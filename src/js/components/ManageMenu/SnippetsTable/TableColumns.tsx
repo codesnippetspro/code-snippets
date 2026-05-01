@@ -28,10 +28,10 @@ const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
 	<a
 		className="snippet-execution-button"
 		title={__('Run Once', 'code-snippets')}
-		aria-label={__('Run Once', 'code-snippets')}
 		href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
 	>
-		&nbsp;
+		<span className="screen-reader-text">{__('Run Once', 'code-snippets')}</span>
+		<span aria-hidden="true">&nbsp;</span>
 	</a>
 
 const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
@@ -51,7 +51,9 @@ const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
 			<input
 				id={`snippet-${snippet.id}-switch`}
 				type="checkbox"
+				role="switch"
 				checked={snippet.active}
+				aria-checked={snippet.active}
 				className="switch"
 				title={actionText}
 				onChange={() => {
@@ -172,7 +174,12 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
 		{snippet.locked && (
-			<Tooltip inline end icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}>
+			<Tooltip
+				inline
+				end
+				label={__('About snippet lock', 'code-snippets')}
+				icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}
+			>
 				{__('This snippet is locked and cannot be modified.', 'code-snippets')}
 			</Tooltip>)}
 
@@ -260,6 +267,7 @@ const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
+		title: <span className="screen-reader-text">{__('Activate', 'code-snippets')}</span>,
 		render: snippet => <ActivateColumn snippet={snippet} />
 	},
 	{

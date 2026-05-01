@@ -35,6 +35,7 @@ export const CommunityCloud = () => {
 						key={tab}
 						href={buildUrl(window.location.href, { type: tab })}
 						className={classnames('nav-tab', `${tab}-tab`, { 'nav-tab-active': tab === currentTab })}
+						aria-current={tab === currentTab ? 'page' : undefined}
 						onClick={event => {
 							event.preventDefault()
 
