@@ -136,7 +136,7 @@ $breakpoint: 1060px;
 
 	.item-category {
 		color: white;
-		background: theme.$secondary;
+		background: color.adjust(theme.$secondary, $lightness: -15%);
 		display: block;
 		font-size: 12px;
 		letter-spacing: 1px;
