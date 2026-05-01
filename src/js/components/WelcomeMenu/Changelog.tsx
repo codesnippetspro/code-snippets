@@ -64,6 +64,9 @@ export const Changelog = () =>
 				target="_blank" rel="noreferrer"
 			>
 				{__('View changelog', 'code-snippets')}
+				<span className="screen-reader-text">
+					{__('(opens in a new tab)', 'code-snippets')}
+				</span>
 			</a>
 		</div>
 		<div className="code-snippets-changelog-entries">

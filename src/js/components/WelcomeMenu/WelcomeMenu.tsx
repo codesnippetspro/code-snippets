@@ -20,10 +20,13 @@ const HeroImage = () => {
 					rel="noopener noreferrer"
 				>
 					{__('Read more', 'code-snippets')}
+					<span className="screen-reader-text">
+						{__('(opens in a new tab)', 'code-snippets')}
+					</span>
 				</a>
 			</div>
 			<figure>
-				{!isImageLoaded && <div className="code-snippets-loading-spinner"></div>}
+				{!isImageLoaded && <div className="code-snippets-loading-spinner" aria-hidden="true"></div>}
 				<img
 					src={DATA?.hero.image_url}
 					alt={__('Latest news image', 'code-snippets')}
@@ -49,7 +52,16 @@ const Partners: React.FC<PartnersProps> = ({ partners }) =>
 					</figure>
 					<div className="code-snippets-header-wrapper">
 						<h3>{title}</h3>
-						<a href={follow_url} target="_blank" rel="noopener noreferrer" aria-label={sprintf( /* translators: %s: partner name. */ __('Visit %s', 'code-snippets'), title)}>
+						<a
+							href={follow_url}
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={sprintf(
+								/* translators: %s: partner name. */
+								__('Visit %s (opens in a new tab)', 'code-snippets'),
+								title
+							)}
+						>
 							{__('Visit', 'code-snippets')}
 						</a>
 					</div>
@@ -76,6 +88,9 @@ const Articles: React.FC<ArticlesProps> = ({ articles }) =>
 						<p className="item-description">{description}</p>
 						<a href={follow_url} className="button button-secondary" target="_blank" rel="noopener noreferrer">
 							{__('Read more', 'code-snippets')}
+							<span className="screen-reader-text">
+								{__('(opens in a new tab)', 'code-snippets')}
+							</span>
 						</a>
 					</div>
 				</li>)}
