@@ -28,7 +28,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 		? <Modal
 			title={title}
 			onRequestClose={onCancel}
-			closeButtonLabel={cancelLabel}
+			closeButtonLabel={__('Close dialog', 'code-snippets')}
 			isDismissible={true}
 		>
 			{children}
