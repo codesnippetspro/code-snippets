@@ -48,6 +48,11 @@ $type-colors: (
 		opacity: 0.6;
 	}
 
+	&:focus-visible {
+		outline: 2px solid #2271b1;
+		outline-offset: 2px;
+	}
+
 	.drop-zone-icon {
 		font-size: 48px;
 		margin-block-end: 10px;
@@ -111,6 +116,11 @@ $type-colors: (
 		cursor: pointer;
 		font-size: 16px;
 		padding: 4px;
+
+		&:focus-visible {
+			outline: 2px solid #2271b1;
+			outline-offset: 2px;
+		}
 	}
 
 	.selected-file-details {

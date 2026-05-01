@@ -29,7 +29,7 @@ $wpbody-block-indent: 22px;
 .code-snippets-toolbar-upper {
 	justify-content: space-between;
 	block-size: 77px;
-	padding-inline: 35px;
+	padding-inline: 24px;
 	display: flex;
 	align-items: center;
 
@@ -113,6 +113,7 @@ $wpbody-block-indent: 22px;
 	align-items: center;
 	box-sizing: border-box;
 	padding: 3px 9px;
+	font-weight: 600;
 }
 
 
