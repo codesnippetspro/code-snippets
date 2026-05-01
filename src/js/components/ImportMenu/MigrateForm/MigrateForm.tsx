@@ -16,7 +16,12 @@ interface StatusDisplayProps {
 }
 
 const StatusDisplay: React.FC<StatusDisplayProps> = ({ type, title, children }) =>
-	<ImportCard variant="controls" className="import-section-status">
+	<ImportCard
+		variant="controls"
+		className="import-section-status"
+		role={'error' === type ? 'alert' : 'status'}
+		aria-live={'error' === type ? 'assertive' : 'polite'}
+	>
 		<div className={type} aria-hidden="true"><span>{'error' === type ? '✕' : '✓'}</span></div>
 		<div>
 			<h4>{title}</h4>
@@ -52,7 +57,7 @@ const StatusMessages: React.FC = () => {
 			{selectedImporter &&
 					isWorking !== MigrationStep.FetchSnippets && error?.step !== MigrationStep.FetchSnippets &&
 					0 === snippetSelection.availableItems.length && 0 === importedIds.length && (
-				<ImportCard className="no-snippets-card">
+				<ImportCard className="no-snippets-card" role="status" aria-live="polite">
 					<div className="card-inner">
 						<div className="card-icon" aria-hidden="true">📭</div>
 						<h4>{__('No snippets found', 'code-snippets')}</h4>
@@ -68,7 +73,7 @@ const MigrateFormInner: React.FC = () => {
 	const { isWorking, error, importers, snippetSelection, importSnippets, changeSelectedImporter } = useMigrationData()
 
 	if (isWorking === MigrationStep.LoadImporters) {
-		return <p>{__('Loading importers…', 'code-snippets')}</p>
+		return <p role="status" aria-live="polite">{__('Loading importers…', 'code-snippets')}</p>
 	}
 
 	if (error?.step === MigrationStep.LoadImporters) {
