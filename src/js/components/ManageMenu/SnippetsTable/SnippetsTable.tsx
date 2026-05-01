@@ -118,7 +118,7 @@ const SnippetsTableInner = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
 	return (
-		<div className="wrap">
+		<>
 			<PageHeading />
 
 			<nav
@@ -135,7 +135,7 @@ const SnippetsTableInner = () => {
 			</WithFilteredSnippetsContext>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
-		</div>
+		</>
 	)
 }
 

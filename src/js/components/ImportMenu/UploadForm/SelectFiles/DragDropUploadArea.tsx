@@ -46,7 +46,7 @@ export const DragDropUploadArea: React.FC<DragDropUploadAreaProps> = ({ fileInpu
 					handleFiles(event.dataTransfer.files)
 				}}
 			>
-				<div className="drop-zone-icon">📁</div>
+				<div className="drop-zone-icon" aria-hidden="true">📁</div>
 				<p>{__('Drag and drop files here, or click to browse', 'code-snippets')}</p>
 				<p>{__('Supports JSON and XML files', 'code-snippets')}</p>
 			</div>

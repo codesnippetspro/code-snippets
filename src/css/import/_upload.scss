@@ -4,12 +4,8 @@ $type-colors: (
 	html: #ef6a36
 );
 
-.upload-form-container {
-	max-inline-size: 800px;
-}
-
 .import-upload-card {
-	h2 {
+	h3 {
 		margin: 0 0 1em;
 	}
 
@@ -86,7 +82,7 @@ $type-colors: (
 .selected-files {
 	margin-block-end: 20px;
 
-	h3 {
+	h4 {
 		margin: 0 0 12px;
 		font-size: 14px;
 		font-weight: 600;
@@ -138,7 +134,7 @@ $type-colors: (
 }
 
 .duplicate-action-selector-card {
-	h2 {
+	h3 {
 		margin: 0 0 1em;
 	}
 
@@ -175,7 +171,7 @@ $type-colors: (
 		flex: 1;
 	}
 
-	h3 {
+	h4 {
 		margin: 0 0 8px;
 		font-size: 16px;
 		font-weight: 600
@@ -256,7 +252,7 @@ $type-colors: (
 		align-items: center;
 		margin-block-end: 10px;
 
-		h3 {
+		h4 {
 			margin: 0;
 		}
 

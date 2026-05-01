@@ -8,7 +8,7 @@ export const ImportOptions: React.FC = () => {
 
 	return (
 		<ImportCard className="import-options-card">
-			<h2>{__('Import options', 'code-snippets')}</h2>
+			<h3>{__('Import options', 'code-snippets')}</h3>
 			<label>
 				<input
 					type="checkbox"

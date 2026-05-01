@@ -23,7 +23,7 @@ export const CommunityCloud = () => {
 	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
 
 	return (
-		<div className="wrap">
+		<>
 			<h2>{__('Community Cloud', 'code-snippets')}</h2>
 
 			<nav
@@ -60,6 +60,6 @@ export const CommunityCloud = () => {
 				: null}
 
 			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
-		</div>
+		</>
 	)
 }
