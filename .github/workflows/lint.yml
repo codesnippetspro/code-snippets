@@ -1,4 +1,4 @@
-name: "(Lint): CSS / JS / PHP"
+name: "(Lint): CSS, JS, PHP"
 
 on:
   pull_request:
@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   lint:
-    name: Lint CSS / JS / PHP (eslint + stylelint + phpcbf + phpcs)
+    name: stylelint, eslint, phpcs
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout source code
