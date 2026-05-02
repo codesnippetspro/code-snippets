@@ -39,7 +39,7 @@ test.describe('Accessibility (axe-core, WCAG 2.1 AA)', () => {
 	})
 
 	test('Import snippets screen has no detectable axe violations', async ({ page }) => {
-		await page.goto('/wp-admin/admin.php?page=code-snippets-import')
+		await page.goto('/wp-admin/admin.php?page=import-code-snippets')
 		await page.waitForLoadState('networkidle')
 
 		const results = await runAxe(page)
