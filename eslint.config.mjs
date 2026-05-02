@@ -6,6 +6,7 @@ import eslintTs from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
 import reactHooks from 'eslint-plugin-react-hooks'
 import importPlugin from 'eslint-plugin-import'
+import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
 import reactPlugin from 'eslint-plugin-react'
 import { FlatCompat } from '@eslint/eslintrc'
 
@@ -21,6 +22,7 @@ export default eslintTs.config(
 	...compat.extends('plugin:react-hooks/recommended'),
 	reactPlugin.configs.flat.recommended,
 	importPlugin.flatConfigs.recommended,
+	jsxA11yPlugin.flatConfigs.recommended,
 	{
 		plugins: { 'react-hooks': reactHooks },
 		rules: reactHooks.configs.recommended.rules,
@@ -127,7 +129,32 @@ export default eslintTs.config(
 			'prefer-named-capture-group': 'error',
 			'prefer-template': 'error',
 			'sort-imports': ['error', { ignoreDeclarationSort: true }],
-			'yoda': ['error', 'always']
+			'yoda': ['error', 'always'],
+			// Accessibility rules. Start as warnings so existing code is surfaced
+			// without breaking CI; promote to error once the audit backlog is
+			// cleared.
+			'jsx-a11y/alt-text': 'warn',
+			'jsx-a11y/anchor-has-content': 'warn',
+			'jsx-a11y/anchor-is-valid': 'warn',
+			'jsx-a11y/aria-props': 'error',
+			'jsx-a11y/aria-proptypes': 'error',
+			'jsx-a11y/aria-role': 'error',
+			'jsx-a11y/aria-unsupported-elements': 'error',
+			'jsx-a11y/click-events-have-key-events': 'warn',
+			'jsx-a11y/control-has-associated-label': 'warn',
+			'jsx-a11y/heading-has-content': 'warn',
+			'jsx-a11y/iframe-has-title': 'warn',
+			'jsx-a11y/img-redundant-alt': 'warn',
+			'jsx-a11y/interactive-supports-focus': 'warn',
+			'jsx-a11y/label-has-associated-control': 'warn',
+			'jsx-a11y/no-autofocus': 'warn',
+			'jsx-a11y/no-noninteractive-element-interactions': 'warn',
+			'jsx-a11y/no-noninteractive-tabindex': 'warn',
+			'jsx-a11y/no-redundant-roles': 'warn',
+			'jsx-a11y/no-static-element-interactions': 'warn',
+			'jsx-a11y/role-has-required-aria-props': 'error',
+			'jsx-a11y/role-supports-aria-props': 'error',
+			'jsx-a11y/tabindex-no-positive': 'warn'
 		}
 	},
 	{

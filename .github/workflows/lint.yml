@@ -1,0 +1,48 @@
+name: "(Lint): CSS / JS / PHP"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  push:
+    branches:
+      - 'core'
+      - 'pro'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.gitignore'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint CSS / JS / PHP (eslint + stylelint + phpcbf + phpcs)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run Stylelint
+        run: npm run lint:styles
+
+      - name: Run ESLint
+        run: npm run lint:js
+
+      - name: Run PHP CS
+        run: npm run lint:php
