@@ -167,7 +167,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 		global $wpdb;
 
 		$table = code_snippets()->db->ms_table;
-		$value = $wpdb->get_var(
+		$value = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare( "SELECT active FROM {$table} WHERE id = %d", $snippet_id )
 		);
 
