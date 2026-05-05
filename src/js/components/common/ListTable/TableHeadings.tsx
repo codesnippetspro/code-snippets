@@ -13,7 +13,7 @@ export interface TableHeadingsProps<T, K extends Key> extends Pick<ListTableProp
 	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
 }
 
-interface SortableColumnHeadingProps<T> {
+interface SortableHeadingCellProps<T> {
 	column: ListTableColumn<T>
 	cellProps: ThHTMLAttributes<HTMLTableCellElement>
 	sortColumn: ListTableColumn<T> | undefined
@@ -22,11 +22,15 @@ interface SortableColumnHeadingProps<T> {
 	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
 }
 
-const SortableColumnHeading = <T, >({
-	column, cellProps, sortColumn, sortDirection, setSortColumn, setSortDirection
-}: SortableColumnHeadingProps<T>) => {
+const SortableHeadingCell = <T,>({
+	column,
+	cellProps,
+	sortColumn,
+	sortDirection,
+	setSortColumn,
+	setSortDirection
+}: SortableHeadingCellProps<T>) => {
 	const isCurrent = column.id === sortColumn?.id
-
 	const nextSortDirection = isCurrent
 		? 'asc' === sortDirection ? 'desc' : 'asc'
 		: column.defaultSortDirection ?? 'asc'
@@ -39,11 +43,14 @@ const SortableColumnHeading = <T, >({
 			aria-sort={ariaSort}
 			className={classnames(cellProps.className, isCurrent ? 'sorted' : 'sortable', classDirection)}
 		>
-			<a href="#" onClick={event => {
-				event.preventDefault()
-				setSortColumn(column)
-				setSortDirection(nextSortDirection)
-			}}>
+			<button
+				type="button"
+				className="list-table-sort-button"
+				onClick={() => {
+					setSortColumn(column)
+					setSortDirection(nextSortDirection)
+				}}
+			>
 				<span>{column.title}</span>
 				<span className="sorting-indicators">
 					<span className="sorting-indicator asc" aria-hidden="true"></span>
@@ -54,7 +61,7 @@ const SortableColumnHeading = <T, >({
 						{/* translators: Hidden accessibility text. */}
 						{'asc' === nextSortDirection ? __('Sort ascending.', 'code-snippets') : __('Sort descending.', 'code-snippets')}
 					</span>}
-			</a>
+			</button>
 		</th>
 	)
 }
@@ -87,7 +94,6 @@ export const TableHeadings = <T, K extends Key>({
 		{columns.map(column => {
 			const cellProps: ThHTMLAttributes<HTMLTableCellElement> = {
 				id: 'head' === which ? column.id.toString() : undefined,
-				key: column.id,
 				scope: 'col',
 				className: classnames(
 					'manage-column',
@@ -97,8 +103,13 @@ export const TableHeadings = <T, K extends Key>({
 				)
 			}
 
-			return column.sortedValue
-				? <SortableColumnHeading {...{ column, cellProps, sortColumn, sortDirection, setSortColumn, setSortDirection }} />
-				: <th {...cellProps}>{column.title}</th>
+			if (!column.sortedValue) {
+				return <th key={column.id} {...cellProps}>{column.title}</th>
+			}
+
+			return <SortableHeadingCell
+				key={column.id}
+				{...{ column, cellProps, sortColumn, sortDirection, setSortColumn, setSortDirection }}
+			/>
 		})}
 	</tr>
