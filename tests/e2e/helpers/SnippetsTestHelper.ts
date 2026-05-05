@@ -249,7 +249,7 @@ export class SnippetsTestHelper {
    * Click the "Add New" button to start creating a snippet
    */
 	async clickAddNewSnippet(): Promise<void> {
-		await this.page.goto(URLS.ADD_SNIPPET)
+		await this.page.goto(URLS.ADD_SNIPPET_ADMIN)
 		await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
 	}
 
