@@ -43,17 +43,17 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = props => {
 
 	return (
 		<ImportCard className="migrate-snippets-table-card snippets-table-card">
-			<div>
-				<header>
-					<h3>{sprintf(
-						// translators: %d: number of available snippets.
-						__('Available snippets (%d)', 'code-snippets'),
-						availableItems.length
-					)}</h3>
-					<p>{__('We found the following snippets:', 'code-snippets')}</p>
-				</header>
-				<TableNav which="top" {...props} />
-			</div>
+			<header>
+				<h3>{sprintf(
+					// translators: %d: number of available snippets.
+					__('Available snippets (%d)', 'code-snippets'),
+					availableItems.length
+				)}</h3>
+				<p>{__('We found the following snippets:', 'code-snippets')}</p>
+			</header>
+
+			<TableNav which="top" {...props} />
+
 			<table className="wp-list-table widefat fixed striped">
 				<thead>
 					<tr>
