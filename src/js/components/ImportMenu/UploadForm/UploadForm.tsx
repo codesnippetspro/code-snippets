@@ -29,7 +29,10 @@ export const UploadForm: React.FC = () => {
 			<p>
 				{createInterpolateElement(
 					__('Afterward, you will need to visit the <a>All Snippets</a> page to activate the imported snippets.', 'code-snippets'),
-					{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
+					{
+						// eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+						a: <a href={window.CODE_SNIPPETS?.urls.manage} />
+					}
 				)}
 			</p>
 

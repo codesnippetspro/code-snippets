@@ -243,7 +243,10 @@ const NoItemsMessage = () => {
 			currentType
 				? __("It looks like you don't have any snippets of this type. <a>Perhaps you would like to add a new one?</a>", 'code-snippets')
 				: __("It looks like you don't have any snippets. <a>Perhaps you would like to add a new one?</a>", 'code-snippets'),
-			{ a: <a href={buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type: currentType })} /> }
+			{
+				// eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+				a: <a href={buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type: currentType })} />
+			}
 		)}
 		</>
 }

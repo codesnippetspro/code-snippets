@@ -43,7 +43,10 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ succes
 					<p className="import-result-link">
 						{createInterpolateElement(
 							__('Go to <a>All Snippets</a> to activate your imported snippets.', 'code-snippets'),
-							{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
+							{
+								// eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+								a: <a href={window.CODE_SNIPPETS?.urls.manage} />
+							}
 						)}
 					</p>)}
 
