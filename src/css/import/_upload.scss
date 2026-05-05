@@ -29,9 +29,9 @@ $type-colors: (
 	text-align: center;
 	cursor: pointer;
 	background-color: #fafafa;
-	margin-block-end: 20px;
 	transition: all 0.3s ease;
 	opacity: 1;
+	display: block;
 
 	@media (prefers-reduced-motion: reduce) {
 		transition-duration: 0.01s;
@@ -70,10 +70,28 @@ $type-colors: (
 		color: #666;
 		font-size: 14px;
 	}
+}
 
-	+ input[type='file'] {
-		display: none;
+.upload-drop-zone-wrapper {
+	position: relative;
+	margin-block-end: 20px;
+
+	&:focus-within .upload-drop-zone:not(.disabled) {
+		box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
 	}
+}
+
+.upload-drop-zone-file-input {
+	position: absolute;
+	inline-size: 1px;
+	block-size: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+	clip-path: inset(50%);
+	white-space: nowrap;
 }
 
 .import-result-display-card {
