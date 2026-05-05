@@ -1,5 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
+import { __ } from '@wordpress/i18n'
 import type { Dispatch, Key, SetStateAction } from 'react'
 import type { ListTableColumn, ListTableItemsProps } from './ListTable'
 
@@ -10,7 +11,11 @@ interface CheckboxCellProps<T, K extends Key> extends Pick<TableItemsProps<T, K>
 
 const CheckboxCell = <T, K extends Key>({ item, setSelected, getKey }: CheckboxCellProps<T, K>) =>
 	<th scope="row" className="check-column">
+		<label htmlFor={`cb-select-${getKey(item)}`}>
+			<span className="screen-reader-text">{__('Select snippet', 'code-snippets')}</span>
+		</label>
 		<input
+			id={`cb-select-${getKey(item)}`}
 			type="checkbox"
 			name="checked[]"
 			onChange={event => {
