@@ -22,7 +22,7 @@ export default eslintTs.config(
 	...compat.extends('plugin:react-hooks/recommended'),
 	reactPlugin.configs.flat.recommended,
 	importPlugin.flatConfigs.recommended,
-	jsxA11yPlugin.flatConfigs.recommended,
+	jsxA11yPlugin.flatConfigs.strict,
 	{
 		plugins: { 'react-hooks': reactHooks },
 		rules: reactHooks.configs.recommended.rules,
