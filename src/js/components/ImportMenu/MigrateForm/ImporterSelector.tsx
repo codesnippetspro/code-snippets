@@ -12,11 +12,13 @@ export interface ImporterSelectorProps {
 
 export const ImporterSelector: React.FC<ImporterSelectorProps> = ({ value, onChange, options, isLoading }) =>
 	<ImportCard variant="controls" className="importer-selector-card">
-		<label htmlFor="importer-select">
-			<h3>{__('Select plugin', 'code-snippets')}</h3>
+		<h3 id="importer-select-heading">{__('Select plugin', 'code-snippets')}</h3>
+		<label htmlFor="importer-select" className="screen-reader-text">
+			{__('Select plugin to migrate from', 'code-snippets')}
 		</label>
 
 		<select
+			aria-labelledby="importer-select-heading"
 			id="importer-select"
 			value={value}
 			onChange={event => onChange(event.target.value)}
@@ -37,5 +39,5 @@ export const ImporterSelector: React.FC<ImporterSelectorProps> = ({ value, onCha
 				</option>)}
 		</select>
 
-		{isLoading && <p>{__('Loading snippets…', 'code-snippets')}</p>}
+		{isLoading && <p role="status" aria-live="polite">{__('Loading snippets…', 'code-snippets')}</p>}
 	</ImportCard>
