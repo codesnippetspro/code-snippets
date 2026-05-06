@@ -250,7 +250,7 @@ const NoItemsMessage = () => {
 }
 
 const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] => {
-	const { activate } = useSnippetsAPI()
+	const { activate, deactivate } = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
 	return useMemo(
@@ -273,7 +273,19 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 			},
 			{
 				name: __('Deactivate', 'code-snippets'),
-				apply: () => Promise.resolve()
+				apply: async (selected: Set<Snippet['id']>) => {
+					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && snippet.active)
+
+					if (0 === targets.length) {
+						return
+					}
+
+					await Promise.all(targets.map(snippet =>
+						deactivate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
+					))
+
+					await refreshSnippetsList()
+				}
 			},
 			{
 				name: __('Clone', 'code-snippets'),
@@ -305,7 +317,7 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 				apply: () => Promise.resolve()
 			}
 		],
-		[allSnippets, activate, refreshSnippetsList]
+		[allSnippets, activate, deactivate, refreshSnippetsList]
 	)
 }
 
