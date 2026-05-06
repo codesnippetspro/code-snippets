@@ -8,7 +8,7 @@ import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadBulkSnippetExportFile } from '../../../utils/files'
 import { REST_BASES } from '../../../utils/restAPI'
-import { getSnippetDisplayName, getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetDisplayName, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
@@ -250,7 +250,7 @@ const NoItemsMessage = () => {
 }
 
 const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] => {
-	const { activate, deactivate, delete: trashOrDelete } = useSnippetsAPI()
+	const { activate, deactivate, delete: trashOrDelete, create } = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
 	return useMemo(
@@ -289,7 +289,19 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 			},
 			{
 				name: __('Clone', 'code-snippets'),
-				apply: () => Promise.resolve()
+				apply: async (selected: Set<Snippet['id']>) => {
+					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.trashed)
+
+					if (0 === targets.length) {
+						return
+					}
+
+					for (const snippet of targets) {
+						await create(cloneSnippetObject(snippet)).catch(handleUnknownError)
+					}
+
+					await refreshSnippetsList()
+				}
 			},
 			{
 				name: __('Export', 'code-snippets'),
@@ -329,7 +341,7 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 				}
 			}
 		],
-		[allSnippets, activate, deactivate, trashOrDelete, refreshSnippetsList]
+		[allSnippets, activate, deactivate, trashOrDelete, create, refreshSnippetsList]
 	)
 }
 
