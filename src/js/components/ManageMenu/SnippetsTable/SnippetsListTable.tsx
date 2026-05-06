@@ -250,7 +250,7 @@ const NoItemsMessage = () => {
 }
 
 const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] => {
-	const { activate, deactivate } = useSnippetsAPI()
+	const { activate, deactivate, delete: trashOrDelete } = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
 	return useMemo(
@@ -264,9 +264,9 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 						return
 					}
 
-					await Promise.all(targets.map(snippet =>
-						activate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
-					))
+					for (const snippet of targets) {
+						await activate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
+					}
 
 					await refreshSnippetsList()
 				}
@@ -280,9 +280,9 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 						return
 					}
 
-					await Promise.all(targets.map(snippet =>
-						deactivate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
-					))
+					for (const snippet of targets) {
+						await deactivate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
+					}
 
 					await refreshSnippetsList()
 				}
@@ -314,10 +314,22 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 			},
 			{
 				name: __('Trash', 'code-snippets'),
-				apply: () => Promise.resolve()
+				apply: async (selected: Set<Snippet['id']>) => {
+					const targets = allSnippets.filter(snippet => selected.has(snippet.id))
+
+					if (0 === targets.length) {
+						return
+					}
+
+					for (const snippet of targets) {
+						await trashOrDelete({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
+					}
+
+					await refreshSnippetsList()
+				}
 			}
 		],
-		[allSnippets, activate, deactivate, refreshSnippetsList]
+		[allSnippets, activate, deactivate, trashOrDelete, refreshSnippetsList]
 	)
 }
 
