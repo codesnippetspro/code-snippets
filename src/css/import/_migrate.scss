@@ -55,6 +55,10 @@
 
 
 .import-section-status {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+
 	.error, .success {
 		border-radius: 50%;
 		inline-size: 24px;
