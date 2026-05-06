@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadBulkSnippetExportFile } from '../../../utils/files'
@@ -248,13 +249,27 @@ const NoItemsMessage = () => {
 		</>
 }
 
-const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] =>
-{
+const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] => {
+	const { activate } = useSnippetsAPI()
+	const { refreshSnippetsList } = useSnippetsList()
+
 	return useMemo(
 		() => [
 			{
 				name: __('Activate', 'code-snippets'),
-				apply: () => Promise.resolve()
+				apply: async (selected: Set<Snippet['id']>) => {
+					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.active)
+
+					if (0 === targets.length) {
+						return
+					}
+
+					await Promise.all(targets.map(snippet =>
+						activate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
+					))
+
+					await refreshSnippetsList()
+				}
 			},
 			{
 				name: __('Deactivate', 'code-snippets'),
@@ -290,7 +305,7 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 				apply: () => Promise.resolve()
 			}
 		],
-		[allSnippets]
+		[allSnippets, activate, refreshSnippetsList]
 	)
 }
 

@@ -7,6 +7,7 @@ import type { Dispatch, Key, SetStateAction, ThHTMLAttributes } from 'react'
 export interface TableHeadingsProps<T, K extends Key> extends Pick<ListTableProps<T, K>, 'columns' | 'getKey' | 'items'> {
 	which: 'head' | 'foot'
 	sortColumn: ListTableColumn<T> | undefined
+	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 	sortDirection: ListTableSortDirection
 	setSortColumn: Dispatch<SetStateAction<ListTableColumn<T> | undefined>>
@@ -72,17 +73,21 @@ export const TableHeadings = <T, K extends Key>({
 	getKey,
 	columns,
 	sortColumn,
+	selected,
 	setSelected,
 	setSortColumn,
 	sortDirection,
 	setSortDirection
-}: TableHeadingsProps<T, K>) =>
-	<tr>
+}: TableHeadingsProps<T, K>) => {
+	const allSelected = 0 < items.length && items.every(item => selected.has(getKey(item)))
+
+	return <tr>
 		<td className="column-cb check-column">
 			<input
 				id={`cb-select-all-${which}`}
 				type="checkbox"
 				name="checked[]"
+				checked={allSelected}
 				onChange={event => {
 					setSelected(new Set(event.target.checked ? items.map(getKey) : []))
 				}}
@@ -113,3 +118,4 @@ export const TableHeadings = <T, K extends Key>({
 			/>
 		})}
 	</tr>
+}
