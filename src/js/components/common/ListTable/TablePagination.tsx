@@ -178,6 +178,44 @@ interface PaginationControlsProps {
 	setCurrentPage: (page: number) => void
 }
 
+type NavigationLinksProps = Omit<PaginationControlsProps, 'totalItems'>
+
+const NavigationLinks: React.FC<NavigationLinksProps> = ({
+	which,
+	disabled,
+	totalPages,
+	inputValue,
+	currentPage,
+	useQueryVars,
+	setCurrentPage,
+	setInputValue
+}) => (
+	<span className="pagination-links">
+		<BackwardNavigationButtons
+			disabled={disabled}
+			currentPage={currentPage}
+			renderAsLinks={useQueryVars}
+			setCurrentPage={setCurrentPage}
+		/>
+		<CurrentPage
+			which={which}
+			disabled={disabled}
+			totalPages={totalPages}
+			currentPage={currentPage}
+			inputValue={inputValue}
+			setInputValue={setInputValue}
+			confirmInputValue={() => setCurrentPage(inputValue)}
+		/>{'\n'}
+		<ForwardNavigationButtons
+			disabled={disabled}
+			totalPages={totalPages}
+			currentPage={currentPage}
+			renderAsLinks={useQueryVars}
+			setCurrentPage={setCurrentPage}
+		/>
+	</span>
+)
+
 const PaginationControls: React.FC<PaginationControlsProps> = ({
 	which,
 	disabled,
@@ -188,49 +226,39 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 	useQueryVars,
 	setCurrentPage,
 	setInputValue
-}) =>
-	<form
-		className={classnames('tablenav-pages', {
-			'one-page': totalPages && 1 === totalPages,
-			'no-pages': !totalPages
-		})}
-		onSubmit={event => {
-			event.preventDefault()
-			setCurrentPage(inputValue)
-		}}
-	>
-		<span className="displaying-num">
-			{/* translators: %s: Number of items. */}
-			{sprintf(_n('%s item', '%s items', totalItems), totalItems)}
-		</span>{'\n'}
+}) => {
+	const navLabel = 'top' === which
+		? __('Pagination, before the table', 'code-snippets')
+		: __('Pagination, after the table', 'code-snippets')
 
-		<span className="pagination-links">
-			<BackwardNavigationButtons
-				disabled={disabled}
-				currentPage={currentPage}
-				renderAsLinks={useQueryVars}
-				setCurrentPage={setCurrentPage}
-			/>
-
-			<CurrentPage
-				which={which}
-				disabled={disabled}
-				totalPages={totalPages}
-				currentPage={currentPage}
-				inputValue={inputValue}
-				setInputValue={setInputValue}
-				confirmInputValue={() => setCurrentPage(inputValue)}
-			/>{'\n'}
-
-			<ForwardNavigationButtons
-				disabled={disabled}
-				totalPages={totalPages}
-				currentPage={currentPage}
-				renderAsLinks={useQueryVars}
-				setCurrentPage={setCurrentPage}
-			/>
-		</span>
-	</form>
+	return (
+		<nav aria-label={navLabel}>
+			<form
+				className={classnames('tablenav-pages', {
+					'one-page': totalPages && 1 === totalPages,
+					'no-pages': !totalPages
+				})}
+				onSubmit={event => {
+					event.preventDefault()
+					setCurrentPage(inputValue)
+				}}
+			>
+				<span className="displaying-num">
+					{
+						sprintf(
+							// translators: %s: Number of items.
+							_n('%s item', '%s items', totalItems),
+							totalItems
+						)
+					}
+				</span>{'\n'}
+				<NavigationLinks
+					{...{ which, disabled, totalPages, inputValue, currentPage, useQueryVars, setCurrentPage, setInputValue }}
+				/>
+			</form>
+		</nav>
+	)
+}
 
 export interface TablePaginationProps extends Omit<ListTablePaginationProps, 'totalPages'>,
 	Required<Pick<ListTablePaginationProps, 'totalPages'>> {

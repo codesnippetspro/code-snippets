@@ -34,6 +34,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialo
 				'nav-tab-active': type === currentType,
 				'nav-tab-inactive': type && type !== currentType && !isLicensed() && isProType(type)
 			})}
+			aria-current={type === currentType ? 'page' : undefined}
 			onClick={event => {
 				event.preventDefault()
 
@@ -61,7 +62,7 @@ const PageHeading = () => {
 				{__('Create new snippet', 'code-snippets')}
 			</a>
 
-			<h1>
+			<h2>
 				{__('Manage Code Snippets', 'code-snippets')}
 
 				{searchQueryText || currentTag
@@ -86,7 +87,7 @@ const PageHeading = () => {
 						</Button>
 					</span>
 					: null}
-			</h1>
+			</h2>
 
 			<SafeModeNotice />
 		</>
@@ -118,21 +119,24 @@ const SnippetsTableInner = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
 	return (
-		<div className="wrap">
+		<>
 			<PageHeading />
 
-			<h2 className="nav-tab-wrapper snippet-type-tabs">
+			<nav
+				className="nav-tab-wrapper snippet-type-tabs"
+				aria-label={__('Snippet types', 'code-snippets')}
+			>
 				<SnippetTypeTab setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
 				{SNIPPET_TYPES.map(type =>
 					<SnippetTypeTab key={type} type={type} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />)}
-			</h2>
+			</nav>
 
 			<WithFilteredSnippetsContext>
 				<SnippetsListTable />
 			</WithFilteredSnippetsContext>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
-		</div>
+		</>
 	)
 }
 

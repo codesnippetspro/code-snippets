@@ -31,6 +31,10 @@ input[type='checkbox'].switch {
 		background-color: $off-color;
 		border-radius: 50%;
 		margin: 2px;
+
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
+		}
 	}
 }
 
@@ -50,7 +54,7 @@ input[type='checkbox'].switch:checked {
 	text-align: center;
 	font-weight: bold;
 	line-height: 1;
-	color: #bbb;
+	color: #1d2327;
 }
 
 a.snippet-condition-count {
@@ -97,6 +101,14 @@ a.snippet-condition-count {
 		&::before {
 			border-color: theme.$accent;
 			transition: border-color 0.6s;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
+
+			&::before {
+				transition-duration: 0.01s;
+			}
 		}
 	}
 }

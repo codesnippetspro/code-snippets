@@ -8,13 +8,11 @@ export const PriorityInput = () => {
 
 	return (
 		<div className="snippet-priority inline-form-field">
-			<h4>
-				<label htmlFor="snippet-priority">
-					{__('Priority', 'code-snippets')}
-				</label>
-			</h4>
+			<label htmlFor="snippet-priority">
+				{__('Priority', 'code-snippets')}
+			</label>
 
-			<Tooltip block end>
+			<Tooltip block end className="priority-input-tooltip">
 				{__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}
 			</Tooltip>
 

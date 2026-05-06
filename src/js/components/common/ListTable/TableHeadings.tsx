@@ -13,6 +13,59 @@ export interface TableHeadingsProps<T, K extends Key> extends Pick<ListTableProp
 	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
 }
 
+interface SortableHeadingCellProps<T> {
+	column: ListTableColumn<T>
+	cellProps: ThHTMLAttributes<HTMLTableCellElement>
+	sortColumn: ListTableColumn<T> | undefined
+	sortDirection: ListTableSortDirection
+	setSortColumn: Dispatch<SetStateAction<ListTableColumn<T> | undefined>>
+	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
+}
+
+const SortableHeadingCell = <T,>({
+	column,
+	cellProps,
+	sortColumn,
+	sortDirection,
+	setSortColumn,
+	setSortDirection
+}: SortableHeadingCellProps<T>) => {
+	const isCurrent = column.id === sortColumn?.id
+	const nextSortDirection = isCurrent
+		? 'asc' === sortDirection ? 'desc' : 'asc'
+		: column.defaultSortDirection ?? 'asc'
+	const classDirection = isCurrent ? sortDirection : 'asc' === nextSortDirection ? 'desc' : 'asc'
+	const ariaSort = isCurrent ? 'asc' === sortDirection ? 'ascending' : 'descending' : undefined
+
+	return (
+		<th
+			{...cellProps}
+			aria-sort={ariaSort}
+			className={classnames(cellProps.className, isCurrent ? 'sorted' : 'sortable', classDirection)}
+		>
+			<button
+				type="button"
+				className="list-table-sort-button"
+				onClick={() => {
+					setSortColumn(column)
+					setSortDirection(nextSortDirection)
+				}}
+			>
+				<span>{column.title}</span>
+				<span className="sorting-indicators">
+					<span className="sorting-indicator asc" aria-hidden="true"></span>
+					<span className="sorting-indicator desc" aria-hidden="true"></span>
+				</span>
+				{isCurrent ? null
+					: <span className="screen-reader-text">
+						{/* translators: Hidden accessibility text. */}
+						{'asc' === nextSortDirection ? __('Sort ascending.', 'code-snippets') : __('Sort descending.', 'code-snippets')}
+					</span>}
+			</button>
+		</th>
+	)
+}
+
 export const TableHeadings = <T, K extends Key>({
 	items,
 	which,
@@ -54,38 +107,9 @@ export const TableHeadings = <T, K extends Key>({
 				return <th key={column.id} {...cellProps}>{column.title}</th>
 			}
 
-			const isCurrent = column.id === sortColumn?.id
-
-			const nextSortDirection = isCurrent
-				? 'asc' === sortDirection ? 'desc' : 'asc'
-				: column.defaultSortDirection ?? 'asc'
-			const classDirection = isCurrent ? sortDirection : 'asc' === nextSortDirection ? 'desc' : 'asc'
-			const ariaSort = isCurrent ? 'asc' === sortDirection ? 'ascending' : 'descending' : undefined
-
-			return (
-				<th
-					key={column.id}
-					{...cellProps}
-					aria-sort={ariaSort}
-					className={classnames(cellProps.className, isCurrent ? 'sorted' : 'sortable', classDirection)}
-				>
-					<a href="#" onClick={event => {
-						event.preventDefault()
-						setSortColumn(column)
-						setSortDirection(nextSortDirection)
-					}}>
-						<span>{column.title}</span>
-						<span className="sorting-indicators">
-							<span className="sorting-indicator asc" aria-hidden="true"></span>
-							<span className="sorting-indicator desc" aria-hidden="true"></span>
-						</span>
-						{isCurrent ? null
-							: <span className="screen-reader-text">
-								{/* translators: Hidden accessibility text. */}
-								{'asc' === nextSortDirection ? __('Sort ascending.', 'code-snippets') : __('Sort descending.', 'code-snippets')}
-							</span>}
-					</a>
-				</th>
-			)
+			return <SortableHeadingCell
+				key={column.id}
+				{...{ column, cellProps, sortColumn, sortDirection, setSortColumn, setSortDirection }}
+			/>
 		})}
 	</tr>

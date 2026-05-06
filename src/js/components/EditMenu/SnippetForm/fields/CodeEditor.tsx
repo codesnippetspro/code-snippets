@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useId, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSubmitSnippet } from '../../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../../utils/errors'
@@ -38,10 +38,19 @@ const useFocusEditorShortcut = (
 }
 
 const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
+	const descriptionId = useId()
 	const { snippet, setSnippet } = useSnippetForm()
 
 	return (
-		<div className="snippet-editor">
+		<div
+			className="snippet-editor"
+			role="application"
+			aria-label={__('Code editor', 'code-snippets')}
+			aria-describedby={descriptionId}
+		>
+			<p id={descriptionId} className="screen-reader-text">
+				{__('In the editing area, the Tab key enters a tab character. To exit the code editor, press the Escape key and then the Tab key.', 'code-snippets')}
+			</p>
 			<textarea
 				ref={textareaRef}
 				id="snippet-code"
@@ -105,10 +114,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 	return (
 		<div className="snippet-code-container">
 			<div className="above-snippet-code">
-				<h2><label htmlFor="snippet-code">{__('Snippet Content', 'code-snippets')}</label></h2>
+				<label htmlFor="snippet-code">
+					{__('Snippet Content', 'code-snippets')}
+				</label>
 
 				<Button small className="expand-editor-button" onClick={() => setIsExpanded(current => !current)}>
-					{isExpanded ? <MinimiseIcon /> : <ExpandIcon />}
+					{isExpanded ? <MinimiseIcon aria-hidden="true" /> : <ExpandIcon aria-hidden="true" />}
 					{isExpanded ? __('Minimize', 'code-snippets') : __('Expand', 'code-snippets')}
 				</Button>
 			</div>

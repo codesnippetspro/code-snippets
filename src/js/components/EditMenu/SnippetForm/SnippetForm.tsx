@@ -147,12 +147,12 @@ const EditFormWrap: React.FC = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
 	return (
-		<div className="wrap">
+		<>
 			<PageHeading />
 			<Notices placement="above-form" />
 
 			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
-				<main className="snippet-form-upper">
+				<div className="snippet-form-upper">
 					<div className="snippet-name-wrapper">
 						<NameInput />
 						<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
@@ -160,7 +160,7 @@ const EditFormWrap: React.FC = () => {
 
 					<CodeEditor {...{ isExpanded, setIsExpanded }} />
 					<ConditionsEditor />
-				</main>
+				</div>
 
 				<div className="snippet-form-lower">
 					<UpsellBanner />
@@ -172,7 +172,7 @@ const EditFormWrap: React.FC = () => {
 			</EditForm>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
-		</div>
+		</>
 	)
 }
 

@@ -23,15 +23,19 @@ export const CommunityCloud = () => {
 	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
 
 	return (
-		<div className="wrap">
-			<h1>{__('Community Cloud', 'code-snippets')}</h1>
+		<>
+			<h2>{__('Community Cloud', 'code-snippets')}</h2>
 
-			<h2 className="nav-tab-wrapper">
+			<nav
+				className="nav-tab-wrapper"
+				aria-label={__('Community Cloud types', 'code-snippets')}
+			>
 				{TABS.map(tab =>
 					<a
 						key={tab}
 						href={buildUrl(window.location.href, { type: tab })}
 						className={classnames('nav-tab', `${tab}-tab`, { 'nav-tab-active': tab === currentTab })}
+						aria-current={tab === currentTab ? 'page' : undefined}
 						onClick={event => {
 							event.preventDefault()
 
@@ -46,7 +50,7 @@ export const CommunityCloud = () => {
 						{TAB_LABELS[tab]}
 						{PRO_TABS.includes(tab) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 					</a>)}
-			</h2>
+			</nav>
 
 			{'snippets' === currentTab
 				? <WithRestAPIContext>
@@ -57,6 +61,6 @@ export const CommunityCloud = () => {
 				: null}
 
 			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
-		</div>
+		</>
 	)
 }

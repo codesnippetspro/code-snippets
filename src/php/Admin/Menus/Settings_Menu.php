@@ -198,8 +198,8 @@ class Settings_Menu extends Admin_Menu {
 		$current_section = $this->get_current_section();
 
 		?>
-		<div class="code-snippets-settings wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
-			<h1>
+		<div class="wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
+			<h2>
 				<?php
 				esc_html_e( 'Settings', 'code-snippets' );
 
@@ -219,7 +219,7 @@ class Settings_Menu extends Admin_Menu {
 					}
 				}
 				?>
-			</h1>
+			</h2>
 
 			<?php settings_errors( OPTION_NAME ); ?>
 
@@ -254,7 +254,7 @@ class Settings_Menu extends Admin_Menu {
 		$sections = $this->get_sections();
 		$active_tab = $this->get_current_section();
 
-		echo '<h2 class="nav-tab-wrapper" id="settings-sections-tabs">';
+		echo '<nav class="nav-tab-wrapper" id="settings-sections-tabs" aria-label="' . esc_attr__( 'Settings tabs', 'code-snippets' ) . '">';
 
 		foreach ( $sections as $section ) {
 			printf(
@@ -266,7 +266,7 @@ class Settings_Menu extends Admin_Menu {
 			);
 		}
 
-		echo '</h2>';
+		echo '</nav>';
 
 		foreach ( $sections as $section ) {
 			if ( 'license' === $section['id'] ) {
@@ -275,7 +275,7 @@ class Settings_Menu extends Admin_Menu {
 
 			if ( $section['title'] ) {
 				printf(
-					'<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
+					'<h3 id="%s-settings" class="settings-section-title">%s</h3>' . "\n",
 					esc_attr( $section['id'] ),
 					esc_html( $section['title'] )
 				);

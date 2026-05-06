@@ -52,6 +52,7 @@ abstract class Admin_Menu {
 	public static array $script_deps = [
 		'react',
 		'react-dom',
+		'react-jsx-runtime',
 		'wp-url',
 		'wp-i18n',
 		'wp-date',
@@ -122,7 +123,7 @@ abstract class Admin_Menu {
 	 * Render the navigation bar at the top of the admin page.
 	 */
 	protected function render_navigation() {
-		echo '<div id="code-snippets-toolbar-container"></div>';
+		echo '<div id="code-snippets-toolbar-container" class="wrap"></div>';
 	}
 
 	/**

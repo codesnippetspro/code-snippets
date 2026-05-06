@@ -21,19 +21,26 @@ interface StatusIconProps {
 const StatusIcon: React.FC<StatusIconProps> = ({ status }) => {
 	switch (status) {
 		case Status.INITIAL:
-			return <CopyIcon />
+			return <CopyIcon aria-hidden="true" />
 		case Status.PROGRESSING:
-			return <span className="spinner-wrapper"><Spinner /></span>
+			return <span className="spinner-wrapper" aria-hidden="true"><Spinner /></span>
 		case Status.SUCCESS:
-			return <span className="dashicons dashicons-yes"></span>
+			return <span className="dashicons dashicons-yes" aria-hidden="true"></span>
 		case Status.ERROR:
-			return <span className="dashicons dashicons-warning"></span>
+			return <span className="dashicons dashicons-warning" aria-hidden="true"></span>
 	}
 }
 
 export interface CopyToClipboardButtonProps extends ButtonProps {
 	text: string
 	timeout?: number
+}
+
+const STATUS_MESSAGES: Record<Status, string> = {
+	[Status.INITIAL]: '',
+	[Status.PROGRESSING]: __('Copying to clipboard…', 'code-snippets'),
+	[Status.SUCCESS]: __('Copied to clipboard.', 'code-snippets'),
+	[Status.ERROR]: __('Failed to copy to clipboard. Please try again.', 'code-snippets')
 }
 
 export const CopyToClipboardButton: React.FC<CopyToClipboardButtonProps> = ({
@@ -55,17 +62,27 @@ export const CopyToClipboardButton: React.FC<CopyToClipboardButtonProps> = ({
 			.catch((error: unknown) => {
 				console.error('Failed to copy text to clipboard.', error)
 				setStatus(Status.ERROR)
+				setTimeout(() => setStatus(Status.INITIAL), timeout)
 			})
 	}
 
 	return clipboard && window.isSecureContext
-		? <Button
-			className="code-snippets-copy-text"
-			onClick={handleClick}
-			{...props}
-		>
-			<StatusIcon status={status} />
-			{__('Copy', 'code-snippets')}
-		</Button>
+		? <>
+			<Button
+				className="code-snippets-copy-text"
+				onClick={handleClick}
+				{...props}
+			>
+				<StatusIcon status={status} />
+				{__('Copy', 'code-snippets')}
+			</Button>
+			<span
+				className="screen-reader-text"
+				role={Status.ERROR === status ? 'alert' : 'status'}
+				aria-live={Status.ERROR === status ? 'assertive' : 'polite'}
+			>
+				{STATUS_MESSAGES[status]}
+			</span>
+		</>
 		: null
 }

@@ -7,6 +7,8 @@ on:
     branches:
       - 'core'
       - 'pro'
+      - 'core-beta'
+      - 'pro-beta'
     paths-ignore:
       - '**.md'
       - '**.txt'

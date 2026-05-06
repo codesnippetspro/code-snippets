@@ -27,7 +27,7 @@ export const PageHeading: React.FC = () => {
 	const { snippet, updateSnippet, setCurrentNotice } = useSnippetForm()
 
 	return (
-		<h1>
+		<h2>
 			{snippet.id
 				? <>
 					{`${getPageHeading(snippet)} `}
@@ -57,6 +57,6 @@ export const PageHeading: React.FC = () => {
 					<a key={label} href={url} className="page-title-action">{label}</a>{' '}
 				</>
 			)}
-		</h1>
+		</h2>
 	)
 }

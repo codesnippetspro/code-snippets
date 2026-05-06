@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.9.6] (2026-04-28)
+
+### Fixed
+* Improved permissions handling with snippets REST API.
+* Site admin cannot toggle shared network snippets status.
+
 ## [3.9.5] (2026-02-05)
 
 ### Fixed
