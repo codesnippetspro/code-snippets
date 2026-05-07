@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import React, { Fragment, useState } from 'react'
-import { __, sprintf } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
@@ -8,7 +8,7 @@ import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { createSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
@@ -88,15 +88,6 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 			return <ActivationSwitch snippet={snippet} />
 	}
 }
-
-const cloneSnippetObject = (snippet: Snippet): Snippet =>
-	createSnippetObject({
-		...snippet,
-		id: 0,
-		active: false,
-		// translators: %s: snippet title.
-		name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
-	})
 
 const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 	const api = useSnippetsAPI()
