@@ -137,7 +137,10 @@ class Plugin {
 		new MCE_Plugin();
 		new Upgrader( PLUGIN_VERSION, $this->db );
 		new Admin_Bar();
-		new Promotion_Manager();
+
+		if ( is_admin() ) {
+			new Promotion_Manager();
+		}
 
 		$this->init_snippet_files();
 	}
