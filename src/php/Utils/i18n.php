@@ -24,7 +24,11 @@ array(
 	'site-css'       => __( 'Site front-end stylesheet', 'code-snippets' ),
 	'admin-css'      => __( 'Administration area stylesheet', 'code-snippets' ),
 	'site-head-js'   => __( 'JavaScript loaded in the site &amp;lt;head&amp;gt; section', 'code-snippets' ),
-	'site-footer-js' => __( 'JavaScript loaded just before the closing &amp;lt;/body&amp;gt; tag', 'code-snippets' ),
+	'site-body-js'   => __( 'JavaScript loaded at the start of the &amp;lt;body&amp;gt; tag', 'code-snippets' ),
+	'site-footer-js' => __( 'JavaScript loaded at the end of the &amp;lt;body&amp;gt; tag', 'code-snippets' ),
+	'head-content'   => __( 'HTML output in the &amp;lt;head&amp;gt; section', 'code-snippets' ),
+	'body-content'   => __( 'HTML output at the start of the &amp;lt;body&amp;gt; tag', 'code-snippets' ),
+	'footer-content' => __( 'HTML output at the end of the &amp;lt;body&amp;gt; tag', 'code-snippets' ),
 );
 
 // class-content-widget.php.

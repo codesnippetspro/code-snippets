@@ -28,8 +28,8 @@ export type SnippetScope = typeof SNIPPET_TYPE_SCOPES[SnippetType][number]
 
 export const SNIPPET_TYPE_SCOPES = <const> {
 	php: ['global', 'admin', 'front-end', 'single-use'],
-	html: ['content', 'head-content', 'footer-content'],
+	html: ['content', 'head-content', 'body-content', 'footer-content'],
 	css: ['admin-css', 'site-css'],
-	js: ['site-head-js', 'site-footer-js'],
+	js: ['site-head-js', 'site-body-js', 'site-footer-js'],
 	cond: ['condition']
 }

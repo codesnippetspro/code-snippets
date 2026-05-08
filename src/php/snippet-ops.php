@@ -64,7 +64,7 @@ function clean_active_snippets_cache( string $table_name, $scopes = false ) {
 	$scope_groups = $scopes
 		? [ $scopes ]
 		: [
-			[ 'head-content', 'footer-content' ],
+			[ 'head-content', 'body-content', 'footer-content' ],
 			[ 'global', 'single-use', 'front-end' ],
 			[ 'global', 'single-use', 'admin' ],
 		];

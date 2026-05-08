@@ -14,10 +14,12 @@ const SCOPE_ICONS: Record<SnippetCodeScope, string> = {
 	'single-use': 'clock',
 	'content': 'shortcode',
 	'head-content': 'editor-code',
+	'body-content': 'editor-code',
 	'footer-content': 'editor-code',
 	'admin-css': 'dashboard',
 	'site-css': 'admin-customizer',
 	'site-head-js': 'media-code',
+	'site-body-js': 'media-code',
 	'site-footer-js': 'media-code'
 }
 
@@ -27,12 +29,14 @@ const SCOPE_DESCRIPTIONS: Record<SnippetCodeScope, string> = {
 	'front-end': __('Only run on site front-end', 'code-snippets'),
 	'single-use': __('Only run once', 'code-snippets'),
 	'content': __('Where inserted in editor', 'code-snippets'),
-	'head-content': __('In site <head> section', 'code-snippets'),
+	'head-content': __('In site header (<head> section)', 'code-snippets'),
+	'body-content': __('In site content (start of <body>)', 'code-snippets'),
 	'footer-content': __('In site footer (end of <body>)', 'code-snippets'),
 	'site-css': __('Site front-end', 'code-snippets'),
 	'admin-css': __('Administration area', 'code-snippets'),
-	'site-footer-js': __('In site footer (end of <body>)', 'code-snippets'),
-	'site-head-js': __('In site <head> section', 'code-snippets')
+	'site-head-js': __('In site header (<head> section)', 'code-snippets'),
+	'site-body-js': __('In site content (start of <body>)', 'code-snippets'),
+	'site-footer-js': __('In site footer (end of <body>)', 'code-snippets')
 }
 
 export const SnippetLocationInput: React.FC = () => {

@@ -312,9 +312,9 @@ class Snippet extends Model {
 	public static function get_all_scopes(): array {
 		return array(
 			'global', 'admin', 'front-end', 'single-use',
-			'content', 'head-content', 'footer-content',
+			'content', 'head-content', 'body-content', 'footer-content',
 			'admin-css', 'site-css',
-			'site-head-js', 'site-footer-js',
+			'site-head-js', 'site-body-js', 'site-footer-js',
 			'condition',
 		);
 	}
@@ -332,10 +332,12 @@ class Snippet extends Model {
 			'single-use'     => 'clock',
 			'content'        => 'shortcode',
 			'head-content'   => 'editor-code',
+			'body-content'   => 'editor-code',
 			'footer-content' => 'editor-code',
 			'admin-css'      => 'dashboard',
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
+			'site-body-js'   => 'media-code',
 			'site-footer-js' => 'media-code',
 			'condition'      => 'randomize',
 		);
@@ -361,6 +363,8 @@ class Snippet extends Model {
 				return __( 'Content', 'code-snippets' );
 			case 'head-content':
 				return __( 'Head content', 'code-snippets' );
+			case 'body-content':
+				return __( 'Body content', 'code-snippets' );
 			case 'footer-content':
 				return __( 'Footer content', 'code-snippets' );
 			case 'admin-css':
@@ -369,6 +373,8 @@ class Snippet extends Model {
 				return __( 'Front-end styles', 'code-snippets' );
 			case 'site-head-js':
 				return __( 'Head scripts', 'code-snippets' );
+			case 'site-body-js':
+				return __( 'Body scripts', 'code-snippets' );
 			case 'site-footer-js':
 				return __( 'Footer scripts', 'code-snippets' );
 		}

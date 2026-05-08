@@ -43,8 +43,9 @@ export const SNIPPET_TYPES = <const>{
 }
 
 export const SNIPPET_LOCATIONS = <const>{
-	SITE_FOOTER: 'In site footer (end of <body>)',
 	SITE_HEADER: 'In site <head> section',
+	SITE_BODY: 'In site content (start of <body>)',
+	SITE_FOOTER: 'In site footer (end of <body>)',
 	IN_EDITOR: 'Where inserted in editor',
 	ADMIN_ONLY: 'Only run in administration area',
 	FRONTEND_ONLY: 'Only run on site front-end',
