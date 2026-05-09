@@ -497,6 +497,56 @@ export class SnippetsTestHelper {
 		await expect(this.page.locator('body')).not.toContainText(text)
 	}
 
+	async expectTextBeforeElement(text: string, selector: string): Promise<void> {
+		const precedes = await this.page.evaluate(
+			({ text, selector }) => {
+				const node = document.evaluate(
+					`//p[contains(text(),"${text}")]`,
+					document,
+					null,
+					XPathResult.FIRST_ORDERED_NODE_TYPE,
+					null
+				).singleNodeValue
+
+				const reference = document.querySelector(selector)
+
+				if (!node || !reference) {
+					return null
+				}
+
+				return !!(reference.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_PRECEDING)
+			},
+			{ text, selector }
+		)
+
+		expect(precedes).toBe(true)
+	}
+
+	async expectTextAfterElement(text: string, selector: string): Promise<void> {
+		const follows = await this.page.evaluate(
+			({ text, selector }) => {
+				const node = document.evaluate(
+					`//p[contains(text(),"${text}")]`,
+					document,
+					null,
+					XPathResult.FIRST_ORDERED_NODE_TYPE,
+					null
+				).singleNodeValue
+
+				const reference = document.querySelector(selector)
+
+				if (!node || !reference) {
+					return null
+				}
+
+				return !!(reference.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING)
+			},
+			{ text, selector }
+		)
+
+		expect(follows).toBe(true)
+	}
+
 	/**
    * Create a complete snippet with save and activate
    */

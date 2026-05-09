@@ -198,6 +198,7 @@ test.describe('Code Snippets Evaluation', () => {
 		await helper.navigateToFrontend()
 		await helper.expectTextVisible('Hello World HTML snippet in body start!')
 		await helper.expectElementCount('text=Hello World HTML snippet in body start!', 1)
+		await helper.expectTextBeforeElement('Hello World HTML snippet in body start!', SELECTORS.THEME_MAIN_WRAPPER)
 	})
 
 	test('HTML snippet is evaluating correctly at body end', async () => {
@@ -211,6 +212,7 @@ test.describe('Code Snippets Evaluation', () => {
 		await helper.navigateToFrontend()
 		await helper.expectTextVisible('Hello World HTML snippet in body end!')
 		await helper.expectElementCount('text=Hello World HTML snippet in body end!', 1)
+		await helper.expectTextAfterElement('Hello World HTML snippet in body end!', SELECTORS.THEME_MAIN_WRAPPER)
 	})
 
 	test('HTML snippet works with shortcode in editor', async ({ page }) => {

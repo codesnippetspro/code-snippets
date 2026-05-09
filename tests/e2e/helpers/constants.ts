@@ -16,7 +16,8 @@ export const SELECTORS = <const>{
 	DELETE_ACTION: '.row-actions button:has-text("Trash")',
 	EXPORT_ACTION: '.row-actions button:has-text("Export")',
 
-	ADMIN_BAR: '#wpadminbar'
+	ADMIN_BAR: '#wpadminbar',
+	THEME_MAIN_WRAPPER: '.wp-site-blocks'
 }
 
 export const TIMEOUTS = <const>{
