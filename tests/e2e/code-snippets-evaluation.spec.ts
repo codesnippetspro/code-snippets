@@ -190,27 +190,27 @@ test.describe('Code Snippets Evaluation', () => {
 	test('HTML snippet is evaluating correctly at body start', async () => {
 		await helper.createAndActivateSnippet({
 			name: snippetName,
-			code: '<p>Hello World HTML snippet in body!</p>',
+			code: '<p>Hello World HTML snippet in body start!</p>',
 			type: 'HTML',
 			location: 'SITE_BODY'
 		})
 
 		await helper.navigateToFrontend()
-		await helper.expectTextVisible('Hello World HTML snippet in body!')
-		await helper.expectElementCount('text=Hello World HTML snippet in body!', 1)
+		await helper.expectTextVisible('Hello World HTML snippet in body start!')
+		await helper.expectElementCount('text=Hello World HTML snippet in body start!', 1)
 	})
 
 	test('HTML snippet is evaluating correctly at body end', async () => {
 		await helper.createAndActivateSnippet({
 			name: snippetName,
-			code: '<p>Hello World HTML snippet in end!</p>',
+			code: '<p>Hello World HTML snippet in body end!</p>',
 			type: 'HTML',
 			location: 'SITE_FOOTER'
 		})
 
 		await helper.navigateToFrontend()
-		await helper.expectTextVisible('Hello World HTML snippet in footer!')
-		await helper.expectElementCount('text=Hello World HTML snippet in footer!', 1)
+		await helper.expectTextVisible('Hello World HTML snippet in body end!')
+		await helper.expectElementCount('text=Hello World HTML snippet in body end!', 1)
 	})
 
 	test('HTML snippet works with shortcode in editor', async ({ page }) => {
