@@ -82,18 +82,22 @@ const SearchResultsTable = () => {
 				/>
 			</div>
 
-			<SearchResults results={filteredSearchResults} />
+			{0 < filteredSearchResults.length
+				? <>
+					<SearchResults results={filteredSearchResults} />
 
-			<div className="tablenav bottom">
-				<TablePagination
-					which="bottom"
-					totalItems={totalItems}
-					totalPages={totalPages}
-					disabled={isSearching}
-					currentPage={page}
-					setCurrentPage={setPage}
-				/>
-			</div>
+					<div className="tablenav bottom">
+						<TablePagination
+							which="bottom"
+							totalItems={totalItems}
+							totalPages={totalPages}
+							disabled={isSearching}
+							currentPage={page}
+							setCurrentPage={setPage}
+						/>
+					</div>
+				</>
+				: <NoSearchResultsBanner />}
 		</>
 		: null
 }
@@ -108,13 +112,15 @@ const NoSearchResultsBanner = () =>
 		<p>{__('No snippets or codevault could be found with that search term. Please try again.', 'code-snippets')}</p>
 	</div>
 
-const FeaturedHeading = () =>
-	<h3 className="cloud-featured-heading">
-		{__('Featured Snippets', 'code-snippets')}
+const CloudSnippetsHeading: React.FC<{ isFeatured: boolean }> = ({ isFeatured }) =>
+	<h3 className="cloud-snippets-heading">
+		{isFeatured
+			? __('Featured Snippets', 'code-snippets')
+			: __('Search Results', 'code-snippets')}
 	</h3>
 
 export const CloudSearch = () => {
-	const { searchResults, error, page, isFeatured } = useCloudSearch()
+	const { searchResults, error, isFeatured } = useCloudSearch()
 
 	return (
 		<div className="cloud-search">
@@ -122,18 +128,14 @@ export const CloudSearch = () => {
 
 			{error && <ErrorBanner />}
 
-			{isFeatured && searchResults && 0 < searchResults.length
+			{searchResults !== undefined
 				? <>
-					<FeaturedHeading />
+					<CloudSnippetsHeading isFeatured={isFeatured} />
 					<WithCloudSearchFiltersContext>
 						<SearchResultsTable />
 					</WithCloudSearchFiltersContext>
 				</>
-				: 0 < page && 0 === searchResults?.length
-					? <NoSearchResultsBanner />
-					: <WithCloudSearchFiltersContext>
-						<SearchResultsTable />
-					</WithCloudSearchFiltersContext>}
+				: null}
 		</div>
 	)
 }
