@@ -27,7 +27,8 @@ class Cloud_Snippets extends Model {
 		'total_snippets' => 0,
 		'total_pages'    => 0,
 		'page'           => 0,
-		'cloud_id_rev'   => [],
+		'cloud_id_rev'        => [],
+		'available_filters'   => [],
 	];
 
 	/**
@@ -108,6 +109,7 @@ class Cloud_Snippets extends Model {
 			$normalized['total_pages'] = isset( $meta['total_pages'] ) ? (int) $meta['total_pages'] : 0;
 			$normalized['page'] = isset( $meta['page'] ) ? max( 0, (int) $meta['page'] - 1 ) : 0;
 			$normalized['cloud_id_rev'] = $initial_data['cloud_id_rev'] ?? [];
+			$normalized['available_filters'] = $initial_data['available_filters'] ?? [];
 			$initial_data = $normalized;
 		}
 

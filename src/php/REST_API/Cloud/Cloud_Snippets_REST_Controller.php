@@ -228,6 +228,10 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 		$response->header( 'X-WP-Total', $cloud_snippets->total_snippets );
 		$response->header( 'X-WP-TotalPages', $cloud_snippets->total_pages );
 
+		if ( ! empty( $cloud_snippets->available_filters ) ) {
+			$response->header( 'X-WP-Filters', wp_json_encode( $cloud_snippets->available_filters ) );
+		}
+
 		return $response;
 	}
 
@@ -258,6 +262,10 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 
 		$response->header( 'X-WP-Total', $cloud_snippets->total_snippets );
 		$response->header( 'X-WP-TotalPages', $cloud_snippets->total_pages );
+
+		if ( ! empty( $cloud_snippets->available_filters ) ) {
+			$response->header( 'X-WP-Filters', wp_json_encode( $cloud_snippets->available_filters ) );
+		}
 
 		return $response;
 	}
