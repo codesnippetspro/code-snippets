@@ -16,16 +16,12 @@
 	}
 
 	.cloud-search-submit {
-		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 
 		.components-spinner {
-			inset: 0;
-			margin: auto;
-			position: absolute;
-		}
-
-		&:disabled {
-			color: transparent;
+			margin: 0;
 		}
 	}
 

@@ -52,8 +52,7 @@ const SearchBox = () => {
 				className="button button-primary cloud-search-submit"
 				disabled={isSearching}
 			>
-				{isSearching ? <Spinner /> : null}
-				{__('Search Cloud Library', 'code-snippets')}
+				{isSearching ? <Spinner /> : __('Search Cloud Library', 'code-snippets')}
 			</button>
 		</form>
 	)
