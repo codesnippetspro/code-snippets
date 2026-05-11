@@ -513,8 +513,21 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function clear_caches() {
+		global $wpdb;
+
 		$this->cached_cloud_links = null;
 
 		delete_transient( self::CLOUD_MAP_TRANSIENT_KEY );
+		delete_transient( self::TYPES_TRANSIENT_KEY );
+		delete_transient( self::CATEGORIES_TRANSIENT_KEY );
+		delete_transient( 'cs_codevault_snippets' );
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+				$wpdb->esc_like( '_transient_' . self::FEATURED_TRANSIENT_KEY ) . '%',
+				$wpdb->esc_like( '_transient_timeout_' . self::FEATURED_TRANSIENT_KEY ) . '%'
+			)
+		);
 	}
 }
