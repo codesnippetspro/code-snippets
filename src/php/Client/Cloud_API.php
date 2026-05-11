@@ -365,16 +365,28 @@ class Cloud_API {
 	/**
 	 * Retrieve featured snippets from the cloud API, with transient caching.
 	 *
+	 * @param int $page     Page number (1-indexed).
+	 * @param int $per_page Results per page.
+	 *
 	 * @return Cloud_Snippets Featured snippets, or an empty result on failure.
 	 */
-	public static function get_featured_snippets(): Cloud_Snippets {
-		$cached = get_transient( self::FEATURED_TRANSIENT_KEY );
+	public static function get_featured_snippets( int $page = 1, int $per_page = 10 ): Cloud_Snippets {
+		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
+		$cache_key = self::FEATURED_TRANSIENT_KEY . "_p{$page}_pp{$per_page}";
+
+		$cached = get_transient( $cache_key );
 
 		if ( $cached instanceof Cloud_Snippets ) {
 			return $cached;
 		}
 
-		$url = self::get_cloud_api_url() . 'public/featured';
+		$url = add_query_arg(
+			[
+				'page'     => max( 0, $page - 1 ),
+				'per_page' => $per_page,
+			],
+			self::get_cloud_api_url() . 'public/featured'
+		);
 
 		$response = wp_remote_get(
 			$url,
@@ -401,27 +413,10 @@ class Cloud_API {
 			return new Cloud_Snippets();
 		}
 
-		$result = new Cloud_Snippets(
-			[
-				'snippets'       => $json['data'],
-				'total_snippets' => count( $json['data'] ),
-				'total_pages'    => 1,
-				'page'           => 1,
-			]
-		);
+		$result = new Cloud_Snippets( $json );
+		$result->page = $page;
 
-		$ttl = self::FEATURED_MIN_TTL;
-
-		if ( ! empty( $json['cached_until'] ) ) {
-			$expires = strtotime( $json['cached_until'] );
-
-			if ( false !== $expires ) {
-				$computed = $expires - time();
-				$ttl = max( self::FEATURED_MIN_TTL, $computed );
-			}
-		}
-
-		set_transient( self::FEATURED_TRANSIENT_KEY, $result, $ttl );
+		set_transient( $cache_key, $result, self::FEATURED_MIN_TTL );
 
 		return $result;
 	}

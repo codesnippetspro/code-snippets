@@ -90,6 +90,18 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_featured_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'args'                => [
+						'page'     => [
+							'description' => esc_html__( 'Page number.', 'code-snippets' ),
+							'type'        => 'integer',
+							'default'     => 1,
+						],
+						'per_page' => [
+							'description' => esc_html__( 'Results per page.', 'code-snippets' ),
+							'type'        => 'integer',
+							'default'     => $this->get_snippets_per_page(),
+						],
+					],
 				],
 				'schema' => [ $this, 'get_item_schema' ],
 			]
@@ -150,10 +162,18 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	/**
 	 * Retrieve featured snippets from the cloud API.
 	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_featured_items(): WP_REST_Response {
-		$cloud_snippets = Cloud_API::get_featured_snippets();
+	public function get_featured_items( WP_REST_Request $request ): WP_REST_Response {
+		$page = max( 1, (int) $request->get_param( 'page' ) );
+		$query_params = $request->get_query_params();
+		$per_page = isset( $query_params['per_page'] )
+			? min( Cloud_API::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
+			: $this->get_snippets_per_page();
+
+		$cloud_snippets = Cloud_API::get_featured_snippets( $page, $per_page );
 
 		$results = [];
 
