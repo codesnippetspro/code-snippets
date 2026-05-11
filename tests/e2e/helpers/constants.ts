@@ -27,7 +27,7 @@ export const TIMEOUTS = <const>{
 export const URLS = <const>{
 	SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets',
 	ADD_SNIPPET: '/wp-admin/admin.php?page=add-snippet',
-	COMMUNITY_CLOUD: '/wp-admin/admin.php?page=snippets&sub=cloud',
+	COMMUNITY_CLOUD: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
 	FRONTEND: '/'
 }
 
