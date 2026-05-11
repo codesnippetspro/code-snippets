@@ -13,11 +13,6 @@ use Code_Snippets\Model\Cloud_Snippets;
 class Cloud_API_Featured_Test extends TestCase {
 
 	/**
-	 * Transient key used by the featured snippets cache.
-	 */
-	private const TRANSIENT_KEY = 'cs_featured_snippets';
-
-	/**
 	 * Number of HTTP requests intercepted during a test.
 	 *
 	 * @var int
@@ -39,7 +34,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		delete_transient( self::TRANSIENT_KEY );
+		$this->clear_featured_transients();
 		$this->http_request_count = 0;
 		$this->mock_response = null;
 
@@ -53,20 +48,43 @@ class Cloud_API_Featured_Test extends TestCase {
 	 */
 	public function tear_down() {
 		remove_filter( 'pre_http_request', [ $this, 'mock_featured_request' ], 10 );
-		delete_transient( self::TRANSIENT_KEY );
+		$this->clear_featured_transients();
 
 		parent::tear_down();
 	}
 
 	/**
-	 * Build a successful mock HTTP response body.
+	 * Build the transient key matching Cloud_API's format.
 	 *
-	 * @param int    $count       Number of snippets to include.
-	 * @param string $cached_until ISO datetime for the cached_until field.
+	 * @param int   $page     Page number.
+	 * @param int   $per_page Per-page count.
+	 * @param array $filters  Filter params.
+	 *
+	 * @return string
+	 */
+	private function transient_key( int $page = 1, int $per_page = 10, array $filters = [] ): string {
+		$encoded = wp_json_encode( $filters );
+		$hash = md5( false === $encoded ? '' : $encoded );
+		return "cs_featured_snippets_p{$page}_pp{$per_page}_{$hash}";
+	}
+
+	/**
+	 * Clear all featured transients for default params.
+	 *
+	 * @return void
+	 */
+	private function clear_featured_transients(): void {
+		delete_transient( $this->transient_key() );
+	}
+
+	/**
+	 * Build a successful mock HTTP response in the new API format.
+	 *
+	 * @param int $count Number of snippets to include.
 	 *
 	 * @return array Mock response array compatible with pre_http_request.
 	 */
-	private function build_success_response( int $count = 3, string $cached_until = '' ): array {
+	private function build_success_response( int $count = 3 ): array {
 		$snippets = [];
 
 		for ( $i = 1; $i <= $count; $i++ ) {
@@ -77,6 +95,10 @@ class Cloud_API_Featured_Test extends TestCase {
 				'code'        => '<?php echo "featured";',
 				'tags'        => [],
 				'scope'       => 'global',
+				'language'    => [
+					'id' => 2,
+					'name' => 'PHP',
+				],
 				'status'      => 4,
 				'codevault'   => 'FeaturedVault',
 				'vote_count'  => '5',
@@ -84,11 +106,34 @@ class Cloud_API_Featured_Test extends TestCase {
 			];
 		}
 
-		$body = [ 'data' => $snippets ];
-
-		if ( $cached_until ) {
-			$body['cached_until'] = $cached_until;
-		}
+		$body = [
+			'data'              => $snippets,
+			'snippets'          => $snippets,
+			'meta'              => [
+				'total'       => $count,
+				'total_pages' => 1,
+				'page'        => 0,
+				'per_page'    => 10,
+				'from_cache'  => true,
+			],
+			'available_filters' => [
+				'categories' => [],
+				'types'      => [
+					[
+						'id' => 2,
+						'name' => 'PHP',
+					],
+				],
+				'statuses'   => [
+					[
+						'id' => 4,
+						'name' => 'Public',
+					],
+				],
+			],
+			'cloud_id_rev'      => [],
+			'success'           => true,
+		];
 
 		return [
 			'headers'  => [],
@@ -121,7 +166,7 @@ class Cloud_API_Featured_Test extends TestCase {
 			return $this->mock_response;
 		}
 
-		return $this->build_success_response( 3, '2026-04-06T12:00:00Z' );
+		return $this->build_success_response();
 	}
 
 	/**
@@ -143,11 +188,11 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_transient_is_set_after_first_call(): void {
-		$this->assertFalse( get_transient( self::TRANSIENT_KEY ) );
+		$this->assertFalse( get_transient( $this->transient_key() ) );
 
 		Cloud_API::get_featured_snippets();
 
-		$cached = get_transient( self::TRANSIENT_KEY );
+		$cached = get_transient( $this->transient_key() );
 		$this->assertInstanceOf( Cloud_Snippets::class, $cached );
 	}
 
@@ -226,29 +271,23 @@ class Cloud_API_Featured_Test extends TestCase {
 	}
 
 	/**
-	 * Transient TTL respects cached_until when it exceeds the minimum.
+	 * Transient is set using the minimum TTL.
 	 *
 	 * @return void
 	 */
-	public function test_ttl_respects_cached_until(): void {
-		// Response with cached_until 2 hours from now.
-		$two_hours_from_now = gmdate( 'Y-m-d\TH:i:s\Z', time() + 7200 );
-		$this->mock_response = $this->build_success_response( 2, $two_hours_from_now );
-
+	public function test_transient_is_cached(): void {
 		Cloud_API::get_featured_snippets();
 
-		// Transient should exist after the call.
-		$cached = get_transient( self::TRANSIENT_KEY );
+		$cached = get_transient( $this->transient_key() );
 		$this->assertInstanceOf( Cloud_Snippets::class, $cached );
 
-		// Now test fallback: response without cached_until uses minimum TTL (3600).
-		delete_transient( self::TRANSIENT_KEY );
-		$this->mock_response = $this->build_success_response( 2, '' );
+		delete_transient( $this->transient_key() );
+		$this->mock_response = $this->build_success_response( 2 );
 
 		Cloud_API::get_featured_snippets();
 
-		$cached_fallback = get_transient( self::TRANSIENT_KEY );
-		$this->assertInstanceOf( Cloud_Snippets::class, $cached_fallback );
+		$cached_again = get_transient( $this->transient_key() );
+		$this->assertInstanceOf( Cloud_Snippets::class, $cached_again );
 	}
 
 	/**
@@ -282,10 +321,23 @@ class Cloud_API_Featured_Test extends TestCase {
 	public function test_transient_stores_cloud_snippets_instance(): void {
 		Cloud_API::get_featured_snippets();
 
-		$raw_transient = get_transient( self::TRANSIENT_KEY );
+		$raw_transient = get_transient( $this->transient_key() );
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $raw_transient );
 		$this->assertFalse( is_array( $raw_transient ) );
 		$this->assertCount( 3, $raw_transient->snippets );
+	}
+
+	/**
+	 * Available filters are preserved from the API response.
+	 *
+	 * @return void
+	 */
+	public function test_available_filters_preserved(): void {
+		$result = Cloud_API::get_featured_snippets();
+
+		$this->assertIsArray( $result->available_filters );
+		$this->assertArrayHasKey( 'types', $result->available_filters );
+		$this->assertArrayHasKey( 'statuses', $result->available_filters );
 	}
 }
