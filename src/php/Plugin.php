@@ -358,6 +358,7 @@ class Plugin {
 					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
 					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
 					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
+					'cloud'    => esc_url_raw( Cloud_API::get_cloud_url() ),
 				],
 			]
 		);

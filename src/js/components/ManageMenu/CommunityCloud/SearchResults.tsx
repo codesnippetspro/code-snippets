@@ -70,7 +70,7 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 
 		<p className="cloud-snippet-author">
 			{_x('by ', 'snippet author', 'code-snippets')}
-			<a href={`https://codesnippets.cloud/codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
+			<a href={`${window.CODE_SNIPPETS?.urls.cloud}codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
 				{snippet.codevault}
 			</a>
 		</p>
