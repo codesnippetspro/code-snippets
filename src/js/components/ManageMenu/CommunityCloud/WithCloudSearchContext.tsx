@@ -102,7 +102,9 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		const requestId = nextRequestId()
 		setIsSearching(true)
 
-		api.getResponse<CloudSnippetSchema[]>(`${REST_BASES.cloud}/featured`)
+		api.getResponse<CloudSnippetSchema[]>(
+			buildUrl(`${REST_BASES.cloud}/featured`, { page, per_page: snippetsPerPage })
+		)
 			.then(response => {
 				if (requestId !== activeRequestRef.current) {
 					return
@@ -119,7 +121,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 				}
 				setIsSearching(false)
 			})
-	}, [api, nextRequestId, query])
+	}, [api, nextRequestId, page, query, snippetsPerPage])
 
 	// Cleanup debounce timer on unmount.
 	useEffect(() => () => clearTimeout(searchTimerRef.current), [])
