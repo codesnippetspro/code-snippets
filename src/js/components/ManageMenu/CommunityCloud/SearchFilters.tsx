@@ -14,8 +14,8 @@ export const STATUS_LABELS: Record<CloudStatus, string> = {
 }
 
 export interface CloudSearchFilters {
-	category: string
-	type: string
+	category: number
+	type: number
 	status: number
 }
 
@@ -57,13 +57,13 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, s
 export const SearchFilters = () => {
 	const { availableFilters, filters, setFilters } = useCloudSearch()
 
-	const categoryOptions: [string, string][] = useMemo(
-		() => (availableFilters.categories ?? []).map(c => [c, c]),
+	const categoryOptions: [number, string][] = useMemo(
+		() => (availableFilters.categories ?? []).map(c => [c.id, c.name]),
 		[availableFilters.categories]
 	)
 
-	const typeOptions: [string, string][] = useMemo(
-		() => (availableFilters.types ?? []).map(t => [t, t]),
+	const typeOptions: [number, string][] = useMemo(
+		() => (availableFilters.types ?? []).map(t => [t.id, t.name]),
 		[availableFilters.types]
 	)
 

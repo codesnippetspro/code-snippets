@@ -13,10 +13,15 @@ const DEFAULT_SNIPPETS_PER_PAGE = 10
 const MAX_CLOUD_RESULTS_PER_PAGE = 100
 const SEARCH_DEBOUNCE_MS = 500
 
+interface FilterOption {
+	id: number
+	name: string
+}
+
 export interface AvailableFilters {
-	categories?: string[]
-	types?: string[]
-	statuses?: { id: number; name: string }[]
+	categories?: FilterOption[]
+	types?: FilterOption[]
+	statuses?: FilterOption[]
 }
 
 export interface CloudSearchContext {
@@ -51,8 +56,8 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 	)
 
 	const [filters, setFilters] = useState<CloudSearchFilters>(() => ({
-		category: fetchQueryParam('category') ?? '',
-		type: fetchQueryParam('type') ?? '',
+		category: Number(fetchQueryParam('category') ?? 0),
+		type: Number(fetchQueryParam('type') ?? 0),
 		status: Number(fetchQueryParam('status') ?? 0)
 	}))
 
