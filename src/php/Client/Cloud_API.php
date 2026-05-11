@@ -364,6 +364,11 @@ class Cloud_API {
 	private const TYPES_TRANSIENT_KEY = 'cs_cloud_types';
 
 	/**
+	 * Transient key for cached cloud categories.
+	 */
+	private const CATEGORIES_TRANSIENT_KEY = 'cs_cloud_categories';
+
+	/**
 	 * Transient key for cached featured snippets.
 	 */
 	private const FEATURED_TRANSIENT_KEY = 'cs_featured_snippets';
@@ -468,6 +473,37 @@ class Cloud_API {
 		set_transient( self::TYPES_TRANSIENT_KEY, $types, DAY_IN_SECONDS );
 
 		return $types;
+	}
+
+	/**
+	 * Retrieve available snippet categories from the cloud API, with transient caching.
+	 *
+	 * @return array<int, array{id: int, name: string, snippet_count: int}> List of categories.
+	 */
+	public static function get_cloud_categories(): array {
+		$cached = get_transient( self::CATEGORIES_TRANSIENT_KEY );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$url = self::get_cloud_api_url() . 'public/categories';
+		$response = wp_remote_get( $url );
+
+		if ( is_wp_error( $response ) ) {
+			return [];
+		}
+
+		$json = self::unpack_request_json( $response );
+
+		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
+			return [];
+		}
+
+		$categories = $json['data'];
+		set_transient( self::CATEGORIES_TRANSIENT_KEY, $categories, DAY_IN_SECONDS );
+
+		return $categories;
 	}
 
 	/**

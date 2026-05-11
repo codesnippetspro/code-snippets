@@ -168,6 +168,18 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 
 		register_rest_route(
 			$this->namespace,
+			$this->rest_base . '/categories',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_categories' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+				],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
 			$this->rest_base . '/(?P<id>\d+)/download',
 			[
 				[
@@ -257,6 +269,15 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function get_types(): WP_REST_Response {
 		return rest_ensure_response( Cloud_API::get_cloud_types() );
+	}
+
+	/**
+	 * Retrieve available snippet categories from the cloud API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_categories(): WP_REST_Response {
+		return rest_ensure_response( Cloud_API::get_cloud_categories() );
 	}
 
 	/**
