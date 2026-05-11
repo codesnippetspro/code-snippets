@@ -13,6 +13,12 @@ const DEFAULT_SNIPPETS_PER_PAGE = 10
 const MAX_CLOUD_RESULTS_PER_PAGE = 100
 const SEARCH_DEBOUNCE_MS = 500
 
+export interface AvailableFilters {
+	categories?: string[]
+	types?: string[]
+	statuses?: { id: number; name: string }[]
+}
+
 export interface CloudSearchContext {
 	page: number
 	error: boolean
@@ -23,6 +29,7 @@ export interface CloudSearchContext {
 	isSearching: boolean
 	isFeatured: boolean
 	searchResults: CloudSnippetSchema[] | undefined
+	availableFilters: AvailableFilters
 	setPage: Dispatch<SetStateAction<number>>
 	setQuery: Dispatch<SetStateAction<string>>
 	searchByCodevault: boolean
@@ -51,6 +58,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 
 	const [totalItems, setTotalItems] = useState(0)
 	const [totalPages, setTotalPages] = useState(0)
+	const [availableFilters, setAvailableFilters] = useState<AvailableFilters>({})
 
 	const [searchResults, setSearchResults] = useState<CloudSnippetSchema[] | undefined>()
 	const [isSearching, setIsSearching] = useState(false)
@@ -97,6 +105,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 					}
 					setTotalItems(Number(response.headers['x-wp-total']))
 					setTotalPages(Number(response.headers['x-wp-totalpages']))
+					try { setAvailableFilters(JSON.parse(String(response.headers['x-wp-filters'] ?? '{}')) as AvailableFilters) } catch { /* */ }
 					setSearchResults(response.data)
 					setIsSearching(false)
 				})
@@ -127,6 +136,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 				}
 				setTotalItems(Number(response.headers['x-wp-total']))
 				setTotalPages(Number(response.headers['x-wp-totalpages']))
+				try { setAvailableFilters(JSON.parse(String(response.headers['x-wp-filters'] ?? '{}')) as AvailableFilters) } catch { /* */ }
 				setSearchResults(response.data)
 				setIsFeatured(true)
 				setIsSearching(false)
@@ -162,6 +172,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		isSearching,
 		isFeatured,
 		searchResults,
+		availableFilters,
 		searchByCodevault,
 		setSearchByCodevault,
 		filters,
