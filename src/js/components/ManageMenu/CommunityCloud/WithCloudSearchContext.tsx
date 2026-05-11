@@ -5,6 +5,7 @@ import { REST_BASES } from '../../../utils/restAPI'
 import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
+import type { CloudSearchFilters } from './SearchFilters'
 
 const SEARCH_PARAM = 's'
 const SEARCH_METHOD_PARAM = 'by'
@@ -26,6 +27,8 @@ export interface CloudSearchContext {
 	setQuery: Dispatch<SetStateAction<string>>
 	searchByCodevault: boolean
 	setSearchByCodevault: Dispatch<SetStateAction<boolean>>
+	filters: CloudSearchFilters
+	setFilters: Dispatch<SetStateAction<CloudSearchFilters>>
 }
 
 const [Context, useCloudSearch] = createContextHook<CloudSearchContext>('useCloudSearch')
@@ -39,6 +42,12 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		window.CODE_SNIPPETS_MANAGE?.cloudSearchPerPage ?? window.CODE_SNIPPETS_MANAGE?.snippetsPerPage ?? DEFAULT_SNIPPETS_PER_PAGE,
 		MAX_CLOUD_RESULTS_PER_PAGE
 	)
+
+	const [filters, setFilters] = useState<CloudSearchFilters>(() => ({
+		category: fetchQueryParam('category') ?? '',
+		type: fetchQueryParam('type') ?? '',
+		status: Number(fetchQueryParam('status') ?? 0)
+	}))
 
 	const [totalItems, setTotalItems] = useState(0)
 	const [totalPages, setTotalPages] = useState(0)
@@ -56,6 +65,14 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		return activeRequestRef.current
 	}, [])
 
+	const filterParams = useCallback((): Record<string, string | number> => {
+		const params: Record<string, string | number> = {}
+		if (filters.category) {params.category = filters.category}
+		if (filters.type) {params.type = filters.type}
+		if (filters.status) {params.status = filters.status}
+		return params
+	}, [filters])
+
 	const doSearch = useCallback(() => {
 		if (!query) {
 			return
@@ -72,7 +89,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 			setIsSearching(true)
 
 			api.getResponse<CloudSnippetSchema[]>(
-				buildUrl(REST_BASES.cloud, { query, searchByCodevault, page, per_page: snippetsPerPage })
+				buildUrl(REST_BASES.cloud, { query, searchByCodevault, page, per_page: snippetsPerPage, ...filterParams() })
 			)
 				.then(response => {
 					if (requestId !== activeRequestRef.current) {
@@ -91,9 +108,8 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 					setError(true)
 				})
 		}, SEARCH_DEBOUNCE_MS)
-	}, [api, nextRequestId, page, query, searchByCodevault, snippetsPerPage])
+	}, [api, filterParams, nextRequestId, page, query, searchByCodevault, snippetsPerPage])
 
-	// Load featured snippets when no search query is active on initial mount.
 	useEffect(() => {
 		if (query) {
 			return
@@ -103,7 +119,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		setIsSearching(true)
 
 		api.getResponse<CloudSnippetSchema[]>(
-			buildUrl(`${REST_BASES.cloud}/featured`, { page, per_page: snippetsPerPage })
+			buildUrl(`${REST_BASES.cloud}/featured`, { page, per_page: snippetsPerPage, ...filterParams() })
 		)
 			.then(response => {
 				if (requestId !== activeRequestRef.current) {
@@ -121,9 +137,17 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 				}
 				setIsSearching(false)
 			})
-	}, [api, nextRequestId, page, query, snippetsPerPage])
+	}, [api, filterParams, nextRequestId, page, query, snippetsPerPage])
 
-	// Cleanup debounce timer on unmount.
+	// Reset to page 1 when filters change.
+	const prevFiltersRef = useRef(filters)
+	useEffect(() => {
+		if (prevFiltersRef.current !== filters) {
+			prevFiltersRef.current = filters
+			setPage(1)
+		}
+	}, [filters])
+
 	useEffect(() => () => clearTimeout(searchTimerRef.current), [])
 
 	const value: CloudSearchContext = {
@@ -139,7 +163,9 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		isFeatured,
 		searchResults,
 		searchByCodevault,
-		setSearchByCodevault
+		setSearchByCodevault,
+		filters,
+		setFilters
 	}
 
 	return <Context.Provider value={value}>{children}</Context.Provider>
