@@ -63,37 +63,33 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, s
 	</>
 
 export const SearchFilters = () => {
-	const { searchResults: snippets, filters, setFilters } = useCloudSearch()
+	const { filters, setFilters } = useCloudSearch()
 	const { api } = useRestAPI()
 
 	const [cloudTypes, setCloudTypes] = useState<CloudType[]>([])
+	const [cloudCategories, setCloudCategories] = useState<CloudType[]>([])
 
 	useEffect(() => {
 		api.get<CloudType[]>(`${REST_BASES.cloud}/types`)
 			.then(setCloudTypes)
 			.catch(() => setCloudTypes([]))
+
+		api.get<CloudType[]>(`${REST_BASES.cloud}/categories`)
+			.then(setCloudCategories)
+			.catch(() => setCloudCategories([]))
 	}, [api])
 
-	const options: { category: [string, string][], status: [number, string][] } = useMemo(
-		() => {
-			const categories = new Set<string>()
-			const statuses = new Set<CloudStatus>()
-
-			snippets?.forEach(snippet => {
-				snippet.tags.forEach(tag => categories.add(tag))
-				statuses.add(snippet.status)
-			})
-
-			return {
-				category: Array.from(categories).sort().map(cat => [cat, cat]),
-				status: Array.from(statuses).sort().map(status => [status, STATUS_LABELS[status]])
-			}
-		},
-		[snippets])
+	const categoryOptions: [string, string][] = useMemo(
+		() => cloudCategories.map(c => [c.name, c.name]),
+		[cloudCategories])
 
 	const typeOptions: [string, string][] = useMemo(
 		() => cloudTypes.map(t => [t.name, t.name]),
 		[cloudTypes])
+
+	const statusOptions: [number, string][] = useMemo(
+		() => Object.entries(STATUS_LABELS).map(([id, label]) => [Number(id), label]),
+		[])
 
 	return (
 		<>
@@ -101,7 +97,7 @@ export const SearchFilters = () => {
 				filter="category"
 				filters={filters}
 				setFilters={setFilters}
-				options={options.category}
+				options={categoryOptions}
 				label={__('Snippet Category', 'code-snippets')}
 				allOptionLabel={__('All Categories', 'code-snippets')}
 			/>
@@ -119,7 +115,7 @@ export const SearchFilters = () => {
 				filter="status"
 				filters={filters}
 				setFilters={setFilters}
-				options={options.status}
+				options={statusOptions}
 				label={__('Snippet Status', 'code-snippets')}
 				allOptionLabel={__('All Snippet Statuses', 'code-snippets')}
 			/>
