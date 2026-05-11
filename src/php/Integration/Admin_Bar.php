@@ -191,7 +191,7 @@ class Admin_Bar {
 	 */
 	private function add_safe_mode_link( WP_Admin_Bar $wp_admin_bar ): void {
 		$title = sprintf(
-			'%s <span class="code-snippets-external-icon dashicons dashicons-external"></span>',
+			'%s <span class="code-snippets-external-icon dashicons dashicons-external" aria-hidden="true"></span>',
 			esc_html__( 'Safe Mode', 'code-snippets' )
 		);
 

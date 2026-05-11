@@ -34,7 +34,7 @@
 		text-decoration: none;
 		font-weight: normal;
 		padding: 0;
-		color: #a7aaad;
+		color: #646970;
 		line-height: 1;
 	}
 }
@@ -76,19 +76,11 @@
 	p {
 		margin-block: 0;
 		margin-inline: 2em;
-	}
-
-	h1 + p {
 		font-size: 16px;
 	}
 
 	img {
 		inline-size: 82px;
-	}
-
-	h2 {
-		text-transform: uppercase;
-		font-size: 12px;
 	}
 
 	ul {

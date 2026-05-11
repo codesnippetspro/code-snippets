@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import React, { Fragment, useState } from 'react'
-import { __, sprintf } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
@@ -8,7 +8,7 @@ import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { createSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
@@ -16,7 +16,7 @@ import { DeleteButton } from '../../common/DeleteButton'
 import { Tooltip } from '../../common/Tooltip'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import type { ReactNode } from 'react'
+import type { Key, ReactNode } from 'react'
 import type { Snippet } from '../../../types/Snippet'
 import type { ListTableColumn } from '../../common/ListTable'
 
@@ -24,10 +24,50 @@ interface ColumnProps {
 	snippet: Snippet
 }
 
-const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
+const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
+	<a
+		className="snippet-execution-button"
+		title={__('Run Once', 'code-snippets')}
+		href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
+	>
+		<span className="screen-reader-text">{__('Run Once', 'code-snippets')}</span>
+		<span aria-hidden="true">&nbsp;</span>
+	</a>
+
+const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
 	const { activate, deactivate } = useSnippetsAPI()
-	const { activeByCondition } = useFilteredSnippets()
 	const { refreshSnippetsList } = useSnippetsList()
+
+	const actionText = snippet.network && !snippet.shared_network
+		? snippet.active ? __('Network Deactivate', 'code-snippets') : __('Network Activate', 'code-snippets')
+		: snippet.active ? __('Deactivate', 'code-snippets') : __('Activate', 'code-snippets')
+
+	return (
+		<>
+			<label className="screen-reader-text" htmlFor={`snippet-${snippet.id}-switch`}>
+				{actionText}
+			</label>
+
+			<input
+				id={`snippet-${snippet.id}-switch`}
+				type="checkbox"
+				role="switch"
+				checked={snippet.active}
+				aria-checked={snippet.active}
+				className="switch"
+				title={actionText}
+				onChange={() => {
+					(snippet.active ? deactivate(snippet) : activate(snippet))
+						.then(refreshSnippetsList)
+						.catch(handleUnknownError)
+				}}
+			/>
+		</>
+	)
+}
+
+const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
+	const { activeByCondition } = useFilteredSnippets()
 
 	if (snippet.trashed) {
 		return ''
@@ -35,15 +75,7 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 
 	switch (snippet.scope) {
 		case 'single-use':
-			return (
-				<a
-					className="snippet-execution-button"
-					title={__('Run Once', 'code-snippets')}
-					href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
-				>
-					&nbsp;
-				</a>
-			)
+			return <RunOnceButton snippet={snippet} />
 
 		case 'condition':
 			return (
@@ -52,32 +84,8 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 				</a>
 			)
 
-		default: {
-			const actionText = snippet.network && !snippet.shared_network
-				? snippet.active ? __('Network Deactivate', 'code-snippets') : __('Network Activate', 'code-snippets')
-				: snippet.active ? __('Deactivate', 'code-snippets') : __('Activate', 'code-snippets')
-
-			return (
-				<>
-					<label className="screen-reader-text" htmlFor={`snippet-${snippet.id}-switch`}>
-						{actionText}
-					</label>
-
-					<input
-						id={`snippet-${snippet.id}-switch`}
-						type="checkbox"
-						checked={snippet.active}
-						className="switch"
-						title={actionText}
-						onChange={() => {
-							(snippet.active ? deactivate(snippet) : activate(snippet))
-								.then(refreshSnippetsList)
-								.catch(handleUnknownError)
-						}}
-					/>
-				</>
-			)
-		}
+		default:
+			return <ActivationSwitch snippet={snippet} />
 	}
 }
 
@@ -92,13 +100,7 @@ const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 
 	const Clone = !snippet.trashed && (() =>
 		<Button link onClick={() => {
-			api.create(createSnippetObject({
-				...snippet,
-				id: 0,
-				active: false,
-				// translators: %s: snippet title.
-				name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
-			}))
+			api.create(cloneSnippetObject(snippet))
 				.then(refreshSnippetsList)
 				.catch(handleUnknownError)
 		}}>
@@ -163,7 +165,12 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
 		{snippet.locked && (
-			<Tooltip inline end icon={<span className="dashicons dashicons-lock"></span>}>
+			<Tooltip
+				inline
+				end
+				label={__('About snippet lock', 'code-snippets')}
+				icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}
+			>
 				{__('This snippet is locked and cannot be modified.', 'code-snippets')}
 			</Tooltip>)}
 
@@ -248,17 +255,10 @@ const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	)
 }
 
-const withHiddenState = (
-	column: ListTableColumn<Snippet>,
-	hiddenColumns: readonly string[]
-): ListTableColumn<Snippet> => ({
-	...column,
-	isHidden: hiddenColumns.includes(column.id.toString())
-})
-
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
+		title: <span className="screen-reader-text">{__('Activate', 'code-snippets')}</span>,
 		render: snippet => <ActivateColumn snippet={snippet} />
 	},
 	{
@@ -298,5 +298,5 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 	}
 ]
 
-export const getTableColumns = (hiddenColumns: readonly string[] = []): ListTableColumn<Snippet>[] =>
-	baseTableColumns.map(column => withHiddenState(column, hiddenColumns))
+export const getTableColumns = (hiddenColumns: Set<Key>): ListTableColumn<Snippet>[] =>
+	baseTableColumns.map(column => ({ ...column, isHidden: hiddenColumns.has(column.id) }))

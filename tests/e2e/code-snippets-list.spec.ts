@@ -31,26 +31,27 @@ test.describe('Code Snippets List Page Actions', () => {
 			.first()
 
 		const toggleCell = snippetRow.locator('td').first()
-		const toggleCheckbox = toggleCell.getByRole('checkbox').first()
+		const toggleSwitch = toggleCell.getByRole('switch').first()
+		await expect(toggleSwitch).toBeVisible()
 
-		const initialChecked = await toggleCheckbox.isChecked()
-		await expect(toggleCell).toContainText(initialChecked ? 'Deactivate' : 'Activate')
+		const initialChecked = await toggleSwitch.isChecked()
+		await expect(toggleSwitch).toHaveAccessibleName(initialChecked ? /Deactivate/i : /Activate/i)
 
-		await toggleCheckbox.click({ force: true })
+		await toggleSwitch.click({ force: true })
 		if (initialChecked) {
-			await expect(toggleCheckbox).not.toBeChecked()
+			await expect(toggleSwitch).not.toBeChecked()
 		} else {
-			await expect(toggleCheckbox).toBeChecked()
+			await expect(toggleSwitch).toBeChecked()
 		}
-		await expect(toggleCell).toContainText(!initialChecked ? 'Deactivate' : 'Activate')
+		await expect(toggleSwitch).toHaveAccessibleName(!initialChecked ? /Deactivate/i : /Activate/i)
 
-		await toggleCheckbox.click({ force: true })
+		await toggleSwitch.click({ force: true })
 		if (initialChecked) {
-			await expect(toggleCheckbox).toBeChecked()
+			await expect(toggleSwitch).toBeChecked()
 		} else {
-			await expect(toggleCheckbox).not.toBeChecked()
+			await expect(toggleSwitch).not.toBeChecked()
 		}
-		await expect(toggleCell).toContainText(initialChecked ? 'Deactivate' : 'Activate')
+		await expect(toggleSwitch).toHaveAccessibleName(initialChecked ? /Deactivate/i : /Activate/i)
 	})
 
 	test('Can access edit from list page', async ({ page }) => {

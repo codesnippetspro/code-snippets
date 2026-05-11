@@ -1,13 +1,14 @@
-import { __, _x, sprintf } from '@wordpress/i18n'
+import { __, _n, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadBulkSnippetExportFile } from '../../../utils/files'
 import { REST_BASES } from '../../../utils/restAPI'
-import { getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetDisplayName, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
@@ -96,6 +97,7 @@ const SnippetStatusCounts = () => {
 						<a
 							href={buildUrl(window.location.href, { status: INDEX_STATUS === status ? undefined : status })}
 							className={currentStatus === status ? 'current' : undefined}
+							aria-current={currentStatus === status ? 'page' : undefined}
 							onClick={event => {
 								event.preventDefault()
 								setCurrentStatus(status)
@@ -107,8 +109,8 @@ const SnippetStatusCounts = () => {
 								sprintf(_x('(%d)', 'table view count', 'code-snippets'), snippetsByStatus.get(status)?.length ?? 0)
 							}</span>
 						</a>
+						{index < visibleStatuses.length - 1 && ' | '}
 					</li>
-					{index < visibleStatuses.length - 1 && ' | '}
 				</Fragment>)}
 		</ul>
 	)
@@ -140,8 +142,13 @@ interface ExtraTableNavProps {
 	visibleSnippets: Snippet[]
 }
 
-const useManageTableSettings = (): { hiddenColumns: string[], truncateRowValues: boolean } => {
-	const [hiddenColumns, setHiddenColumns] = useState<string[]>(() => window.CODE_SNIPPETS_MANAGE?.hiddenColumns ?? [])
+interface ManageTableSettings {
+	hiddenColumns: Set<string>
+	truncateRowValues: boolean
+}
+
+const useManageTableSettings = (): ManageTableSettings => {
+	const [hiddenColumns, setHiddenColumns] = useState(() => new Set(window.CODE_SNIPPETS_MANAGE?.hiddenColumns ?? []))
 	const [truncateRowValues, setTruncateRowValues] = useState(
 		() => 0 !== Number(window.CODE_SNIPPETS_MANAGE?.truncateRowValues ?? 1)
 	)
@@ -155,8 +162,8 @@ const useManageTableSettings = (): { hiddenColumns: string[], truncateRowValues:
 
 		const updateHiddenColumns = () => {
 			setHiddenColumns(
-				Array.from(screenOptions.querySelectorAll<HTMLInputElement>('.hide-column-tog:not(:checked)'))
-					.map(toggle => toggle.value)
+				new Set(Array.from(screenOptions.querySelectorAll<HTMLInputElement>('.hide-column-tog:not(:checked)'))
+					.map(toggle => toggle.value))
 			)
 
 			setTruncateRowValues(
@@ -187,9 +194,14 @@ const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) =
 
 	return 0 < tagsList.size
 		? <div className="alignleft actions">
+			<label htmlFor="snippets-tag-filter" className="screen-reader-text">
+				{__('Filter snippets by tag', 'code-snippets')}
+			</label>
 			<select
+				id="snippets-tag-filter"
 				name="tag"
 				value={currentTag}
+				aria-label={__('Filter snippets by tag', 'code-snippets')}
 				onChange={event => setCurrentTag(event.target.value)}
 			>
 				<option value="">{__('Show all tags', 'code-snippets')}</option>
@@ -204,17 +216,19 @@ const SearchBox = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
 
 	return (
-		<p className="search-box">
-			<label className="screen-reader-text" htmlFor="snippets_search">{__('Search Snippets:', 'code-snippets')}</label>
-			<input
-				type="search"
-				id="snippets_search"
-				name="s"
-				value={searchQuery ?? ''}
-				onChange={event => setSearchQuery(event.target.value)}
-				placeholder={__('Search snippets', 'code-snippets')}
-			/>
-		</p>
+		<search aria-label={__('Search Snippets', 'code-snippets')}>
+			<p className="search-box">
+				<label className="screen-reader-text" htmlFor="snippets_search">{__('Search Snippets:', 'code-snippets')}</label>
+				<input
+					type="search"
+					id="snippets_search"
+					name="s"
+					value={searchQuery ?? ''}
+					onChange={event => setSearchQuery(event.target.value)}
+					placeholder={__('Search snippets', 'code-snippets')}
+				/>
+			</p>
+		</search>
 	)
 }
 
@@ -235,21 +249,59 @@ const NoItemsMessage = () => {
 		</>
 }
 
-const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] =>
-{
+const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] => {
+	const { activate, deactivate, delete: trashOrDelete, create } = useSnippetsAPI()
+	const { refreshSnippetsList } = useSnippetsList()
+
 	return useMemo(
 		() => [
 			{
 				name: __('Activate', 'code-snippets'),
-				apply: () => Promise.resolve()
+				apply: async (selected: Set<Snippet['id']>) => {
+					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.active)
+
+					if (0 === targets.length) {
+						return
+					}
+
+					for (const snippet of targets) {
+						await activate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
+					}
+
+					await refreshSnippetsList()
+				}
 			},
 			{
 				name: __('Deactivate', 'code-snippets'),
-				apply: () => Promise.resolve()
+				apply: async (selected: Set<Snippet['id']>) => {
+					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && snippet.active)
+
+					if (0 === targets.length) {
+						return
+					}
+
+					for (const snippet of targets) {
+						await deactivate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
+					}
+
+					await refreshSnippetsList()
+				}
 			},
 			{
 				name: __('Clone', 'code-snippets'),
-				apply: () => Promise.resolve()
+				apply: async (selected: Set<Snippet['id']>) => {
+					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.trashed)
+
+					if (0 === targets.length) {
+						return
+					}
+
+					for (const snippet of targets) {
+						await create(cloneSnippetObject(snippet)).catch(handleUnknownError)
+					}
+
+					await refreshSnippetsList()
+				}
 			},
 			{
 				name: __('Export', 'code-snippets'),
@@ -274,21 +326,34 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 			},
 			{
 				name: __('Trash', 'code-snippets'),
-				apply: () => Promise.resolve()
+				apply: async (selected: Set<Snippet['id']>) => {
+					const targets = allSnippets.filter(snippet => selected.has(snippet.id))
+
+					if (0 === targets.length) {
+						return
+					}
+
+					for (const snippet of targets) {
+						await trashOrDelete({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
+					}
+
+					await refreshSnippetsList()
+				}
 			}
 		],
-		[allSnippets]
+		[allSnippets, activate, deactivate, trashOrDelete, create, refreshSnippetsList]
 	)
 }
 
 export const SnippetsListTable: React.FC = () => {
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { snippetsByStatus } = useFilteredSnippets()
-
 	const { hiddenColumns, truncateRowValues } = useManageTableSettings()
+
 	const allSnippets = useMemo(() => snippetsByStatus.get('all') ?? [], [snippetsByStatus])
 	const totalItems = snippetsByStatus.get(currentStatus)?.length ?? 0
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
+
 	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
 	const actions = useBulkActions(allSnippets)
 
@@ -303,9 +368,23 @@ export const SnippetsListTable: React.FC = () => {
 			<SnippetStatusCounts />
 			<SearchBox />
 
+			<p className="screen-reader-text" role="status" aria-live="polite">
+				{sprintf(
+					// translators: %d: number of snippets matching current filters.
+					_n('%d snippet found.', '%d snippets found.', totalItems),
+					totalItems
+				)}
+			</p>
+
 			<ListTable
 				items={snippetsByStatus.get(currentStatus) ?? []}
 				getKey={snippet => snippet.id}
+				ariaLabel={__('Snippets list', 'code-snippets')}
+				getCheckboxAriaLabel={(snippet: Snippet) => sprintf(
+					// translators: %s: Snippet name.
+					__('Select %s', 'code-snippets'),
+					getSnippetDisplayName(snippet)
+				)}
 				className={classnames({ 'truncate-row-values': truncateRowValues })}
 				columns={columns}
 				actions={actions}

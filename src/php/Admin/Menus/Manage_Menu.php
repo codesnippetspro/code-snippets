@@ -90,7 +90,7 @@ class Manage_Menu extends Admin_Menu {
 		$menu_title = sprintf(
 			'<span class="button button-primary code-snippets-upgrade-button">%s %s</span>',
 			_x( 'Go Pro', 'top-level menu label', 'code-snippets' ),
-			'<span class="dashicons dashicons-external"></span>'
+			'<span class="dashicons dashicons-external" aria-hidden="true"></span>'
 		);
 
 		$hook = add_submenu_page(
@@ -284,7 +284,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		echo '<div id="manage-snippets-container"></div>';
+		echo '<div id="manage-snippets-container" class="wrap"></div>';
 	}
 
 	/**

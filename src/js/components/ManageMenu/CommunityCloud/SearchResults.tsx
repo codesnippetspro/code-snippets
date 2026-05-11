@@ -30,23 +30,26 @@ interface CloudSnippetDetailsProps {
 const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setIsPreviewOpen }) =>
 	<div className="cloud-snippet">
 		<h3>
-			<a
-				href="#"
+			<button
+				type="button"
+				className="cloud-snippet-title-button"
 				title={__('Preview this snippet', 'code-snippets')}
-				onClick={event => {
-					event.preventDefault()
+				onClick={() => {
 					setIsPreviewOpen(true)
 				}}
 			>
 				{snippet.name}
-			</a>
+			</button>
 		</h3>
 
 		<div className="cloud-snippet-meta">
 			<Badge name={getSnippetType(snippet)} />
 			<span className="cloud-snippet-votes">
-				<span className="dashicons dashicons-thumbs-up"></span>
-				<span>{snippet.vote_count}</span>
+				<span className="dashicons dashicons-thumbs-up" aria-hidden="true"></span>
+				<span>
+					{snippet.vote_count}
+					<span className="screen-reader-text">{` ${__('votes', 'code-snippets')}`}</span>
+				</span>
 			</span>
 			{0 < snippet.tags.length
 				? <span className="cloud-snippet-category">
@@ -56,11 +59,13 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 				: null}
 		</div>
 
-		<p className="cloud-snippet-description">
-			{snippet.description.length > MAX_DESCRIPTION_LENGTH
-				? `${snippet.description.slice(0, MAX_DESCRIPTION_LENGTH)}…`
-				: snippet.description}
-		</p>
+		{snippet.description && (
+			<p className="cloud-snippet-description">
+				{snippet.description.length > MAX_DESCRIPTION_LENGTH
+					? `${snippet.description.slice(0, MAX_DESCRIPTION_LENGTH)}…`
+					: snippet.description}
+			</p>
+		)}
 
 		<p className="cloud-snippet-author">
 			{_x('by ', 'snippet author', 'code-snippets')}
@@ -162,7 +167,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 	}, [isPreviewOpen])
 
 	return (
-		<div className="cloud-search-result">
+		<li className="cloud-search-result">
 			<CloudSnippetDetails snippet={snippet} setIsPreviewOpen={setIsPreviewOpen} />
 
 			<footer>
@@ -182,7 +187,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 			</footer>
 
 			<PreviewModal snippet={snippet} isOpen={isPreviewOpen} setIsOpen={setIsPreviewOpen} />
-		</div>
+		</li>
 	)
 }
 
@@ -191,7 +196,7 @@ interface SearchResultsProps {
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({ results }) =>
-	<div className="cloud-search-results">
+	<ul className="cloud-search-results">
 		{results.map(result =>
 			<SearchResult key={result.id} snippet={result} />)}
-	</div>
+	</ul>

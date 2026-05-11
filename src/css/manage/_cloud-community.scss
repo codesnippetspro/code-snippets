@@ -62,11 +62,13 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
 	gap: 20px;
+	margin: 0;
 }
 
 .cloud-search-result {
 	background: #fff;
 	border: 1px solid #c3c4c7;
+	margin: 0;
 	display: flex;
 	flex-flow: column;
 	box-sizing: border-box;
@@ -81,6 +83,25 @@
 
 	.cloud-snippet {
 		padding: 24px;
+
+		.cloud-snippet-title-button {
+			display: inline;
+			margin: 0;
+			padding: 0;
+			border: none;
+			background: none;
+			font: inherit;
+			color: #2271b1;
+			cursor: pointer;
+			text-align: start;
+			text-decoration: underline;
+
+			&:focus-visible {
+				outline: 2px solid #2271b1;
+				outline-offset: 2px;
+				border-radius: 2px;
+			}
+		}
 	}
 
 	.cloud-snippet-meta {

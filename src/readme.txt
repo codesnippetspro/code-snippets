@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.9.5
+Stable tag: 3.9.6
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
@@ -105,6 +105,13 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.9.6 (2026-04-28) =
+
+__Fixed__
+
+* Improved permissions handling with snippets REST API.
+* Site admin cannot toggle shared network snippets status.
 
 = 3.9.5 (2026-02-05) =
 

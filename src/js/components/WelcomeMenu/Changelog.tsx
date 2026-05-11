@@ -38,7 +38,7 @@ interface ChangelogSectionProps {
 const ChangelogSection: React.FC<ChangelogSectionProps> = ({ section, entries }) =>
 	<>
 		<h4>
-			<span className={`dashicons dashicons-${CHANGELOG_ICONS[section]}`}></span>
+			<span className={`dashicons dashicons-${CHANGELOG_ICONS[section]}`} aria-hidden="true"></span>
 			{CHANGELOG_LABELS[section]}
 		</h4>
 		<ul>
@@ -56,30 +56,34 @@ const ChangelogSection: React.FC<ChangelogSectionProps> = ({ section, entries })
 
 export const Changelog = () =>
 	<div className="code-snippets-changelog">
-		<header>
-			<h2>{__('Latest changes', 'code-snippets')}</h2>
+		<div className="code-snippets-header-wrapper">
+			<h3>{__('Latest changes', 'code-snippets')}</h3>
 			<a
 				href="https://wordpress.org/plugins/code-snippets/changelog"
 				className="button button-primary button-large"
 				target="_blank" rel="noreferrer"
 			>
 				{__('View changelog', 'code-snippets')}
+				<span className="screen-reader-text">
+					{__('(opens in a new tab)', 'code-snippets')}
+				</span>
 			</a>
-		</header>
+		</div>
 		<div className="code-snippets-changelog-entries">
 			{CHANGELOG_DATA?.map(({ version, date, entries }) =>
 				<Fragment key={version}>
-					<header>
-						{/* translators: %s: version number. */}
-						<h3>{sprintf(__('Version %s', 'code-snippets'), version)}</h3>
-						<p>{date}</p>
-					</header>
-					<article>
-						{CHANGELOG_SECTIONS.map(section =>
-							entries[section]
-								? <ChangelogSection key={section} section={section} entries={entries[section]} />
-								: null)}
-					</article>
+					<h3>
+						{sprintf(
+							/* translators: %s: version number. */
+							__('Version %s', 'code-snippets'),
+							version
+						)}
+						<span>{date}</span>
+					</h3>
+					{CHANGELOG_SECTIONS.map(section =>
+						entries[section]
+							? <ChangelogSection key={section} section={section} entries={entries[section]} />
+							: null)}
 				</Fragment>)}
 		</div>
 	</div>

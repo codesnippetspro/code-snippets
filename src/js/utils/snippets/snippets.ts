@@ -16,6 +16,15 @@ const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 export const createSnippetObject = (fields: unknown): Snippet =>
 	parseSnippetObject(fields)
 
+export const cloneSnippetObject = (snippet: Snippet): Snippet =>
+	createSnippetObject({
+		...snippet,
+		id: 0,
+		active: false,
+		// translators: %s: snippet title.
+		name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
+	})
+
 export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType => {
 	switch (true) {
 		case scope.endsWith('-css'):

@@ -86,7 +86,7 @@ abstract class Plugin_Importer {
 		$snippet = new Snippet();
 		$snippet->network = $multisite;
 
-		foreach ( self::FIELD_MAPPINGS as $source_field => $target_field ) {
+		foreach ( static::FIELD_MAPPINGS as $source_field => $target_field ) {
 			if ( ! isset( $snippet_data[ $source_field ] ) ) {
 				continue;
 			}

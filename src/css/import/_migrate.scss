@@ -1,6 +1,6 @@
 
 .importer-selector-card {
-	h2 {
+	h3 {
 		margin: 0 0 1em;
 	}
 
@@ -19,7 +19,7 @@
 }
 
 .import-options-card {
-	h2 {
+	h3 {
 		margin: 0 0 1em;
 	}
 
@@ -55,6 +55,10 @@
 
 
 .import-section-status {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+
 	.error, .success {
 		border-radius: 50%;
 		inline-size: 24px;
@@ -80,7 +84,7 @@
 		background-color: #d63638;
 	}
 
-	h3 {
+	h4 {
 		margin: 0 0 8px;
 		font-size: 16px;
 		font-weight: 600;
@@ -114,7 +118,7 @@
 		margin-block-end: 16px;
 	}
 
-	h3 {
+	h4 {
 		margin: 0 0 8px;
 		font-size: 18px;
 		color: #333;
@@ -129,7 +133,7 @@
 		align-items: center;
 		margin-block-end: 10px;
 
-		h2 {
+		h3 {
 			margin: 0;
 		}
 
@@ -142,8 +146,4 @@
 		text-align: end;
 		inline-size: 50px;
 	}
-}
-
-.migrate-form-container {
-	max-inline-size: 800px;
 }
