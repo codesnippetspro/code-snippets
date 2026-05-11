@@ -179,27 +179,33 @@ class Cloud_API {
 	/**
 	 * Search Code Snippets Cloud -> Static Function
 	 *
-	 * @param string $search_method Search by name of codevault or keyword(s).
-	 * @param string $search        Search query.
-	 * @param int    $page          Search result page to retrieve. Defaults to '1'.
-	 * @param int    $per_page      Number of search results to retrieve per page.
+	 * @param string               $search_method Search by name of codevault or keyword(s).
+	 * @param string               $search        Search query.
+	 * @param int                  $page          Search result page to retrieve. Defaults to '1'.
+	 * @param int                  $per_page      Number of search results to retrieve per page.
+	 * @param array<string,string> $filters       Optional filters: category, type, status.
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */
-	public static function fetch_search_results( string $search_method, string $search, int $page = 1, int $per_page = 10 ): Cloud_Snippets {
+	public static function fetch_search_results( string $search_method, string $search, int $page = 1, int $per_page = 10, array $filters = [] ): Cloud_Snippets {
 		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
 
-		$api_url = add_query_arg(
-			[
-				's_method'   => $search_method,
-				's'          => $search,
-				'page'       => max( 0, $page - 1 ),
-				'per_page'   => $per_page,
-				'site_token' => self::get_local_token(),
-				'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
-			],
-			self::get_cloud_api_url() . 'public/search'
-		);
+		$params = [
+			's_method'   => $search_method,
+			's'          => $search,
+			'page'       => max( 0, $page - 1 ),
+			'per_page'   => $per_page,
+			'site_token' => self::get_local_token(),
+			'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
+		];
+
+		foreach ( [ 'category', 'type', 'status' ] as $key ) {
+			if ( ! empty( $filters[ $key ] ) ) {
+				$params[ $key ] = $filters[ $key ];
+			}
+		}
+
+		$api_url = add_query_arg( $params, self::get_cloud_api_url() . 'public/search' );
 
 		$raw = self::unpack_request_json( wp_remote_get( $api_url ) );
 
@@ -353,6 +359,11 @@ class Cloud_API {
 	}
 
 	/**
+	 * Transient key for cached cloud types (languages).
+	 */
+	private const TYPES_TRANSIENT_KEY = 'cs_cloud_types';
+
+	/**
 	 * Transient key for cached featured snippets.
 	 */
 	private const FEATURED_TRANSIENT_KEY = 'cs_featured_snippets';
@@ -365,14 +376,16 @@ class Cloud_API {
 	/**
 	 * Retrieve featured snippets from the cloud API, with transient caching.
 	 *
-	 * @param int $page     Page number (1-indexed).
-	 * @param int $per_page Results per page.
+	 * @param int                  $page     Page number (1-indexed).
+	 * @param int                  $per_page Results per page.
+	 * @param array<string,string> $filters  Optional filters: category, type, status.
 	 *
 	 * @return Cloud_Snippets Featured snippets, or an empty result on failure.
 	 */
-	public static function get_featured_snippets( int $page = 1, int $per_page = 10 ): Cloud_Snippets {
+	public static function get_featured_snippets( int $page = 1, int $per_page = 10, array $filters = [] ): Cloud_Snippets {
 		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
-		$cache_key = self::FEATURED_TRANSIENT_KEY . "_p{$page}_pp{$per_page}";
+		$filter_hash = md5( wp_json_encode( $filters ) ?: '' );
+		$cache_key = self::FEATURED_TRANSIENT_KEY . "_p{$page}_pp{$per_page}_{$filter_hash}";
 
 		$cached = get_transient( $cache_key );
 
@@ -380,13 +393,18 @@ class Cloud_API {
 			return $cached;
 		}
 
-		$url = add_query_arg(
-			[
-				'page'     => max( 0, $page - 1 ),
-				'per_page' => $per_page,
-			],
-			self::get_cloud_api_url() . 'public/featured'
-		);
+		$params = [
+			'page'     => max( 0, $page - 1 ),
+			'per_page' => $per_page,
+		];
+
+		foreach ( [ 'category', 'type', 'status' ] as $key ) {
+			if ( ! empty( $filters[ $key ] ) ) {
+				$params[ $key ] = $filters[ $key ];
+			}
+		}
+
+		$url = add_query_arg( $params, self::get_cloud_api_url() . 'public/featured' );
 
 		$response = wp_remote_get(
 			$url,
@@ -419,6 +437,37 @@ class Cloud_API {
 		set_transient( $cache_key, $result, self::FEATURED_MIN_TTL );
 
 		return $result;
+	}
+
+	/**
+	 * Retrieve available snippet types (languages) from the cloud API, with transient caching.
+	 *
+	 * @return array<int, array{id: int, name: string, snippet_count: int}> List of types.
+	 */
+	public static function get_cloud_types(): array {
+		$cached = get_transient( self::TYPES_TRANSIENT_KEY );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$url = self::get_cloud_api_url() . 'public/types';
+		$response = wp_remote_get( $url );
+
+		if ( is_wp_error( $response ) ) {
+			return [];
+		}
+
+		$json = self::unpack_request_json( $response );
+
+		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
+			return [];
+		}
+
+		$types = $json['data'];
+		set_transient( self::TYPES_TRANSIENT_KEY, $types, DAY_IN_SECONDS );
+
+		return $types;
 	}
 
 	/**

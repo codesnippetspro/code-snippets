@@ -43,11 +43,54 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Common filter args shared across search and featured endpoints.
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	private function get_filter_args(): array {
+		return [
+			'category' => [
+				'description' => esc_html__( 'Filter by category name (comma-separated).', 'code-snippets' ),
+				'type'        => 'string',
+				'default'     => '',
+			],
+			'type'     => [
+				'description' => esc_html__( 'Filter by language/type name (comma-separated).', 'code-snippets' ),
+				'type'        => 'string',
+				'default'     => '',
+			],
+			'status'   => [
+				'description' => esc_html__( 'Filter by status ID (comma-separated).', 'code-snippets' ),
+				'type'        => 'string',
+				'default'     => '',
+			],
+		];
+	}
+
+	/**
+	 * Extract filter values from a request.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return array<string, string>
+	 */
+	private function extract_filters( WP_REST_Request $request ): array {
+		return array_filter(
+            [
+				'category' => $request->get_param( 'category' ) ?? '',
+				'type'     => $request->get_param( 'type' ) ?? '',
+				'status'   => $request->get_param( 'status' ) ?? '',
+			]
+        );
+	}
+
+	/**
 	 * Register REST routes.
 	 */
 	public function register_routes() {
 		$collection_args = $this->get_collection_params();
 		$collection_args['per_page']['default'] = $this->get_snippets_per_page();
+		$filter_args = $this->get_filter_args();
 
 		register_rest_route(
 			$this->namespace,
@@ -59,6 +102,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => array_merge(
 						$collection_args,
+						$filter_args,
 						[
 							'query'             => [
 								'description' => esc_html__( 'Search query.', 'code-snippets' ),
@@ -90,20 +134,35 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_featured_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => [
-						'page'     => [
-							'description' => esc_html__( 'Page number.', 'code-snippets' ),
-							'type'        => 'integer',
-							'default'     => 1,
-						],
-						'per_page' => [
-							'description' => esc_html__( 'Results per page.', 'code-snippets' ),
-							'type'        => 'integer',
-							'default'     => $this->get_snippets_per_page(),
-						],
-					],
+					'args'                => array_merge(
+						$filter_args,
+						[
+							'page'     => [
+								'description' => esc_html__( 'Page number.', 'code-snippets' ),
+								'type'        => 'integer',
+								'default'     => 1,
+							],
+							'per_page' => [
+								'description' => esc_html__( 'Results per page.', 'code-snippets' ),
+								'type'        => 'integer',
+								'default'     => $this->get_snippets_per_page(),
+							],
+						]
+					),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/types',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_types' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+				],
 			]
 		);
 
@@ -143,7 +202,8 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 			? min( Cloud_API::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
 			: $this->get_snippets_per_page();
 
-		$cloud_snippets = Cloud_API::fetch_search_results( $method, $query, $page, $per_page );
+		$filters = $this->extract_filters( $request );
+		$cloud_snippets = Cloud_API::fetch_search_results( $method, $query, $page, $per_page, $filters );
 
 		$results = [];
 
@@ -173,7 +233,8 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 			? min( Cloud_API::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
 			: $this->get_snippets_per_page();
 
-		$cloud_snippets = Cloud_API::get_featured_snippets( $page, $per_page );
+		$filters = $this->extract_filters( $request );
+		$cloud_snippets = Cloud_API::get_featured_snippets( $page, $per_page, $filters );
 
 		$results = [];
 
@@ -190,6 +251,15 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Retrieve available snippet types (languages) from the cloud API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_types(): WP_REST_Response {
+		return rest_ensure_response( Cloud_API::get_cloud_types() );
+	}
+
+	/**
 	 * Get the user's snippets per-page preference for Screen Options pagination.
 	 *
 	 * @return int
@@ -201,7 +271,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
-	 * Retrieve cloud snippets using a search query.
+	 * Download a single cloud snippet.
 	 *
 	 * @param WP_REST_Request $request The request object containing the search parameters.
 	 *
