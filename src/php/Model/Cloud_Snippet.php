@@ -41,6 +41,7 @@ class Cloud_Snippet extends Model {
 		'code'           => '',
 		'tags'           => [],
 		'scope'          => '',
+		'language'       => '',
 		'status'         => '',
 		'codevault'      => '',
 		'total_votes'    => '',
@@ -73,6 +74,9 @@ class Cloud_Snippet extends Model {
 				return ( null === $value ) ? '' : $value;
 			case 'tags':
 				return code_snippets_build_tags_array( $value );
+
+			case 'language':
+				return is_array( $value ) ? ( $value['name'] ?? '' ) : (string) $value;
 
 			default:
 				return $value;

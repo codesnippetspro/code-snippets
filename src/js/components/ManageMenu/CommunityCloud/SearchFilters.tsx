@@ -1,9 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { __ } from '@wordpress/i18n'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { updateQueryParam } from '../../../utils/urls'
-import { useRestAPI } from '../../../hooks/useRestAPI'
-import { REST_BASES } from '../../../utils/restAPI'
 import { useCloudSearch } from './WithCloudSearchContext'
 import type { Dispatch, SetStateAction } from 'react'
 
@@ -19,12 +17,6 @@ export interface CloudSearchFilters {
 	category: string
 	type: string
 	status: number
-}
-
-interface CloudType {
-	id: number
-	name: string
-	snippet_count: number
 }
 
 interface SearchFilterProps {
@@ -63,33 +55,25 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, s
 	</>
 
 export const SearchFilters = () => {
-	const { filters, setFilters } = useCloudSearch()
-	const { api } = useRestAPI()
+	const { searchResults: snippets, filters, setFilters } = useCloudSearch()
 
-	const [cloudTypes, setCloudTypes] = useState<CloudType[]>([])
-	const [cloudCategories, setCloudCategories] = useState<CloudType[]>([])
+	const options = useMemo(() => {
+		const categories = new Set<string>()
+		const types = new Set<string>()
+		const statuses = new Set<CloudStatus>()
 
-	useEffect(() => {
-		api.get<CloudType[]>(`${REST_BASES.cloud}/types`)
-			.then(setCloudTypes)
-			.catch(() => setCloudTypes([]))
+		snippets?.forEach(snippet => {
+			snippet.tags.forEach(tag => categories.add(tag))
+			if (snippet.language) {types.add(snippet.language)}
+			statuses.add(snippet.status)
+		})
 
-		api.get<CloudType[]>(`${REST_BASES.cloud}/categories`)
-			.then(setCloudCategories)
-			.catch(() => setCloudCategories([]))
-	}, [api])
-
-	const categoryOptions: [string, string][] = useMemo(
-		() => cloudCategories.map(c => [c.name, c.name]),
-		[cloudCategories])
-
-	const typeOptions: [string, string][] = useMemo(
-		() => cloudTypes.map(t => [t.name, t.name]),
-		[cloudTypes])
-
-	const statusOptions: [number, string][] = useMemo(
-		() => Object.entries(STATUS_LABELS).map(([id, label]) => [Number(id), label]),
-		[])
+		return {
+			category: Array.from(categories).sort().map(cat => [cat, cat] as [string, string]),
+			type: Array.from(types).sort().map(t => [t, t] as [string, string]),
+			status: Array.from(statuses).sort().map(s => [s, STATUS_LABELS[s]] as [number, string])
+		}
+	}, [snippets])
 
 	return (
 		<>
@@ -97,7 +81,7 @@ export const SearchFilters = () => {
 				filter="category"
 				filters={filters}
 				setFilters={setFilters}
-				options={categoryOptions}
+				options={options.category}
 				label={__('Snippet Category', 'code-snippets')}
 				allOptionLabel={__('All Categories', 'code-snippets')}
 			/>
@@ -106,7 +90,7 @@ export const SearchFilters = () => {
 				filter="type"
 				filters={filters}
 				setFilters={setFilters}
-				options={typeOptions}
+				options={options.type}
 				label={__('Snippet Type', 'code-snippets')}
 				allOptionLabel={__('All Types', 'code-snippets')}
 			/>
@@ -115,7 +99,7 @@ export const SearchFilters = () => {
 				filter="status"
 				filters={filters}
 				setFilters={setFilters}
-				options={statusOptions}
+				options={options.status}
 				label={__('Snippet Status', 'code-snippets')}
 				allOptionLabel={__('All Snippet Statuses', 'code-snippets')}
 			/>

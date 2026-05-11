@@ -8,6 +8,7 @@ export interface CloudSnippetSchema {
 	code: string
 	tags: string[]
 	scope: SnippetScope
+	language: string
 	status: CloudStatus
 	codevault: string
 	total_votes: number
