@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../common/theme';
 @use '../common/banners';
 
@@ -182,4 +183,17 @@
 
 .cloud-search-results .cloud-search-result footer > .components-spinner {
 	margin: 0;
+}
+
+.cloud-pro-button.button {
+	background-color: theme.$secondary;
+	border-color: theme.$secondary;
+	color: #fff;
+
+	&:hover,
+	&:focus {
+		background-color: color.adjust(theme.$secondary, $lightness: -10%);
+		border-color: color.adjust(theme.$secondary, $lightness: -10%);
+		color: #fff;
+	}
 }
