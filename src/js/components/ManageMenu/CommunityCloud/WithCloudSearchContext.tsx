@@ -110,7 +110,10 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 					}
 					setTotalItems(Number(response.headers['x-wp-total']))
 					setTotalPages(Number(response.headers['x-wp-totalpages']))
-					try { setAvailableFilters(JSON.parse(String(response.headers['x-wp-filters'] ?? '{}')) as AvailableFilters) } catch { /* */ }
+					try {
+						const raw = String(response.headers['x-wp-filters'] ?? '{}')
+						setAvailableFilters(JSON.parse(raw) as AvailableFilters)
+					} catch { /* */ }
 					setSearchResults(response.data)
 					setIsSearching(false)
 				})
@@ -141,7 +144,10 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 				}
 				setTotalItems(Number(response.headers['x-wp-total']))
 				setTotalPages(Number(response.headers['x-wp-totalpages']))
-				try { setAvailableFilters(JSON.parse(String(response.headers['x-wp-filters'] ?? '{}')) as AvailableFilters) } catch { /* */ }
+				try {
+					const raw = String(response.headers['x-wp-filters'] ?? '{}')
+					setAvailableFilters(JSON.parse(raw) as AvailableFilters)
+				} catch { /* */ }
 				setSearchResults(response.data)
 				setIsFeatured(true)
 				setIsSearching(false)

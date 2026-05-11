@@ -389,7 +389,8 @@ class Cloud_API {
 	 */
 	public static function get_featured_snippets( int $page = 1, int $per_page = 10, array $filters = [] ): Cloud_Snippets {
 		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
-		$filter_hash = md5( wp_json_encode( $filters ) ?: '' );
+		$encoded = wp_json_encode( $filters );
+		$filter_hash = md5( false === $encoded ? '' : $encoded );
 		$cache_key = self::FEATURED_TRANSIENT_KEY . "_p{$page}_pp{$per_page}_{$filter_hash}";
 
 		$cached = get_transient( $cache_key );
