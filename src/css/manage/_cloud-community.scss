@@ -15,6 +15,20 @@
 		flex: 0 0 165px;
 	}
 
+	.cloud-search-submit {
+		position: relative;
+
+		.components-spinner {
+			inset: 0;
+			margin: auto;
+			position: absolute;
+		}
+
+		&:disabled {
+			color: transparent;
+		}
+	}
+
 	.cloud-search-query {
 		flex: 1;
 		position: relative;

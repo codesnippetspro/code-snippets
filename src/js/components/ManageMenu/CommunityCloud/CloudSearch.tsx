@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n'
 import React, { useEffect } from 'react'
 import { Spinner } from '@wordpress/components'
 import { TablePagination } from '../../common/ListTable/TablePagination'
-import { SubmitButton } from '../../common/SubmitButton'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { WithCloudSearchFiltersContext, useCloudSearchFilters } from './WithCloudSearchFiltersContext'
 import { SearchFilters } from './SearchFilters'
@@ -43,14 +42,19 @@ const SearchBox = () => {
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>
 				<span role="status" aria-live="polite">
-					{isSearching && <>
-						<Spinner />
-						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>
-					</>}
+					{isSearching &&
+						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>}
 				</span>
 			</div>
 
-			<SubmitButton primary disabled={isSearching} text={__('Search Cloud Library', 'code-snippets')} />
+			<button
+				type="submit"
+				className="button button-primary cloud-search-submit"
+				disabled={isSearching}
+			>
+				{isSearching ? <Spinner /> : null}
+				{__('Search Cloud Library', 'code-snippets')}
+			</button>
 		</form>
 	)
 }
