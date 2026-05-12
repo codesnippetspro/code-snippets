@@ -218,26 +218,29 @@ class Manage_Menu extends Admin_Menu {
 		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
 		$plugin->localize_script( self::JS_HANDLE );
 
-		wp_localize_script(
-			self::JS_HANDLE,
-			'CODE_SNIPPETS_MANAGE',
-			[
-				'hasNetworkCap'        => current_user_can( code_snippets()->get_network_cap_name() ),
-				'hiddenColumns'        => $this->get_hidden_manage_columns(),
-				'truncateRowValues'    => (int) $this->truncate_row_values(),
-				'snippetsPerPage'      => $this->get_snippets_per_page(),
-				'cloudSearchPerPage'   => $this->get_cloud_search_per_page(),
-				'isSafeModeActive'     => code_snippets()->evaluate_functions->is_safe_mode_active(),
-				'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
-				'supportsZipDownloads' => class_exists( 'ZipArchive' ),
-				'snippetsList'         => array_map(
-					function ( $snippet ) {
-						return $snippet->get_fields();
-					},
-					get_snippets()
-				),
-			]
-		);
+		$localized = [
+			'hasNetworkCap'        => current_user_can( code_snippets()->get_network_cap_name() ),
+			'hiddenColumns'        => $this->get_hidden_manage_columns(),
+			'truncateRowValues'    => (int) $this->truncate_row_values(),
+			'snippetsPerPage'      => $this->get_snippets_per_page(),
+			'cloudSearchPerPage'   => $this->get_cloud_search_per_page(),
+			'isSafeModeActive'     => code_snippets()->evaluate_functions->is_safe_mode_active(),
+			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
+			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
+		];
+
+		// Only the manage-table view consumes the full snippets list; skip the
+		// table scan and inline payload on subpages that don't render the table.
+		if ( $this->is_manage_table_view() ) {
+			$localized['snippetsList'] = array_map(
+				function ( $snippet ) {
+					return $snippet->get_fields();
+				},
+				get_snippets()
+			);
+		}
+
+		wp_localize_script( self::JS_HANDLE, 'CODE_SNIPPETS_MANAGE', $localized );
 	}
 
 	/**
@@ -333,15 +336,31 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Read the current `subpage` routing parameter.
+	 *
+	 * @return string
+	 */
+	protected function get_current_subpage(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
+		return isset( $_REQUEST['subpage'] ) ? sanitize_key( wp_unslash( $_REQUEST['subpage'] ) ) : '';
+	}
+
+	/**
+	 * Whether the current request renders the snippets-table view (the default subpage).
+	 *
+	 * @return bool
+	 */
+	protected function is_manage_table_view(): bool {
+		return ! $this->get_current_subpage();
+	}
+
+	/**
 	 * Whether the current manage subpage is the Community Cloud view.
 	 *
 	 * @return bool
 	 */
 	protected function is_cloud_community_view(): bool {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
-		$subpage = isset( $_REQUEST['subpage'] ) ? sanitize_key( wp_unslash( $_REQUEST['subpage'] ) ) : '';
-
-		return 'cloud-community' === $subpage;
+		return 'cloud-community' === $this->get_current_subpage();
 	}
 
 	/**
