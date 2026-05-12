@@ -6,10 +6,11 @@ import type { ListTableColumn, ListTableItemsProps } from './ListTable'
 
 interface CheckboxCellProps<T, K extends Key> extends Pick<TableItemsProps<T, K>, 'getKey'> {
 	item: T
+	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-const CheckboxCell = <T, K extends Key>({ item, setSelected, getKey }: CheckboxCellProps<T, K>) =>
+const CheckboxCell = <T, K extends Key>({ item, selected, setSelected, getKey }: CheckboxCellProps<T, K>) =>
 	<th scope="row" className="check-column">
 		<label htmlFor={`cb-select-${getKey(item)}`}>
 			<span className="screen-reader-text">{__('Select snippet', 'code-snippets')}</span>
@@ -18,6 +19,7 @@ const CheckboxCell = <T, K extends Key>({ item, setSelected, getKey }: CheckboxC
 			id={`cb-select-${getKey(item)}`}
 			type="checkbox"
 			name="checked[]"
+			checked={selected.has(getKey(item))}
 			onChange={event => {
 				setSelected(previous => {
 					const updated = new Set(previous)
@@ -49,14 +51,15 @@ const TableCell = <T, >({ item, column }: TableCellProps<T>) => {
 
 export interface TableItemsProps<T, K extends Key>
 	extends Pick<ListTableItemsProps<T, K>, 'items' | 'getKey' | 'columns' | 'noItems' | 'rowClassName'> {
+	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-export const TableItems = <T, K extends Key>({ items, getKey, columns, noItems, setSelected, rowClassName }: TableItemsProps<T, K>) =>
+export const TableItems = <T, K extends Key>({ items, getKey, columns, noItems, selected, setSelected, rowClassName }: TableItemsProps<T, K>) =>
 	0 < items.length
 		? items.map(item =>
 			<tr key={getKey(item)} className={rowClassName?.(item)}>
-				<CheckboxCell {...{ item, setSelected, getKey }} />
+				<CheckboxCell {...{ item, selected, setSelected, getKey }} />
 
 				{columns.map(column =>
 					<TableCell key={column.id} item={item} column={column} />)}
