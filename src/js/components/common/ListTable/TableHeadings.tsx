@@ -30,6 +30,7 @@ const SortableColumnHeading = <T, >({
 	const nextSortDirection = isCurrent
 		? 'asc' === sortDirection ? 'desc' : 'asc'
 		: column.defaultSortDirection ?? 'asc'
+
 	const classDirection = isCurrent ? sortDirection : 'asc' === nextSortDirection ? 'desc' : 'asc'
 	const ariaSort = isCurrent ? 'asc' === sortDirection ? 'ascending' : 'descending' : undefined
 
@@ -87,7 +88,6 @@ export const TableHeadings = <T, K extends Key>({
 		{columns.map(column => {
 			const cellProps: ThHTMLAttributes<HTMLTableCellElement> = {
 				id: 'head' === which ? column.id.toString() : undefined,
-				key: column.id,
 				scope: 'col',
 				className: classnames(
 					'manage-column',
@@ -98,7 +98,7 @@ export const TableHeadings = <T, K extends Key>({
 			}
 
 			return column.sortedValue
-				? <SortableColumnHeading {...{ column, cellProps, sortColumn, sortDirection, setSortColumn, setSortDirection }} />
-				: <th {...cellProps}>{column.title}</th>
+				? <SortableColumnHeading key={column.id} {...{ column, cellProps, sortColumn, sortDirection, setSortColumn, setSortDirection }} />
+				: <th key={column.id} {...cellProps}>{column.title}</th>
 		})}
 	</tr>
