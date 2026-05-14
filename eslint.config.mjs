@@ -69,7 +69,7 @@ export default eslintTs.config(
 			'@stylistic/indent': ['error', 'tab', { SwitchCase: 1 }],
 			'@stylistic/jsx-quotes': ['error', 'prefer-double'],
 			'@stylistic/linebreak-style': ['error', 'unix'],
-			'@stylistic/max-len': ['warn', 140, { ignorePattern: 'd="(.*?)"|_[_xn]\\(|import .+ from .+' }],
+			'@stylistic/max-len': ['error', 140, { ignorePattern: 'd="(.*?)"|_[_xn]\\(|import .+ from .+' }],
 			'@stylistic/multiline-ternary': 'off',
 			'@stylistic/no-extra-parens': ['error', 'all', { ignoreJSX: 'multi-line' }],
 			'@stylistic/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
@@ -149,7 +149,7 @@ export default eslintTs.config(
 			'jsx-a11y/no-noninteractive-element-interactions': 'error',
 			'jsx-a11y/no-noninteractive-tabindex': 'error',
 			'jsx-a11y/no-redundant-roles': 'error',
-			'jsx-a11y/no-static-element-interactions': 'warn',
+			'jsx-a11y/no-static-element-interactions': 'error',
 			'jsx-a11y/role-has-required-aria-props': 'error',
 			'jsx-a11y/role-supports-aria-props': 'error',
 			'jsx-a11y/tabindex-no-positive': 'error'
