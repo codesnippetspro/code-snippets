@@ -3,17 +3,21 @@
 namespace Code_Snippets\REST_API\Cloud;
 
 use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\Model\Cloud_Link;
+use Code_Snippets\Model\Snippet;
 use Code_Snippets\REST_API\REST_Collection_Controller;
+use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\save_snippet;
 
 /**
  * Allows fetching cloud snippets through the WordPress REST API.
  *
  * @package Code_Snippets
  */
-final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
+final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Controller {
 
 	/**
 	 * Current API version.
@@ -23,24 +27,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	/**
 	 * The base of this controller's route.
 	 */
-	public const BASE_ROUTE = 'cloud';
-
-	/**
-	 * Cloud API instance.
-	 *
-	 * @var Cloud_API
-	 */
-	private Cloud_API $api;
-
-	/**
-	 * Class constructor.
-	 *
-	 * @param Cloud_API $api Cloud API instance.
-	 */
-	public function __construct( Cloud_API $api ) {
-		$this->api = $api;
-		parent::__construct();
-	}
+	public const BASE_ROUTE = 'cloud/snippets';
 
 	/**
 	 * Register REST routes.
@@ -79,6 +66,20 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base,
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'create_item_from_cloud' ],
+					'permission_callback' => [ $this, 'create_item_permissions_check' ],
+					'args'                => rest_get_endpoint_args_for_schema( $this->get_cloud_snippet_schema() ),
+				],
+				'schema' => [ $this, 'get_cloud_snippet_schema' ],
 			]
 		);
 
@@ -146,6 +147,108 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Get the schema for a cloud snippet request body.
+	 *
+	 * @return array
+	 */
+	public function get_cloud_snippet_schema(): array {
+		static $schema = null;
+
+		if ( ! is_null( $schema ) ) {
+			return $schema;
+		}
+
+		$schema = [
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'cloud snippet',
+			'type'       => 'object',
+			'properties' => [
+				'id'          => [
+					'description' => esc_html__( 'Cloud snippet identifier.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'name'        => [
+					'description' => esc_html__( 'Title of cloud snippet.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'description' => [
+					'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'code'        => [
+					'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'scope'       => [
+					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'created'     => [
+					'description' => esc_html__( 'Date and time when the snippet was last created, in ISO format.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'revision'    => [
+					'description' => esc_html__( 'Snippet revision number.', 'code-snippets' ),
+					'type'        => 'integer',
+				],
+			],
+		];
+
+		return $schema;
+	}
+
+	/**
+	 * Create one item from the collection
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function create_item( $request ) {
+		$body = json_decode( $request->get_body() );
+		$snippet_data = json_decode( $body[0], true );
+
+		$snippet = new Snippet();
+
+		$snippet->name = $snippet_data['name'];
+		$snippet->desc = $snippet_data['description'];
+		$snippet->code = $snippet_data['code'];
+		$snippet->scope = $snippet_data['scope'];
+		$snippet->modified = $snippet_data['created'];
+		$snippet->revision = $snippet_data['revision'] ?? 1;
+		$snippet->cloud_id = $snippet_data['id'] . '_0'; // Set to not owner.
+		$snippet->shared_network = false;
+		$snippet->network = false;
+		$snippet->active = false;
+
+		$result = save_snippet( $snippet );
+
+		if ( ! $result ) {
+			return new WP_Error(
+				'rest_cannot_create',
+				__( 'The snippet could not be created.', 'code-snippets' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		$link = new Cloud_Link();
+		$link->local_id = $snippet_data['id'];
+		$link->cloud_id = $snippet->cloud_id;
+		$link->is_owner = false;
+		$link->in_codevault = false;
+		$link->update_available = false;
+
+		$this->cloud_api->add_cloud_link( $link );
+
+		$response = [
+			'status'  => 'success',
+			'message' => __( 'Snippet created', 'code-snippets' ),
+		];
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
 	 * Retrieve cloud snippets using a search query.
 	 *
 	 * @param WP_REST_Request $request The request object containing the search parameters.
@@ -154,8 +257,9 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function download_item( WP_REST_Request $request ): WP_REST_Response {
 		$id = $request->get_param( 'id' );
+		$in_codevault = $request->get_param( 'in_codevault' );
 
-		$cloud_snippet = $this->api->get_single_snippet_from_cloud( $id );
-		return rest_ensure_response( $this->api->download_snippet_from_cloud( $cloud_snippet ) );
+		$cloud_snippet = $this->cloud_api->get_single_snippet_from_cloud( $id );
+		return rest_ensure_response( $this->cloud_api->download_snippet_from_cloud( $cloud_snippet, $in_codevault ) );
 	}
 }

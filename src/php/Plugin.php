@@ -128,10 +128,10 @@ class Plugin {
 		}
 
 		new Snippets_REST_Controller();
-		new Cloud_Snippets_REST_Controller( $this->cloud_api );
 		new Recently_Active_REST_Controller();
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
+		new Cloud_Snippets_REST_Controller( $this->cloud_api );
 
 		new Shortcodes();
 		new MCE_Plugin();
@@ -335,12 +335,14 @@ class Plugin {
 				'restAPI'          => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'cloud'          => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
 					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
 					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
 					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),
-					'localToken'     => $this->cloud_api->get_local_token(),
+					'cloud'          => [
+						'token'    => $this->cloud_api->get_local_token(),
+						'snippets' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
+					],
 				],
 				'urls'             => [
 					'plugin'   => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),

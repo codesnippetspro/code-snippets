@@ -107,7 +107,7 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
 		setIsWorking(true)
 		setErrorMessage(undefined)
 
-		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud}/${snippet.id}/download`)
+		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)
 			.then(response => {
 				setLocalSnippetId(response.snippet_id)
 			})
