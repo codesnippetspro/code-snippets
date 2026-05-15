@@ -52,6 +52,11 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 	&:focus {
 		box-shadow: none;
 	}
+
+	&:focus-visible {
+		outline: 2px solid #2271b1;
+		outline-offset: 2px;
+	}
 }
 
 .tooltip::before,

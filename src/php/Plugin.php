@@ -127,19 +127,31 @@ class Plugin {
 			$this->admin = new Bootstrap_Admin();
 		}
 
+		new Shortcodes();
+		new MCE_Plugin();
+		new Upgrader( PLUGIN_VERSION, $this->db );
+		new Admin_Bar();
+
+		if ( is_admin() ) {
+			new Promotion_Manager();
+		}
+
+		$this->init_snippet_files();
+
+		add_action( 'rest_api_init', [ $this, 'init_rest_api' ], 1 );
+	}
+
+	/**
+	 * Load REST API controller classes when serving REST API requests.
+	 *
+	 * @return void
+	 */
+	public function init_rest_api() {
 		new Snippets_REST_Controller();
 		new Recently_Active_REST_Controller();
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
 		new Cloud_Snippets_REST_Controller( $this->cloud_api );
-
-		new Shortcodes();
-		new MCE_Plugin();
-		new Upgrader( PLUGIN_VERSION, $this->db );
-		new Admin_Bar();
-		new Promotion_Manager();
-
-		$this->init_snippet_files();
 	}
 
 	/**

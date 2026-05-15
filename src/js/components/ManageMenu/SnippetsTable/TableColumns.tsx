@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import React, { Fragment, useState } from 'react'
-import { __, sprintf } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
@@ -8,7 +8,7 @@ import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { createSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
@@ -28,10 +28,10 @@ const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
 	<a
 		className="snippet-execution-button"
 		title={__('Run Once', 'code-snippets')}
-		aria-label={__('Run Once', 'code-snippets')}
 		href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
 	>
-		&nbsp;
+		<span className="screen-reader-text">{__('Run Once', 'code-snippets')}</span>
+		<span aria-hidden="true">&nbsp;</span>
 	</a>
 
 const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
@@ -51,7 +51,9 @@ const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
 			<input
 				id={`snippet-${snippet.id}-switch`}
 				type="checkbox"
+				role="switch"
 				checked={snippet.active}
+				aria-checked={snippet.active}
 				className="switch"
 				title={actionText}
 				onChange={() => {
@@ -86,15 +88,6 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 			return <ActivationSwitch snippet={snippet} />
 	}
 }
-
-const cloneSnippetObject = (snippet: Snippet): Snippet =>
-	createSnippetObject({
-		...snippet,
-		id: 0,
-		active: false,
-		// translators: %s: snippet title.
-		name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
-	})
 
 const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 	const api = useSnippetsAPI()
@@ -172,7 +165,12 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
 		{snippet.locked && (
-			<Tooltip inline end icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}>
+			<Tooltip
+				inline
+				end
+				label={__('About snippet lock', 'code-snippets')}
+				icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}
+			>
 				{__('This snippet is locked and cannot be modified.', 'code-snippets')}
 			</Tooltip>)}
 
@@ -260,6 +258,7 @@ const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
+		title: <span className="screen-reader-text">{__('Activate', 'code-snippets')}</span>,
 		render: snippet => <ActivateColumn snippet={snippet} />
 	},
 	{

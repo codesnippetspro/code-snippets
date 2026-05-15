@@ -67,11 +67,11 @@ const SelectSnippetsForm: React.FC<SelectSnippetsFormProps> = ({ availableSnippe
 		<>
 			<div className="tablenav top">
 				<div>
-					<h3>{sprintf(
+					<h4>{sprintf(
 						// translators: %d: number of available snippets.
 						__('Available snippets (%d)', 'code-snippets'),
 						availableSnippets.length
-					)}</h3>
+					)}</h4>
 					<p>{__('Select the snippets you would like to import.', 'code-snippets')}</p>
 				</div>
 				<div className="table-actions">

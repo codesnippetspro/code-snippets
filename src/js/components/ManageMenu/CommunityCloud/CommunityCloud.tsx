@@ -23,7 +23,7 @@ export const CommunityCloud = () => {
 	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
 
 	return (
-		<div className="wrap">
+		<>
 			<h2>{__('Community Cloud', 'code-snippets')}</h2>
 
 			<nav
@@ -35,6 +35,7 @@ export const CommunityCloud = () => {
 						key={tab}
 						href={buildUrl(window.location.href, { type: tab })}
 						className={classnames('nav-tab', `${tab}-tab`, { 'nav-tab-active': tab === currentTab })}
+						aria-current={tab === currentTab ? 'page' : undefined}
 						onClick={event => {
 							event.preventDefault()
 
@@ -60,6 +61,6 @@ export const CommunityCloud = () => {
 				: null}
 
 			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
-		</div>
+		</>
 	)
 }

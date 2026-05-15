@@ -131,7 +131,14 @@ const ListTableMarkup = <T, K extends Key>({
 			<tbody>
 				<TableItems
 					items={visibleItems}
-					{...{ getKey, columns, noItems, setSelected: tableHeadingsProps.setSelected, rowClassName }}
+					{...{
+						getKey,
+						columns,
+						noItems,
+						selected: tableHeadingsProps.selected,
+						setSelected: tableHeadingsProps.setSelected,
+						rowClassName
+					}}
 				/>
 			</tbody>
 			<tfoot>
@@ -171,6 +178,7 @@ export const ListTable = <T, K extends Key>({
 		actions,
 		extraTableNav,
 		selected: getVisibleSelected(visibleItems, getKey, selected),
+		setSelected,
 		disabled,
 		currentPage,
 		totalPages,
@@ -179,7 +187,7 @@ export const ListTable = <T, K extends Key>({
 	}
 
 	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
-		{ items: visibleItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
+		{ items: visibleItems, selected, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
 
 	return <ListTableMarkup
 		{...{

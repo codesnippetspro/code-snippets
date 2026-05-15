@@ -42,7 +42,12 @@ const SearchBox = () => {
 					onChange={event => setQuery(event.target.value)}
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>
-				{isSearching && <Spinner />}
+				<span role="status" aria-live="polite">
+					{isSearching && <>
+						<Spinner />
+						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>
+					</>}
+				</span>
 			</div>
 
 			<SubmitButton primary disabled={isSearching} text={__('Search Cloud Library', 'code-snippets')} />
@@ -90,12 +95,12 @@ const SearchResultsTable = () => {
 }
 
 const ErrorBanner = () =>
-	<div className="banner banner-error">
+	<div className="banner banner-error" role="alert">
 		<p>{__('An error occurred while fetching search results. Please try again.')}</p>
 	</div>
 
 const NoSearchResultsBanner = () =>
-	<div className="banner banner-neutral no-results">
+	<div className="banner banner-neutral no-results" role="status" aria-live="polite">
 		<p>{__('No snippets or codevault could be found with that search term. Please try again.', 'code-snippets')}</p>
 	</div>
 

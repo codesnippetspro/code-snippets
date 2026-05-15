@@ -43,7 +43,7 @@ class Welcome_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		echo '<div id="code-snippets-welcome-container"></div>';
+		echo '<div id="code-snippets-welcome-container" class="wrap"></div>';
 	}
 
 	/**

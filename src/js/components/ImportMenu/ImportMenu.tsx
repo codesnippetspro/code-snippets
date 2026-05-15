@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { fetchQueryParam, updateQueryParam } from '../../utils/urls'
+import { Toolbar } from '../common/Toolbar'
 import { UploadForm } from './UploadForm/UploadForm'
 import { MigrateForm } from './MigrateForm/MigrateForm'
 import type { ReactNode } from 'react'
@@ -33,10 +34,11 @@ export const ImportMenu: React.FC = () => {
 	const [activeTab, setActiveTab] = useState<TabType>(getDefaultTab)
 
 	return (
-		<div className="import-snippets-menu wrap">
-			<h1>{__('Import Snippets', 'code-snippets')}</h1>
+		<>
+			<Toolbar />
+			<>
+				<h2>{__('Import Snippets', 'code-snippets')}</h2>
 
-			<div className="narrow">
 				<nav
 					className="nav-tab-wrapper"
 					aria-label={__('Import sources', 'code-snippets')}
@@ -61,7 +63,7 @@ export const ImportMenu: React.FC = () => {
 							{TAB_CONTENT[tab]}
 						</div>)}
 				</WithRestAPIContext>
-			</div>
-		</div>
+			</>
+		</>
 	)
 }

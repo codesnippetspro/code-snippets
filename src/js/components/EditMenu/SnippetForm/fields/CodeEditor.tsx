@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useId, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSubmitSnippet } from '../../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../../utils/errors'
@@ -38,6 +38,7 @@ const useFocusEditorShortcut = (
 }
 
 const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
+	const descriptionId = useId()
 	const { snippet, setSnippet } = useSnippetForm()
 
 	return (
@@ -45,8 +46,11 @@ const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
 			className="snippet-editor"
 			role="application"
 			aria-label={__('Code editor', 'code-snippets')}
-			aria-description={__('In the editing area, the Tab key enters a tab character. To exit the code editor, press the Escape key and then the Tab key.', 'code-snippets')}
+			aria-describedby={descriptionId}
 		>
+			<p id={descriptionId} className="screen-reader-text">
+				{__('In the editing area, the Tab key enters a tab character. To exit the code editor, press the Escape key and then the Tab key.', 'code-snippets')}
+			</p>
 			<textarea
 				ref={textareaRef}
 				id="snippet-code"

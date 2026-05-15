@@ -91,6 +91,6 @@ class Import_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		echo '<div id="import-container"></div>';
+		echo '<div id="import-container" class="wrap"></div>';
 	}
 }

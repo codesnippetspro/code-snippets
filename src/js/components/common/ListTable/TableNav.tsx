@@ -54,10 +54,17 @@ const BulkActionSelect = <K extends Key,>({
 
 interface BulkActionsProps<K extends Key> extends Required<Pick<TableNavProps<K>, 'which' | 'actions'>> {
 	applyAction: (action: ListTableBulkAction<K>) => Promise<void>
+	onActionSuccess?: () => void
 	disabled?: boolean
 }
 
-const BulkActions = function BulkActions<K extends Key>({ which, actions, applyAction, disabled }: BulkActionsProps<K>) {
+const BulkActions = function BulkActions<K extends Key>({
+	which,
+	actions,
+	applyAction,
+	onActionSuccess,
+	disabled
+}: BulkActionsProps<K>) {
 	const [selectedAction, setSelectedAction] = useState<ListTableBulkAction<K>>()
 	const [selectedActionName, setSelectedActionName] = useState('-1')
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
@@ -85,6 +92,9 @@ const BulkActions = function BulkActions<K extends Key>({ which, actions, applyA
 					if (selectedAction) {
 						setIsPerformingAction(true)
 						applyAction(selectedAction)
+							.then(() => {
+								onActionSuccess?.()
+							})
 							.catch(handleUnknownError)
 							.finally(() => {
 								setIsPerformingAction(false)
@@ -101,6 +111,7 @@ const BulkActions = function BulkActions<K extends Key>({ which, actions, applyA
 export interface TableNavProps<K extends Key> extends ListTableNavProps<K>, Omit<TablePaginationProps, 'totalPages'> {
 	which: 'top' | 'bottom'
 	selected: Set<K>
+	setSelected: Dispatch<SetStateAction<Set<K>>>
 	totalItems: number
 	totalPages: number | undefined
 }
@@ -109,6 +120,7 @@ export const TableNav = <K extends Key,>({
 	which,
 	actions,
 	selected,
+	setSelected,
 	totalItems,
 	totalPages = 0,
 	extraTableNav,
@@ -123,6 +135,7 @@ export const TableNav = <K extends Key,>({
 					actions={actions}
 					disabled={paginationProps.disabled}
 					applyAction={action => action.apply(selected)}
+					onActionSuccess={() => setSelected(new Set())}
 				/>)}
 
 			{extraTableNav?.(which)}
