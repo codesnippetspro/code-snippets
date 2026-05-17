@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\REST_API;
 
+use WP_REST_Request;
 use function Code_Snippets\code_snippets;
 use const Code_Snippets\REST_API_NAMESPACE;
 
@@ -58,9 +59,13 @@ abstract class REST_Controller {
 	/**
 	 * Default permission callback for this controller's routes.
 	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
 	 * @return bool
+	 *
+	 * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	 */
-	public function permission_callback(): bool {
+	public function permission_callback( WP_REST_Request $request ): bool {
 		return code_snippets()->current_user_can();
 	}
 }

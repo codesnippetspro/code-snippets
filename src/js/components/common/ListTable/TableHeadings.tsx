@@ -23,7 +23,7 @@ interface SortableHeadingCellProps<T> {
 	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
 }
 
-const SortableHeadingCell = <T,>({
+const SortableHeadingCell = <T, >({
 	column,
 	cellProps,
 	sortColumn,
@@ -35,6 +35,7 @@ const SortableHeadingCell = <T,>({
 	const nextSortDirection = isCurrent
 		? 'asc' === sortDirection ? 'desc' : 'asc'
 		: column.defaultSortDirection ?? 'asc'
+
 	const classDirection = isCurrent ? sortDirection : 'asc' === nextSortDirection ? 'desc' : 'asc'
 	const ariaSort = isCurrent ? 'asc' === sortDirection ? 'ascending' : 'descending' : undefined
 
@@ -108,14 +109,12 @@ export const TableHeadings = <T, K extends Key>({
 				)
 			}
 
-			if (!column.sortedValue) {
-				return <th key={column.id} {...cellProps}>{column.title}</th>
-			}
-
-			return <SortableHeadingCell
-				key={column.id}
-				{...{ column, cellProps, sortColumn, sortDirection, setSortColumn, setSortDirection }}
-			/>
+			return column.sortedValue
+				? <SortableHeadingCell
+					key={column.id}
+					{...{ column, cellProps, sortColumn, sortDirection, setSortColumn, setSortDirection }}
+				/>
+				: <th key={column.id} {...cellProps}>{column.title}</th>
 		})}
 	</tr>
 }

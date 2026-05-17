@@ -172,6 +172,7 @@ export const ListTable = <T, K extends Key>({
 	const visibleItems: T[] = useMemo(
 		() => pageItems(sortItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
 		[items, sortColumn, sortDirection, currentPage, totalPages])
+
 	const tableNavProps = {
 		totalItems: items.length,
 		actions,
