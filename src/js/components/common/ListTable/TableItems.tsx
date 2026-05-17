@@ -55,7 +55,9 @@ export interface TableItemsProps<T, K extends Key>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-export const TableItems = <T, K extends Key>({ items, getKey, columns, noItems, selected, setSelected, rowClassName }: TableItemsProps<T, K>) =>
+export const TableItems = <T, K extends Key>(
+	{ items, getKey, columns, noItems, selected, setSelected, rowClassName }: TableItemsProps<T, K>
+) =>
 	0 < items.length
 		? items.map(item =>
 			<tr key={getKey(item)} className={rowClassName?.(item)}>

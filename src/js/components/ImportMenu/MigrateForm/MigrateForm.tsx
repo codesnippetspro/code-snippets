@@ -50,7 +50,10 @@ const StatusMessages: React.FC = () => {
 				<StatusDisplay type="success" title={sprintf(__('%d snippets imported!', 'code-snippets'), importedIds.length)}>
 					{createInterpolateElement(
 						__('Selected snippets have been successfully imported to your <a>Code Snippets library</a>.', 'code-snippets'),
-						{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
+						{
+							// eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+							a: <a href={window.CODE_SNIPPETS?.urls.manage} />
+						}
 					)}
 				</StatusDisplay>)}
 
