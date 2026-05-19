@@ -107,14 +107,14 @@ const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 			{__('Clone', 'code-snippets')}
 		</Button>)
 
-	const Export = () =>
+	const Export = !snippet.trashed && (() =>
 		<Button link onClick={() => {
 			api.export(snippet)
 				.then(response => downloadSnippetExportFile(response, snippet))
 				.catch(handleUnknownError)
 		}}>
 			{__('Export', 'code-snippets')}
-		</Button>
+		</Button>)
 
 	const Restore = snippet.trashed && (() =>
 		<Button link onClick={() => {
