@@ -21,7 +21,7 @@ class REST_API_Cloud_Test extends TestCase {
 	 *
 	 * @var string
 	 */
-	protected string $endpoint = '/code-snippets/v1/cloud';
+	protected string $endpoint = '/code-snippets/v1/cloud/snippets';
 
 	/**
 	 * Administrator user ID.
