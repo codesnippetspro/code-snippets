@@ -138,10 +138,11 @@ class Divi_Scanner_Test extends TestCase {
 	}
 
 	/**
-	 * Divi treats unset toggles as 'on' (matching the checkbox `std` values in options_divi.php),
-	 * so a populated Integration field with no stored toggle value must still report active.
+	 * Divi's runtime check uses strict equality against `'on'`, so a populated Integration field
+	 * with no stored toggle value (which `et_get_option()` returns as boolean false) is NOT
+	 * actually emitted by Divi. The scanner must mirror that.
 	 */
-	public function test_missing_toggle_defaults_to_active() {
+	public function test_missing_toggle_reports_inactive() {
 		$scanner = new Divi_Theme_Options_Scanner(
 			[
 				'integration_body' => '<script>window.diviBody = true;</script>',
@@ -152,7 +153,26 @@ class Divi_Scanner_Test extends TestCase {
 
 		$this->assertCount( 1, $results );
 		$this->assertSame( 'Divi Body Code', $results[0]->name );
-		$this->assertTrue( $results[0]->is_active );
+		$this->assertFalse( $results[0]->is_active );
+	}
+
+	/**
+	 * Divi's save handler writes the literal string `'false'` when a checkbox is unchecked at
+	 * save time. That is not strictly equal to `'on'`, so the snippet must report inactive.
+	 */
+	public function test_literal_false_toggle_reports_inactive() {
+		$scanner = new Divi_Theme_Options_Scanner(
+			[
+				'integration_head'        => '<meta name="divi-head" content="1">',
+				'integrate_header_enable' => 'false',
+			]
+		);
+
+		$results = $scanner->scan();
+
+		$this->assertCount( 1, $results );
+		$this->assertSame( 'Divi Head Code', $results[0]->name );
+		$this->assertFalse( $results[0]->is_active );
 	}
 
 	/**

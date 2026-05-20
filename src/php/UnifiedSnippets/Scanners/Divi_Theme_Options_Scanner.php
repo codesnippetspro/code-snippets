@@ -187,23 +187,25 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 	/**
 	 * Read one of Divi's `_integrate_*_enable` toggles.
 	 *
-	 * Divi treats these as 'on' by default when unset, matching the checkbox `std` values in
-	 * options_divi.php. We do the same so a freshly populated Integration field is reported as
-	 * active rather than silently inactive.
+	 * Mirrors Divi's runtime check (see `integration_head()` in custom_functions.php), which
+	 * emits code only when the toggle value is strictly equal to `'on'`. Other states the
+	 * scanner may encounter:
+	 *
+	 *   - Stored as `'false'` (string) when the checkbox was explicitly unchecked at save.
+	 *     Divi's save handler writes the literal string `'false'` for unchecked checkboxes
+	 *     (see `epanel_save_data()`).
+	 *   - Missing entirely on a never-saved install. `et_get_option()` returns boolean false
+	 *     in that case, and `false === 'on'` is also false, so Divi does NOT emit. We match
+	 *     that here — the checkbox `std => 'on'` in options_divi.php controls the admin UI's
+	 *     default-checked state, not the runtime default.
 	 *
 	 * @param string $shortname The resolved Divi shortname.
-	 * @param string $key       Toggle key without the `et_<shortname>_` prefix.
+	 * @param string $key       Toggle key without the `<shortname>_` prefix.
 	 *
 	 * @return bool
 	 */
 	private function read_toggle( string $shortname, string $key ): bool {
-		$value = $this->read_option( $shortname, $key );
-
-		if ( '' === $value ) {
-			return true;
-		}
-
-		return 'on' === $value;
+		return 'on' === $this->read_option( $shortname, $key );
 	}
 
 	/**
@@ -265,7 +267,7 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 				'source_name'  => $source_name,
 				'source_path'  => 'divi://theme-options/integration_head',
 				'is_active'    => $this->read_toggle( $shortname, 'integrate_header_enable' ),
-				'import_notes' => __( 'Imports into the head-content scope (rendered on wp_head).', 'code-snippets' ),
+				'import_notes' => __( 'Divi renders this on wp_head at priority 12. Importing as head-content runs it on wp_head at priority 10, so the imported snippet executes slightly earlier than Divi did. Usually harmless, but may matter for order-sensitive scripts.', 'code-snippets' ),
 			]
 		);
 	}
@@ -275,9 +277,10 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 	 *
 	 * Despite Divi's UI labelling this "body" code, the theme actually emits the content on
 	 * `wp_footer` at priority 12 (see Divi/epanel/custom_functions.php). Importing into
-	 * Code Snippets' `footer-content` scope (also wp_footer, priority 20) reproduces the
-	 * runtime behaviour. The priority delta is surfaced in `import_notes` for users with
-	 * order-sensitive scripts.
+	 * Code Snippets' `footer-content` scope (also wp_footer, default priority 10 per
+	 * `Evaluate_Content::init()`) reproduces the runtime behaviour, just executed slightly
+	 * earlier. The priority delta is surfaced in `import_notes` for users with order-sensitive
+	 * scripts.
 	 *
 	 * @param string $shortname   The Divi option shortname.
 	 * @param string $source_name Human-readable theme name.
@@ -303,7 +306,7 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 				'source_name'  => $source_name,
 				'source_path'  => 'divi://theme-options/integration_body',
 				'is_active'    => $this->read_toggle( $shortname, 'integrate_body_enable' ),
-				'import_notes' => __( 'Divi renders this on wp_footer at priority 12. Importing as footer-content runs it on wp_footer at priority 20, which may matter for order-sensitive scripts.', 'code-snippets' ),
+				'import_notes' => __( 'Divi renders this on wp_footer at priority 12. Importing as footer-content runs it on wp_footer at priority 10, so the imported snippet executes slightly earlier than Divi did. Usually harmless, but may matter for order-sensitive scripts.', 'code-snippets' ),
 			]
 		);
 	}
