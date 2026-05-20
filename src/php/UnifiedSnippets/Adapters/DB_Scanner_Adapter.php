@@ -13,14 +13,36 @@ use Code_Snippets\UnifiedSnippets\Scanner_Base;
  */
 abstract class DB_Scanner_Adapter extends Scanner_Base {
 
+	/**
+	 * The wrapped importer that reads rows from the source plugin's storage.
+	 *
+	 * @var Plugin_Importer
+	 */
 	protected Plugin_Importer $importer;
 
+	/**
+	 * Class constructor.
+	 *
+	 * @param Plugin_Importer|null $importer Optional importer override, primarily for testing.
+	 *                                       When null, the concrete subclass creates one via
+	 *                                       {@see self::create_importer()}.
+	 */
 	public function __construct( ?Plugin_Importer $importer = null ) {
 		$this->importer = $importer ?? $this->create_importer();
 	}
 
+	/**
+	 * Construct the {@see Plugin_Importer} this adapter wraps.
+	 *
+	 * @return Plugin_Importer
+	 */
 	abstract protected function create_importer(): Plugin_Importer;
 
+	/**
+	 * The source plugin's storage table name (without the WordPress table prefix).
+	 *
+	 * @return string
+	 */
 	abstract protected function get_table_name(): string;
 
 	/**
@@ -34,10 +56,19 @@ abstract class DB_Scanner_Adapter extends Scanner_Base {
 	 */
 	abstract protected function map_row( array $row ): ?array;
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Delegates to the wrapped importer's `is_active()` so the adapter is available exactly
+	 * when the source plugin would be importable.
+	 */
 	public function is_available(): bool {
 		return (bool) call_user_func( [ get_class( $this->importer ), 'is_active' ] );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function scan(): array {
 		if ( ! $this->is_available() ) {
 			return [];
@@ -59,6 +90,13 @@ abstract class DB_Scanner_Adapter extends Scanner_Base {
 		return $snippets;
 	}
 
+	/**
+	 * Merge per-row field overrides on top of adapter-wide defaults.
+	 *
+	 * @param array<string, mixed> $fields Row-specific overrides from {@see self::map_row()}.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function with_defaults( array $fields ): array {
 		return array_merge(
 			[

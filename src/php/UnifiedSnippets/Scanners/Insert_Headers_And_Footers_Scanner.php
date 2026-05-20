@@ -19,22 +19,39 @@ class Insert_Headers_And_Footers_Scanner extends DB_Scanner_Adapter {
 
 	private const SUPPORTED_CODE_TYPES = [ 'php', 'css', 'js', 'html', 'universal' ];
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function get_id(): string {
 		return 'wpcode';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function get_label(): string {
 		return __( 'WPCode (Insert Headers and Footers)', 'code-snippets' );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function create_importer(): Plugin_Importer {
 		return new Insert_Headers_And_Footers_Plugin_Importer();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function get_table_name(): string {
 		return 'wpcode_snippets';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param array<string, mixed> $row Raw WPCode row from `wpcode` custom posts.
+	 */
 	protected function map_row( array $row ): ?array {
 		$code_type = (string) ( $row['code_type'] ?? '' );
 

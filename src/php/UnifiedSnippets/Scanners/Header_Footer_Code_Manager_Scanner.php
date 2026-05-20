@@ -17,22 +17,39 @@ use Code_Snippets\UnifiedSnippets\Adapters\DB_Scanner_Adapter;
  */
 class Header_Footer_Code_Manager_Scanner extends DB_Scanner_Adapter {
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function get_id(): string {
 		return 'hfcm';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function get_label(): string {
 		return __( 'Header Footer Code Manager', 'code-snippets' );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function create_importer(): Plugin_Importer {
 		return new Header_Footer_Code_Manager_Plugin_Importer();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function get_table_name(): string {
 		return 'hfcm_scripts';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param array<string, mixed> $row Raw HFCM row from `{prefix}hfcm_scripts`.
+	 */
 	protected function map_row( array $row ): ?array {
 		$code = (string) ( $row['snippet'] ?? '' );
 
