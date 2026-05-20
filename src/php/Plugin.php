@@ -22,6 +22,7 @@ use Code_Snippets\UnifiedSnippets\Scanner_Registry;
 use Code_Snippets\UnifiedSnippets\Scan_Results_Store;
 use Code_Snippets\UnifiedSnippets\REST\Scan_REST_Controller;
 use Code_Snippets\UnifiedSnippets\Scanners\Additional_CSS_Scanner;
+use Code_Snippets\UnifiedSnippets\Scanners\Divi_Theme_Options_Scanner;
 use Code_Snippets\UnifiedSnippets\Scanners\Functions_Php_Scanner;
 use Code_Snippets\UnifiedSnippets\Scanners\Header_Footer_Code_Manager_Scanner;
 use Code_Snippets\UnifiedSnippets\Scanners\Htaccess_Scanner;
@@ -197,6 +198,7 @@ class Plugin {
 		$this->unified_snippets->register( new Insert_Headers_And_Footers_Scanner() );
 		$this->unified_snippets->register( new Header_Footer_Code_Manager_Scanner() );
 		$this->unified_snippets->register( new Insert_PHP_Code_Snippet_Scanner() );
+		$this->unified_snippets->register( new Divi_Theme_Options_Scanner() );
 
 		new Scan_REST_Controller( $this->unified_snippets, $this->unified_snippets_store );
 	}
