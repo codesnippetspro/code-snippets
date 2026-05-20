@@ -34,8 +34,14 @@ class Discovered_Snippet extends Model {
 	private const VALID_TYPES = [ 'php', 'css', 'js', 'html', 'config', 'mixed' ];
 
 	private const VALID_SOURCE_TYPES = [
-		'theme', 'child-theme', 'plugin', 'builder',
-		'core', 'server', 'customizer', 'mu-plugin',
+		'theme',
+		'child-theme',
+		'plugin',
+		'builder',
+		'core',
+		'server',
+		'customizer',
+		'mu-plugin',
 	];
 
 	private const VALID_RISK_LEVELS = [ 'low', 'medium', 'high' ];
@@ -146,13 +152,16 @@ class Discovered_Snippet extends Model {
 	 * @return string SHA-256 hash.
 	 */
 	public function generate_hash(): string {
-		$key = implode( '|', [
-			$this->scanner_id,
-			$this->source_type,
-			$this->source_path,
-			$this->line_start,
-			$this->line_end,
-		] );
+		$key = implode(
+            '|',
+            [
+				$this->scanner_id,
+				$this->source_type,
+				$this->source_path,
+				$this->line_start,
+				$this->line_end,
+			]
+        );
 
 		$this->hash = hash( 'sha256', $key );
 
