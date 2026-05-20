@@ -33,30 +33,10 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 	private const SUPPORTED_TEMPLATES = [ 'Divi', 'Extra' ];
 
 	/**
-	 * Default shortname used when the active template is not one of the supported themes
-	 * (only relevant in override-mode for tests).
+	 * Fallback shortname when the active template is not Extra. Production only reaches this
+	 * branch when running against Divi itself (the parent theme).
 	 */
 	private const DEFAULT_SHORTNAME = 'divi';
-
-	/**
-	 * Optional in-memory overrides keyed by Divi option name (without the `et_<shortname>_` prefix).
-	 *
-	 * Used by tests to inject fixture values without touching wp_options. When non-empty, the
-	 * scanner also treats itself as available regardless of the active template so test fixtures
-	 * can drive end-to-end behaviour.
-	 *
-	 * @var array<string, string>
-	 */
-	private array $option_overrides;
-
-	/**
-	 * Class constructor.
-	 *
-	 * @param array<string, string> $option_overrides Optional option-value overrides for testing.
-	 */
-	public function __construct( array $option_overrides = [] ) {
-		$this->option_overrides = $option_overrides;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -80,10 +60,6 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 	 * dormant and the namespaced option keys belong to an inactive theme.
 	 */
 	public function is_available(): bool {
-		if ( $this->option_overrides ) {
-			return true;
-		}
-
 		if ( ! function_exists( 'get_template' ) ) {
 			return false;
 		}
@@ -164,10 +140,6 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 	 * @return string The stored value, or '' when unset.
 	 */
 	private function read_option( string $shortname, string $key ): string {
-		if ( array_key_exists( $key, $this->option_overrides ) ) {
-			return (string) $this->option_overrides[ $key ];
-		}
-
 		if ( ! function_exists( 'get_option' ) ) {
 			return '';
 		}

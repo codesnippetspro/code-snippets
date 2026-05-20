@@ -7,30 +7,71 @@ use Code_Snippets\UnifiedSnippets\Scanners\Divi_Theme_Options_Scanner;
 /**
  * Tests for the Tier 3 Divi Theme Options scanner.
  *
- * The scanner is constructed with option-value overrides to avoid touching wp_options or
- * needing Divi installed in the test environment. Override mode also forces is_available()
- * to true so end-to-end behaviour can be exercised without activating the theme.
+ * The scanner has no test-only seams: all fixtures are written through real WordPress APIs
+ * (`update_option()` for wp_options, and the `pre_option_template` / `pre_option_stylesheet`
+ * filters for `get_template()`). Each test that seeds data is responsible for cleaning up,
+ * and the filter callbacks are removed in tearDown.
  *
  * @group unified-snippets
  */
 class Divi_Scanner_Test extends TestCase {
 
 	/**
-	 * Populated fixture covering all five Divi Theme Options fields.
+	 * Closures registered against `pre_option_*` filters during a test, captured so they can
+	 * be removed in tearDown.
 	 *
-	 * @var array<string, string>
+	 * @var array<int, array{hook: string, callback: callable}>
 	 */
-	private const FULL_FIXTURE = [
-		'custom_css'                  => '.divi-test { color: red; }',
-		'integration_head'            => '<meta name="divi-head" content="1">',
-		'integration_body'            => '<script>window.diviBody = true;</script>',
-		'integration_single_top'      => '<div class="divi-single-top">Top</div>',
-		'integration_single_bottom'   => '<div class="divi-single-bottom">Bottom</div>',
-		'integrate_header_enable'     => 'on',
-		'integrate_body_enable'       => 'on',
-		'integrate_singletop_enable'  => 'on',
-		'integrate_singlebottom_enable' => 'on',
-	];
+	private array $registered_filters = [];
+
+	/**
+	 * Tear down per-test fixtures: remove any `pre_option_*` filters this test registered, and
+	 * delete the wp_options rows the per-storage tests seed.
+	 */
+	public function tear_down() {
+		foreach ( $this->registered_filters as $entry ) {
+			remove_filter( $entry['hook'], $entry['callback'] );
+		}
+
+		$this->registered_filters = [];
+
+		delete_option( 'et_divi' );
+		delete_option( 'divi_custom_css' );
+		delete_option( 'divi_integration_head' );
+		delete_option( 'divi_integration_body' );
+		delete_option( 'divi_integration_single_top' );
+		delete_option( 'divi_integration_single_bottom' );
+		delete_option( 'divi_integrate_header_enable' );
+		delete_option( 'divi_integrate_body_enable' );
+		delete_option( 'divi_integrate_singletop_enable' );
+		delete_option( 'divi_integrate_singlebottom_enable' );
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Force `get_template()` (and its companion `get_stylesheet()`) to report a chosen theme
+	 * slug for the duration of the test, without activating that theme on disk. Uses WordPress's
+	 * own `pre_option_*` short-circuit filters so we don't poke at scanner internals.
+	 *
+	 * @param string $template Slug to return from get_template(), e.g. 'Divi' or 'twentytwentyfour'.
+	 *
+	 * @return void
+	 */
+	private function pretend_active_template( string $template ): void {
+		$callback = static function () use ( $template ) {
+			return $template;
+		};
+
+		foreach ( [ 'pre_option_template', 'pre_option_stylesheet' ] as $hook ) {
+			add_filter( $hook, $callback );
+
+			$this->registered_filters[] = [
+				'hook'     => $hook,
+				'callback' => $callback,
+			];
+		}
+	}
 
 	/**
 	 * Index a scan result by snippet name for easier per-field assertions.
@@ -50,11 +91,38 @@ class Divi_Scanner_Test extends TestCase {
 	}
 
 	/**
-	 * A populated fixture produces one Discovered_Snippet per Divi field with the expected
-	 * type, source metadata, and active flags.
+	 * Write a fully populated `et_divi` bundle (one-row storage mode) covering every field
+	 * the scanner knows about, with all enable toggles set to `'on'`.
+	 *
+	 * @return void
+	 */
+	private function seed_full_divi_bundle(): void {
+		update_option(
+			'et_divi',
+			[
+				'divi_custom_css'                => '.divi-test { color: red; }',
+				'divi_integration_head'          => '<meta name="divi-head" content="1">',
+				'divi_integration_body'          => '<script>window.diviBody = true;</script>',
+				'divi_integration_single_top'    => '<div class="divi-single-top">Top</div>',
+				'divi_integration_single_bottom' => '<div class="divi-single-bottom">Bottom</div>',
+				'divi_integrate_header_enable'   => 'on',
+				'divi_integrate_body_enable'     => 'on',
+				'divi_integrate_singletop_enable' => 'on',
+				'divi_integrate_singlebottom_enable' => 'on',
+			]
+		);
+	}
+
+	/**
+	 * A fully populated Divi install produces one Discovered_Snippet per field with the
+	 * expected type, source metadata, and active flags. Uses one-row storage mode (the modern
+	 * Divi default).
 	 */
 	public function test_scan_returns_one_snippet_per_populated_field() {
-		$scanner = new Divi_Theme_Options_Scanner( self::FULL_FIXTURE );
+		$this->pretend_active_template( 'Divi' );
+		$this->seed_full_divi_bundle();
+
+		$scanner = new Divi_Theme_Options_Scanner();
 
 		$this->assertTrue( $scanner->is_available() );
 
@@ -103,15 +171,18 @@ class Divi_Scanner_Test extends TestCase {
 	 * surfaces the fields the user has actually filled in.
 	 */
 	public function test_scan_skips_empty_fields() {
-		$scanner = new Divi_Theme_Options_Scanner(
+		$this->pretend_active_template( 'Divi' );
+
+		update_option(
+			'et_divi',
 			[
-				'custom_css'       => '.only-css {}',
-				'integration_head' => '   ',
-				'integration_body' => '',
+				'divi_custom_css'       => '.only-css {}',
+				'divi_integration_head' => '   ',
+				'divi_integration_body' => '',
 			]
 		);
 
-		$results = $scanner->scan();
+		$results = ( new Divi_Theme_Options_Scanner() )->scan();
 
 		$this->assertCount( 1, $results );
 		$this->assertSame( 'Divi Custom CSS', $results[0]->name );
@@ -119,18 +190,22 @@ class Divi_Scanner_Test extends TestCase {
 	}
 
 	/**
-	 * Disabling Divi's `_integrate_header_enable` toggle is reflected as `is_active = false`
-	 * on the discovered snippet so the Unified view does not falsely report it as running.
+	 * Disabling Divi's `_integrate_header_enable` toggle (stored as `'off'`) is reflected as
+	 * `is_active = false` on the discovered snippet so the Unified view does not falsely
+	 * report it as running.
 	 */
 	public function test_disabled_toggle_marks_snippet_inactive() {
-		$scanner = new Divi_Theme_Options_Scanner(
+		$this->pretend_active_template( 'Divi' );
+
+		update_option(
+			'et_divi',
 			[
-				'integration_head'        => '<meta name="divi-head" content="1">',
-				'integrate_header_enable' => 'off',
+				'divi_integration_head'        => '<meta name="divi-head" content="1">',
+				'divi_integrate_header_enable' => 'off',
 			]
 		);
 
-		$results = $scanner->scan();
+		$results = ( new Divi_Theme_Options_Scanner() )->scan();
 
 		$this->assertCount( 1, $results );
 		$this->assertSame( 'Divi Head Code', $results[0]->name );
@@ -143,13 +218,16 @@ class Divi_Scanner_Test extends TestCase {
 	 * actually emitted by Divi. The scanner must mirror that.
 	 */
 	public function test_missing_toggle_reports_inactive() {
-		$scanner = new Divi_Theme_Options_Scanner(
+		$this->pretend_active_template( 'Divi' );
+
+		update_option(
+			'et_divi',
 			[
-				'integration_body' => '<script>window.diviBody = true;</script>',
+				'divi_integration_body' => '<script>window.diviBody = true;</script>',
 			]
 		);
 
-		$results = $scanner->scan();
+		$results = ( new Divi_Theme_Options_Scanner() )->scan();
 
 		$this->assertCount( 1, $results );
 		$this->assertSame( 'Divi Body Code', $results[0]->name );
@@ -161,14 +239,17 @@ class Divi_Scanner_Test extends TestCase {
 	 * save time. That is not strictly equal to `'on'`, so the snippet must report inactive.
 	 */
 	public function test_literal_false_toggle_reports_inactive() {
-		$scanner = new Divi_Theme_Options_Scanner(
+		$this->pretend_active_template( 'Divi' );
+
+		update_option(
+			'et_divi',
 			[
-				'integration_head'        => '<meta name="divi-head" content="1">',
-				'integrate_header_enable' => 'false',
+				'divi_integration_head'        => '<meta name="divi-head" content="1">',
+				'divi_integrate_header_enable' => 'false',
 			]
 		);
 
-		$results = $scanner->scan();
+		$results = ( new Divi_Theme_Options_Scanner() )->scan();
 
 		$this->assertCount( 1, $results );
 		$this->assertSame( 'Divi Head Code', $results[0]->name );
@@ -180,11 +261,11 @@ class Divi_Scanner_Test extends TestCase {
 	 * stable across repeated scans. This is what change detection in Phase 5 relies on.
 	 */
 	public function test_hash_is_stable_across_scans() {
-		$scanner_a = new Divi_Theme_Options_Scanner( self::FULL_FIXTURE );
-		$scanner_b = new Divi_Theme_Options_Scanner( self::FULL_FIXTURE );
+		$this->pretend_active_template( 'Divi' );
+		$this->seed_full_divi_bundle();
 
-		$hashes_a = wp_list_pluck( $scanner_a->scan(), 'hash' );
-		$hashes_b = wp_list_pluck( $scanner_b->scan(), 'hash' );
+		$hashes_a = wp_list_pluck( ( new Divi_Theme_Options_Scanner() )->scan(), 'hash' );
+		$hashes_b = wp_list_pluck( ( new Divi_Theme_Options_Scanner() )->scan(), 'hash' );
 
 		sort( $hashes_a );
 		sort( $hashes_b );
@@ -198,27 +279,40 @@ class Divi_Scanner_Test extends TestCase {
 	 * its `hash` (so the snippet is recognised as the same source location).
 	 */
 	public function test_checksum_changes_with_code_but_hash_stays() {
-		$base = new Divi_Theme_Options_Scanner( self::FULL_FIXTURE );
+		$this->pretend_active_template( 'Divi' );
+		$this->seed_full_divi_bundle();
 
-		$modified_fixture                 = self::FULL_FIXTURE;
-		$modified_fixture['integration_head'] = '<meta name="divi-head" content="2">';
-		$modified = new Divi_Theme_Options_Scanner( $modified_fixture );
+		$head_before = $this->index_by_name( ( new Divi_Theme_Options_Scanner() )->scan() )['Divi Head Code'];
 
-		$head_before = $this->index_by_name( $base->scan() )['Divi Head Code'];
-		$head_after  = $this->index_by_name( $modified->scan() )['Divi Head Code'];
+		$bundle = get_option( 'et_divi' );
+		$bundle['divi_integration_head'] = '<meta name="divi-head" content="2">';
+		update_option( 'et_divi', $bundle );
+
+		$head_after = $this->index_by_name( ( new Divi_Theme_Options_Scanner() )->scan() )['Divi Head Code'];
 
 		$this->assertSame( $head_before->hash, $head_after->hash );
 		$this->assertNotSame( $head_before->checksum, $head_after->checksum );
 	}
 
 	/**
-	 * Without override fixtures, availability is driven by the active template. The test
-	 * environment is not running Divi, so the scanner must report itself unavailable.
+	 * Without Divi (or Extra) as the active template, the scanner reports itself unavailable
+	 * even if the wp_options rows still exist. Divi's hooks are not running, so the code is
+	 * dormant and should not be surfaced.
 	 */
 	public function test_is_available_false_without_divi_theme() {
-		$scanner = new Divi_Theme_Options_Scanner();
+		$this->pretend_active_template( 'twentytwentyfour' );
 
-		$this->assertFalse( $scanner->is_available() );
+		$this->assertFalse( ( new Divi_Theme_Options_Scanner() )->is_available() );
+	}
+
+	/**
+	 * The sibling theme Extra shares Divi's option storage layout under a different shortname,
+	 * so the scanner reports itself available when Extra is the active template.
+	 */
+	public function test_is_available_true_for_extra_theme() {
+		$this->pretend_active_template( 'Extra' );
+
+		$this->assertTrue( ( new Divi_Theme_Options_Scanner() )->is_available() );
 	}
 
 	/**
@@ -237,10 +331,11 @@ class Divi_Scanner_Test extends TestCase {
 	/**
 	 * One-row storage: Divi packs every option into `et_divi`, keyed by the full field id
 	 * (e.g. `divi_custom_css`). The scanner must look up `<shortname>_<key>` inside that array
-	 * rather than the bare key. Without override fixtures this exercises the real
-	 * get_option path that production runs against.
+	 * rather than the bare key.
 	 */
 	public function test_reads_real_one_row_storage() {
+		$this->pretend_active_template( 'Divi' );
+
 		update_option(
 			'et_divi',
 			[
@@ -249,50 +344,30 @@ class Divi_Scanner_Test extends TestCase {
 			]
 		);
 
-		$scanner = $this->scanner_with_forced_availability();
-		$results = $this->index_by_name( $scanner->scan() );
+		$results = $this->index_by_name( ( new Divi_Theme_Options_Scanner() )->scan() );
 
-		try {
-			$this->assertArrayHasKey( 'Divi Custom CSS', $results );
-			$this->assertSame( '.real-one-row { color: green; }', $results['Divi Custom CSS']->code );
-			$this->assertArrayHasKey( 'Divi Head Code', $results );
-			$this->assertSame( '<meta name="real-one-row" content="1">', $results['Divi Head Code']->code );
-		} finally {
-			delete_option( 'et_divi' );
-		}
+		$this->assertArrayHasKey( 'Divi Custom CSS', $results );
+		$this->assertSame( '.real-one-row { color: green; }', $results['Divi Custom CSS']->code );
+		$this->assertArrayHasKey( 'Divi Head Code', $results );
+		$this->assertSame( '<meta name="real-one-row" content="1">', $results['Divi Head Code']->code );
 	}
 
 	/**
 	 * Per-row storage: each field is stored as its own option named after the full field id
-	 * (e.g. `divi_custom_css`), with no `et_` prefix. The scanner falls back to this read
+	 * (e.g. `divi_integration_body`), with no `et_` prefix. The scanner falls back to this read
 	 * path when the `et_<shortname>` bundle is missing the key.
 	 */
 	public function test_reads_real_per_row_storage() {
+		$this->pretend_active_template( 'Divi' );
+
 		update_option( 'divi_integration_body', '<script>console.log("real-per-row");</script>' );
 
-		$scanner = $this->scanner_with_forced_availability();
-		$results = $this->index_by_name( $scanner->scan() );
+		$results = $this->index_by_name( ( new Divi_Theme_Options_Scanner() )->scan() );
 
-		try {
-			$this->assertArrayHasKey( 'Divi Body Code', $results );
-			$this->assertSame(
-				'<script>console.log("real-per-row");</script>',
-				$results['Divi Body Code']->code
-			);
-		} finally {
-			delete_option( 'divi_integration_body' );
-		}
-	}
-
-	/**
-	 * Build a scanner instance whose `is_available()` returns true regardless of the active
-	 * theme template, so the storage-mode tests can exercise the real wp_options read path
-	 * without needing Divi installed in the test environment.
-	 *
-	 * The trivial single-key override forces override-mode availability without polluting
-	 * any of the real Divi field reads (the override key never matches a real Divi field).
-	 */
-	private function scanner_with_forced_availability(): Divi_Theme_Options_Scanner {
-		return new Divi_Theme_Options_Scanner( [ '__force_available__' => '' ] );
+		$this->assertArrayHasKey( 'Divi Body Code', $results );
+		$this->assertSame(
+			'<script>console.log("real-per-row");</script>',
+			$results['Divi Body Code']->code
+		);
 	}
 }
