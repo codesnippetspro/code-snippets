@@ -213,4 +213,66 @@ class Divi_Scanner_Test extends TestCase {
 		$this->assertTrue( $scanner->supports_import() );
 		$this->assertFalse( $scanner->supports_editing() );
 	}
+
+	/**
+	 * One-row storage: Divi packs every option into `et_divi`, keyed by the full field id
+	 * (e.g. `divi_custom_css`). The scanner must look up `<shortname>_<key>` inside that array
+	 * rather than the bare key. Without override fixtures this exercises the real
+	 * get_option path that production runs against.
+	 */
+	public function test_reads_real_one_row_storage() {
+		update_option(
+			'et_divi',
+			[
+				'divi_custom_css'       => '.real-one-row { color: green; }',
+				'divi_integration_head' => '<meta name="real-one-row" content="1">',
+			]
+		);
+
+		$scanner = $this->scanner_with_forced_availability();
+		$results = $this->index_by_name( $scanner->scan() );
+
+		try {
+			$this->assertArrayHasKey( 'Divi Custom CSS', $results );
+			$this->assertSame( '.real-one-row { color: green; }', $results['Divi Custom CSS']->code );
+			$this->assertArrayHasKey( 'Divi Head Code', $results );
+			$this->assertSame( '<meta name="real-one-row" content="1">', $results['Divi Head Code']->code );
+		} finally {
+			delete_option( 'et_divi' );
+		}
+	}
+
+	/**
+	 * Per-row storage: each field is stored as its own option named after the full field id
+	 * (e.g. `divi_custom_css`), with no `et_` prefix. The scanner falls back to this read
+	 * path when the `et_<shortname>` bundle is missing the key.
+	 */
+	public function test_reads_real_per_row_storage() {
+		update_option( 'divi_integration_body', '<script>console.log("real-per-row");</script>' );
+
+		$scanner = $this->scanner_with_forced_availability();
+		$results = $this->index_by_name( $scanner->scan() );
+
+		try {
+			$this->assertArrayHasKey( 'Divi Body Code', $results );
+			$this->assertSame(
+				'<script>console.log("real-per-row");</script>',
+				$results['Divi Body Code']->code
+			);
+		} finally {
+			delete_option( 'divi_integration_body' );
+		}
+	}
+
+	/**
+	 * Build a scanner instance whose `is_available()` returns true regardless of the active
+	 * theme template, so the storage-mode tests can exercise the real wp_options read path
+	 * without needing Divi installed in the test environment.
+	 *
+	 * The trivial single-key override forces override-mode availability without polluting
+	 * any of the real Divi field reads (the override key never matches a real Divi field).
+	 */
+	private function scanner_with_forced_availability(): Divi_Theme_Options_Scanner {
+		return new Divi_Theme_Options_Scanner( [ '__force_available__' => '' ] );
+	}
 }

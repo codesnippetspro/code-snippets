@@ -150,13 +150,16 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 	 * Read a Divi option, mirroring `et_get_option()`'s two storage modes.
 	 *
 	 * Divi may store its theme options either as a single serialised array under `et_<shortname>`
-	 * (one-row mode) or as individual options keyed `et_<shortname>_<key>` (per-row mode). The
-	 * actual mode is decided per-install by `et_options_stored_in_one_row()`. Rather than load
-	 * that helper, we check both locations and return whichever yields a value; reads against an
-	 * empty install harmlessly return ''.
+	 * (one-row mode) or as individual options keyed by the full field id (per-row mode). The
+	 * actual mode is decided per-install by `et_options_stored_in_one_row()`. Crucially, the
+	 * field IDs in `options_divi.php` are already prefixed with the shortname (e.g.
+	 * `divi_custom_css`, `divi_integration_head`), and that full id is what `et_get_option()`
+	 * uses as both the array key (one-row) and the option name (per-row). Rather than load
+	 * Divi's helper, we check both locations and return whichever yields a value; reads against
+	 * an empty install harmlessly return ''.
 	 *
-	 * @param string $shortname The resolved Divi shortname.
-	 * @param string $key       Option key without the `et_<shortname>_` prefix (e.g. `custom_css`).
+	 * @param string $shortname The resolved Divi shortname (e.g. `divi`).
+	 * @param string $key       Option key without the shortname prefix (e.g. `custom_css`).
 	 *
 	 * @return string The stored value, or '' when unset.
 	 */
@@ -169,12 +172,14 @@ class Divi_Theme_Options_Scanner extends Scanner_Base {
 			return '';
 		}
 
+		$full_key = $shortname . '_' . $key;
+
 		$bundle = get_option( 'et_' . $shortname );
-		if ( is_array( $bundle ) && isset( $bundle[ $key ] ) && '' !== (string) $bundle[ $key ] ) {
-			return (string) $bundle[ $key ];
+		if ( is_array( $bundle ) && isset( $bundle[ $full_key ] ) && '' !== (string) $bundle[ $full_key ] ) {
+			return (string) $bundle[ $full_key ];
 		}
 
-		$value = get_option( 'et_' . $shortname . '_' . $key, '' );
+		$value = get_option( $full_key, '' );
 
 		return is_scalar( $value ) ? (string) $value : '';
 	}
