@@ -27,11 +27,13 @@ declare global {
 				snippets: string
 				recentlyActive: string
 				conditions: string
-				cloud: string
 				importPlugins: string
 				importFiles: string
 				nonce: string
-				localToken: string
+				cloud: {
+					token: string
+					snippets: string
+				}
 			}
 			urls: {
 				plugin: string

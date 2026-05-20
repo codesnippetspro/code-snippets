@@ -52,7 +52,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 			setIsSearching(true)
 
 			api.getResponse<CloudSnippetSchema[]>(
-				buildUrl(REST_BASES.cloud, { query, searchByCodevault, page, per_page: snippetsPerPage })
+				buildUrl(REST_BASES.cloud.snippets, { query, searchByCodevault, page, per_page: snippetsPerPage })
 			)
 				.then(response => {
 					setTotalItems(Number(response.headers['x-wp-total']))

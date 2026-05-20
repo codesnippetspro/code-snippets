@@ -1,7 +1,7 @@
 @use 'upsell';
 
 $toolbar-block-size: 150px;
-$wpbody-block-indent: 20px;
+$wpbody-block-indent: 22px;
 
 #wpbody {
 	padding-block-start: $toolbar-block-size;
@@ -29,7 +29,7 @@ $wpbody-block-indent: 20px;
 .code-snippets-toolbar-upper {
 	justify-content: space-between;
 	block-size: 77px;
-	padding-inline: 35px;
+	padding-inline: 24px;
 	display: flex;
 	align-items: center;
 
@@ -62,7 +62,7 @@ $wpbody-block-indent: 20px;
 }
 
 .code-snippets-toolbar-lower {
-	border: 1px solid #c3c4c7;
+	border-block: 1px solid #c3c4c7;
 
 	ul {
 		display: flex;
@@ -113,6 +113,7 @@ $wpbody-block-indent: 20px;
 	align-items: center;
 	box-sizing: border-box;
 	padding: 3px 9px;
+	font-weight: 600;
 }
 
 

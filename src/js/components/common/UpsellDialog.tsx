@@ -12,7 +12,7 @@ export interface UpsellDialogProps {
 export const UpsellDialog: React.FC<UpsellDialogProps> = ({ isOpen, setIsOpen }) =>
 	isOpen
 		? <Modal
-			title=""
+			aria-labelledby="code-snippets-upsell-dialog-title"
 			className="code-snippets-upsell-dialog"
 			onRequestClose={() => {
 				setIsOpen(false)
@@ -23,7 +23,7 @@ export const UpsellDialog: React.FC<UpsellDialogProps> = ({ isOpen, setIsOpen })
 				alt={__('Code Snippets logo', 'code-snippets')}
 			/>
 
-			<h1>
+			<h1 id="code-snippets-upsell-dialog-title">
 				{createInterpolateElement(
 					__('Unlock all cloud sync features and many more, with <span>Code Snippets Pro</span>', 'code-snippets'),
 					{ span: <span /> }

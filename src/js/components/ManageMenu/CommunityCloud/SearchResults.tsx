@@ -46,7 +46,10 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 			<Badge name={getSnippetType(snippet)} />
 			<span className="cloud-snippet-votes">
 				<span className="dashicons dashicons-thumbs-up" aria-hidden="true"></span>
-				<span>{snippet.vote_count}</span>
+				<span>
+					{snippet.vote_count}
+					<span className="screen-reader-text">{` ${__('votes', 'code-snippets')}`}</span>
+				</span>
 			</span>
 			{0 < snippet.tags.length
 				? <span className="cloud-snippet-category">
@@ -107,7 +110,7 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
 		setIsWorking(true)
 		setErrorMessage(undefined)
 
-		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud}/${snippet.id}/download`)
+		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)
 			.then(response => {
 				setLocalSnippetId(response.snippet_id)
 			})

@@ -1,0 +1,88 @@
+name: "(Lint): CSS, JS, PHP"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  push:
+    branches:
+      - 'core'
+      - 'pro'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.gitignore'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: stylelint, eslint, phpcs
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Set up PHP
+        uses: codesnippetspro/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Compute dependency hash
+        id: deps-hash
+        run: |
+          set -euo pipefail
+          tmpfile=$(mktemp)
+          if [ -f "src/composer.lock" ]; then
+            cat "src/composer.lock" >> "$tmpfile"
+          fi
+          if [ -s "$tmpfile" ]; then
+            deps_hash=$(shasum -a 1 "$tmpfile" | awk '{print $1}' | cut -c1-8)
+          else
+            deps_hash=$(echo "${GITHUB_SHA:-unknown}" | cut -c1-8)
+          fi
+          echo "deps_hash=$deps_hash" >> "$GITHUB_OUTPUT"
+
+      - name: Get Composer cache
+        id: composer-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: src/vendor
+          key: ${{ runner.os }}-php-8.2-composer-${{ steps.deps-hash.outputs.deps_hash }}
+          restore-keys: |
+            ${{ runner.os }}-php-8.2-composer-
+
+      - name: Install Composer dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: composer install -d src --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Save Composer cache
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: src/vendor
+          key: ${{ runner.os }}-php-8.2-composer-${{ steps.deps-hash.outputs.deps_hash }}
+
+      - name: Run Stylelint
+        run: npm run lint:styles
+
+      - name: Run ESLint
+        run: npm run lint:js
+
+      - name: Run PHP CS
+        run: npm run lint:php

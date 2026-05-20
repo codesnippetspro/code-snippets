@@ -23,50 +23,51 @@ export const UploadForm: React.FC = () => {
 	const [availableSnippets, setAvailableSnippets] = useState<ImportableSnippetSchema[]>([])
 
 	return (
-		<div className="wrap">
-			<div className="upload-form-container">
-				<p>{__('Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets')}</p>
+		<>
+			<p>{__('Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets')}</p>
 
-				<p>
-					{createInterpolateElement(
-						__('Afterward, you will need to visit the <a>All Snippets</a> page to activate the imported snippets.', 'code-snippets'),
-						{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
-					)}
-				</p>
+			<p>
+				{createInterpolateElement(
+					__('Afterward, you will need to visit the <a>All Snippets</a> page to activate the imported snippets.', 'code-snippets'),
+					{
+						// eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+						a: <a href={window.CODE_SNIPPETS?.urls.manage} />
+					}
+				)}
+			</p>
 
-				{'upload' === currentStep && !importResult?.success && (
-					<>
-						<DuplicateActionSelector value={duplicateAction} onChange={setDuplicateAction} />
+			{'upload' === currentStep && !importResult?.success && (
+				<>
+					<DuplicateActionSelector value={duplicateAction} onChange={setDuplicateAction} />
 
-						<SelectFiles
-							{...{ fileInputRef, selectedFiles, setSelectedFiles, setImportResult }}
-							onSuccess={uploadedSnippets => {
-								setAvailableSnippets(uploadedSnippets)
-								setCurrentStep('select')
-							}}
-						/>
-					</>)}
-
-				{'select' === currentStep && 0 < availableSnippets.length && !importResult?.success && (
-					<SelectSnippets
-						duplicateAction={duplicateAction}
-						setImportResult={setImportResult}
-						availableSnippets={availableSnippets}
-						onCancel={() => {
-							setSelectedFiles(undefined)
-
-							if (fileInputRef.current) {
-								fileInputRef.current.value = ''
-							}
-
-							setAvailableSnippets([])
-							setImportResult(undefined)
-							setCurrentStep('upload')
+					<SelectFiles
+						{...{ fileInputRef, selectedFiles, setSelectedFiles, setImportResult }}
+						onSuccess={uploadedSnippets => {
+							setAvailableSnippets(uploadedSnippets)
+							setCurrentStep('select')
 						}}
-					/>)}
+					/>
+				</>)}
 
-				{importResult && <ImportResultDisplay {...importResult} />}
-			</div>
-		</div>
+			{'select' === currentStep && 0 < availableSnippets.length && !importResult?.success && (
+				<SelectSnippets
+					duplicateAction={duplicateAction}
+					setImportResult={setImportResult}
+					availableSnippets={availableSnippets}
+					onCancel={() => {
+						setSelectedFiles(undefined)
+
+						if (fileInputRef.current) {
+							fileInputRef.current.value = ''
+						}
+
+						setAvailableSnippets([])
+						setImportResult(undefined)
+						setCurrentStep('upload')
+					}}
+				/>)}
+
+			{importResult && <ImportResultDisplay {...importResult} />}
+		</>
 	)
 }

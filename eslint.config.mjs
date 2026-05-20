@@ -6,6 +6,7 @@ import eslintTs from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
 import reactHooks from 'eslint-plugin-react-hooks'
 import importPlugin from 'eslint-plugin-import'
+import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
 import reactPlugin from 'eslint-plugin-react'
 import { FlatCompat } from '@eslint/eslintrc'
 
@@ -21,6 +22,7 @@ export default eslintTs.config(
 	...compat.extends('plugin:react-hooks/recommended'),
 	reactPlugin.configs.flat.recommended,
 	importPlugin.flatConfigs.recommended,
+	jsxA11yPlugin.flatConfigs.recommended,
 	{
 		plugins: { 'react-hooks': reactHooks },
 		rules: reactHooks.configs.recommended.rules,
@@ -67,7 +69,7 @@ export default eslintTs.config(
 			'@stylistic/indent': ['error', 'tab', { SwitchCase: 1 }],
 			'@stylistic/jsx-quotes': ['error', 'prefer-double'],
 			'@stylistic/linebreak-style': ['error', 'unix'],
-			'@stylistic/max-len': ['warn', 140, { ignorePattern: 'd="(.*?)"|_[_xn]\\(|import .+ from .+' }],
+			'@stylistic/max-len': ['error', 140, { ignorePattern: 'd="(.*?)"|_[_xn]\\(|import .+ from .+' }],
 			'@stylistic/multiline-ternary': 'off',
 			'@stylistic/no-extra-parens': ['error', 'all', { ignoreJSX: 'multi-line' }],
 			'@stylistic/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
@@ -127,7 +129,30 @@ export default eslintTs.config(
 			'prefer-named-capture-group': 'error',
 			'prefer-template': 'error',
 			'sort-imports': ['error', { ignoreDeclarationSort: true }],
-			'yoda': ['error', 'always']
+			'yoda': ['error', 'always'],
+			// Accessibility rules.
+			'jsx-a11y/alt-text': 'error',
+			'jsx-a11y/anchor-has-content': 'error',
+			'jsx-a11y/anchor-is-valid': 'error',
+			'jsx-a11y/aria-props': 'error',
+			'jsx-a11y/aria-proptypes': 'error',
+			'jsx-a11y/aria-role': 'error',
+			'jsx-a11y/aria-unsupported-elements': 'error',
+			'jsx-a11y/click-events-have-key-events': 'error',
+			'jsx-a11y/control-has-associated-label': 'warn',
+			'jsx-a11y/heading-has-content': 'error',
+			'jsx-a11y/iframe-has-title': 'error',
+			'jsx-a11y/img-redundant-alt': 'error',
+			'jsx-a11y/interactive-supports-focus': 'error',
+			'jsx-a11y/label-has-associated-control': 'error',
+			'jsx-a11y/no-autofocus': 'error',
+			'jsx-a11y/no-noninteractive-element-interactions': 'error',
+			'jsx-a11y/no-noninteractive-tabindex': 'error',
+			'jsx-a11y/no-redundant-roles': 'error',
+			'jsx-a11y/no-static-element-interactions': 'error',
+			'jsx-a11y/role-has-required-aria-props': 'error',
+			'jsx-a11y/role-supports-aria-props': 'error',
+			'jsx-a11y/tabindex-no-positive': 'error'
 		}
 	},
 	{

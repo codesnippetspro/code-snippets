@@ -34,6 +34,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialo
 				'nav-tab-active': type === currentType,
 				'nav-tab-inactive': type && type !== currentType && !isLicensed() && isProType(type)
 			})}
+			aria-current={type === currentType ? 'page' : undefined}
 			onClick={event => {
 				event.preventDefault()
 
@@ -118,7 +119,7 @@ const SnippetsTableInner = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
 	return (
-		<div className="wrap">
+		<>
 			<PageHeading />
 
 			<nav
@@ -135,7 +136,7 @@ const SnippetsTableInner = () => {
 			</WithFilteredSnippetsContext>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
-		</div>
+		</>
 	)
 }
 

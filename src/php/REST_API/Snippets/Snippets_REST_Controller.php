@@ -214,16 +214,12 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 * is treated as a network-scoped request. A missing or null `network` param
 	 * means "site-scoped", and must not be escalated to the network capability.
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request|WP_Error $request Full data about the request.
 	 *
 	 * @return bool
 	 */
 	private function is_network_scoped_request( $request ): bool {
-		if ( ! is_multisite() ) {
-			return false;
-		}
-
-		if ( ! $request instanceof WP_REST_Request || ! $request->has_param( 'network' ) ) {
+		if ( ! is_multisite() || ! $request instanceof WP_REST_Request || ! $request->has_param( 'network' ) ) {
 			return false;
 		}
 
@@ -247,12 +243,10 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 *
 	 * @return bool
 	 */
-	private function check_request_capability( $request ): bool {
-		if ( $this->is_network_scoped_request( $request ) ) {
-			return code_snippets()->user_can_manage_network_snippets();
-		}
-
-		return code_snippets()->current_user_can();
+	private function check_request_capability( WP_REST_Request $request ): bool {
+		return $this->is_network_scoped_request( $request )
+			? code_snippets()->user_can_manage_network_snippets()
+			: code_snippets()->current_user_can();
 	}
 
 	/**
@@ -263,7 +257,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 * `id` route parameter is used to look up the snippet so the result reflects the
 	 * actual stored row rather than a value supplied in the request payload.
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request|WP_Error $request Full data about the request.
 	 *
 	 * @return bool
 	 */
@@ -279,8 +273,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 		}
 
 		$snippet = get_snippet( $snippet_id, true );
-
-		return $snippet && $snippet->id && $snippet->shared_network;
+		return $snippet->id && $snippet->shared_network;
 	}
 
 	/**
@@ -358,7 +351,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 *
 	 * @return bool
 	 */
-	public function toggle_item_permissions_check( $request ): bool {
+	public function toggle_item_permissions_check( WP_REST_Request $request ): bool {
 		if ( $this->is_shared_network_snippet_request( $request ) ) {
 			return code_snippets()->current_user_can();
 		}
@@ -816,75 +809,75 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			'title'      => 'snippet',
 			'type'       => 'object',
 			'properties' => [
-				'id'             => [
+				'id'               => [
 					'description' => esc_html__( 'Unique identifier for the snippet.', 'code-snippets' ),
 					'type'        => 'integer',
 					'readonly'    => true,
 				],
-				'name'           => [
+				'name'             => [
 					'description' => esc_html__( 'Descriptive title for the snippet.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-				'desc'           => [
+				'desc'             => [
 					'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-				'code'           => [
+				'code'             => [
 					'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-				'tags'           => [
+				'tags'             => [
 					'description' => esc_html__( 'List of tag categories the snippet belongs to.', 'code-snippets' ),
 					'type'        => 'array',
 					'items'       => [
 						'type' => 'string',
 					],
 				],
-				'scope'          => [
+				'scope'            => [
 					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-				'condition_id'   => [
+				'condition_id'     => [
 					'description' => esc_html__( 'Identifier of condition linked to this snippet.', 'code-snippets' ),
 					'type'        => 'integer',
 				],
-				'active'         => [
+				'active'           => [
 					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
 					'type'        => 'boolean',
 				],
-				'trashed'        => [
+				'trashed'          => [
 					'description' => esc_html__( 'Whether the snippet is marked as deleted.', 'code-snippets' ),
 					'type'        => 'boolean',
 				],
-				'locked'         => [
+				'locked'           => [
 					'description' => esc_html__( 'Whether the snippet is locked from modification or deletion.', 'code-snippets' ),
 					'type'        => 'boolean',
 				],
-				'priority'       => [
+				'priority'         => [
 					'description' => esc_html__( 'Relative priority in which the snippet is executed.', 'code-snippets' ),
 					'type'        => 'integer',
 				],
-				'network'        => [
+				'network'          => [
 					'description' => esc_html__( 'Whether the snippet is network-wide instead of site-wide.', 'code-snippets' ),
 					'type'        => [ 'boolean', 'null' ],
 					'default'     => null,
 				],
-				'shared_network' => [
+				'shared_network'   => [
 					'description' => esc_html__( 'If a network snippet, whether can be activated on discrete sites instead of network-wide.', 'code-snippets' ),
 					'type'        => [ 'boolean', 'null' ],
 				],
-				'modified'       => [
+				'modified'         => [
 					'description' => esc_html__( 'Date and time when the snippet was last modified, in ISO format.', 'code-snippets' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'readonly'    => true,
 				],
-				'last_active'    => [
+				'last_active'      => [
 					'description' => esc_html__( 'Timestamp of when the snippet was last active, if available.', 'code-snippets' ),
 					'type'        => 'integer',
 					'readonly'    => true,
 				],
-				'code_error'     => [
+				'code_error'       => [
 					'description' => esc_html__( 'Error message if the snippet code could not be parsed.', 'code-snippets' ),
 					'type'        => [ 'array', 'null' ],
 					'items'       => [

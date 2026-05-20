@@ -43,24 +43,27 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = props => {
 
 	return (
 		<ImportCard className="migrate-snippets-table-card snippets-table-card">
-			<div>
-				<header>
-					<h2>{sprintf(
-						// translators: %d: number of available snippets.
-						__('Available snippets (%d)', 'code-snippets'),
-						availableItems.length
-					)}</h2>
-					<p>{__('We found the following snippets:', 'code-snippets')}</p>
-				</header>
+			<header>
+				<h3>{sprintf(
+					// translators: %d: number of available snippets.
+					__('Available snippets (%d)', 'code-snippets'),
+					availableItems.length
+				)}</h3>
+				<p>{__('We found the following snippets:', 'code-snippets')}</p>
+			</header>
 
-				<TableNav which="top" {...props} />
-			</div>
+			<TableNav which="top" {...props} />
 
 			<table className="wp-list-table widefat fixed striped">
 				<thead>
 					<tr>
 						<th scope="col" className="check-column">
-							<input type="checkbox" checked={isAllSelected} onChange={selectAll} />
+							<input
+								type="checkbox"
+								checked={isAllSelected}
+								onChange={selectAll}
+								aria-label={__('Select all snippets', 'code-snippets')}
+							/>
 						</th>
 						<th scope="col" className="column-name">{__('Snippet name', 'code-snippets')}</th>
 						<th scope="col" className="column-id">{__('ID', 'code-snippets')}</th>
@@ -74,6 +77,11 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = props => {
 									type="checkbox"
 									checked={selectedItems.has(snippet.table_data.id)}
 									onChange={() => toggleItem(snippet.table_data.id)}
+									aria-label={sprintf(
+										// translators: %s: snippet name.
+										__('Select %s', 'code-snippets'),
+										snippet.table_data.title
+									)}
 								/>
 							</th>
 							<td className="column-name">{snippet.table_data.title}</td>
@@ -81,7 +89,6 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = props => {
 						</tr>)}
 				</tbody>
 			</table>
-
 			<TableNav which="bottom" {...props} />
 		</ImportCard>
 	)

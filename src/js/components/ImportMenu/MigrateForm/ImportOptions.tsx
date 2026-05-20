@@ -8,7 +8,7 @@ export const ImportOptions: React.FC = () => {
 
 	return (
 		<ImportCard className="import-options-card">
-			<h2>{__('Import options', 'code-snippets')}</h2>
+			<h3>{__('Import options', 'code-snippets')}</h3>
 			<label>
 				<input
 					type="checkbox"
@@ -25,7 +25,11 @@ export const ImportOptions: React.FC = () => {
 					</div>
 					{autoAddTags && (
 						<div className="import-tag-entry">
+							<label htmlFor="import-auto-tag" className="screen-reader-text">
+								{__('Tag to add to imported snippets', 'code-snippets')}
+							</label>
 							<input
+								id="import-auto-tag"
 								type="text"
 								value={tagValue}
 								onChange={event => setTagValue(event.target.value)}

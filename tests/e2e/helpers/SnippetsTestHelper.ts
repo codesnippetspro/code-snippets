@@ -249,7 +249,7 @@ export class SnippetsTestHelper {
    * Click the "Add New" button to start creating a snippet
    */
 	async clickAddNewSnippet(): Promise<void> {
-		await this.page.goto(URLS.ADD_SNIPPET)
+		await this.page.goto(URLS.ADD_SNIPPET_ADMIN)
 		await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
 	}
 
@@ -515,15 +515,16 @@ export class SnippetsTestHelper {
 		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
 		const toggleCell = row.locator('td').first()
-		const toggleCheckbox = toggleCell.getByRole('checkbox').first()
+		const toggleSwitch = toggleCell.getByRole('switch').first()
+		await expect(toggleSwitch).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		const isChecked = await toggleCheckbox.isChecked().catch(() => false)
+		const isChecked = await toggleSwitch.isChecked().catch(() => false)
 		if (!isChecked) {
-			await toggleCheckbox.click({ timeout: TIMEOUTS.DEFAULT, force: true })
-			await expect(toggleCheckbox).toBeChecked({ timeout: TIMEOUTS.DEFAULT })
+			await toggleSwitch.click({ timeout: TIMEOUTS.DEFAULT, force: true })
+			await expect(toggleSwitch).toBeChecked({ timeout: TIMEOUTS.DEFAULT })
 		}
 
-		await expect(toggleCell).toContainText(/Deactivate/i, { timeout: TIMEOUTS.DEFAULT })
+		await expect(toggleSwitch).toHaveAccessibleName(/Deactivate/i, { timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**

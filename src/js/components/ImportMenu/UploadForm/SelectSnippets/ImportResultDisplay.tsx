@@ -22,12 +22,12 @@ export interface ImportResultDisplayProps {
 export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ success, message, warnings, step }) =>
 	<ImportCard className="import-result-display-card">
 		<div className={`import-result import-result-${success ? 'success' : 'failure'}`}>
-			<div className="import-result-icon">
+			<div className="import-result-icon" aria-hidden="true">
 				<span>{success ? '✓' : '✕'}</span>
 			</div>
 
 			<div>
-				<h3>
+				<h4>
 					{'upload' === step && (success
 						? __('File upload successful', 'code-snippets')
 						: __('File upload error', 'code-snippets'))}
@@ -35,7 +35,7 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ succes
 					{'select' === step && (success
 						? __('Import successful', 'code-snippets')
 						: __('Import error', 'code-snippets'))}
-				</h3>
+				</h4>
 
 				<p className="import-result-message">{message}</p>
 
@@ -43,7 +43,10 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ succes
 					<p className="import-result-link">
 						{createInterpolateElement(
 							__('Go to <a>All Snippets</a> to activate your imported snippets.', 'code-snippets'),
-							{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
+							{
+								// eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+								a: <a href={window.CODE_SNIPPETS?.urls.manage} />
+							}
 						)}
 					</p>)}
 

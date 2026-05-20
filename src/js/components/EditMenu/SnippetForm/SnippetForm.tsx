@@ -147,7 +147,7 @@ const EditFormWrap: React.FC = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
 	return (
-		<div className="wrap">
+		<>
 			<PageHeading />
 			<Notices placement="above-form" />
 
@@ -172,7 +172,7 @@ const EditFormWrap: React.FC = () => {
 			</EditForm>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
-		</div>
+		</>
 	)
 }
 
