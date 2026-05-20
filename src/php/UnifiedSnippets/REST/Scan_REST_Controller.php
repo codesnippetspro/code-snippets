@@ -30,11 +30,15 @@ class Scan_REST_Controller extends REST_Controller {
 	public const BASE_ROUTE = 'scan';
 
 	/**
+	 * Registry of available scanners, used to look up and run scanners by ID.
+	 *
 	 * @var Scanner_Registry
 	 */
 	private Scanner_Registry $registry;
 
 	/**
+	 * Persisted scan results store, used to save new scans and read prior results.
+	 *
 	 * @var Scan_Results_Store
 	 */
 	private Scan_Results_Store $store;
@@ -236,10 +240,12 @@ class Scan_REST_Controller extends REST_Controller {
 
 		$this->store->merge_scanner_results( $scanner_id, $snippets );
 
-		return rest_ensure_response( [
-			'scanner_id' => $scanner_id,
-			'count'      => count( $snippets ),
-		] );
+		return rest_ensure_response(
+            [
+				'scanner_id' => $scanner_id,
+				'count'      => count( $snippets ),
+			]
+        );
 	}
 
 	/**
@@ -263,16 +269,18 @@ class Scan_REST_Controller extends REST_Controller {
 
 		$metadata = $this->store->get_metadata();
 
-		return rest_ensure_response( [
-			'scan_date'   => $metadata['scan_date'],
-			'scanners'    => $metadata['scanners'],
-			'total_count' => $metadata['total_count'],
-			'count'       => count( $snippets ),
-			'snippets'    => array_map(
-				static fn( $s ) => $s->to_array(),
-				array_values( $snippets )
-			),
-		] );
+		return rest_ensure_response(
+            [
+				'scan_date'   => $metadata['scan_date'],
+				'scanners'    => $metadata['scanners'],
+				'total_count' => $metadata['total_count'],
+				'count'       => count( $snippets ),
+				'snippets'    => array_map(
+					static fn( $s ) => $s->to_array(),
+					array_values( $snippets )
+				),
+			]
+        );
 	}
 
 	/**
@@ -281,9 +289,11 @@ class Scan_REST_Controller extends REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function list_scanners(): WP_REST_Response {
-		return rest_ensure_response( [
-			'scanners' => $this->registry->get_scanner_info(),
-		] );
+		return rest_ensure_response(
+            [
+				'scanners' => $this->registry->get_scanner_info(),
+			]
+        );
 	}
 
 	/**
@@ -301,11 +311,13 @@ class Scan_REST_Controller extends REST_Controller {
 			$items
 		);
 
-		return rest_ensure_response( [
-			'new'      => $serialize( $changes['new'] ),
-			'modified' => $serialize( $changes['modified'] ),
-			'removed'  => $serialize( $changes['removed'] ),
-		] );
+		return rest_ensure_response(
+            [
+				'new'      => $serialize( $changes['new'] ),
+				'modified' => $serialize( $changes['modified'] ),
+				'removed'  => $serialize( $changes['removed'] ),
+			]
+        );
 	}
 
 	/**
