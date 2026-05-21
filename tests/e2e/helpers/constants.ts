@@ -16,7 +16,8 @@ export const SELECTORS = <const>{
 	DELETE_ACTION: '.row-actions button:has-text("Trash")',
 	EXPORT_ACTION: '.row-actions button:has-text("Export")',
 
-	ADMIN_BAR: '#wpadminbar'
+	ADMIN_BAR: '#wpadminbar',
+	THEME_MAIN_WRAPPER: '.wp-site-blocks'
 }
 
 export const TIMEOUTS = <const>{
@@ -47,8 +48,9 @@ export const SNIPPET_TYPES = <const>{
 }
 
 export const SNIPPET_LOCATIONS = <const>{
+	SITE_HEADER: 'In site header (<head> section)',
+	SITE_BODY: 'In site content (start of <body>)',
 	SITE_FOOTER: 'In site footer (end of <body>)',
-	SITE_HEADER: 'In site <head> section',
 	IN_EDITOR: 'Where inserted in editor',
 	ADMIN_ONLY: 'Only run in administration area',
 	FRONTEND_ONLY: 'Only run on site front-end',

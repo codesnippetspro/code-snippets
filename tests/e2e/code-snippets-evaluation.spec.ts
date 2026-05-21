@@ -187,6 +187,34 @@ test.describe('Code Snippets Evaluation', () => {
 		await helper.expectElementCount('text=Hello World HTML snippet in header!', 1)
 	})
 
+	test('HTML snippet is evaluating correctly at body start', async () => {
+		await helper.createAndActivateSnippet({
+			name: snippetName,
+			code: '<p>Hello World HTML snippet in body start!</p>',
+			type: 'HTML',
+			location: 'SITE_BODY'
+		})
+
+		await helper.navigateToFrontend()
+		await helper.expectTextVisible('Hello World HTML snippet in body start!')
+		await helper.expectElementCount('text=Hello World HTML snippet in body start!', 1)
+		await helper.expectTextBeforeElement('Hello World HTML snippet in body start!', SELECTORS.THEME_MAIN_WRAPPER)
+	})
+
+	test('HTML snippet is evaluating correctly at body end', async () => {
+		await helper.createAndActivateSnippet({
+			name: snippetName,
+			code: '<p>Hello World HTML snippet in body end!</p>',
+			type: 'HTML',
+			location: 'SITE_FOOTER'
+		})
+
+		await helper.navigateToFrontend()
+		await helper.expectTextVisible('Hello World HTML snippet in body end!')
+		await helper.expectElementCount('text=Hello World HTML snippet in body end!', 1)
+		await helper.expectTextAfterElement('Hello World HTML snippet in body end!', SELECTORS.THEME_MAIN_WRAPPER)
+	})
+
 	test('HTML snippet works with shortcode in editor', async ({ page }) => {
 		const snippetId = await createHtmlSnippetForEditor(helper, page, snippetName)
 		const pageUrl = await createPageWithShortcode(page, snippetId, snippetName)

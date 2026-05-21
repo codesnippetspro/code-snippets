@@ -43,6 +43,7 @@ class Evaluate_Content {
 	 */
 	public function init() {
 		add_action( 'wp_head', [ $this, 'load_head_content' ] );
+		add_action( 'wp_body_open', [ $this, 'load_body_content' ] );
 		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
 	}
 
@@ -63,7 +64,7 @@ class Evaluate_Content {
 				}
 			}
 		} else {
-			$scopes = [ 'head-content', 'footer-content' ];
+			$scopes = [ 'head-content', 'body-content', 'footer-content' ];
 
 			if ( is_null( $this->active_snippets ) ) {
 				$this->active_snippets = $this->db->fetch_active_snippets( $scopes );
@@ -88,6 +89,15 @@ class Evaluate_Content {
 	}
 
 	/**
+	 * Print body content snippets (requires theme to call wp_body_open).
+	 *
+	 * @return void
+	 */
+	public function load_body_content() {
+		$this->print_content_snippets( 'body-content' );
+	}
+
+	/**
 	 * Print footer content snippets.
 	 *
 	 * @return void
@@ -106,7 +116,7 @@ class Evaluate_Content {
 		$dir_name = $handler->get_dir_name();
 		$ext = $handler->get_file_extension();
 
-		$scopes = [ 'head-content', 'footer-content' ];
+		$scopes = [ 'head-content', 'body-content', 'footer-content' ];
 		$all_snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, $dir_name );
 
 		foreach ( $all_snippets as $snippet ) {
