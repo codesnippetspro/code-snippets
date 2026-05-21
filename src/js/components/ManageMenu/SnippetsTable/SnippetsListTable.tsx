@@ -8,15 +8,15 @@ import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadBulkSnippetExportFile } from '../../../utils/files'
 import { REST_BASES } from '../../../utils/restAPI'
-import { cloneSnippetObject, getSnippetDisplayName, getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
 import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { getTableColumns } from './TableColumns'
-import type { SnippetStatus} from './WithSnippetsTableFilters'
-import type { ListTableBulkAction } from '../../common/ListTable'
+import type { ListTableAction } from '../../common/ListTable'
+import type { SnippetStatus } from './WithSnippetsTableFilters'
 import type { Snippet } from '../../../types/Snippet'
 
 const STATUS_LABELS: [SnippetStatus, string][] = [
@@ -29,16 +29,19 @@ const STATUS_LABELS: [SnippetStatus, string][] = [
 	['trashed', __('Trashed', 'code-snippets')]
 ]
 
+type SnippetsTableAction = 'activate' | 'deactivate' | 'clone' | 'export' | 'download' | 'trash'
+
+const BULK_ACTIONS: ListTableAction<SnippetsTableAction>[] = [
+	{ key: 'activate', label: __('Activate', 'code-snippets') },
+	{ key: 'deactivate', label: __('Deactivate', 'code-snippets') },
+	{ key: 'clone', label: __('Clone', 'code-snippets') },
+	{ key: 'export', label: __('Export', 'code-snippets') },
+	{ key: 'download', label: __('Download', 'code-snippets') },
+	{ key: 'trash', label: __('Trash', 'code-snippets') }
+]
+
 const BULK_DOWNLOAD_ACTION = 'bulk-download'
 const INDIVIDUAL_DOWNLOAD_DELAY_MS = 200
-
-const appendHiddenField = (form: HTMLFormElement, name: string, value: string) => {
-	const input = document.createElement('input')
-	input.type = 'hidden'
-	input.name = name
-	input.value = value
-	form.appendChild(input)
-}
 
 const submitBulkSnippetDownload = (snippets: readonly Snippet[]): Promise<void> => {
 	if (0 === snippets.length) {
@@ -47,14 +50,21 @@ const submitBulkSnippetDownload = (snippets: readonly Snippet[]): Promise<void> 
 
 	const form = document.createElement('form')
 
+	const appendHiddenField = (name: string, value: string) => {
+		const input = document.createElement('input')
+		input.type = 'hidden'
+		input.name = name
+		input.value = value
+		form.appendChild(input)
+	}
+
 	form.method = 'post'
 	form.action = window.location.href
 	form.hidden = true
 
-	appendHiddenField(form, 'code_snippets_action', BULK_DOWNLOAD_ACTION)
-	appendHiddenField(form, 'code_snippets_bulk_download_nonce', window.CODE_SNIPPETS_MANAGE?.bulkDownloadNonce ?? '')
+	appendHiddenField('code_snippets_action', BULK_DOWNLOAD_ACTION)
+	appendHiddenField('code_snippets_bulk_download_nonce', window.CODE_SNIPPETS_MANAGE?.bulkDownloadNonce ?? '')
 	appendHiddenField(
-		form,
 		'snippets',
 		JSON.stringify(snippets.map(({ id, network }) => ({ id, network })))
 	)
@@ -218,12 +228,12 @@ const SearchBox = () => {
 	return (
 		<search aria-label={__('Search Snippets', 'code-snippets')}>
 			<p className="search-box">
-				<label className="screen-reader-text" htmlFor="snippets_search">{__('Search Snippets:', 'code-snippets')}</label>
 				<input
 					type="search"
 					id="snippets_search"
 					name="s"
 					value={searchQuery ?? ''}
+					aria-label={__('Search Snippets:', 'code-snippets')}
 					onChange={event => setSearchQuery(event.target.value)}
 					placeholder={__('Search snippets', 'code-snippets')}
 				/>
@@ -252,100 +262,63 @@ const NoItemsMessage = () => {
 		</>
 }
 
-const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] => {
-	const { activate, deactivate, delete: trashOrDelete, create } = useSnippetsAPI()
+const applyAndRefresh = async (
+	targets: Snippet[],
+	action: (snippet: Snippet) => Promise<Snippet> | Promise<void>,
+	refresh: () => Promise<void>
+): Promise<void> => {
+	if (0 < targets.length) {
+		for (const snippet of targets) {
+			await action(snippet).catch(handleUnknownError)
+		}
+
+		await refresh()
+	}
+}
+
+const useApplyBulkAction = (
+	allSnippets: Snippet[]
+): (action: SnippetsTableAction, selected: Set<Snippet['id']>) => Promise<void> => {
+	const { activate, deactivate, create } = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
-	return useMemo(
-		() => [
-			{
-				name: __('Activate', 'code-snippets'),
-				apply: async (selected: Set<Snippet['id']>) => {
-					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.active)
+	return async (action, selected) => {
+		if ('export' === action) {
+			downloadBulkSnippetExportFile(allSnippets.filter(snippet => selected.has(snippet.id)))
+			return Promise.resolve()
+		}
 
-					if (0 === targets.length) {
-						return
-					}
+		if ('trash' === action) {
+			const selectedSnippets = allSnippets.filter(snippet => selected.has(snippet.id))
 
-					for (const snippet of targets) {
-						await activate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
-					}
+			return 1 < selectedSnippets.length && !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads
+				? submitBulkSnippetDownloadsIndividually(selectedSnippets)
+				: submitBulkSnippetDownload(selectedSnippets)
+		}
 
-					await refreshSnippetsList()
-				}
-			},
-			{
-				name: __('Deactivate', 'code-snippets'),
-				apply: async (selected: Set<Snippet['id']>) => {
-					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && snippet.active)
+		switch (action) {
+			case 'activate':
+				await applyAndRefresh(
+					allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.active),
+					snippet => activate({ id: snippet.id, network: snippet.network }),
+					refreshSnippetsList)
+				break
 
-					if (0 === targets.length) {
-						return
-					}
+			case 'deactivate':
+				await applyAndRefresh(
+					allSnippets.filter(snippet => selected.has(snippet.id) && snippet.active),
+					snippet => deactivate({ id: snippet.id, network: snippet.network }),
+					refreshSnippetsList)
+				break
 
-					for (const snippet of targets) {
-						await deactivate({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
-					}
-
-					await refreshSnippetsList()
-				}
-			},
-			{
-				name: __('Clone', 'code-snippets'),
-				apply: async (selected: Set<Snippet['id']>) => {
-					const targets = allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.trashed)
-
-					if (0 === targets.length) {
-						return
-					}
-
-					for (const snippet of targets) {
-						await create(cloneSnippetObject(snippet)).catch(handleUnknownError)
-					}
-
-					await refreshSnippetsList()
-				}
-			},
-			{
-				name: __('Export', 'code-snippets'),
-				apply: (selected: Set<Snippet['id']>) => {
-					downloadBulkSnippetExportFile(
-						allSnippets.filter(snippet => selected.has(snippet.id))
-					)
-					return Promise.resolve()
-				}
-			},
-			{
-				name: __('Download', 'code-snippets'),
-				apply: (selected: Set<Snippet['id']>) => {
-					const selectedSnippets = allSnippets.filter(snippet => selected.has(snippet.id))
-
-					if (1 < selectedSnippets.length && !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads) {
-						return submitBulkSnippetDownloadsIndividually(selectedSnippets)
-					}
-
-					return submitBulkSnippetDownload(selectedSnippets)
-				}
-			},
-			{
-				name: __('Trash', 'code-snippets'),
-				apply: async (selected: Set<Snippet['id']>) => {
-					const targets = allSnippets.filter(snippet => selected.has(snippet.id))
-
-					if (0 === targets.length) {
-						return
-					}
-
-					for (const snippet of targets) {
-						await trashOrDelete({ id: snippet.id, network: snippet.network }).catch(handleUnknownError)
-					}
-
-					await refreshSnippetsList()
-				}
-			}
-		],
-		[allSnippets, activate, deactivate, trashOrDelete, create, refreshSnippetsList]
-	)
+			case 'clone':
+				await applyAndRefresh(
+					allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.trashed),
+					snippet => create(cloneSnippetObject(snippet)),
+					refreshSnippetsList)
+				break
+		}
+	}
 }
 
 export const SnippetsListTable: React.FC = () => {
@@ -358,7 +331,7 @@ export const SnippetsListTable: React.FC = () => {
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
 
 	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
-	const actions = useBulkActions(allSnippets)
+	const applyBulkAction = useApplyBulkAction(allSnippets)
 
 	useEffect(() => {
 		if (INDEX_STATUS !== currentStatus && !snippetsByStatus.has(currentStatus)) {
@@ -382,15 +355,10 @@ export const SnippetsListTable: React.FC = () => {
 			<ListTable
 				items={snippetsByStatus.get(currentStatus) ?? []}
 				getKey={snippet => snippet.id}
-				ariaLabel={__('Snippets list', 'code-snippets')}
-				getCheckboxAriaLabel={(snippet: Snippet) => sprintf(
-					// translators: %s: Snippet name.
-					__('Select %s', 'code-snippets'),
-					getSnippetDisplayName(snippet)
-				)}
 				className={classnames({ 'truncate-row-values': truncateRowValues })}
 				columns={columns}
-				actions={actions}
+				actions={BULK_ACTIONS}
+				doAction={applyBulkAction}
 				totalPages={itemsPerPage && Math.ceil(totalItems / itemsPerPage)}
 				extraTableNav={which =>
 					<>

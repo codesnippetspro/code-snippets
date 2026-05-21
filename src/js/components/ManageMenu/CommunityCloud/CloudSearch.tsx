@@ -31,13 +31,11 @@ const SearchBox = () => {
 			</select>
 
 			<div className="cloud-search-query">
-				<label className="screen-reader-text" htmlFor="cloud-search-query">
-					{__('Search query', 'code-snippets')}
-				</label>
 				<input
 					id="cloud-search-query"
 					type="search"
 					value={query}
+					aria-label={__('Search query', 'code-snippets')}
 					onChange={event => setQuery(event.target.value)}
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>

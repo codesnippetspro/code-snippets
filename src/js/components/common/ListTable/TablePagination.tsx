@@ -115,30 +115,25 @@ interface PagingInputProps {
 }
 
 const PagingInput: React.FC<PagingInputProps> = ({ which, totalPages, disabled, inputValue, setInputValue, confirmInputValue }) =>
-	<>
-		<label htmlFor={`current-page-selector-${which}`} className="screen-reader-text">
-			{/* translators: Hidden accessibility text. */
-				__('Current Page', 'code-snippets')}
-		</label>
-		<input
-			className="current-page"
-			id={`current-page-selector-${which}`}
-			type="text"
-			name="paged"
-			value={inputValue}
-			size={totalPages.toString().length}
-			disabled={disabled}
-			aria-describedby="table-paging"
-			onBlur={confirmInputValue}
-			onChange={event => {
-				const value = Number(event.target.value)
+	<input
+		className="current-page"
+		id={`current-page-selector-${which}`}
+		aria-label={__('Current Page', 'code-snippets')}
+		type="text"
+		name="paged"
+		value={inputValue}
+		size={totalPages.toString().length}
+		disabled={disabled}
+		aria-describedby="table-paging"
+		onBlur={confirmInputValue}
+		onChange={event => {
+			const value = Number(event.target.value)
 
-				if (value) {
-					setInputValue(value)
-				}
-			}}
-		/>
-	</>
+			if (value) {
+				setInputValue(value)
+			}
+		}}
+	/>
 
 interface CurrentPageProps extends PagingInputProps {
 	currentPage: number

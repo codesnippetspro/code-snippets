@@ -97,6 +97,47 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ snippet, isOpen, setIsOpen 
 		: null
 }
 
+interface DownloadOrViewButtonProps {
+	snippet: CloudSnippetSchema
+	isWorking: boolean
+	onDownload: VoidFunction
+	localSnippetId: number | undefined
+}
+
+const DownloadOrViewButton: React.FC<DownloadOrViewButtonProps> = ({
+	snippet,
+	isWorking,
+	onDownload,
+	localSnippetId,
+}) => {
+	const [isUpsellOpen, setIsUpsellOpen] = useState(false)
+
+	if (localSnippetId) {
+		return (
+			<a className="button button-primary" href={getSnippetEditUrl({ id: localSnippetId })} target="_blank" rel="noreferrer">
+				{__('View', 'code-snippets')}
+			</a>
+		)
+	}
+
+	if (isProSnippet(snippet) && !isLicensed()) {
+		return (
+			<>
+				<Button className="cloud-pro-button" onClick={() => setIsUpsellOpen(true)}>
+					{__('Pro Only', 'code-snippets')}
+				</Button>
+				<UpsellDialog isOpen={isUpsellOpen} setIsOpen={setIsUpsellOpen} />
+			</>
+		)
+	}
+
+	return (
+		<Button primary onClick={onDownload} disabled={isWorking}>
+			{__('Download', 'code-snippets')}
+		</Button>
+	)
+}
+
 interface DownloadButtonProps {
 	snippet: CloudSnippetSchema
 }
@@ -106,7 +147,6 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
 	const [isWorking, setIsWorking] = useState(false)
 	const [errorMessage, setErrorMessage] = useState<string>()
 	const [localSnippetId, setLocalSnippetId] = useState<number>()
-	const [isUpsellOpen, setIsUpsellOpen] = useState(false)
 
 	const handleDownload = () => {
 		setIsWorking(true)
@@ -124,38 +164,17 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
 			.finally(() => setIsWorking(false))
 	}
 
-	const DownloadOrViewButton = () => {
-		if (localSnippetId) {
-			return (
-				<a className="button button-primary" href={getSnippetEditUrl({ id: localSnippetId })} target="_blank" rel="noreferrer">
-					{__('View', 'code-snippets')}
-				</a>
-			)
-		}
-
-		if (isProSnippet(snippet) && !isLicensed()) {
-			return (
-				<>
-					<Button className="cloud-pro-button" onClick={() => setIsUpsellOpen(true)}>
-						{__('Pro Only', 'code-snippets')}
-					</Button>
-					<UpsellDialog isOpen={isUpsellOpen} setIsOpen={setIsUpsellOpen} />
-				</>
-			)
-		}
-
-		return (
-			<Button primary onClick={handleDownload} disabled={isWorking}>
-				{__('Download', 'code-snippets')}
-			</Button>
-		)
-	}
-
 	return (
 		<>
 			{isWorking && <Spinner />}
 			{errorMessage && <ErrorTooltip message={errorMessage} />}
-			<DownloadOrViewButton />
+
+			<DownloadOrViewButton
+				snippet={snippet}
+				isWorking={isWorking}
+				onDownload={handleDownload}
+				localSnippetId={localSnippetId}
+			/>
 		</>
 	)
 }

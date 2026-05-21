@@ -75,6 +75,7 @@ export const DragDropUploadArea: React.FC<DragDropUploadAreaProps> = ({ fileInpu
 				multiple
 				onChange={event => onFileSelect(event.target.files ?? undefined)}
 				disabled={disabled}
+				aria-label={__('Select files to import', 'code-snippets')}
 			/>
 		</div>
 	)

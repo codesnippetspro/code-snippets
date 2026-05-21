@@ -29,10 +29,13 @@ export const SnippetSelectionTable: React.FC<SnippetSelectionTableProps> = ({
 		<thead>
 			<tr>
 				<th scope="col" className="check-column">
-					<label htmlFor="cb-select-all-head">
-						<span className="screen-reader-text">{__('Select all snippets', 'code-snippets')}</span>
-					</label>
-					<input id="cb-select-all-head" type="checkbox" checked={isAllSelected} onChange={selectAll} />
+					<input
+						id="cb-select-all-head"
+						type="checkbox"
+						aria-label={__('Select all snippets', 'code-snippets')}
+						checked={isAllSelected}
+						onChange={selectAll}
+					/>
 				</th>
 				<th scope="col" className="column-name">{__('Name', 'code-snippets')}</th>
 				<th scope="col" className="column-type">{__('Type', 'code-snippets')}</th>
@@ -44,12 +47,10 @@ export const SnippetSelectionTable: React.FC<SnippetSelectionTableProps> = ({
 			{snippets.map(snippet =>
 				<tr key={snippet.table_data.id} className={`${snippet.table_data.type}-snippet`}>
 					<th scope="row" className="check-column">
-						<label htmlFor={`cb-select-${snippet.table_data.id}`}>
-							<span className="screen-reader-text">{__('Select snippet', 'code-snippets')}</span>
-						</label>
 						<input
 							id={`cb-select-${snippet.table_data.id}`}
 							type="checkbox"
+							aria-label={__('Select snippet', 'code-snippets')}
 							checked={selectedItems.has(snippet.table_data.id)}
 							onChange={() => toggleItem(snippet.table_data.id)}
 						/>

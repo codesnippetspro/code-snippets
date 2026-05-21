@@ -8,7 +8,7 @@ export const MultisiteSharingSettings: React.FC = () => {
 
 	return (
 		<div className="inline-form-field activation-switch-container">
-			<label htmlFor="snippet_sharing">
+			<label htmlFor="snippet_sharing" id="snippet-sharing-label">
 				{__('Share with Subsites', 'code-snippets')}
 			</label>
 
@@ -29,6 +29,7 @@ export const MultisiteSharingSettings: React.FC = () => {
 				className="switch"
 				checked={!!snippet.shared_network}
 				disabled={isReadOnly}
+				aria-labelledby="snippet-sharing-label"
 				onChange={event =>
 					setSnippet(previous => ({
 						...previous,

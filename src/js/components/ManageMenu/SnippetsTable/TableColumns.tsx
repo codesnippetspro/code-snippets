@@ -43,26 +43,21 @@ const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
 		: snippet.active ? __('Deactivate', 'code-snippets') : __('Activate', 'code-snippets')
 
 	return (
-		<>
-			<label className="screen-reader-text" htmlFor={`snippet-${snippet.id}-switch`}>
-				{actionText}
-			</label>
-
-			<input
-				id={`snippet-${snippet.id}-switch`}
-				type="checkbox"
-				role="switch"
-				checked={snippet.active}
-				aria-checked={snippet.active}
-				className="switch"
-				title={actionText}
-				onChange={() => {
-					(snippet.active ? deactivate(snippet) : activate(snippet))
-						.then(refreshSnippetsList)
-						.catch(handleUnknownError)
-				}}
-			/>
-		</>
+		<input
+			id={`snippet-${snippet.id}-switch`}
+			type="checkbox"
+			role="switch"
+			checked={snippet.active}
+			aria-checked={snippet.active}
+			className="switch"
+			title={actionText}
+			aria-label={actionText}
+			onChange={() => {
+				(snippet.active ? deactivate(snippet) : activate(snippet))
+					.then(refreshSnippetsList)
+					.catch(handleUnknownError)
+			}}
+		/>
 	)
 }
 
@@ -240,7 +235,6 @@ const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 			event.preventDefault()
 			handleUpdate()
 		}}>
-			<label htmlFor={id} className="screen-reader-text">{__('Snippet priority', 'code-snippets')}</label>
 			<input
 				id={id}
 				type="number"
@@ -248,6 +242,7 @@ const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 				value={value}
 				step="1"
 				onBlur={handleUpdate}
+				aria-label={__('Snippet priority', 'code-snippets')}
 				onChange={event => setValue(Number(event.target.value))}
 				disabled={snippet.locked || snippet.trashed}
 			/>

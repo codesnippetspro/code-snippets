@@ -19,20 +19,17 @@ export interface ListTableColumn<T> {
 	defaultSortDirection?: ListTableSortDirection
 }
 
-export interface ListTableBulkAction<K extends Key> {
-	name: string
-	apply: (selected: Set<K>) => Promise<void>
-}
-
-export interface ListTableBulkActionGroup<K extends Key> {
-	name: string
-	actions: ListTableBulkAction<K>[]
-}
-
 export type ListTableSortDirection = 'asc' | 'desc'
 
-export interface ListTableNavProps<K extends Key> {
-	actions?: readonly (ListTableBulkAction<K> | ListTableBulkActionGroup<K>)[]
+export interface ListTableAction<A extends string> {
+	key: A
+	label: string
+	group?: string
+}
+
+export interface ListTableNavProps<K extends Key, A extends string> {
+	actions?: ListTableAction<A>[]
+	doAction: (action: A, selected: Set<K>) => Promise<void>
 	disabled?: boolean
 	extraTableNav?: (which: 'top' | 'bottom') => ReactNode
 }
@@ -50,7 +47,8 @@ export interface ListTablePaginationProps {
 	useQueryVars?: boolean
 }
 
-export interface ListTableProps<T, K extends Key> extends ListTableItemsProps<T, K>, ListTableNavProps<K>, ListTablePaginationProps {
+export interface ListTableProps<T, K extends Key, A extends string> extends ListTableItemsProps<T, K>,
+	ListTableNavProps<K, A>, ListTablePaginationProps {
 	fixed?: boolean
 	striped?: boolean
 	className?: string
@@ -94,10 +92,14 @@ const pageItems = <T, >(
 	}
 }
 
-const getVisibleSelected = <T, K extends Key>(visibleItems: T[], getKey: (item: T) => K, selected: Set<K>): Set<K> =>
+const getVisibleSelected = <T, K extends Key>(
+	visibleItems: T[],
+	getKey: (item: T) => K,
+	selected: Set<K>
+): Set<K> =>
 	new Set(visibleItems.map(getKey).filter(key => selected.has(key)))
 
-interface ListTableMarkupProps<T, K extends Key> {
+interface ListTableMarkupProps<T, K extends Key, A extends string> {
 	className?: string
 	fixed?: boolean
 	striped?: boolean
@@ -105,12 +107,12 @@ interface ListTableMarkupProps<T, K extends Key> {
 	columns: ListTableColumn<T>[]
 	noItems?: ReactNode
 	rowClassName?: (item: T) => string
-	tableNavProps: Omit<TableNavProps<K>, 'which'>
+	tableNavProps: Omit<TableNavProps<K, A>, 'which'>
 	tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'>
 	visibleItems: T[]
 }
 
-const ListTableMarkup = <T, K extends Key>({
+const ListTableMarkup = <T, K extends Key, A extends string>({
 	fixed,
 	striped,
 	getKey,
@@ -121,7 +123,7 @@ const ListTableMarkup = <T, K extends Key>({
 	tableNavProps,
 	tableHeadingsProps,
 	visibleItems
-}: ListTableMarkupProps<T, K>) => (
+}: ListTableMarkupProps<T, K, A>) => (
 	<>
 		<TableNav which="top" {...tableNavProps} />
 		<table className={classnames('wp-list-table widefat', { striped, fixed }, className)}>
@@ -149,21 +151,18 @@ const ListTableMarkup = <T, K extends Key>({
 	</>
 )
 
-export const ListTable = <T, K extends Key>({
+export const ListTable = <T, K extends Key, A extends string = never>({
 	items,
-	fixed,
-	striped,
 	getKey,
 	columns,
 	actions,
-	noItems,
-	className,
+	doAction,
 	totalPages,
-	rowClassName,
 	extraTableNav,
 	disabled = false,
 	useQueryVars = true,
-}: ListTableProps<T, K>) => {
+	...tableProps
+}: ListTableProps<T, K, A>) => {
 	const [selected, setSelected] = useState(new Set<K>())
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
 	const [currentPage, setCurrentPage] = useState(() => useQueryVars && Number(fetchQueryParam('paged')) || 1)
@@ -173,34 +172,28 @@ export const ListTable = <T, K extends Key>({
 		() => pageItems(sortItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
 		[items, sortColumn, sortDirection, currentPage, totalPages])
 
-	const tableNavProps = {
-		totalItems: items.length,
-		actions,
-		extraTableNav,
-		selected: getVisibleSelected(visibleItems, getKey, selected),
-		setSelected,
-		disabled,
-		currentPage,
-		totalPages,
-		setCurrentPage,
-		useQueryVars
-	}
-
-	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
-		{ items: visibleItems, selected, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
-
-	return <ListTableMarkup
-		{...{
-			fixed,
-			striped,
-			getKey,
-			columns,
-			noItems,
-			className,
-			rowClassName,
-			tableNavProps,
-			tableHeadingsProps,
-			visibleItems
-		}}
-	/>
+	return (
+		<ListTableMarkup
+			{...tableProps}
+			getKey={getKey}
+			columns={columns}
+			visibleItems={visibleItems}
+			tableHeadingsProps={{
+				items: visibleItems, selected, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection
+			}}
+			tableNavProps={{
+				totalItems: items.length,
+				actions,
+				doAction,
+				extraTableNav,
+				selected: getVisibleSelected(visibleItems, getKey, selected),
+				setSelected,
+				disabled,
+				currentPage,
+				totalPages,
+				setCurrentPage,
+				useQueryVars
+			}}
+		/>
+	)
 }

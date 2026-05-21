@@ -139,7 +139,7 @@ export default eslintTs.config(
 			'jsx-a11y/aria-role': 'error',
 			'jsx-a11y/aria-unsupported-elements': 'error',
 			'jsx-a11y/click-events-have-key-events': 'error',
-			'jsx-a11y/control-has-associated-label': 'warn',
+			'jsx-a11y/control-has-associated-label': ['warn', { ignoreElements: ['th', 'td'] }],
 			'jsx-a11y/heading-has-content': 'error',
 			'jsx-a11y/iframe-has-title': 'error',
 			'jsx-a11y/img-redundant-alt': 'error',

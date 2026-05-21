@@ -26,7 +26,9 @@ export const LockControl: React.FC = () => {
 
 	return (
 		<div className="inline-form-field lock-control-container">
-			<label htmlFor="snippet-lock">{__('Lock snippet', 'code-snippets')}</label>
+			<label htmlFor="snippet-lock" id="snippet-lock-label">
+				{__('Lock snippet', 'code-snippets')}
+			</label>
 
 			<Tooltip block end>
 				{__('Mark this snippet as read-only to prevent accidental changes or deletion.', 'code-snippets')}
@@ -43,6 +45,7 @@ export const LockControl: React.FC = () => {
 				disabled={isWorking}
 				className="switch"
 				onChange={handleToggle}
+				aria-labelledby="snippet-lock-label"
 			/>
 		</div>
 	)

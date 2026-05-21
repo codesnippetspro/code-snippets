@@ -12,13 +12,11 @@ interface CheckboxCellProps<T, K extends Key> extends Pick<TableItemsProps<T, K>
 
 const CheckboxCell = <T, K extends Key>({ item, selected, setSelected, getKey }: CheckboxCellProps<T, K>) =>
 	<th scope="row" className="check-column">
-		<label htmlFor={`cb-select-${getKey(item)}`}>
-			<span className="screen-reader-text">{__('Select snippet', 'code-snippets')}</span>
-		</label>
 		<input
 			id={`cb-select-${getKey(item)}`}
 			type="checkbox"
 			name="checked[]"
+			aria-label={__('Select snippet', 'code-snippets')}
 			checked={selected.has(getKey(item))}
 			onChange={event => {
 				setSelected(previous => {
@@ -55,8 +53,15 @@ export interface TableItemsProps<T, K extends Key>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-export const TableItems = <T, K extends Key>(
-	{ items, getKey, columns, noItems, selected, setSelected, rowClassName }: TableItemsProps<T, K>
+export const TableItems = <T, K extends Key>({
+	items,
+	getKey,
+	columns,
+	noItems,
+	selected,
+	setSelected,
+	rowClassName
+}: TableItemsProps<T, K>
 ) =>
 	0 < items.length
 		? items.map(item =>

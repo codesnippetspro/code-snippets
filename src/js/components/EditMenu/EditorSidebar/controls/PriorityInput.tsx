@@ -8,7 +8,7 @@ export const PriorityInput = () => {
 
 	return (
 		<div className="snippet-priority inline-form-field">
-			<label htmlFor="snippet-priority">
+			<label htmlFor="snippet-priority" id="snippet-priority-label">
 				{__('Priority', 'code-snippets')}
 			</label>
 
@@ -22,6 +22,7 @@ export const PriorityInput = () => {
 				name="snippet_priority"
 				value={snippet.priority}
 				disabled={isReadOnly}
+				aria-labelledby="snippet-priority-label"
 				onChange={event => setSnippet(previous => ({
 					...previous,
 					priority: parseInt(event.target.value, 10)

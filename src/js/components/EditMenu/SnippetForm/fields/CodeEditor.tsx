@@ -56,6 +56,7 @@ const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
 				id="snippet-code"
 				name="snippet_code"
 				value={snippet.code}
+				aria-label={__('Snippet code', 'code-snippets')}
 				rows={200}
 				spellCheck={false}
 				onChange={event => {

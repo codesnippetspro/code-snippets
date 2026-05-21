@@ -10,7 +10,9 @@ export const ActivationSwitch = () => {
 
 	return (
 		<div className="inline-form-field activation-switch-container">
-			<label htmlFor="activation-switch">{__('Status', 'code-snippets')}</label>
+			<label htmlFor="activation-switch" id="snippet-activation-switch-label">
+				{__('Status', 'code-snippets')}
+			</label>
 
 			<span className="status-text">
 				{snippet.active
@@ -24,6 +26,7 @@ export const ActivationSwitch = () => {
 				checked={snippet.active}
 				disabled={isWorking || !!snippet.shared_network}
 				className="switch"
+				aria-labelledby="snippet-activation-switch-label"
 				onChange={() => {
 					submitSnippet(
 						{ id: snippet.id, network: snippet.network, active: !snippet.active },

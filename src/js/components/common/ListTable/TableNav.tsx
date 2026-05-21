@@ -4,70 +4,100 @@ import { Spinner } from '@wordpress/components'
 import { handleUnknownError } from '../../../utils/errors'
 import { SubmitButton } from '../SubmitButton'
 import { TablePagination } from './TablePagination'
+import type { ListTableAction, ListTableNavProps } from './ListTable'
 import type { TablePaginationProps } from './TablePagination'
-import type { ListTableBulkAction, ListTableNavProps } from './ListTable'
-import type { Dispatch, Key, SetStateAction } from 'react'
+import type { Dispatch, Key, MouseEventHandler , SetStateAction} from 'react'
 
-interface BulkActionSelectProps<K extends Key> extends Required<Pick<TableNavProps<K>, 'which' | 'actions'>> {
-	selectedActionName: string
-	setSelectedActionName: Dispatch<SetStateAction<string>>
-	setSelectedAction: Dispatch<SetStateAction<ListTableBulkAction<K> | undefined>>
+const isBulkAction = <A extends string>(value: string, actions: ListTableAction<A>[]): value is A =>
+	actions.some(action => action.key === value)
+
+interface BulkActionSelectOptionsProps<A extends string> {
+	actions: ListTableAction<A>[]
 }
 
-const BulkActionSelect = <K extends Key,>({
-	which,
-	actions,
-	selectedActionName,
-	setSelectedActionName,
-	setSelectedAction
-}: BulkActionSelectProps<K>) => {
-	const actionsMap: Map<string, ListTableBulkAction<K>> = useMemo(
-		() => new Map(
-			actions
-				.flatMap(actionOrGroup =>
-					'actions' in actionOrGroup ? actionOrGroup.actions : [actionOrGroup])
-				.map(action => [action.name, action])
-		), [actions])
+const BulkActionSelectOptions = <A extends string>({ actions }: BulkActionSelectOptionsProps<A>) => {
+	const [options, optionGroups] = useMemo(() => {
+		const ungroupedActions: ListTableAction<A>[] = []
+		const groupedActions = new Map<string, ListTableAction<A>[]>()
+
+		for (const action of actions) {
+			if (action.group === undefined) {
+				ungroupedActions.push(action)
+			} else {
+				groupedActions.set(action.group, [...groupedActions.get(action.group) ?? [], action])
+			}
+		}
+
+		return [ungroupedActions, Array.from(groupedActions.entries())]
+	}, [actions])
 
 	return (
-		<select
-			name={`action${'bottom' === which ? '-2' : ''}`}
-			id={`bulk-action-selector-${which}`}
-			value={selectedActionName}
-			onChange={event => {
-				setSelectedActionName(event.target.value)
-				setSelectedAction(actionsMap.get(event.target.value))
-			}}
-		>
-			<option value="-1">{__('Bulk actions', 'code-snippets')}</option>
+		<>
+			{options.map(action => <option key={action.key} value={action.key}>{action.label}</option>)}
 
-			{actions.map(actionOrGroup =>
-				'actions' in actionOrGroup
-					? <optgroup key={actionOrGroup.name} label={actionOrGroup.name}>
-						{actionOrGroup.actions.map(action =>
-							<option key={action.name} value={action.name}>{action.name}</option>)}
-					</optgroup>
-					: <option key={actionOrGroup.name} value={actionOrGroup.name}>{actionOrGroup.name}</option>)}
-		</select>
+			{optionGroups.map(([groupLabel, groupActions]) =>
+				<optgroup key={groupLabel} label={groupLabel}>
+					{groupActions.map(action =>
+						<option key={action.label} value={action.label}>{action.label}</option>)}
+				</optgroup>)}
+		</>
 	)
 }
 
-interface BulkActionsProps<K extends Key> extends Required<Pick<TableNavProps<K>, 'which' | 'actions'>> {
-	applyAction: (action: ListTableBulkAction<K>) => Promise<void>
-	onActionSuccess?: () => void
-	disabled?: boolean
+interface BulkActionSelectProps<A extends string> {
+	which: 'top' | 'bottom'
+	actions: ListTableAction<A>[]
+	selectedAction: A | undefined
+	setSelectedAction: Dispatch<SetStateAction<A | undefined>>
 }
 
-const BulkActions = function BulkActions<K extends Key>({
+const BulkActionSelect = <A extends string>({ which, actions, selectedAction, setSelectedAction }: BulkActionSelectProps<A>) =>
+	<select
+		name={`action${'bottom' === which ? '-2' : ''}`}
+		id={`bulk-action-selector-${which}`}
+		value={selectedAction}
+		onChange={({ target: { value } }) => {
+			if (!value || '-1' === value) {
+				setSelectedAction(undefined)
+			} else if (isBulkAction(value, actions)) {
+				setSelectedAction(value)
+			}
+		}}
+	>
+		<option value="-1">{__('Bulk actions', 'code-snippets')}</option>
+		<BulkActionSelectOptions actions={actions} />
+	</select>
+
+interface BulkActionsProps<K extends Key, A extends string> extends Required<Pick<TableNavProps<K, A>, 'which' | 'actions' | 'doAction'>> {
+	onActionSuccess?: () => void
+	disabled?: boolean
+	selected: Set<K>
+}
+
+const BulkActions = function BulkActions<K extends Key, A extends string>({
 	which,
 	actions,
-	applyAction,
+	selected,
+	doAction,
 	onActionSuccess,
 	disabled
-}: BulkActionsProps<K>) {
-	const [selectedAction, setSelectedAction] = useState<ListTableBulkAction<K>>()
-	const [selectedActionName, setSelectedActionName] = useState('-1')
+}: BulkActionsProps<K, A>) {
+	const [selectedAction, setSelectedAction] = useState<A>()
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
+
+	const handleSubmit: MouseEventHandler<HTMLInputElement> = event => {
+		event.preventDefault()
+
+		if (selectedAction) {
+			setIsPerformingAction(true)
+			doAction(selectedAction, selected)
+				.then(() => {
+					onActionSuccess?.()
+				})
+				.catch(handleUnknownError)
+				.finally(() => setIsPerformingAction(false))
+		}
+	}
 
 	return (
 		<div className="alignleft actions bulkactions">
@@ -76,9 +106,7 @@ const BulkActions = function BulkActions<K extends Key>({
 				{__('Select bulk action', 'code-snippets')}
 			</label>
 
-			<BulkActionSelect
-				{...{ which, actions, selectedActionName, setSelectedActionName, setSelectedAction }}
-			/>
+			<BulkActionSelect {...{ which, actions, selectedAction, setSelectedAction }} />
 
 			<SubmitButton
 				id={`doaction${'bottom' === which ? '-2' : ''}`}
@@ -86,21 +114,7 @@ const BulkActions = function BulkActions<K extends Key>({
 				text={__('Apply', 'code-snippets')}
 				className="action"
 				disabled={!!disabled || isPerformingAction || !selectedAction}
-				onClick={event => {
-					event.preventDefault()
-
-					if (selectedAction) {
-						setIsPerformingAction(true)
-						applyAction(selectedAction)
-							.then(() => {
-								onActionSuccess?.()
-							})
-							.catch(handleUnknownError)
-							.finally(() => {
-								setIsPerformingAction(false)
-							})
-					}
-				}}
+				onClick={handleSubmit}
 			/>
 
 			{isPerformingAction ? <Spinner /> : null}
@@ -108,7 +122,7 @@ const BulkActions = function BulkActions<K extends Key>({
 	)
 }
 
-export interface TableNavProps<K extends Key> extends ListTableNavProps<K>, Omit<TablePaginationProps, 'totalPages'> {
+export interface TableNavProps<K extends Key, A extends string> extends ListTableNavProps<K, A>, Omit<TablePaginationProps, 'totalPages'> {
 	which: 'top' | 'bottom'
 	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
@@ -116,16 +130,17 @@ export interface TableNavProps<K extends Key> extends ListTableNavProps<K>, Omit
 	totalPages: number | undefined
 }
 
-export const TableNav = <K extends Key,>({
+export const TableNav = <K extends Key, A extends string>({
 	which,
 	actions,
+	doAction,
 	selected,
 	setSelected,
 	totalItems,
 	totalPages = 0,
 	extraTableNav,
 	...paginationProps
-}: TableNavProps<K>) =>
+}: TableNavProps<K, A>) =>
 	extraTableNav || 0 < totalItems && actions
 		? <div className={`tablenav ${which}`}>
 
@@ -133,8 +148,9 @@ export const TableNav = <K extends Key,>({
 				<BulkActions
 					which={which}
 					actions={actions}
+					doAction={doAction}
 					disabled={paginationProps.disabled}
-					applyAction={action => action.apply(selected)}
+					selected={selected}
 					onActionSuccess={() => setSelected(new Set())}
 				/>)}
 

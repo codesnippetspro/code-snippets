@@ -1,18 +1,8 @@
 import React from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import type { ListTableColumn, ListTableProps, ListTableSortDirection } from './ListTable'
+import type { ListTableColumn, ListTableSortDirection } from './ListTable'
 import type { Dispatch, Key, SetStateAction, ThHTMLAttributes } from 'react'
-
-export interface TableHeadingsProps<T, K extends Key> extends Pick<ListTableProps<T, K>, 'columns' | 'getKey' | 'items'> {
-	which: 'head' | 'foot'
-	sortColumn: ListTableColumn<T> | undefined
-	selected: Set<K>
-	setSelected: Dispatch<SetStateAction<Set<K>>>
-	sortDirection: ListTableSortDirection
-	setSortColumn: Dispatch<SetStateAction<ListTableColumn<T> | undefined>>
-	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
-}
 
 interface SortableHeadingCellProps<T> {
 	column: ListTableColumn<T>
@@ -68,6 +58,19 @@ const SortableHeadingCell = <T, >({
 	)
 }
 
+export interface TableHeadingsProps<T, K extends Key> {
+	items: T[]
+	which: 'head' | 'foot'
+	getKey: (item: T) => K
+	columns: ListTableColumn<T>[]
+	selected: Set<K>
+	sortColumn: ListTableColumn<T> | undefined
+	setSelected: Dispatch<SetStateAction<Set<K>>>
+	sortDirection: ListTableSortDirection
+	setSortColumn: Dispatch<SetStateAction<ListTableColumn<T> | undefined>>
+	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
+}
+
 export const TableHeadings = <T, K extends Key>({
 	items,
 	which,
@@ -79,23 +82,19 @@ export const TableHeadings = <T, K extends Key>({
 	setSortColumn,
 	sortDirection,
 	setSortDirection
-}: TableHeadingsProps<T, K>) => {
-	const allSelected = 0 < items.length && items.every(item => selected.has(getKey(item)))
-
-	return <tr>
+}: TableHeadingsProps<T, K>) =>
+	<tr>
 		<td className="column-cb check-column">
 			<input
 				id={`cb-select-all-${which}`}
 				type="checkbox"
 				name="checked[]"
-				checked={allSelected}
+				checked={0 < items.length && items.every(item => selected.has(getKey(item)))}
+				aria-label={__('Select All', 'code-snippets')}
 				onChange={event => {
 					setSelected(new Set(event.target.checked ? items.map(getKey) : []))
 				}}
 			/>
-			<label htmlFor={`cb-select-all-${which}`}>
-				<span className="screen-reader-text">{__('Select All', 'code-snippets')}</span>
-			</label>
 		</td>
 		{columns.map(column => {
 			const cellProps: ThHTMLAttributes<HTMLTableCellElement> = {
@@ -117,4 +116,3 @@ export const TableHeadings = <T, K extends Key>({
 				: <th key={column.id} {...cellProps}>{column.title}</th>
 		})}
 	</tr>
-}
