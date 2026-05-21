@@ -42,6 +42,7 @@ declare global {
 				edit: string
 				welcome: string
 				settings: string
+				cloud: string
 				connectCloud: string
 			}
 			banner: {

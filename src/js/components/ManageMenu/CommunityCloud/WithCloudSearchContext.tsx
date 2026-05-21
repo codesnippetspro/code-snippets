@@ -1,15 +1,28 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { REST_BASES } from '../../../utils/restAPI'
 import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
+import type { CloudSearchFilters } from './SearchFilters'
 
 const SEARCH_PARAM = 's'
 const SEARCH_METHOD_PARAM = 'by'
 const DEFAULT_SNIPPETS_PER_PAGE = 10
 const MAX_CLOUD_RESULTS_PER_PAGE = 100
+const SEARCH_DEBOUNCE_MS = 500
+
+interface FilterOption {
+	id: number
+	name: string
+}
+
+export interface AvailableFilters {
+	categories?: FilterOption[]
+	types?: FilterOption[]
+	statuses?: FilterOption[]
+}
 
 export interface CloudSearchContext {
 	page: number
@@ -19,11 +32,15 @@ export interface CloudSearchContext {
 	totalItems: number
 	totalPages: number
 	isSearching: boolean
+	isFeatured: boolean
 	searchResults: CloudSnippetSchema[] | undefined
+	availableFilters: AvailableFilters
 	setPage: Dispatch<SetStateAction<number>>
 	setQuery: Dispatch<SetStateAction<string>>
 	searchByCodevault: boolean
 	setSearchByCodevault: Dispatch<SetStateAction<boolean>>
+	filters: CloudSearchFilters
+	setFilters: Dispatch<SetStateAction<CloudSearchFilters>>
 }
 
 const [Context, useCloudSearch] = createContextHook<CloudSearchContext>('useCloudSearch')
@@ -38,34 +55,132 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		MAX_CLOUD_RESULTS_PER_PAGE
 	)
 
+	const [filters, setFilters] = useState<CloudSearchFilters>(() => ({
+		category: Number(fetchQueryParam('category') ?? 0),
+		type: Number(fetchQueryParam('type') ?? 0),
+		status: Number(fetchQueryParam('status') ?? 0)
+	}))
+
 	const [totalItems, setTotalItems] = useState(0)
 	const [totalPages, setTotalPages] = useState(0)
+	const [availableFilters, setAvailableFilters] = useState<AvailableFilters>({})
 
 	const [searchResults, setSearchResults] = useState<CloudSnippetSchema[] | undefined>()
 	const [isSearching, setIsSearching] = useState(false)
 	const [error, setError] = useState(false)
+	const [isFeatured, setIsFeatured] = useState(false)
+
+	const searchTimerRef = useRef<ReturnType<typeof setTimeout>>()
+	const activeRequestRef = useRef(0)
+
+	const nextRequestId = useCallback(() => {
+		activeRequestRef.current += 1
+		return activeRequestRef.current
+	}, [])
+
+	const filterParams = useCallback((): Record<string, string | number> => {
+		const params: Record<string, string | number> = {}
+		if (filters.category) {
+			params.category = filters.category
+		}
+		if (filters.type) {
+			params.type = filters.type
+		}
+		if (filters.status) {
+			params.status = filters.status
+		}
+		return params
+	}, [filters])
 
 	const doSearch = useCallback(() => {
-		if (query) {
+		if (!query) {
+			return
+		}
+
+		clearTimeout(searchTimerRef.current)
+
+		searchTimerRef.current = setTimeout(() => {
+			const requestId = nextRequestId()
+
+			setIsFeatured(false)
 			updateQueryParam(SEARCH_PARAM, query)
 			updateQueryParam(SEARCH_METHOD_PARAM, searchByCodevault ? 'codevault' : 'term')
 			setIsSearching(true)
 
 			api.getResponse<CloudSnippetSchema[]>(
-				buildUrl(REST_BASES.cloud.snippets, { query, searchByCodevault, page, per_page: snippetsPerPage })
+				buildUrl(
+					REST_BASES.cloud.snippets,
+					{ query, searchByCodevault, page, per_page: snippetsPerPage, ...filterParams() }
+				)
 			)
 				.then(response => {
+					if (requestId !== activeRequestRef.current) {
+						return
+					}
 					setTotalItems(Number(response.headers['x-wp-total']))
 					setTotalPages(Number(response.headers['x-wp-totalpages']))
+					try {
+						const raw = String(response.headers['x-wp-filters'] ?? '{}')
+						setAvailableFilters(JSON.parse(raw) as AvailableFilters)
+					} catch { /* */
+					}
 					setSearchResults(response.data)
 					setIsSearching(false)
 				})
 				.catch(() => {
+					if (requestId !== activeRequestRef.current) {
+						return
+					}
 					setIsSearching(false)
 					setError(true)
 				})
+		}, SEARCH_DEBOUNCE_MS)
+	}, [api, filterParams, nextRequestId, page, query, searchByCodevault, snippetsPerPage])
+
+	useEffect(() => {
+		if (query) {
+			return
 		}
-	}, [api, page, query, searchByCodevault, snippetsPerPage])
+
+		const requestId = nextRequestId()
+		setIsSearching(true)
+
+		api.getResponse<CloudSnippetSchema[]>(
+			buildUrl(`${REST_BASES.cloud.snippets}/featured`, { page, per_page: snippetsPerPage, ...filterParams() })
+		)
+			.then(response => {
+				if (requestId !== activeRequestRef.current) {
+					return
+				}
+				setTotalItems(Number(response.headers['x-wp-total']))
+				setTotalPages(Number(response.headers['x-wp-totalpages']))
+				try {
+					const raw = String(response.headers['x-wp-filters'] ?? '{}')
+					setAvailableFilters(JSON.parse(raw) as AvailableFilters)
+				} catch { /* */
+				}
+				setSearchResults(response.data)
+				setIsFeatured(true)
+				setIsSearching(false)
+			})
+			.catch(() => {
+				if (requestId !== activeRequestRef.current) {
+					return
+				}
+				setIsSearching(false)
+			})
+	}, [api, filterParams, nextRequestId, page, query, snippetsPerPage])
+
+	// Reset to page 1 when filters change.
+	const prevFiltersRef = useRef(filters)
+	useEffect(() => {
+		if (prevFiltersRef.current !== filters) {
+			prevFiltersRef.current = filters
+			setPage(1)
+		}
+	}, [filters])
+
+	useEffect(() => () => clearTimeout(searchTimerRef.current), [])
 
 	const value: CloudSearchContext = {
 		page,
@@ -77,9 +192,13 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		totalItems,
 		totalPages,
 		isSearching,
+		isFeatured,
 		searchResults,
+		availableFilters,
 		searchByCodevault,
-		setSearchByCodevault
+		setSearchByCodevault,
+		filters,
+		setFilters
 	}
 
 	return <Context.Provider value={value}>{children}</Context.Provider>

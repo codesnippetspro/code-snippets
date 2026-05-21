@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { updateQueryParam } from '../../../utils/urls'
 import { useCloudSearch } from './WithCloudSearchContext'
-import { useCloudSearchFilters } from './WithCloudSearchFiltersContext'
 import type { Dispatch, SetStateAction } from 'react'
 
 export const STATUS_LABELS: Record<CloudStatus, string> = {
@@ -15,7 +14,8 @@ export const STATUS_LABELS: Record<CloudStatus, string> = {
 }
 
 export interface CloudSearchFilters {
-	tags: string
+	category: number
+	type: number
 	status: number
 }
 
@@ -35,7 +35,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, s
 		</label>
 
 		<select
-			id="cloud-search-category"
+			id={`cloud-search-${filter}`}
 			className="cloud-search-category-filter"
 			value={filters[filter]}
 			onChange={event => {
@@ -55,42 +55,48 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, s
 	</>
 
 export const SearchFilters = () => {
-	const { searchResults: snippets } = useCloudSearch()
-	const { filters, setFilters } = useCloudSearchFilters()
+	const { availableFilters, filters, setFilters } = useCloudSearch()
 
-	const options: { [K in keyof CloudSearchFilters]: [CloudSearchFilters[K], string][] } = useMemo(
-		() => {
-			const tags = new Set<string>()
-			const statuses = new Set<CloudStatus>()
+	const categoryOptions: [number, string][] = useMemo(
+		() => (availableFilters.categories ?? []).map(c => [c.id, c.name]),
+		[availableFilters.categories]
+	)
 
-			snippets?.forEach(snippet => {
-				snippet.tags.forEach(tag => tags.add(tag))
-				statuses.add(snippet.status)
-			})
+	const typeOptions: [number, string][] = useMemo(
+		() => (availableFilters.types ?? []).map(t => [t.id, t.name]),
+		[availableFilters.types]
+	)
 
-			return {
-				tags: Array.from(tags).sort().map(tag => [tag, tag]),
-				status: Array.from(statuses).sort().map(status => [status, STATUS_LABELS[status]])
-			}
-		},
-		[snippets])
+	const statusOptions: [number, string][] = useMemo(
+		() => (availableFilters.statuses ?? []).map(s => [s.id, s.name]),
+		[availableFilters.statuses]
+	)
 
 	return (
 		<>
 			<SearchFilter
-				filter="tags"
+				filter="category"
 				filters={filters}
 				setFilters={setFilters}
-				options={options.tags}
+				options={categoryOptions}
 				label={__('Snippet Category', 'code-snippets')}
 				allOptionLabel={__('All Categories', 'code-snippets')}
+			/>
+
+			<SearchFilter
+				filter="type"
+				filters={filters}
+				setFilters={setFilters}
+				options={typeOptions}
+				label={__('Snippet Type', 'code-snippets')}
+				allOptionLabel={__('All Types', 'code-snippets')}
 			/>
 
 			<SearchFilter
 				filter="status"
 				filters={filters}
 				setFilters={setFilters}
-				options={options.status}
+				options={statusOptions}
 				label={__('Snippet Status', 'code-snippets')}
 				allOptionLabel={__('All Snippet Statuses', 'code-snippets')}
 			/>

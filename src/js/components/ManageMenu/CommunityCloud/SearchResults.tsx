@@ -11,6 +11,7 @@ import { getSnippetEditUrl, getSnippetType, isProSnippet } from '../../../utils/
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { ErrorTooltip } from '../../common/Tooltip'
+import { UpsellDialog } from '../../common/UpsellDialog'
 import { STATUS_LABELS } from './SearchFilters'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 
@@ -69,7 +70,7 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 
 		<p className="cloud-snippet-author">
 			{_x('by ', 'snippet author', 'code-snippets')}
-			<a href={`https://codesnippets.cloud/codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
+			<a href={`${window.CODE_SNIPPETS?.urls.cloud}codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
 				{snippet.codevault}
 			</a>
 		</p>
@@ -105,6 +106,7 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
 	const [isWorking, setIsWorking] = useState(false)
 	const [errorMessage, setErrorMessage] = useState<string>()
 	const [localSnippetId, setLocalSnippetId] = useState<number>()
+	const [isUpsellOpen, setIsUpsellOpen] = useState(false)
 
 	const handleDownload = () => {
 		setIsWorking(true)
@@ -133,7 +135,12 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
 
 		if (isProSnippet(snippet) && !isLicensed()) {
 			return (
-				<Button primary disabled>{__('Pro only', 'code-snippets')}</Button>
+				<>
+					<Button className="cloud-pro-button" onClick={() => setIsUpsellOpen(true)}>
+						{__('Pro Only', 'code-snippets')}
+					</Button>
+					<UpsellDialog isOpen={isUpsellOpen} setIsOpen={setIsUpsellOpen} />
+				</>
 			)
 		}
 

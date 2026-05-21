@@ -304,6 +304,7 @@ function process_settings_actions( array $input ): ?array {
 
 	if ( isset( $input['debug']['reset_caches'] ) ) {
 		Welcome_API::clear_cache();
+		code_snippets()->cloud_api->clear_caches();
 		clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
 
 		if ( is_multisite() ) {

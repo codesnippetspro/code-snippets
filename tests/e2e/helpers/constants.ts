@@ -32,6 +32,8 @@ export const URLS = <const>{
 	IMPORT_SNIPPETS_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
 	SETTINGS_ADMIN: '/wp-admin/admin.php?page=snippets-settings',
 	WELCOME_SCREEN_ADMIN: '/wp-admin/admin.php?page=code-snippets-welcome',
+	ADD_SNIPPET: '/wp-admin/admin.php?page=add-snippet',
+	COMMUNITY_CLOUD: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
 	FRONTEND: '/'
 }
 

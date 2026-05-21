@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n'
 import React, { useEffect } from 'react'
 import { Spinner } from '@wordpress/components'
 import { TablePagination } from '../../common/ListTable/TablePagination'
-import { SubmitButton } from '../../common/SubmitButton'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { WithCloudSearchFiltersContext, useCloudSearchFilters } from './WithCloudSearchFiltersContext'
 import { SearchFilters } from './SearchFilters'
@@ -43,14 +42,18 @@ const SearchBox = () => {
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>
 				<span role="status" aria-live="polite">
-					{isSearching && <>
-						<Spinner />
-						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>
-					</>}
+					{isSearching &&
+						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>}
 				</span>
 			</div>
 
-			<SubmitButton primary disabled={isSearching} text={__('Search Cloud Library', 'code-snippets')} />
+			<button
+				type="submit"
+				className="button button-primary cloud-search-submit"
+				disabled={isSearching}
+			>
+				{isSearching ? <Spinner /> : __('Search Cloud Library', 'code-snippets')}
+			</button>
 		</form>
 	)
 }
@@ -78,18 +81,22 @@ const SearchResultsTable = () => {
 				/>
 			</div>
 
-			<SearchResults results={filteredSearchResults} />
+			{0 < filteredSearchResults.length
+				? <>
+					<SearchResults results={filteredSearchResults} />
 
-			<div className="tablenav bottom">
-				<TablePagination
-					which="bottom"
-					totalItems={totalItems}
-					totalPages={totalPages}
-					disabled={isSearching}
-					currentPage={page}
-					setCurrentPage={setPage}
-				/>
-			</div>
+					<div className="tablenav bottom">
+						<TablePagination
+							which="bottom"
+							totalItems={totalItems}
+							totalPages={totalPages}
+							disabled={isSearching}
+							currentPage={page}
+							setCurrentPage={setPage}
+						/>
+					</div>
+				</>
+				: <NoSearchResultsBanner />}
 		</>
 		: null
 }
@@ -104,8 +111,15 @@ const NoSearchResultsBanner = () =>
 		<p>{__('No snippets or codevault could be found with that search term. Please try again.', 'code-snippets')}</p>
 	</div>
 
+const CloudSnippetsHeading: React.FC<{ isFeatured: boolean }> = ({ isFeatured }) =>
+	<h3 className="cloud-snippets-heading">
+		{isFeatured
+			? __('Featured Snippets', 'code-snippets')
+			: __('Search Results', 'code-snippets')}
+	</h3>
+
 export const CloudSearch = () => {
-	const { searchResults, error, page } = useCloudSearch()
+	const { searchResults, error, isFeatured } = useCloudSearch()
 
 	return (
 		<div className="cloud-search">
@@ -113,11 +127,14 @@ export const CloudSearch = () => {
 
 			{error && <ErrorBanner />}
 
-			{0 < page && 0 === searchResults?.length
-				? <NoSearchResultsBanner />
-				: <WithCloudSearchFiltersContext>
-					<SearchResultsTable />
-				</WithCloudSearchFiltersContext>}
+			{searchResults !== undefined
+				? <>
+					<CloudSnippetsHeading isFeatured={isFeatured} />
+					<WithCloudSearchFiltersContext>
+						<SearchResultsTable />
+					</WithCloudSearchFiltersContext>
+				</>
+				: null}
 		</div>
 	)
 }
