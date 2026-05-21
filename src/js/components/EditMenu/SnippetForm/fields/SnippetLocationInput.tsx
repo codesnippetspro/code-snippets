@@ -19,7 +19,6 @@ const SCOPE_ICONS: Record<SnippetCodeScope, string> = {
 	'admin-css': 'dashboard',
 	'site-css': 'admin-customizer',
 	'site-head-js': 'media-code',
-	'site-body-js': 'media-code',
 	'site-footer-js': 'media-code'
 }
 
@@ -35,7 +34,6 @@ const SCOPE_DESCRIPTIONS: Record<SnippetCodeScope, string> = {
 	'site-css': __('Site front-end', 'code-snippets'),
 	'admin-css': __('Administration area', 'code-snippets'),
 	'site-head-js': __('In site header (<head> section)', 'code-snippets'),
-	'site-body-js': __('In site content (start of <body>)', 'code-snippets'),
 	'site-footer-js': __('In site footer (end of <body>)', 'code-snippets')
 }
 

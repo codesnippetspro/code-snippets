@@ -314,7 +314,7 @@ class Snippet extends Model {
 			'global', 'admin', 'front-end', 'single-use',
 			'content', 'head-content', 'body-content', 'footer-content',
 			'admin-css', 'site-css',
-			'site-head-js', 'site-body-js', 'site-footer-js',
+			'site-head-js', 'site-footer-js',
 			'condition',
 		);
 	}
@@ -337,7 +337,6 @@ class Snippet extends Model {
 			'admin-css'      => 'dashboard',
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
-			'site-body-js'   => 'media-code',
 			'site-footer-js' => 'media-code',
 			'condition'      => 'randomize',
 		);
@@ -373,8 +372,6 @@ class Snippet extends Model {
 				return __( 'Front-end styles', 'code-snippets' );
 			case 'site-head-js':
 				return __( 'Head scripts', 'code-snippets' );
-			case 'site-body-js':
-				return __( 'Body scripts', 'code-snippets' );
 			case 'site-footer-js':
 				return __( 'Footer scripts', 'code-snippets' );
 		}
