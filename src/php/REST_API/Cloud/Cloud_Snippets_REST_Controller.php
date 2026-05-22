@@ -217,23 +217,7 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 
 		$filters = $this->extract_filters( $request );
 		$cloud_snippets = Cloud_API::fetch_search_results( $method, $query, $page, $per_page, $filters );
-
-		$results = [];
-
-		foreach ( $cloud_snippets->snippets as $snippet ) {
-			$results[] = $snippet->get_fields();
-		}
-
-		$response = rest_ensure_response( $results );
-
-		$response->header( 'X-WP-Total', $cloud_snippets->total_snippets );
-		$response->header( 'X-WP-TotalPages', $cloud_snippets->total_pages );
-
-		if ( ! empty( $cloud_snippets->available_filters ) ) {
-			$response->header( 'X-WP-Filters', wp_json_encode( $cloud_snippets->available_filters ) );
-		}
-
-		return $response;
+		return $cloud_snippets->to_rest_response();
 	}
 
 	/**
@@ -252,23 +236,7 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 
 		$filters = $this->extract_filters( $request );
 		$cloud_snippets = Cloud_API::get_featured_snippets( $page, $per_page, $filters );
-
-		$results = [];
-
-		foreach ( $cloud_snippets->snippets as $snippet ) {
-			$results[] = $snippet->get_fields();
-		}
-
-		$response = rest_ensure_response( $results );
-
-		$response->header( 'X-WP-Total', $cloud_snippets->total_snippets );
-		$response->header( 'X-WP-TotalPages', $cloud_snippets->total_pages );
-
-		if ( ! empty( $cloud_snippets->available_filters ) ) {
-			$response->header( 'X-WP-Filters', wp_json_encode( $cloud_snippets->available_filters ) );
-		}
-
-		return $response;
+		return $cloud_snippets->to_rest_response();
 	}
 
 	/**

@@ -179,11 +179,11 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
 	)
 }
 
-interface SearchResultProps {
+export interface SearchResultProps {
 	snippet: CloudSnippetSchema
 }
 
-const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
+export const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	useEffect(() => {
@@ -216,13 +216,3 @@ const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 		</li>
 	)
 }
-
-interface SearchResultsProps {
-	results: CloudSnippetSchema[]
-}
-
-export const SearchResults: React.FC<SearchResultsProps> = ({ results }) =>
-	<ul className="cloud-search-results">
-		{results.map(result =>
-			<SearchResult key={result.id} snippet={result} />)}
-	</ul>

@@ -2,18 +2,21 @@
 
 namespace Code_Snippets\Model;
 
+use WP_REST_Response;
+
 /**
  * A list of snippets as retrieved from the cloud API.
  *
  * @since   3.4.0
  * @package Code_Snippets
  *
- * @property Cloud_Snippet $snippets        List of snippet items for the current page.
- * @property int           $page            Page of data that this data belongs to.
- * @property int           $total_pages     Total number of available pages of items.
- * @property int           $total_snippets  Total number of available snippet items.
- * @property array         $cloud_id_rev    An array of all cloud snippet IDs and their revision numbers.
- * @property bool          $success         If the request has any results.
+ * @property Cloud_Snippet[] $snippets          List of snippet items for the current page.
+ * @property int             $page              Page of data that this data belongs to.
+ * @property int             $total_pages       Total number of available pages of items.
+ * @property int             $total_snippets    Total number of available snippet items.
+ * @property array           $cloud_id_rev      An array of all cloud snippet IDs and their revision numbers.
+ * @property bool            $success           If the request has any results.
+ * @property array           $available_filters An array of available filters that can be applied to the collection.
  */
 class Cloud_Snippets extends Model {
 
@@ -23,12 +26,12 @@ class Cloud_Snippets extends Model {
 	 * @var array<string, mixed>
 	 */
 	protected static array $default_values = [
-		'snippets'       => [],
-		'total_snippets' => 0,
-		'total_pages'    => 0,
-		'page'           => 0,
-		'cloud_id_rev'        => [],
-		'available_filters'   => [],
+		'snippets'          => [],
+		'total_snippets'    => 0,
+		'total_pages'       => 0,
+		'page'              => 0,
+		'cloud_id_rev'      => [],
+		'available_filters' => [],
 	];
 
 	/**
@@ -110,9 +113,34 @@ class Cloud_Snippets extends Model {
 			$normalized['page'] = isset( $meta['page'] ) ? max( 0, (int) $meta['page'] - 1 ) : 0;
 			$normalized['cloud_id_rev'] = $initial_data['cloud_id_rev'] ?? [];
 			$normalized['available_filters'] = $initial_data['available_filters'] ?? [];
-			$initial_data = $normalized;
+			return $normalized;
 		}
 
 		return $initial_data;
+	}
+
+	/**
+	 * Transform the data stored into this class into a REST API response.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function to_rest_response(): WP_REST_Response {
+		$response = rest_ensure_response(
+			[
+				'snippets'          => array_map(
+					fn( Cloud_Snippet $snippet ) => $snippet->get_fields(),
+					$this->snippets
+				),
+				'page'              => $this->page,
+				'total_pages'       => $this->total_pages,
+				'total_snippets'    => $this->total_snippets,
+				'available_filters' => $this->available_filters,
+			]
+		);
+
+		$response->header( 'X-WP-Total', $this->total_snippets );
+		$response->header( 'X-WP-TotalPages', $this->total_pages );
+
+		return $response;
 	}
 }
