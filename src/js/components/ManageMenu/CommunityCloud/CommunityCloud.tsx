@@ -26,6 +26,8 @@ export const CommunityCloud = () => {
 		<>
 			<h2>{__('Community Cloud', 'code-snippets')}</h2>
 
+			<hr className="wp-header-end" />
+
 			<nav
 				className="nav-tab-wrapper"
 				aria-label={__('Community Cloud types', 'code-snippets')}

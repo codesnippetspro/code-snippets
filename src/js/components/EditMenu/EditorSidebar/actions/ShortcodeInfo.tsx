@@ -109,6 +109,8 @@ const ModalContent = () => {
 
 			<h2>{__('Shortcode Options', 'code-snippets')}</h2>
 
+			<hr className="wp-header-end" />
+
 			<CheckboxList
 				options={['php', 'format', 'shortcodes']}
 				checked={options}
