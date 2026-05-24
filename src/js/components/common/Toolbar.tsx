@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import React, { useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { buildUrl, fetchQueryParam } from '../../utils/urls'
-import { CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon, TeamsIcon } from './icons/ToolbarIcons'
+import { CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
 import type { ReactNode } from 'react'
 
@@ -59,13 +59,6 @@ const LOWER_NAV_LINKS: NavLink[] = [
 		icon: <LibraryIcon aria-hidden="true" />,
 		pro: true,
 		subpage: 'cloud-library'
-	},
-	{
-		name: 'cloud-teams',
-		label: __('My Teams', 'code-snippets'),
-		icon: <TeamsIcon aria-hidden="true" />,
-		pro: true,
-		subpage: 'cloud-teams'
 	},
 	{
 		name: 'settings',
