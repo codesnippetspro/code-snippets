@@ -15,7 +15,10 @@ const SNIPPETS_PER_PAGE = Math.min(
 	MAX_CLOUD_RESULTS_PER_PAGE
 )
 
-const SEARCH_DEBOUNCE_MS = 500
+const SEARCH_URLS = {
+	SEARCH_QUERY: REST_BASES.cloud.snippets,
+	FEATURED: `${REST_BASES.cloud.snippets}/featured`
+} as const
 
 export interface AvailableCloudFilters {
 	types?: CloudFilterOption[]
@@ -72,44 +75,36 @@ const fetchSearchQueryParams = (): CloudSearchParams => {
 	}
 }
 
-const updateSearchQueryParams = (request: CloudSearchRequest) => {
-	updateQueryParam(SEARCH_PARAM_VARS.page, request.page)
-	updateQueryParam(SEARCH_PARAM_VARS.type, request.type)
-	updateQueryParam(SEARCH_PARAM_VARS.query, request.query)
-	updateQueryParam(SEARCH_PARAM_VARS.status, request.status.toString())
-	updateQueryParam(SEARCH_PARAM_VARS.method, request.method)
-	updateQueryParam(SEARCH_PARAM_VARS.status, request.status || undefined)
-	updateQueryParam(SEARCH_PARAM_VARS.category, request.category)
-}
-
-interface CloudSearchRequest extends CloudSearchParams {
-	isFeatured: boolean
+const updateSearchQueryParams = (params: CloudSearchParams) => {
+	updateQueryParam(SEARCH_PARAM_VARS.page, params.page)
+	updateQueryParam(SEARCH_PARAM_VARS.type, params.type)
+	updateQueryParam(SEARCH_PARAM_VARS.query, params.query)
+	updateQueryParam(SEARCH_PARAM_VARS.status, params.status.toString())
+	updateQueryParam(SEARCH_PARAM_VARS.method, params.method)
+	updateQueryParam(SEARCH_PARAM_VARS.status, params.status || undefined)
+	updateQueryParam(SEARCH_PARAM_VARS.category, params.category)
 }
 
 const buildSearchUrl = (
-	{ query, type, method, status, category, page, isFeatured }: CloudSearchRequest
+	baseUrl: string,
+	{ query, type, method, status, category, page }: CloudSearchParams
 ) =>
-	buildUrl(
-		`${REST_BASES.cloud.snippets}${isFeatured ? '/featured' : ''}`,
-		{
-			query,
-			searchByCodevault: 'codevault' === method ? true : undefined,
-			per_page: SNIPPETS_PER_PAGE,
-			type: type || undefined,
-			category: category || undefined,
-			status: status || undefined,
-			page
-		})
+	buildUrl(baseUrl, {
+		query,
+		searchByCodevault: 'codevault' === method ? true : undefined,
+		per_page: SNIPPETS_PER_PAGE,
+		type: type || undefined,
+		category: category || undefined,
+		status: status || undefined,
+		page
+	})
 
-const unpackSearchResponse = (
-	response: AxiosResponse<CloudSnippetsSchema>,
-	{ isFeatured }: CloudSearchRequest
-) => ({
-	page: response.data.page,
-	isFeatured,
-	snippets: response.data.snippets,
-	totalItems: response.data.total_snippets,
-	totalPages: response.data.total_pages
+const unpackSearchResponse = ({ data }: AxiosResponse<CloudSnippetsSchema>, baseUrl: string) => ({
+	page: data.page,
+	isFeatured: baseUrl === SEARCH_URLS.FEATURED,
+	snippets: data.snippets,
+	totalItems: data.total_snippets,
+	totalPages: data.total_pages
 })
 
 const isFilterOption = (value: unknown): value is CloudFilterOption =>
@@ -163,14 +158,15 @@ const useSearchApi = () => {
 	const [searchResults, setSearchResults] = useState<CloudSearchResults | false | undefined>()
 	const [availableFilters, setAvailableFilters] = useState<AvailableCloudFilters>({})
 
-	const makeSearchRequest = useCallback((request: CloudSearchRequest) => {
+	const makeSearchRequest = useCallback((request: CloudSearchParams) => {
 		const requestId = nextRequestId()
 		setIsSearching(true)
+		const baseUrl = '' === request.query.trim() ? SEARCH_URLS.FEATURED : SEARCH_URLS.SEARCH_QUERY
 
-		api.getResponse<CloudSnippetsSchema>(buildSearchUrl(request))
+		api.getResponse<CloudSnippetsSchema>(buildSearchUrl(baseUrl, request))
 			.then(response => {
 				if (isCurrentRequest(requestId)) {
-					setSearchResults(unpackSearchResponse(response, request))
+					setSearchResults(unpackSearchResponse(response, baseUrl))
 					setAvailableFilters(previous => unpackFiltersFromResponse(response) ?? previous)
 				}
 			})
@@ -194,7 +190,6 @@ const [Context, useCloudSearch] = createContextHook<CloudSearchContext>('useClou
 
 export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { isSearching, makeSearchRequest, availableFilters, searchResults } = useSearchApi()
-	const searchTimerRef = useRef<ReturnType<typeof setTimeout>>()
 	const [searchParams, setSearchParams] = useState<CloudSearchParams>(fetchSearchQueryParams)
 	const [madeInitialRequest, setMadeInitialRequest] = useState(false)
 
@@ -204,25 +199,19 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 
 	const doSearch = useCallback((paramsDelta?: Partial<CloudSearchParams>) => {
 		if (searchParams.query) {
-			clearTimeout(searchTimerRef.current)
-
-			searchTimerRef.current = setTimeout(() => {
-				const request: CloudSearchRequest = { ...searchParams, ...paramsDelta, isFeatured: false }
-				updateSearchQueryParams(request)
-				setSearchParams(request)
-				makeSearchRequest(request)
-			}, SEARCH_DEBOUNCE_MS)
+			const request: CloudSearchParams = { ...searchParams, ...paramsDelta }
+			updateSearchQueryParams(request)
+			setSearchParams(request)
+			makeSearchRequest(request)
 		}
 	}, [makeSearchRequest, searchParams])
 
 	useEffect(() => {
 		if (!madeInitialRequest) {
-			makeSearchRequest({ ...searchParams, isFeatured: !searchParams.query })
+			makeSearchRequest(searchParams)
 			setMadeInitialRequest(true)
 		}
 	}, [makeSearchRequest, searchParams, madeInitialRequest])
-
-	useEffect(() => () => clearTimeout(searchTimerRef.current), [])
 
 	const value: CloudSearchContext = {
 		doSearch,
