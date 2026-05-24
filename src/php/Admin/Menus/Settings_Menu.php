@@ -221,6 +221,8 @@ class Settings_Menu extends Admin_Menu {
 				?>
 			</h2>
 
+			<hr class="wp-header-end" />
+
 			<?php settings_errors( OPTION_NAME ); ?>
 
 			<form action="<?php echo esc_url( $update_url ); ?>" method="post">

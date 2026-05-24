@@ -89,6 +89,8 @@ const PageHeading = () => {
 					: null}
 			</h2>
 
+			<hr className="wp-header-end" />
+
 			<SafeModeNotice />
 		</>
 	)

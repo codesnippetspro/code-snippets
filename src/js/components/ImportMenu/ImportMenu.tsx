@@ -39,6 +39,8 @@ export const ImportMenu: React.FC = () => {
 			<>
 				<h2>{__('Import Snippets', 'code-snippets')}</h2>
 
+				<hr className="wp-header-end" />
+
 				<nav
 					className="nav-tab-wrapper"
 					aria-label={__('Import sources', 'code-snippets')}

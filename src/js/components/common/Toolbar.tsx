@@ -166,13 +166,10 @@ export const Toolbar = () => {
 	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
 
 	return (
-		<>
-			<div className="code-snippets-toolbar">
-				<UpperNav setIsUpsellDialogOpen={setIsUpsellDialogOpen} />
-				<LowerNav setIsUpsellDialogOpen={setIsUpsellDialogOpen} />
-				<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
-			</div>
-			<hr className="wp-header-end" />
-		</>
+		<div className="code-snippets-toolbar">
+			<UpperNav setIsUpsellDialogOpen={setIsUpsellDialogOpen} />
+			<LowerNav setIsUpsellDialogOpen={setIsUpsellDialogOpen} />
+			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
+		</div>
 	)
 }

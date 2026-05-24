@@ -103,6 +103,8 @@ export const WelcomeMenu = () =>
 		<div className="code-snippets-welcome">
 			<h2>{__('Resources and Updates', 'code-snippets')}</h2>
 
+			<hr className="wp-header-end" />
+
 			<div className="code-snippets-updates">
 				<HeroImage />
 				<Changelog />
