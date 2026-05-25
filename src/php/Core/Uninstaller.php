@@ -9,6 +9,8 @@
 
 namespace Code_Snippets\Core;
 
+use Code_Snippets\Client\Cloud_API;
+
 /**
  * Uninstaller class.
  *
@@ -72,7 +74,7 @@ class Uninstaller {
 		delete_option( 'code_snippets_settings' );
 
 		delete_option( 'code_snippets_cloud_settings' );
-		delete_option( 'cs_featured_cache_version' );
+		delete_option( Cloud_API::FEATURED_VERSION_OPTION );
 		delete_transient( 'cs_codevault_snippets' );
 		delete_transient( 'cs_local_to_cloud_map' );
 	}
