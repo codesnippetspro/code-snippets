@@ -361,8 +361,7 @@ class Cloud_API {
 	/**
 	 * Option key holding the current featured-snippets cache version.
 	 *
-	 * Bumped on flush so old transient keys become unreachable and expire naturally,
-	 * which avoids needing a raw SQL sweep across the options table.
+	 * Bumped on flush so old transient keys become unreachable and expire naturally.
 	 */
 	private const FEATURED_VERSION_OPTION = 'cs_featured_cache_version';
 
@@ -478,9 +477,8 @@ class Cloud_API {
 	/**
 	 * Refresh the cached synced data.
 	 *
-	 * Bumps the featured-cache version counter instead of issuing a raw SQL sweep
-	 * across the options table: previously cached keys become unreachable and are
-	 * cleaned up by WordPress's normal transient-expiry path.
+	 * Bumps the featured-cache version counter so previously cached keys
+	 * become unreachable and expire via WordPress's normal transient path.
 	 *
 	 * @return void
 	 */
