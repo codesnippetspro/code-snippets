@@ -359,17 +359,15 @@ class Cloud_API {
 	}
 
 	/**
-	 * Transient key for cached cloud types (languages).
+	 * Option key holding the current featured-snippets cache version.
+	 *
+	 * Bumped on flush so old transient keys become unreachable and expire naturally,
+	 * which avoids needing a raw SQL sweep across the options table.
 	 */
-	private const TYPES_TRANSIENT_KEY = 'cs_cloud_types';
+	private const FEATURED_VERSION_OPTION = 'cs_featured_cache_version';
 
 	/**
-	 * Transient key for cached cloud categories.
-	 */
-	private const CATEGORIES_TRANSIENT_KEY = 'cs_cloud_categories';
-
-	/**
-	 * Transient key for cached featured snippets.
+	 * Base transient key for cached featured snippets.
 	 */
 	private const FEATURED_TRANSIENT_KEY = 'cs_featured_snippets';
 
@@ -377,6 +375,40 @@ class Cloud_API {
 	 * Minimum TTL in seconds for the featured snippets transient.
 	 */
 	private const FEATURED_MIN_TTL = 3600;
+
+	/**
+	 * Get the current featured-snippets cache version, initialising it if absent.
+	 *
+	 * @return int
+	 */
+	private static function get_featured_cache_version(): int {
+		$version = (int) get_option( self::FEATURED_VERSION_OPTION, 0 );
+
+		if ( $version <= 0 ) {
+			$version = 1;
+			update_option( self::FEATURED_VERSION_OPTION, $version, false );
+		}
+
+		return $version;
+	}
+
+	/**
+	 * Build the transient key for a specific (version, page, per_page, filters) slot.
+	 *
+	 * @param int                  $page     Page number (1-indexed).
+	 * @param int                  $per_page Results per page.
+	 * @param array<string,string> $filters  Filter values.
+	 *
+	 * @return string
+	 */
+	private static function build_featured_cache_key( int $page, int $per_page, array $filters ): string {
+		$active_filters = array_filter( $filters );
+		$encoded = wp_json_encode( $active_filters );
+		$filter_hash = md5( false === $encoded ? '' : $encoded );
+		$version = self::get_featured_cache_version();
+
+		return self::FEATURED_TRANSIENT_KEY . "_v{$version}_p{$page}_pp{$per_page}_{$filter_hash}";
+	}
 
 	/**
 	 * Retrieve featured snippets from the cloud API, with transient caching.
@@ -389,9 +421,7 @@ class Cloud_API {
 	 */
 	public static function get_featured_snippets( int $page = 1, int $per_page = 10, array $filters = [] ): Cloud_Snippets {
 		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
-		$encoded = wp_json_encode( $filters );
-		$filter_hash = md5( false === $encoded ? '' : $encoded );
-		$cache_key = self::FEATURED_TRANSIENT_KEY . "_p{$page}_pp{$per_page}_{$filter_hash}";
+		$cache_key = self::build_featured_cache_key( $page, $per_page, $filters );
 
 		$cached = get_transient( $cache_key );
 
@@ -446,88 +476,21 @@ class Cloud_API {
 	}
 
 	/**
-	 * Retrieve available snippet types (languages) from the cloud API, with transient caching.
-	 *
-	 * @return array<int, array{id: int, name: string, snippet_count: int}> List of types.
-	 */
-	public static function get_cloud_types(): array {
-		$cached = get_transient( self::TYPES_TRANSIENT_KEY );
-
-		if ( is_array( $cached ) ) {
-			return $cached;
-		}
-
-		$url = self::get_cloud_api_url() . 'public/types';
-		$response = wp_remote_get( $url );
-
-		if ( is_wp_error( $response ) ) {
-			return [];
-		}
-
-		$json = self::unpack_request_json( $response );
-
-		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
-			return [];
-		}
-
-		$types = $json['data'];
-		set_transient( self::TYPES_TRANSIENT_KEY, $types, DAY_IN_SECONDS );
-
-		return $types;
-	}
-
-	/**
-	 * Retrieve available snippet categories from the cloud API, with transient caching.
-	 *
-	 * @return array<int, array{id: int, name: string, snippet_count: int}> List of categories.
-	 */
-	public static function get_cloud_categories(): array {
-		$cached = get_transient( self::CATEGORIES_TRANSIENT_KEY );
-
-		if ( is_array( $cached ) ) {
-			return $cached;
-		}
-
-		$url = self::get_cloud_api_url() . 'public/categories';
-		$response = wp_remote_get( $url );
-
-		if ( is_wp_error( $response ) ) {
-			return [];
-		}
-
-		$json = self::unpack_request_json( $response );
-
-		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
-			return [];
-		}
-
-		$categories = $json['data'];
-		set_transient( self::CATEGORIES_TRANSIENT_KEY, $categories, DAY_IN_SECONDS );
-
-		return $categories;
-	}
-
-	/**
 	 * Refresh the cached synced data.
+	 *
+	 * Bumps the featured-cache version counter instead of issuing a raw SQL sweep
+	 * across the options table: previously cached keys become unreachable and are
+	 * cleaned up by WordPress's normal transient-expiry path.
 	 *
 	 * @return void
 	 */
 	public function clear_caches() {
-		global $wpdb;
-
 		$this->cached_cloud_links = null;
 
 		delete_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-		delete_transient( self::TYPES_TRANSIENT_KEY );
-		delete_transient( self::CATEGORIES_TRANSIENT_KEY );
 		delete_transient( 'cs_codevault_snippets' );
 
-		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
-				$wpdb->esc_like( '_transient_' . self::FEATURED_TRANSIENT_KEY ) . '%',
-				$wpdb->esc_like( '_transient_timeout_' . self::FEATURED_TRANSIENT_KEY ) . '%'
-			)
-		);
+		$version = self::get_featured_cache_version();
+		update_option( self::FEATURED_VERSION_OPTION, $version + 1, false );
 	}
 }
