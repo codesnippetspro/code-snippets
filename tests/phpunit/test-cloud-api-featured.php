@@ -63,9 +63,12 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return string
 	 */
 	private function transient_key( int $page = 1, int $per_page = 10, array $filters = [] ): string {
-		$encoded = wp_json_encode( $filters );
+		$active_filters = array_filter( $filters );
+		$encoded = wp_json_encode( $active_filters );
 		$hash = md5( false === $encoded ? '' : $encoded );
-		return "cs_featured_snippets_p{$page}_pp{$per_page}_{$hash}";
+		$version = (int) get_option( 'cs_featured_cache_version', 1 );
+		$version = $version > 0 ? $version : 1;
+		return "cs_featured_snippets_v{$version}_p{$page}_pp{$per_page}_{$hash}";
 	}
 
 	/**
@@ -75,6 +78,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 */
 	private function clear_featured_transients(): void {
 		delete_transient( $this->transient_key() );
+		delete_option( 'cs_featured_cache_version' );
 	}
 
 	/**
@@ -339,5 +343,41 @@ class Cloud_API_Featured_Test extends TestCase {
 		$this->assertIsArray( $result->available_filters );
 		$this->assertArrayHasKey( 'types', $result->available_filters );
 		$this->assertArrayHasKey( 'statuses', $result->available_filters );
+	}
+
+	/**
+	 * Calling clear_caches() causes the next get_featured_snippets() to miss cache and re-fetch.
+	 *
+	 * @return void
+	 */
+	public function test_clear_caches_invalidates_featured_cache(): void {
+		Cloud_API::get_featured_snippets();
+		$this->assertSame( 1, $this->http_request_count );
+
+		$api = new Cloud_API();
+		$api->clear_caches();
+
+		Cloud_API::get_featured_snippets();
+		$this->assertSame( 2, $this->http_request_count, 'Expected a fresh HTTP request after cache invalidation.' );
+	}
+
+	/**
+	 * Empty filter values produce the same cache key as omitted filters.
+	 *
+	 * @return void
+	 */
+	public function test_empty_filters_produce_same_cache_key(): void {
+		$key_empty = $this->transient_key(
+			1,
+			10,
+			[
+				'category' => '',
+				'type'     => '',
+				'status'   => '',
+			]
+		);
+		$key_none = $this->transient_key( 1, 10, [] );
+
+		$this->assertSame( $key_none, $key_empty, 'Empty filter values should hash identically to no filters.' );
 	}
 }
