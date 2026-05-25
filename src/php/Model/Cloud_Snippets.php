@@ -15,7 +15,6 @@ use WP_REST_Response;
  * @property int             $total_pages       Total number of available pages of items.
  * @property int             $total_snippets    Total number of available snippet items.
  * @property array           $cloud_id_rev      An array of all cloud snippet IDs and their revision numbers.
- * @property bool            $success           If the request has any results.
  * @property array           $available_filters An array of available filters that can be applied to the collection.
  */
 class Cloud_Snippets extends Model {
@@ -50,7 +49,7 @@ class Cloud_Snippets extends Model {
 	/**
 	 * Class constructor.
 	 *
-	 * @param Cloud_Snippet $initial_data Initial data.
+	 * @param array|null $initial_data Initial data from the cloud API response.
 	 */
 	public function __construct( $initial_data = null ) {
 		parent::__construct( $this->normalize_cloud_api( $initial_data ) );
@@ -103,7 +102,6 @@ class Cloud_Snippets extends Model {
 	 * @return mixed Normalized data array or original value when no normalization is required.
 	 */
 	private function normalize_cloud_api( $initial_data ) {
-		// pagination metadata is nested under a 'meta' key.
 		if ( is_array( $initial_data ) && isset( $initial_data['meta'] ) ) {
 			$meta = $initial_data['meta'];
 			$normalized = [];
