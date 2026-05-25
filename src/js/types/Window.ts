@@ -43,7 +43,6 @@ declare global {
 				welcome: string
 				settings: string
 				cloud: string
-				connectCloud: string
 			}
 			banner: {
 				key: string
