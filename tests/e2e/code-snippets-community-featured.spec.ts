@@ -31,14 +31,13 @@ test.describe('Community Cloud Featured Snippets', () => {
 			.waitFor({ state: 'hidden', timeout: TIMEOUTS.DEFAULT })
 			.catch(() => undefined)
 
-		const featuredHeading = page.locator('.cloud-featured-heading')
+		const featuredHeading = page.locator('.cloud-snippets-heading', { hasText: 'Featured Snippets' })
 		const headingVisible = await featuredHeading
 			.waitFor({ state: 'visible', timeout: TIMEOUTS.SHORT })
 			.then(() => true)
 			.catch(() => false)
 
 		if (headingVisible) {
-			// Featured snippets loaded — verify the heading text.
 			await expect(featuredHeading).toContainText('Featured Snippets')
 		} else {
 			// Cloud API unreachable — verify no crash: the search form is still functional.
@@ -64,7 +63,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 			.waitFor({ state: 'hidden', timeout: TIMEOUTS.DEFAULT })
 			.catch(() => undefined)
 
-		// The "Featured Snippets" heading should no longer be visible.
-		await expect(page.locator('.cloud-featured-heading')).not.toBeVisible()
+		// The "Featured Snippets" heading should no longer be visible (search-mode heading replaces it).
+		await expect(page.locator('.cloud-snippets-heading', { hasText: 'Featured Snippets' })).not.toBeVisible()
 	})
 })
