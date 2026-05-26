@@ -41,7 +41,7 @@ const SearchBox = () => {
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>
 				<span role="status" aria-live="polite">
-					{isSearching && 
+					{isSearching &&
 						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>}
 				</span>
 			</div>

@@ -99,6 +99,25 @@ const buildSearchUrl = (
 		page
 	})
 
+const processSearchParams = (params: CloudSearchParams, previous: CloudSearchParams): CloudSearchParams => {
+	const queryDiff = params.query.trim() !== previous.query.trim()
+	const methodDiff = params.method !== previous.method
+
+	const typeDiff = params.type !== previous.type
+	const statusDiff = params.status !== previous.status
+	const categoryDiff = params.category !== previous.category
+
+	const filterDiff = typeDiff || statusDiff || categoryDiff
+
+	if (queryDiff || methodDiff) {
+		return { ...params, page: 1, type: '', status: 0, category: '' }
+	} else if (filterDiff) {
+		return { ...params, page: 1 }
+	}
+
+	return params
+}
+
 const unpackSearchResponse = ({ data }: AxiosResponse<CloudSnippetsSchema>, baseUrl: string) => ({
 	page: data.page,
 	isFeatured: baseUrl === SEARCH_URLS.FEATURED,
@@ -158,12 +177,12 @@ const useSearchApi = () => {
 	const [searchResults, setSearchResults] = useState<CloudSearchResults | false | undefined>()
 	const [availableFilters, setAvailableFilters] = useState<AvailableCloudFilters>({})
 
-	const makeSearchRequest = useCallback((request: CloudSearchParams) => {
+	const makeSearchRequest = useCallback((params: CloudSearchParams) => {
 		const requestId = nextRequestId()
 		setIsSearching(true)
-		const baseUrl = '' === request.query.trim() ? SEARCH_URLS.FEATURED : SEARCH_URLS.SEARCH_QUERY
+		const baseUrl = '' === params.query.trim() ? SEARCH_URLS.FEATURED : SEARCH_URLS.SEARCH_QUERY
 
-		api.getResponse<CloudSnippetsSchema>(buildSearchUrl(baseUrl, request))
+		api.getResponse<CloudSnippetsSchema>(buildSearchUrl(baseUrl, params))
 			.then(response => {
 				if (isCurrentRequest(requestId)) {
 					setSearchResults(unpackSearchResponse(response, baseUrl))
@@ -199,10 +218,10 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 
 	const doSearch = useCallback((paramsDelta?: Partial<CloudSearchParams>) => {
 		if (searchParams.query) {
-			const request: CloudSearchParams = { ...searchParams, ...paramsDelta }
-			updateSearchQueryParams(request)
-			setSearchParams(request)
-			makeSearchRequest(request)
+			const params = processSearchParams({ ...searchParams, ...paramsDelta }, searchParams)
+			updateSearchQueryParams(params)
+			setSearchParams(params)
+			makeSearchRequest(params)
 		}
 	}, [makeSearchRequest, searchParams])
 

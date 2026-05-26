@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n'
 import React, { Fragment } from 'react'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { useCloudSearch } from './WithCloudSearchContext'
-import type { AvailableCloudFilters , CloudSearchParams} from './WithCloudSearchContext'
+import type { AvailableCloudFilters, CloudSearchParams } from './WithCloudSearchContext'
 
 export const STATUS_LABELS: Record<CloudStatus, string> = {
 	[CloudStatus.Public]: __('Public', 'code-snippets'),
@@ -55,7 +55,7 @@ const normaliseFilterValue = (filter: keyof CloudSearchParams, params: CloudSear
 }
 
 export const SearchFilters = () => {
-	const { availableFilters, searchParams, updateSearchParams } = useCloudSearch()
+	const { availableFilters, searchParams, doSearch } = useCloudSearch()
 
 	return FILTERS.map(({ label, allOptionLabel, filterName, paramName }) =>
 		availableFilters[filterName] && 0 < availableFilters[filterName].length
@@ -69,7 +69,7 @@ export const SearchFilters = () => {
 					className="cloud-search-category-filter"
 					value={searchParams[paramName]}
 					onChange={event =>
-						updateSearchParams({ [paramName]: normaliseFilterValue(paramName, searchParams, event.target.value) })}
+						doSearch({ [paramName]: normaliseFilterValue(paramName, searchParams, event.target.value) })}
 				>
 					<option value="">{allOptionLabel}</option>
 					{availableFilters[filterName].map(filterOption =>
