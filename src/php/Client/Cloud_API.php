@@ -363,7 +363,7 @@ class Cloud_API {
 	 *
 	 * Bumped on flush so old transient keys become unreachable and expire naturally.
 	 */
-	public const FEATURED_VERSION_OPTION = 'cs_featured_cache_version';
+	private const FEATURED_VERSION_OPTION = 'cs_featured_cache_version';
 
 	/**
 	 * Base transient key for cached featured snippets.
