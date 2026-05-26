@@ -32,22 +32,25 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 	/**
 	 * Common filter args shared across search and featured endpoints.
 	 *
+	 * Each filter accepts a single numeric ID (e.g. category=12). The cloud API
+	 * resolves IDs to the underlying name/slug.
+	 *
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_filter_args(): array {
 		return [
 			'category' => [
-				'description' => esc_html__( 'Filter by category name (comma-separated).', 'code-snippets' ),
+				'description' => esc_html__( 'Filter by category ID.', 'code-snippets' ),
 				'type'        => 'string',
 				'default'     => '',
 			],
 			'type'     => [
-				'description' => esc_html__( 'Filter by language/type name (comma-separated).', 'code-snippets' ),
+				'description' => esc_html__( 'Filter by language/type ID.', 'code-snippets' ),
 				'type'        => 'string',
 				'default'     => '',
 			],
 			'status'   => [
-				'description' => esc_html__( 'Filter by status ID (comma-separated).', 'code-snippets' ),
+				'description' => esc_html__( 'Filter by status ID.', 'code-snippets' ),
 				'type'        => 'string',
 				'default'     => '',
 			],
@@ -157,30 +160,6 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/types',
-			[
-				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_types' ],
-					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-				],
-			]
-		);
-
-		register_rest_route(
-			$this->namespace,
-			$this->rest_base . '/categories',
-			[
-				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_categories' ],
-					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-				],
-			]
-		);
-
-		register_rest_route(
-			$this->namespace,
 			$this->rest_base . '/(?P<id>\d+)/download',
 			[
 				[
@@ -237,24 +216,6 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 		$filters = $this->extract_filters( $request );
 		$cloud_snippets = Cloud_API::get_featured_snippets( $page, $per_page, $filters );
 		return $cloud_snippets->to_rest_response();
-	}
-
-	/**
-	 * Retrieve available snippet types (languages) from the cloud API.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function get_types(): WP_REST_Response {
-		return rest_ensure_response( Cloud_API::get_cloud_types() );
-	}
-
-	/**
-	 * Retrieve available snippet categories from the cloud API.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function get_categories(): WP_REST_Response {
-		return rest_ensure_response( Cloud_API::get_cloud_categories() );
 	}
 
 	/**
