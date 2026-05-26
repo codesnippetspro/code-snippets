@@ -380,12 +380,12 @@ class Cloud_API {
 	 *
 	 * @return int
 	 */
-	private static function get_featured_cache_version(): int {
-		$version = (int) get_option( self::FEATURED_VERSION_OPTION, 0 );
+	private static function get_featured_cache_version(): string {
+		$version = get_transient( self::FEATURED_VERSION_OPTION );
 
-		if ( $version <= 0 ) {
-			$version = 1;
-			update_option( self::FEATURED_VERSION_OPTION, $version, false );
+		if ( ! $version ) {
+			$version = (string) ( microtime( true ) * 1000 );
+			set_transient( self::FEATURED_VERSION_OPTION, $version, MONTH_IN_SECONDS );
 		}
 
 		return $version;
@@ -488,7 +488,6 @@ class Cloud_API {
 		delete_transient( self::CLOUD_MAP_TRANSIENT_KEY );
 		delete_transient( 'cs_codevault_snippets' );
 
-		$version = self::get_featured_cache_version();
-		update_option( self::FEATURED_VERSION_OPTION, $version + 1, false );
+		delete_transient( self::FEATURED_VERSION_OPTION );
 	}
 }

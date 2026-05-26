@@ -66,8 +66,10 @@ class Cloud_API_Featured_Test extends TestCase {
 		$active_filters = array_filter( $filters );
 		$encoded = wp_json_encode( $active_filters );
 		$hash = md5( false === $encoded ? '' : $encoded );
-		$version = (int) get_option( 'cs_featured_cache_version', 1 );
-		$version = $version > 0 ? $version : 1;
+		$version = get_transient( 'cs_featured_cache_version' );
+		if ( ! $version ) {
+			$version = (string) ( microtime( true ) * 1000 );
+		}
 		return "cs_featured_snippets_v{$version}_p{$page}_pp{$per_page}_{$hash}";
 	}
 
@@ -78,7 +80,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 */
 	private function clear_featured_transients(): void {
 		delete_transient( $this->transient_key() );
-		delete_option( 'cs_featured_cache_version' );
+		delete_transient( 'cs_featured_cache_version' );
 	}
 
 	/**
