@@ -100,7 +100,7 @@ const SearchResults = () => {
 	if (isErrored) {
 		return (
 			<div className="banner banner-error">
-				<p>{__('An error occurred while fetching search results. Please try again.')}</p>
+				<p>{__('An error occurred while fetching search results. Please try again.', 'code-snippets')}</p>
 			</div>
 		)
 	}

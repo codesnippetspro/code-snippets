@@ -114,7 +114,7 @@ const DownloadOrViewButton: React.FC<DownloadOrViewButtonProps> = ({
 
 	if (localSnippetId) {
 		return (
-			<a className="button button-primary" href={getSnippetEditUrl({ id: localSnippetId })} target="_blank" rel="noreferrer">
+			<a className="button button-primary" href={getSnippetEditUrl({ id: localSnippetId })} target="_blank" rel="noopener noreferrer">
 				{__('View', 'code-snippets')}
 			</a>
 		)
