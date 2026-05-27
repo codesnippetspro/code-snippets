@@ -121,6 +121,12 @@ abstract class Promotion_Base {
 	public function print_promotion_styles() {
 		?>
 		<style>
+			.code-snippets-promotion.notice,
+			.code-snippets-promotion.info,
+			.code-snippets-promotion.warning,
+			.code-snippets-promotion.error {
+				padding: 0;
+			}
             .code-snippets-promotion {
                 display: flex;
                 padding: 0;
