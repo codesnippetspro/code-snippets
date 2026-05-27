@@ -1,9 +1,8 @@
-import React, { useMemo } from 'react'
 import { __ } from '@wordpress/i18n'
+import React, { Fragment } from 'react'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
-import { updateQueryParam } from '../../../utils/urls'
 import { useCloudSearch } from './WithCloudSearchContext'
-import type { Dispatch, SetStateAction } from 'react'
+import type { AvailableCloudFilters, CloudSearchParams } from './WithCloudSearchContext'
 
 export const STATUS_LABELS: Record<CloudStatus, string> = {
 	[CloudStatus.Public]: __('Public', 'code-snippets'),
@@ -13,93 +12,69 @@ export const STATUS_LABELS: Record<CloudStatus, string> = {
 	[CloudStatus.Pro_Verified]: __('Pro Verified', 'code-snippets')
 }
 
-export interface CloudSearchFilters {
-	category: number
-	type: number
-	status: number
-}
-
-interface SearchFilterProps {
+interface FilterInfo {
+	paramName: keyof CloudSearchParams
+	filterName: keyof AvailableCloudFilters
 	label: string
-	filter: keyof CloudSearchFilters
-	filters: CloudSearchFilters
-	setFilters: Dispatch<SetStateAction<CloudSearchFilters>>
-	options: [string | number, string][]
 	allOptionLabel: string
+
 }
 
-const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, setFilters, label, allOptionLabel }) =>
-	<>
-		<label htmlFor={`cloud-search-${filter}`} className="screen-reader-text">
-			{label}
-		</label>
+const FILTERS: FilterInfo[] = [
+	{
+		paramName: 'category',
+		filterName: 'categories',
+		label: __('Snippet Category', 'code-snippets'),
+		allOptionLabel: __('All Categories', 'code-snippets')
+	},
+	{
+		paramName: 'type',
+		filterName: 'types',
+		label: __('Snippet Type', 'code-snippets'),
+		allOptionLabel: __('All Types', 'code-snippets')
+	},
+	{
+		paramName: 'status',
+		filterName: 'statuses',
+		label: __('Snippet Status', 'code-snippets'),
+		allOptionLabel: __('All Statuses', 'code-snippets')
+	}
+]
 
-		<select
-			id={`cloud-search-${filter}`}
-			className="cloud-search-category-filter"
-			value={filters[filter]}
-			onChange={event => {
-				setFilters(previous => ({
-					...previous,
-					[filter]: 'number' === typeof filters[filter]
-						? Number(event.target.value)
-						: event.target.value
-				}))
-				updateQueryParam(filter, event.target.value)
-			}}
-		>
-			<option value="">{allOptionLabel}</option>
-			{options.map(([value, label]) =>
-				<option key={value} value={value}>{label}</option>)}
-		</select>
-	</>
+const normaliseFilterValue = (filter: keyof CloudSearchParams, params: CloudSearchParams, value: string) => {
+	if ('' === value) {
+		return undefined
+	}
+
+	if ('number' === typeof params[filter]) {
+		const numberValue = Number(value)
+		return isNaN(numberValue) ? undefined : numberValue
+	}
+
+	return value
+}
 
 export const SearchFilters = () => {
-	const { availableFilters, filters, setFilters } = useCloudSearch()
+	const { availableFilters, searchParams, doSearch } = useCloudSearch()
 
-	const categoryOptions: [number, string][] = useMemo(
-		() => (availableFilters.categories ?? []).map(c => [c.id, c.name]),
-		[availableFilters.categories]
-	)
+	return FILTERS.map(({ label, allOptionLabel, filterName, paramName }) =>
+		availableFilters[filterName] && 0 < availableFilters[filterName].length
+			? <Fragment key={filterName}>
+				<label htmlFor={`cloud-search-${paramName}`} className="screen-reader-text">
+					{label}
+				</label>
 
-	const typeOptions: [number, string][] = useMemo(
-		() => (availableFilters.types ?? []).map(t => [t.id, t.name]),
-		[availableFilters.types]
-	)
-
-	const statusOptions: [number, string][] = useMemo(
-		() => (availableFilters.statuses ?? []).map(s => [s.id, s.name]),
-		[availableFilters.statuses]
-	)
-
-	return (
-		<>
-			<SearchFilter
-				filter="category"
-				filters={filters}
-				setFilters={setFilters}
-				options={categoryOptions}
-				label={__('Snippet Category', 'code-snippets')}
-				allOptionLabel={__('All Categories', 'code-snippets')}
-			/>
-
-			<SearchFilter
-				filter="type"
-				filters={filters}
-				setFilters={setFilters}
-				options={typeOptions}
-				label={__('Snippet Type', 'code-snippets')}
-				allOptionLabel={__('All Types', 'code-snippets')}
-			/>
-
-			<SearchFilter
-				filter="status"
-				filters={filters}
-				setFilters={setFilters}
-				options={statusOptions}
-				label={__('Snippet Status', 'code-snippets')}
-				allOptionLabel={__('All Snippet Statuses', 'code-snippets')}
-			/>
-		</>
-	)
+				<select
+					id={`cloud-search-${filterName}`}
+					className="cloud-search-category-filter"
+					value={searchParams[paramName]}
+					onChange={event =>
+						doSearch({ [paramName]: normaliseFilterValue(paramName, searchParams, event.target.value) })}
+				>
+					<option value="">{allOptionLabel}</option>
+					{availableFilters[filterName].map(filterOption =>
+						<option key={filterOption.id} value={filterOption.id}>{filterOption.name}</option>)}
+				</select>
+			</Fragment>
+			: null)
 }

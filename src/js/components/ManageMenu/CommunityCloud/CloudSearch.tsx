@@ -1,15 +1,15 @@
 import { __ } from '@wordpress/i18n'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { TablePagination } from '../../common/ListTable/TablePagination'
+import { SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
-import { WithCloudSearchFiltersContext, useCloudSearchFilters } from './WithCloudSearchFiltersContext'
 import { SearchFilters } from './SearchFilters'
-import { SearchResults } from './SearchResults'
+import type { TablePaginationProps } from '../../common/ListTable/TablePagination'
 import type { FormEventHandler } from 'react'
 
 const SearchBox = () => {
-	const { query, searchByCodevault, setQuery, setSearchByCodevault, isSearching, doSearch } = useCloudSearch()
+	const { searchParams, updateSearchParams, isSearching, doSearch } = useCloudSearch()
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
@@ -23,8 +23,9 @@ const SearchBox = () => {
 			</label>
 			<select
 				id="cloud-search-method"
-				value={searchByCodevault ? 'codevault' : 'term'}
-				onChange={event => setSearchByCodevault('codevault' === event.target.value)}
+				value={searchParams.method}
+				onChange={event =>
+					updateSearchParams({ method: 'codevault' === event.target.value ? 'codevault' : 'term' })}
 			>
 				<option value="term">{__('Search by keyword', 'code-snippets')}</option>
 				<option value="codevault">{__('Name of codevault', 'code-snippets')}</option>
@@ -34,9 +35,9 @@ const SearchBox = () => {
 				<input
 					id="cloud-search-query"
 					type="search"
-					value={query}
+					value={searchParams.query}
 					aria-label={__('Search query', 'code-snippets')}
-					onChange={event => setQuery(event.target.value)}
+					onChange={event => updateSearchParams({ query: event.target.value })}
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>
 				<span role="status" aria-live="polite">
@@ -57,82 +58,80 @@ const SearchBox = () => {
 }
 
 const SearchResultsTable = () => {
-	const { page, totalItems, totalPages, setPage, doSearch, isSearching } = useCloudSearch()
-	const { filteredSearchResults } = useCloudSearchFilters()
+	const { searchResults, isSearching, doSearch } = useCloudSearch()
 
-	useEffect(() => {
-		doSearch()
-	}, [doSearch, page])
+	if (!searchResults) {
+		return null
+	}
 
-	return filteredSearchResults
-		? <>
+	const { totalItems, totalPages, page } = searchResults
+
+	const paginationProps: Omit<TablePaginationProps, 'which'> = {
+		totalItems,
+		totalPages,
+		disabled: isSearching,
+		currentPage: page,
+		setCurrentPage: newPage => doSearch({ page: newPage })
+	}
+
+	return (
+		<>
 			<div className="tablenav top">
 				<SearchFilters />
 
-				<TablePagination
-					which="top"
-					totalItems={totalItems}
-					totalPages={totalPages}
-					disabled={isSearching}
-					currentPage={page}
-					setCurrentPage={setPage}
-				/>
+				<TablePagination which="top" {...paginationProps} />
 			</div>
 
-			{0 < filteredSearchResults.length
-				? <>
-					<SearchResults results={filteredSearchResults} />
+			<ul className="cloud-search-results">
+				{searchResults.snippets.map(result =>
+					<SearchResult key={result.id} snippet={result} />)}
+			</ul>
 
-					<div className="tablenav bottom">
-						<TablePagination
-							which="bottom"
-							totalItems={totalItems}
-							totalPages={totalPages}
-							disabled={isSearching}
-							currentPage={page}
-							setCurrentPage={setPage}
-						/>
-					</div>
-				</>
-				: <NoSearchResultsBanner />}
+			<div className="tablenav bottom">
+				<TablePagination which="bottom" {...paginationProps} />
+			</div>
 		</>
-		: null
-}
-
-const ErrorBanner = () =>
-	<div className="banner banner-error" role="alert">
-		<p>{__('An error occurred while fetching search results. Please try again.')}</p>
-	</div>
-
-const NoSearchResultsBanner = () =>
-	<div className="banner banner-neutral no-results" role="status" aria-live="polite">
-		<p>{__('No snippets or codevault could be found with that search term. Please try again.', 'code-snippets')}</p>
-	</div>
-
-const CloudSnippetsHeading: React.FC<{ isFeatured: boolean }> = ({ isFeatured }) =>
-	<h3 className="cloud-snippets-heading">
-		{isFeatured
-			? __('Featured Snippets', 'code-snippets')
-			: __('Search Results', 'code-snippets')}
-	</h3>
-
-export const CloudSearch = () => {
-	const { searchResults, error, isFeatured } = useCloudSearch()
-
-	return (
-		<div className="cloud-search">
-			<SearchBox />
-
-			{error && <ErrorBanner />}
-
-			{searchResults !== undefined
-				? <>
-					<CloudSnippetsHeading isFeatured={isFeatured} />
-					<WithCloudSearchFiltersContext>
-						<SearchResultsTable />
-					</WithCloudSearchFiltersContext>
-				</>
-				: null}
-		</div>
 	)
 }
+
+const SearchResults = () => {
+	const { searchResults, searchParams, isErrored } = useCloudSearch()
+
+	if (isErrored) {
+		return (
+			<div className="banner banner-error">
+				<p>{__('An error occurred while fetching search results. Please try again.', 'code-snippets')}</p>
+			</div>
+		)
+	}
+
+	if (!searchResults) {
+		return null
+	}
+
+	if (0 < searchResults.page && 0 === searchResults.snippets.length) {
+		return (
+			<div className="banner banner-neutral no-results">
+				<p>{'codevault' === searchParams.method
+					? __('Could not find a codevault with that name. Please try again.', 'code-snippets')
+					: __('No snippets could be found with that search term. Please try again.', 'code-snippets')
+				}</p>
+			</div>
+		)
+	}
+
+	return (
+		<>
+			{searchResults.isFeatured
+				? <h3 className="cloud-featured-heading">{__('Featured Snippets', 'code-snippets')}</h3>
+				: <h3 className="cloud-snippets-heading">{__('Search Results', 'code-snippets')}</h3>}
+			<SearchResultsTable />
+		</>
+	)
+}
+
+export const CloudSearch = () =>
+	<div className="cloud-search">
+		<SearchBox />
+		<SearchResults />
+	</div>
