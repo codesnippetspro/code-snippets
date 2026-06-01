@@ -504,7 +504,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			return new WP_Error(
 				'rest_cannot_get',
 				__( 'The snippet could not be found.', 'code-snippets' ),
-				[ 'status' => 500 ]
+				[ 'status' => 404 ]
 			);
 		}
 
