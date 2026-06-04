@@ -48,7 +48,7 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 	const { currentType, currentTag, searchLineNumber, searchQueryText } = useSnippetsFilters()
 
 	const snippets = useMemo(
-		() => snippetsList ?? window.CODE_SNIPPETS_MANAGE?.snippetsList.map(parseSnippetObject) ?? [],
+		() => snippetsList ?? window.CODE_SNIPPETS_MANAGE?.snippetsList?.map(parseSnippetObject) ?? [],
 		[snippetsList])
 
 	const visibleSnippets = useMemo(() => {

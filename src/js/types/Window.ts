@@ -57,7 +57,7 @@ declare global {
 			}
 		}
 		readonly CODE_SNIPPETS_MANAGE?: {
-			snippetsList: Snippet[]
+			snippetsList?: Snippet[]
 			hasNetworkCap: boolean
 			hiddenColumns: string[]
 			truncateRowValues: number | string
