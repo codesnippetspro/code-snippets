@@ -2,9 +2,9 @@ import React from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import type { Dispatch, Key, SetStateAction } from 'react'
-import type { ListTableColumn, ListTableItemsProps } from './ListTable'
+import type { ListTableColumn, ListTableRowsProps } from './ListTable'
 
-interface CheckboxCellProps<T, K extends Key> extends Pick<TableItemsProps<T, K>, 'getKey'> {
+interface CheckboxCellProps<T, K extends Key> extends Pick<TableRowsProps<T, K>, 'getKey'> {
 	item: T
 	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
@@ -47,13 +47,13 @@ const TableCell = <T, >({ item, column }: TableCellProps<T>) => {
 		: <td className={className}>{column.render(item)}</td>
 }
 
-export interface TableItemsProps<T, K extends Key>
-	extends Pick<ListTableItemsProps<T, K>, 'items' | 'getKey' | 'columns' | 'noItems' | 'rowClassName'> {
+export interface TableRowsProps<T, K extends Key>
+	extends Pick<ListTableRowsProps<T, K>, 'items' | 'getKey' | 'columns' | 'noItems' | 'rowClassName'> {
 	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-export const TableItems = <T, K extends Key>({
+export const TableRows = <T, K extends Key>({
 	items,
 	getKey,
 	columns,
@@ -61,7 +61,7 @@ export const TableItems = <T, K extends Key>({
 	selected,
 	setSelected,
 	rowClassName
-}: TableItemsProps<T, K>
+}: TableRowsProps<T, K>
 ) =>
 	0 < items.length
 		? items.map(item =>

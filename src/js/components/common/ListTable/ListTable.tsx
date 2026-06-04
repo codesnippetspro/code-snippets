@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { fetchQueryParam } from '../../../utils/urls'
-import { TableHeadings } from './TableHeadings'
-import { TableItems } from './TableItems'
-import { TableNav } from './TableNav'
-import type { TableNavProps } from './TableNav'
-import type { TableHeadingsProps } from './TableHeadings'
+import { ColumnHeadings } from './ColumnHeadings'
+import { TableRows } from './TableRows'
+import { TableNavigation } from './TableNavigation'
+import type { ColumnHeadingsProps } from './ColumnHeadings'
 import type { Key, ReactNode } from 'react'
 
 export interface ListTableColumn<T> {
@@ -34,7 +33,7 @@ export interface ListTableNavProps<K extends Key, A extends string> {
 	extraTableNav?: (which: 'top' | 'bottom') => ReactNode
 }
 
-export interface ListTableItemsProps<T, K extends Key> {
+export interface ListTableRowsProps<T, K extends Key> {
 	items: T[]
 	getKey: (item: T) => K
 	columns: ListTableColumn<T>[]
@@ -47,12 +46,17 @@ export interface ListTablePaginationProps {
 	useQueryVars?: boolean
 }
 
-export interface ListTableProps<T, K extends Key, A extends string> extends ListTableItemsProps<T, K>,
-	ListTableNavProps<K, A>, ListTablePaginationProps {
+export interface ListTableBorderProps {
 	fixed?: boolean
 	striped?: boolean
 	className?: string
 }
+
+export type ListTableProps<T, K extends Key, A extends string> =
+	ListTableBorderProps &
+	ListTableNavProps<K, A> &
+	ListTablePaginationProps &
+	ListTableRowsProps<T, K>
 
 const sortItems = <T, >(
 	items: T[],
@@ -99,56 +103,28 @@ const getVisibleSelected = <T, K extends Key>(
 ): Set<K> =>
 	new Set(visibleItems.map(getKey).filter(key => selected.has(key)))
 
-interface ListTableMarkupProps<T, K extends Key, A extends string> {
-	className?: string
-	fixed?: boolean
-	striped?: boolean
-	getKey: (item: T) => K
-	columns: ListTableColumn<T>[]
-	noItems?: ReactNode
-	rowClassName?: (item: T) => string
-	tableNavProps: Omit<TableNavProps<K, A>, 'which'>
-	tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'>
-	visibleItems: T[]
+interface TableBorderProps<T, K extends Key> extends ListTableBorderProps, Omit<ColumnHeadingsProps<T, K>, 'which'> {
+	children: ReactNode
 }
 
-const ListTableMarkup = <T, K extends Key, A extends string>({
+const TableBorder = <T, K extends Key>({
 	fixed,
 	striped,
-	getKey,
-	columns,
-	noItems,
+	children,
 	className,
-	rowClassName,
-	tableNavProps,
-	tableHeadingsProps,
-	visibleItems
-}: ListTableMarkupProps<T, K, A>) => (
-	<>
-		<TableNav which="top" {...tableNavProps} />
-		<table className={classnames('wp-list-table widefat', { striped, fixed }, className)}>
-			<thead>
-				<TableHeadings which="head" {...tableHeadingsProps} />
-			</thead>
-			<tbody>
-				<TableItems
-					items={visibleItems}
-					{...{
-						getKey,
-						columns,
-						noItems,
-						selected: tableHeadingsProps.selected,
-						setSelected: tableHeadingsProps.setSelected,
-						rowClassName
-					}}
-				/>
-			</tbody>
-			<tfoot>
-				<TableHeadings which="foot" {...tableHeadingsProps} />
-			</tfoot>
-		</table>
-		<TableNav which="bottom" {...tableNavProps} />
-	</>
+	...tableHeadingsProps
+}: TableBorderProps<T, K>) => (
+	<table className={classnames('wp-list-table widefat', { striped, fixed }, className)}>
+		<thead>
+			<ColumnHeadings which="head" {...tableHeadingsProps} />
+		</thead>
+		<tbody>
+			{children}
+		</tbody>
+		<tfoot>
+			<ColumnHeadings which="foot" {...tableHeadingsProps} />
+		</tfoot>
+	</table>
 )
 
 export const ListTable = <T, K extends Key, A extends string = never>({
@@ -161,9 +137,9 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 	extraTableNav,
 	disabled = false,
 	useQueryVars = true,
-	...tableProps
+	...tableRowsProps
 }: ListTableProps<T, K, A>) => {
-	const [selected, setSelected] = useState(new Set<K>())
+	const [selected, setSelected] = useState(() => new Set<K>())
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
 	const [currentPage, setCurrentPage] = useState(() => useQueryVars && Number(fetchQueryParam('paged')) || 1)
 	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>('asc')
@@ -173,27 +149,21 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 		[items, sortColumn, sortDirection, currentPage, totalPages])
 
 	return (
-		<ListTableMarkup
-			{...tableProps}
-			getKey={getKey}
-			columns={columns}
-			visibleItems={visibleItems}
-			tableHeadingsProps={{
-				items: visibleItems, selected, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection
-			}}
-			tableNavProps={{
-				totalItems: items.length,
-				actions,
-				doAction,
-				extraTableNav,
-				selected: getVisibleSelected(visibleItems, getKey, selected),
-				setSelected,
-				disabled,
-				currentPage,
-				totalPages,
-				setCurrentPage,
-				useQueryVars
-			}}
-		/>
+		<TableNavigation
+			totalItems={items.length}
+			selected={getVisibleSelected(visibleItems, getKey, selected)}
+			{...{ actions, doAction, extraTableNav, disabled, currentPage, totalPages, useQueryVars, setSelected, setCurrentPage }}
+		>
+			<TableBorder
+				items={visibleItems}
+				{...{ columns, getKey, selected, sortColumn, sortDirection, setSelected, setSortColumn, setSortDirection }}
+			>
+				<TableRows
+					items={visibleItems}
+					{...{ getKey, columns, selected, setSelected }}
+					{...tableRowsProps}
+				/>
+			</TableBorder>
+		</TableNavigation>
 	)
 }

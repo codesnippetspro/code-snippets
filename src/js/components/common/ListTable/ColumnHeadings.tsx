@@ -58,7 +58,7 @@ const SortableHeadingCell = <T, >({
 	)
 }
 
-export interface TableHeadingsProps<T, K extends Key> {
+export interface ColumnHeadingsProps<T, K extends Key> {
 	items: T[]
 	which: 'head' | 'foot'
 	getKey: (item: T) => K
@@ -71,7 +71,7 @@ export interface TableHeadingsProps<T, K extends Key> {
 	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
 }
 
-export const TableHeadings = <T, K extends Key>({
+export const ColumnHeadings = <T, K extends Key>({
 	items,
 	which,
 	getKey,
@@ -82,7 +82,7 @@ export const TableHeadings = <T, K extends Key>({
 	setSortColumn,
 	sortDirection,
 	setSortDirection
-}: TableHeadingsProps<T, K>) =>
+}: ColumnHeadingsProps<T, K>) =>
 	<tr>
 		<td className="column-cb check-column">
 			<input

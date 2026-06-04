@@ -29,7 +29,10 @@ const STATUS_LABELS: [SnippetStatus, string][] = [
 	['trashed', __('Trashed', 'code-snippets')]
 ]
 
-type SnippetsTableAction = 'activate' | 'deactivate' | 'clone' | 'export' | 'download' | 'trash'
+type SnippetsTableAction =
+	'activate' | 'deactivate' |
+	'clone' | 'export' | 'download' |
+	'trash' | 'restore' | 'delete'
 
 const BULK_ACTIONS: ListTableAction<SnippetsTableAction>[] = [
 	{ key: 'activate', label: __('Activate', 'code-snippets') },
@@ -38,6 +41,11 @@ const BULK_ACTIONS: ListTableAction<SnippetsTableAction>[] = [
 	{ key: 'export', label: __('Export', 'code-snippets') },
 	{ key: 'download', label: __('Download', 'code-snippets') },
 	{ key: 'trash', label: __('Trash', 'code-snippets') }
+]
+
+const TRASHED_BULK_ACTIONS: ListTableAction<SnippetsTableAction>[] = [
+	{ key: 'restore', label: __('Restore', 'code-snippets') },
+	{ key: 'delete', label: __('Delete Permanently', 'code-snippets') }
 ]
 
 const BULK_DOWNLOAD_ACTION = 'bulk-download'
@@ -279,42 +287,49 @@ const applyAndRefresh = async (
 const useApplyBulkAction = (
 	allSnippets: Snippet[]
 ): (action: SnippetsTableAction, selected: Set<Snippet['id']>) => Promise<void> => {
-	const { activate, deactivate, create } = useSnippetsAPI()
+	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
 	return async (action, selected) => {
-		if ('export' === action) {
-			downloadBulkSnippetExportFile(allSnippets.filter(snippet => selected.has(snippet.id)))
-			return Promise.resolve()
-		}
-
-		if ('trash' === action) {
-			const selectedSnippets = allSnippets.filter(snippet => selected.has(snippet.id))
-
-			return 1 < selectedSnippets.length && !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads
-				? submitBulkSnippetDownloadsIndividually(selectedSnippets)
-				: submitBulkSnippetDownload(selectedSnippets)
-		}
-
 		switch (action) {
 			case 'activate':
 				await applyAndRefresh(
 					allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.active),
-					snippet => activate({ id: snippet.id, network: snippet.network }),
+					snippet => api.activate({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 				break
 
 			case 'deactivate':
 				await applyAndRefresh(
 					allSnippets.filter(snippet => selected.has(snippet.id) && snippet.active),
-					snippet => deactivate({ id: snippet.id, network: snippet.network }),
+					snippet => api.deactivate({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 				break
 
 			case 'clone':
 				await applyAndRefresh(
 					allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.trashed),
-					snippet => create(cloneSnippetObject(snippet)),
+					snippet => api.create(cloneSnippetObject(snippet)),
+					refreshSnippetsList)
+				break
+
+			case 'export':
+				downloadBulkSnippetExportFile(allSnippets.filter(snippet => selected.has(snippet.id)))
+				break
+
+			case 'download': {
+				const selectedSnippets = allSnippets.filter(snippet => selected.has(snippet.id))
+
+				return 1 < selectedSnippets.length && !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads
+					? submitBulkSnippetDownloadsIndividually(selectedSnippets)
+					: submitBulkSnippetDownload(selectedSnippets)
+			}
+
+			case 'trash':
+			case 'delete':
+				await applyAndRefresh(
+					allSnippets.filter(snippet => selected.has(snippet.id) && snippet.trashed),
+					snippet => api.delete({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 				break
 		}
@@ -322,16 +337,19 @@ const useApplyBulkAction = (
 }
 
 export const SnippetsListTable: React.FC = () => {
-	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { snippetsByStatus } = useFilteredSnippets()
+	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { hiddenColumns, truncateRowValues } = useManageTableSettings()
 
-	const allSnippets = useMemo(() => snippetsByStatus.get('all') ?? [], [snippetsByStatus])
-	const totalItems = snippetsByStatus.get(currentStatus)?.length ?? 0
+	const currentSnippets = useMemo(
+		() => snippetsByStatus.get(currentStatus) ?? [],
+		[snippetsByStatus, currentStatus]
+	)
+	const totalItems = currentSnippets.length
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
 
 	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
-	const applyBulkAction = useApplyBulkAction(allSnippets)
+	const applyBulkAction = useApplyBulkAction(currentSnippets)
 
 	useEffect(() => {
 		if (INDEX_STATUS !== currentStatus && !snippetsByStatus.has(currentStatus)) {
@@ -353,11 +371,11 @@ export const SnippetsListTable: React.FC = () => {
 			</p>
 
 			<ListTable
-				items={snippetsByStatus.get(currentStatus) ?? []}
+				items={currentSnippets}
 				getKey={snippet => snippet.id}
 				className={classnames({ 'truncate-row-values': truncateRowValues })}
 				columns={columns}
-				actions={BULK_ACTIONS}
+				actions={'trashed' === currentStatus ? TRASHED_BULK_ACTIONS : BULK_ACTIONS}
 				doAction={applyBulkAction}
 				totalPages={itemsPerPage && Math.ceil(totalItems / itemsPerPage)}
 				extraTableNav={which =>

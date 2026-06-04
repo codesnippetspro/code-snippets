@@ -6,7 +6,7 @@ import { SubmitButton } from '../SubmitButton'
 import { TablePagination } from './TablePagination'
 import type { ListTableAction, ListTableNavProps } from './ListTable'
 import type { TablePaginationProps } from './TablePagination'
-import type { Dispatch, Key, MouseEventHandler , SetStateAction} from 'react'
+import type { Dispatch, Key, MouseEventHandler, PropsWithChildren, SetStateAction } from 'react'
 
 const isBulkAction = <A extends string>(value: string, actions: ListTableAction<A>[]): value is A =>
 	actions.some(action => action.key === value)
@@ -122,12 +122,8 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 	)
 }
 
-export interface TableNavProps<K extends Key, A extends string> extends ListTableNavProps<K, A>, Omit<TablePaginationProps, 'totalPages'> {
+export interface TableNavProps<K extends Key, A extends string> extends TableNavigationProps<K, A> {
 	which: 'top' | 'bottom'
-	selected: Set<K>
-	setSelected: Dispatch<SetStateAction<Set<K>>>
-	totalItems: number
-	totalPages: number | undefined
 }
 
 export const TableNav = <K extends Key, A extends string>({
@@ -160,3 +156,21 @@ export const TableNav = <K extends Key, A extends string>({
 			<br className="clear" />
 		</div>
 		: null
+
+export interface TableNavigationProps<K extends Key, A extends string> extends ListTableNavProps<K, A>,
+	Omit<TablePaginationProps, 'totalPages' | 'which'> {
+	selected: Set<K>
+	setSelected: Dispatch<SetStateAction<Set<K>>>
+	totalItems: number
+	totalPages: number | undefined
+}
+
+export const TableNavigation = <K extends Key, A extends string>({
+	children,
+	...props
+}: PropsWithChildren<TableNavigationProps<K, A>>) =>
+	<>
+		<TableNav which="top" {...props} />
+		{children}
+		<TableNav which="bottom" {...props} />
+	</>

@@ -572,9 +572,18 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function delete_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
+		$snippet = get_snippet( $item->id, $item->network );
 
-		if ( $item->trashed ) {
-			return delete_snippet( $item->id, $item->network )
+		if ( ! $snippet || ! $snippet->id ) {
+			return new WP_Error(
+				'rest_cannot_delete',
+				__( 'The snippet could not be found.', 'code-snippets' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		if ( $snippet->trashed ) {
+			return delete_snippet( $snippet->id, $snippet->network )
 				? new WP_REST_Response( null, 204 )
 				: new WP_Error(
 					'rest_cannot_delete',
@@ -582,7 +591,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 					[ 'status' => 500 ]
 				);
 		} else {
-			return trash_snippet( $item->id, $item->network )
+			return trash_snippet( $snippet->id, $snippet->network )
 				? $this->get_item( $request )
 				: new WP_Error(
 					'rest_cannot_trash',
