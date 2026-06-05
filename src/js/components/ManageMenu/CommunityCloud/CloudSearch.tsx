@@ -41,7 +41,7 @@ const SearchBox = () => {
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>
 				<span role="status" aria-live="polite">
-					{isSearching &&
+					{isSearching && 
 						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>}
 				</span>
 			</div>
@@ -120,14 +120,14 @@ const SearchResults = () => {
 		)
 	}
 
-	return (
-		<>
+	return searchResults.snippets.length
+		? <>
 			{searchResults.isFeatured
 				? <h3 className="cloud-featured-heading">{__('Featured Snippets', 'code-snippets')}</h3>
 				: <h3 className="cloud-snippets-heading">{__('Search Results', 'code-snippets')}</h3>}
 			<SearchResultsTable />
 		</>
-	)
+		: null
 }
 
 export const CloudSearch = () =>

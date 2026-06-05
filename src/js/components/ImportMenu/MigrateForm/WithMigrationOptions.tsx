@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
-import { fetchQueryParam, updateQueryParam } from '../../../utils/urls'
-import type { PropsWithChildren} from 'react'
+import { fetchQueryParam, updateQueryParams } from '../../../utils/urls'
+import type { PropsWithChildren } from 'react'
 
 const IMPORTER_QUERY_PARAM = 'from'
 
@@ -22,7 +22,7 @@ export const WithMigrationOptions: React.FC<PropsWithChildren> = ({ children }) 
 	const [tagValue, setTagValue] = useState<string>(() => `imported-${selectedImporter}`)
 
 	const setSelectedImporter = useCallback((newImporter: string) => {
-		updateQueryParam(IMPORTER_QUERY_PARAM, newImporter)
+		updateQueryParams({ [IMPORTER_QUERY_PARAM]: newImporter })
 		setTagValue(`imported-${newImporter}`)
 		setSelectedImporterValue(newImporter)
 	}, [])
@@ -33,7 +33,7 @@ export const WithMigrationOptions: React.FC<PropsWithChildren> = ({ children }) 
 		setSelectedImporter,
 		setAutoAddTags,
 		setTagValue,
-		tagValue,
+		tagValue
 	}
 
 	return <Context.Provider value={value}>{children}</Context.Provider>

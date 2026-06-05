@@ -5,14 +5,16 @@ export const fetchQueryParam = (name: string): string | undefined => {
 	return urlParams.get(name) ?? undefined
 }
 
-export const updateQueryParam = (name: string, value?: string | number) => {
+export const updateQueryParams = (params: Record<string, string | number | undefined>) => {
 	if ('URLSearchParams' in window) {
 		const searchParams = new URLSearchParams(window.location.search)
 
-		if (value) {
-			searchParams.set(name, String(value))
-		} else {
-			searchParams.delete(name)
+		for (const [name, value] of Object.entries(params)) {
+			if (value) {
+				searchParams.set(name, String(value))
+			} else {
+				searchParams.delete(name)
+			}
 		}
 
 		const newUrl = window.location.toString().replace(window.location.search, `?${searchParams.toString()}`)

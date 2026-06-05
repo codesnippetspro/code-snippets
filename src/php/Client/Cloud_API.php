@@ -42,6 +42,33 @@ class Cloud_API {
 	private const CLOUD_SEARCH_API_TOKEN = 'csc-1a2b3c4d5e6f7g8h9i0j';
 
 	/**
+	 * Option key holding the current featured-snippets cache version.
+	 *
+	 * Bumped on flush so old transient keys become unreachable and expire naturally.
+	 */
+	private const FEATURED_VERSION_OPTION = 'cs_featured_cache_version';
+
+	/**
+	 * Transient key for cached cloud types (languages).
+	 */
+	private const TYPES_TRANSIENT_KEY = 'cs_cloud_types';
+
+	/**
+	 * Transient key for cached cloud categories.
+	 */
+	private const CATEGORIES_TRANSIENT_KEY = 'cs_cloud_categories';
+
+	/**
+	 * Transient key for cached featured snippets.
+	 */
+	private const FEATURED_TRANSIENT_KEY = 'cs_featured_snippets';
+
+	/**
+	 * Minimum TTL in seconds for the featured snippets transient.
+	 */
+	private const FEATURED_MIN_TTL = 3600;
+
+	/**
 	 * Cached list of cloud links.
 	 *
 	 * @var Cloud_Link[]|null
@@ -90,6 +117,33 @@ class Cloud_API {
 	 */
 	public static function is_cloud_connection_available(): bool {
 		return false;
+	}
+
+	/**
+	 * Unpack JSON data from a request response.
+	 *
+	 * @param array|WP_Error $response Response from wp_request_*.
+	 *
+	 * @return array<string, mixed>|null Associative array of JSON data on success, null on failure.
+	 */
+	private static function unpack_request_json( $response ): ?array {
+		if ( is_wp_error( $response ) ) {
+			return null;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		if ( ! $body ) {
+			return null;
+		}
+
+		$json = json_decode( $body, true );
+
+		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
+			return null;
+		}
+
+		return $json['data'];
 	}
 
 	/**
@@ -162,18 +216,6 @@ class Cloud_API {
 			'is_owner'        => isset( $cloud_id_owner[1] ) && $cloud_id_owner[1],
 			'is_owner_string' => isset( $cloud_id_owner[1] ) && $cloud_id_owner[1] ? '1' : '0',
 		];
-	}
-
-	/**
-	 * Unpack JSON data from a request response.
-	 *
-	 * @param array|WP_Error $response Response from wp_request_*.
-	 *
-	 * @return array<string, mixed>|null Associative array of JSON data on success, null on failure.
-	 */
-	private static function unpack_request_json( $response ): ?array {
-		$body = wp_remote_retrieve_body( $response );
-		return $body ? json_decode( $body, true ) : null;
 	}
 
 	/**
@@ -359,26 +401,9 @@ class Cloud_API {
 	}
 
 	/**
-	 * Option key holding the current featured-snippets cache version.
-	 *
-	 * Bumped on flush so old transient keys become unreachable and expire naturally.
-	 */
-	private const FEATURED_VERSION_OPTION = 'cs_featured_cache_version';
-
-	/**
-	 * Base transient key for cached featured snippets.
-	 */
-	private const FEATURED_TRANSIENT_KEY = 'cs_featured_snippets';
-
-	/**
-	 * Minimum TTL in seconds for the featured snippets transient.
-	 */
-	private const FEATURED_MIN_TTL = 3600;
-
-	/**
 	 * Get the current featured-snippets cache version, initialising it if absent.
 	 *
-	 * @return int
+	 * @return string
 	 */
 	private static function get_featured_cache_version(): string {
 		$version = get_transient( self::FEATURED_VERSION_OPTION );
@@ -472,6 +497,61 @@ class Cloud_API {
 		set_transient( $cache_key, $result, self::FEATURED_MIN_TTL );
 
 		return $result;
+	}
+
+	/**
+	 * Retrieve available snippet types (languages) from the cloud API, with transient caching.
+	 *
+	 * @return array<int, array{id: int, name: string, snippet_count: int}> List of types.
+	 */
+	public static function get_cloud_types(): array {
+		$cached = get_transient( self::TYPES_TRANSIENT_KEY );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$response = wp_remote_get( sprintf( '%s/public/types', self::get_cloud_api_url() ) );
+		$json = self::unpack_request_json( $response );
+
+		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
+			return [];
+		}
+
+		$types = $json['data'];
+		set_transient( self::TYPES_TRANSIENT_KEY, $types, DAY_IN_SECONDS );
+
+		return $types;
+	}
+
+	/**
+	 * Retrieve available snippet categories from the cloud API, with transient caching.
+	 *
+	 * @return array<int, array{id: int, name: string, snippet_count: int}> List of categories.
+	 */
+	public static function get_cloud_categories(): array {
+		$cached = get_transient( self::CATEGORIES_TRANSIENT_KEY );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$response = wp_remote_get( sprintf( '%s/public/categories', self::get_cloud_api_url() ) );
+
+		if ( is_wp_error( $response ) ) {
+			return [];
+		}
+
+		$json = self::unpack_request_json( $response );
+
+		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
+			return [];
+		}
+
+		$categories = $json['data'];
+		set_transient( self::CATEGORIES_TRANSIENT_KEY, $categories, DAY_IN_SECONDS );
+
+		return $categories;
 	}
 
 	/**

@@ -99,22 +99,26 @@ class Cloud_Snippets extends Model {
 	 *
 	 * @param mixed $initial_data Raw data passed into the constructor.
 	 *
-	 * @return mixed Normalized data array or original value when no normalization is required.
+	 * @return array Normalized data array or original value when no normalization is required.
 	 */
-	private function normalize_cloud_api( $initial_data ) {
-		if ( is_array( $initial_data ) && isset( $initial_data['meta'] ) ) {
-			$meta = $initial_data['meta'];
-			$normalized = [];
-			$normalized['snippets'] = $initial_data['data'] ?? $initial_data['snippets'] ?? [];
-			$normalized['total_snippets'] = isset( $meta['total'] ) ? (int) $meta['total'] : 0;
-			$normalized['total_pages'] = isset( $meta['total_pages'] ) ? (int) $meta['total_pages'] : 0;
-			$normalized['page'] = isset( $meta['page'] ) ? max( 0, (int) $meta['page'] - 1 ) : 0;
-			$normalized['cloud_id_rev'] = $initial_data['cloud_id_rev'] ?? [];
-			$normalized['available_filters'] = $initial_data['available_filters'] ?? [];
-			return $normalized;
+	private function normalize_cloud_api( $initial_data ): array {
+		$result = [];
+
+		if ( is_array( $initial_data ) ) {
+			$meta = $initial_data['meta'] ?? [];
+
+			$result['snippets'] = $initial_data['data'] ?? $initial_data['snippets'] ?? [];
+			$result['cloud_id_rev'] = $initial_data['cloud_id_rev'] ?? [];
+
+			if ( $meta ) {
+				$result['total_snippets'] = isset( $meta['total'] ) ? (int) $meta['total'] : 0;
+				$result['total_pages'] = isset( $meta['total_pages'] ) ? (int) $meta['total_pages'] : 0;
+				$result['page'] = isset( $meta['page'] ) ? max( 0, (int) $meta['page'] - 1 ) : 0;
+				$result['available_filters'] = $initial_data['available_filters'] ?? [];
+			}
 		}
 
-		return $initial_data;
+		return $result;
 	}
 
 	/**

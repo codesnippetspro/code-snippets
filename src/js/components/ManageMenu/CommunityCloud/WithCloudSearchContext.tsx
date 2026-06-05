@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { REST_BASES } from '../../../utils/restAPI'
-import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
+import { buildUrl, fetchQueryParam, updateQueryParams } from '../../../utils/urls'
 import type { CloudSnippetsSchema } from '../../../types/schema/CloudSnippetsSchema'
 import type { PropsWithChildren } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
@@ -57,6 +57,10 @@ export interface CloudFilterOption {
 	name: string
 }
 
+export const clearSearchQueryParams = () => {
+	updateQueryParams(Object.fromEntries(Object.values(SEARCH_PARAM_VARS).map(param => [param, undefined])))
+}
+
 const fetchSearchQueryParams = (): CloudSearchParams => {
 	const page = Number(fetchQueryParam(SEARCH_PARAM_VARS.page) ?? 1)
 	const query = fetchQueryParam(SEARCH_PARAM_VARS.query) ?? ''
@@ -76,13 +80,14 @@ const fetchSearchQueryParams = (): CloudSearchParams => {
 }
 
 const updateSearchQueryParams = (params: CloudSearchParams) => {
-	updateQueryParam(SEARCH_PARAM_VARS.page, params.page)
-	updateQueryParam(SEARCH_PARAM_VARS.type, params.type)
-	updateQueryParam(SEARCH_PARAM_VARS.query, params.query)
-	updateQueryParam(SEARCH_PARAM_VARS.status, params.status.toString())
-	updateQueryParam(SEARCH_PARAM_VARS.method, params.method)
-	updateQueryParam(SEARCH_PARAM_VARS.status, params.status || undefined)
-	updateQueryParam(SEARCH_PARAM_VARS.category, params.category)
+	updateQueryParams({
+		[SEARCH_PARAM_VARS.page]: params.page,
+		[SEARCH_PARAM_VARS.type]: params.type || undefined,
+		[SEARCH_PARAM_VARS.query]: params.query || undefined,
+		[SEARCH_PARAM_VARS.status]: params.status || undefined,
+		[SEARCH_PARAM_VARS.method]: 'codevault' === params.method ? 'codevault' : undefined,
+		[SEARCH_PARAM_VARS.category]: params.category || undefined
+	})
 }
 
 const buildSearchUrl = (
@@ -173,14 +178,16 @@ export interface CloudSearchContext {
 const useSearchApi = () => {
 	const { api } = useRestAPI()
 	const { isCurrentRequest, nextRequestId } = useRequestIds()
-	const [isSearching, setIsSearching] = useState(false)
+	const [currentSearch, setCurrentSearch] = useState(false)
 	const [searchResults, setSearchResults] = useState<CloudSearchResults | false | undefined>()
 	const [availableFilters, setAvailableFilters] = useState<AvailableCloudFilters>({})
 
 	const makeSearchRequest = useCallback((params: CloudSearchParams) => {
 		const requestId = nextRequestId()
-		setIsSearching(true)
-		const baseUrl = '' === params.query.trim() ? SEARCH_URLS.FEATURED : SEARCH_URLS.SEARCH_QUERY
+		const isFeaturedSearch = '' === params.query.trim()
+
+		setCurrentSearch(!isFeaturedSearch)
+		const baseUrl = isFeaturedSearch ? SEARCH_URLS.FEATURED : SEARCH_URLS.SEARCH_QUERY
 
 		api.getResponse<CloudSnippetsSchema>(buildSearchUrl(baseUrl, params))
 			.then(response => {
@@ -194,11 +201,11 @@ const useSearchApi = () => {
 					setSearchResults(false)
 				}
 			})
-			.finally(() => setIsSearching(false))
+			.finally(() => setCurrentSearch(false))
 	}, [api, nextRequestId, isCurrentRequest])
 
 	return {
-		isSearching,
+		isSearching: currentSearch,
 		searchResults,
 		availableFilters,
 		makeSearchRequest

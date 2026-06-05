@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { isLicensed } from '../../../utils/screen'
-import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
+import { buildUrl, fetchQueryParam, updateQueryParams } from '../../../utils/urls'
 import { UpsellDialog } from '../../common/UpsellDialog'
 import { WithCloudSearchContext } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
@@ -29,7 +29,7 @@ export const CommunityCloud = () => {
 			<hr className="wp-header-end" />
 
 			<nav
-				className="nav-tab-wrapper"
+				className="nav-tab-wrapper community-cloud-tabs"
 				aria-label={__('Community Cloud types', 'code-snippets')}
 			>
 				{TABS.map(tab =>
@@ -44,7 +44,7 @@ export const CommunityCloud = () => {
 							if (PRO_TABS.includes(tab) && !isLicensed()) {
 								setIsUpsellDialogOpen(true)
 							} else {
-								updateQueryParam('tab', tab)
+								updateQueryParams({ tab })
 								setCurrentTab(tab)
 							}
 						}}
@@ -54,13 +54,12 @@ export const CommunityCloud = () => {
 					</a>)}
 			</nav>
 
-			{'snippets' === currentTab
-				? <WithRestAPIContext>
+			{'snippets' === currentTab && (
+				<WithRestAPIContext>
 					<WithCloudSearchContext>
 						<CloudSearch />
 					</WithCloudSearchContext>
-				</WithRestAPIContext>
-				: null}
+				</WithRestAPIContext>)}
 
 			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
 		</>

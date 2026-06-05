@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../hooks/useRestAPI'
-import { fetchQueryParam, updateQueryParam } from '../../utils/urls'
+import { fetchQueryParam, updateQueryParams } from '../../utils/urls'
 import { Toolbar } from '../common/Toolbar'
 import { UploadForm } from './UploadForm/UploadForm'
 import { MigrateForm } from './MigrateForm/MigrateForm'
@@ -52,7 +52,7 @@ export const ImportMenu: React.FC = () => {
 							className={classnames('nav-tab', { 'nav-tab-active': tab === activeTab })}
 							onClick={() => {
 								setActiveTab(tab)
-								updateQueryParam('tab', tab)
+								updateQueryParams({ tab })
 							}}
 						>
 							{TAB_LABELS[tab]}

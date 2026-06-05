@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __, _n, _x, sprintf } from '@wordpress/i18n'
-import { buildUrl, updateQueryParam } from '../../../utils/urls'
+import { buildUrl, updateQueryParams } from '../../../utils/urls'
 import { Button } from '../Button'
 import type { ListTablePaginationProps } from './ListTable'
 import type { ReactNode } from 'react'
@@ -282,7 +282,7 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
 			setCurrentPage(validPage)
 
 			if (useQueryVars) {
-				updateQueryParam('paged', 1 === validPage ? undefined : validPage)
+				updateQueryParams({ paged: 1 === validPage ? undefined : validPage })
 			}
 		}
 	}
