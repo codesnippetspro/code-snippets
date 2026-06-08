@@ -31,6 +31,31 @@
 	font-weight: 600;
 }
 
+// WP 7.0 changes the default admin link colour to the modern blue. Pin the classic accent on
+// active rows (names and row-action links) so links keep their original colour; inactive rows
+// are handled by the muted link-colors mixin below, and the trash button keeps its dark red
+// from the `.delete` rule further down.
+.wp-list-table .active-snippet a {
+	color: theme.$accent;
+
+	&:hover,
+	&:focus {
+		color: #0a4b78;
+	}
+}
+
+// Status filter links (All | Active | Inactive | …): WP 7.0 recolours these with the modern
+// blue. Restore the classic accent for non-current links; the current one keeps its own colour.
+/* stylelint-disable-next-line no-descending-specificity -- unrelated element; ordering is fine. */
+.subsubsub a:not(.current) {
+	color: theme.$accent;
+
+	&:hover,
+	&:focus {
+		color: #0a4b78;
+	}
+}
+
 .active-snippet {
 	td, th {
 		background-color: rgba(#78c8e6, 0.06);
@@ -41,12 +66,26 @@
 	}
 }
 
-.priority-column input {
+// `.wp-list-table` prefix keeps this above WP 7.0's 40px control height so the borderless
+// priority field stays 30px tall and vertically aligned with the rest of the row.
+.wp-list-table .priority-column input {
 	appearance: none;
 	background: none;
 	border: none;
 	box-shadow: none;
+	box-sizing: border-box;
+	min-block-size: 30px;
+	block-size: 30px;
 	inline-size: 4em;
+
+	// Pin the box model so padding/margins/line-height match WP 6.9 regardless of WP 7.0's
+	// taller default control metrics; this keeps the value aligned in both the resting and
+	// hovered (native spinner) states.
+	padding-block: 0;
+	padding-inline: 8px;
+	margin-block: 0;
+	margin-inline: 1px;
+	line-height: 2;
 	color: #666;
 	text-align: center;
 
