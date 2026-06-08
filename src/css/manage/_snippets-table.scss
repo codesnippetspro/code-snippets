@@ -152,13 +152,30 @@
 		position: relative;
 		inset-inline-start: 0;
 
+		// Row-action buttons render as plain inline links. On WP 7.0 the generic `.button`
+		// compatibility styling would otherwise give them a fill, border, radius and fixed
+		// height, so fully neutralise it here (this rule is emitted after the wp-admin layer
+		// at equal specificity, so it wins). Non-delete links inherit the accent text colour.
 		.button-link {
-			min-block-size: unset;
-			line-height: unset;
-			border: none;
+			block-size: auto;
+			min-block-size: 0;
+			padding: 0;
+			border: 0;
+			border-radius: 0;
+			background: none;
+			box-shadow: none;
+			line-height: inherit;
+			font-weight: 400;
 
-			&:hover {
+			&:hover:not(:disabled),
+			&:focus:not(:disabled) {
 				background: none;
+				border: 0;
+				box-shadow: none;
+			}
+
+			&.delete {
+				color: #b32d2e;
 			}
 		}
 

@@ -139,47 +139,6 @@
 	.button .dashicons {
 		line-height: 1;
 	}
-
-	// Row-action buttons (list table + editor sidebar) are plain inline links, not boxed
-	// buttons. The secondary-button rule above would otherwise give them a fill, border and
-	// fixed height, so reset that here while keeping the accent text colour. This block follows
-	// the button rules at equal specificity, so source order lets it win. Trash/delete keep
-	// their dark-red colour.
-	/* stylelint-disable no-descending-specificity -- intentional reset that overrides the button rules above via source order. */
-	.row-actions .button {
-		block-size: auto;
-		min-block-size: 30px;
-		border: 0;
-		border-radius: 0;
-		background: none;
-		box-shadow: none;
-		font-weight: 400;
-		padding-block: 0;
-		padding-inline: 10px;
-
-		&:hover:not(:disabled),
-		&:focus:not(:disabled) {
-			background: none;
-			border: 0;
-			box-shadow: none;
-		}
-
-		// List-table row actions render as fully inline links with no padding or min-height.
-		&.button-link {
-			min-block-size: 0;
-			padding-inline: 0;
-			line-height: inherit;
-		}
-
-		&.delete-button {
-			color: #cc1818;
-		}
-
-		&.delete {
-			color: #b32d2e;
-		}
-	}
-	/* stylelint-enable no-descending-specificity */
 }
 
 // Scope to our admin page content. We intentionally keep this to a single `.wrap` class so
