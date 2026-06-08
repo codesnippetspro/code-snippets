@@ -25,6 +25,12 @@ class Cloud_API {
 	public const MAX_RESULTS_PER_PAGE = 100;
 
 	/**
+	 * Request timeout, in seconds, for the cloud search endpoint. Higher than WordPress's 5s
+	 * default because search can be slow on a cold cache and would otherwise time out.
+	 */
+	private const SEARCH_REQUEST_TIMEOUT = 15;
+
+	/**
 	 * Key used to access the local-to-cloud map transient data.
 	 */
 	private const CLOUD_MAP_TRANSIENT_KEY = 'cs_local_to_cloud_map';
@@ -249,9 +255,24 @@ class Cloud_API {
 
 		$api_url = add_query_arg( $params, self::get_cloud_api_url() . 'public/search' );
 
-		$raw = self::unpack_request_json( wp_remote_get( $api_url ) );
+		// The search endpoint can be slow on a cold cache; allow more time than WordPress's
+		// default 5s request timeout so the request is not cut short and returned as empty.
+		$response = wp_remote_get( $api_url, [ 'timeout' => self::SEARCH_REQUEST_TIMEOUT ] );
 
-		$results = new Cloud_Snippets( $raw );
+		if ( is_wp_error( $response ) ) {
+			return new Cloud_Snippets();
+		}
+
+		$json = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		// Pass the full response envelope to Cloud_Snippets, which reads the `data`/`snippets`,
+		// `meta` and `available_filters` keys. Passing only the unpacked `data` list (as before)
+		// dropped the metadata, so the result normalised to an empty set.
+		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
+			return new Cloud_Snippets();
+		}
+
+		$results = new Cloud_Snippets( $json );
 		$results->page = $page;
 
 		return $results;
