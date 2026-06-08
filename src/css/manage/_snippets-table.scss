@@ -40,7 +40,7 @@
 
 	&:hover,
 	&:focus {
-		color: #0a4b78;
+		color: theme.$accent-hover;
 	}
 }
 
@@ -52,7 +52,7 @@
 
 	&:hover,
 	&:focus {
-		color: #0a4b78;
+		color: theme.$accent-hover;
 	}
 }
 
@@ -74,8 +74,8 @@
 	border: none;
 	box-shadow: none;
 	box-sizing: border-box;
-	min-block-size: 30px;
-	block-size: 30px;
+	min-block-size: theme.$control-height;
+	block-size: theme.$control-height;
 	inline-size: 4em;
 
 	// Pin the box model so padding/margins/line-height match WP 6.9 regardless of WP 7.0's

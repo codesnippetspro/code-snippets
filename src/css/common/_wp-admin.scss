@@ -30,13 +30,13 @@
 	input[type='tel']:not([class*='components-']) {
 		// `min-block-size` (not a fixed `block-size`) so controls floor at 30px but can still
 		// flex-stretch where the layout calls for it (e.g. the 54px cloud search bar).
-		min-block-size: 30px;
+		min-block-size: theme.$control-height;
 		padding-block: 0;
 		padding-inline: 8px;
-		border: 1px solid #8c8f94;
+		border: 1px solid theme.$control-border;
 		border-radius: 4px;
 		line-height: 2;
-		color: #2c3338;
+		color: theme.$control-text;
 		font-size: 14px;
 
 		&:focus {
@@ -50,16 +50,16 @@
 	// side. WP 7.0 keeps the chevron as a background image; clamping both paddings to 8px (as
 	// for text inputs) would let the arrow overlap the text, so the inline-end padding is wider.
 	select:not([class*='components-']) {
-		min-block-size: 30px;
+		min-block-size: theme.$control-height;
 		padding-block: 0;
 		padding-inline: 8px 24px;
-		border: 1px solid #8c8f94;
+		border: 1px solid theme.$control-border;
 		border-radius: 3px;
 
 		// WP 7.0 leaves a tall (≈38px) line-height on selects, pushing the value off-centre in
 		// the 30px control. Pin it so the text stays vertically centred.
 		line-height: 2;
-		color: #2c3338;
+		color: theme.$control-text;
 		font-size: 14px;
 
 		&:focus {
@@ -74,7 +74,7 @@
 	// is excluded so its solid fill below is not overwritten.
 	.button:not(.button-primary),
 	.button-secondary {
-		min-block-size: 30px;
+		min-block-size: theme.$control-height;
 		padding-block: 0;
 		padding-inline: 12px;
 		border-radius: 3px;
@@ -87,8 +87,8 @@
 
 		&:hover:not(:disabled) {
 			background: #f0f0f1;
-			border-color: #0a4b78;
-			color: #0a4b78;
+			border-color: theme.$accent-hover;
+			color: theme.$accent-hover;
 		}
 
 		&:focus:not(:disabled) {
@@ -101,7 +101,7 @@
 	// Primary buttons: WP 7.0 recolours these with the modern accent and drops the solid
 	// fill. Restore the classic solid brand-accent fill with white text.
 	.button-primary {
-		min-block-size: 30px;
+		min-block-size: theme.$control-height;
 		padding-block: 0;
 		padding-inline: 12px;
 		border-radius: 3px;
@@ -113,14 +113,14 @@
 		color: #fff;
 
 		&:hover:not(:disabled) {
-			background: #0a4b78;
-			border-color: #0a4b78;
+			background: theme.$accent-hover;
+			border-color: theme.$accent-hover;
 			color: #fff;
 		}
 
 		&:focus:not(:disabled) {
-			background: #0a4b78;
-			border-color: #0a4b78;
+			background: theme.$accent-hover;
+			border-color: theme.$accent-hover;
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px theme.$accent;
 			outline: 2px solid transparent;
 		}

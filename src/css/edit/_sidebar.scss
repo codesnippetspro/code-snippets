@@ -41,7 +41,7 @@
 		// the wp-admin layer at equal specificity, so it wins. Export/Download inherit the accent.
 		.button {
 			block-size: auto;
-			min-block-size: 30px;
+			min-block-size: theme.$control-height;
 			padding-block: 0;
 			padding-inline: 10px;
 			border: 0;

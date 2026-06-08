@@ -1,3 +1,5 @@
+@use 'common/theme';
+
 #adminmenu {
 	.toplevel_page_snippets div.wp-menu-image::before {
 		content: '';
@@ -18,7 +20,7 @@
 		border-radius: 3px;
 		padding-block: 0;
 		padding-inline: 10px;
-		min-block-size: 30px;
+		min-block-size: theme.$control-height;
 		block-size: auto;
 		text-align: center;
 		font-weight: bold;
