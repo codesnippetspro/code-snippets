@@ -11,6 +11,15 @@
 		color: #fff;
 		background-color: #d46f4d;
 		border: none;
+
+		// WP 7.0 restyles `.button`/`.button-primary` with wider padding, a 2px radius and a
+		// 40px min-height; pin these so the menu pill keeps its classic dimensions and stays
+		// aligned with the surrounding submenu items across WP versions.
+		border-radius: 3px;
+		padding-block: 0;
+		padding-inline: 10px;
+		min-block-size: 30px;
+		block-size: auto;
 		text-align: center;
 		font-weight: bold;
 		transition: background-color .1s linear;
@@ -31,6 +40,10 @@
 		.dashicons {
 			vertical-align: text-bottom;
 			color: inherit;
+
+			// WP 7.0's taller button line-height (≈38px) leaks onto the icon and pushes it out
+			// of alignment; reset it so the glyph stays centred within the flex pill.
+			line-height: 1;
 		}
 	}
 
