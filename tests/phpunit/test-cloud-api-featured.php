@@ -68,7 +68,11 @@ class Cloud_API_Featured_Test extends TestCase {
 		$hash = md5( false === $encoded ? '' : $encoded );
 		$version = get_transient( 'cs_featured_cache_version' );
 		if ( ! $version ) {
+			// Mirror the production helper by persisting the freshly generated version, so that
+			// repeated calls within a test resolve to the same value rather than a new
+			// timestamp each time (which made cache-key comparisons non-deterministic).
 			$version = (string) ( microtime( true ) * 1000 );
+			set_transient( 'cs_featured_cache_version', $version, MONTH_IN_SECONDS );
 		}
 		return "cs_featured_snippets_v{$version}_p{$page}_pp{$per_page}_{$hash}";
 	}
