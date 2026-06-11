@@ -224,12 +224,11 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		[])
 
 	const doSearch = useCallback((paramsDelta?: Partial<CloudSearchParams>) => {
-		if (searchParams.query) {
-			const params = processSearchParams({ ...searchParams, ...paramsDelta }, searchParams)
-			updateSearchQueryParams(params)
-			setSearchParams(params)
-			makeSearchRequest(params)
-		}
+		// An empty query is the featured view: makeSearchRequest routes it to the featured endpoint.
+		const params = processSearchParams({ ...searchParams, ...paramsDelta }, searchParams)
+		updateSearchQueryParams(params)
+		setSearchParams(params)
+		makeSearchRequest(params)
 	}, [makeSearchRequest, searchParams])
 
 	useEffect(() => {
