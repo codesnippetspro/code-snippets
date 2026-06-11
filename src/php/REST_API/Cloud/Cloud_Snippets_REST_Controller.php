@@ -218,6 +218,11 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 		return $cloud_snippets->to_rest_response();
 	}
 
+	/**
+	 * Retrieve available snippet types (languages) from the cloud API.
+	 *
+	 * @return WP_REST_Response
+	 */
 	public function get_types(): WP_REST_Response {
 		return rest_ensure_response( Cloud_API::get_cloud_types() );
 	}
