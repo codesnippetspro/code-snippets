@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.0.0-beta] (2026-06-11)
+
+### Added
+* Add WordPress 7.0 admin styling compatibility layer to ensure admin UI renders correctly under WP 7.0
+* Improve cloud search UX so fetching featured bundles no longer shows a persistent 'loading' state
+
+### Changed
+* Refine community cloud search results and restore previously missing community results for cloud browse/search
+* Consolidate row-action and snippets table styling for more consistent controls and spacing in the admin lists
+* Keep cloud community 'Go Pro' / upsell button branding and alignment correct in WP 7.0
+* Render truncate-row-values on the snippets list table to improve long-value display and prevent layout overflow
+* Increase spacing below the import drop zone icon for clearer UX when importing snippets
+* Add unit tests for cloud search and response parsing and expand documentation for cloud endpoints (get_types)
+
+### Fixed
+* Fix get_item() returning HTTP 500 for a not-found snippet (now returns proper 404/handled response)
+* Restore community cloud search results after regression introduced in earlier changes
+* Fix various WordPress 7.0 admin UI regressions (snippets table controls, menu button alignment, branding)
+* Fix a breaking change introduced in #389 that caused runtime issues
+* Stabilize flaky featured cache key test to reduce CI/test flakiness
+
 ## [3.9.6] (2026-04-28)
 
 ### Fixed
