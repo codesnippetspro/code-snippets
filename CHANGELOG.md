@@ -3,23 +3,32 @@
 ## [4.0.0-beta] (2026-06-11)
 
 ### Added
-* Add WordPress 7.0 admin styling compatibility layer to ensure admin UI renders correctly under WP 7.0
-* Improve cloud search UX so fetching featured bundles no longer shows a persistent 'loading' state
+* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
+* Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from the WordPress admin bar.
+* Snippet locking to help prevent accidental edits or deletion of important snippets. Props to https://github.com/mgiannopoulos24.
+* Improved screen options on the main snippets table, including controls for visible columns and truncating long snippet names or descriptions.
+* Bulk actions and bulk code download support in the redesigned snippets table.
+* Featured snippets and improved browsing in Community Cloud.
+* WordPress 7.0 admin styling compatibility.
 
 ### Changed
-* Refine community cloud search results and restore previously missing community results for cloud browse/search
-* Consolidate row-action and snippets table styling for more consistent controls and spacing in the admin lists
-* Keep cloud community 'Go Pro' / upsell button branding and alignment correct in WP 7.0
-* Render truncate-row-values on the snippets list table to improve long-value display and prevent layout overflow
-* Increase spacing below the import drop zone icon for clearer UX when importing snippets
-* Add unit tests for cloud search and response parsing and expand documentation for cloud endpoints (get_types)
+* Redesigned the main snippets table with improved search, filtering, sorting, pagination, row actions, and bulk selection.
+* Improved the snippet import and migration experience, including clearer file upload handling and third-party plugin migration flows.
+* Improved snippet error handling so activation failures, validation errors, and stack traces are easier to understand.
+* Improved Community Cloud search and filtering, including server-side filters, better result loading, and clearer empty states.
+* Updated the welcome screen, toolbar, import screen, and cloud screens to match the new admin experience.
+* Updated internal plugin architecture to a cleaner PSR-4 structure for better long-term maintainability.
 
 ### Fixed
-* Fix get_item() returning HTTP 500 for a not-found snippet (now returns proper 404/handled response)
-* Restore community cloud search results after regression introduced in earlier changes
-* Fix various WordPress 7.0 admin UI regressions (snippets table controls, menu button alignment, branding)
-* Fix a breaking change introduced in #389 that caused runtime issues
-* Stabilize flaky featured cache key test to reduce CI/test flakiness
+* Fixed REST API server error responses on missing snippets.
+* Fixed redundant frontend logic, improving overall performance.
+* Fixed Community Cloud search results and pagination to respect WordPress screen options.
+* Fixed snippet saving and activation feedback to improve validation and runtime error display.
+
+### Accessibility
+* Improved accessibility across the snippets table, import screen, migration flow, Community Cloud, welcome screen, toolbar, dialogs, tooltips, and code editor.
+* Added clearer labels, headings, tab markup, table checkboxes, sort buttons, copy buttons, and drag-and-drop upload controls.
+* Improved colour contrast and reduced-motion support across admin screens.
 
 ## [3.9.6] (2026-04-28)
 
