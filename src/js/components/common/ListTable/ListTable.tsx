@@ -137,6 +137,9 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 	extraTableNav,
 	disabled = false,
 	useQueryVars = true,
+	fixed,
+	striped,
+	className,
 	...tableRowsProps
 }: ListTableProps<T, K, A>) => {
 	const [selected, setSelected] = useState(() => new Set<K>())
@@ -147,7 +150,6 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 	const visibleItems: T[] = useMemo(
 		() => pageItems(sortItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
 		[items, sortColumn, sortDirection, currentPage, totalPages])
-
 	return (
 		<TableNavigation
 			totalItems={items.length}
@@ -156,6 +158,9 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 		>
 			<TableBorder
 				items={visibleItems}
+				fixed={fixed}
+				striped={striped}
+				className={className}
 				{...{ columns, getKey, selected, sortColumn, sortDirection, setSelected, setSortColumn, setSortDirection }}
 			>
 				<TableRows

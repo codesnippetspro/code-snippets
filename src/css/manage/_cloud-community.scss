@@ -185,7 +185,9 @@
 	margin: 0;
 }
 
-.cloud-pro-button.button {
+// Anchored to the card container so this keeps its brand-orange fill above the WP-admin
+// compatibility layer's secondary-button styling (equal specificity, resolved by source order).
+.cloud-search-result .cloud-pro-button.button {
 	background-color: theme.$secondary;
 	border-color: theme.$secondary;
 	color: #fff;

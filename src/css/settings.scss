@@ -1,5 +1,6 @@
 @use 'common/codemirror';
 @use 'common/toolbar';
+@use 'common/wp-admin';
 
 $sections: general, editor, debug, version-switch;
 

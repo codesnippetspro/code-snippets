@@ -9,6 +9,14 @@ $brand-facebook: #3b5998;
 $cloud: #00bcd4;
 $cloud-update: #ff9800;
 
+// WordPress classic admin control palette. WP 7.0's "modern" redesign restyles native form
+// controls; these restore the classic metrics our admin UI is designed around (see
+// common/_wp-admin.scss).
+$accent-hover: #0a4b78;
+$control-border: #8c8f94;
+$control-text: #2c3338;
+$control-height: 30px;
+
 /* format: background-color [color] */
 $badges: (
 	php: #1d97c6,

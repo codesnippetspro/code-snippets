@@ -36,27 +36,45 @@
 	.row-actions {
 		display: flex;
 
+		// Row-action buttons render as plain inline links. Neutralise the generic `.button`
+		// WP 7.0 compatibility styling (fill/border/radius/40px height) here — emitted after
+		// the wp-admin layer at equal specificity, so it wins. Export/Download inherit the accent.
 		.button {
+			block-size: auto;
+			min-block-size: theme.$control-height;
+			padding-block: 0;
+			padding-inline: 10px;
+			border: 0;
+			border-radius: 0;
 			background: none;
-			border: none;
-		}
-	}
+			box-shadow: none;
+			font-weight: 400;
 
-	.delete-button {
-		color: #cc1818;
-
-		&:disabled {
-			color: #a7aaad;
-			cursor: not-allowed;
-		}
-
-		&:hover:not(:disabled) {
-			color: #9e1313;
+			&:hover:not(:disabled),
+			&:focus:not(:disabled) {
+				background: none;
+				border: 0;
+				box-shadow: none;
+			}
 		}
 
-		&:focus:not(:disabled) {
-			color: #710d0d;
-			border-color: #710d0d;
+		// Nested under `.row-actions` so the dark-red trash colour outranks the generic
+		// `.button` accent text colour from the wp-admin compatibility layer.
+		.delete-button {
+			color: #cc1818;
+
+			&:disabled {
+				color: #a7aaad;
+				cursor: not-allowed;
+			}
+
+			&:hover:not(:disabled) {
+				color: #9e1313;
+			}
+
+			&:focus:not(:disabled) {
+				color: #710d0d;
+			}
 		}
 	}
 

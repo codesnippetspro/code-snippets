@@ -1,0 +1,151 @@
+@use 'theme';
+
+/**
+ * WordPress 7.0 admin compatibility.
+ *
+ * WP 7.0 ships the "modern" admin redesign, which enlarges native form controls
+ * (40px tall vs. 30/32px), reduces their corner radius (2px vs. 3/4px) and recolours
+ * secondary buttons with a transparent fill and the modern accent (#3858E9). Our admin
+ * UI was designed against the classic control metrics and the brand accent (#2271b1),
+ * so the redesign throws our spacing and colours out of alignment.
+ *
+ * These rules restore the classic control metrics for native elements inside our admin
+ * pages so the layout renders consistently on both WP 6.9 and WP 7.0. They deliberately
+ * leave the admin menu, admin bar and `@wordpress/components` React widgets untouched —
+ * only native inputs/buttons rendered inside our own markup are normalised.
+ */
+
+@mixin classic-controls {
+	// Native single-line text controls and selects: restore 30px height + classic border.
+	// `@wordpress/components` inputs/selects (`.components-*`) keep their own design — they
+	// are excluded so React widgets such as the tags token field are left untouched.
+	// `.snippet-priority` (the borderless list-table priority field) is excluded so it keeps
+	// its plain transparent styling rather than gaining a bordered box.
+	input[type='text']:not([class*='components-']),
+	input[type='search']:not([class*='components-']),
+	input[type='number']:not([class*='components-'], .snippet-priority),
+	input[type='email']:not([class*='components-']),
+	input[type='url']:not([class*='components-']),
+	input[type='password']:not([class*='components-']),
+	input[type='tel']:not([class*='components-']) {
+		// `min-block-size` (not a fixed `block-size`) so controls floor at 30px but can still
+		// flex-stretch where the layout calls for it (e.g. the 54px cloud search bar).
+		min-block-size: theme.$control-height;
+		padding-block: 0;
+		padding-inline: 8px;
+		border: 1px solid theme.$control-border;
+		border-radius: 4px;
+		line-height: 2;
+		color: theme.$control-text;
+		font-size: 14px;
+
+		&:focus {
+			border-color: theme.$accent;
+			box-shadow: 0 0 0 1px theme.$accent;
+			outline: 2px solid transparent;
+		}
+	}
+
+	// Selects: same metrics, but preserve room for the WP dropdown chevron on the inline-end
+	// side. WP 7.0 keeps the chevron as a background image; clamping both paddings to 8px (as
+	// for text inputs) would let the arrow overlap the text, so the inline-end padding is wider.
+	select:not([class*='components-']) {
+		min-block-size: theme.$control-height;
+		padding-block: 0;
+		padding-inline: 8px 24px;
+		border: 1px solid theme.$control-border;
+		border-radius: 3px;
+
+		// WP 7.0 leaves a tall (≈38px) line-height on selects, pushing the value off-centre in
+		// the 30px control. Pin it so the text stays vertically centred.
+		line-height: 2;
+		color: theme.$control-text;
+		font-size: 14px;
+
+		&:focus {
+			border-color: theme.$accent;
+			box-shadow: 0 0 0 1px theme.$accent;
+			outline: 2px solid transparent;
+		}
+	}
+
+	// Secondary buttons: restore classic geometry, the grey fill and the brand accent
+	// border/text in place of WP 7.0's transparent + modern-blue treatment. `.button-primary`
+	// is excluded so its solid fill below is not overwritten.
+	.button:not(.button-primary),
+	.button-secondary {
+		min-block-size: theme.$control-height;
+		padding-block: 0;
+		padding-inline: 12px;
+		border-radius: 3px;
+		line-height: 2.3077;
+		font-size: 13px;
+		font-weight: 400;
+		background: #f6f7f7;
+		border-color: theme.$accent;
+		color: theme.$accent;
+
+		&:hover:not(:disabled) {
+			background: #f0f0f1;
+			border-color: theme.$accent-hover;
+			color: theme.$accent-hover;
+		}
+
+		&:focus:not(:disabled) {
+			border-color: #3582c4;
+			box-shadow: 0 0 0 1px #3582c4;
+			outline: 2px solid transparent;
+		}
+	}
+
+	// Primary buttons: WP 7.0 recolours these with the modern accent and drops the solid
+	// fill. Restore the classic solid brand-accent fill with white text.
+	.button-primary {
+		min-block-size: theme.$control-height;
+		padding-block: 0;
+		padding-inline: 12px;
+		border-radius: 3px;
+		line-height: 2.3077;
+		font-size: 13px;
+		font-weight: 400;
+		background: theme.$accent;
+		border-color: theme.$accent;
+		color: #fff;
+
+		&:hover:not(:disabled) {
+			background: theme.$accent-hover;
+			border-color: theme.$accent-hover;
+			color: #fff;
+		}
+
+		&:focus:not(:disabled) {
+			background: theme.$accent-hover;
+			border-color: theme.$accent-hover;
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px theme.$accent;
+			outline: 2px solid transparent;
+		}
+	}
+
+	// Small buttons stay compact rather than inheriting the 40px control height.
+	.button-small {
+		min-block-size: 26px;
+		line-height: 2.1818;
+		font-size: 11px;
+	}
+
+	// WP 7.0's taller button line-height leaks onto dashicon glyphs inside buttons (e.g. the
+	// conditions badge icon), pushing them out of vertical alignment. Reset it so icons stay
+	// centred — mirrors the existing `.button svg` rule for SVG icons.
+	.button .dashicons {
+		line-height: 1;
+	}
+}
+
+// Scope to our admin page content. We intentionally keep this to a single `.wrap` class so
+// the rules sit just above WordPress core defaults (which we must override) but below the
+// plugin's own more-specific per-control rules, which are emitted later in each bundle and so
+// win on equal specificity. This lets bespoke controls (conditions button, row-action links,
+// priority input, etc.) keep their intended styling without per-element exclusions here.
+.wrap {
+	@include classic-controls;
+}
