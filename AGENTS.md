@@ -83,6 +83,12 @@ Tool-specific configuration lives in dedicated locations:
 - Use `__()`, `_e()`, `esc_html__()`, `esc_attr__()`, `_x()`, `_n()` as appropriate — never echo raw translatable strings.
 - Do not load translations before `init` or `plugins_loaded`.
 
+### Code Comments
+
+- A comment must state a current constraint or behaviour the code itself cannot show — written for the next reader, not the reviewer.
+- Do not write comments that narrate what the next line does, justify why a change is correct, or argue with the previous implementation ("not a no-op", "this used to…", "fixes the bug where…"). History belongs in the commit message.
+- Match the comment density and tone of the surrounding file; when in doubt, omit the comment.
+
 ### PHP
 
 - Namespace: `Code_Snippets\` — all new classes must live under this namespace and be PSR-4 autoloaded.
@@ -123,6 +129,14 @@ Tool-specific configuration lives in dedicated locations:
 - Open PRs back into `core-beta`.
 - Use **merge commits** (not squash/rebase) when merging dev branches into `core-beta`.
 - Hotfixes branch from `core` and merge directly back into `core`.
+
+### Commit Messages
+
+- Single-line conventional commit messages only — no body, no trailers.
+- The subject must start with exactly one of: `fix:`, `feat:`, `chore:`, `docs:`.
+- No scope in parentheses — write `fix: restore cloud search`, never `fix(cloud): …`.
+- No co-author lines or any other trailers (`Co-Authored-By:`, `Signed-off-by:`, etc.).
+- Scope each commit to one feature, one change, or one file — do not bundle unrelated changes.
 
 ---
 
