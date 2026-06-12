@@ -90,8 +90,8 @@ class Cloud_API {
 	 */
 	public static function get_cloud_url(): string {
 		return defined( 'CS_CLOUD_URL' )
-			? CS_CLOUD_URL
-			: 'https://codesnippets.cloud/';
+			? untrailingslashit( CS_CLOUD_URL )
+			: 'https://codesnippets.cloud';
 	}
 
 	/**
@@ -103,8 +103,8 @@ class Cloud_API {
 	 */
 	public static function get_cloud_api_url(): string {
 		return defined( 'CS_CLOUD_API_URL' )
-			? CS_CLOUD_API_URL
-			: self::get_cloud_url() . 'api/v1/';
+			? untrailingslashit( CS_CLOUD_API_URL )
+			: sprintf( '%s/api/v1', self::get_cloud_url() );
 	}
 
 	/**
@@ -133,10 +133,6 @@ class Cloud_API {
 	 * @return array<string, mixed>|null Associative array of JSON data on success, null on failure.
 	 */
 	private static function unpack_request_json( $response ): ?array {
-		if ( is_wp_error( $response ) ) {
-			return null;
-		}
-
 		$body = wp_remote_retrieve_body( $response );
 
 		if ( ! $body ) {
@@ -145,11 +141,9 @@ class Cloud_API {
 
 		$json = json_decode( $body, true );
 
-		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
-			return null;
-		}
-
-		return $json['data'];
+		return is_array( $json ) && isset( $json['data'] )
+			? $json['data']
+			: null;
 	}
 
 	/**
@@ -253,22 +247,18 @@ class Cloud_API {
 			}
 		}
 
-		$api_url = add_query_arg( $params, self::get_cloud_api_url() . 'public/search' );
+		$api_url = add_query_arg( $params, sprintf( '%s/public/search', self::get_cloud_api_url() ) );
 
 		// The search endpoint can be slow on a cold cache; allow more time than WordPress's
 		// default 5s request timeout so the request is not cut short and returned as empty.
 		$response = wp_remote_get( $api_url, [ 'timeout' => self::SEARCH_REQUEST_TIMEOUT ] );
 
-		if ( is_wp_error( $response ) ) {
-			return new Cloud_Snippets();
-		}
-
-		$json = json_decode( wp_remote_retrieve_body( $response ), true );
+		$json = self::unpack_request_json( $response );
 
 		// Pass the full response envelope to Cloud_Snippets, which reads the `data`/`snippets`,
 		// `meta` and `available_filters` keys. Passing only the unpacked `data` list (as before)
 		// dropped the metadata, so the result normalised to an empty set.
-		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
+		if ( ! $json ) {
 			return new Cloud_Snippets();
 		}
 
@@ -332,7 +322,7 @@ class Cloud_API {
 	 * @return Cloud_Snippet Retrieved snippet.
 	 */
 	public static function get_single_snippet_from_cloud( int $cloud_id ): Cloud_Snippet {
-		$url = self::get_cloud_api_url() . sprintf( 'public/getsnippet/%s', $cloud_id );
+		$url = sprintf( '%s/public/getsnippet/%s', self::get_cloud_api_url(), $cloud_id );
 		$response = wp_remote_get( $url );
 		$cloud_snippet = self::unpack_request_json( $response );
 		return new Cloud_Snippet( $cloud_snippet['snippet'] );
@@ -346,15 +336,13 @@ class Cloud_API {
 	 * @return string|null Revision number on success, null otherwise.
 	 */
 	public static function get_cloud_snippet_revision( string $cloud_id ): ?string {
-		$api_url = self::get_cloud_api_url() . sprintf( 'public/getsnippetrevision/%s', $cloud_id );
-		$body = wp_remote_retrieve_body( wp_remote_get( $api_url ) );
+		$api_url = sprintf( '%s/public/getsnippetrevision/%s', self::get_cloud_api_url(), $cloud_id );
 
-		if ( ! $body ) {
-			return null;
-		}
+		$cloud_snippet_revision = self::unpack_request_json( wp_remote_get( $api_url ) );
 
-		$cloud_snippet_revision = json_decode( $body, true );
-		return $cloud_snippet_revision['snippet_revision'] ?? null;
+		return $cloud_snippet_revision
+			? $cloud_snippet_revision['snippet_revision'] ?? null
+			: null;
 	}
 
 	/**
@@ -485,13 +473,13 @@ class Cloud_API {
 			}
 		}
 
-		$url = add_query_arg( $params, self::get_cloud_api_url() . 'public/featured' );
+		$url = add_query_arg( $params, sprintf( '%s/public/featured', self::get_cloud_api_url() ) );
 
 		$response = wp_remote_get(
 			$url,
 			[
 				'headers' => [
-					'Authorization' => 'Bearer ' . self::get_local_token(),
+					'Authorization' => sprintf( 'Bearer %s', self::get_local_token() ),
 				],
 			]
 		);
