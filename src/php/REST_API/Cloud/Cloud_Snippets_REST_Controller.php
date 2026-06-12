@@ -195,7 +195,7 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 			: $this->get_snippets_per_page();
 
 		$filters = $this->extract_filters( $request );
-		$cloud_snippets = Cloud_API::fetch_search_results( $method, $query, $page, $per_page, $filters );
+		$cloud_snippets = $this->cloud_api->fetch_search_results( $method, $query, $page, $per_page, $filters );
 		return $cloud_snippets->to_rest_response();
 	}
 
@@ -209,12 +209,13 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 	public function get_featured_items( WP_REST_Request $request ): WP_REST_Response {
 		$page = max( 1, (int) $request->get_param( 'page' ) );
 		$query_params = $request->get_query_params();
+
 		$per_page = isset( $query_params['per_page'] )
 			? min( Cloud_API::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
 			: $this->get_snippets_per_page();
 
 		$filters = $this->extract_filters( $request );
-		$cloud_snippets = Cloud_API::get_featured_snippets( $page, $per_page, $filters );
+		$cloud_snippets = $this->cloud_api->get_featured_snippets( $page, $per_page, $filters );
 		return $cloud_snippets->to_rest_response();
 	}
 
@@ -224,7 +225,7 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 	 * @return WP_REST_Response
 	 */
 	public function get_types(): WP_REST_Response {
-		return rest_ensure_response( Cloud_API::get_cloud_types() );
+		return rest_ensure_response( $this->cloud_api->get_cloud_types() );
 	}
 
 	/**
@@ -233,7 +234,7 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 	 * @return WP_REST_Response
 	 */
 	public function get_categories(): WP_REST_Response {
-		return rest_ensure_response( Cloud_API::get_cloud_categories() );
+		return rest_ensure_response( $this->cloud_api->get_cloud_categories() );
 	}
 
 	/**

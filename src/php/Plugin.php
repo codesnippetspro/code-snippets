@@ -342,7 +342,7 @@ class Plugin {
 			[
 				'debug'            => defined( 'WP_DEBUG' ) && WP_DEBUG,
 				'isLicensed'       => $this->licensing->is_licensed(),
-				'isCloudConnected' => Cloud_API::is_cloud_connection_available(),
+				'isCloudConnected' => $this->cloud_api->is_cloud_connection_available(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'restAPI'          => [
 					'base'           => esc_url_raw( rest_url() ),
@@ -363,7 +363,7 @@ class Plugin {
 					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
 					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
 					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
-					'cloud'    => esc_url_raw( Cloud_API::get_cloud_url() ),
+					'cloud'    => esc_url_raw( $this->cloud_api->get_cloud_url() ),
 				],
 			]
 		);
