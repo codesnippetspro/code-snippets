@@ -162,9 +162,9 @@ class Cloud_API {
 
 		$json = json_decode( $body, true );
 
-		return is_array( $json ) && isset( $json['data'] )
-			? $json['data']
-			: null;
+		// Return the whole decoded envelope; each caller extracts the key it needs (search reads
+		// `snippets`/`meta`/`available_filters`, single reads `snippet`, taxonomy reads `data`).
+		return is_array( $json ) ? $json : null;
 	}
 
 	/**
@@ -346,7 +346,7 @@ class Cloud_API {
 		$url = sprintf( '%s/public/getsnippet/%s', $this->get_cloud_api_url(), $cloud_id );
 		$response = wp_remote_get( $url );
 		$cloud_snippet = self::unpack_request_json( $response );
-		return new Cloud_Snippet( $cloud_snippet['snippet'] );
+		return new Cloud_Snippet( is_array( $cloud_snippet ) ? ( $cloud_snippet['snippet'] ?? [] ) : [] );
 	}
 
 	/**
