@@ -107,7 +107,7 @@ class Cloud_Snippets extends Model {
 		if ( is_array( $initial_data ) ) {
 			$meta = $initial_data['meta'] ?? [];
 
-			$result['snippets'] = $initial_data['data'] ?? $initial_data['snippets'] ?? [];
+			$result['snippets'] = $initial_data['snippets'] ?? [];
 			$result['cloud_id_rev'] = $initial_data['cloud_id_rev'] ?? [];
 
 			if ( $meta ) {

@@ -127,7 +127,6 @@ class Cloud_API_Featured_Test extends TestCase {
 		}
 
 		$body = [
-			'data'              => $snippets,
 			'snippets'          => $snippets,
 			'meta'              => [
 				'total'       => $count,
