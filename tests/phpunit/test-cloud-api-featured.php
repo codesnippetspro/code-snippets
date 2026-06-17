@@ -4,13 +4,21 @@ namespace Code_Snippets\Tests;
 
 use Code_Snippets\Client\Cloud_API;
 use Code_Snippets\Model\Cloud_Snippets;
+use WP_Error;
 
 /**
- * Tests for Cloud_API::get_featured_snippets().
+ * Tests for $this->api->get_featured_snippets().
  *
  * @group cloud
  */
 class Cloud_API_Featured_Test extends TestCase {
+
+	/**
+	 * API instance.
+	 *
+	 * @var Cloud_API
+	 */
+	private Cloud_API $api;
 
 	/**
 	 * Number of HTTP requests intercepted during a test.
@@ -22,7 +30,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	/**
 	 * Response to return from the mock HTTP filter.
 	 *
-	 * @var array|\WP_Error|null
+	 * @var array|WP_Error|null
 	 */
 	private $mock_response = null;
 
@@ -33,6 +41,8 @@ class Cloud_API_Featured_Test extends TestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
+
+		$this->api = new Cloud_API();
 
 		$this->clear_featured_transients();
 		$this->http_request_count = 0;
@@ -185,7 +195,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_returns_cloud_snippets_object(): void {
-		$result = Cloud_API::get_featured_snippets();
+		$result = $this->api->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 3, $result->snippets );
@@ -200,7 +210,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	public function test_transient_is_set_after_first_call(): void {
 		$this->assertFalse( get_transient( $this->transient_key() ) );
 
-		Cloud_API::get_featured_snippets();
+		$this->api->get_featured_snippets();
 
 		$cached = get_transient( $this->transient_key() );
 		$this->assertInstanceOf( Cloud_Snippets::class, $cached );
@@ -212,10 +222,10 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_second_call_returns_from_transient(): void {
-		Cloud_API::get_featured_snippets();
+		$this->api->get_featured_snippets();
 		$this->assertSame( 1, $this->http_request_count );
 
-		$result = Cloud_API::get_featured_snippets();
+		$result = $this->api->get_featured_snippets();
 		$this->assertSame( 1, $this->http_request_count );
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 3, $result->snippets );
@@ -227,9 +237,9 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_returns_empty_on_http_error(): void {
-		$this->mock_response = new \WP_Error( 'http_request_failed', 'Connection refused' );
+		$this->mock_response = new WP_Error( 'http_request_failed', 'Connection refused' );
 
-		$result = Cloud_API::get_featured_snippets();
+		$result = $this->api->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
@@ -252,7 +262,7 @@ class Cloud_API_Featured_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = Cloud_API::get_featured_snippets();
+		$result = $this->api->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
@@ -274,7 +284,7 @@ class Cloud_API_Featured_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = Cloud_API::get_featured_snippets();
+		$result = $this->api->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
@@ -286,7 +296,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_transient_is_cached(): void {
-		Cloud_API::get_featured_snippets();
+		$this->api->get_featured_snippets();
 
 		$cached = get_transient( $this->transient_key() );
 		$this->assertInstanceOf( Cloud_Snippets::class, $cached );
@@ -294,7 +304,7 @@ class Cloud_API_Featured_Test extends TestCase {
 		delete_transient( $this->transient_key() );
 		$this->mock_response = $this->build_success_response( 2 );
 
-		Cloud_API::get_featured_snippets();
+		$this->api->get_featured_snippets();
 
 		$cached_again = get_transient( $this->transient_key() );
 		$this->assertInstanceOf( Cloud_Snippets::class, $cached_again );
@@ -316,7 +326,7 @@ class Cloud_API_Featured_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = Cloud_API::get_featured_snippets();
+		$result = $this->api->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
@@ -329,7 +339,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_transient_stores_cloud_snippets_instance(): void {
-		Cloud_API::get_featured_snippets();
+		$this->api->get_featured_snippets();
 
 		$raw_transient = get_transient( $this->transient_key() );
 
@@ -344,7 +354,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_available_filters_preserved(): void {
-		$result = Cloud_API::get_featured_snippets();
+		$result = $this->api->get_featured_snippets();
 
 		$this->assertIsArray( $result->available_filters );
 		$this->assertArrayHasKey( 'types', $result->available_filters );
@@ -357,13 +367,13 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_clear_caches_invalidates_featured_cache(): void {
-		Cloud_API::get_featured_snippets();
+		$this->api->get_featured_snippets();
 		$this->assertSame( 1, $this->http_request_count );
 
 		$api = new Cloud_API();
 		$api->clear_caches();
 
-		Cloud_API::get_featured_snippets();
+		$this->api->get_featured_snippets();
 		$this->assertSame( 2, $this->http_request_count, 'Expected a fresh HTTP request after cache invalidation.' );
 	}
 
