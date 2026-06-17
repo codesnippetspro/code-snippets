@@ -509,15 +509,9 @@ class Cloud_API {
 			return new Cloud_Snippets();
 		}
 
-		$body = wp_remote_retrieve_body( $response );
+		$json = self::unpack_request_json( $response );
 
-		if ( ! $body ) {
-			return new Cloud_Snippets();
-		}
-
-		$json = json_decode( $body, true );
-
-		if ( ! is_array( $json ) || ! isset( $json['data'] ) ) {
+		if ( ! $json ) {
 			return new Cloud_Snippets();
 		}
 
