@@ -156,10 +156,10 @@ const promoteBoldChangeTypeLabels = (lines: string[]): string[] =>
 
 const normaliseReleaseHeaders = (lines: string[], errors: string[]): string[] =>
 	lines.map(line => {
-		const bracketed = /^## \[(?<ver>[^\]]+)\]\s*\((?<date>\d{4}-\d{2}-\d{2})\)/.exec(line)
+		const bracketed = /^## \[(?<ver>[^\]]+)\]\s*\((?<date>\d{4}-\d{2}-\d{2}|[A-Z][A-Z0-9-]*)\)/.exec(line)
 		if (bracketed?.groups) {return `## [${bracketed.groups.ver}] (${bracketed.groups.date})`}
 
-		const bracketedMissingClose = /^## \[(?<ver>[^\]]+)\]\s*\((?<date>\d{4}-\d{2}-\d{2})$/.exec(line)
+		const bracketedMissingClose = /^## \[(?<ver>[^\]]+)\]\s*\((?<date>\d{4}-\d{2}-\d{2}|[A-Z][A-Z0-9-]*)$/.exec(line)
 		if (bracketedMissingClose?.groups) {
 			return `## [${bracketedMissingClose.groups.ver}] (${bracketedMissingClose.groups.date})`
 		}
@@ -170,7 +170,7 @@ const normaliseReleaseHeaders = (lines: string[], errors: string[]): string[] =>
 			return line
 		}
 
-		const plain = /^## (?<ver>\d[^\s(]+)\s*(?:\((?<date>\d{4}-\d{2}-\d{2})\))?/.exec(line)
+		const plain = /^## (?<ver>\d[^\s(]+)\s*(?:\((?<date>\d{4}-\d{2}-\d{2}|[A-Z][A-Z0-9-]*)\))?/.exec(line)
 		if (!plain?.groups) {return line}
 		if (plain.groups.date) {return `## [${plain.groups.ver}] (${plain.groups.date})`}
 		errors.push(`CHANGELOG.md: Release header missing date: ${line}`)

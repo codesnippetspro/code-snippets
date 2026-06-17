@@ -20,7 +20,7 @@
  *     Screenshots, Changelog, Upgrade Notice
  *
  * Changelog section (inside readme.txt)
- *   - Version sub-headers: = X.Y.Z (YYYY-MM-DD) =
+ *   - Version sub-headers: = X.Y.Z (YYYY-MM-DD) = or an uppercase status token, e.g. = X.Y.Z (UPCOMING) =
  *   - Change-type labels: __Added__, __Changed__, __Fixed__, __Removed__,
  *     __Deprecated__, __Security__
  *     (### headings and **Bold** variants are demoted / normalised)
@@ -51,7 +51,7 @@ const CLI_ARGS_START_INDEX = 2
 const SUBSECTION_TITLECASE_MAX_WORDS = 2
 const LIST_MARKER_LENGTH = 2
 
-const RE_DATE_SRC = '\\d{4}-\\d{2}-\\d{2}'
+const RE_DATE_SRC = '(?:\\d{4}-\\d{2}-\\d{2}|[A-Z][A-Z0-9-]*)'
 const RE_VERSION_SRC = '\\d+\\.\\d+(?:\\.\\d+)*(?:-[a-zA-Z0-9.]+)?'
 
 /** Known == Section == names (canonical capitalisation). */
