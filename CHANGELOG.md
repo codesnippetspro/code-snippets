@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.0.0] (2026-06-11)
+## [4.0.0] (UPCOMING)
 
 ### Added
 * New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.

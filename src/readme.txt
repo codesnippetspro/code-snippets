@@ -106,7 +106,7 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 4.0.0 (Upcoming) =
+= 4.0.0 (UPCOMING) =
 
 __Added__
 
