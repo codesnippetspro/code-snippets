@@ -88,7 +88,7 @@ class Cloud_API_Search_Test extends TestCase {
 		}
 
 		$body = [
-			'data'              => $snippets,
+			'snippets'          => $snippets,
 			'meta'              => [
 				'total'       => $total,
 				'total_pages' => 5,

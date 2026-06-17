@@ -20,7 +20,7 @@ class Cloud_Snippets_Test extends TestCase {
 	public function test_normalizes_full_envelope(): void {
 		$result = new Cloud_Snippets(
 			[
-				'data'              => [
+				'snippets'          => [
 					[
 						'id'   => 1,
 						'name' => 'First',
@@ -57,11 +57,11 @@ class Cloud_Snippets_Test extends TestCase {
 	}
 
 	/**
-	 * The `snippets` key is used when no `data` key is present.
+	 * Snippets are read from the `snippets` key of the envelope.
 	 *
 	 * @return void
 	 */
-	public function test_falls_back_to_snippets_key(): void {
+	public function test_reads_snippets_key(): void {
 		$result = new Cloud_Snippets(
 			[
 				'snippets' => [
@@ -79,11 +79,11 @@ class Cloud_Snippets_Test extends TestCase {
 	}
 
 	/**
-	 * The `data` key takes precedence over the `snippets` key when both are present.
+	 * The `snippets` key is authoritative; a legacy `data` key is ignored.
 	 *
 	 * @return void
 	 */
-	public function test_data_key_takes_precedence_over_snippets_key(): void {
+	public function test_legacy_data_key_is_ignored(): void {
 		$result = new Cloud_Snippets(
 			[
 				'data'     => [
@@ -99,14 +99,14 @@ class Cloud_Snippets_Test extends TestCase {
 				'snippets' => [
 					[
 						'id'   => 9,
-						'name' => 'Ignored',
+						'name' => 'Used',
 					],
 				],
-				'meta'     => [ 'total' => 2 ],
+				'meta'     => [ 'total' => 1 ],
 			]
 		);
 
-		$this->assertCount( 2, $result->snippets );
+		$this->assertCount( 1, $result->snippets );
 	}
 
 	/**
@@ -161,7 +161,7 @@ class Cloud_Snippets_Test extends TestCase {
 	public function test_missing_meta_keeps_default_totals(): void {
 		$result = new Cloud_Snippets(
 			[
-				'data' => [
+				'snippets' => [
 					[
 						'id'   => 1,
 						'name' => 'Lonely',
