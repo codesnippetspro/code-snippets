@@ -17,7 +17,10 @@ const pushToMapArray = <K, V>(map: Map<K, V[]>, key: K, value: V) => {
 const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus, Snippet[]> =>
 	snippets.reduce((acc, snippet) => {
 		pushToMapArray(acc, snippet.trashed ? 'trashed' : 'all', snippet)
-		pushToMapArray(acc, snippet.active ? 'active' : 'inactive', snippet)
+
+		if (!snippet.trashed) {
+			pushToMapArray(acc, snippet.active ? 'active' : 'inactive', snippet)
+		}
 		pushToMapArray(acc, snippet.locked ? 'locked' : 'unlocked', snippet)
 
 		if (snippet.lastActive) {
