@@ -1,7 +1,7 @@
 @use 'upsell';
 
 $toolbar-block-size: 150px;
-$wpbody-block-indent: 22px;
+$wpcontent-inline-start-indent: 20px;
 
 #wpbody {
 	padding-block-start: $toolbar-block-size;
@@ -11,9 +11,9 @@ $wpbody-block-indent: 22px;
 	color: #2c3337;
 	background: #fff;
 	font-family: 'SF Pro', sans-serif;
-	margin-inline-start: -$wpbody-block-indent;
+	margin-inline-start: -$wpcontent-inline-start-indent - 2;
 	position: absolute;
-	inline-size: calc(100% + $wpbody-block-indent);
+	inline-size: calc(100% + $wpcontent-inline-start-indent);
 	block-size: $toolbar-block-size;
 	inset-block-start: 0;
 	display: flex;
