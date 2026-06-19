@@ -11,10 +11,6 @@ switch ( true ) {
 		$_tests_dir = getenv( 'WP_TESTS_DIR' );
 		break;
 
-	case (bool) getenv( 'WP_DEVELOP_DIR' ):
-		$_tests_dir = getenv( 'WP_DEVELOP_DIR' ) . '/tests/phpunit';
-		break;
-
 	case (bool) getenv( 'WP_PHPUNIT__DIR' ):
 		$_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
 		break;
