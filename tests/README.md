@@ -46,7 +46,7 @@ npm run test:php:watch
 Or run PHPUnit directly:
 
 ```bash
-WP_TESTS_DIR=./.wp-tests-lib WP_DEVELOP_DIR=./.wp-core src/vendor/bin/phpunit -c phpunit.xml
+WP_TESTS_DIR=./.wp-tests-lib src/vendor/bin/phpunit -c phpunit.xml
 ```
 
 ## What Gets Installed
