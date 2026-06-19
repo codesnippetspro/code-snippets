@@ -1,5 +1,33 @@
 # Changelog
 
+## [4.0.0] (UPCOMING)
+
+### Added
+* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
+* Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from the WordPress admin bar.
+* Snippet locking to help prevent accidental edits or deletion of important snippets. Props to https://github.com/mgiannopoulos24.
+* Improved screen options on the main snippets table, including controls for visible columns and truncating long snippet names or descriptions.
+* Bulk actions and bulk code download support in the redesigned snippets table.
+* Featured snippets and improved browsing in Community Cloud.
+* WordPress 7.0 admin styling compatibility.
+* Clearer accessibility labels, headings, tab markup, table checkboxes, sort buttons, copy buttons, and drag-and-drop upload controls.
+
+### Changed
+* Redesigned the main snippets table with improved search, filtering, sorting, pagination, row actions, and bulk selection.
+* Improved the snippet import and migration experience, including clearer file upload handling and third-party plugin migration flows.
+* Improved snippet error handling so activation failures, validation errors, and stack traces are easier to understand.
+* Improved Community Cloud search and filtering, including server-side filters, better result loading, and clearer empty states.
+* Updated the welcome screen, toolbar, import screen, and cloud screens to match the new admin experience.
+* Updated internal plugin architecture to a cleaner PSR-4 structure for better long-term maintainability.
+* Improved accessibility across the snippets table, import screen, migration flow, Community Cloud, welcome screen, toolbar, dialogs, tooltips, and code editor.
+* Improved colour contrast and reduced-motion support across admin screens.
+
+### Fixed
+* Fixed REST API server error responses on missing snippets.
+* Fixed redundant frontend logic, improving overall performance.
+* Fixed Community Cloud search results and pagination to respect WordPress screen options.
+* Fixed snippet saving and activation feedback to improve validation and runtime error display.
+
 ## [3.9.6] (2026-04-28)
 
 ### Fixed
