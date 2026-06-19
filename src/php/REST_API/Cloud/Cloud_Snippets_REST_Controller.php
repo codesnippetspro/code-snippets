@@ -2,7 +2,9 @@
 
 namespace Code_Snippets\REST_API\Cloud;
 
-use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\Client\Cloud_Snippets_Client;
+use Code_Snippets\Controller\Cloud_Snippets_Controller;
+use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Link;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\REST_API\REST_Collection_Controller;
@@ -17,7 +19,7 @@ use function Code_Snippets\save_snippet;
  *
  * @package Code_Snippets
  */
-final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Controller {
+final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 
 	/**
 	 * Current API version.
@@ -28,6 +30,35 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 	 * The base of this controller's route.
 	 */
 	public const BASE_ROUTE = 'cloud/snippets';
+
+	/**
+	 * Controller instance.
+	 *
+	 * @var Cloud_Snippets_Controller
+	 */
+	private Cloud_Snippets_Controller $controller;
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param Cloud_Snippets_Controller $controller Cloud snippets controller.
+	 */
+	public function __construct( Cloud_Snippets_Controller $controller ) {
+		parent::__construct();
+		$this->controller = $controller;
+	}
+
+	/**
+	 * Check the request from Cloud API is valid
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function create_item_permissions_check( $request ): bool {
+		return parent::create_item_permissions_check( $request ) &&
+		       $request->get_header( 'Access-Control' ) === $this->controller->get_access_control_token();
+	}
 
 	/**
 	 * Common filter args shared across search and featured endpoints.
@@ -118,15 +149,29 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base,
+			$this->rest_base . '/codevault',
 			[
 				[
-					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => [ $this, 'create_item_from_cloud' ],
-					'permission_callback' => [ $this, 'create_item_permissions_check' ],
-					'args'                => rest_get_endpoint_args_for_schema( $this->get_cloud_snippet_schema() ),
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_codevault_items' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'args'                => [
+						$collection_args['page'],
+					],
+					'schema'              => [ $this, 'get_item_schema' ],
 				],
-				'schema' => [ $this, 'get_cloud_snippet_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/codevault/links',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_cloud_links' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+				],
 			]
 		);
 
@@ -191,11 +236,11 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 		$query_params = $request->get_query_params();
 		$page = max( 1, (int) $request->get_param( 'page' ) );
 		$per_page = isset( $query_params['per_page'] )
-			? min( Cloud_API::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
+			? min( Cloud_Snippets_Client::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
 			: $this->get_snippets_per_page();
 
 		$filters = $this->extract_filters( $request );
-		$cloud_snippets = $this->cloud_api->fetch_search_results( $method, $query, $page, $per_page, $filters );
+		$cloud_snippets = $this->controller->fetch_search_results( $method, $query, $page, $per_page, $filters );
 		return $cloud_snippets->to_rest_response();
 	}
 
@@ -211,30 +256,12 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 		$query_params = $request->get_query_params();
 
 		$per_page = isset( $query_params['per_page'] )
-			? min( Cloud_API::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
+			? min( Cloud_Snippets_Client::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
 			: $this->get_snippets_per_page();
 
 		$filters = $this->extract_filters( $request );
-		$cloud_snippets = $this->cloud_api->get_featured_snippets( $page, $per_page, $filters );
+		$cloud_snippets = $this->controller->get_featured_snippets( $page, $per_page, $filters );
 		return $cloud_snippets->to_rest_response();
-	}
-
-	/**
-	 * Retrieve available snippet types (languages) from the cloud API.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function get_types(): WP_REST_Response {
-		return rest_ensure_response( $this->cloud_api->get_cloud_types() );
-	}
-
-	/**
-	 * Retrieve available snippet categories from the cloud API.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function get_categories(): WP_REST_Response {
-		return rest_ensure_response( $this->cloud_api->get_cloud_categories() );
 	}
 
 	/**
@@ -242,10 +269,12 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 	 *
 	 * @return int
 	 */
-	private function get_snippets_per_page(): int {
-		$per_page = (int) get_user_option( 'snippets_per_page' );
+	public function get_snippets_per_page(): int {
+		$per_page = intval( get_user_option( 'snippets_per_page' ) );
 
-		return $per_page > 0 ? min( Cloud_API::MAX_RESULTS_PER_PAGE, $per_page ) : 10;
+		return $per_page > 0
+			? min( Cloud_Snippets_Client::MAX_RESULTS_PER_PAGE, $per_page )
+			: Cloud_Snippets_Client::DEFAULT_RESULTS_PER_PAGE;
 	}
 
 	/**
@@ -300,57 +329,6 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 	}
 
 	/**
-	 * Create one item from the collection
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 *
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function create_item( $request ) {
-		$body = json_decode( $request->get_body() );
-		$snippet_data = json_decode( $body[0], true );
-
-		$snippet = new Snippet();
-
-		$snippet->name = $snippet_data['name'];
-		$snippet->desc = $snippet_data['description'];
-		$snippet->code = $snippet_data['code'];
-		$snippet->scope = $snippet_data['scope'];
-		$snippet->modified = $snippet_data['created'];
-		$snippet->revision = $snippet_data['revision'] ?? 1;
-		$snippet->cloud_id = $snippet_data['id'] . '_0'; // Set to not owner.
-		$snippet->shared_network = false;
-		$snippet->network = false;
-		$snippet->active = false;
-
-		$result = save_snippet( $snippet );
-
-		if ( ! $result ) {
-			return new WP_Error(
-				'rest_cannot_create',
-				__( 'The snippet could not be created.', 'code-snippets' ),
-				[ 'status' => 500 ]
-			);
-		}
-
-		$link = new Cloud_Link();
-		$link->local_id = $snippet_data['id'];
-		$link->cloud_id = $snippet->cloud_id;
-		$link->is_owner = false;
-		$link->in_codevault = false;
-		$link->update_available = false;
-
-		$this->cloud_api->add_cloud_link( $link );
-
-		$response = [
-			'status'  => 'success',
-			'message' => __( 'Snippet created', 'code-snippets' ),
-		];
-
-		return rest_ensure_response( $response );
-	}
-
-	/**
 	 * Download a single cloud snippet.
 	 *
 	 * @param WP_REST_Request $request The request object containing the search parameters.
@@ -359,9 +337,8 @@ final class Cloud_Snippets_REST_Controller extends Cloud_Collection_REST_Control
 	 */
 	public function download_item( WP_REST_Request $request ): WP_REST_Response {
 		$id = $request->get_param( 'id' );
-		$in_codevault = $request->get_param( 'in_codevault' );
 
-		$cloud_snippet = $this->cloud_api->get_single_snippet_from_cloud( $id );
-		return rest_ensure_response( $this->cloud_api->download_snippet_from_cloud( $cloud_snippet, $in_codevault ) );
+		$cloud_snippet = $this->controller->get_cloud_snippet( $id );
+		return rest_ensure_response( $this->controller->download_snippet_from_cloud( $cloud_snippet ) );
 	}
 }

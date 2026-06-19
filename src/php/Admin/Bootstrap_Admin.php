@@ -8,7 +8,7 @@ use Code_Snippets\Admin\Menus\Import_Menu;
 use Code_Snippets\Admin\Menus\Manage_Menu;
 use Code_Snippets\Admin\Menus\Settings_Menu;
 use Code_Snippets\Admin\Menus\Welcome_Menu;
-use Code_Snippets\Client\Welcome_API;
+use Code_Snippets\Client\Welcome_Client;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
@@ -34,19 +34,19 @@ class Bootstrap_Admin {
 	/**
 	 * Welcome_API class instance.
 	 *
-	 * @var Welcome_API
+	 * @var Welcome_Client
 	 */
-	public Welcome_API $welcome_api;
+	public Welcome_Client $welcome_client;
 
 	/**
-	 * Class constructor
+	 * Class constructor.
 	 */
 	public function __construct() {
 		if ( ! is_admin() ) {
 			return;
 		}
 
-		$this->welcome_api = new Welcome_API();
+		$this->welcome_client = new Welcome_Client();
 
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 
@@ -70,7 +70,7 @@ class Bootstrap_Admin {
 			$this->menus['settings'] = new Settings_Menu();
 		}
 
-		$this->menus['welcome'] = new Welcome_Menu( $this->welcome_api );
+		$this->menus['welcome'] = new Welcome_Menu( $this->welcome_client );
 	}
 
 	/**
@@ -283,7 +283,7 @@ class Bootstrap_Admin {
 			return;
 		}
 
-		$welcome = $this->welcome_api->get_banner();
+		$welcome = $this->welcome_client->get_banner();
 
 		try {
 			$now = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );

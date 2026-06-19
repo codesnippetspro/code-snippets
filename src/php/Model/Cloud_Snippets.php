@@ -45,16 +45,6 @@ class Cloud_Snippets extends Model {
 		'cloud_id_rev' => 'cloud_id_rev',
 	];
 
-
-	/**
-	 * Class constructor.
-	 *
-	 * @param array|null $initial_data Initial data from the cloud API response.
-	 */
-	public function __construct( $initial_data = null ) {
-		parent::__construct( $this->normalize_cloud_api( $initial_data ) );
-	}
-
 	/**
 	 * Prepare a value before it is stored.
 	 *
@@ -95,27 +85,51 @@ class Cloud_Snippets extends Model {
 	}
 
 	/**
+	 * Unpack meta values from API response.
+	 *
+	 * @param array $meta Response meta data.
+	 *
+	 * @return void
+	 */
+	public function unpack_api_meta( array $meta ) {
+		if ( isset( $meta['total'] ) && is_numeric( $meta['total'] ) ) {
+			$this->total_snippets = $meta['total'];
+		}
+
+		if ( isset( $meta['total_pages'] ) && is_numeric( $meta['total_pages'] ) ) {
+			$this->total_pages = $meta['total_pages'];
+		}
+
+		if ( isset( $meta['page'] ) && is_numeric( $meta['page'] ) ) {
+			$this->page = max( 0, (int) $meta['page'] - 1 );
+		}
+	}
+
+	/**
 	 * Normalize payloads returned by the cloud API into the shape expected by this class.
 	 *
-	 * @param mixed $initial_data Raw data passed into the constructor.
+	 * @param array|null $response Response data as returned from API.
 	 *
-	 * @return array Normalized data array or original value when no normalization is required.
+	 * @return Cloud_Snippets Constructed cloud snippets object from response data.
 	 */
-	private function normalize_cloud_api( $initial_data ): array {
-		$result = [];
+	public static function unpack_api_response( ?array $response ): Cloud_Snippets {
+		$result = new Cloud_Snippets();
 
-		if ( is_array( $initial_data ) ) {
-			$meta = $initial_data['meta'] ?? [];
+		if ( ! $response ) {
+			return $result;
+		}
 
-			$result['snippets'] = $initial_data['snippets'] ?? [];
-			$result['cloud_id_rev'] = $initial_data['cloud_id_rev'] ?? [];
+		$snippets_data = $response['data'] ?? $response['snippets'] ?? [];
 
-			if ( $meta ) {
-				$result['total_snippets'] = isset( $meta['total'] ) ? (int) $meta['total'] : 0;
-				$result['total_pages'] = isset( $meta['total_pages'] ) ? (int) $meta['total_pages'] : 0;
-				$result['page'] = isset( $meta['page'] ) ? max( 0, (int) $meta['page'] - 1 ) : 0;
-				$result['available_filters'] = $initial_data['available_filters'] ?? [];
-			}
+		foreach ( $snippets_data as $snippet_data ) {
+			$result->snippets[] = new Cloud_Snippet( $snippet_data );
+		}
+
+		$result->cloud_id_rev = $response['cloud_id_rev'] ?? [];
+		$result->available_filters = $response['available_filters'] ?? [];
+
+		if ( isset( $response['meta'] ) && is_array( $response['meta'] ) ) {
+			$result->unpack_api_meta( $response['meta'] );
 		}
 
 		return $result;

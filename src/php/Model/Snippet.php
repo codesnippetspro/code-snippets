@@ -31,7 +31,9 @@ use function Code_Snippets\Utils\get_self_option;
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
  * @property string|null            $code_error_trace   Stack trace captured when last testing snippet code.
  * @property int                    $revision           Revision or version number of snippet.
- * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
+ * @property int                    $cloud_id           The cloud ID of the snippet, if applicable.
+ * @property bool                   $is_cloud_owner     Whether the user is the owner of the cloud snippet, if applicable.
+ * @property string                 $cloud_id_owner     Cloud ownership information as a single value, if applicable.
  *
  * @property-read int               $last_active        Timestamp of when the snippet was last active, if available.
  * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
@@ -62,24 +64,25 @@ class Snippet extends Model {
 	 * @var array<string, mixed>
 	 */
 	protected static array $default_values = [
-		'id'             => 0,
-		'name'           => '',
-		'desc'           => '',
-		'code'           => '',
-		'tags'           => [],
-		'scope'          => 'global',
-		'condition_id'   => 0,
-		'active'         => false,
-		'trashed'        => false,
-		'locked'         => false,
-		'priority'       => 10,
-		'network'        => null,
-		'shared_network' => null,
-		'modified'       => null,
-		'code_error'     => null,
+		'id'               => 0,
+		'name'             => '',
+		'desc'             => '',
+		'code'             => '',
+		'tags'             => [],
+		'scope'            => 'global',
+		'condition_id'     => 0,
+		'active'           => false,
+		'trashed'          => false,
+		'locked'           => false,
+		'priority'         => 10,
+		'network'          => null,
+		'shared_network'   => null,
+		'modified'         => null,
+		'code_error'       => null,
 		'code_error_trace' => null,
-		'revision'       => 1,
-		'cloud_id'       => '',
+		'revision'         => 1,
+		'cloud_id'         => 0,
+		'is_cloud_owner'   => false,
 	];
 
 	/**
@@ -106,6 +109,7 @@ class Snippet extends Model {
 			case 'id':
 			case 'priority':
 			case 'condition_id':
+			case 'cloud_id':
 				return absint( $value );
 
 			case 'tags':
@@ -120,6 +124,7 @@ class Snippet extends Model {
 				return 1 === intval( $value ) && ! $this->trashed && ! $this->is_condition();
 
 			case 'locked':
+			case 'is_cloud_owner':
 				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
@@ -496,10 +501,40 @@ class Snippet extends Model {
 	/**
 	 * Determine whether the current snippet type is pro-only.
 	 *
+	 * @return bool
+	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function get_is_pro(): bool {
 		return 'css' === $this->type || 'js' === $this->type || 'cond' === $this->type;
+	}
+
+	/**
+	 * Concatonate the 'cloud_id' and 'is_cloud_owner' fields to provide a single value representing the ownership
+	 * status of the cloud snippet, if applicable.
+	 *
+	 * @return string
+	 *
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function get_cloud_id_owner(): string {
+		return sprintf( '%d_%d', $this->cloud_id, $this->cloud_id_owner ? '1' : '0' );
+	}
+
+	/**
+	 * Set the 'cloud_id' and 'is_cloud_owner' values from a single string value.
+	 *
+	 * @param string $cloud_id_owner Combined cloud ID and ownership value.
+	 *
+	 * @return void
+	 *
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function set_cloud_id_owner( string $cloud_id_owner ): void {
+		$parts = explode( '_', $cloud_id_owner );
+
+		$this->cloud_id = (int) $parts[0];
+		$this->is_cloud_owner = isset( $parts[1] ) && $parts[1];
 	}
 
 	/**

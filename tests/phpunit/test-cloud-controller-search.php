@@ -2,7 +2,9 @@
 
 namespace Code_Snippets\Tests;
 
-use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\Client\Cloud_Snippets_Client;
+use Code_Snippets\Controller\Cloud_Snippets_Controller;
+use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippets;
 use WP_Error;
 
@@ -11,14 +13,7 @@ use WP_Error;
  *
  * @group cloud
  */
-class Cloud_API_Search_Test extends TestCase {
-
-	/**
-	 * API instance.
-	 *
-	 * @var Cloud_API
-	 */
-	private Cloud_API $api;
+class Cloud_Controller_Search_Test extends TestCase {
 
 	/**
 	 * Number of HTTP requests intercepted during a test.
@@ -53,9 +48,16 @@ class Cloud_API_Search_Test extends TestCase {
 		$this->last_url = null;
 		$this->mock_response = null;
 
-		$this->api = new Cloud_API();
-
 		add_filter( 'pre_http_request', [ $this, 'mock_search_request' ], 10, 3 );
+	}
+
+	/**
+	 * Create a new instance of the controller.
+	 *
+	 * @return Cloud_Snippets_Controller
+	 */
+	private static function make_controller() {
+		return new Cloud_Snippets_Controller( new Cloud_Snippets_Client( new Basic_Cloud_Connection() ) );
 	}
 
 	/**
@@ -149,9 +151,8 @@ class Cloud_API_Search_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_returns_parsed_snippets_and_total(): void {
-		$result = $this->api->fetch_search_results( 'term', 'woo' );
+		$result = self::make_controller()->fetch_search_results( 'term', 'woo' );
 
-		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertSame( 1, $this->http_request_count );
 		$this->assertCount( 2, $result->snippets );
 		$this->assertSame( 42, $result->total_snippets );
@@ -163,7 +164,7 @@ class Cloud_API_Search_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_request_includes_expected_query_args(): void {
-		$this->api->fetch_search_results( 'term', 'woo', 2, 10 );
+		self::make_controller()->fetch_search_results( 'term', 'woo', 2, 10 );
 		$args = $this->query_args( $this->last_url );
 
 		$this->assertSame( 'term', $args['s_method'] );
@@ -179,10 +180,10 @@ class Cloud_API_Search_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_per_page_is_capped_at_maximum(): void {
-		$this->api->fetch_search_results( 'term', 'woo', 1, 500 );
+		self::make_controller()->fetch_search_results( 'term', 'woo', 1, 500 );
 		$args = $this->query_args( $this->last_url );
 
-		$this->assertSame( (string) Cloud_API::MAX_RESULTS_PER_PAGE, $args['per_page'] );
+		$this->assertSame( (string) Cloud_Snippets_Client::MAX_RESULTS_PER_PAGE, $args['per_page'] );
 	}
 
 	/**
@@ -191,7 +192,7 @@ class Cloud_API_Search_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_filters_are_added_to_request(): void {
-		$this->api->fetch_search_results(
+		self::make_controller()->fetch_search_results(
 			'term',
 			'woo',
 			1,
@@ -217,7 +218,7 @@ class Cloud_API_Search_Test extends TestCase {
 	public function test_returns_empty_on_http_error(): void {
 		$this->mock_response = new WP_Error( 'http_request_failed', 'Operation timed out' );
 
-		$result = $this->api->fetch_search_results( 'term', 'woo' );
+		$result = self::make_controller()->fetch_search_results( 'term', 'woo' );
 
 		$this->assertCount( 0, $result->snippets );
 		$this->assertSame( 0, $result->total_snippets );
@@ -239,7 +240,7 @@ class Cloud_API_Search_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = $this->api->fetch_search_results( 'term', 'woo' );
+		$result = self::make_controller()->fetch_search_results( 'term', 'woo' );
 
 		$this->assertCount( 0, $result->snippets );
 	}
@@ -260,7 +261,7 @@ class Cloud_API_Search_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = $this->api->fetch_search_results( 'term', 'woo' );
+		$result = self::make_controller()->fetch_search_results( 'term', 'woo' );
 
 		$this->assertCount( 0, $result->snippets );
 	}
@@ -271,7 +272,7 @@ class Cloud_API_Search_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_result_page_matches_requested_page(): void {
-		$result = $this->api->fetch_search_results( 'term', 'woo', 3 );
+		$result = self::make_controller()->fetch_search_results( 'term', 'woo', 3 );
 
 		$this->assertSame( 3, $result->page );
 	}

@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\Tests;
 
-use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\Client\Cloud_Snippets_Client;
 use Code_Snippets\Model\Cloud_Snippet;
 use WP_Error;
 
@@ -17,9 +17,9 @@ class Cloud_API_Snippet_Test extends TestCase {
 	/**
 	 * API instance.
 	 *
-	 * @var Cloud_API
+	 * @var Cloud_Snippets_Client
 	 */
-	private Cloud_API $api;
+	private Cloud_Snippets_Client $api;
 
 	/**
 	 * Response to return from the mock HTTP filter.
@@ -37,7 +37,7 @@ class Cloud_API_Snippet_Test extends TestCase {
 		parent::set_up();
 
 		$this->mock_response = null;
-		$this->api = new Cloud_API();
+		$this->api = new Cloud_Snippets_Client();
 
 		add_filter( 'pre_http_request', [ $this, 'mock_request' ], 10, 3 );
 	}
@@ -101,7 +101,7 @@ class Cloud_API_Snippet_Test extends TestCase {
 			]
 		);
 
-		$result = $this->api->get_single_snippet_from_cloud( 5 );
+		$result = $this->api->get_cloud_snippet( 5 );
 
 		$this->assertInstanceOf( Cloud_Snippet::class, $result );
 		$this->assertSame( 'Test Snippet', $result->name );
@@ -115,7 +115,7 @@ class Cloud_API_Snippet_Test extends TestCase {
 	public function test_get_single_snippet_handles_empty_response(): void {
 		$this->mock_response = new WP_Error( 'http_request_failed', 'down' );
 
-		$result = $this->api->get_single_snippet_from_cloud( 5 );
+		$result = $this->api->get_cloud_snippet( 5 );
 
 		$this->assertInstanceOf( Cloud_Snippet::class, $result );
 		$this->assertSame( '', $result->name );

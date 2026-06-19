@@ -12,7 +12,7 @@ use const Code_Snippets\PLUGIN_FILE;
  *
  * @package Code_Snippets
  */
-class Welcome_API {
+class Welcome_Client {
 
 	/**
 	 *  URL for the welcome page data.

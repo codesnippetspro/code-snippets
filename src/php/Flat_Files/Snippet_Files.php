@@ -9,6 +9,7 @@ use Code_Snippets\Flat_Files\Interfaces\Snippet_Type_Handler;
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
+use function wp_hash;
 use const Code_Snippets\CACHE_GROUP;
 
 /**
@@ -405,7 +406,7 @@ class Snippet_Files {
 	 */
 	public static function get_hashed_table_name( string $table ): string {
 		// wp_hash() is pluggable and may not be available during early bootstrap.
-		return function_exists( 'wp_hash' ) ? \wp_hash( $table ) : md5( $table );
+		return function_exists( 'wp_hash' ) ? wp_hash( $table ) : md5( $table );
 	}
 
 	/**

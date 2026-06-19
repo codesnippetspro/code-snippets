@@ -64,6 +64,7 @@ abstract class REST_Controller {
 	 * @return bool
 	 *
 	 * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function permission_callback( WP_REST_Request $request ): bool {
 		return code_snippets()->current_user_can();

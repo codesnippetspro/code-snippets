@@ -225,7 +225,7 @@ function code_snippets_build_tags_array( $tags ): array {
  *
  * @since 2.0.0
  */
-function get_snippet( int $id = 0, ?bool $network = null ): Snippet {
+function get_snippet( int $id = 0, ?bool $network = null ): ?Snippet {
 	global $wpdb;
 
 	$id = absint( $id );
@@ -506,7 +506,6 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	if ( $result ) {
 		do_action( 'code_snippets/delete_snippet', $snippet, $network );
 		clean_snippets_cache( $table );
-		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 
 		$recently_active = get_self_option( $network, 'recently_active_snippets', [] );
 
@@ -546,7 +545,6 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 
 	do_action( 'code_snippets/trash_snippet', $snippet, $network );
 	clean_snippets_cache( $table );
-	code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 
 	return true;
 }
@@ -679,7 +677,7 @@ function save_snippet( $snippet ): ?Snippet {
 		'active'       => intval( $snippet->active ),
 		'modified'     => $snippet->modified,
 		'revision'     => $snippet->revision,
-		'cloud_id'     => $snippet->cloud_id ? $snippet->cloud_id : null,
+		'cloud_id'     => $snippet->cloud_id_owner ? $snippet->cloud_id_owner : null,
 	];
 
 	// Create a new snippet if the ID is not set.
@@ -873,7 +871,7 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
  * @param int    $id    Snippet ID.
  * @param bool   $force Force snippet execution, even if save mode is active.
  *
- * @return bool|Throwable|null
+ * @return bool|Exception|Throwable|null Code error if encountered during execution, or result of snippet execution otherwise.
  */
 function execute_snippet_from_flat_file( string $code, string $file, int $id = 0, bool $force = false ) {
 	if ( ! is_file( $file ) ) {

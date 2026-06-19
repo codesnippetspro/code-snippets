@@ -2,7 +2,9 @@
 
 namespace Code_Snippets\Tests;
 
-use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\Client\Cloud_Snippets_Client;
+use Code_Snippets\Controller\Cloud_Snippets_Controller;
+use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippets;
 use WP_Error;
 
@@ -11,14 +13,7 @@ use WP_Error;
  *
  * @group cloud
  */
-class Cloud_API_Featured_Test extends TestCase {
-
-	/**
-	 * API instance.
-	 *
-	 * @var Cloud_API
-	 */
-	private Cloud_API $api;
+class Cloud_Controller_Featured_Test extends TestCase {
 
 	/**
 	 * Number of HTTP requests intercepted during a test.
@@ -42,13 +37,21 @@ class Cloud_API_Featured_Test extends TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->api = new Cloud_API();
-
 		$this->clear_featured_transients();
 		$this->http_request_count = 0;
 		$this->mock_response = null;
 
 		add_filter( 'pre_http_request', [ $this, 'mock_featured_request' ], 10, 3 );
+	}
+
+	/**
+	 * Construct a new instance of the controller.
+	 *
+	 * @return Cloud_Snippets_Controller
+	 */
+	private static function make_controller(): Cloud_Snippets_Controller {
+		$client = new Cloud_Snippets_Client( new Basic_Cloud_Connection() );
+		return new Cloud_Snippets_Controller( $client );
 	}
 
 	/**
@@ -116,7 +119,7 @@ class Cloud_API_Featured_Test extends TestCase {
 				'tags'        => [],
 				'scope'       => 'global',
 				'language'    => [
-					'id' => 2,
+					'id'   => 2,
 					'name' => 'PHP',
 				],
 				'status'      => 4,
@@ -139,13 +142,13 @@ class Cloud_API_Featured_Test extends TestCase {
 				'categories' => [],
 				'types'      => [
 					[
-						'id' => 2,
+						'id'   => 2,
 						'name' => 'PHP',
 					],
 				],
 				'statuses'   => [
 					[
-						'id' => 4,
+						'id'   => 4,
 						'name' => 'Public',
 					],
 				],
@@ -194,7 +197,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_returns_cloud_snippets_object(): void {
-		$result = $this->api->get_featured_snippets();
+		$result = self::make_controller()->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 3, $result->snippets );
@@ -209,7 +212,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	public function test_transient_is_set_after_first_call(): void {
 		$this->assertFalse( get_transient( $this->transient_key() ) );
 
-		$this->api->get_featured_snippets();
+		self::make_controller()->get_featured_snippets();
 
 		$cached = get_transient( $this->transient_key() );
 		$this->assertInstanceOf( Cloud_Snippets::class, $cached );
@@ -221,10 +224,10 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_second_call_returns_from_transient(): void {
-		$this->api->get_featured_snippets();
+		self::make_controller()->get_featured_snippets();
 		$this->assertSame( 1, $this->http_request_count );
 
-		$result = $this->api->get_featured_snippets();
+		$result = self::make_controller()->get_featured_snippets();
 		$this->assertSame( 1, $this->http_request_count );
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 3, $result->snippets );
@@ -238,7 +241,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	public function test_returns_empty_on_http_error(): void {
 		$this->mock_response = new WP_Error( 'http_request_failed', 'Connection refused' );
 
-		$result = $this->api->get_featured_snippets();
+		$result = self::make_controller()->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
@@ -261,7 +264,7 @@ class Cloud_API_Featured_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = $this->api->get_featured_snippets();
+		$result = self::make_controller()->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
@@ -283,7 +286,7 @@ class Cloud_API_Featured_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = $this->api->get_featured_snippets();
+		$result = self::make_controller()->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
@@ -295,7 +298,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_transient_is_cached(): void {
-		$this->api->get_featured_snippets();
+		self::make_controller()->get_featured_snippets();
 
 		$cached = get_transient( $this->transient_key() );
 		$this->assertInstanceOf( Cloud_Snippets::class, $cached );
@@ -303,7 +306,7 @@ class Cloud_API_Featured_Test extends TestCase {
 		delete_transient( $this->transient_key() );
 		$this->mock_response = $this->build_success_response( 2 );
 
-		$this->api->get_featured_snippets();
+		self::make_controller()->get_featured_snippets();
 
 		$cached_again = get_transient( $this->transient_key() );
 		$this->assertInstanceOf( Cloud_Snippets::class, $cached_again );
@@ -325,7 +328,7 @@ class Cloud_API_Featured_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = $this->api->get_featured_snippets();
+		$result = $this->controller->get_featured_snippets();
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
@@ -338,12 +341,12 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_transient_stores_cloud_snippets_instance(): void {
-		$this->api->get_featured_snippets();
+		self::make_controller()->get_featured_snippets();
 
 		$raw_transient = get_transient( $this->transient_key() );
 
-		$this->assertInstanceOf( Cloud_Snippets::class, $raw_transient );
 		$this->assertFalse( is_array( $raw_transient ) );
+		$this->assertInstanceOf( Cloud_Snippets::class, $raw_transient );
 		$this->assertCount( 3, $raw_transient->snippets );
 	}
 
@@ -353,7 +356,7 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_available_filters_preserved(): void {
-		$result = $this->api->get_featured_snippets();
+		$result = self::make_controller()->get_featured_snippets();
 
 		$this->assertIsArray( $result->available_filters );
 		$this->assertArrayHasKey( 'types', $result->available_filters );
@@ -366,13 +369,13 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_clear_caches_invalidates_featured_cache(): void {
-		$this->api->get_featured_snippets();
+		self::make_controller()->get_featured_snippets();
 		$this->assertSame( 1, $this->http_request_count );
 
-		$api = new Cloud_API();
-		$api->clear_caches();
+		$controller = self::make_controller();
+		$controller->clear_caches();
 
-		$this->api->get_featured_snippets();
+		$controller->get_featured_snippets();
 		$this->assertSame( 2, $this->http_request_count, 'Expected a fresh HTTP request after cache invalidation.' );
 	}
 

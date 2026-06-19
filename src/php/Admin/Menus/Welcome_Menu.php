@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\Admin\Menus;
 
-use Code_Snippets\Client\Welcome_API;
+use Code_Snippets\Client\Welcome_Client;
 use function Code_Snippets\code_snippets;
 use const Code_Snippets\PLUGIN_FILE;
 use const Code_Snippets\PLUGIN_VERSION;
@@ -16,25 +16,25 @@ use const Code_Snippets\PLUGIN_VERSION;
 class Welcome_Menu extends Admin_Menu {
 
 	/**
-	 * Instance of Welcome_API class.
+	 * Client instance.
 	 *
-	 * @var Welcome_API
+	 * @var Welcome_Client
 	 */
-	protected Welcome_API $api;
+	protected Welcome_Client $client;
 
 	/**
 	 * Class constructor
 	 *
-	 * @param Welcome_API $api Instance of API class.
+	 * @param Welcome_Client $client Client instance.
 	 */
-	public function __construct( $api ) {
+	public function __construct( $client ) {
 		parent::__construct(
 			'welcome',
 			_x( "What's New", 'menu label', 'code-snippets' ),
 			__( 'Resources and Updates', 'code-snippets' )
 		);
 
-		$this->api = $api;
+		$this->client = $client;
 	}
 
 	/**
@@ -75,11 +75,11 @@ class Welcome_Menu extends Admin_Menu {
 			$handle,
 			'CODE_SNIPPETS_WELCOME',
 			[
-				'banner'    => $this->api->get_banner(),
-				'hero'      => $this->api->get_hero_item(),
-				'changelog' => $this->api->get_changelog(),
-				'features'  => $this->api->get_features(),
-				'partners'  => $this->api->get_partners(),
+				'banner'    => $this->client->get_banner(),
+				'hero'      => $this->client->get_hero_item(),
+				'changelog' => $this->client->get_changelog(),
+				'features'  => $this->client->get_features(),
+				'partners'  => $this->client->get_partners(),
 			]
 		);
 	}

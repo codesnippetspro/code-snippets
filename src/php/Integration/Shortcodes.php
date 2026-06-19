@@ -208,9 +208,9 @@ class Shortcodes {
 	 * @param int  $id      Snippet identifier.
 	 * @param bool $network Whether the snippet is network-wide.
 	 *
-	 * @return Snippet
+	 * @return Snippet|null
 	 */
-	private function get_content_snippet( int $id, bool $network ): Snippet {
+	private function get_content_snippet( int $id, bool $network ): ?Snippet {
 		if ( ! Snippet_Files::is_active() ) {
 			return get_snippet( $id, $network );
 		}

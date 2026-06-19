@@ -2,6 +2,8 @@
 
 namespace Code_Snippets\Model;
 
+use WP_Exception;
+
 /**
  * A connection between a local snippet and remote cloud snippet.
  *
@@ -34,12 +36,14 @@ class Cloud_Link extends Model {
 	 * @param mixed  $value Value to prepare.
 	 * @param string $field Field name.
 	 *
-	 * @return mixed Value in the correct format.
+	 * @return bool|int|null Value in the correct format.
+	 *
+	 * @throws WP_Exception If trying to set an invalid value.
 	 */
 	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
 			case 'local_id':
-			case 'remote_id':
+			case 'cloud_id':
 				return absint( $value );
 
 			case 'is_owner':
@@ -48,7 +52,12 @@ class Cloud_Link extends Model {
 				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
-				return $value;
+				if ( function_exists( 'wp_trigger_error' ) ) {
+					// translators: 1: class name, 2: field name.
+					$message = sprintf( 'Trying to access invalid property on "%1$s" class: %2$s', get_class( $this ), $field );
+					wp_trigger_error( __FUNCTION__, $message, E_USER_WARNING );
+				}
+				return null;
 		}
 	}
 }

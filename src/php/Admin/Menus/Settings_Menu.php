@@ -27,7 +27,7 @@ class Settings_Menu extends Admin_Menu {
 	public const SETTINGS_PAGE = 'code-snippets';
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 */
 	public function __construct() {
 		parent::__construct(

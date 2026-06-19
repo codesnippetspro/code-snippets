@@ -3,7 +3,8 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
-use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\Client\Cloud_Snippets_Client;
+use Code_Snippets\Controller\Cloud_Snippets_Controller;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
 use Code_Snippets\Core\Upgrader;
@@ -13,6 +14,7 @@ use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Integration\Promotions\Promotion_Manager;
 use Code_Snippets\Integration\Shortcodes;
+use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
@@ -73,11 +75,18 @@ class Plugin {
 	public Bootstrap_Admin $admin;
 
 	/**
-	 * Class for managing cloud API actions.
+	 * Instance of connection to Code Snippets Cloud.
 	 *
-	 * @var Cloud_API
+	 * @var Basic_Cloud_Connection
 	 */
-	public Cloud_API $cloud_api;
+	private Basic_Cloud_Connection $cloud_connection;
+
+	/**
+	 * Instance of cloud snippets controller.
+	 *
+	 * @var Cloud_Snippets_Controller
+	 */
+	public Cloud_Snippets_Controller $cloud_snippets_controller;
 
 	/**
 	 * Handles licensing and plugin updates.
@@ -117,8 +126,10 @@ class Plugin {
 	public function load_plugin() {
 		$this->load_utilities();
 
+		$this->cloud_connection = new Basic_Cloud_Connection();
+		$this->cloud_snippets_controller = new Cloud_Snippets_Controller( $this->cloud_connection );
+
 		$this->db = new DB();
-		$this->cloud_api = new Cloud_API();
 		$this->licensing = new Licensing();
 		$this->evaluate_content = new Evaluate_Content( $this->db );
 		$this->evaluate_functions = new Evaluate_Functions( $this->db );
@@ -151,7 +162,7 @@ class Plugin {
 		new Recently_Active_REST_Controller();
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
-		new Cloud_Snippets_REST_Controller( $this->cloud_api );
+		new Cloud_Snippets_REST_Controller( $this->cloud_snippets_controller );
 	}
 
 	/**
@@ -342,7 +353,7 @@ class Plugin {
 			[
 				'debug'            => defined( 'WP_DEBUG' ) && WP_DEBUG,
 				'isLicensed'       => $this->licensing->is_licensed(),
-				'isCloudConnected' => $this->cloud_api->is_cloud_connection_available(),
+				'isCloudConnected' => $this->cloud_connection->is_authenticated(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'restAPI'          => [
 					'base'           => esc_url_raw( rest_url() ),
@@ -352,7 +363,7 @@ class Plugin {
 					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),
 					'cloud'          => [
-						'token'    => $this->cloud_api->get_local_token(),
+						'token'    => $this->cloud_connection->get_local_token(),
 						'snippets' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
 					],
 				],
@@ -363,7 +374,7 @@ class Plugin {
 					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
 					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
 					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
-					'cloud'    => esc_url_raw( $this->cloud_api->get_cloud_url() ),
+					'cloud'    => esc_url_raw( $this->cloud_connection->get_base_url() ),
 				],
 			]
 		);

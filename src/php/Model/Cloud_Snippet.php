@@ -11,6 +11,7 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @package Code_Snippets
  *
  * @property int           $id               The remote ID.
+ * @property string        $slug             The snippet slug.
  * @property string        $name             The snippet title.
  * @property string        $description      The formatted description.
  * @property string        $code             The executable code.
@@ -25,6 +26,8 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @property string        $updated          When the snippet was last updated, in ISO format.
  * @property int           $revision         The update revision number.
  * @property bool          $is_owner         If user is owner or author of snippet.
+ * @property bool|null     $in_codevault     Whether the snippet is stored in the users' codevault.
+ * @property bool|null     $update_available If synchronised, whether there is an update available on the cloud platform.
  */
 class Cloud_Snippet extends Model {
 
@@ -34,24 +37,25 @@ class Cloud_Snippet extends Model {
 	 * @var array<string, mixed>
 	 */
 	protected static array $default_values = [
-		'id'             => '',
-		'cloud_id'       => '',
-		'name'           => '',
-		'description'    => '',
-		'code'           => '',
-		'tags'           => [],
-		'scope'          => '',
-		'language'       => '',
-		'status'         => '',
-		'codevault'      => '',
-		'total_votes'    => '',
-		'vote_count'     => '',
-		'wp_tested'      => '',
-		'created'        => '',
-		'updated'        => '',
-		'revision'       => 0,
-		'is_owner'       => false,
-		'shared_network' => false,
+		'id'               => '',
+		'cloud_id'         => '',
+		'name'             => '',
+		'description'      => '',
+		'code'             => '',
+		'tags'             => [],
+		'scope'            => '',
+		'language'         => '',
+		'status'           => '',
+		'codevault'        => '',
+		'total_votes'      => '',
+		'vote_count'       => '',
+		'wp_tested'        => '',
+		'created'          => '',
+		'updated'          => '',
+		'revision'         => 0,
+		'is_owner'         => false,
+		'in_codevault'     => null,
+		'update_available' => null,
 	];
 
 	/**

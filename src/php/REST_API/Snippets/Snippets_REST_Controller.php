@@ -462,10 +462,10 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	/**
 	 * Retrieve and merge shared network snippets.
 	 *
-	 * @param array<Snippet> $all_snippets List of snippets to merge with.
-	 * @param bool|null      $network      Whether fetching network snippets.
+	 * @param Snippet[] $all_snippets List of snippets to merge with.
+	 * @param bool|null $network      Whether fetching network snippets.
 	 *
-	 * @return array<Snippet> Modified list of snippets.
+	 * @return Snippet[] Modified list of snippets.
 	 */
 	private function get_network_items( array $all_snippets, ?bool $network ): array {
 		if ( ! is_multisite() || $network ) {
@@ -621,15 +621,18 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
-	 * Activate one item in the collection.
+	 * Fetch snippet using data from request.
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Request containing 'id' and 'network' parameters.
 	 *
-	 * @return WP_Error|WP_REST_Response
+	 * @return Snippet|WP_Error
 	 */
-	public function activate_item( WP_REST_Request $request ) {
-		$item = $this->prepare_item_for_database( $request );
-		$snippet = $item ? get_snippet( $item->id, $item->network ) : null;
+	private function get_requested_snippet( WP_REST_Request $request ): Snippet {
+		$id = $request->get_param( 'id' );
+
+		$snippet = $id && is_numeric( $id )
+			? get_snippet( $id, $request->get_param( 'network' ) )
+			: null;
 
 		if ( ! $snippet || ! $snippet->id ) {
 			return new WP_Error(
@@ -637,6 +640,23 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 				__( 'The snippet could not be found.', 'code-snippets' ),
 				[ 'status' => 404 ]
 			);
+		}
+
+		return $snippet;
+	}
+
+	/**
+	 * Activate one item in the collection.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function activate_item( WP_REST_Request $request ) {
+		$snippet = $this->get_requested_snippet( $request );
+
+		if ( is_wp_error( $snippet ) ) {
+			return rest_ensure_response( $snippet );
 		}
 
 		if ( $snippet->shared_network ) {
@@ -664,15 +684,10 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function deactivate_item( WP_REST_Request $request ) {
-		$item = $this->prepare_item_for_database( $request );
-		$snippet = $item ? get_snippet( $item->id, $item->network ) : null;
+		$snippet = $this->get_requested_snippet( $request );
 
-		if ( ! $snippet || ! $snippet->id ) {
-			return new WP_Error(
-				'rest_cannot_activate',
-				__( 'The snippet could not be found.', 'code-snippets' ),
-				[ 'status' => 404 ]
-			);
+		if ( is_wp_error( $snippet ) ) {
+			return rest_ensure_response( $snippet );
 		}
 
 		if ( $snippet->shared_network ) {

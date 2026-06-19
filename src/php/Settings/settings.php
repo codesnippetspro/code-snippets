@@ -7,7 +7,8 @@
 
 namespace Code_Snippets\Settings;
 
-use Code_Snippets\Client\Welcome_API;
+use Code_Snippets\Client\Welcome_Client;
+use Code_Snippets\Controller\Cloud_Snippets_Controller;
 use function add_action;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\code_snippets;
@@ -303,8 +304,8 @@ function process_settings_actions( array $input ): ?array {
 	}
 
 	if ( isset( $input['debug']['reset_caches'] ) ) {
-		Welcome_API::clear_cache();
-		code_snippets()->cloud_api->clear_caches();
+		Welcome_Client::clear_cache();
+		Cloud_Snippets_Controller::clear_caches();
 		clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
 
 		if ( is_multisite() ) {

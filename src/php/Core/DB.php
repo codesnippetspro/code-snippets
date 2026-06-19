@@ -318,7 +318,7 @@ class DB {
 	 *
 	 * @return array<string, array<string, mixed>>|false List of active snippets, if any could be retrieved.
 	 */
-	private static function fetch_snippets_from_table( string $table_name, array $scopes, bool $active_only = true ) {
+	private static function fetch_snippets_from_table( string $table_name, array $scopes, bool $active_only ) {
 		global $wpdb;
 
 		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name );

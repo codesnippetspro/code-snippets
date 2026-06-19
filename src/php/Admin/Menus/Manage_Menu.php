@@ -4,6 +4,7 @@ namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Migration\Export\Download_Code;
+use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Code_Highlighter;
 use WP_Error;
 use function Code_Snippets\code_snippets;
@@ -175,17 +176,17 @@ class Manage_Menu extends Admin_Menu {
 		$screen = get_current_screen();
 
 		if ( $screen && ! $this->is_cloud_community_view() ) {
-			add_filter( "manage_{$screen->id}_columns", array( $this, 'get_screen_columns' ) );
-			add_filter( 'screen_settings', array( $this, 'render_screen_settings' ), 10, 2 );
+			add_filter( "manage_{$screen->id}_columns", [ $this, 'get_screen_columns' ] );
+			add_filter( 'screen_settings', [ $this, 'render_screen_settings' ] );
 		}
 
 		add_screen_option(
 			'per_page',
-			array(
+			[
 				'label'   => __( 'Snippets per page', 'code-snippets' ),
 				'default' => $this->get_default_snippets_per_page(),
 				'option'  => 'snippets_per_page',
-			)
+			]
 		);
 
 		$contextual_help = new Contextual_Help( 'edit' );
@@ -331,8 +332,7 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	protected function truncate_row_values(): bool {
 		$setting = get_user_option( 'snippets_table_truncate_row_values' );
-
-		return false === $setting ? true : (bool) $setting;
+		return false === $setting || $setting;
 	}
 
 	/**
@@ -366,12 +366,11 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Render extra Screen Options controls for the snippets table.
 	 *
-	 * @param string     $screen_settings Existing screen settings HTML.
-	 * @param \WP_Screen $screen          Current screen object.
+	 * @param string $screen_settings Existing screen settings HTML.
 	 *
 	 * @return string
 	 */
-	public function render_screen_settings( string $screen_settings, \WP_Screen $screen ): string {
+	public function render_screen_settings( string $screen_settings ): string {
 		if ( $this->is_cloud_community_view() ) {
 			return $screen_settings;
 		}
@@ -460,14 +459,12 @@ class Manage_Menu extends Admin_Menu {
 
 		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
 			$this->send_download_error( __( 'You are not allowed to download these snippets.', 'code-snippets' ), 403 );
-			return;
 		}
 
 		$nonce = filter_input( INPUT_POST, 'code_snippets_bulk_download_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
 		if ( ! wp_verify_nonce( $nonce, 'code_snippets_bulk_download' ) ) {
 			$this->send_download_error( __( 'The download request is no longer valid. Please refresh and try again.', 'code-snippets' ), 403 );
-			return;
 		}
 
 		$snippets = $this->get_requested_download_snippets();
@@ -475,12 +472,10 @@ class Manage_Menu extends Admin_Menu {
 		if ( $snippets instanceof WP_Error ) {
 			$status = $snippets->get_error_data( 'status' );
 			$this->send_download_error( $snippets->get_error_message(), is_numeric( $status ) ? (int) $status : 403 );
-			return;
 		}
 
 		if ( empty( $snippets ) ) {
 			$this->send_download_error( __( 'No snippets were selected for download.', 'code-snippets' ) );
-			return;
 		}
 
 		$download = 1 === count( $snippets )
@@ -490,7 +485,6 @@ class Manage_Menu extends Admin_Menu {
 		if ( $download instanceof WP_Error ) {
 			$status = $download->get_error_data( 'status' );
 			$this->send_download_error( $download->get_error_message(), is_numeric( $status ) ? (int) $status : 500 );
-			return;
 		}
 
 		$this->send_download_response( $download );
@@ -511,7 +505,7 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Resolve the snippets requested for download.
 	 *
-	 * @return array<\Code_Snippets\Model\Snippet>|WP_Error
+	 * @return Snippet[]|WP_Error
 	 */
 	private function get_requested_download_snippets() {
 		$snippets_json = wp_unslash( filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '' );

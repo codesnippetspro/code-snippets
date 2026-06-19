@@ -175,9 +175,9 @@ class Import {
 	 *
 	 * @access private
 	 *
-	 * @param array<Snippet> $snippets List of snippets to save.
+	 * @param Snippet[] $snippets List of snippets to save.
 	 *
-	 * @return array<int> IDs of imported snippets.
+	 * @return int[] IDs of imported snippets.
 	 */
 	private function save_snippets( array $snippets ): array {
 		$existing_snippets = $this->fetch_existing_snippets();

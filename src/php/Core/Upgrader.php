@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\Core;
 
-use Code_Snippets\Client\Welcome_API;
+use Code_Snippets\Client\Welcome_Client;
 use Code_Snippets\Model\Snippet;
 use WP_User;
 use function Code_Snippets\clean_snippets_cache;
@@ -105,7 +105,7 @@ class Upgrader {
 		}
 
 		clean_snippets_cache( $table_name );
-		Welcome_API::clear_cache();
+		Welcome_Client::clear_cache();
 	}
 
 	/**
