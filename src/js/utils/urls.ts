@@ -5,6 +5,14 @@ export const fetchQueryParam = (name: string): string | undefined => {
 	return urlParams.get(name) ?? undefined
 }
 
+export const fetchConstQueryParam = <T extends string>(name: string, values: readonly T[]): T | undefined => {
+	const isT = (value: string): value is T =>
+		(<readonly string[]> values).includes(value)
+
+	const value = fetchQueryParam(name)
+	return value && isT(value) ? value : undefined
+}
+
 export const updateQueryParams = (params: Record<string, string | number | undefined>) => {
 	if ('URLSearchParams' in window) {
 		const searchParams = new URLSearchParams(window.location.search)

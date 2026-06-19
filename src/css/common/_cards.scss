@@ -1,0 +1,35 @@
+.code-snippets-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+	gap: 20px;
+	margin: 0;
+}
+
+.code-snippets-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	margin: 0;
+	display: flex;
+	flex-flow: column;
+	box-sizing: border-box;
+
+	a {
+		text-decoration: none;
+		color: #2271b1;
+	}
+
+	.card-inner {
+		padding: 24px;
+	}
+
+	footer {
+		display: flex;
+		gap: 8px;
+		background: #f6f7f7;
+		margin-block-start: auto;
+		border-block-start: 1px solid #c3c4c7;
+		padding-inline: 24px;
+		padding-block: 12px;
+		align-items: center;
+	}
+}

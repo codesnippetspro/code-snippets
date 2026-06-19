@@ -3,9 +3,11 @@ import classnames from 'classnames'
 import React, { useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { buildUrl, fetchQueryParam } from '../../utils/urls'
-import { CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon } from './icons/ToolbarIcons'
+import { BlueprintIcon, CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
 import type { ReactNode } from 'react'
+
+export const SUBPAGES = ['snippets', 'blueprints', 'cloud-community', 'cloud-library'] as const
 
 interface NavLink {
 	name: string
@@ -15,7 +17,7 @@ interface NavLink {
 	icon?: ReactNode
 	pro?: boolean
 	pageSlug?: string
-	subpage?: string
+	subpage?: typeof SUBPAGES[number]
 }
 
 const UPPER_NAV_LINKS: NavLink[] = [
@@ -46,6 +48,13 @@ const LOWER_NAV_LINKS: NavLink[] = [
 		label: __('Snippets', 'code-snippets'),
 		icon: <SnippetsIcon aria-hidden="true" />,
 		pageSlug: 'snippets'
+	},
+	{
+		name: 'blueprints',
+		label: __('Blueprints', 'code-snippets'),
+		icon: <BlueprintIcon />,
+		pro: true,
+		subpage: 'blueprints'
 	},
 	{
 		name: 'cloud-community',

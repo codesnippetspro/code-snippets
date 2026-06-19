@@ -1,16 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import React, { Fragment } from 'react'
-import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { useCloudSearch } from './WithCloudSearchContext'
 import type { AvailableCloudFilters, CloudSearchParams } from './WithCloudSearchContext'
-
-export const STATUS_LABELS: Record<CloudStatus, string> = {
-	[CloudStatus.Public]: __('Public', 'code-snippets'),
-	[CloudStatus.Private]: __('Private', 'code-snippets'),
-	[CloudStatus.Unverified]: __('Unverified', 'code-snippets'),
-	[CloudStatus.AI_Verified]: __('AI Verified', 'code-snippets'),
-	[CloudStatus.Pro_Verified]: __('Pro Verified', 'code-snippets')
-}
 
 interface FilterInfo {
 	paramName: keyof CloudSearchParams

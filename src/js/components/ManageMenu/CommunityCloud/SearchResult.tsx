@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import classnames from 'classnames'
 import { __, _x } from '@wordpress/i18n'
 import { Modal, Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
-import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { Prism } from '../../../utils/Prism'
 import { REST_BASES } from '../../../utils/restAPI'
 import { isLicensed } from '../../../utils/screen'
 import { getSnippetEditUrl, getSnippetType, isProSnippet } from '../../../utils/snippets/snippets'
+import { truncateChars } from '../../../utils/text'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
+import { CloudStatusBadge } from '../../common/cloud/CloudStatusBadge'
 import { ErrorTooltip } from '../../common/Tooltip'
 import { UpsellDialog } from '../../common/UpsellDialog'
-import { STATUS_LABELS } from './SearchFilters'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
-
-const MAX_DESCRIPTION_LENGTH = 150
 
 interface DownloadSnippetResponse {
 	success: boolean
@@ -29,7 +26,7 @@ interface CloudSnippetDetailsProps {
 }
 
 const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setIsPreviewOpen }) =>
-	<div className="cloud-snippet">
+	<div className="cloud-snippet card-inner">
 		<h3>
 			<button
 				type="button"
@@ -62,9 +59,7 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 
 		{snippet.description && (
 			<p className="cloud-snippet-description">
-				{snippet.description.length > MAX_DESCRIPTION_LENGTH
-					? `${snippet.description.slice(0, MAX_DESCRIPTION_LENGTH)}…`
-					: snippet.description}
+				{truncateChars(snippet.description)}
 			</p>
 		)}
 
@@ -193,16 +188,11 @@ export const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 	}, [isPreviewOpen])
 
 	return (
-		<li className="cloud-search-result">
+		<li className="cloud-search-result code-snippets-card">
 			<CloudSnippetDetails snippet={snippet} setIsPreviewOpen={setIsPreviewOpen} />
 
 			<footer>
-				<span className={classnames(
-					'cloud-snippet-status',
-					`cloud-snippet-status-${CloudStatus[snippet.status].toLowerCase().replace('_', '-')}`
-				)}>
-					{STATUS_LABELS[snippet.status]}
-				</span>
+				<CloudStatusBadge status={snippet.status} />
 
 				<DownloadButton snippet={snippet} />
 

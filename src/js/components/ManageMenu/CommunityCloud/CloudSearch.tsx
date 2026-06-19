@@ -41,7 +41,7 @@ const SearchBox = () => {
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>
 				<span role="status" aria-live="polite">
-					{isSearching && 
+					{isSearching &&
 						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>}
 				</span>
 			</div>
@@ -82,7 +82,7 @@ const SearchResultsTable = () => {
 				<TablePagination which="top" {...paginationProps} />
 			</div>
 
-			<ul className="cloud-search-results">
+			<ul className="cloud-search-results code-snippets-cards">
 				{searchResults.snippets.map(result =>
 					<SearchResult key={result.id} snippet={result} />)}
 			</ul>

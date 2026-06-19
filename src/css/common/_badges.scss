@@ -35,7 +35,7 @@
 }
 
 .network-shared {
-	color: #2271b1; 
+	color: #2271b1;
 	font-size: 22px;
 	inline-size: 100%;
 	cursor: help;
@@ -82,7 +82,8 @@
 		background-color: $background-color;
 	}
 
-	.badge.#{$name}-badge:hover {
+	a.badge.#{$name}-badge:hover,
+	button.badge.#{$name}-badge:hover {
 		color: $text-color;
 		background-color: color.adjust($background-color, $lightness: -5%);
 	}

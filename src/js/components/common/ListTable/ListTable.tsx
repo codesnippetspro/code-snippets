@@ -28,7 +28,7 @@ export interface ListTableAction<A extends string> {
 
 export interface ListTableNavProps<K extends Key, A extends string> {
 	actions?: ListTableAction<A>[]
-	doAction: (action: A, selected: Set<K>) => Promise<void>
+	doAction?: (action: A, selected: Set<K>) => Promise<void>
 	disabled?: boolean
 	extraTableNav?: (which: 'top' | 'bottom') => ReactNode
 }
