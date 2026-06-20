@@ -36,7 +36,7 @@ abstract class REST_Controller {
 	 */
 	public function __construct() {
 		assert( static::VERSION > 0, get_class( $this ) . '::VERSION must be set' );
-		assert( static::BASE_ROUTE, get_class( $this ) . '::BASE_ROUTE must be set' );
+		assert( static::BASE_ROUTE !== '', get_class( $this ) . '::BASE_ROUTE must be set' );
 
 		$this->namespace = REST_API_NAMESPACE . static::VERSION;
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
