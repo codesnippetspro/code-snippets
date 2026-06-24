@@ -50,8 +50,7 @@ class Cloud_Controller_Featured_Test extends TestCase {
 	 * @return Cloud_Snippets_Controller
 	 */
 	private static function make_controller(): Cloud_Snippets_Controller {
-		$client = new Cloud_Snippets_Client( new Basic_Cloud_Connection() );
-		return new Cloud_Snippets_Controller( $client );
+		return new Cloud_Snippets_Controller( new Basic_Cloud_Connection() );
 	}
 
 	/**
@@ -199,7 +198,7 @@ class Cloud_Controller_Featured_Test extends TestCase {
 	public function test_returns_cloud_snippets_object(): void {
 		$result = self::make_controller()->get_featured_snippets();
 
-		$this->assertInstanceOf( Cloud_Snippets::class, $result );
+		$this->assertInstanceOf( Cloud_Snippets::class, (object) $result );
 		$this->assertCount( 3, $result->snippets );
 		$this->assertSame( 3, $result->total_snippets );
 	}
@@ -328,9 +327,9 @@ class Cloud_Controller_Featured_Test extends TestCase {
 			'cookies'  => [],
 		];
 
-		$result = $this->controller->get_featured_snippets();
+		$result = self::make_controller()->get_featured_snippets();
 
-		$this->assertInstanceOf( Cloud_Snippets::class, $result );
+		$this->assertInstanceOf( Cloud_Snippets::class, (object) $result );
 		$this->assertCount( 0, $result->snippets );
 		$this->assertSame( 0, $result->total_snippets );
 	}

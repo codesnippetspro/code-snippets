@@ -56,8 +56,8 @@ class Cloud_Controller_Search_Test extends TestCase {
 	 *
 	 * @return Cloud_Snippets_Controller
 	 */
-	private static function make_controller() {
-		return new Cloud_Snippets_Controller( new Cloud_Snippets_Client( new Basic_Cloud_Connection() ) );
+	private static function make_controller(): Cloud_Snippets_Controller {
+		return new Cloud_Snippets_Controller( new Basic_Cloud_Connection() );
 	}
 
 	/**

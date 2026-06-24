@@ -108,16 +108,7 @@ class Cloud_Snippets_Client {
 		// default 5s request timeout so the request is not cut short and returned as empty.
 		$response = wp_remote_get( $api_url, [ 'timeout' => self::SEARCH_REQUEST_TIMEOUT ] );
 
-		$body = self::unpack_response_body( $response );
-
-		// Pass the full response envelope to Cloud_Snippets, which reads the `data`/`snippets`,
-		// `meta` and `available_filters` keys. Passing only the unpacked `data` list (as before)
-		// dropped the metadata, so the result normalised to an empty set.
-		if ( ! $body ) {
-			return new Cloud_Snippets();
-		}
-
-		$results = new Cloud_Snippets( $body );
+		$results = Cloud_Snippets::unpack_api_response( self::unpack_response_body( $response ) );
 		$results->page = $page;
 
 		return $results;
@@ -182,13 +173,7 @@ class Cloud_Snippets_Client {
 			[ 'headers' => $this->connection->get_request_headers() ]
 		);
 
-		$body = self::unpack_response_body( $response );
-
-		if ( ! $body ) {
-			return new Cloud_Snippets();
-		}
-
-		$result = new Cloud_Snippets( $body );
+		$result = Cloud_Snippets::unpack_api_response( self::unpack_response_body( $response ) );
 		$result->page = $page;
 
 		return $result;

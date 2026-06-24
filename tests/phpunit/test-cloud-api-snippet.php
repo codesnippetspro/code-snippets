@@ -3,6 +3,7 @@
 namespace Code_Snippets\Tests;
 
 use Code_Snippets\Client\Cloud_Snippets_Client;
+use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippet;
 use WP_Error;
 
@@ -37,7 +38,7 @@ class Cloud_API_Snippet_Test extends TestCase {
 		parent::set_up();
 
 		$this->mock_response = null;
-		$this->api = new Cloud_Snippets_Client();
+		$this->api = new Cloud_Snippets_Client( new Basic_Cloud_Connection() );
 
 		add_filter( 'pre_http_request', [ $this, 'mock_request' ], 10, 3 );
 	}

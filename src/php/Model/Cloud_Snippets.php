@@ -119,10 +119,13 @@ class Cloud_Snippets extends Model {
 			return $result;
 		}
 
-		$snippets_data = $response['data'] ?? $response['snippets'] ?? [];
+		$snippets_data = $response['snippets'] ?? $response['data'] ?? null;
 
-		foreach ( $snippets_data as $snippet_data ) {
-			$result->snippets[] = new Cloud_Snippet( $snippet_data );
+		if ( is_array( $snippets_data ) ) {
+			$result->snippets = array_map(
+				fn( $snippet_data ) => new Cloud_Snippet( $snippet_data ),
+				$snippets_data
+			);
 		}
 
 		$result->cloud_id_rev = $response['cloud_id_rev'] ?? [];

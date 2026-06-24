@@ -33,7 +33,6 @@ use function Code_Snippets\Utils\get_self_option;
  * @property int                    $revision           Revision or version number of snippet.
  * @property int                    $cloud_id           The cloud ID of the snippet, if applicable.
  * @property bool                   $is_cloud_owner     Whether the user is the owner of the cloud snippet, if applicable.
- * @property string                 $cloud_id_owner     Cloud ownership information as a single value, if applicable.
  *
  * @property-read int               $last_active        Timestamp of when the snippet was last active, if available.
  * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
@@ -45,6 +44,7 @@ use function Code_Snippets\Utils\get_self_option;
  * @property-read int               $modified_timestamp The last modification date in Unix timestamp format.
  * @property-read DateTime          $modified_local     The last modification date in the local timezone.
  * @property-read bool              $is_pro             Whether the snippet type is pro-only.
+ * @property-read string            $cloud_id_owner     Cloud ownership information as a single value, if applicable.
  */
 class Snippet extends Model {
 
@@ -109,7 +109,6 @@ class Snippet extends Model {
 			case 'id':
 			case 'priority':
 			case 'condition_id':
-			case 'cloud_id':
 				return absint( $value );
 
 			case 'tags':
@@ -168,6 +167,35 @@ class Snippet extends Model {
 		}
 
 		return true === $network;
+	}
+
+	/**
+	 * Set the 'cloud_id', and possibly the 'is_cloud_owner' fields.
+	 *
+	 * @param string|int $cloud_id Cloud identifier, possibly with cloud ownership information attached.
+	 *
+	 * @return int
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function prepare_cloud_id( $cloud_id ): int {
+		if ( is_numeric( $cloud_id ) ) {
+			return absint( $cloud_id );
+		}
+
+		$parts = explode( '_', $cloud_id );
+
+		$is_cloud_owner = isset( $parts[1] )
+			? filter_var( $parts[1], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE )
+			: null;
+
+		if ( ! is_null( $is_cloud_owner ) ) {
+			$this->is_cloud_owner = $is_cloud_owner;
+		}
+
+		return isset( $parts[0] ) && is_numeric( $parts[0] )
+			? absint( $parts[0] )
+			: $this->cloud_id;
 	}
 
 	/**
@@ -503,9 +531,9 @@ class Snippet extends Model {
 	 *
 	 * @return bool
 	 *
-	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @noinspection PhpUnused
 	 */
-	private function get_is_pro(): bool {
+	protected function get_is_pro(): bool {
 		return 'css' === $this->type || 'js' === $this->type || 'cond' === $this->type;
 	}
 
@@ -515,26 +543,10 @@ class Snippet extends Model {
 	 *
 	 * @return string
 	 *
-	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @noinspection PhpUnused
 	 */
-	private function get_cloud_id_owner(): string {
-		return sprintf( '%d_%d', $this->cloud_id, $this->cloud_id_owner ? '1' : '0' );
-	}
-
-	/**
-	 * Set the 'cloud_id' and 'is_cloud_owner' values from a single string value.
-	 *
-	 * @param string $cloud_id_owner Combined cloud ID and ownership value.
-	 *
-	 * @return void
-	 *
-	 * @noinspection PhpUnusedPrivateMethodInspection
-	 */
-	private function set_cloud_id_owner( string $cloud_id_owner ): void {
-		$parts = explode( '_', $cloud_id_owner );
-
-		$this->cloud_id = (int) $parts[0];
-		$this->is_cloud_owner = isset( $parts[1] ) && $parts[1];
+	protected function get_cloud_id_owner(): string {
+		return sprintf( '%d_%d', $this->cloud_id, $this->is_cloud_owner ? '1' : '0' );
 	}
 
 	/**

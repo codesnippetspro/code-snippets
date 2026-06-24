@@ -18,7 +18,7 @@ class Cloud_Snippets_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_normalizes_full_envelope(): void {
-		$result = new Cloud_Snippets(
+		$result = Cloud_Snippets::unpack_api_response(
 			[
 				'snippets'          => [
 					[
@@ -62,7 +62,7 @@ class Cloud_Snippets_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_reads_snippets_key(): void {
-		$result = new Cloud_Snippets(
+		$result = Cloud_Snippets::unpack_api_response(
 			[
 				'snippets' => [
 					[
@@ -84,7 +84,7 @@ class Cloud_Snippets_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_legacy_data_key_is_ignored(): void {
-		$result = new Cloud_Snippets(
+		$result = Cloud_Snippets::unpack_api_response(
 			[
 				'data'     => [
 					[
@@ -119,7 +119,7 @@ class Cloud_Snippets_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_bare_list_without_envelope_yields_no_snippets(): void {
-		$result = new Cloud_Snippets(
+		$result = Cloud_Snippets::unpack_api_response(
 			[
 				[
 					'id'   => 1,
@@ -143,7 +143,7 @@ class Cloud_Snippets_Test extends TestCase {
 	 */
 	public function test_empty_input_uses_defaults(): void {
 		foreach ( [ null, [] ] as $input ) {
-			$result = new Cloud_Snippets( $input );
+			$result = Cloud_Snippets::unpack_api_response( $input );
 
 			$this->assertCount( 0, $result->snippets );
 			$this->assertSame( 0, $result->total_snippets );
@@ -159,7 +159,7 @@ class Cloud_Snippets_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_missing_meta_keeps_default_totals(): void {
-		$result = new Cloud_Snippets(
+		$result = Cloud_Snippets::unpack_api_response(
 			[
 				'snippets' => [
 					[
