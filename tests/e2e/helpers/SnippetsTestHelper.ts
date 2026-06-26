@@ -324,12 +324,12 @@ export class SnippetsTestHelper {
 		for (let attempt = 0; SAVE_CONFIRM_RETRIES > attempt; attempt++) {
 			await this.clickButton(name)
 
-			const confirmed = await this.page.locator(SELECTORS.SUCCESS_MESSAGE).first()
+			const settled = await this.page.locator(SELECTORS.SAVE_SETTLED_NOTICE).first()
 				.waitFor({ state: 'visible', timeout: TIMEOUTS.DEFAULT })
 				.then(() => true)
 				.catch(() => false)
 
-			if (confirmed) {
+			if (settled) {
 				return
 			}
 
