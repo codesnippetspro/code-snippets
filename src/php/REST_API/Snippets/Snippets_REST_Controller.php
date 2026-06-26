@@ -241,7 +241,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 		}
 
 		if ( is_string( $network ) ) {
-			return in_array( strtolower( $network ), [ '1', 'true', 'yes' ], true );
+			return ! in_array( strtolower( $network ), [ '0', 'false', 'no', '' ], true );
 		}
 
 		return (bool) $network;
