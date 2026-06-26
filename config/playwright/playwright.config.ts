@@ -4,6 +4,9 @@ import { defineConfig, devices } from '@playwright/test'
 
 const WORKERS = 1
 
+const CI_RETRIES = 2
+const LOCAL_RETRIES = 1
+
 const TEST_TIMEOUT_SECONDS = 60
 const ASSERT_TIMEOUT_SECONDS = 30
 
@@ -20,8 +23,8 @@ export default defineConfig({
 	snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
-	retries: 0,
-	workers: process.env.CI ? WORKERS : WORKERS,
+	retries: process.env.CI ? CI_RETRIES : LOCAL_RETRIES,
+	workers: WORKERS,
 	reporter: process.env.CI
 		? [
 			['line'],

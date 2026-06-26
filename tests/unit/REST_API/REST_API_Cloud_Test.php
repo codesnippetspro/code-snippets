@@ -151,13 +151,27 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 */
 	private function make_request( array $params ): WP_REST_Response {
 		$request = new WP_REST_Request( 'GET', $this->endpoint );
-		$request->add_header( 'Access-Control', 'csc-1a2b3c4d5e6f7g8h9i0j' );
+		$request->add_header( 'Access-Control', $this->get_connection_token() );
 
 		foreach ( $params as $key => $value ) {
 			$request->set_param( $key, $value );
 		}
 
 		return rest_do_request( $request );
+	}
+
+	/**
+	 * Read the active cloud connection's local token.
+	 *
+	 * @return string
+	 */
+	private function get_connection_token(): string {
+		$plugin = \Code_Snippets\code_snippets();
+
+		$property = new \ReflectionProperty( $plugin, 'cloud_connection' );
+		$property->setAccessible( true );
+
+		return $property->getValue( $plugin )->get_local_token();
 	}
 
 	/**

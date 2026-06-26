@@ -234,7 +234,7 @@ class Manage_Menu_Test extends UnitTestCase {
 			)
 		);
 
-		$_POST['snippets'] = wp_json_encode(
+		$snippets_json = wp_json_encode(
 			array(
 				array(
 					'id'      => $snippet->id,
@@ -246,7 +246,7 @@ class Manage_Menu_Test extends UnitTestCase {
 		$menu = new Manage_Menu();
 		$method = new ReflectionMethod( $menu, 'get_requested_download_snippets' );
 		$method->setAccessible( true );
-		$result = $method->invoke( $menu );
+		$result = $method->invoke( $menu, $snippets_json );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'code_snippets_forbidden_network_download', $result->get_error_code() );

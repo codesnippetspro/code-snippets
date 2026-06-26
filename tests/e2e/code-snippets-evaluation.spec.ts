@@ -92,21 +92,9 @@ test.describe('Code Snippets Evaluation', () => {
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName()
-		await helper.navigateToSnippetsAdmin()
 
-		// Ensure isolation: file-based execution runs from flat files, so we must delete old snippets
-		// via plugin operations (to keep flat files in sync), not via direct SQL.
-		await wpCli([
-			'eval',
-			`
-					global $wpdb;
-					$table = $wpdb->prefix . 'snippets';
-					$ids = $wpdb->get_col(
-						$wpdb->prepare( "SELECT id FROM {$table} WHERE name LIKE %s", "${DEFAULT_E2E_SNIPPET_BASE_NAME}%" )
-					);
-					foreach ( $ids as $id ) { \\Code_Snippets\\delete_snippet( intval( $id ), false ); }
-				`
-		])
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
+		await helper.navigateToSnippetsAdmin()
 	})
 
 	test('PHP snippet is evaluating correctly', async () => {

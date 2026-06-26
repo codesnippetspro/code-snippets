@@ -5,6 +5,7 @@ export const SELECTORS = <const>{
 	LOCATION_SELECT: '.code-snippets-select-location',
 
 	SUCCESS_MESSAGE: '.snippet-editor-sidebar .notice.updated',
+	SAVE_SETTLED_NOTICE: '.snippet-editor-sidebar .notice.updated, .code-snippets-notice.error',
 
 	SNIPPETS_TABLE: '.wp-list-table',
 	SNIPPET_ROW: '.wp-list-table tbody tr',

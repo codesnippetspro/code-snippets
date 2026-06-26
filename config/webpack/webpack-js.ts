@@ -35,7 +35,7 @@ export const jsWebpackConfig: Configuration = {
 		'welcome': `${SOURCE_DIR}/welcome.ts`
 	},
 	output: {
-		path: join(resolve(__dirname), '..', DEST_DIR),
+		path: join(resolve(__dirname), '..', '..', DEST_DIR),
 		filename: '[name].js',
 		clean: true
 	},
@@ -58,7 +58,7 @@ export const jsWebpackConfig: Configuration = {
 		)
 	},
 	resolve: {
-		modules: [resolve(__dirname, '..', 'node_modules')],
+		modules: [resolve(__dirname, '..', '..', 'node_modules')],
 		extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
 	},
 	module: {

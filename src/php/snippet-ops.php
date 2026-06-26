@@ -688,7 +688,7 @@ function save_snippet( $snippet ): ?Snippet {
 		}
 
 		$snippet->id = $wpdb->insert_id;
-		$updated = get_snippet( $snippet->id );
+		$updated = get_snippet( $snippet->id, $snippet->network );
 		$updated->code_error = $snippet->code_error;
 		$updated->code_error_trace = $snippet->code_error_trace;
 		do_action( 'code_snippets/create_snippet', $updated, $table );

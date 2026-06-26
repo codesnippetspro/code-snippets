@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
-import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS } from './helpers/constants'
 import type { Page } from '@playwright/test'
 
@@ -12,6 +12,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 		await helper.navigateToSnippetsAdmin()
 
 		await helper.createAndActivateSnippet({
@@ -325,6 +326,7 @@ test.describe('Manage table Screen Options', () => {
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Screen Options')
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 		await helper.createAndActivateSnippet({
 			name: snippetName,
 			code: "add_filter('show_admin_bar', '__return_false');"

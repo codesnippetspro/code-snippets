@@ -35,3 +35,5 @@ Thumbs.db
 tmp
 .continue
 .codex
+# Local environment overrides (license keys, secrets)
+/.env

@@ -14,9 +14,6 @@ function _get_tests_dir(): string {
 		case (bool) getenv( 'WP_TESTS_DIR' ):
 			return getenv( 'WP_TESTS_DIR' );
 
-		case (bool) getenv( 'WP_DEVELOP_DIR' ):
-			return getenv( 'WP_DEVELOP_DIR' ) . '/tests/phpunit';
-
 		case (bool) getenv( 'WP_PHPUNIT__DIR' ):
 			return getenv( 'WP_PHPUNIT__DIR' );
 
