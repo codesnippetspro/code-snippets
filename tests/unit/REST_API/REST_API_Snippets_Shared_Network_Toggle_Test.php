@@ -338,7 +338,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends UnitTestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/$this->namespace/$this->base_route/$this->shared_snippet_id}",
+			"/$this->namespace/$this->base_route/$this->shared_snippet_id",
 			[ 'network' => true ]
 		);
 
