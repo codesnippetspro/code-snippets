@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { MESSAGES, SELECTORS, TIMEOUTS } from './helpers/constants'
 
 test.describe('Code Snippets Admin', () => {
@@ -7,6 +7,7 @@ test.describe('Code Snippets Admin', () => {
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 		await helper.navigateToSnippetsAdmin()
 	})
 
