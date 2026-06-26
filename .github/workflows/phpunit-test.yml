@@ -44,6 +44,9 @@ jobs:
           if [ -f "src/composer.lock" ]; then
             cat "src/composer.lock" >> "$tmpfile"
           fi
+          if [ -f "src/composer.json" ]; then
+            cat "src/composer.json" >> "$tmpfile"
+          fi
           if [ -s "$tmpfile" ]; then
             deps_hash=$(shasum -a 1 "$tmpfile" | awk '{print $1}' | cut -c1-8)
           else
