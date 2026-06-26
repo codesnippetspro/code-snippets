@@ -6,6 +6,7 @@ use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
 
@@ -74,9 +75,9 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends UnitTestCase {
 	/**
 	 * Set up fixture users before any tests run.
 	 *
-	 * @param mixed $factory Factory object.
+	 * @param WP_UnitTest_Factory $factory Factory object.
 	 */
-	public static function wpSetUpBeforeClass( $factory ) {
+	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
 		self::$super_admin_id = $factory->user->create( [ 'role' => 'administrator' ] );
 		self::$subsite_admin_id = $factory->user->create( [ 'role' => 'administrator' ] );
 

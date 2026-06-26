@@ -5,6 +5,7 @@ namespace Code_Snippets\REST_API;
 use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_UnitTest_Factory;
 
 /**
  * Tests for the Cloud REST API endpoint.
@@ -42,11 +43,11 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	/**
 	 * Set up fixtures before any tests run.
 	 *
-	 * @param mixed $factory Factory object.
+	 * @param WP_UnitTest_Factory $factory Factory object.
 	 *
 	 * @return void
 	 */
-	public static function wpSetUpBeforeClass( $factory ) {
+	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
 		self::$admin_user_id = $factory->user->create(
 			[
 				'role' => 'administrator',

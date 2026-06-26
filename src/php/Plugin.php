@@ -85,7 +85,7 @@ class Plugin {
 	 *
 	 * @var Cloud_Search_Controller
 	 */
-	public Cloud_Search_Controller $cloud_search_controller;
+	public Cloud_Search_Controller $cloud_search;
 
 	/**
 	 * Handles licensing and plugin updates.
@@ -126,7 +126,7 @@ class Plugin {
 		$this->load_utilities();
 
 		$this->cloud_connection = new Basic_Cloud_Connection();
-		$this->cloud_search_controller = new Cloud_Search_Controller( $this->cloud_connection );
+		$this->cloud_search = new Cloud_Search_Controller( $this->cloud_connection );
 
 		$this->db = new DB();
 		$this->licensing = new Licensing();
@@ -161,7 +161,7 @@ class Plugin {
 		new Recently_Active_REST_Controller();
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
-		new Cloud_Snippets_REST_Controller( $this->cloud_search_controller );
+		new Cloud_Snippets_REST_Controller( $this->cloud_search );
 	}
 
 	/**

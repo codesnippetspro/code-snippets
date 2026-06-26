@@ -92,7 +92,7 @@ jobs:
 
       - name: Install WordPress test suite
         run: |
-          bash tests/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 latest true
+          bash scripts/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 latest true
 
       - name: Save WordPress test suite cache
         if: steps.wp-tests-cache.outputs.cache-hit != 'true'
@@ -119,4 +119,3 @@ jobs:
             test-results/phpunit/
           if-no-files-found: ignore
           retention-days: 2
-

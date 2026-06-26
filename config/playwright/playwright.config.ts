@@ -4,11 +4,19 @@ import { defineConfig, devices } from '@playwright/test'
 
 const WORKERS = 1
 
+const TEST_TIMEOUT_SECONDS = 60
+const ASSERT_TIMEOUT_SECONDS = 30
+
+const MILLISECONDS_IN_SECOND = 1000
+
+const baseTestsDir = join(__dirname, '..', '..', 'tests')
+const storageState =  join(baseTestsDir, 'e2e/.auth/user.json')
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-	testDir: '../e2e',
+	testDir: join(baseTestsDir, 'e2e'),
 	snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
@@ -44,7 +52,7 @@ export default defineConfig({
 			testMatch: /flat-files\.setup\.ts/,
 			use: {
 				...devices['Desktop Chrome'],
-				storageState: join(__dirname, '../e2e/.auth/user.json')
+				storageState
 			},
 			dependencies: ['setup']
 		},
@@ -53,7 +61,7 @@ export default defineConfig({
 			name: 'chromium-db-snippets',
 			use: {
 				...devices['Desktop Chrome'],
-				storageState: join(__dirname, '../e2e/.auth/user.json')
+				storageState
 			},
 			dependencies: ['setup'],
 			testIgnore: /.*\.setup\.ts/
@@ -63,17 +71,17 @@ export default defineConfig({
 			name: 'chromium-file-based-snippets',
 			use: {
 				...devices['Desktop Chrome'],
-				storageState: join(__dirname, '../e2e/.auth/user.json')
+				storageState
 			},
 			dependencies: ['setup', 'flat-files-setup'],
 			testIgnore: /.*\.setup\.ts/
 		}
 	],
 
-	timeout: 60000, // 60 seconds per test
+	timeout: TEST_TIMEOUT_SECONDS * MILLISECONDS_IN_SECOND,
 
 	expect: {
-		timeout: 30000, // 30 seconds for each expect assertion
+		timeout: ASSERT_TIMEOUT_SECONDS * MILLISECONDS_IN_SECOND,
 		toHaveScreenshot: { maxDiffPixels: 100 }
 	}
 })

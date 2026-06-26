@@ -6,6 +6,7 @@ use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_UnitTest_Factory;
 use function Code_Snippets\save_snippet;
 
 /**
@@ -73,9 +74,9 @@ class REST_API_Snippets_Permissions_Test extends UnitTestCase {
 	/**
 	 * Set up fixture users before any tests run.
 	 *
-	 * @param mixed $factory Factory object.
+	 * @param WP_UnitTest_Factory $factory Factory object.
 	 */
-	public static function wpSetUpBeforeClass( $factory ) {
+	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
 		self::$super_admin_id = $factory->user->create( [ 'role' => 'administrator' ] );
 		self::$subsite_admin_id = $factory->user->create( [ 'role' => 'administrator' ] );
 		self::$editor_id = $factory->user->create( [ 'role' => 'editor' ] );
@@ -410,13 +411,13 @@ class REST_API_Snippets_Permissions_Test extends UnitTestCase {
 	 */
 	public function provide_truthy_network_values(): array {
 		return [
-			'boolean true'       => [ true ],
-			'string "true"'      => [ 'true' ],
-			'string "1"'         => [ '1' ],
-			'integer 1'          => [ 1 ],
-			'string "yes"'       => [ 'yes' ],
-			'string "on"'        => [ 'on' ],
-			'string "anything"'  => [ 'anything' ],
+			'boolean true'      => [ true ],
+			'string "true"'     => [ 'true' ],
+			'string "1"'        => [ '1' ],
+			'integer 1'         => [ 1 ],
+			'string "yes"'      => [ 'yes' ],
+			'string "on"'       => [ 'on' ],
+			'string "anything"' => [ 'anything' ],
 		];
 	}
 
@@ -450,7 +451,7 @@ class REST_API_Snippets_Permissions_Test extends UnitTestCase {
 	 */
 	public function provide_falsy_network_values(): array {
 		return [
-			'boolean false' => [ false ],
+			'boolean false'  => [ false ],
 			'string "false"' => [ 'false' ],
 			'string "0"'     => [ '0' ],
 			'integer 0'      => [ 0 ],

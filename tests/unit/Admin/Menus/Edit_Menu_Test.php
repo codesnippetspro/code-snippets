@@ -3,6 +3,7 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\UnitTestCase;
+use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -22,11 +23,11 @@ class Edit_Menu_Test extends UnitTestCase {
 	/**
 	 * Set up fixtures before any tests run.
 	 *
-	 * @param mixed $factory Factory object.
+	 * @param WP_UnitTest_Factory $factory Factory object.
 	 *
 	 * @return void
 	 */
-	public static function wpSetUpBeforeClass( $factory ) {
+	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
 		self::$admin_user_id = $factory->user->create(
 			[
 				'role' => 'administrator',
@@ -97,7 +98,7 @@ class Edit_Menu_Test extends UnitTestCase {
 			code_snippets()->get_menu_slug()
 		);
 
-		$screen->id   = $hook;
+		$screen->id = $hook;
 		$screen->base = $hook;
 		$_GET['id'] = '11';
 
