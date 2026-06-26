@@ -19,6 +19,7 @@ const RANDOM_RADIX = 36
 const RANDOM_SLICE_START = 2
 const RANDOM_SLICE_END = 7
 const CLICK_RETRIES = 3
+const SAVE_CONFIRM_RETRIES = 3
 const AT_LEAST_ONE = 1
 
 const getErrorMessage = (error: unknown): string => {
@@ -288,7 +289,7 @@ export class SnippetsTestHelper {
 		if ('save_and_activate' === action) {
 			const activateButton = this.page.locator(BUTTONS.SAVE_AND_ACTIVATE).first()
 			if (await activateButton.isVisible().catch(() => false)) {
-				await this.clickButton(/^Save and Activate$/i)
+				await this.clickSaveAndConfirm(/^Save and Activate$/i)
 				return
 			}
 
@@ -297,7 +298,7 @@ export class SnippetsTestHelper {
 			if (await inactiveToggle.isVisible().catch(() => false)) {
 				await inactiveToggle.click({ timeout: TIMEOUTS.DEFAULT, force: true })
 			}
-			await this.clickButton(/^Save Snippet$/i)
+			await this.clickSaveAndConfirm(/^Save Snippet$/i)
 			return
 		}
 
@@ -312,11 +313,34 @@ export class SnippetsTestHelper {
 					await statusToggle.click({ timeout: TIMEOUTS.DEFAULT, force: true })
 				}
 			}
-			await this.clickButton(/^Save Snippet$/i)
+			await this.clickSaveAndConfirm(/^Save Snippet$/i)
 			return
 		}
 
-		await this.clickButton(/^Save Snippet$/i)
+		await this.clickSaveAndConfirm(/^Save Snippet$/i)
+	}
+
+	private async clickSaveAndConfirm(name: RegExp): Promise<void> {
+		for (let attempt = 0; SAVE_CONFIRM_RETRIES > attempt; attempt++) {
+			await this.clickButton(name)
+
+			const confirmed = await this.page.locator(SELECTORS.SUCCESS_MESSAGE).first()
+				.waitFor({ state: 'visible', timeout: TIMEOUTS.DEFAULT })
+				.then(() => true)
+				.catch(() => false)
+
+			if (confirmed) {
+				return
+			}
+
+			const buttonStillPresent = await this.page.getByRole('button', { name }).first()
+				.isVisible()
+				.catch(() => false)
+
+			if (!buttonStillPresent) {
+				return
+			}
+		}
 	}
 
 	/**
