@@ -467,7 +467,8 @@ class Manage_Menu extends Admin_Menu {
 			$this->send_download_error( __( 'The download request is no longer valid. Please refresh and try again.', 'code-snippets' ), 403 );
 		}
 
-		$snippets = $this->get_requested_download_snippets();
+		$snippets_json = wp_unslash( filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '' );
+		$snippets = $this->get_requested_download_snippets( $snippets_json );
 
 		if ( $snippets instanceof WP_Error ) {
 			$status = $snippets->get_error_data( 'status' );
@@ -505,10 +506,11 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Resolve the snippets requested for download.
 	 *
+	 * @param string $snippets_json JSON-encoded list of requested snippets.
+	 *
 	 * @return Snippet[]|WP_Error
 	 */
-	private function get_requested_download_snippets() {
-		$snippets_json = wp_unslash( filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '' );
+	private function get_requested_download_snippets( string $snippets_json ) {
 		$payload = '' === $snippets_json ? [] : json_decode( $snippets_json, true );
 
 		if ( ! is_array( $payload ) ) {
