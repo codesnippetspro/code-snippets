@@ -2,14 +2,13 @@
 
 namespace Code_Snippets\Tests;
 
-use Code_Snippets\Client\Cloud_Snippets_Client;
-use Code_Snippets\Controller\Cloud_Snippets_Controller;
+use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Model\Basic_Cloud_Connection;
-use Code_Snippets\Model\Cloud_Snippets;
 use WP_Error;
+use const Code_Snippets\Utils\MAX_RESULTS_PER_PAGE;
 
 /**
- * Tests for $this->api->fetch_search_results().
+ * Tests for Cloud_Search_Controller::fetch_search_results().
  *
  * @group cloud
  */
@@ -54,10 +53,10 @@ class Cloud_Controller_Search_Test extends TestCase {
 	/**
 	 * Create a new instance of the controller.
 	 *
-	 * @return Cloud_Snippets_Controller
+	 * @return Cloud_Search_Controller
 	 */
-	private static function make_controller(): Cloud_Snippets_Controller {
-		return new Cloud_Snippets_Controller( new Basic_Cloud_Connection() );
+	private static function make_controller(): Cloud_Search_Controller {
+		return new Cloud_Search_Controller( new Basic_Cloud_Connection() );
 	}
 
 	/**
@@ -183,7 +182,7 @@ class Cloud_Controller_Search_Test extends TestCase {
 		self::make_controller()->fetch_search_results( 'term', 'woo', 1, 500 );
 		$args = $this->query_args( $this->last_url );
 
-		$this->assertSame( (string) Cloud_Snippets_Client::MAX_RESULTS_PER_PAGE, $args['per_page'] );
+		$this->assertSame( (string) MAX_RESULTS_PER_PAGE, $args['per_page'] );
 	}
 
 	/**

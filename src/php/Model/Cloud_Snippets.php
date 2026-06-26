@@ -10,12 +10,12 @@ use WP_REST_Response;
  * @since   3.4.0
  * @package Code_Snippets
  *
- * @property Cloud_Snippet[] $snippets          List of snippet items for the current page.
- * @property int             $page              Page of data that this data belongs to.
- * @property int             $total_pages       Total number of available pages of items.
- * @property int             $total_snippets    Total number of available snippet items.
- * @property array           $cloud_id_rev      An array of all cloud snippet IDs and their revision numbers.
- * @property array           $available_filters An array of available filters that can be applied to the collection.
+ * @property Cloud_Snippet[]      $snippets          List of snippet items for the current page.
+ * @property int                  $page              Page of data that this data belongs to.
+ * @property int                  $total_pages       Total number of available pages of items.
+ * @property int                  $total_snippets    Total number of available snippet items.
+ * @property array<int, int>      $cloud_id_rev      An array of all cloud snippet IDs and their revision numbers.
+ * @property array<string, array> $available_filters An array of available filters that can be applied to the collection.
  */
 class Cloud_Snippets extends Model {
 

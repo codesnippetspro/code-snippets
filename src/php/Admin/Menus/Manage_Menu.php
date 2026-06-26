@@ -245,32 +245,6 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Get the number of snippets to show per page.
-	 *
-	 * @return int
-	 */
-	protected function get_snippets_per_page(): int {
-		$per_page = (int) get_user_option( 'snippets_per_page' );
-
-		if ( empty( $per_page ) || $per_page < 1 ) {
-			$per_page = $this->get_default_snippets_per_page();
-		}
-
-		return (int) apply_filters( 'snippets_per_page', $per_page );
-	}
-
-	/**
-	 * Get the default number of snippets to show per page.
-	 *
-	 * @return int
-	 */
-	protected function get_default_snippets_per_page(): int {
-		$default = (int) apply_filters( 'code_snippets/snippets_per_page_default', self::DEFAULT_SNIPPETS_PER_PAGE );
-
-		return max( 1, $default );
-	}
-
-	/**
 	 * Get the number of snippets to show per page in the cloud search.
 	 *
 	 * The value defaults to the user's local snippets-per-page preference but can
@@ -278,8 +252,34 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @return int
 	 */
-	protected function get_cloud_search_per_page(): int {
-		return (int) apply_filters( 'code_snippets/cloud_search/per_page', $this->get_snippets_per_page() );
+	public static function get_cloud_search_per_page(): int {
+		return intval( apply_filters( 'code_snippets/cloud_search/per_page', self::get_snippets_per_page() ) );
+	}
+
+	/**
+	 * Get the default number of snippets to show per page.
+	 *
+	 * @return int
+	 */
+	public static function get_default_snippets_per_page(): int {
+		$default = apply_filters( 'code_snippets/snippets_per_page_default', self::DEFAULT_SNIPPETS_PER_PAGE );
+		return max( 1, intval( $default ) );
+	}
+
+	/**
+	 * Get the number of snippets to show per page.
+	 *
+	 * @return int
+	 */
+	public static function get_snippets_per_page(): int {
+		$per_page = intval( get_user_option( 'snippets_per_page' ) );
+
+		return intval(
+			apply_filters(
+				'snippets_per_page',
+				$per_page > 0 ? $per_page : self::get_default_snippets_per_page()
+			)
+		);
 	}
 
 	/**

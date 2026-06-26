@@ -3,6 +3,8 @@
 namespace Code_Snippets\Tests;
 
 use WP_REST_Request;
+use WP_REST_Response;
+use function Code_Snippets\code_snippets;
 
 /**
  * Tests for the Cloud REST API endpoint.
@@ -144,10 +146,11 @@ class REST_API_Cloud_Test extends TestCase {
 	 *
 	 * @param array<string, bool|int|string> $params Request params.
 	 *
-	 * @return \WP_REST_Response
+	 * @return WP_REST_Response
 	 */
-	private function make_request( array $params ) {
+	private function make_request( array $params ): WP_REST_Response {
 		$request = new WP_REST_Request( 'GET', $this->endpoint );
+		$request->add_header( 'Access-Control', 'csc-1a2b3c4d5e6f7g8h9i0j' );
 
 		foreach ( $params as $key => $value ) {
 			$request->set_param( $key, $value );

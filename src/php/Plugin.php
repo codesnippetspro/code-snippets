@@ -3,8 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
-use Code_Snippets\Client\Cloud_Snippets_Client;
-use Code_Snippets\Controller\Cloud_Snippets_Controller;
+use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
 use Code_Snippets\Core\Upgrader;
@@ -82,11 +81,11 @@ class Plugin {
 	private Basic_Cloud_Connection $cloud_connection;
 
 	/**
-	 * Instance of cloud snippets controller.
+	 * Instance of cloud search controller.
 	 *
-	 * @var Cloud_Snippets_Controller
+	 * @var Cloud_Search_Controller
 	 */
-	public Cloud_Snippets_Controller $cloud_snippets_controller;
+	public Cloud_Search_Controller $cloud_search_controller;
 
 	/**
 	 * Handles licensing and plugin updates.
@@ -127,7 +126,7 @@ class Plugin {
 		$this->load_utilities();
 
 		$this->cloud_connection = new Basic_Cloud_Connection();
-		$this->cloud_snippets_controller = new Cloud_Snippets_Controller( $this->cloud_connection );
+		$this->cloud_search_controller = new Cloud_Search_Controller( $this->cloud_connection );
 
 		$this->db = new DB();
 		$this->licensing = new Licensing();
@@ -162,7 +161,7 @@ class Plugin {
 		new Recently_Active_REST_Controller();
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
-		new Cloud_Snippets_REST_Controller( $this->cloud_snippets_controller );
+		new Cloud_Snippets_REST_Controller( $this->cloud_search_controller );
 	}
 
 	/**

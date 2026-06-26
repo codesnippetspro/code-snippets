@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { Fragment, useEffect, useMemo } from 'react'
 import { fetchConstQueryParam } from '../../utils/urls'
 import { SUBPAGES, Toolbar } from '../common/Toolbar'
 import { CommunityCloud } from './CommunityCloud/CommunityCloud'
@@ -20,6 +20,24 @@ const repositionTableOptionsSettings = () => {
 	}
 }
 
+interface PageContentParams {
+	subpage: typeof SUBPAGES[number]
+}
+
+const PageContent: React.FC<PageContentParams> = ({ subpage }) => {
+	switch (subpage) {
+		case 'snippets':
+			return <SnippetsTable />
+
+		case 'cloud-community':
+			return <CommunityCloud />
+
+		case 'blueprints':
+		case 'cloud-library':
+			return <Fragment />
+	}
+}
+
 export const ManageMenu = () => {
 	const subpage = useMemo(() =>
 		fetchConstQueryParam('subpage', SUBPAGES) ?? SUBPAGES[0], [])
@@ -33,10 +51,7 @@ export const ManageMenu = () => {
 	return (
 		<>
 			<Toolbar />
-
-			{'cloud-community' === subpage
-				? <CommunityCloud />
-				: <SnippetsTable />}
+			<PageContent subpage={subpage} />
 		</>
 	)
 }

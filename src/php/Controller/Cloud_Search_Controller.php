@@ -2,17 +2,23 @@
 
 namespace Code_Snippets\Controller;
 
-use Code_Snippets\Client\Cloud_Snippets_Client;
+use Code_Snippets\Client\Cloud_Public_Client;
 use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippet;
 use Code_Snippets\Model\Cloud_Snippets;
 use Code_Snippets\Model\Snippet;
+use WP_REST_Request;
 use function Code_Snippets\save_snippet;
 
 /**
- * Controller for fetching and storing data relating to cloud snippets.
+ * Controller for interfacing with public data on Code Snippets Cloud.
  */
-class Cloud_Snippets_Controller {
+class Cloud_Search_Controller {
+
+	/**
+	 * Maximum number of cloud search results allowed per page.
+	 */
+	public const MAX_RESULTS_PER_PAGE = 100;
 
 	/**
 	 * Minimum TTL in seconds for the featured snippets transient.
@@ -34,9 +40,9 @@ class Cloud_Snippets_Controller {
 	/**
 	 * Cloud snippets client instance.
 	 *
-	 * @var Cloud_Snippets_Client
+	 * @var Cloud_Public_Client
 	 */
-	private Cloud_Snippets_Client $client;
+	private Cloud_Public_Client $client;
 
 	/**
 	 * Class constructor.
@@ -44,25 +50,29 @@ class Cloud_Snippets_Controller {
 	 * @param Basic_Cloud_Connection $connection Connection to Code Snippets Cloud.
 	 */
 	public function __construct( Basic_Cloud_Connection $connection ) {
-		$this->client = new Cloud_Snippets_Client( $connection );
+		$this->client = new Cloud_Public_Client( $connection );
 	}
 
 	/**
-	 * Retrive access control token from the cloud connection.
+	 * Verify a REST API request is authorised to access controller functions.
 	 *
-	 * @return string
+	 * @param WP_REST_Request $request The REST API request.
+	 *
+	 * @return bool
 	 */
-	public function get_access_control_token(): string {
-		return $this->client->get_access_control_token();
+	public function verify_rest_request( WP_REST_Request $request ): bool {
+		return $this->client->verify_rest_request( $request );
 	}
 
 	/**
-	 * Reset local cached data.
+	 * Refresh the cached synced data.
+	 *
+	 * Bumps the featured-cache version counter so previously cached keys
+	 * become unreachable and expire via WordPress's normal transient path.
 	 *
 	 * @return void
 	 */
 	public static function clear_caches() {
-		delete_transient( 'cs_codevault_snippets' );
 		delete_transient( self::FEATURED_VERSION_OPTION );
 	}
 
@@ -89,6 +99,8 @@ class Cloud_Snippets_Controller {
 	 * @return Cloud_Snippets Result of search query.
 	 */
 	public function fetch_search_results( string $search_method, string $search, int $page = 1, int $per_page = 10, array $filters = [] ): Cloud_Snippets {
+		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
+
 		return $this->client->fetch_search_results( $search_method, $search, $page, $per_page, $filters );
 	}
 
@@ -128,20 +140,9 @@ class Cloud_Snippets_Controller {
 	 * @return string
 	 */
 	private function build_featured_cache_key( int $page, int $per_page, array $filters ): string {
-		$active_filters = array_filter( $filters );
-		$encoded = wp_json_encode( $active_filters );
+		$encoded = wp_json_encode( array_filter( $filters ) );
 		$filter_hash = md5( false === $encoded ? '' : $encoded );
-		$version = $this->get_featured_cache_version();
 
-		return self::FEATURED_TRANSIENT_KEY . "_v{$version}_p{$page}_pp{$per_page}_{$filter_hash}";
-	}
-
-	/**
-	 * Get the current featured-snippets cache version, initialising it if absent.
-	 *
-	 * @return string
-	 */
-	private function get_featured_cache_version(): string {
 		$version = get_transient( self::FEATURED_VERSION_OPTION );
 
 		if ( ! $version ) {
@@ -149,7 +150,7 @@ class Cloud_Snippets_Controller {
 			set_transient( self::FEATURED_VERSION_OPTION, $version, MONTH_IN_SECONDS );
 		}
 
-		return $version;
+		return self::FEATURED_TRANSIENT_KEY . "_v{$version}_p{$page}_pp{$per_page}_$filter_hash";
 	}
 
 	/**
@@ -170,6 +171,7 @@ class Cloud_Snippets_Controller {
 			return $cached;
 		}
 
+		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
 		$result = $this->client->get_featured_snippets( $page, $per_page, $filters );
 
 		set_transient( $cache_key, $result, self::FEATURED_MIN_TTL );

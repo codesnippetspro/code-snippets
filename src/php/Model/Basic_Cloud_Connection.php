@@ -2,6 +2,8 @@
 
 namespace Code_Snippets\Model;
 
+use WP_REST_Request;
+
 /**
  * Represents an unauthenticated connection to Code Snippets Cloud.
  */
@@ -98,5 +100,16 @@ class Basic_Cloud_Connection {
 		return [
 			'Local-Token' => $this->get_local_token(),
 		];
+	}
+
+	/**
+	 * Verify a REST API request includes the correct Access-Control header.
+	 *
+	 * @param WP_REST_Request $request Incoming REST request.
+	 *
+	 * @return bool
+	 */
+	public function verify_rest_request( WP_REST_Request $request ): bool {
+		return $request->get_header( 'Access-Control' ) === $this->get_local_token();
 	}
 }

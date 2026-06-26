@@ -7,8 +7,10 @@ use Code_Snippets\REST_API\Import\Plugins\Insert_Headers_And_Footers_Plugin_Impo
 use Code_Snippets\REST_API\Import\Plugins\Insert_PHP_Code_Snippet_Plugin_Importer;
 use Code_Snippets\REST_API\Import\Plugins\Plugin_Importer;
 use Code_Snippets\REST_API\REST_Controller;
+use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\code_snippets;
 
 /**
  * REST API controller for plugin importers.
@@ -107,5 +109,16 @@ class Plugins_Import_REST_Controller extends REST_Controller {
 				]
 			);
 		}
+	}
+
+	/**
+	 * Determine whether the request has permission to import snippets.
+	 *
+	 * @param WP_REST_Request $request Incoming HTTP request.
+	 *
+	 * @return bool
+	 */
+	public function permission_callback( WP_REST_Request $request ): bool {
+		return code_snippets()->current_user_can();
 	}
 }

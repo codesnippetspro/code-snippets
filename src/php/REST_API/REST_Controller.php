@@ -10,6 +10,7 @@ use const Code_Snippets\REST_API_NAMESPACE;
  * Base class for REST API controllers.
  */
 abstract class REST_Controller {
+
 	/**
 	 * The version of the REST API this controller belongs to.
 	 *
@@ -35,8 +36,8 @@ abstract class REST_Controller {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		assert( static::VERSION > 0, get_class( $this ) . '::VERSION must be set' );
-		assert( static::BASE_ROUTE !== '', get_class( $this ) . '::BASE_ROUTE must be set' );
+		assert( ! empty( static::VERSION ), get_class( $this ) . '::VERSION must be set' );
+		assert( ! empty( static::BASE_ROUTE ), get_class( $this ) . '::BASE_ROUTE must be set' );
 
 		$this->namespace = REST_API_NAMESPACE . static::VERSION;
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
@@ -62,11 +63,6 @@ abstract class REST_Controller {
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return bool
-	 *
-	 * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
-	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function permission_callback( WP_REST_Request $request ): bool {
-		return code_snippets()->current_user_can();
-	}
+	abstract public function permission_callback( WP_REST_Request $request ): bool;
 }

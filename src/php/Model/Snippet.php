@@ -183,6 +183,10 @@ class Snippet extends Model {
 			return absint( $cloud_id );
 		}
 
+		if ( is_null( $cloud_id ) ) {
+			return 0;
+		}
+
 		$parts = explode( '_', $cloud_id );
 
 		$is_cloud_owner = isset( $parts[1] )

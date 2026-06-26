@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\Tests;
 
-use Code_Snippets\Client\Cloud_Snippets_Client;
+use Code_Snippets\Client\Cloud_Public_Client;
 use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippet;
 use WP_Error;
@@ -13,14 +13,14 @@ use WP_Error;
  *
  * @group cloud
  */
-class Cloud_API_Snippet_Test extends TestCase {
+class Cloud_Client_Snippet_Test extends TestCase {
 
 	/**
-	 * API instance.
+	 * Client instance.
 	 *
-	 * @var Cloud_Snippets_Client
+	 * @var Cloud_Public_Client
 	 */
-	private Cloud_Snippets_Client $api;
+	private Cloud_Public_Client $client;
 
 	/**
 	 * Response to return from the mock HTTP filter.
@@ -38,7 +38,7 @@ class Cloud_API_Snippet_Test extends TestCase {
 		parent::set_up();
 
 		$this->mock_response = null;
-		$this->api = new Cloud_Snippets_Client( new Basic_Cloud_Connection() );
+		$this->client = new Cloud_Public_Client( new Basic_Cloud_Connection() );
 
 		add_filter( 'pre_http_request', [ $this, 'mock_request' ], 10, 3 );
 	}
@@ -102,24 +102,23 @@ class Cloud_API_Snippet_Test extends TestCase {
 			]
 		);
 
-		$result = $this->api->get_cloud_snippet( 5 );
+		$result = $this->client->get_cloud_snippet( 5 );
 
 		$this->assertInstanceOf( Cloud_Snippet::class, $result );
 		$this->assertSame( 'Test Snippet', $result->name );
 	}
 
 	/**
-	 * A failed/empty single-snippet request returns an empty Cloud_Snippet without erroring.
+	 * A failed/empty single-snippet request returns null without erroring.
 	 *
 	 * @return void
 	 */
 	public function test_get_single_snippet_handles_empty_response(): void {
 		$this->mock_response = new WP_Error( 'http_request_failed', 'down' );
 
-		$result = $this->api->get_cloud_snippet( 5 );
+		$result = $this->client->get_cloud_snippet( 5 );
 
-		$this->assertInstanceOf( Cloud_Snippet::class, $result );
-		$this->assertSame( '', $result->name );
+		$this->assertNull( $result );
 	}
 
 	/**
@@ -130,7 +129,7 @@ class Cloud_API_Snippet_Test extends TestCase {
 	public function test_get_cloud_snippet_revision_returns_revision(): void {
 		$this->mock_response = $this->json_response( [ 'snippet_revision' => 7 ] );
 
-		$this->assertSame( '7', $this->api->get_cloud_snippet_revision( '5' ) );
+		$this->assertSame( '7', $this->client->get_cloud_snippet_revision( '5' ) );
 	}
 
 	/**
@@ -141,6 +140,6 @@ class Cloud_API_Snippet_Test extends TestCase {
 	public function test_get_cloud_snippet_revision_handles_empty_response(): void {
 		$this->mock_response = new WP_Error( 'http_request_failed', 'down' );
 
-		$this->assertNull( $this->api->get_cloud_snippet_revision( '5' ) );
+		$this->assertNull( $this->client->get_cloud_snippet_revision( '5' ) );
 	}
 }

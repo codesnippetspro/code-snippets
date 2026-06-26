@@ -2,14 +2,13 @@
 
 namespace Code_Snippets\Tests;
 
-use Code_Snippets\Client\Cloud_Snippets_Client;
-use Code_Snippets\Controller\Cloud_Snippets_Controller;
+use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippets;
 use WP_Error;
 
 /**
- * Tests for $this->api->get_featured_snippets().
+ * Tests for Cloud_Search_Controller::get_featured_snippets().
  *
  * @group cloud
  */
@@ -47,10 +46,10 @@ class Cloud_Controller_Featured_Test extends TestCase {
 	/**
 	 * Construct a new instance of the controller.
 	 *
-	 * @return Cloud_Snippets_Controller
+	 * @return Cloud_Search_Controller
 	 */
-	private static function make_controller(): Cloud_Snippets_Controller {
-		return new Cloud_Snippets_Controller( new Basic_Cloud_Connection() );
+	private static function make_controller(): Cloud_Search_Controller {
+		return new Cloud_Search_Controller( new Basic_Cloud_Connection() );
 	}
 
 	/**

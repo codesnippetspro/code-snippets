@@ -208,6 +208,17 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Determine whether the request has permission to access snippets.
+	 *
+	 * @param WP_REST_Request $request Incoming HTTP request.
+	 *
+	 * @return bool
+	 */
+	public function permission_callback( WP_REST_Request $request ): bool {
+		return code_snippets()->current_user_can();
+	}
+
+	/**
 	 * Determine whether a request targets network-scoped snippets.
 	 *
 	 * Only the literal boolean `true` (or its common string/integer equivalents)
