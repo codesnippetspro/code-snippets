@@ -16,6 +16,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 	let inactiveA: string
 
 	test.beforeAll(async () => {
+		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
 		await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
 		await SnippetsTestHelper.cleanupSnippetsByPrefix(QUICKNAV_PREFIX)
 
