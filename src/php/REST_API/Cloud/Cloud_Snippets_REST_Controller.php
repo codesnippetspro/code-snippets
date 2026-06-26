@@ -107,7 +107,6 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function register_routes() {
 		$collection_args = $this->get_collection_params();
-		$collection_args['per_page']['default'] = Manage_Menu::get_default_snippets_per_page();
 		$filter_args = $this->get_filter_args();
 
 		register_rest_route(
@@ -119,8 +118,6 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => array_merge(
-						$collection_args,
-						$filter_args,
 						[
 							'query'             => [
 								'description' => esc_html__( 'Search query.', 'code-snippets' ),
@@ -132,12 +129,10 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 								'type'        => 'boolean',
 								'default'     => false,
 							],
-							'page'              => [
-								'description' => esc_html__( 'Page number.', 'code-snippets' ),
-								'type'        => 'integer',
-								'default'     => 1,
-							],
-						]
+							$collection_args['page'],
+							$collection_args['per_page'],
+						],
+						$filter_args
 					),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
@@ -152,7 +147,9 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_codevault_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => $collection_args['page'],
+					'args'                => [
+						$collection_args['page'],
+					],
 					'schema'              => [ $this, 'get_item_schema' ],
 				],
 			]
@@ -168,18 +165,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => array_merge(
 						$filter_args,
-						[
-							'page'     => [
-								'description' => esc_html__( 'Page number.', 'code-snippets' ),
-								'type'        => 'integer',
-								'default'     => 1,
-							],
-							'per_page' => [
-								'description' => esc_html__( 'Results per page.', 'code-snippets' ),
-								'type'        => 'integer',
-								'default'     => Manage_Menu::get_default_snippets_per_page(),
-							],
-						]
+						[ $collection_args['page'], $collection_args['per_page'] ]
 					),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
@@ -204,6 +190,17 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Augment the standard controller collection query params with the correct per_page default value.
+	 *
+	 * @return array Query parameters for the collection.
+	 */
+	public function get_collection_params(): array {
+		$params = parent::get_collection_params();
+		$params['per_page']['default'] = Manage_Menu::get_cloud_search_per_page();
+		return $params;
 	}
 
 	/**

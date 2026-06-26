@@ -1,12 +1,11 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Flat_Files;
 
-use Code_Snippets\Flat_Files\Handler_Registry;
 use Code_Snippets\Flat_Files\Interfaces\Filesystem_Adapter;
 use Code_Snippets\Flat_Files\Interfaces\Snippet_Config_Repository;
-use Code_Snippets\Flat_Files\Snippet_Files;
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\UnitTestCase;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\update_snippet_fields;
 
@@ -15,7 +14,7 @@ use function Code_Snippets\update_snippet_fields;
  *
  * @group flat-files
  */
-class Flat_Files_Hooks_Test extends TestCase {
+class Flat_Files_Hooks_Test extends UnitTestCase {
 
 	/**
 	 * Build a Snippet_Files instance with a stub filesystem adapter.
@@ -90,7 +89,7 @@ class Flat_Files_Hooks_Test extends TestCase {
 			$observed = $snippet_arg;
 		};
 
-		add_action( 'code_snippets/update_snippet', $callback, 0, 1 );
+		add_action( 'code_snippets/update_snippet', $callback, 0 );
 
 		update_snippet_fields( $saved->id, [ 'priority' => 9 ] );
 

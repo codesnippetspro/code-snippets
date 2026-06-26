@@ -1,18 +1,17 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Controller;
 
-use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Model\Basic_Cloud_Connection;
+use Code_Snippets\UnitTestCase;
 use WP_Error;
-use const Code_Snippets\Utils\MAX_RESULTS_PER_PAGE;
 
 /**
  * Tests for Cloud_Search_Controller::fetch_search_results().
  *
  * @group cloud
  */
-class Cloud_Controller_Search_Test extends TestCase {
+class Cloud_Search_Controller_Test extends UnitTestCase {
 
 	/**
 	 * Number of HTTP requests intercepted during a test.
@@ -65,7 +64,7 @@ class Cloud_Controller_Search_Test extends TestCase {
 	 * @return void
 	 */
 	public function tear_down() {
-		remove_filter( 'pre_http_request', [ $this, 'mock_search_request' ], 10 );
+		remove_filter( 'pre_http_request', [ $this, 'mock_search_request' ] );
 
 		parent::tear_down();
 	}
@@ -73,12 +72,11 @@ class Cloud_Controller_Search_Test extends TestCase {
 	/**
 	 * Build a successful mock search response in the cloud API envelope format.
 	 *
-	 * @param int $count Number of snippets to include on the page.
-	 * @param int $total Total number of matching snippets.
-	 *
 	 * @return array
 	 */
-	private function build_response( int $count = 2, int $total = 42 ): array {
+	private function build_response(): array {
+		$count = 2;
+		$total = 42;
 		$snippets = [];
 
 		for ( $i = 1; $i <= $count; $i++ ) {
@@ -163,7 +161,7 @@ class Cloud_Controller_Search_Test extends TestCase {
 	 * @return void
 	 */
 	public function test_request_includes_expected_query_args(): void {
-		self::make_controller()->fetch_search_results( 'term', 'woo', 2, 10 );
+		self::make_controller()->fetch_search_results( 'term', 'woo', 2 );
 		$args = $this->query_args( $this->last_url );
 
 		$this->assertSame( 'term', $args['s_method'] );
@@ -182,7 +180,7 @@ class Cloud_Controller_Search_Test extends TestCase {
 		self::make_controller()->fetch_search_results( 'term', 'woo', 1, 500 );
 		$args = $this->query_args( $this->last_url );
 
-		$this->assertSame( (string) MAX_RESULTS_PER_PAGE, $args['per_page'] );
+		$this->assertSame( (string) Cloud_Search_Controller::MAX_RESULTS_PER_PAGE, $args['per_page'] );
 	}
 
 	/**

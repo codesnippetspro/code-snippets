@@ -1,9 +1,10 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Admin\Menus;
 
-use Code_Snippets\Admin\Menus\Manage_Menu;
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\UnitTestCase;
+use ReflectionException;
 use ReflectionMethod;
 use WP_Error;
 use function Code_Snippets\code_snippets;
@@ -14,7 +15,7 @@ use function Code_Snippets\save_snippet;
  *
  * @group admin-menu
  */
-class Manage_Menu_Test extends TestCase {
+class Manage_Menu_Test extends UnitTestCase {
 
 	/**
 	 * Administrator user ID.
@@ -109,7 +110,7 @@ class Manage_Menu_Test extends TestCase {
 	public function test_render_screen_settings_adds_truncation_toggle(): void {
 		$menu = new Manage_Menu();
 
-		$output = $menu->render_screen_settings( '', get_current_screen() );
+		$output = $menu->render_screen_settings( '' );
 
 		$this->assertStringContainsString( 'snippets-table-truncate-row-values', $output );
 		$this->assertStringContainsString( 'Truncate long snippet names and descriptions', $output );
@@ -124,7 +125,7 @@ class Manage_Menu_Test extends TestCase {
 		$_REQUEST['subpage'] = 'cloud-community';
 
 		$menu = new Manage_Menu();
-		$output = $menu->render_screen_settings( '', get_current_screen() );
+		$output = $menu->render_screen_settings( '' );
 
 		$this->assertSame( '', $output );
 	}
@@ -213,6 +214,8 @@ class Manage_Menu_Test extends TestCase {
 	 * Subsite admins cannot request downloads from the network snippets table.
 	 *
 	 * @return void
+	 *
+	 * @throws ReflectionException Creates instance of ReflectionMethod class.
 	 */
 	public function test_network_bulk_download_requires_network_cap(): void {
 		if ( ! is_multisite() ) {

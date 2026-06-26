@@ -1,10 +1,10 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Controller;
 
-use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippets;
+use Code_Snippets\UnitTestCase;
 use WP_Error;
 
 /**
@@ -12,7 +12,7 @@ use WP_Error;
  *
  * @group cloud
  */
-class Cloud_Controller_Featured_Test extends TestCase {
+class Cloud_Search_Controller_Featured_Test extends UnitTestCase {
 
 	/**
 	 * Number of HTTP requests intercepted during a test.
@@ -58,7 +58,7 @@ class Cloud_Controller_Featured_Test extends TestCase {
 	 * @return void
 	 */
 	public function tear_down() {
-		remove_filter( 'pre_http_request', [ $this, 'mock_featured_request' ], 10 );
+		remove_filter( 'pre_http_request', [ $this, 'mock_featured_request' ] );
 		$this->clear_featured_transients();
 
 		parent::tear_down();
@@ -67,17 +67,20 @@ class Cloud_Controller_Featured_Test extends TestCase {
 	/**
 	 * Build the transient key matching Cloud_API's format.
 	 *
-	 * @param int   $page     Page number.
-	 * @param int   $per_page Per-page count.
-	 * @param array $filters  Filter params.
+	 * @param array $filters Filter params.
 	 *
 	 * @return string
 	 */
-	private function transient_key( int $page = 1, int $per_page = 10, array $filters = [] ): string {
+	private function transient_key( array $filters = [] ): string {
+		$page = 1;
+		$per_page = 10;
+
 		$active_filters = array_filter( $filters );
 		$encoded = wp_json_encode( $active_filters );
 		$hash = md5( false === $encoded ? '' : $encoded );
+
 		$version = get_transient( 'cs_featured_cache_version' );
+
 		if ( ! $version ) {
 			// Mirror the production helper by persisting the freshly generated version, so that
 			// repeated calls within a test resolve to the same value rather than a new
@@ -85,7 +88,7 @@ class Cloud_Controller_Featured_Test extends TestCase {
 			$version = (string) ( microtime( true ) * 1000 );
 			set_transient( 'cs_featured_cache_version', $version, MONTH_IN_SECONDS );
 		}
-		return "cs_featured_snippets_v{$version}_p{$page}_pp{$per_page}_{$hash}";
+		return "cs_featured_snippets_v{$version}_p{$page}_pp{$per_page}_$hash";
 	}
 
 	/**
@@ -384,15 +387,14 @@ class Cloud_Controller_Featured_Test extends TestCase {
 	 */
 	public function test_empty_filters_produce_same_cache_key(): void {
 		$key_empty = $this->transient_key(
-			1,
-			10,
 			[
 				'category' => '',
 				'type'     => '',
 				'status'   => '',
 			]
 		);
-		$key_none = $this->transient_key( 1, 10, [] );
+
+		$key_none = $this->transient_key();
 
 		$this->assertSame( $key_none, $key_empty, 'Empty filter values should hash identically to no filters.' );
 	}

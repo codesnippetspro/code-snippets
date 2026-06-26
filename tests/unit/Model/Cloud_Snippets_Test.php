@@ -1,16 +1,15 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Model;
 
-use Code_Snippets\Model\Cloud_Snippet;
-use Code_Snippets\Model\Cloud_Snippets;
+use Code_Snippets\UnitTestCase;
 
 /**
  * Tests for Cloud_Snippets normalisation of cloud API payloads.
  *
  * @group cloud
  */
-class Cloud_Snippets_Test extends TestCase {
+class Cloud_Snippets_Test extends UnitTestCase {
 
 	/**
 	 * A full response envelope is normalised into snippets and pagination metadata.

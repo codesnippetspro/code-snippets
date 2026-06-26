@@ -99,7 +99,7 @@ class Cloud_Search_Controller {
 	 * @return Cloud_Snippets Result of search query.
 	 */
 	public function fetch_search_results( string $search_method, string $search, int $page = 1, int $per_page = 10, array $filters = [] ): Cloud_Snippets {
-		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
+		$per_page = min( self::MAX_RESULTS_PER_PAGE, $per_page );
 
 		return $this->client->fetch_search_results( $search_method, $search, $page, $per_page, $filters );
 	}

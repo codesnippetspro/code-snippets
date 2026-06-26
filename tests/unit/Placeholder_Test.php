@@ -1,11 +1,11 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets;
 
 /**
  * Basic unit tests placeholder.
  */
-class Unit_Tests extends TestCase {
+class Placeholder_Test extends UnitTestCase {
 
 	/**
 	 * Verify that the test suite is running.

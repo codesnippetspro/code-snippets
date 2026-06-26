@@ -1,9 +1,11 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\REST_API;
 
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
+use WP_REST_Response;
 use function Code_Snippets\save_snippet;
 
 /**
@@ -17,56 +19,56 @@ use function Code_Snippets\save_snippet;
  * @group rest-api
  * @group permissions
  */
-class REST_API_Snippets_Permissions_Test extends TestCase {
+class REST_API_Snippets_Permissions_Test extends UnitTestCase {
 
 	/**
 	 * REST API namespace.
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'code-snippets/v1';
+	protected string $namespace = 'code-snippets/v1';
 
 	/**
 	 * REST API base route.
 	 *
 	 * @var string
 	 */
-	protected $base_route = 'snippets';
+	protected string $base_route = 'snippets';
 
 	/**
 	 * Super administrator user ID (multisite) or administrator (single site).
 	 *
 	 * @var int
 	 */
-	protected static $super_admin_id;
+	protected static int $super_admin_id;
 
 	/**
 	 * Subsite administrator user ID.
 	 *
 	 * @var int
 	 */
-	protected static $subsite_admin_id;
+	protected static int $subsite_admin_id;
 
 	/**
 	 * Editor user ID (no snippet capabilities).
 	 *
 	 * @var int
 	 */
-	protected static $editor_id;
+	protected static int $editor_id;
 
 	/**
 	 * Shared fixture snippet id (site-scoped).
 	 *
 	 * @var int
 	 */
-	protected $site_snippet_id;
+	protected int $site_snippet_id;
 
 	/**
 	 * Shared fixture snippet id (network-scoped). 0 on single site installs.
 	 *
 	 * @var int
 	 */
-	protected $network_snippet_id = 0;
+	protected int $network_snippet_id = 0;
 
 	/**
 	 * Set up fixture users before any tests run.
@@ -130,9 +132,9 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 	 * @param string               $endpoint Endpoint path.
 	 * @param array<string, mixed> $params   Request parameters.
 	 *
-	 * @return \WP_REST_Response
+	 * @return WP_REST_Response
 	 */
-	protected function dispatch( string $method, string $endpoint, array $params = [] ) {
+	protected function dispatch( string $method, string $endpoint, array $params = [] ): WP_REST_Response {
 		$request = new WP_REST_Request( $method, $endpoint );
 
 		foreach ( $params as $key => $value ) {
@@ -148,10 +150,10 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 	public function test_editor_is_always_blocked() {
 		wp_set_current_user( self::$editor_id );
 
-		$response = $this->dispatch( 'GET', "/{$this->namespace}/{$this->base_route}" );
+		$response = $this->dispatch( 'GET', "/$this->namespace/$this->base_route" );
 		$this->assert_forbidden_or_unauthorised( $response );
 
-		$response = $this->dispatch( 'GET', "/{$this->namespace}/{$this->base_route}", [ 'network' => true ] );
+		$response = $this->dispatch( 'GET', "/$this->namespace/$this->base_route", [ 'network' => true ] );
 		$this->assert_forbidden_or_unauthorised( $response );
 	}
 
@@ -161,7 +163,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 	public function test_schema_route_is_public() {
 		wp_set_current_user( 0 );
 
-		$response = $this->dispatch( 'GET', "/{$this->namespace}/{$this->base_route}/schema" );
+		$response = $this->dispatch( 'GET', "/$this->namespace/$this->base_route/schema" );
 
 		$this->assertSame( 200, $response->get_status() );
 	}
@@ -174,7 +176,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}",
+			"/$this->namespace/$this->base_route",
 			[ 'network' => false ]
 		);
 
@@ -187,7 +189,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 	public function test_site_admin_can_list_with_omitted_network_param() {
 		wp_set_current_user( self::$subsite_admin_id );
 
-		$response = $this->dispatch( 'GET', "/{$this->namespace}/{$this->base_route}" );
+		$response = $this->dispatch( 'GET', "/$this->namespace/$this->base_route" );
 
 		$this->assertSame( 200, $response->get_status() );
 	}
@@ -207,7 +209,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}",
+			"/$this->namespace/$this->base_route",
 			[ 'network' => true ]
 		);
 
@@ -226,7 +228,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}/{$this->network_snippet_id}",
+			"/$this->namespace/$this->base_route/$this->network_snippet_id",
 			[ 'network' => true ]
 		);
 
@@ -245,7 +247,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}",
+			"/$this->namespace/$this->base_route",
 			[
 				'name'    => 'Forged Network Snippet',
 				'code'    => "// forged\n",
@@ -270,7 +272,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->network_snippet_id}",
+			"/$this->namespace/$this->base_route/$this->network_snippet_id",
 			[
 				'name'    => 'Hijacked',
 				'network' => true,
@@ -292,7 +294,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'DELETE',
-			"/{$this->namespace}/{$this->base_route}/{$this->network_snippet_id}",
+			"/$this->namespace/$this->base_route/$this->network_snippet_id",
 			[ 'network' => true ]
 		);
 
@@ -311,7 +313,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->network_snippet_id}/activate",
+			"/$this->namespace/$this->base_route/$this->network_snippet_id/activate",
 			[ 'network' => true ]
 		);
 
@@ -330,7 +332,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->network_snippet_id}/deactivate",
+			"/$this->namespace/$this->base_route/$this->network_snippet_id/deactivate",
 			[ 'network' => true ]
 		);
 
@@ -349,7 +351,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}/{$this->network_snippet_id}/export",
+			"/$this->namespace/$this->base_route/$this->network_snippet_id/export",
 			[ 'network' => true ]
 		);
 
@@ -368,7 +370,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->network_snippet_id}/restore",
+			"/$this->namespace/$this->base_route/$this->network_snippet_id/restore",
 			[ 'network' => true ]
 		);
 
@@ -391,7 +393,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}",
+			"/$this->namespace/$this->base_route",
 			[ 'network' => $value ]
 		);
 
@@ -430,7 +432,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}",
+			"/$this->namespace/$this->base_route",
 			[ 'network' => $value ]
 		);
 
@@ -467,7 +469,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}",
+			"/$this->namespace/$this->base_route",
 			[ 'network' => true ]
 		);
 
@@ -475,7 +477,7 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}/{$this->network_snippet_id}",
+			"/$this->namespace/$this->base_route/$this->network_snippet_id",
 			[ 'network' => true ]
 		);
 
@@ -487,10 +489,10 @@ class REST_API_Snippets_Permissions_Test extends TestCase {
 	 *
 	 * WordPress returns 401 if no user is logged in, otherwise 403.
 	 *
-	 * @param \WP_REST_Response $response Response under test.
-	 * @param string            $message  Optional failure message.
+	 * @param WP_REST_Response $response Response under test.
+	 * @param string           $message  Optional failure message.
 	 */
-	protected function assert_forbidden_or_unauthorised( $response, string $message = '' ) {
+	protected function assert_forbidden_or_unauthorised( WP_REST_Response $response, string $message = '' ) {
 		$status = $response->get_status();
 
 		$this->assertContains(

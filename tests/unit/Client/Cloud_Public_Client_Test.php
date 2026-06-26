@@ -1,10 +1,10 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Client;
 
-use Code_Snippets\Client\Cloud_Public_Client;
 use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippet;
+use Code_Snippets\UnitTestCase;
 use WP_Error;
 
 /**
@@ -13,7 +13,7 @@ use WP_Error;
  *
  * @group cloud
  */
-class Cloud_Client_Snippet_Test extends TestCase {
+class Cloud_Public_Client_Test extends UnitTestCase {
 
 	/**
 	 * Client instance.
@@ -49,7 +49,7 @@ class Cloud_Client_Snippet_Test extends TestCase {
 	 * @return void
 	 */
 	public function tear_down() {
-		remove_filter( 'pre_http_request', [ $this, 'mock_request' ], 10 );
+		remove_filter( 'pre_http_request', [ $this, 'mock_request' ] );
 
 		parent::tear_down();
 	}

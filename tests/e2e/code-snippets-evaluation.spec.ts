@@ -32,7 +32,7 @@ const verifyShortcodeRendersCorrectly = async (
 	await helper.expectTextVisible('Page content after shortcode.')
 }
 
-const createPageWithShortcode = async (page: Page, snippetId: string, snippetName: string): Promise<string> => {
+const createPageWithShortcode = async (snippetId: string, snippetName: string): Promise<string> => {
 	const shortcode = `[code_snippet id=${snippetId} format name="${snippetName}"]`
 	const pageContent = `<p>Page content before shortcode.</p>\n\n${shortcode}\n\n<p>Page content after shortcode.</p>`
 
@@ -217,7 +217,7 @@ test.describe('Code Snippets Evaluation', () => {
 
 	test('HTML snippet works with shortcode in editor', async ({ page }) => {
 		const snippetId = await createHtmlSnippetForEditor(helper, page, snippetName)
-		const pageUrl = await createPageWithShortcode(page, snippetId, snippetName)
+		const pageUrl = await createPageWithShortcode(snippetId, snippetName)
 
 		await verifyShortcodeRendersCorrectly(helper, page, pageUrl)
 	})

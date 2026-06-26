@@ -1,17 +1,17 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\REST_API;
 
+use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
-use function Code_Snippets\code_snippets;
 
 /**
  * Tests for the Cloud REST API endpoint.
  *
  * @group rest-api
  */
-class REST_API_Cloud_Test extends TestCase {
+class REST_API_Cloud_Test extends UnitTestCase {
 
 	/**
 	 * Default per-page value used when none is configured.
@@ -74,7 +74,7 @@ class REST_API_Cloud_Test extends TestCase {
 	 * @return void
 	 */
 	public function tear_down() {
-		remove_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ], 10 );
+		remove_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ] );
 		delete_user_option( self::$admin_user_id, 'snippets_per_page' );
 
 		parent::tear_down();
@@ -83,9 +83,9 @@ class REST_API_Cloud_Test extends TestCase {
 	/**
 	 * Mock the outbound cloud search request.
 	 *
-	 * @param mixed        $preempt     Existing preempted value.
-	 * @param array<mixed> $parsed_args Parsed HTTP request arguments.
-	 * @param string       $url         Requested URL.
+	 * @param mixed  $preempt     Existing preempted value.
+	 * @param array  $parsed_args Parsed HTTP request arguments.
+	 * @param string $url         Requested URL.
 	 *
 	 * @return mixed
 	 */

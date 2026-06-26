@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets;
 
 use WP_UnitTestCase;
 
@@ -50,4 +50,4 @@ require $_tests_dir . '/includes/bootstrap.php';
 /**
  * Base test case for all Code Snippets tests.
  */
-class TestCase extends WP_UnitTestCase {}
+class UnitTestCase extends WP_UnitTestCase {}

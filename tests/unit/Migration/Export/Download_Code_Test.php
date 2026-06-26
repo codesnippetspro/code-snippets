@@ -1,9 +1,9 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Migration\Export;
 
-use Code_Snippets\Migration\Export\Download_Code;
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\UnitTestCase;
 use WP_Error;
 use ZipArchive;
 use function Code_Snippets\code_snippets;
@@ -14,7 +14,7 @@ use function Code_Snippets\save_snippet;
  *
  * @group export
  */
-class Download_Code_Test extends TestCase {
+class Download_Code_Test extends UnitTestCase {
 
 	/**
 	 * Set up before each test.
@@ -35,7 +35,7 @@ class Download_Code_Test extends TestCase {
 		global $wpdb;
 
 		$table_name = code_snippets()->db->get_table_name();
-		$wpdb->query( "TRUNCATE TABLE {$table_name}" );
+		$wpdb->query( "TRUNCATE TABLE $table_name" );
 	}
 
 	/**

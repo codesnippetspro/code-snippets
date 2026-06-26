@@ -322,7 +322,7 @@ export class SnippetsTestHelper {
 	/**
    * Expect a success message with the specified text
    */
-	async expectSuccessMessage(expectedMessage: string): Promise<void> {
+	async expectSuccessMessage(expectedMessage: string | RegExp): Promise<void> {
 		await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE)).toContainText(expectedMessage)
 	}
 

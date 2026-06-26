@@ -1,8 +1,9 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\REST_API;
 
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
@@ -13,28 +14,28 @@ use function Code_Snippets\save_snippet;
  *
  * @group rest-api
  */
-class REST_API_Snippets_Test extends TestCase {
+class REST_API_Snippets_Test extends UnitTestCase {
 
 	/**
 	 * REST API namespace and base route.
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'code-snippets/v1';
+	protected string $namespace = 'code-snippets/v1';
 
 	/**
 	 * REST API base route.
 	 *
 	 * @var string
 	 */
-	protected $base_route = 'snippets';
+	protected string $base_route = 'snippets';
 
 	/**
 	 * Administrator user ID.
 	 *
 	 * @var int
 	 */
-	protected static $admin_user_id;
+	protected static int $admin_user_id;
 
 	/**
 	 * Set up fixtures before any tests run.
@@ -57,7 +58,7 @@ class REST_API_Snippets_Test extends TestCase {
 
 		wp_set_current_user( self::$admin_user_id );
 		$this->clear_all_snippets();
-		$this->seed_test_snippets( 25 );
+		$this->seed_test_snippets();
 	}
 
 	/**
@@ -66,24 +67,24 @@ class REST_API_Snippets_Test extends TestCase {
 	protected function clear_all_snippets() {
 		global $wpdb;
 		$table_name = code_snippets()->db->get_table_name();
-		$wpdb->query( "TRUNCATE TABLE {$table_name}" );
+		$wpdb->query( "TRUNCATE TABLE $table_name" );
 	}
 
 	/**
 	 * Helper method to seed test snippets into the database.
-	 *
-	 * @param int $count Number of snippets to create.
 	 */
-	protected function seed_test_snippets( $count = 25 ) {
+	protected function seed_test_snippets() {
+		$count = 25;
+
 		for ( $i = 1; $i <= $count; $i++ ) {
 			$snippet = new Snippet(
 				[
-					'name'   => "Test Snippet {$i}",
-					'desc'   => "This is test snippet number {$i}",
-					'code'   => "// Test snippet {$i}\necho 'Hello World {$i}';",
+					'name'   => "Test Snippet $i",
+					'desc'   => "This is test snippet number $i",
+					'code'   => "// Test snippet $i\necho 'Hello World $i';",
 					'scope'  => 'global',
 					'active' => false,
-					'tags'   => [ 'test', "batch-{$i}" ],
+					'tags'   => [ 'test', "batch-$i" ],
 				]
 			);
 
@@ -96,9 +97,10 @@ class REST_API_Snippets_Test extends TestCase {
 	 *
 	 * @param string $endpoint Endpoint to request.
 	 * @param array  $params   Query parameters.
-	 * @return WP_REST_Response
+	 *
+	 * @return array
 	 */
-	protected function make_request( $endpoint, $params = [] ) {
+	protected function make_request( string $endpoint, array $params = [] ): array {
 		$request = new WP_REST_Request( 'GET', $endpoint );
 
 		foreach ( $params as $key => $value ) {

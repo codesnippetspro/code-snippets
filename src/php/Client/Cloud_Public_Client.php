@@ -70,7 +70,7 @@ class Cloud_Public_Client {
 			's_method'   => $search_method,
 			's'          => $search,
 			'page'       => max( 0, $page - 1 ),
-			'per_page'   => $per_page,
+			'per_page'   => max( 1, $per_page ),
 			'site_token' => $this->connection->get_local_token(),
 			'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
 		];

@@ -1,9 +1,11 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Admin;
 
 use Code_Snippets\Integration\Admin_Bar;
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\UnitTestCase;
+use ReflectionClass;
 use WP_Admin_Bar;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
@@ -14,7 +16,7 @@ use function Code_Snippets\Settings\update_setting;
  *
  * @group admin-bar
  */
-class Admin_Bar_Test extends TestCase {
+class Admin_Bar_Test extends UnitTestCase {
 
 	/**
 	 * Administrator user ID.
@@ -68,7 +70,7 @@ class Admin_Bar_Test extends TestCase {
 	private function truncate_snippets_table(): void {
 		global $wpdb;
 		$table_name = code_snippets()->db->get_table_name();
-		$wpdb->query( "TRUNCATE TABLE {$table_name}" );
+		$wpdb->query( "TRUNCATE TABLE $table_name" );
 	}
 
 	/**
@@ -92,8 +94,8 @@ class Admin_Bar_Test extends TestCase {
 			);
 
 		$code = 'html' === $type ?
-			"<p>{$name}</p>\n" :
-			"<?php\n// {$name}\n";
+			"<p>$name</p>\n" :
+			"<?php\n// $name\n";
 
 		$snippet = new Snippet(
 			[
@@ -140,7 +142,7 @@ class Admin_Bar_Test extends TestCase {
 			return (array) $wp_admin_bar->get_nodes();
 		}
 
-		$ref = new \ReflectionClass( $wp_admin_bar );
+		$ref = new ReflectionClass( $wp_admin_bar );
 		if ( $ref->hasProperty( 'nodes' ) ) {
 			$prop = $ref->getProperty( 'nodes' );
 			$prop->setAccessible( true );

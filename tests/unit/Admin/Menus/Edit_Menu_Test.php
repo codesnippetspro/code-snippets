@@ -1,8 +1,8 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Admin\Menus;
 
-use Code_Snippets\Admin\Menus\Edit_Menu;
+use Code_Snippets\UnitTestCase;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -10,7 +10,7 @@ use function Code_Snippets\code_snippets;
  *
  * @group admin-menu
  */
-class Edit_Menu_Test extends TestCase {
+class Edit_Menu_Test extends UnitTestCase {
 
 	/**
 	 * Administrator user ID.

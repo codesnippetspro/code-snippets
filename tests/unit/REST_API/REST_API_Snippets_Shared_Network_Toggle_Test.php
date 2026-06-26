@@ -1,11 +1,12 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\REST_API;
 
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
+use WP_REST_Response;
 use function Code_Snippets\code_snippets;
-use function Code_Snippets\get_snippet;
 use function Code_Snippets\save_snippet;
 
 /**
@@ -26,49 +27,49 @@ use function Code_Snippets\save_snippet;
  * @group permissions
  * @group multisite
  */
-class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
+class REST_API_Snippets_Shared_Network_Toggle_Test extends UnitTestCase {
 
 	/**
 	 * REST API namespace.
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'code-snippets/v1';
+	protected string $namespace = 'code-snippets/v1';
 
 	/**
 	 * REST API base route.
 	 *
 	 * @var string
 	 */
-	protected $base_route = 'snippets';
+	protected string $base_route = 'snippets';
 
 	/**
 	 * Super administrator user ID.
 	 *
 	 * @var int
 	 */
-	protected static $super_admin_id;
+	protected static int $super_admin_id;
 
 	/**
 	 * Subsite administrator user ID.
 	 *
 	 * @var int
 	 */
-	protected static $subsite_admin_id;
+	protected static int $subsite_admin_id;
 
 	/**
 	 * Identifier of the shared network snippet seeded for each test.
 	 *
 	 * @var int
 	 */
-	protected $shared_snippet_id = 0;
+	protected int $shared_snippet_id = 0;
 
 	/**
 	 * Identifier of an exclusive (non-shared) network snippet seeded for each test.
 	 *
 	 * @var int
 	 */
-	protected $exclusive_network_snippet_id = 0;
+	protected int $exclusive_network_snippet_id = 0;
 
 	/**
 	 * Set up fixture users before any tests run.
@@ -144,9 +145,9 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 	 * @param string               $endpoint Endpoint path.
 	 * @param array<string, mixed> $params   Request parameters.
 	 *
-	 * @return \WP_REST_Response
+	 * @return WP_REST_Response
 	 */
-	protected function dispatch( string $method, string $endpoint, array $params = [] ) {
+	protected function dispatch( string $method, string $endpoint, array $params = [] ): WP_REST_Response {
 		$request = new WP_REST_Request( $method, $endpoint );
 
 		foreach ( $params as $key => $value ) {
@@ -167,11 +168,9 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 		global $wpdb;
 
 		$table = code_snippets()->db->ms_table;
-		$value = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
-			$wpdb->prepare( "SELECT active FROM {$table} WHERE id = %d", $snippet_id )
+		return $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->prepare( "SELECT active FROM $table WHERE id = %d", $snippet_id )
 		);
-
-		return null === $value ? null : (string) $value;
 	}
 
 	/**
@@ -188,7 +187,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->shared_snippet_id}/activate",
+			"/$this->namespace/$this->base_route/$this->shared_snippet_id/activate",
 			[ 'network' => true ]
 		);
 
@@ -220,7 +219,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->shared_snippet_id}/deactivate",
+			"/$this->namespace/$this->base_route/$this->shared_snippet_id/deactivate",
 			[ 'network' => true ]
 		);
 
@@ -250,7 +249,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->shared_snippet_id}/activate",
+			"/$this->namespace/$this->base_route/$this->shared_snippet_id/activate",
 			[ 'network' => true ]
 		);
 
@@ -280,7 +279,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->shared_snippet_id}/deactivate",
+			"/$this->namespace/$this->base_route/$this->shared_snippet_id/deactivate",
 			[ 'network' => true ]
 		);
 
@@ -305,7 +304,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 
 		$activate_response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->exclusive_network_snippet_id}/activate",
+			"/$this->namespace/$this->base_route/$this->exclusive_network_snippet_id/activate",
 			[ 'network' => true ]
 		);
 
@@ -317,7 +316,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 
 		$deactivate_response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->exclusive_network_snippet_id}/deactivate",
+			"/$this->namespace/$this->base_route/$this->exclusive_network_snippet_id/deactivate",
 			[ 'network' => true ]
 		);
 
@@ -338,7 +337,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'GET',
-			"/{$this->namespace}/{$this->base_route}/{$this->shared_snippet_id}",
+			"/$this->namespace/$this->base_route/$this->shared_snippet_id}",
 			[ 'network' => true ]
 		);
 
@@ -360,7 +359,7 @@ class REST_API_Snippets_Shared_Network_Toggle_Test extends TestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			"/{$this->namespace}/{$this->base_route}/{$this->shared_snippet_id}/activate",
+			"/$this->namespace/$this->base_route/$this->shared_snippet_id/activate",
 			[ 'network' => true ]
 		);
 
