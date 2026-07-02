@@ -8,7 +8,7 @@ import { Button } from './Button'
 export const UpsellBanner = () => {
 	const [isDismissed, setIsDismissed] = useState(false)
 
-	return isDismissed || shouldShowUpsell()
+	return isDismissed || !shouldShowUpsell()
 		? null
 		: <div
 			className="code-snippets-upsell-banner"
@@ -29,7 +29,7 @@ export const UpsellBanner = () => {
 			</p>
 
 			<ExternalLink
-				className="button button-primary button-large"
+				className="button button-primary"
 				href="https://codesnippets.pro/pricing/"
 			>
 				{__('Get Started', 'code-snippets')}

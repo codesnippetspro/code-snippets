@@ -72,7 +72,7 @@
 	// Secondary buttons: restore classic geometry, the grey fill and the brand accent
 	// border/text in place of WP 7.0's transparent + modern-blue treatment. `.button-primary`
 	// is excluded so its solid fill below is not overwritten.
-	.button:not(.button-primary),
+	.button:not(.button-primary, .button-link),
 	.button-secondary {
 		min-block-size: theme.$control-height;
 		padding-block: 0;
