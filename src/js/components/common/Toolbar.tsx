@@ -41,7 +41,7 @@ const UPPER_NAV_LINKS: readonly NavLink[] = [
 	}
 ]
 
-const LOWER_NAV_LINKS = [
+const LOWER_NAV_LINKS: readonly NavLink[] = [
 	{
 		name: 'snippets',
 		url: window.CODE_SNIPPETS?.urls.manage,
@@ -128,7 +128,7 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 const currentPage = fetchQueryParam('page')
 const currentSubpage = fetchQueryParam('subpage')
 
-const isActiveLink = ({ pageSlug, subpage }: NavLink): boolean => {
+const isActiveLink = ({ pageSlug, subpage }: Readonly<NavLink>): boolean => {
 	if (subpage) {
 		return currentSubpage === subpage
 	}
