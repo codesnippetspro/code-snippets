@@ -83,3 +83,11 @@ export const isProSnippet = (snippet: Pick<Snippet, 'scope'>): boolean =>
 
 export const isProType = (type: SnippetType): boolean =>
 	PRO_TYPES.has(type)
+
+export const isSnippetActive = (
+	snippet: Snippet,
+	activeByCondition: Map<Snippet['id'], Snippet[]>
+): boolean =>
+	'cond' === getSnippetType(snippet)
+		? 0 < (activeByCondition.get(snippet.id)?.length ?? 0)
+		: snippet.active

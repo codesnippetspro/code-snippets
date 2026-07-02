@@ -115,7 +115,7 @@ $status-colors: (
 	}
 
 	.cloud-snippet {
-		.cloud-snippet-title-button, h3 {
+		h3 .cloud-snippet-title-button {
 			display: inline;
 			margin: 0;
 			padding: 0;
@@ -125,13 +125,16 @@ $status-colors: (
 			color: #2271b1;
 			cursor: pointer;
 			text-align: start;
-			text-decoration: underline;
-		}
 
-		.cloud-snippet-title-button:focus-visible {
-			outline: 2px solid #2271b1;
-			outline-offset: 2px;
-			border-radius: 2px;
+			&:hover, &:focus {
+				text-decoration: underline;
+			}
+
+			&:focus-visible {
+				outline: 2px solid #2271b1;
+				outline-offset: 2px;
+				border-radius: 2px;
+			}
 		}
 	}
 

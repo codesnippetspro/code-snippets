@@ -8,7 +8,7 @@ import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadBulkSnippetExportFile } from '../../../utils/files'
 import { REST_BASES } from '../../../utils/restAPI'
-import { cloneSnippetObject, getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
@@ -336,8 +336,16 @@ const useApplyBulkAction = (
 	}
 }
 
+const getRowClassName = (snippet: Snippet, activeByCondition: Map<Snippet['id'], Snippet[]>): string =>
+	[
+		'snippet',
+		`snippet ${isSnippetActive(snippet, activeByCondition) ? 'active' : 'inactive'}-snippet`,
+		`${getSnippetType(snippet)}-snippet`,
+		`${snippet.scope}-snippet`
+	].join(' ')
+
 export const SnippetsListTable: React.FC = () => {
-	const { snippetsByStatus } = useFilteredSnippets()
+	const { snippetsByStatus, activeByCondition } = useFilteredSnippets()
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { hiddenColumns, truncateRowValues } = useManageTableSettings()
 
@@ -385,8 +393,7 @@ export const SnippetsListTable: React.FC = () => {
 						{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get('all') ?? []} />}
 						<ClearRecentlyActiveButton />
 					</>}
-				rowClassName={snippet =>
-					`snippet ${snippet.active ? 'active' : 'inactive'}-snippet ${getSnippetType(snippet)}-snippet ${snippet.scope}-snippet`}
+				rowClassName={snippet => getRowClassName(snippet, activeByCondition)}
 				noItems={<NoItemsMessage />}
 			/>
 		</>

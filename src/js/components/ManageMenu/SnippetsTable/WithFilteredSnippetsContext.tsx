@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { parseSnippetObject } from '../../../utils/snippets/objects'
-import { getSnippetType } from '../../../utils/snippets/snippets'
+import { getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
-import type { SnippetStatus} from './WithSnippetsTableFilters'
+import type { SnippetStatus } from './WithSnippetsTableFilters'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../../../types/Snippet'
 
@@ -14,12 +14,12 @@ const pushToMapArray = <K, V>(map: Map<K, V[]>, key: K, value: V) => {
 	}
 }
 
-const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus, Snippet[]> =>
+const partitionSnippetsByStatus = (snippets: Snippet[], activeByCondition: Map<Snippet['id'], Snippet[]>): Map<SnippetStatus, Snippet[]> =>
 	snippets.reduce((acc, snippet) => {
 		pushToMapArray(acc, snippet.trashed ? 'trashed' : 'all', snippet)
 
 		if (!snippet.trashed) {
-			pushToMapArray(acc, snippet.active ? 'active' : 'inactive', snippet)
+			pushToMapArray(acc, isSnippetActive(snippet, activeByCondition) ? 'active' : 'inactive', snippet)
 		}
 		pushToMapArray(acc, snippet.locked ? 'locked' : 'unlocked', snippet)
 
@@ -79,13 +79,13 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 		})
 	}, [snippets, currentTag, currentType, searchQueryText, searchLineNumber])
 
-	const snippetsByStatus = useMemo(
-		() => partitionSnippetsByStatus(visibleSnippets),
-		[visibleSnippets])
-
 	const activeByCondition = useMemo(
 		() => partitionActiveSnippetsByCondition(snippets),
 		[snippets])
+
+	const snippetsByStatus = useMemo(
+		() => partitionSnippetsByStatus(visibleSnippets, activeByCondition),
+		[visibleSnippets, activeByCondition])
 
 	const value: FilteredSnippetsContext = {
 		snippetsByStatus,
