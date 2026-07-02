@@ -1,6 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n'
 import { buildUrl } from '../urls'
 import { parseSnippetObject } from './objects'
+import type { SnippetSchema } from '../../types/schema/SnippetSchema'
 import type { Snippet, SnippetScope, SnippetType } from '../../types/Snippet'
 
 export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
@@ -13,7 +14,7 @@ export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
 
 const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
-export const createSnippetObject = (fields: unknown): Snippet =>
+export const createSnippetObject = (fields: Partial<Snippet> | Partial<SnippetSchema>): Snippet =>
 	parseSnippetObject(fields)
 
 export const cloneSnippetObject = (snippet: Snippet): Snippet =>

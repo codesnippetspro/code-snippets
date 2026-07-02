@@ -9,7 +9,7 @@ import { getSnippetEditUrl, getSnippetType, isProSnippet } from '../../../utils/
 import { truncateChars } from '../../../utils/text'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
-import { CloudStatusBadge } from '../../common/cloud/CloudStatusBadge'
+import { CloudStatusIndicator } from '../../common/cloud/CloudStatusBadge'
 import { ErrorTooltip } from '../../common/Tooltip'
 import { UpsellDialog } from '../../common/UpsellDialog'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
@@ -192,7 +192,7 @@ export const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 			<CloudSnippetDetails snippet={snippet} setIsPreviewOpen={setIsPreviewOpen} />
 
 			<footer>
-				<CloudStatusBadge status={snippet.status} />
+				<CloudStatusIndicator status={snippet.status} />
 
 				<DownloadButton snippet={snippet} />
 

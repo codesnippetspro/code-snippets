@@ -44,6 +44,30 @@
 	}
 }
 
+.snippets-table-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 12px 0;
+
+	.subsubsub {
+		margin: 0;
+		padding: 0;
+	}
+
+	p.search-box {
+		margin: 0;
+
+		input[type="search"] {
+			min-block-size: 38px;
+		}
+	}
+}
+
+.tablenav {
+	margin: 20px 0;
+}
+
 // Status filter links (All | Active | Inactive | …): WP 7.0 recolours these with the modern
 // blue. Restore the classic accent for non-current links; the current one keeps its own colour.
 /* stylelint-disable-next-line no-descending-specificity -- unrelated element; ordering is fine. */
@@ -131,13 +155,14 @@
 		align-items: center;
 		inline-size: 100%;
 		margin: 0;
-		padding: 0;
 		border: none;
 		background: none;
 		font: inherit;
 		color: #2271b1;
 		cursor: pointer;
 		text-align: start;
+		overflow: hidden;
+		padding: 8px;
 	}
 
 	th.sortable .list-table-sort-button:focus-visible,

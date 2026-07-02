@@ -359,8 +359,10 @@ export const SnippetsListTable: React.FC = () => {
 
 	return (
 		<>
-			<SnippetStatusCounts />
-			<SearchBox />
+			<div className="snippets-table-toolbar">
+				<SnippetStatusCounts />
+				<SearchBox />
+			</div>
 
 			<p className="screen-reader-text" role="status" aria-live="polite">
 				{sprintf(
