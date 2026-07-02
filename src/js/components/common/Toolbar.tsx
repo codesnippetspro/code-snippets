@@ -20,7 +20,7 @@ interface NavLink {
 	subpage?: typeof SUBPAGES[number]
 }
 
-const UPPER_NAV_LINKS: NavLink[] = [
+const UPPER_NAV_LINKS: readonly NavLink[] = [
 	{
 		name: 'docs',
 		url: 'https://codesnippets.pro/docs',
@@ -41,20 +41,13 @@ const UPPER_NAV_LINKS: NavLink[] = [
 	}
 ]
 
-const LOWER_NAV_LINKS: NavLink[] = [
+const LOWER_NAV_LINKS = [
 	{
 		name: 'snippets',
 		url: window.CODE_SNIPPETS?.urls.manage,
 		label: __('Snippets', 'code-snippets'),
 		icon: <SnippetsIcon aria-hidden="true" />,
 		pageSlug: 'snippets'
-	},
-	{
-		name: 'blueprints',
-		label: __('Blueprints', 'code-snippets'),
-		icon: <BlueprintIcon />,
-		pro: true,
-		subpage: 'blueprints'
 	},
 	{
 		name: 'cloud-community',
@@ -68,6 +61,13 @@ const LOWER_NAV_LINKS: NavLink[] = [
 		icon: <LibraryIcon aria-hidden="true" />,
 		pro: true,
 		subpage: 'cloud-library'
+	},
+	{
+		name: 'blueprints',
+		label: __('Blueprints', 'code-snippets'),
+		icon: <BlueprintIcon />,
+		pro: true,
+		subpage: 'blueprints'
 	},
 	{
 		name: 'settings',
@@ -105,10 +105,10 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 						>
 							{link.label}
 						</a>
-					</li>
-				)}
-				{shouldShowUpsell()
-					? <li>
+					</li>)}
+
+				{shouldShowUpsell() && (
+					<li>
 						<a
 							className="button button-large button-secondary"
 							href="https://codesnippets.pro/pricing/"
@@ -120,8 +120,7 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 						>
 							{__('Upgrade to Pro', 'code-snippets')}
 						</a>
-					</li>
-					: null}
+					</li>)}
 			</ul>
 		</nav>
 	</div>
