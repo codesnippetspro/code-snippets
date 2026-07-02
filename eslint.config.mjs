@@ -8,6 +8,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import importPlugin from 'eslint-plugin-import'
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
 import reactPlugin from 'eslint-plugin-react'
+import svgPlugin from 'eslint-plugin-svg-jsx'
 import { FlatCompat } from '@eslint/eslintrc'
 
 const compat = new FlatCompat({
@@ -47,18 +48,8 @@ export default eslintTs.config(
 		},
 		plugins: {
 			'@stylistic': stylistic,
-			'react': reactPlugin
-		},
-		settings: {
-			'react': {
-				version: 'detect'
-			},
-			'import/resolver': {
-				typescript: {
-					alwaysTryTypes: true,
-					project: './tsconfig.json',
-				}
-			}
+			'react': reactPlugin,
+			'svg-jsx': svgPlugin
 		},
 		rules: {
 			'@stylistic/array-bracket-newline': ['error', 'consistent'],
@@ -152,7 +143,21 @@ export default eslintTs.config(
 			'jsx-a11y/no-static-element-interactions': 'error',
 			'jsx-a11y/role-has-required-aria-props': 'error',
 			'jsx-a11y/role-supports-aria-props': 'error',
-			'jsx-a11y/tabindex-no-positive': 'error'
+			'jsx-a11y/tabindex-no-positive': 'error',
+			'svg-jsx/camel-case-dash': 'error',
+			'svg-jsx/camel-case-colon': 'error',
+			'svg-jsx/no-style-string': 'error',
+		},
+		settings: {
+			'react': {
+				version: 'detect'
+			},
+			'import/resolver': {
+				typescript: {
+					alwaysTryTypes: true,
+					project: './tsconfig.json',
+				}
+			}
 		}
 	},
 	{
