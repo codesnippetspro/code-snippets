@@ -6,7 +6,6 @@ use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Cloud_Snippet;
 use Code_Snippets\Model\Cloud_Snippets;
 use WP_REST_Request;
-use function Code_Snippets\Utils\get_snippets_per_page;
 use function Code_Snippets\Utils\unpack_response_body;
 
 /**
@@ -65,7 +64,7 @@ class Cloud_Public_Client {
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */
-	public function fetch_search_results( string $search_method, string $search, int $page, int $per_page, array $filters ): Cloud_Snippets {
+	public function fetch_search_results( string $search_method, string $search, int $page, int $per_page, array $filters ): ?Cloud_Snippets {
 		$params = [
 			's_method'   => $search_method,
 			's'          => $search,
@@ -136,9 +135,9 @@ class Cloud_Public_Client {
 	 * @param int                  $per_page Results per page.
 	 * @param array<string,string> $filters  Optional filters: category, type, status.
 	 *
-	 * @return Cloud_Snippets Featured snippets, or an empty result on failure.
+	 * @return Cloud_Snippets|null Featured snippets, or an empty result on failure.
 	 */
-	public function get_featured_snippets( int $page, int $per_page, array $filters ): Cloud_Snippets {
+	public function get_featured_snippets( int $page, int $per_page, array $filters ): ?Cloud_Snippets {
 		$params = [
 			'page'     => max( 0, $page - 1 ),
 			'per_page' => min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) ),

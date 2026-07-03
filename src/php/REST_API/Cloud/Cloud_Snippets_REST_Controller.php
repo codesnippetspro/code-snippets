@@ -5,6 +5,7 @@ namespace Code_Snippets\REST_API\Cloud;
 use Code_Snippets\Admin\Menus\Manage_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\REST_API\REST_Collection_Controller;
+use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -208,9 +209,9 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 *
 	 * @param WP_REST_Request $request The request object containing the search parameters.
 	 *
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_items( $request ): WP_REST_Response {
+	public function get_items( $request ) {
 		$method = $request->get_param( 'searchByCodevault' ) ? 'codevault' : 'term';
 		$query = $request->get_param( 'query' ) ?? '';
 
@@ -218,9 +219,16 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 		$per_page = intval( $request->get_param( 'per_page' ) ?? Manage_Menu::get_cloud_search_per_page() );
 		$filters = $this->extract_filters( $request );
 
-		return $this->search_controller
-			->fetch_search_results( $method, $query, $page, $per_page, $filters )
-			->to_rest_response();
+		$snippets = $this->search_controller
+			->fetch_search_results( $method, $query, $page, $per_page, $filters );
+
+		return $snippets
+			? rest_ensure_response( $snippets->to_rest_response() )
+			: new WP_Error(
+				'code_snippets_get_snippets_failure',
+				esc_html__( 'Could not fetch snippets.', 'code-snippets' ),
+				[ 'status' => 500 ]
+			);
 	}
 
 	/**
@@ -228,16 +236,22 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 *
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_featured_items( WP_REST_Request $request ): WP_REST_Response {
+	public function get_featured_items( WP_REST_Request $request ) {
 		$page = max( 1, intval( $request->get_param( 'page' ) ) );
 		$per_page = intval( $request->get_param( 'per_page' ) ?? Manage_Menu::get_snippets_per_page() );
 		$filters = $this->extract_filters( $request );
 
-		return $this->search_controller
-			->get_featured_snippets( $page, $per_page, $filters )
-			->to_rest_response();
+		$snippets = $this->search_controller->get_featured_snippets( $page, $per_page, $filters );
+
+		return $snippets
+			? rest_ensure_response( $snippets->to_rest_response() )
+			: new WP_Error(
+				'code_snippets_featured_snippets_failure',
+				esc_html__( 'Could not fetch featured snippets.', 'code-snippets' ),
+				[ 'status' => 500 ]
+			);
 	}
 
 	/**
@@ -245,13 +259,34 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 *
 	 * @param WP_REST_Request $request The request object containing the search parameters.
 	 *
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
-	public function create_item( $request ): WP_REST_Response {
+	public function create_item( $request ) {
 		$id = $request->get_param( 'id' );
-
 		$cloud_snippet = $this->search_controller->get_cloud_snippet( $id );
-		return rest_ensure_response( $this->search_controller->download_snippet_from_cloud( $cloud_snippet ) );
+
+		if ( ! $cloud_snippet ) {
+			return new WP_Error(
+				'code_snippets_cloud_snippet_not_found',
+				esc_html__( 'Cloud snippet not found.', 'code-snippets' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		$local_snippet = $this->search_controller->download_snippet_from_cloud( $cloud_snippet );
+
+		return $local_snippet
+			? rest_ensure_response(
+				[
+					'success'    => true,
+					'snippet_id' => $local_snippet->id,
+				]
+			)
+			: new WP_Error(
+				'code_snippets_cloud_snippet_download_failed',
+				esc_html__( 'Failed to create new snippet.', 'code-snippets' ),
+				[ 'status' => 500 ]
+			);
 	}
 
 	/**

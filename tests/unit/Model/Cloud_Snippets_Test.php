@@ -136,20 +136,23 @@ class Cloud_Snippets_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Null and empty payloads fall back to the default values.
+	 * Empty payloads result in null.
 	 *
 	 * @return void
 	 */
 	public function test_empty_input_uses_defaults(): void {
-		foreach ( [ null, [] ] as $input ) {
-			$result = Cloud_Snippets::unpack_api_response( $input );
+		$result = Cloud_Snippets::unpack_api_response( [] );
+		$this->assertNull( $result );
+	}
 
-			$this->assertCount( 0, $result->snippets );
-			$this->assertSame( 0, $result->total_snippets );
-			$this->assertSame( 0, $result->total_pages );
-			$this->assertSame( 0, $result->page );
-			$this->assertSame( [], $result->available_filters );
-		}
+	/**
+	 * Passing null results in a null result.
+	 *
+	 * @return void
+	 */
+	public function test_null_input_returns_null(): void {
+		$result = Cloud_Snippets::unpack_api_response( null );
+		$this->assertNull( $result );
 	}
 
 	/**

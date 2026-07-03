@@ -24,6 +24,7 @@
     "watch": "webpack --watch",
     "bundle": "ts-node scripts/bundle.ts",
     "lint": "npm run lint:styles && npm run lint:js && npm run lint:php",
+    "lint:fix": "npm run lint:styles:fix && npm run lint:js:fix && npm run lint:php:fix",
     "lint:styles": "stylelint 'src/css/**/*.scss'",
     "lint:styles:fix": "stylelint --fix 'src/css/**/*.scss'",
     "lint:js": "eslint .",

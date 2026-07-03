@@ -239,22 +239,19 @@ class Cloud_Search_Controller_Featured_Test extends UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_returns_empty_on_http_error(): void {
+	public function test_returns_null_on_http_error(): void {
 		$this->mock_response = new WP_Error( 'http_request_failed', 'Connection refused' );
 
 		$result = self::make_controller()->get_featured_snippets();
-
-		$this->assertInstanceOf( Cloud_Snippets::class, $result );
-		$this->assertCount( 0, $result->snippets );
-		$this->assertSame( 0, $result->total_snippets );
+		$this->assertNull( $result );
 	}
 
 	/**
-	 * An invalid JSON response returns an empty Cloud_Snippets.
+	 * An invalid JSON response returns null.
 	 *
 	 * @return void
 	 */
-	public function test_returns_empty_on_invalid_json(): void {
+	public function test_returns_null_on_invalid_json(): void {
 		$this->mock_response = [
 			'headers'  => [],
 			'body'     => 'not json',
@@ -267,16 +264,15 @@ class Cloud_Search_Controller_Featured_Test extends UnitTestCase {
 
 		$result = self::make_controller()->get_featured_snippets();
 
-		$this->assertInstanceOf( Cloud_Snippets::class, $result );
-		$this->assertCount( 0, $result->snippets );
+		$this->assertNull( $result );
 	}
 
 	/**
-	 * An empty body returns an empty Cloud_Snippets.
+	 * An empty body returns null.
 	 *
 	 * @return void
 	 */
-	public function test_returns_empty_on_empty_body(): void {
+	public function test_returns_null_on_empty_body(): void {
 		$this->mock_response = [
 			'headers'  => [],
 			'body'     => '',
@@ -288,9 +284,7 @@ class Cloud_Search_Controller_Featured_Test extends UnitTestCase {
 		];
 
 		$result = self::make_controller()->get_featured_snippets();
-
-		$this->assertInstanceOf( Cloud_Snippets::class, $result );
-		$this->assertCount( 0, $result->snippets );
+		$this->assertNull( $result );
 	}
 
 	/**

@@ -83,7 +83,7 @@ class Cloud_Search_Controller {
 	 *
 	 * @return Cloud_Snippet Retrieved snippet.
 	 */
-	public function get_cloud_snippet( int $cloud_id ): Cloud_Snippet {
+	public function get_cloud_snippet( int $cloud_id ): ?Cloud_Snippet {
 		return $this->client->get_cloud_snippet( $cloud_id );
 	}
 
@@ -98,7 +98,7 @@ class Cloud_Search_Controller {
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */
-	public function fetch_search_results( string $search_method, string $search, int $page = 1, int $per_page = 10, array $filters = [] ): Cloud_Snippets {
+	public function fetch_search_results( string $search_method, string $search, int $page = 1, int $per_page = 10, array $filters = [] ): ?Cloud_Snippets {
 		$per_page = min( self::MAX_RESULTS_PER_PAGE, $per_page );
 
 		return $this->client->fetch_search_results( $search_method, $search, $page, $per_page, $filters );
@@ -107,11 +107,11 @@ class Cloud_Search_Controller {
 	/**
 	 * Download a snippet from the cloud.
 	 *
-	 * @param Cloud_Snippet $cloud_snippet The snippet to be downloaded.
+	 * @param Cloud_Snippet $cloud_snippet The cloud snippet to be downloaded.
 	 *
-	 * @return array The result of the download.
+	 * @return Snippet The newly-created local snippet.
 	 */
-	public function download_snippet_from_cloud( Cloud_Snippet $cloud_snippet ): array {
+	public function download_snippet_from_cloud( Cloud_Snippet $cloud_snippet ): ?Snippet {
 		$snippet = new Snippet( $cloud_snippet );
 
 		// Set the snippet id to 0 to ensure that the snippet is saved as a new snippet.
@@ -122,12 +122,7 @@ class Cloud_Search_Controller {
 		$snippet->desc = $cloud_snippet->description ?? '';
 
 		// Save the snippet to the database.
-		$new_snippet = save_snippet( $snippet );
-
-		return [
-			'success'    => true,
-			'snippet_id' => $new_snippet->id,
-		];
+		return save_snippet( $snippet );
 	}
 
 	/**
@@ -162,7 +157,7 @@ class Cloud_Search_Controller {
 	 *
 	 * @return Cloud_Snippets Featured snippets, or an empty result on failure.
 	 */
-	public function get_featured_snippets( int $page = 1, int $per_page = 10, array $filters = [] ): Cloud_Snippets {
+	public function get_featured_snippets( int $page = 1, int $per_page = 10, array $filters = [] ): ?Cloud_Snippets {
 		$cache_key = self::build_featured_cache_key( $page, $per_page, $filters );
 
 		$cached = get_transient( $cache_key );
@@ -174,7 +169,10 @@ class Cloud_Search_Controller {
 		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
 		$result = $this->client->get_featured_snippets( $page, $per_page, $filters );
 
-		set_transient( $cache_key, $result, self::FEATURED_MIN_TTL );
+		if ( $result ) {
+			set_transient( $cache_key, $result, self::FEATURED_MIN_TTL );
+		}
+
 		return $result;
 	}
 }

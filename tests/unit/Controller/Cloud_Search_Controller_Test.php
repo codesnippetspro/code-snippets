@@ -208,17 +208,15 @@ class Cloud_Search_Controller_Test extends UnitTestCase {
 	}
 
 	/**
-	 * A transport error returns an empty result rather than failing.
+	 * A transport error returns null rather than failing.
 	 *
 	 * @return void
 	 */
-	public function test_returns_empty_on_http_error(): void {
+	public function test_returns_null_on_http_error(): void {
 		$this->mock_response = new WP_Error( 'http_request_failed', 'Operation timed out' );
 
 		$result = self::make_controller()->fetch_search_results( 'term', 'woo' );
-
-		$this->assertCount( 0, $result->snippets );
-		$this->assertSame( 0, $result->total_snippets );
+		$this->assertNull( $result );
 	}
 
 	/**
@@ -226,7 +224,7 @@ class Cloud_Search_Controller_Test extends UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_returns_empty_on_invalid_json(): void {
+	public function test_returns_null_on_invalid_json(): void {
 		$this->mock_response = [
 			'headers'  => [],
 			'body'     => 'not-json',
@@ -238,8 +236,7 @@ class Cloud_Search_Controller_Test extends UnitTestCase {
 		];
 
 		$result = self::make_controller()->fetch_search_results( 'term', 'woo' );
-
-		$this->assertCount( 0, $result->snippets );
+		$this->assertNull( $result );
 	}
 
 	/**
