@@ -1,5 +1,8 @@
-import React, { Fragment, useEffect, useMemo } from 'react'
-import { fetchConstQueryParam } from '../../utils/urls'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import { __ } from '@wordpress/i18n'
+import { createInterpolateElement } from '@wordpress/element'
+import { fetchConstQueryParam, fetchQueryParam, updateQueryParams } from '../../utils/urls'
+import { DismissibleNotice } from '../common/Notice'
 import { SUBPAGES, Toolbar } from '../common/Toolbar'
 import { CommunityCloud } from './CommunityCloud/CommunityCloud'
 import { SnippetsTable } from './SnippetsTable'
@@ -18,6 +21,34 @@ const repositionTableOptionsSettings = () => {
 	if (screenOptionsForm && tableOptions && columns) {
 		screenOptionsForm.insertBefore(tableOptions, columns)
 	}
+}
+
+const getNoticeText = (result: string) => {
+	switch (result) {
+		case 'deleted':
+			return __('Snippet <strong>deleted</strong>.', 'code-snippets')
+
+		default:
+			return undefined
+	}
+}
+
+const PageNotices = () => {
+	const [noticeText, setNoticeText] = useState(() => {
+		const result = fetchQueryParam('result')
+		updateQueryParams({ result: undefined })
+		return result && getNoticeText(result)
+	})
+
+	return noticeText
+		? <DismissibleNotice
+			onDismiss={() => {
+				setNoticeText(undefined)
+			}}
+			type="success">
+			<p>{createInterpolateElement(noticeText, { strong: <strong /> })}</p>
+		</DismissibleNotice>
+		: null
 }
 
 interface PageContentParams {
@@ -51,6 +82,7 @@ export const ManageMenu = () => {
 	return (
 		<>
 			<Toolbar />
+			<PageNotices />
 			<PageContent subpage={subpage} />
 		</>
 	)

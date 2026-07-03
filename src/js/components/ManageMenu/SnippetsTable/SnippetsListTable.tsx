@@ -328,7 +328,7 @@ const useApplyBulkAction = (
 			case 'trash':
 			case 'delete':
 				await applyAndRefresh(
-					allSnippets.filter(snippet => selected.has(snippet.id) && snippet.trashed),
+					allSnippets.filter(snippet => selected.has(snippet.id)),
 					snippet => api.delete({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 				break
@@ -337,12 +337,15 @@ const useApplyBulkAction = (
 }
 
 const getRowClassName = (snippet: Snippet, activeByCondition: Map<Snippet['id'], Snippet[]>): string =>
-	[
+	classnames(
 		'snippet',
 		`snippet ${isSnippetActive(snippet, activeByCondition) ? 'active' : 'inactive'}-snippet`,
 		`${getSnippetType(snippet)}-snippet`,
-		`${snippet.scope}-snippet`
-	].join(' ')
+		`${snippet.scope}-snippet`,
+		{
+			'trashed-snippet': snippet.trashed
+		}
+	)
 
 export const SnippetsListTable: React.FC = () => {
 	const { snippetsByStatus, activeByCondition } = useFilteredSnippets()

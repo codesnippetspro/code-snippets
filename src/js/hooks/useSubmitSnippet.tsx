@@ -18,7 +18,7 @@ const snippetMessages = {
 	updatedDeactivated: __('Snippet <strong>updated</strong> and <strong>deactivated</strong>'),
 	updatedExecuted: __('Snippet <strong>updated</strong> and <strong>executed</strong>.', 'code-snippets'),
 	failedCreate: __('Could not create snippet.', 'code-snippets'),
-	failedUpdate: __('Could not update snippet.', 'code-snippets')
+	failedUpdate: __('Could not update snippet.', 'code-snippets'),
 } as const
 
 const conditionCreated = __('Condition <strong>created</strong>.', 'code-snippets')
