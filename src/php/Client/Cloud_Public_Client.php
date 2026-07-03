@@ -88,10 +88,7 @@ class Cloud_Public_Client {
 			[ 'timeout' => self::SEARCH_REQUEST_TIMEOUT ]
 		);
 
-		$results = Cloud_Snippets::unpack_api_response( unpack_response_body( $response ) );
-		$results->page = $page;
-
-		return $results;
+		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ), $page );
 	}
 
 	/**
@@ -158,9 +155,6 @@ class Cloud_Public_Client {
 			[ 'headers' => $this->connection->get_request_headers() ]
 		);
 
-		$result = Cloud_Snippets::unpack_api_response( unpack_response_body( $response ) );
-		$result->page = $page;
-
-		return $result;
+		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ) );
 	}
 }

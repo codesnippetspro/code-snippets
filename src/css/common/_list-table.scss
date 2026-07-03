@@ -49,6 +49,10 @@
 		list-style: disc;
 	}
 
+	.sortable-column-title {
+		display: flex;
+	}
+
 	th.sortable .list-table-sort-button,
 	th.sorted .list-table-sort-button {
 		display: flex;
@@ -184,6 +188,7 @@
 
 		td.column-desc .snippet-description-content {
 			max-inline-size: min(25rem, 45vw);
+			overflow: clip;
 		}
 	}
 }

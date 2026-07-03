@@ -140,7 +140,7 @@ export const TableNav = <K extends Key, A extends string>({
 	extraTableNav || 0 < totalItems && actions
 		? <div className={`tablenav ${which}`}>
 
-			{0 < totalItems && actions && (
+			{0 < totalItems && actions && doAction && (
 				<BulkActions
 					which={which}
 					actions={actions}

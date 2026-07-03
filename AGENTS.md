@@ -1,6 +1,7 @@
 # Code Snippets
 
-This file is the single source of truth for project standards, coding conventions, and development workflows in this repository. All contributors — human or automated — should follow these rules.
+This file is the single source of truth for project standards, coding conventions, and development workflows in this
+repository. All contributors — human or automated — should follow these rules.
 
 Tool-specific configuration lives in dedicated locations:
 
@@ -12,7 +13,9 @@ Tool-specific configuration lives in dedicated locations:
 
 ## Project Overview
 
-**Code Snippets** is a WordPress plugin that lets site owners manage and execute PHP, HTML, CSS, and JavaScript code snippets through a graphical interface — replacing the need to edit `functions.php` or maintain multiple single-purpose plugins.
+**Code Snippets** is a WordPress plugin that lets site owners manage and execute PHP, HTML, CSS, and JavaScript code
+snippets through a graphical interface — replacing the need to edit `functions.php` or maintain multiple single-purpose
+plugins.
 
 ---
 
@@ -20,35 +23,38 @@ Tool-specific configuration lives in dedicated locations:
 
 ```
 <root>/
-├── src/                   # Shipped plugin root
-│   ├── code-snippets.php  # Plugin bootstrap
-│   ├── php/               # PHP application code (PSR-4: Code_Snippets\)
-│   │   ├── Plugin.php     # Main orchestrator
-│   │   ├── Admin/         # Admin UI, menus
-│   │   ├── Core/          # Bootstrap, safe mode
-│   │   ├── REST_API/      # REST endpoint controllers
-│   │   ├── Model/         # Snippet data model
-│   │   ├── Flat_Files/    # File-based snippet storage
-│   │   ├── Integration/   # Third-party integrations
-│   │   ├── Migration/     # Data migration logic
-│   │   ├── Settings/      # Plugin settings
-│   │   └── Utils/         # Shared utilities
-│   ├── js/                # TypeScript / React source
-│   │   ├── entries/       # Webpack entrypoints
-│   │   ├── components/    # Feature-grouped React UI
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── services/      # API service layer
-│   │   ├── types/         # TypeScript type definitions
-│   │   └── utils/         # JS utilities
-│   ├── css/               # SCSS source files
-│   ├── dist/              # Webpack output (built assets, not committed)
-│   ├── vendor/            # Composer dependencies
-│   └── composer.json      # PHP dependency management
-├── config/                # Webpack and PostCSS configuration
-├── scripts/               # Release, versioning, and linter scripts
-├── tests/                 # PHPUnit suites, Playwright E2E specs
-├── assets/                # WordPress.org screenshots, icons, and banners
-└── .github/               # CI workflows, issue templates, Copilot instructions
+├── src/                    # Shipped plugin root
+│   ├── code-snippets.php   # Plugin bootstrap
+│   ├── php/                # PHP application code (PSR-4: Code_Snippets\)
+│   │   ├── Plugin.php      # Main orchestrator
+│   │   ├── Admin/          # Admin UI, menus
+│   │   ├── Client/         # Cloud API clients
+│   │   ├── Controller/     # Cloud/search controllers
+│   │   ├── Core/           # Bootstrap, safe mode
+│   │   ├── REST_API/       # REST endpoint controllers
+│   │   ├── Model/          # Snippet and cloud data models
+│   │   ├── Flat_Files/     # File-based snippet storage
+│   │   ├── Integration/    # Third-party integrations
+│   │   ├── Migration/      # Data migration logic
+│   │   ├── Settings/       # Plugin settings
+│   │   ├── Utils/          # Shared utilities
+│   │   ├── snippet-ops.php # Snippet operations API
+│   ├── js/                 # TypeScript / React source
+│   │   ├── entries/        # Webpack entrypoints
+│   │   ├── components/     # Feature-grouped React UI
+│   │   ├── hooks/          # Custom React hooks
+│   │   ├── services/       # API service layer
+│   │   ├── types/          # TypeScript type definitions
+│   │   └── utils/          # JS utilities
+│   ├── css/                # SCSS source files
+│   ├── dist/               # Webpack output (built assets, not committed)
+│   ├── vendor/             # Composer dependencies
+│   └── composer.json       # PHP dependency management
+├── config/                 # Webpack and PostCSS configuration
+├── scripts/                # Release, versioning, and linter scripts
+├── tests/                  # PHPUnit suites, Playwright E2E specs
+├── assets/                 # WordPress.org screenshots, icons, and banners
+└── .github/                # CI workflows, issue templates, Copilot instructions
 ```
 
 ---
@@ -80,13 +86,17 @@ Tool-specific configuration lives in dedicated locations:
 - `strict_types=1` is not enforced project-wide — match the style of the file being edited.
 - Keep lines under 120 characters for PHP; 100 for JS/TS.
 - All user-visible strings must be wrapped in a WordPress i18n function with the text domain `code-snippets`.
-- Use `__()`, `_e()`, `esc_html__()`, `esc_attr__()`, `_x()`, `_n()` as appropriate — never echo raw translatable strings.
-- Do not load translations before `init` or `plugins_loaded`.
+- Use `__()`, `_e()`, `esc_html__()`, `esc_attr__()`, `_x()`, `_n()` as appropriate — never echo raw translatable
+  strings.
+- Use the actual ellipsis character (`…`) instead of three periods (`...`) in user-facing strings.
 
 ### Code Comments
 
-- A comment must state a current constraint or behaviour the code itself cannot show — written for the next reader, not the reviewer.
-- Do not write comments that narrate what the next line does, justify why a change is correct, or argue with the previous implementation ("not a no-op", "this used to…", "fixes the bug where…"). History belongs in the commit message.
+- A comment must state a current constraint or behaviour the code itself cannot show — written for the next reader, not
+  the reviewer.
+- Do not write comments that narrate what the next line does, justify why a change is correct, or argue with the
+  previous implementation ("not a no-op", "this used to…", "fixes the bug where…"). History belongs in the commit
+  message.
 - Match the comment density and tone of the surrounding file; when in doubt, omit the comment.
 
 ### PHP
@@ -96,27 +106,56 @@ Tool-specific configuration lives in dedicated locations:
 - Guard direct execution at the top of every standalone file: `defined('ABSPATH') || exit;`
 - Use `wp_die()` for fatal admin errors; never `die()` or `exit` with user-facing output.
 - In `src/php/Plugin.php` (and Core bootstrap), rely on `autoload.php`; avoid manual `require_once` chains.
-- Avoid creating custom database tables. Prefer WordPress-native storage: `wp_options` for settings/flags, transients for cached/temporary data, or hidden custom post types for structured content. Custom tables require manual schema management, migration, and uninstall logic — only justify them when native storage genuinely cannot meet the requirement.
+- Avoid creating custom database tables. Prefer WordPress-native storage: `wp_options` for settings/flags, transients
+  for cached/temporary data, or hidden custom post types for structured content. Custom tables require manual schema
+  management, migration, and uninstall logic — only justify them when native storage genuinely cannot meet the
+  requirement.
+- Do not create new instances of `_Controller` classes outside of `Plugin` – reuse the existing instances stored as
+  class properties of `Plugin`.
 
 ### TypeScript / React
 
-- Export types that appear in exported function signatures — do not leak unexported shapes.
-- Use `@wordpress/api-fetch` or the service layer in `src/js/services/` for all WP REST calls.
-- Prefer `@wordpress/components` for UI; avoid reimplementing existing WP admin patterns.
+- **Exports**: Export types that appear in exported function signatures — do not leak unexported shapes.
+- **API calls**: Use the `useRestAPI` context for all WP REST calls.
+- **UI components**: Prefer `@wordpress/components` for UI; avoid reimplementing existing WP admin patterns.
+- **Parameter objects**: For functions with 3+ parameters, use a typed parameter object instead of positional
+  parameters.
+- **Imports**: Keep imports alphabetically sorted within their groups (third-party, local, relative).
+- **Declarative patterns**: Write React in a declarative style—prefer state + conditional rendering over imperative DOM
+  manipulation.
+    - Avoid `useEffect` chains for cascading state updates; use `useMemo` to derive state instead.
+    - Prefer direct state updates in event handlers over using `useEffect` to synchronize multiple state values.
+    - Use controlled components for forms; keep input values in React state.
+    - Derive computed values at render-time rather than duplicating them in separate state.
+- **Component composition**: Break components into smaller, focused units. Use JSX for markup rather than
+  `createElement` in utility functions.
+- Do not create 'index.ts' barrel files for components or hooks; import them directly to avoid circular dependencies and
+  improve tree-shaking.
+- Reuse existing functions and components where possible, creating new common components under
+  `src/js/components/common` if pragmatic to do so, updating the original usages.
 
 ### SCSS
 
 - Use logical CSS properties (e.g., `margin-inline-start` not `margin-left`) — enforced by stylelint.
 
----
+### Code Organization
+
+- Keep individual source files under 300 lines to improve maintainability and testability; split larger files into
+  focused modules.
+- Maintain a direct mapping between source classes and their test files; if a test file grows large, consider whether
+  the source class can be broken into smaller concerns.
 
 ## Architecture Patterns
 
 - **PSR-4 autoloading via Composer** — class files are discovered automatically; do not `require` them manually.
-- **Imposter prefixing** — all `vendor/` code is rewritten to `Code_Snippets\Vendor\…` to prevent conflicts with other plugins using the same libraries.
-- **Snippet model** — core data unit is `Code_Snippets\Model\Snippet`; use its API for reading/writing snippet data, not raw DB access.
-- **Hook-driven extensibility** — use WordPress filters and actions as the primary extension mechanism; expose a filter before changing any default behaviour that may be preference-driven.
-- **Safe mode** — `src/php/Core/load.php` boots a recovery path when safe mode is active; any change to snippet execution must preserve this path.
+- **Imposter prefixing** — all `vendor/` code is rewritten to `Code_Snippets\Vendor\…` to prevent conflicts with other
+  plugins using the same libraries.
+- **Snippet model** — core data unit is `Code_Snippets\Model\Snippet`; use its API for reading/writing snippet data, not
+  raw DB access.
+- **Hook-driven extensibility** — use WordPress filters and actions as the primary extension mechanism; expose a filter
+  before changing any default behaviour that may be preference-driven.
+- **Safe mode** — `src/php/Core/load.php` boots a recovery path when safe mode is active; any change to snippet
+  execution must preserve this path.
 
 ---
 
@@ -198,7 +237,8 @@ Apply to every change:
 
 ## Do Not
 
-- Do not create custom database tables without strong justification — use `wp_options`, transients, or custom post types instead.
+- Do not create custom database tables without strong justification — use `wp_options`, transients, or custom post types
+  instead.
 - Do not echo raw user input — always escape at output.
 - Do not concatenate translated string fragments — translate full sentences.
 - Do not place HTML markup inside translated strings.

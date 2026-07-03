@@ -178,7 +178,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 			[
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => [ $this, 'download_item' ],
+					'callback'            => [ $this, 'create_item' ],
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'args'                => [
 						'id' => [
@@ -241,6 +241,20 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Download a single cloud snippet.
+	 *
+	 * @param WP_REST_Request $request The request object containing the search parameters.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function create_item( $request ): WP_REST_Response {
+		$id = $request->get_param( 'id' );
+
+		$cloud_snippet = $this->search_controller->get_cloud_snippet( $id );
+		return rest_ensure_response( $this->search_controller->download_snippet_from_cloud( $cloud_snippet ) );
+	}
+
+	/**
 	 * Retrieves the item's schema, conforming to JSON Schema.
 	 *
 	 * @return array
@@ -287,19 +301,5 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 		];
 
 		return $this->schema;
-	}
-
-	/**
-	 * Download a single cloud snippet.
-	 *
-	 * @param WP_REST_Request $request The request object containing the search parameters.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function download_item( WP_REST_Request $request ): WP_REST_Response {
-		$id = $request->get_param( 'id' );
-
-		$cloud_snippet = $this->search_controller->get_cloud_snippet( $id );
-		return rest_ensure_response( $this->search_controller->download_snippet_from_cloud( $cloud_snippet ) );
 	}
 }

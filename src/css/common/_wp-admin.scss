@@ -21,7 +21,7 @@
 	// are excluded so React widgets such as the tags token field are left untouched.
 	// `.snippet-priority` (the borderless list-table priority field) is excluded so it keeps
 	// its plain transparent styling rather than gaining a bordered box.
-	input[type='text']:not([class*='components-']),
+	input[type='text']:not([class*='components-'], [id^='react-select-']),
 	input[type='search']:not([class*='components-']),
 	input[type='number']:not([class*='components-'], .snippet-priority),
 	input[type='email']:not([class*='components-']),

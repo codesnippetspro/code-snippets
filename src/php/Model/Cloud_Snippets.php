@@ -108,17 +108,17 @@ class Cloud_Snippets extends Model {
 	/**
 	 * Normalize payloads returned by the cloud API into the shape expected by this class.
 	 *
-	 * @param array|null $response Response data as returned from API.
+	 * @param array|null $response    Response data as returned from API.
+	 * @param int|null   $page_number Page number requested, if applicible.
 	 *
 	 * @return Cloud_Snippets Constructed cloud snippets object from response data.
 	 */
-	public static function unpack_api_response( ?array $response ): Cloud_Snippets {
-		$result = new Cloud_Snippets();
-
+	public static function unpack_api_response( ?array $response, ?int $page_number = null ): ?Cloud_Snippets {
 		if ( ! $response ) {
-			return $result;
+			return null;
 		}
 
+		$result = new Cloud_Snippets();
 		$snippets_data = $response['snippets'] ?? $response['data'] ?? null;
 
 		if ( is_array( $snippets_data ) ) {
@@ -133,6 +133,10 @@ class Cloud_Snippets extends Model {
 
 		if ( isset( $response['meta'] ) && is_array( $response['meta'] ) ) {
 			$result->unpack_api_meta( $response['meta'] );
+		}
+
+		if ( ! is_null( $page_number ) ) {
+			$result->page = $page_number;
 		}
 
 		return $result;
