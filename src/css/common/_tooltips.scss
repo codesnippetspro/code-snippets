@@ -1,43 +1,11 @@
 $bg-color: hsl(0deg 0% 20% / 90%);
 
-.help-tooltip {
-	display: inline-flex;
-	flex-direction: column;
-	justify-content: center;
-	border-block-end: 1px dotted;
-	position: relative;
-	vertical-align: middle;
-}
-
-.help-tooltip-anchor {
-	cursor: help;
-	padding-block: 0.3em 0;
-	padding-inline: 0.3em;
-	display: inline-block;
-	font-size: 10px;
-	background: transparent !important;
-}
-
 .tooltip {
-	cursor: help !important;
 	position: relative;
 	display: inline-block;
-
-	.dashicons {
-		color: lightslategrey;
-	}
-
-	&.badge {
-		display: inline-flex;
-
-		.dashicons {
-			color: inherit;
-		}
-	}
 }
 
 .tooltip-trigger {
-	cursor: help;
 	display: inline-flex;
 	align-items: center;
 	background: transparent;
@@ -212,5 +180,26 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 .tooltip-inline.tooltip-start:focus-within {
 	&::before, .tooltip-content {
 		transform: translateX(calc(-10px * var(--cs-direction-multiplier)));
+	}
+}
+
+
+.help-tooltip {
+	cursor: help !important;
+
+	.tooltip-trigger {
+		cursor: help;
+	}
+
+	.dashicons {
+		color: lightslategrey;
+	}
+
+	&.badge {
+		display: inline-flex;
+
+		.dashicons {
+			color: inherit;
+		}
 	}
 }

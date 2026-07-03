@@ -1,6 +1,7 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSnippetsAPI } from '../../../../hooks/useSnippetsAPI'
+import { getSnippetType } from '../../../../utils/snippets/snippets'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 import { downloadSnippetExportFile } from '../../../../utils/files'
 import { Button } from '../../../common/Button'
@@ -35,6 +36,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ name, label, makeRequest })
 
 export const ExportButtons: React.FC = () => {
 	const api = useSnippetsAPI()
+	const { snippet } = useSnippetForm()
 
 	return (
 		<div className="snippet-export-buttons">
@@ -44,13 +46,12 @@ export const ExportButtons: React.FC = () => {
 				makeRequest={api.export}
 			/>
 
-			{window.CODE_SNIPPETS_EDIT?.enableDownloads
-				? <ExportButton
+			{window.CODE_SNIPPETS_EDIT?.enableDownloads && 'cond' !== getSnippetType(snippet) && (
+				<ExportButton
 					name="export_snippet_code"
 					label={__('Download Code', 'code-snippets')}
 					makeRequest={api.exportCode}
-				/>
-				: null}
+				/>)}
 		</div>
 	)
 }

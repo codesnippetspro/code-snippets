@@ -15,7 +15,12 @@
  * only native inputs/buttons rendered inside our own markup are normalised.
  */
 
-@mixin classic-controls {
+// Scope to our admin page content. We intentionally keep this to a single `.wrap` class so
+// the rules sit just above WordPress core defaults (which we must override) but below the
+// plugin's own more-specific per-control rules, which are emitted later in each bundle and so
+// win on equal specificity. This lets bespoke controls (conditions button, row-action links,
+// priority input, etc.) keep their intended styling without per-element exclusions here.
+.wrap {
 	// Native single-line text controls and selects: restore 30px height + classic border.
 	// `@wordpress/components` inputs/selects (`.components-*`) keep their own design — they
 	// are excluded so React widgets such as the tags token field are left untouched.
@@ -132,20 +137,13 @@
 		line-height: 2.1818;
 		font-size: 11px;
 	}
+}
+
+.wp-core-ui .wrap .button .dashicons {
+	color: inherit;
 
 	// WP 7.0's taller button line-height leaks onto dashicon glyphs inside buttons (e.g. the
 	// conditions badge icon), pushing them out of vertical alignment. Reset it so icons stay
 	// centred — mirrors the existing `.button svg` rule for SVG icons.
-	.button .dashicons {
-		line-height: 1;
-	}
-}
-
-// Scope to our admin page content. We intentionally keep this to a single `.wrap` class so
-// the rules sit just above WordPress core defaults (which we must override) but below the
-// plugin's own more-specific per-control rules, which are emitted later in each bundle and so
-// win on equal specificity. This lets bespoke controls (conditions button, row-action links,
-// priority input, etc.) keep their intended styling without per-element exclusions here.
-.wrap {
-	@include classic-controls;
+	line-height: 1;
 }

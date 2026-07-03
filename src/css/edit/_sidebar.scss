@@ -4,14 +4,36 @@
 	.priority-input-tooltip {
 		margin-inline-end: auto;
 	}
-	
+
 	input {
 		inline-size: 4em;
 	}
 }
 
-.activation-switch-container,
-.lock-control-container {
+.code-snippets-copy-text.button {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+
+	.dashicons {
+		block-size: 18px;
+		inline-size: 18px;
+		font-size: 18px;
+	}
+
+	.spinner-wrapper {
+		block-size: 18px;
+		inline-size: 18px;
+		display: flex;
+		align-items: center;
+	}
+
+	.components-spinner {
+		block-size: 12px;
+	}
+}
+
+.activation-switch-container {
 	inline-size: 100%;
 	display: flex;
 	flex-flow: row;
@@ -33,8 +55,34 @@
 		block-size: 48px;
 	}
 
-	.row-actions {
+	.box {
+		background-color: #fff;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 1.5em;
 		display: flex;
+		flex-flow: column;
+		gap: 1em;
+
+		.inline-form-field {
+			display: flex;
+			flex-flow: row wrap;
+			justify-content: space-between;
+			align-items: center;
+			gap: 5px;
+		}
+
+		.block-form-field {
+			display: flex;
+			flex-flow: column;
+			gap: 4px;
+
+		}
+	}
+
+	.inline-form-field.row-actions {
+		display: flex;
+		gap: 0;
 
 		// Row-action buttons render as plain inline links. Neutralise the generic `.button`
 		// WP 7.0 compatibility styling (fill/border/radius/40px height) here — emitted after
@@ -44,17 +92,29 @@
 			min-block-size: theme.$control-height;
 			padding-block: 0;
 			padding-inline: 10px;
-			border: 0;
-			border-radius: 0;
-			background: none;
-			box-shadow: none;
 			font-weight: 400;
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
 
-			&:hover:not(:disabled),
-			&:focus:not(:disabled) {
-				background: none;
+			.dashicons {
+				color: inherit;
+				line-height: 1;
+				vertical-align: text-bottom;
+			}
+
+			&:not(.snippet-lock-button) {
 				border: 0;
+				border-radius: 0;
+				background: none;
 				box-shadow: none;
+
+				&:hover:not(:disabled),
+				&:focus:not(:disabled) {
+					background: none;
+					border: 0;
+					box-shadow: none;
+				}
 			}
 		}
 
@@ -81,44 +141,6 @@
 	.help-tooltip {
 		margin-block: 0;
 		margin-inline: 5px auto;
-	}
-
-	.box {
-		background-color: #fff;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		padding: 1.5em;
-		display: flex;
-		flex-flow: column;
-		gap: 1em;
-
-		.inline-form-field {
-			display: flex;
-			flex-flow: row wrap;
-			justify-content: space-between;
-			align-items: center;
-			gap: 5px;
-
-			&.lock-control-container {
-				border-block-start: 1px solid #eee;
-				padding-block-start: 1em;
-				margin-block-start: 0.5em;
-
-				.description {
-					flex-basis: 100%;
-					margin-block-start: 4px;
-					color: #646970;
-					font-style: italic;
-				}
-			}
-		}
-
-		.block-form-field {
-			display: flex;
-			flex-flow: column;
-			gap: 4px;
-
-		}
 	}
 
 	label {
@@ -161,28 +183,5 @@ p.submit {
 		background: transparent;
 		padding-inline: 0.5em;
 		text-indent: -0.5em;
-	}
-}
-
-.code-snippets-copy-text.button {
-	display: flex;
-	align-items: center;
-	gap: 3px;
-
-	.dashicons {
-		block-size: 18px;
-		inline-size: 18px;
-		font-size: 18px;
-	}
-
-	.spinner-wrapper {
-		block-size: 18px;
-		inline-size: 18px;
-		display: flex;
-		align-items: center;
-	}
-
-	.components-spinner {
-		block-size: 12px;
 	}
 }

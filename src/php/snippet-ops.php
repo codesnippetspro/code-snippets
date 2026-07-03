@@ -98,13 +98,13 @@ function clean_snippets_cache( string $table_name ) {
  *
  * @since 2.0
  */
-function get_snippets( array $ids = array(), ?bool $network = null ): array {
+function get_snippets( array $ids = [], ?bool $network = null ): array {
 	global $wpdb;
 
 	// If only one ID has been passed in, defer to the get_snippet() function.
 	$ids_count = count( $ids );
 	if ( 1 === $ids_count ) {
-		return array( get_snippet( $ids[0], $network ) );
+		return [ get_snippet( $ids[0], $network ) ];
 	}
 
 	$network = DB::validate_network_param( $network );

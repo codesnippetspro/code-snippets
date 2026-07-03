@@ -15,11 +15,17 @@ export interface TooltipProps {
 	label?: string
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({ block, inline, start, end, icon, className, children, label }) => {
+export const Tooltip: React.FC<TooltipProps> = ({
+	block, inline, start, end,
+	icon,
+	className,
+	children,
+	label
+}) => {
 	const tooltipId = useId()
 	return (
 		<div className={classnames(
-			'tooltip',
+			'tooltip help-tooltip',
 			{ 'tooltip-block': block, 'tooltip-inline': inline, 'tooltip-start': start, 'tooltip-end': end },
 			className
 		)}>

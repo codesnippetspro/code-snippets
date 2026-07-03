@@ -1,7 +1,8 @@
 import React from 'react'
+import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { useSnippetsAPI } from '../../../../hooks/useSnippetsAPI'
-import { Tooltip } from '../../../common/Tooltip'
+import { TooltipButton } from '../../../common/TooltipButton'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 
 export const LockControl: React.FC = () => {
@@ -9,8 +10,8 @@ export const LockControl: React.FC = () => {
 	const { update } = useSnippetsAPI()
 
 	const handleToggle = () => {
-		setSnippet(previous => ({ ...previous, locked: !previous.locked }))
 		setIsWorking(true)
+		setSnippet(previous => ({ ...previous, locked: !previous.locked }))
 
 		update({ id: snippet.id, network: snippet.network, locked: !snippet.locked })
 			.then(result => {
@@ -25,28 +26,22 @@ export const LockControl: React.FC = () => {
 	}
 
 	return (
-		<div className="inline-form-field lock-control-container">
-			<label htmlFor="snippet-lock" id="snippet-lock-label">
-				{__('Lock snippet', 'code-snippets')}
-			</label>
-
-			<Tooltip block end>
-				{__('Mark this snippet as read-only to prevent accidental changes or deletion.', 'code-snippets')}
-			</Tooltip>
-
-			<span className="lock-status-text">
-				{snippet.locked ? __('Locked', 'code-snippets') : __('Unlocked', 'code-snippets')}
-			</span>
-
-			<input
-				id="snippet-lock"
-				type="checkbox"
-				checked={snippet.locked}
+		<div className={classnames('snippet-lock-control', { 'tooltip tooltip-block tooltip-end': !isWorking })}>
+			<TooltipButton
+				small block end
+				primary={snippet.locked}
+				className="snippet-lock-button"
+				containerClassName="snippet-lock-control"
 				disabled={isWorking}
-				className="switch"
-				onChange={handleToggle}
-				aria-labelledby="snippet-lock-label"
-			/>
+				onClick={handleToggle}
+				tooltip={snippet.locked
+					? __('Unlock this snippet to allow editing and deletion.', 'code-snippets')
+					: __('Mark this snippet as read-only to prevent accidental changes or deletion.', 'code-snippets')}
+			>
+				{snippet.locked
+					? <span className="dashicons dashicons-unlock" aria-hidden="true" />
+					: <span className="dashicons dashicons-lock" aria-hidden="true" />}
+			</TooltipButton>
 		</div>
 	)
 }
