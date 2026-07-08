@@ -48,7 +48,8 @@ const TableCell = <T, >({ item, column }: TableCellProps<T>) => {
 }
 
 export interface TableRowsProps<T, K extends Key>
-	extends Pick<ListTableRowsProps<T, K>, 'items' | 'getKey' | 'columns' | 'noItems' | 'rowClassName'> {
+	extends Pick<ListTableRowsProps<T, K>, 'getKey' | 'columns' | 'noItems' | 'rowClassName'> {
+	items: T[]
 	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }

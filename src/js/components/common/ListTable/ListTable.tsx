@@ -34,7 +34,6 @@ export interface ListTableNavProps<K extends Key, A extends string> {
 }
 
 export interface ListTableRowsProps<T, K extends Key> {
-	items: T[]
 	getKey: (item: T) => K
 	columns: ListTableColumn<T>[]
 	noItems?: ReactNode
@@ -43,7 +42,7 @@ export interface ListTableRowsProps<T, K extends Key> {
 
 export interface ListTablePaginationProps {
 	totalPages?: number
-	useQueryVars?: boolean
+	pageSearchParam?: string
 }
 
 export interface ListTableBorderProps {
@@ -52,13 +51,7 @@ export interface ListTableBorderProps {
 	className?: string
 }
 
-export type ListTableProps<T, K extends Key, A extends string> =
-	ListTableBorderProps &
-	ListTableNavProps<K, A> &
-	ListTablePaginationProps &
-	ListTableRowsProps<T, K>
-
-const sortItems = <T, >(
+export const sortTableItems = <T, >(
 	items: T[],
 	sortColumn: ListTableColumn<T> | undefined,
 	sortDirection: ListTableSortDirection
@@ -127,34 +120,81 @@ const TableBorder = <T, K extends Key>({
 	</table>
 )
 
+export interface ListTableProps<T, K extends Key, A extends string> extends ListTableBorderProps,
+	ListTableNavProps<K, A>,
+	ListTablePaginationProps,
+	ListTableRowsProps<T, K> {
+	items: T[]
+}
+
 export const ListTable = <T, K extends Key, A extends string = never>({
 	items,
 	getKey,
-	columns,
-	actions,
-	doAction,
 	totalPages,
-	extraTableNav,
-	disabled = false,
-	useQueryVars = true,
-	fixed,
-	striped,
-	className,
-	...tableRowsProps
+	pageSearchParam = 'paged',
+	...tableProps
 }: ListTableProps<T, K, A>) => {
-	const [selected, setSelected] = useState(() => new Set<K>())
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
-	const [currentPage, setCurrentPage] = useState(() => useQueryVars && Number(fetchQueryParam('paged')) || 1)
+	const [currentPage, setCurrentPage] = useState(() => pageSearchParam && Number(fetchQueryParam(pageSearchParam)) || 1)
 	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>('asc')
 
 	const visibleItems: T[] = useMemo(
-		() => pageItems(sortItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
+		() => pageItems(sortTableItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
 		[items, sortColumn, sortDirection, currentPage, totalPages])
+
+	return (
+		<PartialDataListTable
+			getKey={getKey}
+			totalItems={items.length}
+			visibleItems={visibleItems}
+			pageSearchParam={pageSearchParam}
+			{...{ sortColumn, sortDirection, currentPage, setSortColumn, setSortDirection, setCurrentPage }}
+			{...tableProps}
+		/>
+	)
+}
+
+export interface PartialDataListTableProps<T, K extends Key, A extends string> extends ListTablePaginationProps,
+	ListTableBorderProps, ListTableRowsProps<T, K>, ListTableNavProps<K, A> {
+	sortColumn: ListTableColumn<T> | undefined
+	totalItems: number
+	currentPage: number
+	visibleItems: T[]
+	setSortColumn: (column: ListTableColumn<T> | undefined) => void
+	sortDirection?: ListTableSortDirection
+	setCurrentPage: (page: number) => void
+	setSortDirection: (direction: ListTableSortDirection) => void
+}
+
+export const PartialDataListTable = <T, K extends Key, A extends string>({
+	fixed,
+	getKey,
+	columns,
+	actions,
+	striped,
+	doAction,
+	disabled = false,
+	className,
+	totalItems,
+	totalPages,
+	sortColumn,
+	currentPage,
+	visibleItems,
+	sortDirection = 'asc',
+	setSortColumn,
+	extraTableNav,
+	setCurrentPage,
+	pageSearchParam,
+	setSortDirection,
+	...tableRowsProps
+}: PartialDataListTableProps<T, K, A>) => {
+	const [selected, setSelected] = useState(() => new Set<K>())
+
 	return (
 		<TableNavigation
-			totalItems={items.length}
+			totalItems={totalItems}
 			selected={getVisibleSelected(visibleItems, getKey, selected)}
-			{...{ actions, doAction, extraTableNav, disabled, currentPage, totalPages, useQueryVars, setSelected, setCurrentPage }}
+			{...{ actions, doAction, extraTableNav, disabled, currentPage, totalPages, pageSearchParam, setSelected, setCurrentPage }}
 		>
 			<TableBorder
 				items={visibleItems}
@@ -165,7 +205,9 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 			>
 				<TableRows
 					items={visibleItems}
-					{...{ getKey, columns, selected, setSelected }}
+					selected={selected}
+					setSelected={setSelected}
+					{...{ getKey, columns }}
 					{...tableRowsProps}
 				/>
 			</TableBorder>

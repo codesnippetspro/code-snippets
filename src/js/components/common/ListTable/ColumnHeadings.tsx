@@ -2,15 +2,15 @@ import React from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import type { ListTableColumn, ListTableSortDirection } from './ListTable'
-import type { Dispatch, Key, SetStateAction, ThHTMLAttributes } from 'react'
+import type { Key, ThHTMLAttributes } from 'react'
 
 interface SortableHeadingCellProps<T> {
 	column: ListTableColumn<T>
 	cellProps: ThHTMLAttributes<HTMLTableCellElement>
 	sortColumn: ListTableColumn<T> | undefined
 	sortDirection: ListTableSortDirection
-	setSortColumn: Dispatch<SetStateAction<ListTableColumn<T> | undefined>>
-	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
+	setSortColumn: (column: ListTableColumn<T> | undefined) => void
+	setSortDirection: (direction: ListTableSortDirection) => void
 }
 
 const SortableHeadingCell = <T, >({
@@ -65,10 +65,10 @@ export interface ColumnHeadingsProps<T, K extends Key> {
 	columns: ListTableColumn<T>[]
 	selected: Set<K>
 	sortColumn: ListTableColumn<T> | undefined
-	setSelected: Dispatch<SetStateAction<Set<K>>>
+	setSelected: (selected: Set<K>) => void
 	sortDirection: ListTableSortDirection
-	setSortColumn: Dispatch<SetStateAction<ListTableColumn<T> | undefined>>
-	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
+	setSortColumn: (column: ListTableColumn<T> | undefined) => void
+	setSortDirection: (direction: ListTableSortDirection) => void
 }
 
 export const ColumnHeadings = <T, K extends Key>({
