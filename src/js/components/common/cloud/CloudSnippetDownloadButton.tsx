@@ -57,7 +57,7 @@ export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProp
 			.catch((error: unknown) => {
 				setErrorMessage('string' === typeof error
 					? error
-					: __('An error occurred while trying to download the snippet. Please try again later.', 'code-snippets'))
+					: __('An error occurred while trying to download the snippet.', 'code-snippets'))
 			})
 			.finally(() => setIsWorking(false))
 	}

@@ -13,7 +13,7 @@ import { DeleteButton } from '../../common/DeleteButton'
 import { SnippetCard } from '../../common/SnippetCard'
 import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import { ActivateColumn, DateColumn, PriorityColumn, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
+import { ActivateColumn, DateColumn, PriorityColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
 import type { Snippet } from '../../../types/Snippet'
 
 interface SnippetCardActionsProps {
@@ -181,16 +181,19 @@ export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({ snippet, i
 
 				<div className="snippet-card-meta">
 					<TypeColumn snippet={snippet} />
+
 					<span className="snippet-card-modified">
 						<em>{__('Last Modified: ', 'code-snippets')}</em>
 						<DateColumn snippet={snippet} />
 					</span>
-					{0 < snippet.tags.length
-						? <span className="snippet-card-tags">
+
+					{0 < snippet.tags.length && (
+						<span className="snippet-card-tags">
 							<span className="dashicons dashicons-tag" aria-hidden="true"></span>
 							<TagsColumn snippet={snippet} />
-						</span>
-						: null}
+						</span>)}
+
+					<SnippetExtraIcons snippet={snippet} />
 				</div>
 
 				{snippet.desc

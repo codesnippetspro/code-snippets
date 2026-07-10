@@ -81,20 +81,21 @@ export const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	}
 }
 
+export const SnippetExtraIcons: React.FC<ColumnProps> = ({ snippet }) =>
+	<div className="extra-icons">
+		{snippet.locked && (
+			<Tooltip
+				inline
+				end
+				label={__('About snippet lock', 'code-snippets')}
+				icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}
+			>
+				{__('This snippet is locked and cannot be modified.', 'code-snippets')}
+			</Tooltip>)}
+	</div>
+
 export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
-		<div className="extra-icons">
-			{snippet.locked && (
-				<Tooltip
-					inline
-					end
-					label={__('About snippet lock', 'code-snippets')}
-					icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}
-				>
-					{__('This snippet is locked and cannot be modified.', 'code-snippets')}
-				</Tooltip>)}
-		</div>
-
 		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
 			? <a href={getSnippetEditUrl(snippet)} className="snippet-name">{getSnippetDisplayName(snippet)}</a>
 			: getSnippetDisplayName(snippet)}
@@ -104,6 +105,7 @@ export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
 
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
+		<SnippetExtraIcons snippet={snippet} />
 		<SnippetName snippet={snippet} />
 		<RowActions snippet={snippet} />
 	</>

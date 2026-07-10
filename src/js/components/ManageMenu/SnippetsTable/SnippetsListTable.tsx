@@ -1,4 +1,4 @@
-import { __, _x, sprintf } from '@wordpress/i18n'
+import { __, _n, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { createInterpolateElement } from '@wordpress/element'
