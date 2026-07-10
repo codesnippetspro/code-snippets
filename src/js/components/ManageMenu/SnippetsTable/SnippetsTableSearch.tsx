@@ -23,20 +23,10 @@ const SearchBox = () => {
 	)
 }
 
-export interface SearchAreaProps {
-	totalItems: number
-}
 
-export const SearchArea: React.FC<SearchAreaProps> = ({ totalItems }) =>
+export const SearchArea = () =>
 	<div className="snippets-search-area">
 		<SearchBox />
-		<span className="snippets-found-count" role="status" aria-live="polite">
-			{sprintf(
-				// translators: %d: number of snippets matching current filters.
-				_n('%d item found', '%d items found', totalItems),
-				totalItems
-			)}
-		</span>
 	</div>
 
 export const SearchResultsIndicator = () => {
@@ -65,4 +55,3 @@ export const SearchResultsIndicator = () => {
 		</p>
 		: null
 }
-

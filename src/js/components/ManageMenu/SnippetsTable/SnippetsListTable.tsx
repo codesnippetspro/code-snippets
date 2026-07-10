@@ -216,7 +216,7 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 	const { activeByCondition } = useFilteredSnippets()
 	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
-	const pageCount = itemsPerPage ? Math.ceil(snippets.length / itemsPerPage) : 0
+	const pageCount = itemsPerPage && Math.ceil(snippets.length / itemsPerPage)
 
 	return 'card' === snippetView
 		? <SnippetsCardGrid
@@ -235,7 +235,7 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			columns={columns}
 			actions={actions}
 			doAction={doAction}
-			totalPages={1 < pageCount ? pageCount : undefined}
+			totalPages={pageCount}
 			extraTableNav={extraTableNav}
 			rowClassName={snippet => getRowClassName(snippet, activeByCondition)}
 			noItems={<NoItemsMessage />}
@@ -256,7 +256,6 @@ export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ snippetVie
 		() => snippetsByStatus.get(currentStatus) ?? [],
 		[snippetsByStatus, currentStatus]
 	)
-	const totalItems = currentSnippets.length
 	const applyBulkAction = useApplyBulkAction(currentSnippets)
 
 	useEffect(() => {
@@ -269,13 +268,21 @@ export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ snippetVie
 		<>
 			{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get('all') ?? []} />}
 			<ClearRecentlyActiveButton />
-			{'top' === which && <SearchArea totalItems={totalItems} />}
+
+			<span className="displaying-num" role="status" aria-live="polite">
+				{sprintf(
+				// translators: %d: total number of snippets across all pages.
+					_n('%d item', '%d items', currentSnippets.length),
+					currentSnippets.length
+				)}
+			</span>
 		</>
 
 	return (
 		<>
 			<div className="snippets-table-toolbar">
 				<SnippetStatusCounts />
+				<SearchArea />
 			</div>
 
 			<div className="snippets-list-view">

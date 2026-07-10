@@ -51,7 +51,7 @@ export const SearchFilters = () => {
 	return FILTERS.map(({ label, allOptionLabel, filterName, paramName }) =>
 		availableFilters[filterName] && 0 < availableFilters[filterName].length
 			? <Fragment key={filterName}>
-				<label htmlFor={`cloud-search-${paramName}`} className="screen-reader-text">
+				<label htmlFor={`cloud-search-${filterName}`} className="screen-reader-text">
 					{label}
 				</label>
 

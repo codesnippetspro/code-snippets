@@ -233,23 +233,8 @@
 
 }
 
-.snippets-search-area {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	margin-inline-start: auto;
-
-	.search-box {
-		float: none;
-		margin: 0;
-
-		input[type='search'] {
-			inline-size: 260px;
-			min-block-size: 32px;
-		}
-	}
-
-	.snippets-found-count {
+.tablenav-pages {
+	.displaying-num {
 		color: #646970;
 		white-space: nowrap;
 	}
@@ -260,7 +245,11 @@
 	font-size: 14px;
 	font-style: italic;
 	color: #646970;
-	text-align: end;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1em;
 }
 
 // The visible 'N items found' count beside the search box already reports

@@ -36,6 +36,12 @@
 	@include theme.link-colors(#579);
 }
 
+.paging-input {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+}
+
 .wp-list-table {
 	td.column-id {
 		text-align: center;
@@ -232,18 +238,12 @@
 		margin: 0;
 		padding: 0;
 	}
-
-	p.search-box {
-		margin: 0;
-
-		input[type='search'] {
-			min-block-size: 38px;
-		}
-	}
 }
 
 .tablenav {
 	margin: 20px 0;
+	display: flex;
+	align-items: center;
 }
 
 /* WP 7.0 changes the default admin link colour to the modern blue. Pin the classic accent on active rows (names and
@@ -279,6 +279,27 @@
 	margin: 0;
 	padding-block: 1em;
 	padding-inline: 0;
+}
+
+.snippets-search-area,
+.tablenav .displaying-num {
+	margin-inline-start: auto;
+}
+
+.snippets-search-area {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	.search-box {
+		float: none;
+		margin: 0;
+
+		input[type='search'] {
+			inline-size: 260px;
+			min-block-size: 32px;
+		}
+	}
 }
 
 @media (width <= 782px) {
