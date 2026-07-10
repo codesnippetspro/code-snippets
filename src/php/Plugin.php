@@ -17,6 +17,7 @@ use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
+use Code_Snippets\REST_API\Snippets\Preferences_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
 
@@ -53,18 +54,11 @@ class Plugin {
 	public DB $db;
 
 	/**
-	 * Class for evaluating function snippets.
+	 * Class for managing shortcodes.
 	 *
-	 * @var Evaluate_Functions
+	 * @var Shortcodes
 	 */
-	public Evaluate_Functions $evaluate_functions;
-
-	/**
-	 * Class for evaluating content snippets.
-	 *
-	 * @var Evaluate_Content
-	 */
-	public Evaluate_Content $evaluate_content;
+	public Shortcodes $shortcodes;
 
 	/**
 	 * Administration area class
@@ -72,20 +66,6 @@ class Plugin {
 	 * @var Bootstrap_Admin
 	 */
 	public Bootstrap_Admin $admin;
-
-	/**
-	 * Instance of connection to Code Snippets Cloud.
-	 *
-	 * @var Basic_Cloud_Connection
-	 */
-	private Basic_Cloud_Connection $cloud_connection;
-
-	/**
-	 * Instance of cloud search controller.
-	 *
-	 * @var Cloud_Search_Controller
-	 */
-	public Cloud_Search_Controller $cloud_search;
 
 	/**
 	 * Handles licensing and plugin updates.
@@ -102,6 +82,13 @@ class Plugin {
 	public Flat_Files\Handler_Registry $snippet_handler_registry;
 
 	/**
+	 * Instance of connection to Code Snippets Cloud.
+	 *
+	 * @var Basic_Cloud_Connection
+	 */
+	public Basic_Cloud_Connection $cloud_connection;
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -113,10 +100,10 @@ class Plugin {
 	 * Load the plugin utilities.
 	 */
 	private function load_utilities() {
-		require_once __DIR__ . '/snippet-ops.php';
 		require_once __DIR__ . '/Utils/editor.php';
 		require_once __DIR__ . '/Utils/options.php';
 		require_once __DIR__ . '/Settings/settings.php';
+		require_once __DIR__ . '/snippet-ops.php';
 	}
 
 	/**
@@ -125,16 +112,19 @@ class Plugin {
 	public function load_plugin() {
 		$this->load_utilities();
 
-		$this->cloud_connection = new Basic_Cloud_Connection();
-		$this->cloud_search = new Cloud_Search_Controller( $this->cloud_connection );
-
 		$this->db = new DB();
 		$this->licensing = new Licensing();
-		$this->evaluate_content = new Evaluate_Content( $this->db );
-		$this->evaluate_functions = new Evaluate_Functions( $this->db );
+
+		$this->cloud_connection = new Basic_Cloud_Connection();
+
+		new Evaluate_Content( $this->db );
+		new Evaluate_Functions( $this->db );
+
+		$this->shortcodes = new Shortcodes();
 
 		if ( is_admin() ) {
 			$this->admin = new Bootstrap_Admin();
+			new Promotion_Manager();
 		}
 
 		new Shortcodes();
@@ -157,11 +147,15 @@ class Plugin {
 	 * @return void
 	 */
 	public function init_rest_api() {
+		$cloud_search = new Cloud_Search_Controller( $this->cloud_connection );
+
 		new Snippets_REST_Controller();
 		new Recently_Active_REST_Controller();
+		new Preferences_REST_Controller();
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
-		new Cloud_Snippets_REST_Controller( $this->cloud_search );
+
+		new Cloud_Snippets_REST_Controller( $cloud_search );
 	}
 
 	/**
@@ -259,7 +253,7 @@ class Plugin {
 	/**
 	 * Allow redirecting to the Code Snippets site.
 	 *
-	 * @param array<string> $hosts Allowed hosts.
+	 * @param string[] $hosts Allowed hosts.
 	 *
 	 * @return array Modified allowed hosts.
 	 */
@@ -354,10 +348,12 @@ class Plugin {
 				'isLicensed'       => $this->licensing->is_licensed(),
 				'isCloudConnected' => $this->cloud_connection->is_authenticated(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
+				'snippetView'      => Preferences_REST_Controller::get_snippet_view(),
 				'restAPI'          => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
+					'preferences'    => esc_url_raw( rest_url( Preferences_REST_Controller::get_base_route() ) ),
 					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
 					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),

@@ -145,6 +145,8 @@ plugins.
 - Maintain a direct mapping between source classes and their test files; if a test file grows large, consider whether
   the source class can be broken into smaller concerns.
 
+---
+
 ## Architecture Patterns
 
 - **PSR-4 autoloading via Composer** — class files are discovered automatically; do not `require` them manually.
@@ -193,7 +195,7 @@ npm run wp-env:clean         # Reset all data
 
 # Build
 npm run build                # Webpack build (JS + CSS → src/dist/)
-npm run watch                # Webpack watch mode
+npm run watch                # Webpack watch mode (not recommended in AI workflows)
 npm run bundle               # Full distribution build → bundle/
 
 # Lint
@@ -201,11 +203,26 @@ npm run lint                 # All: PHP + JS + CSS
 npm run lint:php             # PHPCS with WPCS
 npm run lint:js              # ESLint
 npm run lint:styles          # Stylelint
+npm run lint:php:fix         # Auto-fix PHP linting issues
+npm run lint:js:fix          # Auto-fix JS/TS linting issues
+npm run lint:styles:fix      # Auto-fix CSS/SCSS linting issues
 
 # Tests
+npm run test:setup:php       # Download WordPress test suite and configure PHPUnit
 npm run test:php             # PHPUnit
+npm run test:php:watch       # PHPUnit with detailed output
+npm run test:setup:playwright # Prepare environment for Playwright E2E
 npm run test:playwright      # Playwright E2E (requires wp-env running)
+npm run test:playwright:ui   # Playwright with UI runner
+npm run test:playwright:debug # Playwright in debug mode
 ./test-playwright.sh         # Helper script for Playwright
+
+# Versioning (for maintainers)
+npm run version-dev          # Pre-release dev version
+npm run version-alpha        # Pre-release alpha version
+npm run version-beta         # Pre-release beta version
+npm run version-rc           # Pre-release release candidate
+npm run version              # Final release
 ```
 
 ---

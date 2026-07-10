@@ -1,17 +1,20 @@
-import { __, sprintf } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
+import { useSnippetView } from '../../../hooks/useSnippetView'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
-import { WithSnippetsListContext } from '../../../hooks/useSnippetsList'
+import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
 import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, isProType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
-import { Button } from '../../common/Button'
+import { SnippetsIcon } from '../../common/icons/ToolbarIcons'
 import { Notice } from '../../common/Notice'
+import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
+import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { UpsellDialog } from '../../common/UpsellDialog'
 import { WithSnippetsTableFilters, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { WithFilteredSnippetsContext } from './WithFilteredSnippetsContext'
@@ -20,79 +23,41 @@ import type { SnippetType } from '../../../types/Snippet'
 
 interface SnippetTypeTabProps {
 	type?: SnippetType
+	count?: number
 	setIsUpgradeDialogOpen: (isOpen: boolean) => void
 }
 
-const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialogOpen }) => {
+const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count, setIsUpgradeDialogOpen }) => {
 	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
 
 	return (
-		<a
-			href={buildUrl(window.location.href, { type: tabName })}
-			className={classnames('nav-tab', `${tabName}-tab`, {
-				'nav-tab-active': type === currentType,
-				'nav-tab-inactive': type && type !== currentType && !isLicensed() && isProType(type)
-			})}
-			aria-current={type === currentType ? 'page' : undefined}
-			onClick={event => {
-				event.preventDefault()
+		<li>
+			<a
+				href={buildUrl(window.location.href, { type: tabName })}
+				className={classnames('snippet-type-link', `${tabName}-type-link`, {
+					'active-type': type === currentType,
+					'pro-locked-type': type && type !== currentType && !isLicensed() && isProType(type)
+				})}
+				aria-current={type === currentType ? 'page' : undefined}
+				onClick={event => {
+					event.preventDefault()
 
-				if (type && !isLicensed() && isProType(type)) {
-					setIsUpgradeDialogOpen(true)
-				} else {
-					setCurrentType(type)
-				}
-			}}
-		>
-			<span className={`${tabName}-label`}>
-				{type ? SNIPPET_TYPE_LABELS[type] : __('All Snippets', 'code-snippets')}
-			</span>
-			{type && <Badge name={type} />
-			}
-		</a>
-	)
-}
-
-const PageHeading = () => {
-	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
-	return (
-		<>
-			<a href={getSnippetEditUrl()} className="button button-primary button-large create-snippet-button">
-				{__('Create new snippet', 'code-snippets')}
+					if (type && !isLicensed() && isProType(type)) {
+						setIsUpgradeDialogOpen(true)
+					} else {
+						setCurrentType(type)
+					}
+				}}
+			>
+				{type ? <Badge small name={type} /> : <SnippetsIcon aria-hidden="true" />}
+				<span className={`${tabName}-label`}>
+					{type ? SNIPPET_TYPE_LABELS[type] : __('All', 'code-snippets')}
+				</span>
+				{undefined !== count && <span className="subnav-count">{count}</span>}
+				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
-
-			<h2>
-				{__('Manage Code Snippets', 'code-snippets')}
-
-				{searchQueryText || currentTag
-					? <span className="subtitle">
-						{__('Search results', 'code-snippets')}
-
-						{/* translators: %s: search query. */}
-						{searchQueryText && sprintf(__(' for “%s”', 'code-snippets'), searchQueryText)}
-
-						{/* translators: %d: code line number. */}
-						{searchLineNumber && sprintf(__(' on line “%d”', 'code-snippets'), searchLineNumber)}
-
-						{/* translators: %s: tag name. */}
-						{currentTag && sprintf(__(' in tag “%s”', 'code-snippets'), currentTag)}
-
-						{' '}
-						<Button small className="clear-filters" onClick={() => {
-							setSearchQuery()
-							setCurrentTag()
-						}}>
-							{__('Clear Filters', 'code-snippets')}
-						</Button>
-					</span>
-					: null}
-			</h2>
-
-			<hr className="wp-header-end" />
-
-			<SafeModeNotice />
-		</>
+		</li>
 	)
 }
 
@@ -119,22 +84,42 @@ const SafeModeNotice = () =>
 
 const SnippetsTableInner = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
+	const { snippetView, setSnippetView } = useSnippetView()
+	const { snippetsList } = useSnippetsList()
+
+	const allCount = snippetsList?.filter(snippet => !snippet.trashed).length
 
 	return (
 		<>
-			<PageHeading />
-
 			<nav
-				className="nav-tab-wrapper snippet-type-tabs"
+				className="snippet-type-nav"
 				aria-label={__('Snippet types', 'code-snippets')}
 			>
-				<SnippetTypeTab setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
-				{SNIPPET_TYPES.map(type =>
-					<SnippetTypeTab key={type} type={type} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />)}
+				<ul>
+					<SnippetTypeTab count={allCount} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
+					{SNIPPET_TYPES.map(type =>
+						<SnippetTypeTab key={type} type={type} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />)}
+
+					<li className="snippet-view-toggle-nav-item">
+						<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
+					</li>
+
+					<li className="create-snippet-nav-item">
+						<a href={getSnippetEditUrl()} className="button button-primary">
+							{__('Create new snippet', 'code-snippets')}
+						</a>
+					</li>
+				</ul>
 			</nav>
 
+			<ScreenMetaSlot />
+
+			<hr className="wp-header-end" />
+
+			<SafeModeNotice />
+
 			<WithFilteredSnippetsContext>
-				<SnippetsListTable />
+				<SnippetsListTable snippetView={snippetView} />
 			</WithFilteredSnippetsContext>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />

@@ -58,10 +58,11 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		...'network' in fields && 'boolean' === typeof fields.network && { network: fields.network },
 		...'shared_network' in fields && 'boolean' === typeof fields.shared_network && { shared_network: fields.shared_network },
 		...'priority' in fields && 'number' === typeof fields.priority && { priority: fields.priority },
+		...'conditionId' in fields && isAbsInt(fields.conditionId) && { conditionId: fields.conditionId },
 		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id },
 		...'code_error' in fields && isCodeError(fields.code_error) && { code_error: fields.code_error },
-		...'code_error_trace' in fields && ('string' === typeof fields.code_error_trace || null === fields.code_error_trace) &&
-			{ code_error_trace: fields.code_error_trace },
-		...'last_active' in fields && { lastActive: Number(fields.last_active) }
+		...'code_error_trace' in fields &&
+		('string' === typeof fields.code_error_trace || null === fields.code_error_trace) && { code_error_trace: fields.code_error_trace },
+		...'last_active' in fields && { lastActive: Number(fields.last_active) },
 	}
 }

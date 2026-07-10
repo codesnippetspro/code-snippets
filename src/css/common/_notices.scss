@@ -2,34 +2,6 @@
 @use 'sass:map';
 @use 'sass:list';
 
-.code-snippets-notice {
-	.notice-dismiss {
-		position: absolute;
-		transform: initial;
-		inset-inline-end: 0;
-		inset-block-start: 0;
-	}
-
-	details {
-		margin: .5em 0;
-		padding: 2px;
-
-		summary {
-			cursor: pointer;
-		}
-
-		pre {
-			max-inline-size: 100%;
-			overflow: auto hidden;
-			white-space: pre;
-		}
-
-		.stack-trace-hint {
-			opacity: 0.5;
-		}
-	}
-}
-
 @mixin notices {
 	.notice {
 		border: 0;
@@ -67,5 +39,15 @@
 		content: '✓';
 		font-weight: bold;
 		font-size: 16px;
+	}
+}
+
+
+.code-snippets-notice {
+	.notice-dismiss {
+		position: absolute;
+		transform: initial;
+		inset-inline-end: 0;
+		inset-block-start: 0;
 	}
 }

@@ -9,7 +9,6 @@
 @use 'common/select';
 @use 'common/tooltips';
 @use 'common/modal';
-@use 'common/notices';
 @use 'common/upsell';
 @use 'common/toolbar';
 @use 'common/wp-admin';
@@ -17,6 +16,7 @@
 @use 'edit/form';
 @use 'edit/sidebar';
 @use 'edit/editor';
+@use 'edit/notices';
 @use 'edit/conditions';
 @use 'edit/gpt';
 
@@ -58,12 +58,14 @@
 	}
 }
 
-.components-form-token-field__input-container {
-	background: #fff;
-	border-color: #c3c4c7;
+.snippet-tags-container {
+	.components-form-token-field__input-container {
+		background: #fff;
+		border-color: #c3c4c7;
 
-	> .components-flex {
-		padding: 12px;
+		> .components-flex {
+			padding: 12px;
+		}
 	}
 }
 
@@ -81,9 +83,9 @@
 
 	.expand-editor-button {
 		display: flex;
-		gap: 5px;
 		align-items: center;
 		margin-inline-end: auto;
+		gap: 5px;
 
 		.dashicons {
 			inline-size: 18px;

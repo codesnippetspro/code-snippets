@@ -4,6 +4,8 @@ import { parseSnippetObject } from './objects'
 import type { SnippetSchema } from '../../types/schema/SnippetSchema'
 import type { Snippet, SnippetScope, SnippetType } from '../../types/Snippet'
 
+const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
+
 export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
 	php: __('Functions', 'code-snippets'),
 	html: __('Content', 'code-snippets'),
@@ -12,9 +14,7 @@ export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
 	cond: __('Conditions', 'code-snippets')
 }
 
-const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
-
-export const createSnippetObject = (fields: Partial<Snippet> | Partial<SnippetSchema>): Snippet =>
+export const createSnippetObject = (fields?: Partial<Snippet> | Partial<SnippetSchema>): Snippet =>
 	parseSnippetObject(fields)
 
 export const cloneSnippetObject = (snippet: Snippet): Snippet =>

@@ -8,6 +8,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Core\DB;
+use Code_Snippets\Flat_Files\Snippet_Files;
 use Exception;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Validator;
@@ -221,7 +222,7 @@ function code_snippets_build_tags_array( $tags ): array {
  * @param int       $id      The ID of the snippet to retrieve. 0 to build a new snippet.
  * @param bool|null $network Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
  *
- * @return Snippet A single snippet object.
+ * @return ?Snippet A single snippet object.
  *
  * @since 2.0.0
  */
@@ -662,6 +663,11 @@ function save_snippet( $snippet ): ?Snippet {
 		$snippet->increment_revision();
 	}
 
+	// Increment the revision number unless revision = 1 or revision is not set.
+	if ( $snippet->revision && $snippet->revision > 1 ) {
+		$snippet->increment_revision();
+	}
+
 	// Shared network snippets are always considered inactive.
 	$snippet->active = $snippet->active && ! $snippet->shared_network;
 
@@ -821,6 +827,7 @@ function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?
 function update_snippet_fields( int $snippet_id, array $fields, ?bool $network = null ) {
 	global $wpdb;
 
+	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
 	// Build a new snippet object for the validation.
@@ -855,12 +862,11 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
 		set_snippet_locked( $snippet->id, $locked_value, $network );
 	}
 
+	clean_snippets_cache( $table );
 	$updated = get_snippet( $snippet->id, $network );
 	if ( $updated->id ) {
 		do_action( 'code_snippets/update_snippet', $updated, $table );
 	}
-
-	clean_snippets_cache( $table );
 }
 
 /**

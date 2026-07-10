@@ -54,7 +54,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', 
 	 * Used to determine which version of Code Snippets is running.
 	 *
 	 * @since 3.0.0
-	 * @onst  boolean
+	 * @const bool
 	 */
 	define( 'CODE_SNIPPETS_PRO', false );
 

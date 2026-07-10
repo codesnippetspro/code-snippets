@@ -10,24 +10,24 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @since   3.4.0
  * @package Code_Snippets
  *
- * @property int           $id               The remote ID.
- * @property string        $slug             The snippet slug.
- * @property string        $name             The snippet title.
- * @property string        $description      The formatted description.
- * @property string        $code             The executable code.
- * @property array<string> $tags             An array of the tags.
- * @property string        $scope            The scope name.
- * @property string        $codevault        Name of user codevault.
- * @property string        $total_votes      The total number of votes.
- * @property string        $vote_count       The number of actual votes.
- * @property string        $wp_tested        Tested with WP version.
- * @property string        $status           Snippet Status ID.
- * @property string        $created          The date and time when the snippet data was first created, in ISO format.
- * @property string        $updated          When the snippet was last updated, in ISO format.
- * @property int           $revision         The update revision number.
- * @property bool          $is_owner         If user is owner or author of snippet.
- * @property bool|null     $in_codevault     Whether the snippet is stored in the users' codevault.
- * @property bool|null     $update_available If synchronised, whether there is an update available on the cloud platform.
+ * @property int       $id               The remote ID.
+ * @property string    $slug             The snippet slug.
+ * @property string    $name             The snippet title.
+ * @property string    $description      The formatted description.
+ * @property string    $code             The executable code.
+ * @property string[]  $tags             An array of the tags.
+ * @property string    $scope            The scope name.
+ * @property string    $codevault        Name of user codevault.
+ * @property string    $total_votes      The total number of votes.
+ * @property string    $vote_count       The number of actual votes.
+ * @property string    $wp_tested        Tested with WP version.
+ * @property string    $status           Snippet Status ID.
+ * @property string    $created          The date and time when the snippet data was first created, in ISO format.
+ * @property string    $updated          When the snippet was last updated, in ISO format.
+ * @property int       $revision         The update revision number.
+ * @property bool      $is_owner         If user is owner or author of snippet.
+ * @property int|null  $local_id         The local snippet ID when this cloud snippet has been downloaded.
+ * @property bool|null $update_available If synchronised, whether there is an update available on the cloud platform.
  */
 class Cloud_Snippet extends Model {
 
@@ -54,7 +54,7 @@ class Cloud_Snippet extends Model {
 		'updated'          => '',
 		'revision'         => 0,
 		'is_owner'         => false,
-		'in_codevault'     => null,
+		'local_id'         => null,
 		'update_available' => null,
 	];
 
@@ -70,6 +70,7 @@ class Cloud_Snippet extends Model {
 		switch ( $field ) {
 			case 'id':
 			case 'revision':
+			case 'local_id':
 				return absint( $value );
 
 			case 'is_owner':

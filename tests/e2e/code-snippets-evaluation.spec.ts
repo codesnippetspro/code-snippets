@@ -47,8 +47,7 @@ const createPageWithShortcode = async (snippetId: string, snippetName: string): 
 			'--porcelain'
 		])).trim()
 
-		const pageUrl = (await wpCli(['post', 'url', pageId])).trim()
-		return pageUrl
+		return (await wpCli(['post', 'url', pageId])).trim()
 	} catch (error) {
 		console.error('Failed to create page via WP-CLI.', error)
 		// The suite depends on WP-CLI in local/wp-env mode; keep failures explicit to avoid

@@ -1,9 +1,11 @@
+import type { SnippetSchema } from './schema/SnippetSchema'
 import type { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
 import type { Snippet } from './Snippet'
-import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
-import type { WordPressEditor } from './WordPressEditor'
+import type { SnippetView } from './SnippetView'
+import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './vendor/WordPressCodeEditor'
+import type { WordPressEditor } from './vendor/WordPressEditor'
 
 declare global {
 	interface Window {
@@ -22,11 +24,13 @@ declare global {
 			debug: boolean
 			isLicensed: boolean
 			hideUpsell: boolean
+			isCloudConnected: boolean
+			snippetView: SnippetView
 			restAPI: {
 				base: string
 				snippets: string
 				recentlyActive: string
-				conditions: string
+				preferences: string
 				importPlugins: string
 				importFiles: string
 				nonce: string
@@ -68,7 +72,7 @@ declare global {
 			supportsZipDownloads: boolean
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
-			snippet: Snippet
+			snippet: SnippetSchema
 			pageTitleActions: Record<string, string>
 			isLicensed: boolean
 			enableDownloads: boolean

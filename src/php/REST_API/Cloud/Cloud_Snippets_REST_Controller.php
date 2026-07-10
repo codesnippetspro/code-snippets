@@ -2,8 +2,8 @@
 
 namespace Code_Snippets\REST_API\Cloud;
 
-use Code_Snippets\Admin\Menus\Manage_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
+use Code_Snippets\Admin\Menus\Manage_Menu;
 use Code_Snippets\REST_API\REST_Collection_Controller;
 use WP_Error;
 use WP_REST_Request;
@@ -148,9 +148,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_codevault_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => [
-						$collection_args['page'],
-					],
+					'args'                => [ $collection_args['page'] ],
 					'schema'              => [ $this, 'get_item_schema' ],
 				],
 			]
@@ -262,7 +260,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ) {
-		$id = $request->get_param( 'id' );
+		$id = intval( $request->get_param( 'id' ) );
 		$cloud_snippet = $this->search_controller->get_cloud_snippet( $id );
 
 		if ( ! $cloud_snippet ) {

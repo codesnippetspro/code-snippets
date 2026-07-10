@@ -1,10 +1,18 @@
+import { updateQueryParams } from '../../utils/urls'
+
 const selectTab = (tabsWrapper: Element, tab: Element, section: string) => {
 	// Swap the active tab class from the previously active tab to the current one.
-	tabsWrapper.querySelector('.nav-tab-active')?.classList.remove('nav-tab-active')
-	tab.classList.add('nav-tab-active')
+	tabsWrapper.querySelector('.active-type')?.classList.remove('active-type')
+	tab.classList.add('active-type')
+	updateQueryParams({ section })
 
 	// Update the current active tab attribute so that only the active tab is displayed.
 	tabsWrapper.closest('.wrap')?.setAttribute('data-active-tab', section)
+
+	//Hide all cloud messages - this is a bit of a hack, but it works make better **TODO**
+	document.querySelectorAll('.cloud-message').forEach(element => {
+		element.classList.add('hidden')
+	})
 }
 
 // Refresh the editor preview if we're viewing the editor section.
@@ -33,7 +41,7 @@ export const handleSettingsTabs = () => {
 		return
 	}
 
-	const tabs = tabsWrapper.querySelectorAll('.nav-tab')
+	const tabs = tabsWrapper.querySelectorAll('.snippet-type-link')
 
 	for (const tab of tabs) {
 		tab.addEventListener('click', event => {

@@ -25,6 +25,7 @@ tests/e2e/.auth/
 auth.json
 
 # Local files (ideally, should be in a global .gitignore)
+/.env
 .idea/
 Thumbs.db
 .DS_Store

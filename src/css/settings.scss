@@ -1,4 +1,5 @@
 @use 'common/codemirror';
+@use 'common/subnav';
 @use 'common/toolbar';
 @use 'common/wp-admin';
 
@@ -220,4 +221,8 @@ body.js {
 			inline-size: 180px;
 		}
 	}
+}
+
+#settings-sections-tabs {
+	margin-block-end: 15px;
 }

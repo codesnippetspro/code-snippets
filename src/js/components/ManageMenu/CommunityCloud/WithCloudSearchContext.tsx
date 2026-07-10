@@ -57,10 +57,6 @@ export interface CloudFilterOption {
 	name: string
 }
 
-export const clearSearchQueryParams = () => {
-	updateQueryParams(Object.fromEntries(Object.values(SEARCH_PARAM_VARS).map(param => [param, undefined])))
-}
-
 const fetchSearchQueryParams = (): CloudSearchParams => {
 	const page = Number(fetchQueryParam(SEARCH_PARAM_VARS.page) ?? 1)
 	const query = fetchQueryParam(SEARCH_PARAM_VARS.query) ?? ''

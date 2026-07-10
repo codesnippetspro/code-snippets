@@ -100,8 +100,8 @@ const buildExportSnippet = ({
 	lastActive,
 	code_error,
 	code_error_trace
-}: Snippet): SnippetsExport['snippets'][number] => {
-	const exportSnippet: SnippetsExport['snippets'][number] = Object.fromEntries(
+}: Snippet): SnippetsExport['snippets'][number] =>
+	Object.fromEntries(
 		Object.entries({
 			id,
 			name,
@@ -122,9 +122,6 @@ const buildExportSnippet = ({
 			code_error_trace
 		}).filter(([field, value]) => !isDefaultExportValue(field, value))
 	)
-
-	return exportSnippet
-}
 
 export const downloadBulkSnippetExportFile = (snippets: readonly Snippet[]) => {
 	if (0 === snippets.length) {

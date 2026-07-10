@@ -3,10 +3,6 @@
 @use '../common/banners';
 @use '../common/cards';
 
-.snippets-admin-tabs {
-	margin-block-end: 38px;
-}
-
 .cloud-snippet-status {
 	text-transform: uppercase;
 	color: #646970;
@@ -38,10 +34,11 @@ $status-colors: (
 	}
 }
 
+.bundle-share-code-form,
 .cloud-search-form {
 	display: flex;
 	gap: 8px;
-	margin-block: 31px 47px;
+	margin-block: 0 47px;
 	block-size: 54px;
 
 	> select {
@@ -50,16 +47,6 @@ $status-colors: (
 
 	.button {
 		flex: 0 0 165px;
-	}
-
-	.cloud-search-submit {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-
-		.components-spinner {
-			margin: 0;
-		}
 	}
 
 	.cloud-search-query {
@@ -77,10 +64,22 @@ $status-colors: (
 			inset-block-start: 25%;
 		}
 	}
+
+	button[type='submit'] {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		.components-spinner {
+			margin: 0;
+		}
+	}
 }
 
 .cloud-search {
 	@include banners.banners;
+
+	padding-block-start: 10px;
 
 	.banner {
 		justify-content: center;
@@ -107,6 +106,10 @@ $status-colors: (
 			margin-inline-start: auto;
 		}
 	}
+}
+
+.bundle-share-code-form {
+	max-inline-size: 60%;
 }
 
 .cloud-search-result {
@@ -141,6 +144,7 @@ $status-colors: (
 	.cloud-snippet-meta {
 		display: flex;
 		gap: 16px;
+		margin-block-start: 16px;
 	}
 
 	footer {
@@ -178,4 +182,102 @@ $status-colors: (
 		border-color: color.adjust(theme.$secondary, $lightness: -10%);
 		color: #fff;
 	}
+}
+
+// Three equal-height snippet cards per row, matching the manage snippets
+// grid. minmax(0, 1fr) lets columns shrink below their content width so
+// the grid never overflows the page.
+ul.cloud-search-results.code-snippets-cards {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+
+	@media screen and (width <= 1100px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	@media screen and (width <= 782px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.code-snippets-card {
+		min-inline-size: 0;
+
+		footer {
+			flex-wrap: wrap;
+		}
+	}
+}
+
+.cloud-snippet-action-buttons {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
+
+	// Keep the Download / View / Pro Only button a consistent width so
+	// rows line up regardless of which state the snippet is in.
+	.button-primary,
+	.cloud-pro-button {
+		min-inline-size: 90px;
+		text-align: center;
+		justify-content: center;
+	}
+}
+
+.cloud-snippets-table {
+	td {
+		box-sizing: border-box;
+		block-size: 60px;
+		vertical-align: middle;
+	}
+
+	.column-name {
+		inline-size: 22%;
+	}
+
+	.column-type {
+		inline-size: 90px;
+	}
+
+	.column-status {
+		inline-size: 120px;
+	}
+
+	.column-actions {
+		inline-size: 210px;
+	}
+
+	.cloud-table-name-button {
+		background: none;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		font-size: inherit;
+		font-weight: 600;
+		color: #2271b1;
+		text-decoration: none;
+		cursor: pointer;
+		text-align: start;
+
+		&:hover,
+		&:focus-visible {
+			color: #135e96;
+			text-decoration: underline;
+		}
+	}
+
+	// Clamp descriptions so every row stays the same height.
+	.cloud-table-description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
+	}
+}
+
+// Community bundles tab shares the same top padding as .cloud-search so the
+// two tabs' descriptions and inputs align (scoped so the My Library bundles
+// tab is unaffected).
+.community-bundles {
+	padding-block-start: 10px;
 }

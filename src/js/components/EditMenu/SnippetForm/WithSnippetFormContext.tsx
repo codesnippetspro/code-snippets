@@ -6,7 +6,7 @@ import { isProSnippet } from '../../../utils/snippets/snippets'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { ScreenNotice } from '../../../types/ScreenNotice'
 import type { Snippet } from '../../../types/Snippet'
-import type { CodeEditorInstance } from '../../../types/WordPressCodeEditor'
+import type { CodeEditorInstance } from '../../../types/vendor/WordPressCodeEditor'
 
 export interface SnippetFormContext {
 	snippet: Snippet

@@ -1,5 +1,5 @@
 // Handles version switching UI on the settings screen.
-// Exported init function so callers can opt-in like other settings modules.
+// Exported init function so callers can opt in like other settings modules.
 // Uses vanilla DOM APIs and the global `code_snippets_version_switch` config
 // injected by PHP via wp_add_inline_script.
 

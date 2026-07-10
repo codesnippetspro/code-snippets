@@ -8,6 +8,8 @@
 .code-snippets-card {
 	background: #fff;
 	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	overflow: hidden;
 	margin: 0;
 	display: flex;
 	flex-flow: column;
@@ -31,5 +33,36 @@
 		padding-inline: 24px;
 		padding-block: 12px;
 		align-items: center;
+	}
+
+	&.is-selectable,
+	&.has-corner-controls {
+		position: relative;
+	}
+
+	.snippet-card-corner {
+		position: absolute;
+		inset-block-start: 20px;
+		inset-inline-end: 24px;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+
+		.snippet-card-select {
+			margin: 0;
+		}
+	}
+
+	&.is-selectable .card-inner h3 {
+		margin-inline-end: 48px;
+	}
+
+	&.has-corner-controls .card-inner h3 {
+		margin-inline-end: 96px;
+	}
+
+	&.is-selected {
+		border-color: #2271b1;
+		box-shadow: 0 0 0 1px #2271b1;
 	}
 }

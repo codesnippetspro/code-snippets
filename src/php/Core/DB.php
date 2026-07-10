@@ -183,20 +183,21 @@ class DB {
 		return $success;
 	}
 
-		/**
-		 * Generate the SQL for fetching active snippets from the database.
-		 *
-		 * @param string[] $scopes List of scopes to retrieve in.
-         *
-         * @return array{
-         *     id: int,
-         *     code: string,
-         *     scope: string,
-         *     table: string,
-         *     network: bool,
-         *     priority: int,
-         * } List of active snippets.
-         */
+	/**
+	 * Generate the SQL for fetching active snippets from the database.
+	 *
+	 * @param string[] $scopes List of scopes to retrieve in.
+	 *
+	 * @return array{
+	 *     id: int,
+	 *     code: string,
+	 *     scope: string,
+	 *     table: string,
+	 *     network: bool,
+	 *     priority: int,
+	 *     condition_id: int,
+	 * }[] List of active snippets.
+	 */
 	public function fetch_active_snippets( array $scopes ): array {
 		$active_snippets = [];
 

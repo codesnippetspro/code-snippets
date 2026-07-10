@@ -101,7 +101,7 @@ class Evaluate_Functions {
 	 *
 	 * @noinspection PhpUndefinedConstantInspection
 	 */
-	public function is_safe_mode_active(): bool {
+	public static function is_safe_mode_active(): bool {
 		return ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ||
 		       ! apply_filters( 'code_snippets/execute_snippets', true );
 	}
@@ -114,7 +114,7 @@ class Evaluate_Functions {
 	 * @return bool New filter value.
 	 */
 	public function disable_snippet_execution( bool $execute_snippets ): bool {
-		return $execute_snippets && ! $this->is_safe_mode_requested();
+		return $execute_snippets && ! self::is_safe_mode_requested();
 	}
 
 	/**
@@ -187,7 +187,7 @@ class Evaluate_Functions {
 	 * @return bool True if snippets were evaluated, false if safe mode is active.
 	 */
 	public function evaluate_early(): bool {
-		if ( $this->is_safe_mode_active() ) {
+		if ( self::is_safe_mode_active() ) {
 			return false;
 		}
 

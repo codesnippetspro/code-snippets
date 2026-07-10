@@ -103,7 +103,8 @@ $wpcontent-inline-start-indent: 20px;
 }
 
 .code-snippets-toolbar-lower .pro-chip,
-.nav-tab .pro-chip {
+.nav-tab .pro-chip,
+.snippet-type-link .pro-chip {
 	color: #d46f4d;
 	text-transform: uppercase;
 	border: 2px solid currentcolor;
@@ -121,7 +122,12 @@ $wpcontent-inline-start-indent: 20px;
 	font-size: 12px;
 }
 
-.nav-tab .pro-chip {
+.nav-tab .pro-chip,
+.snippet-type-link .pro-chip {
 	font-size: 10px;
 	padding: 0 6px;
+}
+
+.code-snippets-return-link {
+	float: inline-end;
 }

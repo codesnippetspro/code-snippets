@@ -220,7 +220,7 @@ class Cloud_Search_Controller_Test extends UnitTestCase {
 	}
 
 	/**
-	 * An invalid JSON body returns an empty result.
+	 * An invalid JSON body returns null.
 	 *
 	 * @return void
 	 */
@@ -256,7 +256,6 @@ class Cloud_Search_Controller_Test extends UnitTestCase {
 		];
 
 		$result = self::make_controller()->fetch_search_results( 'term', 'woo' );
-
 		$this->assertCount( 0, $result->snippets );
 	}
 

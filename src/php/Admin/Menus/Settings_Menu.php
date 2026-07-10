@@ -14,9 +14,8 @@ use const Code_Snippets\Settings\OPTION_NAME;
 use const Code_Snippets\Settings\CACHE_KEY;
 
 /**
- * This class handles the settings admin menu
+ * This class handles the settings admin menu.
  *
- * @since   2.4.0
  * @package Code_Snippets
  */
 class Settings_Menu extends Admin_Menu {
@@ -199,27 +198,31 @@ class Settings_Menu extends Admin_Menu {
 
 		?>
 		<div class="wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
-			<h2>
-				<?php
-				esc_html_e( 'Settings', 'code-snippets' );
+			<?php $this->render_section_tabs(); ?>
 
-				if ( code_snippets()->is_compact_menu() ) {
-					$actions = [
-						_x( 'Manage', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url(),
-						_x( 'Add New', 'snippet', 'code-snippets' ) => code_snippets()->get_menu_url( 'add' ),
-						_X( 'Import', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url( 'import' ),
-					];
+			<h2 class="screen-reader-text"><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h2>
 
-					foreach ( $actions as $label => $url ) {
-						printf(
-							'<a href="%s" class="page-title-action">%s</a>',
-							esc_url( $url ),
-							esc_html( $label )
-						);
-					}
+			<?php
+			if ( code_snippets()->is_compact_menu() ) {
+				$actions = [
+					_x( 'Manage', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url(),
+					_x( 'Add New', 'snippet', 'code-snippets' ) => code_snippets()->get_menu_url( 'add' ),
+					_x( 'Import', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url( 'import' ),
+				];
+
+				echo '<p class="settings-page-actions">';
+
+				foreach ( $actions as $label => $url ) {
+					printf(
+						'<a href="%s" class="page-title-action">%s</a>',
+						esc_url( $url ),
+						esc_html( $label )
+					);
 				}
-				?>
-			</h2>
+
+				echo '</p>';
+			}
+			?>
 
 			<hr class="wp-header-end" />
 
@@ -230,7 +233,7 @@ class Settings_Menu extends Admin_Menu {
 				<?php
 
 				settings_fields( OPTION_GROUP );
-				$this->do_settings_tabs();
+				$this->render_settings_sections();
 				?>
 				<p class="submit">
 					<?php
@@ -250,25 +253,44 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Output snippet settings in tabs
+	 * Output the settings section subnavigation bar, styled to match the
+	 * subnavigation on the snippet management pages, followed by the slot
+	 * that adopts the Screen Options and Help tabs.
 	 */
-	protected function do_settings_tabs() {
+	protected function render_section_tabs() {
 		$sections = $this->get_sections();
 		$active_tab = $this->get_current_section();
 
-		echo '<nav class="nav-tab-wrapper" id="settings-sections-tabs" aria-label="' . esc_attr__( 'Settings tabs', 'code-snippets' ) . '">';
+		$icons = [
+			'general'        => 'admin-generic',
+			'editor'         => 'editor-code',
+			'debug'          => 'admin-tools',
+			'version-switch' => 'backup',
+			'license'        => 'admin-network',
+		];
+
+		echo '<nav class="snippet-type-nav settings-type-nav" id="settings-sections-tabs" aria-label="' . esc_attr__( 'Settings tabs', 'code-snippets' ) . '"><ul>';
 
 		foreach ( $sections as $section ) {
 			printf(
-				'<a class="nav-tab%s" data-section="%s" href="%s">%s</a>',
-				esc_attr( $active_tab ) === $section['id'] ? ' nav-tab-active' : '',
+				'<li><a class="snippet-type-link%s" data-section="%s" href="%s"><span class="dashicons dashicons-%s snippet-type-icon" aria-hidden="true"></span><span>%s</span></a></li>',
+				esc_attr( $active_tab ) === $section['id'] ? ' active-type' : '',
 				esc_attr( $section['id'] ),
 				esc_url( add_query_arg( 'section', $section['id'] ) ),
+				esc_attr( $icons[ $section['id'] ] ?? 'admin-generic' ),
 				esc_html( $section['title'] )
 			);
 		}
 
-		echo '</nav>';
+		echo '</ul></nav>';
+		echo '<div id="snippets-screen-meta-slot" class="snippets-screen-meta-slot"></div>';
+	}
+
+	/**
+	 * Output snippet settings sections.
+	 */
+	protected function render_settings_sections() {
+		$sections = $this->get_sections();
 
 		foreach ( $sections as $section ) {
 			if ( 'license' === $section['id'] ) {

@@ -127,7 +127,7 @@ class Admin_Bar {
 		}
 
 		// Always show safe mode indicator regardless of setting.
-		$this->add_safe_mode_nodes( $wp_admin_bar, code_snippets()->evaluate_functions->is_safe_mode_active() );
+		$this->add_safe_mode_nodes( $wp_admin_bar );
 
 		// Check if admin bar menu is enabled via settings.
 		$is_enabled = get_setting( 'general', 'enable_admin_bar' );
@@ -157,13 +157,12 @@ class Admin_Bar {
 	/**
 	 * Add menu item for safe mode status.
 	 *
-	 * @param WP_Admin_Bar $wp_admin_bar        Admin bar instance.
-	 * @param bool         $is_safe_mode_active Whether safe mode is active.
+	 * @param WP_Admin_Bar $wp_admin_bar Admin bar instance.
 	 *
 	 * @return void
 	 */
-	private function add_safe_mode_nodes( WP_Admin_Bar $wp_admin_bar, bool $is_safe_mode_active ): void {
-		if ( ! $is_safe_mode_active ) {
+	private function add_safe_mode_nodes( WP_Admin_Bar $wp_admin_bar ): void {
+		if ( ! Evaluate_Functions::is_safe_mode_active() ) {
 			return;
 		}
 

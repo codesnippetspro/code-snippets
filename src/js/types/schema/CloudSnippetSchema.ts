@@ -2,23 +2,23 @@ import type { SnippetScope } from '../Snippet'
 
 export interface CloudSnippetSchema {
 	id: number
-	cloud_id?: string
+	slug: string
 	name: string
 	description: string
 	code: string
 	tags: string[]
 	scope: SnippetScope
-	language: string
-	status: CloudStatus
 	codevault: string
 	total_votes: number
 	vote_count: number
 	wp_tested: string
+	status: CloudStatus
 	created: string
 	updated: string
 	revision: number
 	is_owner: boolean
-	shared_network: boolean
+	local_id?: number | null
+	update_available?: boolean | null
 }
 
 export enum CloudStatus {

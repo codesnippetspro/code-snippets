@@ -1,0 +1,68 @@
+import { __, _n, sprintf } from '@wordpress/i18n'
+import React from 'react'
+import { Button } from '../../common/Button'
+import { useSnippetsFilters } from './WithSnippetsTableFilters'
+
+const SearchBox = () => {
+	const { searchQuery, setSearchQuery } = useSnippetsFilters()
+
+	return (
+		<search aria-label={__('Search Snippets', 'code-snippets')}>
+			<p className="search-box">
+				<input
+					type="search"
+					id="snippets_search"
+					name="s"
+					value={searchQuery ?? ''}
+					aria-label={__('Search Snippets:', 'code-snippets')}
+					onChange={event => setSearchQuery(event.target.value)}
+					placeholder={__('Search snippets', 'code-snippets')}
+				/>
+			</p>
+		</search>
+	)
+}
+
+export interface SearchAreaProps {
+	totalItems: number
+}
+
+export const SearchArea: React.FC<SearchAreaProps> = ({ totalItems }) =>
+	<div className="snippets-search-area">
+		<SearchBox />
+		<span className="snippets-found-count" role="status" aria-live="polite">
+			{sprintf(
+				// translators: %d: number of snippets matching current filters.
+				_n('%d item found', '%d items found', totalItems),
+				totalItems
+			)}
+		</span>
+	</div>
+
+export const SearchResultsIndicator = () => {
+	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
+
+	return searchQueryText || currentTag
+		? <p className="snippets-search-subtitle">
+			{__('Search results', 'code-snippets')}
+
+			{/* translators: %s: search query. */}
+			{searchQueryText && sprintf(__(' for “%s”', 'code-snippets'), searchQueryText)}
+
+			{/* translators: %d: code line number. */}
+			{searchLineNumber && sprintf(__(' on line “%d”', 'code-snippets'), searchLineNumber)}
+
+			{/* translators: %s: tag name. */}
+			{currentTag && sprintf(__(' in tag “%s”', 'code-snippets'), currentTag)}
+
+			{' '}
+			<Button small className="clear-filters" onClick={() => {
+				setSearchQuery()
+				setCurrentTag()
+			}}>
+				{__('Clear Filters', 'code-snippets')}
+			</Button>
+		</p>
+		: null
+}
+

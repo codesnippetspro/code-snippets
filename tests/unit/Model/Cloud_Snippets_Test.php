@@ -136,11 +136,11 @@ class Cloud_Snippets_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Empty payloads result in null.
+	 * Null and empty payloads respond with null.
 	 *
 	 * @return void
 	 */
-	public function test_empty_input_uses_defaults(): void {
+	public function test_empty_input_returns_null(): void {
 		$result = Cloud_Snippets::unpack_api_response( [] );
 		$this->assertNull( $result );
 	}

@@ -19,6 +19,7 @@ export interface SnippetSchema extends Readonly<Required<WritableSnippetSchema>>
 	readonly id: number
 	readonly modified: string
 	readonly last_active?: number
+	readonly trashed: boolean
 	readonly code_error?: readonly [string, number] | null
 	readonly code_error_trace?: string | null
 }

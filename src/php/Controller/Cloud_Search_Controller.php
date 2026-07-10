@@ -100,16 +100,15 @@ class Cloud_Search_Controller {
 	 */
 	public function fetch_search_results( string $search_method, string $search, int $page = 1, int $per_page = 10, array $filters = [] ): ?Cloud_Snippets {
 		$per_page = min( self::MAX_RESULTS_PER_PAGE, $per_page );
-
 		return $this->client->fetch_search_results( $search_method, $search, $page, $per_page, $filters );
 	}
 
 	/**
 	 * Download a snippet from the cloud.
 	 *
-	 * @param Cloud_Snippet $cloud_snippet The cloud snippet to be downloaded.
+	 * @param Cloud_Snippet $cloud_snippet The snippet to be downloaded.
 	 *
-	 * @return Snippet The newly-created local snippet.
+	 * @return Snippet|null The newly-created local snippet.
 	 */
 	public function download_snippet_from_cloud( Cloud_Snippet $cloud_snippet ): ?Snippet {
 		$snippet = new Snippet( $cloud_snippet );
@@ -121,7 +120,6 @@ class Cloud_Search_Controller {
 		$snippet->is_cloud_owner = $cloud_snippet->is_owner;
 		$snippet->desc = $cloud_snippet->description ?? '';
 
-		// Save the snippet to the database.
 		return save_snippet( $snippet );
 	}
 
@@ -159,7 +157,6 @@ class Cloud_Search_Controller {
 	 */
 	public function get_featured_snippets( int $page = 1, int $per_page = 10, array $filters = [] ): ?Cloud_Snippets {
 		$cache_key = self::build_featured_cache_key( $page, $per_page, $filters );
-
 		$cached = get_transient( $cache_key );
 
 		if ( $cached instanceof Cloud_Snippets ) {

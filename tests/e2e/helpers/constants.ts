@@ -1,4 +1,4 @@
-export const SELECTORS = <const>{
+export const SELECTORS = <const> {
 	TITLE_INPUT: '#title',
 	CODE_MIRROR_TEXTAREA: '.CodeMirror textarea',
 	SNIPPET_TYPE_SELECT: '#snippet-type-select-input',
@@ -21,12 +21,12 @@ export const SELECTORS = <const>{
 	THEME_MAIN_WRAPPER: '.wp-site-blocks'
 }
 
-export const TIMEOUTS = <const>{
+export const TIMEOUTS = <const> {
 	DEFAULT: 30000,
 	SHORT: 5000
 }
 
-export const URLS = <const>{
+export const URLS = <const> {
 	SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets',
 	COMMUNITY_CLOUD_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
 	ADD_SNIPPET_ADMIN: '/wp-admin/admin.php?page=add-snippet',
@@ -38,19 +38,19 @@ export const URLS = <const>{
 	FRONTEND: '/'
 }
 
-export const MESSAGES = <const>{
+export const MESSAGES = <const> {
 	SNIPPET_CREATED: /Snippet (?:created|updated)/i,
 	SNIPPET_CREATED_AND_ACTIVATED: /Snippet (?:created|updated)(?: and activated)?/i,
 	SNIPPET_UPDATED_AND_ACTIVATED: /Snippet updated/i,
 	SNIPPET_UPDATED_AND_DEACTIVATED: /Snippet updated/i
 }
 
-export const SNIPPET_TYPES = <const>{
+export const SNIPPET_TYPES = <const> {
 	PHP: 'Functions',
 	HTML: 'Content'
 }
 
-export const SNIPPET_LOCATIONS = <const>{
+export const SNIPPET_LOCATIONS = <const> {
 	SITE_HEADER: 'In site header (<head> section)',
 	SITE_BODY: 'In site content (start of <body>)',
 	SITE_FOOTER: 'In site footer (end of <body>)',
@@ -60,7 +60,7 @@ export const SNIPPET_LOCATIONS = <const>{
 	EVERYWHERE: 'Run everywhere'
 }
 
-export const BUTTONS = <const>{
+export const BUTTONS = <const> {
 	SAVE: 'role=button[name="Save Snippet"]',
 	SAVE_AND_ACTIVATE: 'role=button[name="Save and Activate"]',
 	DELETE: 'button:has-text("Trash")'

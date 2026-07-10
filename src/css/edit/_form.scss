@@ -104,3 +104,16 @@ $sidebar-gap: 30px;
 		}
 	}
 }
+
+.above-editor-container {
+	display: flex;
+	flex-flow: row wrap;
+	gap: 1em;
+
+	> * {
+		flex: 1;
+		display: flex;
+		flex-flow: column;
+		min-inline-size: 180px;
+	}
+}

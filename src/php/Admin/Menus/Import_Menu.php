@@ -56,7 +56,7 @@ class Import_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Enqueue assets for the import menu.
+	 * Empty implementation for enqueue_assets.
 	 *
 	 * @return void
 	 */

@@ -7,10 +7,15 @@
 @use 'common/notices';
 @use 'common/upsell';
 @use 'common/toolbar';
+@use 'common/subnav';
 @use 'common/wp-admin';
 @use 'prism';
 @use 'manage/snippets-table';
 @use 'manage/cloud-community';
+
+.tablenav .tablenav-pages {
+	margin-block-end: 0;
+}
 
 .create-snippet-button {
 	margin-inline-start: auto;

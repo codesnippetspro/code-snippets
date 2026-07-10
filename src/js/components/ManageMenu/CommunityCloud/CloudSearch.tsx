@@ -2,9 +2,11 @@ import { __ } from '@wordpress/i18n'
 import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { TablePagination } from '../../common/ListTable/TablePagination'
+import { CloudSnippetsTable } from './CloudSnippetsTable'
 import { SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
+import type { SnippetView } from '../../../types/SnippetView'
 import type { TablePaginationProps } from '../../common/ListTable/TablePagination'
 import type { FormEventHandler } from 'react'
 
@@ -28,7 +30,7 @@ const SearchBox = () => {
 					updateSearchParams({ method: 'codevault' === event.target.value ? 'codevault' : 'term' })}
 			>
 				<option value="term">{__('Search by keyword', 'code-snippets')}</option>
-				<option value="codevault">{__('Name of codevault', 'code-snippets')}</option>
+				<option value="codevault">{__('Name of library', 'code-snippets')}</option>
 			</select>
 
 			<div className="cloud-search-query">
@@ -57,7 +59,11 @@ const SearchBox = () => {
 	)
 }
 
-const SearchResultsTable = () => {
+interface SearchResultsViewProps {
+	snippetView: SnippetView
+}
+
+const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView }) => {
 	const { searchResults, isSearching, doSearch } = useCloudSearch()
 
 	if (!searchResults) {
@@ -82,10 +88,12 @@ const SearchResultsTable = () => {
 				<TablePagination which="top" {...paginationProps} />
 			</div>
 
-			<ul className="cloud-search-results code-snippets-cards">
-				{searchResults.snippets.map(result =>
-					<SearchResult key={result.id} snippet={result} />)}
-			</ul>
+			{'card' === snippetView
+				? <ul className="cloud-search-results code-snippets-cards">
+					{searchResults.snippets.map(result =>
+						<SearchResult key={result.id} snippet={result} />)}
+				</ul>
+				: <CloudSnippetsTable snippets={searchResults.snippets} />}
 
 			<div className="tablenav bottom">
 				<TablePagination which="bottom" {...paginationProps} />
@@ -94,7 +102,7 @@ const SearchResultsTable = () => {
 	)
 }
 
-const SearchResults = () => {
+const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView }) => {
 	const { searchResults, searchParams, isErrored } = useCloudSearch()
 
 	if (isErrored) {
@@ -125,13 +133,19 @@ const SearchResults = () => {
 			{searchResults.isFeatured
 				? <h3 className="cloud-featured-heading">{__('Featured Snippets', 'code-snippets')}</h3>
 				: <h3 className="cloud-snippets-heading">{__('Search Results', 'code-snippets')}</h3>}
-			<SearchResultsTable />
+			<SearchResultsTable snippetView={snippetView} />
 		</>
 		: null
 }
 
-export const CloudSearch = () =>
+export interface CloudSearchProps {
+	snippetView: SnippetView
+}
+
+export const CloudSearch: React.FC<CloudSearchProps> = ({ snippetView }) =>
 	<div className="cloud-search">
+		<p>{__('Search the community cloud for snippets shared by other users, and download them directly to your site.', 'code-snippets')}</p>
+
 		<SearchBox />
-		<SearchResults />
+		<SearchResults snippetView={snippetView} />
 	</div>

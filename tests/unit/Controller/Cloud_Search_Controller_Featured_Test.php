@@ -235,7 +235,7 @@ class Cloud_Search_Controller_Featured_Test extends UnitTestCase {
 	}
 
 	/**
-	 * An HTTP error returns an empty Cloud_Snippets (graceful fallback).
+	 * An HTTP error returns null (graceful fallback).
 	 *
 	 * @return void
 	 */
@@ -263,7 +263,6 @@ class Cloud_Search_Controller_Featured_Test extends UnitTestCase {
 		];
 
 		$result = self::make_controller()->get_featured_snippets();
-
 		$this->assertNull( $result );
 	}
 

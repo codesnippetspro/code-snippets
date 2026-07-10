@@ -125,6 +125,7 @@ export interface ListTableProps<T, K extends Key, A extends string> extends List
 	ListTablePaginationProps,
 	ListTableRowsProps<T, K> {
 	items: T[]
+	beforeTable?: ReactNode
 }
 
 export const ListTable = <T, K extends Key, A extends string = never>({
@@ -160,6 +161,7 @@ export interface PartialDataListTableProps<T, K extends Key, A extends string> e
 	totalItems: number
 	currentPage: number
 	visibleItems: T[]
+	beforeTable?: ReactNode
 	setSortColumn: (column: ListTableColumn<T> | undefined) => void
 	sortDirection?: ListTableSortDirection
 	setCurrentPage: (page: number) => void
@@ -178,6 +180,7 @@ export const PartialDataListTable = <T, K extends Key, A extends string>({
 	totalItems,
 	totalPages,
 	sortColumn,
+	beforeTable,
 	currentPage,
 	visibleItems,
 	sortDirection = 'asc',
@@ -196,6 +199,8 @@ export const PartialDataListTable = <T, K extends Key, A extends string>({
 			selected={getVisibleSelected(visibleItems, getKey, selected)}
 			{...{ actions, doAction, extraTableNav, disabled, currentPage, totalPages, pageSearchParam, setSelected, setCurrentPage }}
 		>
+			{beforeTable}
+
 			<TableBorder
 				items={visibleItems}
 				fixed={fixed}

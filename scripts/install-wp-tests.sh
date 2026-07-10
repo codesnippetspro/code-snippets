@@ -97,6 +97,7 @@ install_test_suite() {
 		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s|^define( 'WP_TESTS_MULTISITE', false );|define( 'WP_TESTS_MULTISITE', true );|" "$WP_TESTS_DIR"/wp-tests-config.php
 	fi
 
 }
@@ -154,4 +155,3 @@ install_db() {
 install_wp
 install_test_suite
 install_db
-

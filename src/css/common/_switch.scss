@@ -112,3 +112,14 @@ a.snippet-condition-count {
 		}
 	}
 }
+
+.snippet-view-toggle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-inline-end: 16px;
+
+	input[type='checkbox'].switch {
+		display: inline-block;
+	}
+}

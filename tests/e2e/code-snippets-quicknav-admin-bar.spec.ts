@@ -107,18 +107,20 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		await expect(safeModeDocLink).toHaveAttribute('href', 'https://snipco.de/safe-mode')
 		await expect(safeModeDocLink).toHaveAttribute('target', '_blank')
 
-		// Free vs Pro gating: CSS/JS/COND are disabled and lead to upgrade.
-		const cssNode = page.locator('#wp-admin-bar-code-snippets-add-css')
-		await expect(cssNode).toHaveClass(/code-snippets-disabled/)
-		await expect(cssNode.locator('a')).toHaveAttribute('href', /page=code_snippets_upgrade/)
+		// Free vs Pro gating: CSS/JS/COND lead to upgrade when unlicensed, otherwise to the type's add screen.
+		const proLicensed = await SnippetsTestHelper.isProLicensed()
 
-		const jsNode = page.locator('#wp-admin-bar-code-snippets-add-js')
-		await expect(jsNode).toHaveClass(/code-snippets-disabled/)
-		await expect(jsNode.locator('a')).toHaveAttribute('href', /page=code_snippets_upgrade/)
+		for (const type of ['css', 'js', 'cond']) {
+			const node = page.locator(`#wp-admin-bar-code-snippets-add-${type}`)
 
-		const condNode = page.locator('#wp-admin-bar-code-snippets-add-cond')
-		await expect(condNode).toHaveClass(/code-snippets-disabled/)
-		await expect(condNode.locator('a')).toHaveAttribute('href', /page=code_snippets_upgrade/)
+			if (proLicensed) {
+				await expect(node).not.toHaveClass(/code-snippets-disabled/)
+				await expect(node.locator('a')).toHaveAttribute('href', new RegExp(`type=${type}`))
+			} else {
+				await expect(node).toHaveClass(/code-snippets-disabled/)
+				await expect(node.locator('a')).toHaveAttribute('href', /page=code_snippets_upgrade/)
+			}
+		}
 
 		// Pagination: perPage=2 and we created 3 active snippets.
 		const activeNode = page.locator('#wp-admin-bar-code-snippets-active-snippets')

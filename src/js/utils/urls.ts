@@ -1,5 +1,7 @@
 import { addQueryArgs } from '@wordpress/url'
 
+export type UrlQueryArgs = Record<string, boolean | number | string | undefined | null>
+
 export const fetchQueryParam = (name: string): string | undefined => {
 	const urlParams = new URLSearchParams(window.location.search)
 	return urlParams.get(name) ?? undefined
@@ -47,9 +49,28 @@ const normaliseQueryArg = (value: unknown): string | undefined => {
 	}
 }
 
+export const buildAdminUrl = (
+	queryArgs: UrlQueryArgs,
+	preserveQueryArgs: string[] = []
+) => {
+	const searchParams = new URLSearchParams(window.location.search)
+
+	for (const queryArgName of ['page', ...preserveQueryArgs]) {
+		const value = searchParams.get(queryArgName)
+		if (value && queryArgs[queryArgName] === undefined) {
+			queryArgs[queryArgName] = value
+		}
+	}
+
+	return buildUrl(
+		`${window.location.origin}${window.location.pathname}`,
+		{ page: searchParams.get('page'), ...queryArgs }
+	)
+}
+
 export const buildUrl = (
 	base: string | undefined,
-	queryArgs: Record<string, boolean | number | string | undefined | null>
+	queryArgs: UrlQueryArgs
 ): string => {
 	const processedArgs: Record<string, string> = {}
 

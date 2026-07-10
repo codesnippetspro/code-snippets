@@ -49,7 +49,6 @@ export default defineConfig({
 			name: 'setup',
 			testMatch: /auth\.setup\.ts/
 		},
-
 		{
 			name: 'flat-files-setup',
 			testMatch: /flat-files\.setup\.ts/,

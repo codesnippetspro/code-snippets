@@ -121,11 +121,8 @@ class Cloud_Public_Client {
 			sprintf( '%s/public/getsnippetrevision/%s', $this->connection->get_api_url(), $cloud_id )
 		);
 
-		$cloud_snippet_revision = unpack_response_body( $response );
-
-		return $cloud_snippet_revision
-			? $cloud_snippet_revision['snippet_revision'] ?? null
-			: null;
+		$body = unpack_response_body( $response );
+		return $body['snippet_revision'] ?? null;
 	}
 
 	/**
@@ -135,7 +132,7 @@ class Cloud_Public_Client {
 	 * @param int                  $per_page Results per page.
 	 * @param array<string,string> $filters  Optional filters: category, type, status.
 	 *
-	 * @return Cloud_Snippets|null Featured snippets, or an empty result on failure.
+	 * @return Cloud_Snippets|null Featured snippets, or an null on failure.
 	 */
 	public function get_featured_snippets( int $page, int $per_page, array $filters ): ?Cloud_Snippets {
 		$params = [

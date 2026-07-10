@@ -58,6 +58,7 @@ jobs:
         ports:
           - 8888:80
     steps:
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
@@ -116,7 +117,7 @@ jobs:
             src/vendor
             node_modules
           key: ${{ steps.deps-cache.outputs.cache-primary-key }}-${{ github.run_id }}-${{ github.job }}
-          
+
       - name: Wait for WordPress to be reachable
         run: |
           for i in $(seq 1 60); do
@@ -124,7 +125,7 @@ jobs:
               echo "WordPress is reachable."
               exit 0
             fi
-            echo "Waiting for WordPress... ($i/60)"
+            echo "Waiting for WordPress… ($i/60)"
             sleep 2
           done
 
@@ -264,7 +265,7 @@ jobs:
           elif [ -f tests/playwright/test-results/results.json ]; then
             mv tests/playwright/test-results/results.json "test-results/ci/results-${suffix}.json"
           fi
-        
+
       - name: Print WordPress logs on failure
         if: failure()
         run: |

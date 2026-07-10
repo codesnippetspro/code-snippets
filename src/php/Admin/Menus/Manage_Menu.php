@@ -3,6 +3,7 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
+use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Migration\Export\Download_Code;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Code_Highlighter;
@@ -58,6 +59,7 @@ class Manage_Menu extends Admin_Menu {
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_menu_css' ) );
 		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
 	}
 
 	/**
@@ -197,8 +199,6 @@ class Manage_Menu extends Admin_Menu {
 	 * Enqueue scripts and stylesheets for the admin page.
 	 */
 	public function enqueue_assets() {
-		$plugin = code_snippets();
-
 		wp_enqueue_style(
 			self::CSS_HANDLE,
 			plugins_url( 'dist/manage.css', PLUGIN_FILE ),
@@ -217,15 +217,15 @@ class Manage_Menu extends Admin_Menu {
 		Code_Highlighter::enqueue_all_prism_themes();
 
 		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
-		$plugin->localize_script( self::JS_HANDLE );
+		code_snippets()->localize_script( self::JS_HANDLE );
 
 		$localized = [
 			'hasNetworkCap'        => current_user_can( code_snippets()->get_network_cap_name() ),
 			'hiddenColumns'        => $this->get_hidden_manage_columns(),
 			'truncateRowValues'    => (int) $this->truncate_row_values(),
-			'snippetsPerPage'      => $this->get_snippets_per_page(),
+			'snippetsPerPage'      => self::get_snippets_per_page(),
 			'cloudSearchPerPage'   => $this->get_cloud_search_per_page(),
-			'isSafeModeActive'     => code_snippets()->evaluate_functions->is_safe_mode_active(),
+			'isSafeModeActive'     => Evaluate_Functions::is_safe_mode_active(),
 			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
 		];

@@ -43,7 +43,7 @@ const SortableHeadingCell = <T, >({
 					setSortDirection(nextSortDirection)
 				}}
 			>
-				<span>{column.title}</span>
+				<span className="sortable-column-title">{column.title}</span>
 				<span className="sorting-indicators">
 					<span className="sorting-indicator asc" aria-hidden="true"></span>
 					<span className="sorting-indicator desc" aria-hidden="true"></span>

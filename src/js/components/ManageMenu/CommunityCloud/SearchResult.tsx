@@ -1,24 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { __, _x } from '@wordpress/i18n'
-import { Modal, Spinner } from '@wordpress/components'
-import { useRestAPI } from '../../../hooks/useRestAPI'
-import { Prism } from '../../../utils/Prism'
-import { REST_BASES } from '../../../utils/restAPI'
-import { isLicensed } from '../../../utils/screen'
-import { getSnippetEditUrl, getSnippetType, isProSnippet } from '../../../utils/snippets/snippets'
+import React, { useState } from 'react'
+import { __, _x, sprintf } from '@wordpress/i18n'
+import { getSnippetType } from '../../../utils/snippets/snippets'
 import { truncateChars } from '../../../utils/text'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
+import { CloudSnippetDownloadButton } from '../../common/cloud/CloudSnippetDownloadButton'
+import { CloudSnippetPreviewModal } from '../../common/cloud/CloudSnippetPreviewModal'
 import { CloudStatusIndicator } from '../../common/cloud/CloudStatusBadge'
-import { ErrorTooltip } from '../../common/Tooltip'
-import { UpsellDialog } from '../../common/UpsellDialog'
+import { CloudUpdateIcon } from '../../common/icons/CloudIcons'
+import { SnippetCard } from '../../common/SnippetCard'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
-
-interface DownloadSnippetResponse {
-	success: boolean
-	snippet_id: number
-	link_id: number
-}
 
 interface CloudSnippetDetailsProps {
 	snippet: CloudSnippetSchema
@@ -71,138 +62,42 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 		</p>
 	</div>
 
-interface PreviewModalProps {
-	isOpen: boolean
-	snippet: CloudSnippetSchema
-	setIsOpen: (isOpen: boolean) => void
-}
-
-const PreviewModal: React.FC<PreviewModalProps> = ({ snippet, isOpen, setIsOpen }) => {
-	const snippetType = getSnippetType(snippet)
-
-	return isOpen
-		? <Modal onRequestClose={() => setIsOpen(false)} title={snippet.name}>
-			<pre className="line-numbers">
-				<code className={`language-${snippetType}`}>
-					{'php' === snippetType ? '<?php\n\n' : ''}
-					{snippet.code}
-				</code>
-			</pre>
-		</Modal>
-		: null
-}
-
-interface DownloadOrViewButtonProps {
-	snippet: CloudSnippetSchema
-	isWorking: boolean
-	onDownload: VoidFunction
-	localSnippetId: number | undefined
-}
-
-const DownloadOrViewButton: React.FC<DownloadOrViewButtonProps> = ({
-	snippet,
-	isWorking,
-	onDownload,
-	localSnippetId,
-}) => {
-	const [isUpsellOpen, setIsUpsellOpen] = useState(false)
-
-	if (localSnippetId) {
-		return (
-			<a className="button button-primary" href={getSnippetEditUrl({ id: localSnippetId })} target="_blank" rel="noopener noreferrer">
-				{__('View', 'code-snippets')}
-			</a>
-		)
-	}
-
-	if (isProSnippet(snippet) && !isLicensed()) {
-		return (
-			<>
-				<Button className="cloud-pro-button" onClick={() => setIsUpsellOpen(true)}>
-					{__('Pro Only', 'code-snippets')}
-				</Button>
-				<UpsellDialog isOpen={isUpsellOpen} setIsOpen={setIsUpsellOpen} />
-			</>
-		)
-	}
-
-	return (
-		<Button primary onClick={onDownload} disabled={isWorking}>
-			{__('Download', 'code-snippets')}
-		</Button>
-	)
-}
-
-interface DownloadButtonProps {
-	snippet: CloudSnippetSchema
-}
-
-const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
-	const { api } = useRestAPI()
-	const [isWorking, setIsWorking] = useState(false)
-	const [errorMessage, setErrorMessage] = useState<string>()
-	const [localSnippetId, setLocalSnippetId] = useState<number>()
-
-	const handleDownload = () => {
-		setIsWorking(true)
-		setErrorMessage(undefined)
-
-		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)
-			.then(response => {
-				setLocalSnippetId(response.snippet_id)
-			})
-			.catch((error: unknown) => {
-				setErrorMessage('string' === typeof error
-					? error
-					: __('An error occurred while trying to download the snippet. Please try again later.', 'code-snippets'))
-			})
-			.finally(() => setIsWorking(false))
-	}
-
-	return (
-		<>
-			{isWorking && <Spinner />}
-			{errorMessage && <ErrorTooltip message={errorMessage} />}
-
-			<DownloadOrViewButton
-				snippet={snippet}
-				isWorking={isWorking}
-				onDownload={handleDownload}
-				localSnippetId={localSnippetId}
-			/>
-		</>
-	)
-}
-
 export interface SearchResultProps {
 	snippet: CloudSnippetSchema
+	isSelected?: boolean
+	onSelectedChange?: (isSelected: boolean) => void
 }
 
-export const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
+export const SearchResult: React.FC<SearchResultProps> = ({ snippet, isSelected = false, onSelectedChange }) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
-	useEffect(() => {
-		if (isPreviewOpen) {
-			Prism.highlightAll()
-		}
-	}, [isPreviewOpen])
-
 	return (
-		<li className="cloud-search-result code-snippets-card">
-			<CloudSnippetDetails snippet={snippet} setIsPreviewOpen={setIsPreviewOpen} />
-
-			<footer>
+		<SnippetCard
+			className="cloud-search-result"
+			isSelected={isSelected}
+			onSelectedChange={onSelectedChange}
+			selectionLabel={sprintf(
+				/* translators: %s: name of the snippet. */
+				__('Select %s', 'code-snippets'),
+				snippet.name
+			)}
+			footer={<>
+				{snippet.update_available
+					? <span className="cloud-snippet-update" title={__('Update available', 'code-snippets')}>
+						<CloudUpdateIcon aria-label={__('Update available', 'code-snippets')} />
+					</span>
+					: null}
 				<CloudStatusIndicator status={snippet.status} />
-
-				<DownloadButton snippet={snippet} />
+				<CloudSnippetDownloadButton snippet={snippet} />
 
 				<Button secondary onClick={() => setIsPreviewOpen(true)}>
 					{__('Preview', 'code-snippets')}
 				</Button>
+			</>}
+		>
+			<CloudSnippetDetails snippet={snippet} setIsPreviewOpen={setIsPreviewOpen} />
 
-			</footer>
-
-			<PreviewModal snippet={snippet} isOpen={isPreviewOpen} setIsOpen={setIsPreviewOpen} />
-		</li>
+			<CloudSnippetPreviewModal snippet={snippet} isOpen={isPreviewOpen} setIsOpen={setIsPreviewOpen} />
+		</SnippetCard>
 	)
 }

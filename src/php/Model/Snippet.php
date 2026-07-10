@@ -109,6 +109,8 @@ class Snippet extends Model {
 			case 'id':
 			case 'priority':
 			case 'condition_id':
+			case 'cloud_id':
+			case 'revision':
 				return absint( $value );
 
 			case 'tags':
@@ -550,7 +552,9 @@ class Snippet extends Model {
 	 * @noinspection PhpUnused
 	 */
 	protected function get_cloud_id_owner(): string {
-		return sprintf( '%d_%d', $this->cloud_id, $this->is_cloud_owner ? '1' : '0' );
+		return $this->cloud_id
+			? sprintf( '%d_%d', $this->cloud_id, $this->is_cloud_owner ? '1' : '0' )
+			: '';
 	}
 
 	/**
