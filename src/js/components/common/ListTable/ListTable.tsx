@@ -147,6 +147,7 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 		<PartialDataListTable
 			getKey={getKey}
 			totalItems={items.length}
+			totalPages={totalPages}
 			visibleItems={visibleItems}
 			pageSearchParam={pageSearchParam}
 			{...{ sortColumn, sortDirection, currentPage, setSortColumn, setSortDirection, setCurrentPage }}
