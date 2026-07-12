@@ -7,7 +7,7 @@ License URI: license.txt
 Stable tag: 3.9.6
 Tested up to: 6.9
 
-An easy, clean and simple way to enhance your site with code snippets.
+An easy, clean, and simple way to enhance your site with code snippets.
 
 == Description ==
 
