@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { getSnippetType } from '../../../utils/snippets/snippets'
-import { truncateChars } from '../../../utils/text'
+import { stripTags, truncateChars } from '../../../utils/text'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { CloudSnippetDownloadButton } from '../../common/cloud/CloudSnippetDownloadButton'
@@ -36,7 +36,7 @@ const CloudSnippetRow: React.FC<CloudSnippetRowProps> = ({ snippet }) => {
 			<td className="column-status"><CloudStatusBadge status={snippet.status} /></td>
 
 			<td className="column-desc">
-				<div className="cloud-table-description">{truncateChars(snippet.description)}</div>
+				<div className="cloud-table-description">{truncateChars(stripTags(snippet.description))}</div>
 			</td>
 
 			<td className="column-actions">
