@@ -58,6 +58,10 @@ const CommunityCloudInner = () => {
 
 			<ScreenMetaSlot />
 
+			<div className="snippets-page-header">
+				<h1>{__('Community Cloud', 'code-snippets')}</h1>
+			</div>
+
 			<hr className="wp-header-end" />
 
 			{'snippets' === currentTab && <CloudSearch snippetView={snippetView} />}

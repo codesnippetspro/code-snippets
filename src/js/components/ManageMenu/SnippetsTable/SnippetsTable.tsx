@@ -102,16 +102,17 @@ const SnippetsTableInner = () => {
 					<li className="snippet-view-toggle-nav-item">
 						<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
 					</li>
-
-					<li className="create-snippet-nav-item">
-						<a href={getSnippetEditUrl()} className="button button-primary">
-							{__('Create new snippet', 'code-snippets')}
-						</a>
-					</li>
 				</ul>
 			</nav>
 
 			<ScreenMetaSlot />
+
+			<div className="snippets-page-header">
+				<h1>{__('Manage Code Snippets', 'code-snippets')}</h1>
+				<a href={getSnippetEditUrl()} className="button button-primary">
+					{__('Create new Snippet', 'code-snippets')}
+				</a>
+			</div>
 
 			<hr className="wp-header-end" />
 

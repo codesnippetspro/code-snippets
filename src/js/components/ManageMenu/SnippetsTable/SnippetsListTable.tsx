@@ -1,4 +1,4 @@
-import { __, _n, _x, sprintf } from '@wordpress/i18n'
+import { __, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { createInterpolateElement } from '@wordpress/element'
@@ -42,7 +42,7 @@ const SnippetStatusCounts = () => {
 
 	return (
 		<ul className="subsubsub">
-			{visibleStatuses.map(([status, label], index) =>
+			{visibleStatuses.map(([status, label]) =>
 				<Fragment key={status}>
 					<li className={status}>
 						<a
@@ -60,7 +60,6 @@ const SnippetStatusCounts = () => {
 								sprintf(_x('(%d)', 'table view count', 'code-snippets'), snippetsByStatus.get(status)?.length ?? 0)
 							}</span>
 						</a>
-						{index < visibleStatuses.length - 1 && ' | '}
 					</li>
 				</Fragment>)}
 		</ul>
@@ -268,21 +267,13 @@ export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ snippetVie
 		<>
 			{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get('all') ?? []} />}
 			<ClearRecentlyActiveButton />
-
-			<span className="displaying-num" role="status" aria-live="polite">
-				{sprintf(
-				// translators: %d: total number of snippets across all pages.
-					_n('%d item', '%d items', currentSnippets.length),
-					currentSnippets.length
-				)}
-			</span>
+			{'top' === which && <SearchArea />}
 		</>
 
 	return (
 		<>
 			<div className="snippets-table-toolbar">
 				<SnippetStatusCounts />
-				<SearchArea />
 			</div>
 
 			<div className="snippets-list-view">

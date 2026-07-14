@@ -234,9 +234,28 @@
 
 	.subsubsub {
 		display: flex;
-		gap: 5px;
+		align-items: center;
+		gap: 0;
 		margin: 0;
 		padding: 0;
+		font-size: 13px;
+
+		li {
+			display: flex;
+			align-items: center;
+			margin: 0;
+			padding-inline: 10px;
+		}
+
+		// Vertical rules between the status links, sized to the 13px text.
+		li + li {
+			border-inline-start: 1px solid #c3c4c7;
+			line-height: 1;
+		}
+
+		li:first-child {
+			padding-inline-start: 0;
+		}
 	}
 }
 
@@ -258,15 +277,23 @@
 	}
 }
 
-/* Status filter links (All | Active | Inactive | …): WP 7.0 recolours these with the modern blue. Restore the classic
-   accent for non-current links; the current one keeps its own colour. */
+/* Status filter links (All | Active | Inactive | …): the current view keeps the accent colour
+   while the remaining links stay muted. */
 /* stylelint-disable-next-line no-descending-specificity -- unrelated element; ordering is fine. */
 .subsubsub a:not(.current) {
-	color: theme.$accent;
+	color: #2c3337;
 
 	&:hover,
 	&:focus {
-		color: theme.$accent-hover;
+		color: theme.$accent;
+	}
+}
+
+.subsubsub a.current {
+	color: theme.$accent;
+
+	.count {
+		color: theme.$accent;
 	}
 }
 
@@ -281,8 +308,7 @@
 	padding-inline: 0;
 }
 
-.snippets-search-area,
-.tablenav .displaying-num {
+.tablenav .tablenav-pages {
 	margin-inline-start: auto;
 }
 
@@ -297,7 +323,6 @@
 
 		input[type='search'] {
 			inline-size: 260px;
-			min-block-size: 32px;
 		}
 	}
 }

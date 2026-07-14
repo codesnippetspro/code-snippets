@@ -252,11 +252,6 @@
 	gap: 1em;
 }
 
-// The visible 'N items found' count beside the search box already reports
-// the total, so hide the pagination's duplicate item count in this view.
-.snippets-list-view .tablenav-pages .displaying-num {
-	display: none;
-}
 
 // Keep every table row the same height by clamping the description cell
 // to two lines, matching the two-line name + row-actions column.
