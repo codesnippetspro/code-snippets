@@ -167,8 +167,8 @@ const CardModifiedDate: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 	snippet.modified
 		? <span className="snippet-card-modified" title={snippet.modified}>
 			{sprintf(
-				/* translators: %s: human-readable time difference. */
-				__('Modified %s ago', 'code-snippets'),
+				/* translators: %s: human-readable time difference, including "ago" suffix. */
+				__('Modified %s', 'code-snippets'),
 				humanTimeDiff(snippet.modified, undefined)
 			)}
 		</span>
