@@ -130,8 +130,8 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 								'type'        => 'boolean',
 								'default'     => false,
 							],
-							$collection_args['page'],
-							$collection_args['per_page'],
+							'page'              => $collection_args['page'],
+							'per_page'          => $collection_args['per_page'],
 						],
 						$filter_args
 					),
@@ -148,7 +148,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_codevault_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => [ $collection_args['page'] ],
+					'args'                => [ 'page' => $collection_args['page'] ],
 					'schema'              => [ $this, 'get_item_schema' ],
 				],
 			]
@@ -164,7 +164,10 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => array_merge(
 						$filter_args,
-						[ $collection_args['page'], $collection_args['per_page'] ]
+						[
+							'page'     => $collection_args['page'],
+							'per_page' => $collection_args['per_page'],
+						]
 					),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
