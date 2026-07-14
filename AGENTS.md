@@ -179,6 +179,15 @@ plugins.
 - No co-author lines or any other trailers (`Co-Authored-By:`, `Signed-off-by:`, etc.).
 - Scope each commit to one feature, one change, or one file — do not bundle unrelated changes.
 
+### Pull Request Descriptions
+
+- PR descriptions must follow these standards as strictly as code and commit messages do.
+- Keep the language professional and factual — state what changed and how it was verified.
+- Do not include narrative reasoning, architectural rationale, or a record of the deliberation behind the
+  change; that belongs in the issue and commit history, not the PR body.
+- On the public repository, do not disclose premium (Pro) decisions, features, or roadmap, and avoid
+  unnecessary references to private repositories, issues, or cross-edition work.
+
 ---
 
 ## Development Commands
