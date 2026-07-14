@@ -62,6 +62,20 @@
 		min-inline-size: 90vw;
 	}
 
+	.components-modal__header-heading {
+		flex-grow: 1;
+	}
+
+	.code-snippets-preview-modal__title {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		.badge {
+			margin-inline-start: auto;
+		}
+	}
+
 	.components-modal__content {
 		overflow: auto;
 	}

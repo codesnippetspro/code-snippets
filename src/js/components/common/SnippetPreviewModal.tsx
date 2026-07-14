@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import { Modal } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
+import { Badge } from './Badge'
+import type { BadgeName } from './Badge'
 import type { EditorFromTextArea } from 'codemirror'
 
 export interface SnippetPreviewModalProps {
@@ -41,6 +43,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 		const instance = window.wp.codeEditor.initialize(textareaRef.current, {
 			codemirror: {
 				readOnly: true,
+				lineNumbers: true,
 				theme: window.CODE_SNIPPETS_MANAGE?.editorTheme ?? 'default',
 				mode: EDITOR_MODES[type] ?? EDITOR_MODES.php
 			}
@@ -55,7 +58,12 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 		? <Modal
 			className="code-snippets-preview-modal"
 			onRequestClose={() => setIsOpen(false)}
-			title={title}
+			title={
+				<span className="code-snippets-preview-modal__title">
+					{title}
+					<Badge small name={type as BadgeName} />
+				</span>
+			}
 		>
 			<textarea
 				ref={textareaRef}
