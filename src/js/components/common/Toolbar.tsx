@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import React, { useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { buildUrl, fetchQueryParam } from '../../utils/urls'
-import { BlueprintIcon, CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon } from './icons/ToolbarIcons'
+import { BlueprintIcon, CommunityIcon, ImportIcon, LibraryIcon, SettingsIcon, SnippetsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
 import type { ReactNode } from 'react'
 
@@ -18,6 +18,7 @@ interface NavLink {
 	pro?: boolean
 	pageSlug?: string
 	subpage?: typeof SUBPAGES[number]
+	end?: boolean
 }
 
 const UPPER_NAV_LINKS: readonly NavLink[] = [
@@ -50,6 +51,13 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		pageSlug: 'snippets'
 	},
 	{
+		name: 'blueprints',
+		label: __('Blueprints', 'code-snippets'),
+		icon: <BlueprintIcon />,
+		pro: true,
+		subpage: 'blueprints'
+	},
+	{
 		name: 'cloud-community',
 		label: __('Community Cloud', 'code-snippets'),
 		icon: <CommunityIcon aria-hidden="true" />,
@@ -63,18 +71,20 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		subpage: 'cloud-library'
 	},
 	{
-		name: 'blueprints',
-		label: __('Blueprints', 'code-snippets'),
-		icon: <BlueprintIcon />,
-		pro: true,
-		subpage: 'blueprints'
+		name: 'import',
+		url: window.CODE_SNIPPETS?.urls.import,
+		label: __('Import', 'code-snippets'),
+		icon: <ImportIcon aria-hidden="true" />,
+		pageSlug: 'import-code-snippets',
+		end: true
 	},
 	{
 		name: 'settings',
 		url: window.CODE_SNIPPETS?.urls.settings,
 		label: __('Settings', 'code-snippets'),
 		icon: <SettingsIcon aria-hidden="true" />,
-		pageSlug: 'snippets-settings'
+		pageSlug: 'snippets-settings',
+		end: true
 	}
 ]
 
@@ -143,7 +153,7 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 		<nav aria-label={__('Main features', 'code-snippets')}>
 			<ul>
 				{LOWER_NAV_LINKS.map(link =>
-					<li key={link.name}>
+					<li key={link.name} className={link.end ? 'toolbar-end-item' : undefined}>
 						<a
 							href={link.url ?? buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: link.name })}
 							className={classnames(`${link.name}-link`, { 'active-link': isActiveLink(link) })}

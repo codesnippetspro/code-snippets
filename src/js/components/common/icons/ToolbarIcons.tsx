@@ -52,6 +52,17 @@ export const SnippetsIcon: React.FC<SVGProps<SVGSVGElement>> = props =>
 		/>
 	</svg>
 
+export const ImportIcon: React.FC<SVGProps<SVGSVGElement>> = props =>
+	<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path
+			d="M4.33333 17.3337V20.5837C4.33333 21.1584 4.5616 21.7094 4.96793 22.1157C5.37426 22.5221 5.92536 22.7503 6.5 22.7503H19.5C20.0746 22.7503 20.6257 22.5221 21.0321 22.1157C21.4384 21.7094 21.6667 21.1584 21.6667 20.5837V17.3337M13 3.25033V16.2503M13 16.2503L8.66667 11.917M13 16.2503L17.3333 11.917"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+
 export const BlueprintIcon: React.FC<SVGProps<SVGSVGElement>> = props =>
 	<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path
