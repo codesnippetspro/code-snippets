@@ -70,6 +70,7 @@ declare global {
 			isSafeModeActive: boolean
 			bulkDownloadNonce: string
 			supportsZipDownloads: boolean
+			editorTheme: string
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: SnippetSchema

@@ -12,6 +12,7 @@ use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\Settings\get_setting;
+use function Code_Snippets\Utils\enqueue_code_editor;
 use const Code_Snippets\PLUGIN_FILE;
 use const Code_Snippets\PLUGIN_VERSION;
 
@@ -216,6 +217,10 @@ class Manage_Menu extends Admin_Menu {
 
 		Code_Highlighter::enqueue_all_prism_themes();
 
+		// Load the CodeMirror library so the snippet preview modal can render a
+		// read-only editor that honours the configured editor theme.
+		enqueue_code_editor( 'php' );
+
 		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
 		code_snippets()->localize_script( self::JS_HANDLE );
 
@@ -228,6 +233,7 @@ class Manage_Menu extends Admin_Menu {
 			'isSafeModeActive'     => Evaluate_Functions::is_safe_mode_active(),
 			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
+			'editorTheme'          => get_setting( 'editor', 'theme' ),
 		];
 
 		// Only the manage-table view consumes the full snippets list; skip the

@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Modal } from '@wordpress/components'
-import { Prism } from '../../utils/Prism'
+import { __ } from '@wordpress/i18n'
+import type { EditorFromTextArea } from 'codemirror'
 
 export interface SnippetPreviewModalProps {
 	title: string
@@ -10,26 +11,58 @@ export interface SnippetPreviewModalProps {
 	setIsOpen: (isOpen: boolean) => void
 }
 
+// Mirrors the type-to-mode mapping used by the live editor in SnippetTypeInput.
+const EDITOR_MODES: Record<string, string> = {
+	css: 'text/css',
+	js: 'javascript',
+	php: 'text/x-php',
+	html: 'application/x-httpd-php'
+}
+
 /**
- * Modal for quickly viewing a snippet's code with syntax highlighting,
- * without navigating to the edit page. Shared between local snippets and
- * cloud snippet previews.
+ * Modal for quickly viewing a snippet's code in a read-only CodeMirror editor,
+ * without navigating to the edit page. Shared between local snippets and cloud
+ * snippet previews.
  */
-export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ title, code, type, isOpen, setIsOpen }) => {
+export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
+	title,
+	code,
+	type,
+	isOpen,
+	setIsOpen
+}) => {
+	const textareaRef = useRef<HTMLTextAreaElement>(null)
+
 	useEffect(() => {
-		if (isOpen) {
-			Prism.highlightAll()
+		if (!isOpen || !textareaRef.current) {
+			return undefined
 		}
-	}, [isOpen])
+
+		const instance = window.wp.codeEditor.initialize(textareaRef.current, {
+			codemirror: {
+				readOnly: true,
+				theme: window.CODE_SNIPPETS_MANAGE?.editorTheme ?? 'default',
+				mode: EDITOR_MODES[type] ?? EDITOR_MODES.php
+			}
+		})
+
+		return () => {
+			(instance.codemirror as EditorFromTextArea).toTextArea()
+		}
+	}, [isOpen, type])
 
 	return isOpen
-		? <Modal onRequestClose={() => setIsOpen(false)} title={title}>
-			<pre className="line-numbers">
-				<code className={`language-${type}`}>
-					{'php' === type ? '<?php\n\n' : ''}
-					{code}
-				</code>
-			</pre>
+		? <Modal
+			className="code-snippets-preview-modal"
+			onRequestClose={() => setIsOpen(false)}
+			title={title}
+		>
+			<textarea
+				ref={textareaRef}
+				readOnly
+				aria-label={__('Snippet code preview', 'code-snippets')}
+				defaultValue={`${'php' === type ? '<?php\n\n' : ''}${code}`}
+			/>
 		</Modal>
 		: null
 }

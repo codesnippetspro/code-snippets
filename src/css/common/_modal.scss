@@ -51,3 +51,18 @@
 		}
 	}
 }
+
+.components-modal__frame.code-snippets-preview-modal {
+	min-inline-size: 520px;
+	min-block-size: 240px;
+	max-inline-size: 80vw;
+	max-block-size: 80vh;
+
+	@media (width <= 600px) {
+		min-inline-size: 90vw;
+	}
+
+	.components-modal__content {
+		overflow: auto;
+	}
+}
