@@ -119,12 +119,6 @@
 		opacity: 1;
 	}
 
-	// Match the light-blue tint that active snippet rows receive in the
-	// table view (.active-snippet td/th).
-	.code-snippets-card.active-snippet {
-		background-color: rgb(120 200 230 / 6%);
-	}
-
 	// Card body bands: header row, meta row, then a separated description.
 	.card-inner {
 		display: flex;
