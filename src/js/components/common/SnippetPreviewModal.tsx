@@ -61,7 +61,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			title={
 				<span className="code-snippets-preview-modal__title">
 					{title}
-					<Badge small name={type as BadgeName} />
+					<Badge name={type as BadgeName} />
 				</span>
 			}
 		>
