@@ -9,6 +9,7 @@ export interface SnippetCardProps {
 	selectionLabel?: string
 	cornerControls?: ReactNode
 	footer?: ReactNode
+	footerStatus?: ReactNode
 	children: ReactNode
 }
 
@@ -16,8 +17,11 @@ export interface SnippetCardProps {
  * Shared card chrome for displaying a snippet in a card grid: border, inner
  * padding, footer strip, and a top corner holding optional extra controls
  * (such as an activation toggle) plus a selection checkbox for bulk actions.
- * Both cloud search results and local snippet cards render inside this shell
- * so the two views stay visually consistent.
+ * The footer is split into a status region at the inline start and an actions
+ * region at the inline end; the status region is always rendered so actions
+ * stay end-aligned even when no status is provided. Both cloud search results
+ * and local snippet cards render inside this shell so the two views stay
+ * visually consistent.
  */
 export const SnippetCard: React.FC<SnippetCardProps> = ({
 	className,
@@ -26,6 +30,7 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
 	selectionLabel,
 	cornerControls,
 	footer,
+	footerStatus,
 	children
 }) =>
 	<li
@@ -52,5 +57,10 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({
 
 		{children}
 
-		{footer ? <footer>{footer}</footer> : null}
+		{undefined !== footer || undefined !== footerStatus
+			? <footer>
+				<div className="snippet-card-footer-status">{footerStatus}</div>
+				<div className="snippet-card-footer-actions">{footer}</div>
+			</footer>
+			: null}
 	</li>
