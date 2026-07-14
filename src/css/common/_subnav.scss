@@ -107,6 +107,50 @@
 	}
 }
 
+// Card/table view toggle: a two-icon segmented pair of square tiles with
+// the active view filled in the accent colour.
+.snippet-view-toggle {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding-inline-end: 16px;
+
+	.snippet-view-toggle-option {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: 38px;
+		block-size: 38px;
+		box-sizing: border-box;
+		padding: 0;
+		margin: 0;
+		background: #f0f0f1;
+		color: #646970;
+		border: none;
+		border-radius: 4.5px;
+		cursor: pointer;
+
+		svg {
+			display: block;
+		}
+
+		&:hover,
+		&:focus {
+			color: #2c3337;
+		}
+
+		&.active-view {
+			background: #2271b1;
+			color: #fff;
+
+			&:hover,
+			&:focus {
+				color: #fff;
+			}
+		}
+	}
+}
+
 
 // Slot that adopts the WordPress Screen Options / Help tabs so they appear
 // directly below the snippet-type nav instead of above the page content.
