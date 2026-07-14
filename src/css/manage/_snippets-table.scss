@@ -267,10 +267,3 @@
 	line-clamp: 2;
 	overflow: hidden;
 }
-
-// The All tab keeps the width it had with its longer label, with the
-// icon and text centred inside it.
-.snippet-type-nav .all-type-link {
-	min-inline-size: 165px;
-	justify-content: center;
-}

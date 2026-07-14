@@ -11,7 +11,6 @@ import { isLicensed } from '../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, isProType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
-import { SnippetsIcon } from '../../common/icons/ToolbarIcons'
 import { Notice } from '../../common/Notice'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
@@ -50,9 +49,9 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count, setIsUpgra
 					}
 				}}
 			>
-				{type ? <Badge small name={type} /> : <SnippetsIcon aria-hidden="true" />}
+				{type && <Badge small name={type} />}
 				<span className={`${tabName}-label`}>
-					{type ? SNIPPET_TYPE_LABELS[type] : __('All', 'code-snippets')}
+					{type ? SNIPPET_TYPE_LABELS[type] : __('All Snippets', 'code-snippets')}
 				</span>
 				{undefined !== count && <span className="subnav-count">{count}</span>}
 				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}

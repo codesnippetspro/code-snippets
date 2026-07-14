@@ -1,10 +1,10 @@
-// Snippet-type navigation styled to match the main plugin toolbar: a white
-// bar with tab links showing an icon beside black text, highlighting blue
-// with a blue bottom border on hover and for the active type. The create
-// button sits at the far end of the bar.
+// Snippet-type navigation: a boxed segmented control on a grey band, with
+// each tab separated by a vertical rule and the active tab shown as a
+// filled tile. The view toggle sits at the far end of the band.
 .snippet-type-nav {
-	background: #fff;
-	border-block-end: 1px solid #c3c4c7;
+	background: #f7f7f8;
+	border-block: 1px solid #e2e2e4;
+	min-block-size: 53px;
 
 	// Bleed across the full admin content width, flush against the plugin
 	// toolbar above: counteract the .wrap top margin (10px) plus its 2px /
@@ -26,6 +26,7 @@
 		display: flex;
 		align-items: stretch;
 		flex-wrap: wrap;
+		min-block-size: 51px;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -38,11 +39,9 @@
 
 	button.snippet-type-link {
 		background: none;
-		border-inline: none;
-		border-block-start: none;
+		border-block: none;
+		border-inline-start: none;
 		font-family: inherit;
-		font-size: 15px;
-		font-weight: 600;
 	}
 
 	.snippet-type-icon {
@@ -54,19 +53,18 @@
 	.snippet-type-link {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		gap: 10px;
-		padding: 18px 20px 14px;
+		min-inline-size: 100px;
+		padding-block: 0;
+		padding-inline: 24px;
 		cursor: pointer;
-
-		// Overlap the nav's black bottom border so the blue active/hover
-		// border paints directly on top of it with no gap between the two.
-		margin-block-end: -1px;
-		font-size: 15px;
-		font-weight: 600;
-		color: #1d2327;
+		font-size: 14px;
+		font-weight: 700;
+		color: #646970;
 		text-decoration: none;
 		box-sizing: border-box;
-		border-block-end: 4px solid transparent;
+		border-inline-end: 1px solid #e2e2e4;
 
 		svg {
 			display: block;
@@ -76,10 +74,13 @@
 
 		&:hover,
 		&:focus,
-		&:active,
+		&:active {
+			color: #2c3337;
+		}
+
 		&.active-type {
-			color: #2271b1;
-			border-block-end-color: currentcolor;
+			background: #f0f0f1;
+			color: #2c3337;
 		}
 
 		// Suppress the persistent focus ring left behind after a mouse click;
@@ -102,12 +103,6 @@
 
 	.snippet-view-toggle-nav-item {
 		margin-inline-start: auto;
-		align-items: center;
-	}
-
-	.create-snippet-nav-item {
-		margin-inline-start: 24px;
-		padding-inline-end: 16px;
 		align-items: center;
 	}
 }
