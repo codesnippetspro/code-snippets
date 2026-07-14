@@ -1,3 +1,4 @@
+import classnames from 'classnames'
 import React, { useMemo, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { getSnippetDisplayName, getSnippetType } from '../../../utils/snippets/snippets'
@@ -71,7 +72,11 @@ interface CardGridProps {
 
 const CardGrid: React.FC<CardGridProps> = ({ snippets, noItems, selected, setSelected }) =>
 	0 < snippets.length
-		? <ul className="code-snippets-cards snippets-card-grid">
+		? <ul
+			className={classnames('code-snippets-cards', 'snippets-card-grid', {
+				'has-selection': snippets.some(snippet => selected.has(snippet.id))
+			})}
+		>
 			{snippets.map(snippet =>
 				<ManageSnippetCard
 					key={snippet.id}
