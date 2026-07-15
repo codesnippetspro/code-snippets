@@ -1,14 +1,22 @@
 import { __ } from '@wordpress/i18n'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Spinner } from '@wordpress/components'
+import { useRestAPI } from '../../../hooks/useRestAPI'
+import { handleUnknownError } from '../../../utils/errors'
+import { REST_BASES } from '../../../utils/restAPI'
+import { isLicensed } from '../../../utils/screen'
+import { isProSnippet } from '../../../utils/snippets/snippets'
 import { TablePagination } from '../../common/ListTable/TablePagination'
+import { SnippetViewToggle } from '../../common/SnippetViewToggle'
+import { SubmitButton } from '../../common/SubmitButton'
 import { CloudSnippetsTable } from './CloudSnippetsTable'
 import { SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
+import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { SnippetView } from '../../../types/SnippetView'
 import type { TablePaginationProps } from '../../common/ListTable/TablePagination'
-import type { FormEventHandler } from 'react'
+import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
 const SearchBox = () => {
 	const { searchParams, updateSearchParams, isSearching, doSearch } = useCloudSearch()
@@ -59,12 +67,106 @@ const SearchBox = () => {
 	)
 }
 
-interface SearchResultsViewProps {
-	snippetView: SnippetView
+const isSnippetDownloadable = (snippet: CloudSnippetSchema): boolean =>
+	!snippet.local_id && (isLicensed() || !isProSnippet(snippet))
+
+interface BulkEditActionsProps {
+	selected: Set<CloudSnippetSchema['id']>
 }
 
-const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView }) => {
+const BulkEditActions: React.FC<BulkEditActionsProps> = ({ selected }) => {
+	const { api } = useRestAPI()
 	const { searchResults, isSearching, doSearch } = useCloudSearch()
+	const [selectedAction, setSelectedAction] = useState('')
+	const [isPerformingAction, setIsPerformingAction] = useState(false)
+
+	const applyDownloadAction = () => {
+		const downloadable = searchResults?.snippets
+			.filter(snippet => selected.has(snippet.id) && isSnippetDownloadable(snippet)) ?? []
+
+		setIsPerformingAction(true)
+		Promise.all(downloadable.map(snippet =>
+			api.post(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)))
+			.then(() => doSearch())
+			.catch(handleUnknownError)
+			.finally(() => setIsPerformingAction(false))
+	}
+
+	return (
+		<div className="alignleft actions bulkactions">
+			<label htmlFor="cloud-bulk-action-selector" className="screen-reader-text">
+				{/* translators: Hidden accessibility text. */}
+				{__('Select bulk action', 'code-snippets')}
+			</label>
+
+			<select
+				id="cloud-bulk-action-selector"
+				value={selectedAction}
+				onChange={event => setSelectedAction('download' === event.target.value ? 'download' : '')}
+			>
+				<option value="">{__('Bulk Edit', 'code-snippets')}</option>
+				<option value="download">{__('Download', 'code-snippets')}</option>
+			</select>
+
+			<SubmitButton
+				name="cloud_bulk_action"
+				text={__('Apply', 'code-snippets')}
+				className="action"
+				disabled={isSearching || isPerformingAction || !selectedAction || 0 === selected.size}
+				onClick={event => {
+					event.preventDefault()
+					applyDownloadAction()
+				}}
+			/>
+
+			{isPerformingAction ? <Spinner /> : null}
+		</div>
+	)
+}
+
+interface SearchResultsGridProps {
+	snippets: CloudSnippetSchema[]
+	selected: Set<CloudSnippetSchema['id']>
+	setSelected: Dispatch<SetStateAction<Set<CloudSnippetSchema['id']>>>
+}
+
+const SearchResultsGrid: React.FC<SearchResultsGridProps> = ({ snippets, selected, setSelected }) =>
+	<ul className="cloud-search-results code-snippets-cards">
+		{snippets.map(result =>
+			<SearchResult
+				key={result.id}
+				snippet={result}
+				isSelected={selected.has(result.id)}
+				onSelectedChange={isSelected => {
+					setSelected(previous => {
+						const updated = new Set(previous)
+
+						if (isSelected) {
+							updated.add(result.id)
+						} else {
+							updated.delete(result.id)
+						}
+
+						return updated
+					})
+				}}
+			/>)}
+	</ul>
+
+interface SearchResultsViewProps {
+	snippetView: SnippetView
+	setSnippetView: (view: SnippetView) => void
+}
+
+const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
+	const { searchResults, isSearching, doSearch } = useCloudSearch()
+	const [selected, setSelected] = useState<Set<CloudSnippetSchema['id']>>(new Set())
+
+	const snippets = searchResults?.snippets
+
+	useEffect(() => {
+		setSelected(new Set())
+	}, [snippets])
 
 	if (!searchResults) {
 		return null
@@ -81,28 +183,26 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView }) =
 	}
 
 	return (
-		<>
+		<div className="snippets-list-view">
 			<div className="tablenav top">
+				<BulkEditActions selected={selected} />
 				<SearchFilters />
-
 				<TablePagination which="top" {...paginationProps} />
+				<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
 			</div>
 
 			{'card' === snippetView
-				? <ul className="cloud-search-results code-snippets-cards">
-					{searchResults.snippets.map(result =>
-						<SearchResult key={result.id} snippet={result} />)}
-				</ul>
+				? <SearchResultsGrid snippets={searchResults.snippets} selected={selected} setSelected={setSelected} />
 				: <CloudSnippetsTable snippets={searchResults.snippets} />}
 
 			<div className="tablenav bottom">
 				<TablePagination which="bottom" {...paginationProps} />
 			</div>
-		</>
+		</div>
 	)
 }
 
-const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView }) => {
+const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
 	const { searchResults, searchParams, isErrored } = useCloudSearch()
 
 	if (isErrored) {
@@ -133,19 +233,18 @@ const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView }) => {
 			{searchResults.isFeatured
 				? <h3 className="cloud-featured-heading">{__('Featured Snippets', 'code-snippets')}</h3>
 				: <h3 className="cloud-snippets-heading">{__('Search Results', 'code-snippets')}</h3>}
-			<SearchResultsTable snippetView={snippetView} />
+			<SearchResultsTable snippetView={snippetView} setSnippetView={setSnippetView} />
 		</>
 		: null
 }
 
 export interface CloudSearchProps {
 	snippetView: SnippetView
+	setSnippetView: (view: SnippetView) => void
 }
 
-export const CloudSearch: React.FC<CloudSearchProps> = ({ snippetView }) =>
+export const CloudSearch: React.FC<CloudSearchProps> = ({ snippetView, setSnippetView }) =>
 	<div className="cloud-search">
-		<p>{__('Search the community cloud for snippets shared by other users, and download them directly to your site.', 'code-snippets')}</p>
-
 		<SearchBox />
-		<SearchResults snippetView={snippetView} />
+		<SearchResults snippetView={snippetView} setSnippetView={setSnippetView} />
 	</div>
