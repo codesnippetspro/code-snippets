@@ -9,6 +9,7 @@ import { REST_BASES } from '../../../utils/restAPI'
 import { getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
+import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { SubmitButton } from '../../common/SubmitButton'
 import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
@@ -154,7 +155,7 @@ const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) =
 				aria-label={__('Filter snippets by tag', 'code-snippets')}
 				onChange={event => setCurrentTag(event.target.value)}
 			>
-				<option value="">{__('Show all tags', 'code-snippets')}</option>
+				<option value="">{__('All Tags', 'code-snippets')}</option>
 				{[...tagsList].map(tag =>
 					<option key={tag} value={tag}>{tag}</option>)}
 			</select>
@@ -195,6 +196,7 @@ const getRowClassName = (snippet: Snippet, activeByCondition: Map<Snippet['id'],
 
 interface SnippetsViewProps {
 	snippetView: SnippetView
+	setSnippetView: (view: SnippetView) => void
 	snippets: Snippet[]
 	actions: ListTableAction<SnippetsTableAction>[]
 	doAction: (action: SnippetsTableAction, selected: Set<Snippet['id']>) => Promise<void>
@@ -205,6 +207,7 @@ interface SnippetsViewProps {
 
 const SnippetsView: React.FC<SnippetsViewProps> = ({
 	snippetView,
+	setSnippetView,
 	snippets,
 	actions,
 	doAction,
@@ -216,6 +219,7 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
 	const pageCount = itemsPerPage && Math.ceil(snippets.length / itemsPerPage)
+	const viewToggle = <SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
 
 	return 'card' === snippetView
 		? <SnippetsCardGrid
@@ -224,6 +228,8 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			doAction={doAction}
 			itemsPerPage={itemsPerPage}
 			extraTableNav={extraTableNav}
+			selectAll
+			endTableNav={viewToggle}
 			noItems={<NoItemsMessage />}
 			beforeGrid={<SearchResultsIndicator />}
 		/>
@@ -236,6 +242,8 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			doAction={doAction}
 			totalPages={pageCount}
 			extraTableNav={extraTableNav}
+			selectAll
+			endTableNav={viewToggle}
 			rowClassName={snippet => getRowClassName(snippet, activeByCondition)}
 			noItems={<NoItemsMessage />}
 			beforeTable={<SearchResultsIndicator />}
@@ -244,9 +252,10 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 
 export interface SnippetsListTableProps {
 	snippetView: SnippetView
+	setSnippetView: (view: SnippetView) => void
 }
 
-export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ snippetView }) => {
+export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ snippetView, setSnippetView }) => {
 	const { snippetsByStatus } = useFilteredSnippets()
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { hiddenColumns, truncateRowValues } = useManageTableSettings()
@@ -279,6 +288,7 @@ export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ snippetVie
 			<div className="snippets-list-view">
 				<SnippetsView
 					snippetView={snippetView}
+					setSnippetView={setSnippetView}
 					snippets={currentSnippets}
 					actions={'trashed' === currentStatus ? TRASHED_BULK_ACTIONS : BULK_ACTIONS}
 					doAction={applyBulkAction}

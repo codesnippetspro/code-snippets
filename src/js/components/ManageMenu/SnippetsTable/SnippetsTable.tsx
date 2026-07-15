@@ -13,7 +13,6 @@ import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Notice } from '../../common/Notice'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
-import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { UpsellDialog } from '../../common/UpsellDialog'
 import { WithSnippetsTableFilters, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { WithFilteredSnippetsContext } from './WithFilteredSnippetsContext'
@@ -81,10 +80,7 @@ const SafeModeNotice = () =>
 		</Notice>
 		: null
 
-const SnippetsTableInner = () => {
-	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
-	const { snippetView, setSnippetView } = useSnippetView()
-	const { currentType } = useSnippetsFilters()
+const useSnippetTypeCounts = () => {
 	const { snippetsList } = useSnippetsList()
 
 	const countedSnippets = useMemo(
@@ -99,6 +95,15 @@ const SnippetsTableInner = () => {
 		}, new Map<SnippetType, number>()),
 		[countedSnippets]
 	)
+
+	return { countedSnippets, typeCounts }
+}
+
+const SnippetsTableInner = () => {
+	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
+	const { snippetView, setSnippetView } = useSnippetView()
+	const { currentType } = useSnippetsFilters()
+	const { countedSnippets, typeCounts } = useSnippetTypeCounts()
 
 	return (
 		<>
@@ -115,10 +120,6 @@ const SnippetsTableInner = () => {
 							count={countedSnippets && (typeCounts?.get(type) ?? 0)}
 							setIsUpgradeDialogOpen={setIsUpgradeDialogOpen}
 						/>)}
-
-					<li className="snippet-view-toggle-nav-item">
-						<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
-					</li>
 				</ul>
 			</nav>
 
@@ -140,7 +141,7 @@ const SnippetsTableInner = () => {
 			<SafeModeNotice />
 
 			<WithFilteredSnippetsContext>
-				<SnippetsListTable snippetView={snippetView} />
+				<SnippetsListTable snippetView={snippetView} setSnippetView={setSnippetView} />
 			</WithFilteredSnippetsContext>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
