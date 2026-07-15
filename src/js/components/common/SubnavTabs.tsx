@@ -62,7 +62,6 @@ export const SubnavTabs = <T extends string>({
 							>
 								{tab.icon}
 								<span>{tab.label}</span>
-								{undefined !== tab.count && <span className="subnav-count">{tab.count}</span>}
 								{tab.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 							</button>
 						</li>)}

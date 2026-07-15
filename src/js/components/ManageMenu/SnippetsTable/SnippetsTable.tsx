@@ -5,7 +5,7 @@ import classnames from 'classnames'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
-import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
+import { WithSnippetsListContext } from '../../../hooks/useSnippetsList'
 import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, isProType } from '../../../utils/snippets/snippets'
@@ -22,11 +22,10 @@ import type { SnippetType } from '../../../types/Snippet'
 
 interface SnippetTypeTabProps {
 	type?: SnippetType
-	count?: number
 	setIsUpgradeDialogOpen: (isOpen: boolean) => void
 }
 
-const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count, setIsUpgradeDialogOpen }) => {
+const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialogOpen }) => {
 	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
 
@@ -49,11 +48,10 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count, setIsUpgra
 					}
 				}}
 			>
-				{type && <Badge small name={type} />}
+				{type && <Badge name={type} />}
 				<span className={`${tabName}-label`}>
 					{type ? SNIPPET_TYPE_LABELS[type] : __('All Snippets', 'code-snippets')}
 				</span>
-				{undefined !== count && <span className="subnav-count">{count}</span>}
 				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>
@@ -84,9 +82,6 @@ const SafeModeNotice = () =>
 const SnippetsTableInner = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 	const { snippetView, setSnippetView } = useSnippetView()
-	const { snippetsList } = useSnippetsList()
-
-	const allCount = snippetsList?.filter(snippet => !snippet.trashed).length
 
 	return (
 		<>
@@ -95,7 +90,7 @@ const SnippetsTableInner = () => {
 				aria-label={__('Snippet types', 'code-snippets')}
 			>
 				<ul>
-					<SnippetTypeTab count={allCount} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
+					<SnippetTypeTab setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
 					{SNIPPET_TYPES.map(type =>
 						<SnippetTypeTab key={type} type={type} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />)}
 
