@@ -45,7 +45,6 @@ declare global {
 				addNew: string
 				edit: string
 				welcome: string
-				import: string
 				settings: string
 				cloud: string
 			}

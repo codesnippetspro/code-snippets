@@ -1,9 +1,10 @@
-// Snippet-type navigation: a boxed segmented control on a grey band, with
+// Snippet-type navigation: a boxed segmented control on a white band, with
 // each tab separated by a vertical rule and the active tab shown as a
-// filled tile. The view toggle sits at the far end of the band.
+// filled tile. The plugin toolbar above already draws the separating border,
+// so the band only draws its own bottom border.
 .snippet-type-nav {
-	background: #f7f7f8;
-	border-block: 1px solid #e2e2e4;
+	background: #fff;
+	border-block-end: 1px solid #e2e2e4;
 	min-block-size: 53px;
 
 	// Bleed across the full admin content width, flush against the plugin
@@ -26,20 +27,24 @@
 		display: flex;
 		align-items: stretch;
 		flex-wrap: wrap;
-		min-block-size: 51px;
+		min-block-size: 52px;
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
 
+	// Pull each tab 1px past the band so its own bottom border sits exactly
+	// on the band border; the active tab then repaints that line in its tile
+	// colour without doubling up borders anywhere.
 	li {
 		display: flex;
-		margin: 0;
+		margin-block: 0 -1px;
+		margin-inline: 0;
 	}
 
 	button.snippet-type-link {
 		background: none;
-		border-block: none;
+		border-block-start: none;
 		border-inline-start: none;
 		font-family: inherit;
 	}
@@ -54,17 +59,24 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 10px;
+		gap: 8px;
 		min-inline-size: 100px;
 		padding-block: 0;
 		padding-inline: 24px;
 		cursor: pointer;
 		font-size: 14px;
-		font-weight: 700;
+		font-weight: 590;
+		line-height: 1.5;
 		color: #646970;
 		text-decoration: none;
 		box-sizing: border-box;
 		border-inline-end: 1px solid #e2e2e4;
+		border-block-end: 1px solid #e2e2e4;
+
+		// The text-only "All Snippets" tab uses a wider gap before its count.
+		&.all-type-link {
+			gap: 12px;
+		}
 
 		svg {
 			display: block;
@@ -80,6 +92,7 @@
 
 		&.active-type {
 			background: #f0f0f1;
+			border-color: #f0f0f1;
 			color: #2c3337;
 		}
 
@@ -168,24 +181,11 @@
 }
 
 
-// Count pill shown beside a subnav tab's label (e.g. total on the "All" tab).
+// Item count shown after a subnav tab's label, muted against the label text.
 .snippet-type-nav .subnav-count {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-inline-size: 20px;
-	block-size: 20px;
-	padding-inline: 7px;
-	border-radius: 999px;
-	background: #2271b1;
-	color: #fff;
-	font-size: 11px;
-	font-weight: 600;
-	line-height: 1;
-	box-sizing: border-box;
-}
-
-.snippet-type-nav .snippet-type-link:not(.active-type) .subnav-count {
-	background: #dbebf7;
-	color: #2271b1;
+	font-size: 14px;
+	font-weight: 590;
+	line-height: 1.5;
+	color: #2c3337;
+	opacity: 0.4;
 }

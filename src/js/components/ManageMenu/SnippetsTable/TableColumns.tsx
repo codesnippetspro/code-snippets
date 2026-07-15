@@ -97,8 +97,16 @@ export const SnippetExtraIcons: React.FC<ColumnProps> = ({ snippet }) =>
 export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
 		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
-			? <a href={getSnippetEditUrl(snippet)} className="snippet-name">{getSnippetDisplayName(snippet)}</a>
-			: getSnippetDisplayName(snippet)}
+			? <a
+				href={getSnippetEditUrl(snippet)}
+				className="snippet-name"
+				title={getSnippetDisplayName(snippet)}
+			>
+				{getSnippetDisplayName(snippet)}
+			</a>
+			: <span className="snippet-name" title={getSnippetDisplayName(snippet)}>
+				{getSnippetDisplayName(snippet)}
+			</span>}
 
 		{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
 	</>

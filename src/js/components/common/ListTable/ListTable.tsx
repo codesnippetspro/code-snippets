@@ -31,6 +31,8 @@ export interface ListTableNavProps<K extends Key, A extends string> {
 	doAction?: (action: A, selected: Set<K>) => Promise<void>
 	disabled?: boolean
 	extraTableNav?: (which: 'top' | 'bottom') => ReactNode
+	selectAll?: boolean
+	endTableNav?: ReactNode
 }
 
 export interface ListTableRowsProps<T, K extends Key> {
@@ -189,16 +191,17 @@ export const PartialDataListTable = <T, K extends Key, A extends string>({
 	extraTableNav,
 	setCurrentPage,
 	pageSearchParam,
-	setSortDirection,
+	setSortDirection, selectAll, endTableNav,
 	...tableRowsProps
 }: PartialDataListTableProps<T, K, A>) => {
 	const [selected, setSelected] = useState(() => new Set<K>())
 
 	return (
 		<TableNavigation
-			totalItems={totalItems}
 			selected={getVisibleSelected(visibleItems, getKey, selected)}
-			{...{ actions, doAction, extraTableNav, disabled, currentPage, totalPages, pageSearchParam, setSelected, setCurrentPage }}
+			visibleKeys={visibleItems.map(getKey)}
+			{...{ totalItems, actions, doAction, extraTableNav, selectAll, endTableNav }}
+			{...{ disabled, currentPage, totalPages, pageSearchParam, setSelected, setCurrentPage }}
 		>
 			{beforeTable}
 

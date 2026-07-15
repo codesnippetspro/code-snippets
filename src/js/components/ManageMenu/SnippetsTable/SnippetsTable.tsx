@@ -1,19 +1,18 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
-import { WithSnippetsListContext } from '../../../hooks/useSnippetsList'
+import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
 import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
-import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, isProType } from '../../../utils/snippets/snippets'
+import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, getSnippetType, isProType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Notice } from '../../common/Notice'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
-import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { UpsellDialog } from '../../common/UpsellDialog'
 import { WithSnippetsTableFilters, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { WithFilteredSnippetsContext } from './WithFilteredSnippetsContext'
@@ -22,10 +21,11 @@ import type { SnippetType } from '../../../types/Snippet'
 
 interface SnippetTypeTabProps {
 	type?: SnippetType
+	count?: number
 	setIsUpgradeDialogOpen: (isOpen: boolean) => void
 }
 
-const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialogOpen }) => {
+const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count, setIsUpgradeDialogOpen }) => {
 	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
 
@@ -52,6 +52,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialo
 				<span className={`${tabName}-label`}>
 					{type ? SNIPPET_TYPE_LABELS[type] : __('All Snippets', 'code-snippets')}
 				</span>
+				{undefined !== count && <span className="subnav-count">{count}</span>}
 				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>
@@ -79,9 +80,30 @@ const SafeModeNotice = () =>
 		</Notice>
 		: null
 
+const useSnippetTypeCounts = () => {
+	const { snippetsList } = useSnippetsList()
+
+	const countedSnippets = useMemo(
+		() => snippetsList?.filter(snippet => !snippet.trashed),
+		[snippetsList]
+	)
+
+	const typeCounts = useMemo(
+		() => countedSnippets?.reduce((counts, snippet) => {
+			const type = getSnippetType(snippet)
+			return counts.set(type, (counts.get(type) ?? 0) + 1)
+		}, new Map<SnippetType, number>()),
+		[countedSnippets]
+	)
+
+	return { countedSnippets, typeCounts }
+}
+
 const SnippetsTableInner = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 	const { snippetView, setSnippetView } = useSnippetView()
+	const { currentType } = useSnippetsFilters()
+	const { countedSnippets, typeCounts } = useSnippetTypeCounts()
 
 	return (
 		<>
@@ -90,20 +112,25 @@ const SnippetsTableInner = () => {
 				aria-label={__('Snippet types', 'code-snippets')}
 			>
 				<ul>
-					<SnippetTypeTab setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
+					<SnippetTypeTab count={countedSnippets?.length} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
 					{SNIPPET_TYPES.map(type =>
-						<SnippetTypeTab key={type} type={type} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />)}
-
-					<li className="snippet-view-toggle-nav-item">
-						<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
-					</li>
+						<SnippetTypeTab
+							key={type}
+							type={type}
+							count={countedSnippets && (typeCounts?.get(type) ?? 0)}
+							setIsUpgradeDialogOpen={setIsUpgradeDialogOpen}
+						/>)}
 				</ul>
 			</nav>
 
 			<ScreenMetaSlot />
 
 			<div className="snippets-page-header">
-				<h1>{__('Manage Code Snippets', 'code-snippets')}</h1>
+				<h1>{sprintf(
+					// translators: %s: label of the currently selected snippet type.
+					__('Local Snippets: %s', 'code-snippets'),
+					currentType ? SNIPPET_TYPE_LABELS[currentType] : __('All Snippets', 'code-snippets')
+				)}</h1>
 				<a href={getSnippetEditUrl()} className="button button-primary">
 					{__('Create new Snippet', 'code-snippets')}
 				</a>
@@ -114,7 +141,7 @@ const SnippetsTableInner = () => {
 			<SafeModeNotice />
 
 			<WithFilteredSnippetsContext>
-				<SnippetsListTable snippetView={snippetView} />
+				<SnippetsListTable snippetView={snippetView} setSnippetView={setSnippetView} />
 			</WithFilteredSnippetsContext>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
