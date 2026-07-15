@@ -356,10 +356,13 @@
 			line-height: 1;
 		}
 
+		// WP core styles disabled buttons with !important, so these need it too.
 		.tablenav-pages-navspan.button.disabled {
-			background: #fff;
-			border-color: #c3c4c7;
-			color: #a7aaad;
+			/* stylelint-disable declaration-no-important */
+			background: #fff !important;
+			border-color: #c3c4c7 !important;
+			color: #a7aaad !important;
+			/* stylelint-enable declaration-no-important */
 		}
 
 		input.current-page {
