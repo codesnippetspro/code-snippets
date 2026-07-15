@@ -1,12 +1,14 @@
 // Snippet-type navigation: a boxed segmented control on a white band, with
 // each tab separated by a vertical rule and the active tab shown as a
-// filled tile. The plugin toolbar above already draws the separating border,
-// so the band only draws its own bottom border.
+// filled tile.
 .snippet-type-nav {
 	// The tab band scrolls sideways instead of wrapping at any width.
 	overflow-x: auto;
 	scrollbar-width: thin;
 	background: #fff;
+
+	// The toolbar band above already draws the 1px separator, so only a
+	// bottom border here — a top border would double the line weight.
 	border-block-end: 1px solid #e2e2e4;
 	min-block-size: 53px;
 
@@ -20,13 +22,17 @@
 
 	// Core admin switches to 10px #wpcontent padding, 0/12px .wrap margins
 	// below 782px; mirror them so the bar stays flush without overflowing
-	// the viewport. The tabs stop wrapping and the band scrolls inline
-	// instead, so it never stacks or clips.
+	// the viewport. The tabs scroll horizontally on a single row rather than
+	// stacking, with the scrollbar chrome hidden.
 	@media screen and (width <= 782px) {
 		margin-inline-start: -10px;
 		inline-size: calc(100% + 22px);
 		overflow-x: auto;
-		scrollbar-width: thin;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 
 		ul {
 			flex-wrap: nowrap;
@@ -47,18 +53,14 @@
 		list-style: none;
 	}
 
-	// Pull each tab 1px past the band so its own bottom border sits exactly
-	// on the band border; the active tab then repaints that line in its tile
-	// colour without doubling up borders anywhere.
 	li {
 		display: flex;
-		margin-block: 0 -1px;
-		margin-inline: 0;
+		margin: 0;
 	}
 
 	button.snippet-type-link {
 		background: none;
-		border-block-start: none;
+		border-block: none;
 		border-inline-start: none;
 		font-family: inherit;
 	}
@@ -85,9 +87,9 @@
 		text-decoration: none;
 		box-sizing: border-box;
 		border-inline-end: 1px solid #e2e2e4;
-		border-block-end: 1px solid #e2e2e4;
 
-		// The text-only "All Snippets" tab uses a wider gap before its count.
+		// The text-only "All Snippets" tab uses a slightly wider gap between
+		// its label and count than tabs that lead with a badge or icon.
 		&.all-type-link {
 			gap: 12px;
 		}
@@ -108,6 +110,10 @@
 			background: #f0f0f1;
 			border-color: #f0f0f1;
 			color: #2c3337;
+
+			// Children paint over the parent nav's border, so this recolours
+			// the 1px band separator beneath the active tab to match its fill.
+			box-shadow: 0 1px 0 0 #f0f0f1;
 		}
 
 		// Suppress the persistent focus ring left behind after a mouse click;
@@ -140,7 +146,6 @@
 	display: flex;
 	align-items: center;
 	gap: 4px;
-	padding-inline-end: 16px;
 
 	.snippet-view-toggle-option {
 		display: flex;
@@ -178,6 +183,11 @@
 	}
 }
 
+// Inset the toggle from the band edge when hosted inside a subnav bar.
+.snippet-type-nav .snippet-view-toggle-nav-item .snippet-view-toggle {
+	padding-inline-end: 16px;
+}
+
 
 // Slot that adopts the WordPress Screen Options / Help tabs so they appear
 // directly below the snippet-type nav instead of above the page content.
@@ -195,7 +205,7 @@
 }
 
 
-// Item count shown after a subnav tab's label, muted against the label text.
+// Item count shown after a subnav tab's label, as muted text.
 .snippet-type-nav .subnav-count {
 	font-size: 14px;
 	font-weight: 600;

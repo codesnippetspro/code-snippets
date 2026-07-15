@@ -1,5 +1,4 @@
 @use '../common/list-table';
-@use '../common/theme';
 
 .column-name,
 .column-type {
@@ -215,166 +214,13 @@
 	}
 }
 
-// Unified results toolbar shared by the table and card snippet views:
-// bulk actions, select-all, tag filter and search grouped on the
-// inline-start side, with the item count, pagination and view toggle
-// grouped on the inline-end side. The bottom toolbar reuses the same
-// styling for its reduced set of controls: bulk actions and pagination.
+// Shared table-navigation layout for both snippet views and both toolbars:
+// bulk actions, select all, tag filter and search on the left, with the item
+// count, pagination and view toggle pinned to the far end of the row. The
+// bottom toolbar repeats only the bulk actions and pagination group.
 .snippets-list-view .tablenav {
-	display: flex;
-	align-items: center;
 	block-size: auto;
-	gap: 12px 18px;
 	margin-block-end: 20px;
-
-	.actions {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		float: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.bulkactions select,
-	#snippets-tag-filter {
-		inline-size: 154px;
-	}
-
-	// The trailing float-clearing break would otherwise register as an
-	// empty flex item and contribute a stray column gap.
-	br.clear {
-		display: none;
-	}
-}
-
-.snippets-list-view label.tablenav-select-all {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 14px;
-
-	input[type='checkbox'] {
-		inline-size: 20px;
-		block-size: 20px;
-		margin: 0;
-		border: 1px solid #c3c4c7;
-		border-radius: 5px;
-		box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
-	}
-}
-
-// Inline-end toolbar group: item count and pagination pushed to the end of
-// The pagination group and view toggle wrap together as one end-pinned
-// cluster so narrow viewports never split them across rows.
-.snippets-list-view .tablenav .tablenav-end-group {
-	display: flex;
-	align-items: center;
-	gap: 24px;
-	margin-inline-start: auto;
-}
-
-.snippets-list-view .tablenav .snippet-view-toggle {
-	padding-inline-end: 0;
-}
-
-.tablenav-pages {
-	.displaying-num {
-		color: #646970;
-		font-size: 14px;
-		white-space: nowrap;
-	}
-}
-
-// Pagination controls: square outline arrow tiles around a wide
-// current-page box with a muted "of N" indicator.
-.snippets-list-view .tablenav .tablenav-pages {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin: 0;
-	float: none;
-
-	.pagination-links {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-
-		.paging-input {
-			gap: 8px;
-			margin-inline: 4px;
-		}
-
-		.button,
-		.tablenav-pages-navspan.button {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			inline-size: 38px;
-			min-inline-size: 38px;
-			block-size: 38px;
-			min-block-size: 38px;
-			box-sizing: border-box;
-			padding: 0;
-			margin: 0;
-			background: #fff;
-			border: 1px solid theme.$accent;
-			border-radius: 5.6px;
-			color: theme.$accent;
-			font-size: 16px;
-			line-height: 1;
-		}
-
-		// WP core styles disabled buttons with !important, so these need it too.
-		.tablenav-pages-navspan.button.disabled {
-			/* stylelint-disable declaration-no-important */
-			background: #fff !important;
-			border-color: #c3c4c7 !important;
-			color: #a7aaad !important;
-			/* stylelint-enable declaration-no-important */
-		}
-
-		input.current-page {
-			inline-size: 45px;
-			min-block-size: 38px;
-			box-sizing: border-box;
-			margin: 0;
-			text-align: center;
-			color: #2c3337;
-		}
-
-		.tablenav-paging-text {
-			font-size: 14px;
-			color: #646970;
-		}
-	}
-}
-
-// Below desktop widths the toolbar wraps: the inline-end cluster (pagination
-// and view toggle) drops onto its own row while staying pinned inline-end via
-// its auto margin, and the search field flexes into the remaining space.
-@media screen and (width <= 1024px) {
-	.snippets-list-view .tablenav .snippets-search-area {
-		inline-size: auto;
-		flex: 1 1 237px;
-		max-inline-size: 100%;
-	}
-}
-
-@media screen and (width <= 782px) {
-	.snippets-list-view .tablenav .snippets-search-area {
-		flex-basis: 100%;
-	}
-
-	// WP core hides the item count and stretches the pagination form at
-	// mobile widths; keep the unified toolbar shape and 38px tiles instead.
-	.snippets-list-view .tablenav .tablenav-pages {
-		inline-size: auto;
-
-		.displaying-num {
-			display: inline;
-		}
-	}
 }
 
 .snippets-search-subtitle {
@@ -388,7 +234,6 @@
 	justify-content: center;
 	gap: 1em;
 }
-
 
 // Keep every table row the same height by clamping the description cell
 // to two lines, matching the two-line name + row-actions column.

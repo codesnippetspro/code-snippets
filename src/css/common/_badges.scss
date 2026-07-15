@@ -123,3 +123,11 @@
 		}
 	}
 }
+
+// Override WordPress' .wp-core-ui .button .dashicons { line-height: 1.9 } —
+// inside a button the inflated line-box would shift the glyph below the
+// badge's bottom border. Placed at end-of-file so it follows all other
+// .dashicons rules in source order (no-descending-specificity).
+.wp-core-ui .button .badge .dashicons {
+	line-height: 1;
+}

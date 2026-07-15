@@ -219,7 +219,10 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
 	const pageCount = itemsPerPage && Math.ceil(snippets.length / itemsPerPage)
-	const viewToggle = <SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
+	const endTableNav = (which: 'top' | 'bottom') =>
+		'top' === which
+			? <SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
+			: null
 
 	return 'card' === snippetView
 		? <SnippetsCardGrid
@@ -228,8 +231,8 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			doAction={doAction}
 			itemsPerPage={itemsPerPage}
 			extraTableNav={extraTableNav}
-			selectAll
-			endTableNav={viewToggle}
+			selectAllControl
+			endTableNav={endTableNav}
 			noItems={<NoItemsMessage />}
 			beforeGrid={<SearchResultsIndicator />}
 		/>
@@ -242,8 +245,8 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			doAction={doAction}
 			totalPages={pageCount}
 			extraTableNav={extraTableNav}
-			selectAll
-			endTableNav={viewToggle}
+			selectAllControl
+			endTableNav={endTableNav}
 			rowClassName={snippet => getRowClassName(snippet, activeByCondition)}
 			noItems={<NoItemsMessage />}
 			beforeTable={<SearchResultsIndicator />}

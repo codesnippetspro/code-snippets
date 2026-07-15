@@ -262,6 +262,12 @@
 	margin: 20px 0;
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
+
+	// The 12px row gap only shows once controls wrap onto a second row: below
+	// ~1280px the pagination group and view toggle drop to their own
+	// end-aligned row while the left cluster keeps its 18px column gaps.
+	gap: 12px 18px;
 }
 
 /* WP 7.0 changes the default admin link colour to the modern blue. Pin the classic accent on active rows (names and
@@ -307,36 +313,86 @@
 	padding-inline: 0;
 }
 
-.tablenav .tablenav-pages {
+// The pagination group and view toggle wrap together as one end-pinned
+// cluster so narrow viewports never split them across rows.
+.tablenav .tablenav-end-group {
+	display: flex;
+	align-items: center;
+	gap: 24px;
 	margin-inline-start: auto;
+}
+
+.tablenav .tablenav-pages-nav {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	.tablenav-pages {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+	}
+}
+
+// "Select all" control shown in the toolbar beside the bulk actions.
+.tablenav .tablenav-select-all {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+
+	input[type='checkbox'] {
+		inline-size: 20px;
+		block-size: 20px;
+		margin: 0;
+		border: 1px solid #c3c4c7;
+		border-radius: 5px;
+		box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
+	}
 }
 
 .snippets-search-area {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	inline-size: 237px;
 
 	search {
-		display: flex;
 		flex: 1 1 auto;
 		min-inline-size: 0;
 	}
 
 	.search-box {
+		float: none;
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		flex: 1 1 auto;
-		min-inline-size: 0;
-		float: none;
 		margin: 0;
 
 		input[type='search'] {
 			flex: 1 1 auto;
 			min-inline-size: 0;
-			border-color: #e3e3e4;
 		}
+	}
+}
+
+// Inside the results toolbar the search area is fixed to the design width,
+// with the input flexing to fill the space left over by the Search button.
+.tablenav .snippets-search-area {
+	inline-size: 237px;
+}
+
+.wrap .snippets-search-area input[type='search'] {
+	border-color: #e3e3e4;
+}
+
+// Tablet widths: let the search area grow to fill the remainder of its row
+// while the fixed-width selects keep their sizing and groups wrap naturally.
+@media (width <= 1024px) {
+	.tablenav .snippets-search-area {
+		inline-size: auto;
+		flex: 1 1 237px;
+		max-inline-size: 100%;
 	}
 }
 
@@ -348,7 +404,19 @@
 		margin-inline: 0;
 		block-size: auto;
 	}
+
+	// Mobile: the search area takes a full row of its own, and the action
+	// groups stay visible (core admin hides .tablenav.top .actions here).
+	.tablenav .snippets-search-area {
+		flex-basis: 100%;
+	}
+
+	.tablenav .alignleft.actions {
+		display: flex;
+	}
 }
+
+
 
 // Toolbar squeeze: above the mobile breakpoint the row never wraps —
 // components shrink gracefully instead (flex-wrap would otherwise win
@@ -365,6 +433,9 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
+		float: none;
+		margin: 0;
+		padding: 0;
 		flex: 0 1 auto;
 		min-inline-size: 0;
 
@@ -413,6 +484,63 @@
 	.tablenav-pages .tablenav-paging-text {
 		white-space: nowrap;
 		flex-wrap: nowrap;
+	}
+
+	// Square pagination tiles with a compact page-number box between them.
+	// Enabled arrows pick up the accent border/text from the shared control
+	// styling; disabled arrows keep the native WordPress treatment.
+	.pagination-links {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		.button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			inline-size: 38px;
+			block-size: 38px;
+			min-block-size: 38px;
+			box-sizing: border-box;
+			padding: 0;
+			margin: 0;
+			border-radius: 5.6px;
+		}
+
+		a.button {
+			color: #2271b1;
+		}
+
+		.paging-input {
+			gap: 8px;
+			margin-inline: 4px;
+		}
+
+		.current-page {
+			inline-size: 45px;
+			min-block-size: 38px;
+			box-sizing: border-box;
+			margin: 0;
+			text-align: center;
+			color: #2c3337;
+		}
+
+		.tablenav-paging-text {
+			font-size: 14px;
+			color: #646970;
+		}
+	}
+
+	.tablenav-pages .displaying-num {
+		font-size: 14px;
+		color: #646970;
+		white-space: nowrap;
+	}
+
+	// The trailing float-clearing break would otherwise register as an
+	// empty flex item and contribute a stray column gap.
+	br.clear {
+		display: none;
 	}
 
 	.tablenav-end-group {
