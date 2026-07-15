@@ -241,10 +241,6 @@
 		inline-size: 154px;
 	}
 
-	.snippets-search-area {
-		gap: 8px;
-	}
-
 	// The trailing float-clearing break would otherwise register as an
 	// empty flex item and contribute a stray column gap.
 	br.clear {
@@ -252,7 +248,7 @@
 	}
 }
 
-.snippets-list-view label.snippets-select-all {
+.snippets-list-view label.tablenav-select-all {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -265,17 +261,6 @@
 		border: 1px solid #c3c4c7;
 		border-radius: 5px;
 		box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
-	}
-}
-
-// Search field uses a lighter border than the other toolbar controls.
-.snippets-list-view .tablenav .search-box {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-
-	input[type='search'] {
-		border-color: #e3e3e4;
 	}
 }
 
@@ -308,7 +293,7 @@
 .snippets-list-view .tablenav .tablenav-pages {
 	display: flex;
 	align-items: center;
-	gap: 24px;
+	gap: 8px;
 	margin: 0;
 	float: none;
 
