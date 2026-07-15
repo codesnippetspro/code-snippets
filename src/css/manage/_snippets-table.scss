@@ -61,6 +61,26 @@
 	display: table-cell !important;
 }
 
+// Accent pill activation switch shared by the card headers and table rows.
+.snippet-card-header input[type='checkbox'].switch,
+.snippets-list-view .wp-list-table input[type='checkbox'].switch {
+	flex-shrink: 0;
+	inline-size: 36px;
+	border-color: theme.$accent;
+
+	&::before {
+		background-color: theme.$accent;
+	}
+
+	&:checked {
+		background-color: theme.$accent;
+
+		&::before {
+			background-color: #fff;
+		}
+	}
+}
+
 .snippets-card-grid {
 	// Three equal-height cards per row; descriptions are clamped so height
 	// stays uniform regardless of text length. The compound selector wins
@@ -133,24 +153,6 @@
 
 		.extra-icons:empty {
 			display: none;
-		}
-
-		input[type='checkbox'].switch {
-			flex-shrink: 0;
-			inline-size: 36px;
-			border-color: theme.$accent;
-
-			&::before {
-				background-color: theme.$accent;
-			}
-
-			&:checked {
-				background-color: theme.$accent;
-
-				&::before {
-					background-color: #fff;
-				}
-			}
 		}
 	}
 
