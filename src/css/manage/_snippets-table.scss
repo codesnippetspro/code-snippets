@@ -131,8 +131,8 @@
 			font-weight: 700;
 			line-height: 1.5;
 
-			// Allow the heading to shrink below its content width so the
-			// name inside can truncate to a single line.
+			// Let the heading shrink inside the flex row so long names
+			// truncate instead of pushing the header icons out of the card.
 			min-inline-size: 0;
 
 			.snippet-name {
@@ -159,6 +159,11 @@
 
 		.snippet-card-tags-label {
 			color: #646970;
+		}
+
+		.snippet-card-tags a {
+			color: #2271b1;
+			text-decoration: none;
 		}
 
 		.snippet-card-modified {
