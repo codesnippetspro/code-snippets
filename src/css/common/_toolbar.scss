@@ -116,6 +116,17 @@ $wpcontent-inline-start-indent: 20px;
 	li:not(.toolbar-end-item) + li.toolbar-end-item {
 		margin-inline-start: auto;
 	}
+
+	// The primary nav band scrolls inline on narrow screens rather than
+	// wrapping or clipping its items.
+	@media screen and (width <= 782px) {
+		overflow-x: auto;
+		scrollbar-width: thin;
+
+		li a {
+			white-space: nowrap;
+		}
+	}
 }
 
 .code-snippets-toolbar-upper li a.active-link,

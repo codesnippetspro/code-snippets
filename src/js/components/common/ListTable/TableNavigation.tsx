@@ -170,7 +170,7 @@ export const TableNav = <K extends Key, A extends string>({
 	visibleKeys,
 	...paginationProps
 }: TableNavProps<K, A>) =>
-	extraTableNav || 0 < totalItems && actions
+	('bottom' === which ? 0 < totalItems && actions || 0 < totalPages : extraTableNav || 0 < totalItems && actions)
 		? <div className={`tablenav ${which}`}>
 
 			{0 < totalItems && actions && doAction && (
@@ -187,7 +187,7 @@ export const TableNav = <K extends Key, A extends string>({
 				? <SelectAllControl {...{ visibleKeys, selected, setSelected }} />
 				: null}
 
-			{extraTableNav?.(which)}
+			{'top' === which ? extraTableNav?.(which) : null}
 			{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
 			{'top' === which ? endTableNav : null}
 
@@ -211,4 +211,5 @@ export const TableNavigation = <K extends Key, A extends string>({
 	<>
 		<TableNav which="top" {...props} />
 		{children}
+		<TableNav which="bottom" {...props} />
 	</>
