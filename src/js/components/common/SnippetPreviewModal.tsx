@@ -1,9 +1,18 @@
-import React, { useEffect, useRef } from 'react'
 import { Modal } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
+import React, { useEffect, useRef } from 'react'
+import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
+import { useSnippetsList } from '../../hooks/useSnippetsList'
+import { handleUnknownError } from '../../utils/errors'
+import { downloadSnippetExportFile } from '../../utils/files'
+import { cloneSnippetObject, getSnippetEditUrl } from '../../utils/snippets/snippets'
 import { Badge } from './Badge'
+import { Button } from './Button'
+import { useDeleteSnippet } from './DeleteButton'
+import { SnippetPriorityInput } from './SnippetPriorityInput'
 import type { BadgeName } from './Badge'
 import type { EditorFromTextArea } from 'codemirror'
+import type { Snippet } from '../../types/Snippet'
 
 export interface SnippetPreviewModalProps {
 	title: string
@@ -11,6 +20,7 @@ export interface SnippetPreviewModalProps {
 	type: string
 	isOpen: boolean
 	setIsOpen: (isOpen: boolean) => void
+	snippet?: Snippet
 }
 
 // Mirrors the type-to-mode mapping used by the live editor in SnippetTypeInput.
@@ -21,17 +31,106 @@ const EDITOR_MODES: Record<string, string> = {
 	html: 'application/x-httpd-php'
 }
 
+interface SnippetPreviewActionsProps {
+	snippet: Snippet
+	closeModal: () => void
+}
+
+interface SnippetPreviewButtonsProps extends SnippetPreviewActionsProps {
+	requestDelete: () => void
+}
+
+const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({ snippet, closeModal, requestDelete }) => {
+	const api = useSnippetsAPI()
+	const { refreshSnippetsList } = useSnippetsList()
+
+	return (
+		<div className="code-snippets-preview-modal__buttons">
+			{snippet.locked
+				? null
+				: <Button
+					link
+					className="code-snippets-preview-modal__trash"
+					onClick={requestDelete}
+				>
+					{__('Trash', 'code-snippets')}
+				</Button>}
+
+			<Button
+				secondary
+				onClick={() => {
+					api.export(snippet)
+						.then(response => downloadSnippetExportFile(response, snippet))
+						.catch(handleUnknownError)
+				}}
+			>
+				{__('Export', 'code-snippets')}
+			</Button>
+
+			<Button
+				secondary
+				onClick={() => {
+					api.create(cloneSnippetObject(snippet))
+						.then(refreshSnippetsList)
+						.then(closeModal)
+						.catch(handleUnknownError)
+				}}
+			>
+				{__('Clone', 'code-snippets')}
+			</Button>
+
+			<a className="button button-primary" href={getSnippetEditUrl(snippet)}>
+				{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
+			</a>
+		</div>
+	)
+}
+
+/**
+ * Footer action bar for previews of local snippets. Requires the snippets API
+ * and snippets list contexts, so it is only rendered when the modal receives a
+ * full snippet object rather than bare title/code/type values.
+ */
+const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({ snippet, closeModal }) => {
+	const { refreshSnippetsList } = useSnippetsList()
+	const priorityInputId = `snippet-${snippet.id}-preview-priority`
+
+	const { requestDelete, confirmDialog } = useDeleteSnippet({
+		snippet,
+		onSuccess: () => {
+			closeModal()
+			return refreshSnippetsList()
+		},
+		onError: handleUnknownError
+	})
+
+	return (
+		<div className="code-snippets-preview-modal__footer">
+			<div className="code-snippets-preview-modal__priority">
+				<label htmlFor={priorityInputId}>{__('Priority', 'code-snippets')}</label>
+				<SnippetPriorityInput snippet={snippet} inputId={priorityInputId} />
+			</div>
+
+			<SnippetPreviewButtons snippet={snippet} closeModal={closeModal} requestDelete={requestDelete} />
+
+			{confirmDialog}
+		</div>
+	)
+}
+
 /**
  * Modal for quickly viewing a snippet's code in a read-only CodeMirror editor,
  * without navigating to the edit page. Shared between local snippets and cloud
- * snippet previews.
+ * snippet previews. Passing a full snippet object adds a footer of snippet
+ * actions, which requires the snippets API and snippets list contexts.
  */
 export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 	title,
 	code,
 	type,
 	isOpen,
-	setIsOpen
+	setIsOpen,
+	snippet
 }) => {
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -65,12 +164,18 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 				</span>
 			}
 		>
-			<textarea
-				ref={textareaRef}
-				readOnly
-				aria-label={__('Snippet code preview', 'code-snippets')}
-				defaultValue={`${'php' === type ? '<?php\n\n' : ''}${code}`}
-			/>
+			<div className="code-snippets-preview-modal__editor">
+				<textarea
+					ref={textareaRef}
+					readOnly
+					aria-label={__('Snippet code preview', 'code-snippets')}
+					defaultValue={`${'php' === type ? '<?php\n\n' : ''}${code}`}
+				/>
+			</div>
+
+			{snippet
+				? <SnippetPreviewActions snippet={snippet} closeModal={() => setIsOpen(false)} />
+				: null}
 		</Modal>
 		: null
 }

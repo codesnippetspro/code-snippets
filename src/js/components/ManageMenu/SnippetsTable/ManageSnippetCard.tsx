@@ -42,6 +42,7 @@ const CardPreviewButton: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 				type={getSnippetType(snippet)}
 				isOpen={isPreviewOpen}
 				setIsOpen={setIsPreviewOpen}
+				snippet={snippet}
 			/>
 		</>
 	)

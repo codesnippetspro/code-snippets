@@ -32,6 +32,7 @@ const PreviewLink: React.FC<RowActionsProps> = ({ snippet }) => {
 				type={getSnippetType(snippet)}
 				isOpen={isPreviewOpen}
 				setIsOpen={setIsPreviewOpen}
+				snippet={snippet}
 			/>
 		</>
 	)
