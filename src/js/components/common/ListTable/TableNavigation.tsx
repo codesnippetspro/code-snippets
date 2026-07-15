@@ -129,7 +129,7 @@ interface SelectAllControlProps<K extends Key> {
 }
 
 const SelectAllControl = <K extends Key>({ visibleKeys, selected, setSelected }: SelectAllControlProps<K>) =>
-	<label className="snippets-select-all">
+	<label className="tablenav-select-all">
 		<input
 			type="checkbox"
 			checked={0 < visibleKeys.length && visibleKeys.every(key => selected.has(key))}
@@ -211,5 +211,4 @@ export const TableNavigation = <K extends Key, A extends string>({
 	<>
 		<TableNav which="top" {...props} />
 		{children}
-		<TableNav which="bottom" {...props} />
 	</>
