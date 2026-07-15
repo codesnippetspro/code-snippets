@@ -85,28 +85,6 @@ $status-colors: (
 	.banner {
 		justify-content: center;
 	}
-
-	.tablenav.top {
-		display: flex;
-		gap: 20px;
-		block-size: 40px;
-		margin-block-end: 31px;
-		align-items: center;
-
-		select {
-			inline-size: 245px;
-			block-size: 100%;
-		}
-
-		nav {
-			margin-inline-start: auto;
-		}
-
-		.tablenav-pages {
-			margin: 0;
-			margin-inline-start: auto;
-		}
-	}
 }
 
 .bundle-share-code-form {

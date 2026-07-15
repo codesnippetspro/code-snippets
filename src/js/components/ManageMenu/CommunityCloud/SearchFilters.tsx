@@ -48,24 +48,29 @@ const normaliseFilterValue = (filter: keyof CloudSearchParams, params: CloudSear
 export const SearchFilters = () => {
 	const { availableFilters, searchParams, doSearch } = useCloudSearch()
 
-	return FILTERS.map(({ label, allOptionLabel, filterName, paramName }) =>
-		availableFilters[filterName] && 0 < availableFilters[filterName].length
-			? <Fragment key={filterName}>
-				<label htmlFor={`cloud-search-${filterName}`} className="screen-reader-text">
-					{label}
-				</label>
+	const visibleFilters = FILTERS.filter(({ filterName }) =>
+		availableFilters[filterName] && 0 < availableFilters[filterName].length)
 
-				<select
-					id={`cloud-search-${filterName}`}
-					className="cloud-search-category-filter"
-					value={searchParams[paramName]}
-					onChange={event =>
-						doSearch({ [paramName]: normaliseFilterValue(paramName, searchParams, event.target.value) })}
-				>
-					<option value="">{allOptionLabel}</option>
-					{availableFilters[filterName].map(filterOption =>
-						<option key={filterOption.id} value={filterOption.id}>{filterOption.name}</option>)}
-				</select>
-			</Fragment>
-			: null)
+	return 0 < visibleFilters.length
+		? <div className="alignleft actions">
+			{visibleFilters.map(({ label, allOptionLabel, filterName, paramName }) =>
+				<Fragment key={filterName}>
+					<label htmlFor={`cloud-search-${filterName}`} className="screen-reader-text">
+						{label}
+					</label>
+
+					<select
+						id={`cloud-search-${filterName}`}
+						className="cloud-search-category-filter"
+						value={searchParams[paramName]}
+						onChange={event =>
+							doSearch({ [paramName]: normaliseFilterValue(paramName, searchParams, event.target.value) })}
+					>
+						<option value="">{allOptionLabel}</option>
+						{availableFilters[filterName]?.map(filterOption =>
+							<option key={filterOption.id} value={filterOption.id}>{filterOption.name}</option>)}
+					</select>
+				</Fragment>)}
+		</div>
+		: null
 }
