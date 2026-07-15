@@ -3,6 +3,9 @@
 // filled tile. The plugin toolbar above already draws the separating border,
 // so the band only draws its own bottom border.
 .snippet-type-nav {
+	// The tab band scrolls sideways instead of wrapping at any width.
+	overflow-x: auto;
+	scrollbar-width: thin;
 	background: #fff;
 	border-block-end: 1px solid #e2e2e4;
 	min-block-size: 53px;
