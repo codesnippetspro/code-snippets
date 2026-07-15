@@ -355,6 +355,8 @@
 // before flex-shrink ever engages). Wrapping remains the small-screen
 // fallback only.
 .snippets-list-view .tablenav {
+	flex-wrap: wrap;
+
 	@media (width > 782px) {
 		flex-wrap: nowrap;
 	}
