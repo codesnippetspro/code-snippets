@@ -3,7 +3,7 @@ import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { TablePagination } from '../../common/ListTable/TablePagination'
 import { CloudSnippetsTable } from './CloudSnippetsTable'
-import { SearchResult } from './SearchResult'
+import { CloudSnippetAuthor, SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
 import type { SnippetView } from '../../../types/SnippetView'
@@ -91,7 +91,7 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView }) =
 			{'card' === snippetView
 				? <ul className="cloud-search-results code-snippets-cards">
 					{searchResults.snippets.map(result =>
-						<SearchResult key={result.id} snippet={result} />)}
+						<SearchResult key={result.id} snippet={result} author={<CloudSnippetAuthor snippet={result} />} />)}
 				</ul>
 				: <CloudSnippetsTable snippets={searchResults.snippets} />}
 
