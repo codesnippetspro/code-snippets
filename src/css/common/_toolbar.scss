@@ -117,11 +117,19 @@ $wpcontent-inline-start-indent: 20px;
 		margin-inline-start: auto;
 	}
 
-	// The primary nav band scrolls inline on narrow screens rather than
-	// wrapping or clipping its items.
+	// Mobile: the primary navigation scrolls horizontally on its band rather
+	// than wrapping, with the scrollbar chrome hidden.
 	@media screen and (width <= 782px) {
 		overflow-x: auto;
-		scrollbar-width: thin;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		ul {
+			flex-wrap: nowrap;
+		}
 
 		li a {
 			white-space: nowrap;
@@ -165,3 +173,4 @@ $wpcontent-inline-start-indent: 20px;
 .code-snippets-return-link {
 	float: inline-end;
 }
+

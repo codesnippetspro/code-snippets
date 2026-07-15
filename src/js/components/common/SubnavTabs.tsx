@@ -38,7 +38,7 @@ export const SubnavTabs = <T extends string>({
 	endContent
 }: SubnavTabsProps<T>) => {
 	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
-	const hasProTabs = useMemo(() => tabs.some(tab => tab.pro), [tabs])
+	const hasProTabs = useMemo(() => !isLicensed() && tabs.some(tab => tab.pro), [tabs])
 
 	return (
 		<>
