@@ -52,7 +52,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count, setIsUpgra
 				<span className={`${tabName}-label`}>
 					{type ? SNIPPET_TYPE_LABELS[type] : __('All Snippets', 'code-snippets')}
 				</span>
-				{undefined !== count && <span className="subnav-count">{count}</span>}
+				{count ? <span className="subnav-count">{count}</span> : null}
 				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>
