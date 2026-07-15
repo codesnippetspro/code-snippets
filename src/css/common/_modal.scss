@@ -86,6 +86,16 @@
 		overflow: hidden;
 	}
 
+	// The modal component wraps its children in an unstyled focus container;
+	// it must join the flex chain or the editor grows to its content height.
+	.components-modal__header + div {
+		display: flex;
+		flex-flow: column;
+		flex: 1;
+		min-block-size: 0;
+		overflow: hidden;
+	}
+
 	.code-snippets-preview-modal__editor {
 		display: flex;
 		flex-flow: column;
