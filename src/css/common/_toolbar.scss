@@ -69,17 +69,27 @@ $wpcontent-inline-start-indent: 20px;
 	block-size: 60px;
 	box-sizing: border-box;
 
+	nav,
 	ul {
-		display: flex;
-		align-items: stretch;
 		block-size: 100%;
 	}
 
-	// 15px + 26px icon + 11px + 4px underline fills the 60px band exactly.
+	ul {
+		display: flex;
+		align-items: stretch;
+	}
+
+	li {
+		display: flex;
+	}
+
+	// Items fill the 60px band so the 4px active underline sits flush on its bottom edge.
 	li a {
 		display: flex;
 		margin: 0;
-		padding: 15px 24px 11px;
+		block-size: 100%;
+		padding-block: 0;
+		padding-inline: 24px;
 		color: #2c3337;
 		gap: 12px;
 		align-items: center;
