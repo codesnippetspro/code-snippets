@@ -139,6 +139,11 @@
 			font-size: 18px;
 			font-weight: 700;
 			line-height: 1.5;
+
+			.snippet-name {
+				color: #2271b1;
+				text-decoration: none;
+			}
 		}
 
 		.extra-icons:empty {

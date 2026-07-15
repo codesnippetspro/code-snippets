@@ -51,6 +51,12 @@
 		gap: 8px;
 		flex: 1 1 auto;
 		min-inline-size: 0;
+
+		.button:not(.kebab-menu-trigger) {
+			min-inline-size: 103px;
+			text-align: center;
+			justify-content: center;
+		}
 	}
 
 	&.is-selectable,
