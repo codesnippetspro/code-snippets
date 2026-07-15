@@ -194,6 +194,10 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 			{'card' === snippetView
 				? <SearchResultsGrid snippets={searchResults.snippets} selected={selected} setSelected={setSelected} />
 				: <CloudSnippetsTable snippets={searchResults.snippets} />}
+
+			<div className="tablenav bottom">
+				<TablePagination which="bottom" {...paginationProps} />
+			</div>
 		</div>
 	)
 }

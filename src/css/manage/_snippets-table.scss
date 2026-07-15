@@ -211,8 +211,9 @@
 // Unified results toolbar shared by the table and card snippet views:
 // bulk actions, select-all, tag filter and search grouped on the
 // inline-start side, with the item count, pagination and view toggle
-// grouped on the inline-end side.
-.snippets-list-view .tablenav.top {
+// grouped on the inline-end side. The bottom toolbar reuses the same
+// styling for its reduced set of controls: bulk actions and pagination.
+.snippets-list-view .tablenav {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
@@ -260,7 +261,7 @@
 // Inline-end toolbar group: item count and pagination pushed to the end of
 // the row, with the view toggle following at a 24px gap (18px column gap
 // plus 6px margin).
-.snippets-list-view .tablenav.top .tablenav-pages-nav {
+.snippets-list-view .tablenav .tablenav-pages-nav {
 	margin-inline-start: auto;
 }
 
@@ -341,6 +342,33 @@
 		.tablenav-paging-text {
 			font-size: 14px;
 			color: #646970;
+		}
+	}
+}
+
+// Below desktop widths the toolbar wraps: the inline-end cluster (pagination
+// and view toggle) drops onto its own row while staying pinned inline-end via
+// its auto margin, and the search field flexes into the remaining space.
+@media screen and (width <= 1024px) {
+	.snippets-list-view .tablenav .snippets-search-area {
+		inline-size: auto;
+		flex: 1 1 237px;
+		max-inline-size: 100%;
+	}
+}
+
+@media screen and (width <= 782px) {
+	.snippets-list-view .tablenav .snippets-search-area {
+		flex-basis: 100%;
+	}
+
+	// WP core hides the item count and stretches the pagination form at
+	// mobile widths; keep the unified toolbar shape and 38px tiles instead.
+	.snippets-list-view .tablenav .tablenav-pages {
+		inline-size: auto;
+
+		.displaying-num {
+			display: inline;
 		}
 	}
 }
