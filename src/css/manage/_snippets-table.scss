@@ -259,19 +259,17 @@
 }
 
 // Inline-end toolbar group: item count and pagination pushed to the end of
-// the row, with the view toggle following at a 24px gap (18px column gap
-// plus 6px margin).
-.snippets-list-view .tablenav .tablenav-pages-nav {
+// The pagination group and view toggle wrap together as one end-pinned
+// cluster so narrow viewports never split them across rows.
+.snippets-list-view .tablenav .tablenav-end-group {
+	display: flex;
+	align-items: center;
+	gap: 24px;
 	margin-inline-start: auto;
 }
 
-.snippets-list-view .tablenav.top .snippet-view-toggle {
-	margin-inline-start: auto;
+.snippets-list-view .tablenav .snippet-view-toggle {
 	padding-inline-end: 0;
-}
-
-.snippets-list-view .tablenav.top .tablenav-pages-nav + .snippet-view-toggle {
-	margin-inline-start: 6px;
 }
 
 .tablenav-pages {
