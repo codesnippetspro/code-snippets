@@ -385,6 +385,34 @@
 		flex: 1 1 237px;
 		min-inline-size: 150px;
 		max-inline-size: 237px;
+
+		// The inner search row never wraps — the field shrinks instead.
+		search,
+		form,
+		p.search-box {
+			display: flex;
+			align-items: center;
+			flex-wrap: nowrap;
+			gap: 8px;
+			min-inline-size: 0;
+			margin: 0;
+		}
+
+		input[type='search'] {
+			min-inline-size: 110px;
+		}
+
+		.button {
+			flex: 0 0 auto;
+		}
+	}
+
+	// Pagination labels stay on one line while the row squeezes.
+	.tablenav-pages,
+	.tablenav-pages .paging-input,
+	.tablenav-pages .tablenav-paging-text {
+		white-space: nowrap;
+		flex-wrap: nowrap;
 	}
 
 	.tablenav-end-group {
