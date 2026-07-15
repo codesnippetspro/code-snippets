@@ -123,28 +123,24 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 }
 
 interface SelectAllControlProps<K extends Key> {
-	visibleKeys: K[]
+	keys: K[]
 	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-const SelectAllControl = <K extends Key>({ visibleKeys, selected, setSelected }: SelectAllControlProps<K>) =>
+const SelectAllControl = <K extends Key>({ keys, selected, setSelected }: SelectAllControlProps<K>) =>
 	<label className="tablenav-select-all">
 		<input
 			type="checkbox"
-			checked={0 < visibleKeys.length && visibleKeys.every(key => selected.has(key))}
-			disabled={0 === visibleKeys.length}
+			checked={0 < keys.length && keys.every(key => selected.has(key))}
+			disabled={0 === keys.length}
 			aria-label={__('Select all items', 'code-snippets')}
 			onChange={event => {
+				const { checked } = event.target
+
 				setSelected(previous => {
 					const updated = new Set(previous)
-					visibleKeys.forEach(key => {
-						if (event.target.checked) {
-							updated.add(key)
-						} else {
-							updated.delete(key)
-						}
-					})
+					keys.forEach(key => checked ? updated.add(key) : updated.delete(key))
 					return updated
 				})
 			}}
@@ -165,12 +161,17 @@ export const TableNav = <K extends Key, A extends string>({
 	totalItems,
 	totalPages = 0,
 	extraTableNav,
-	selectAll,
 	endTableNav,
-	visibleKeys,
+	selectAllKeys,
 	...paginationProps
-}: TableNavProps<K, A>) =>
-	('bottom' === which ? 0 < totalItems && actions || 0 < totalPages : extraTableNav || 0 < totalItems && actions)
+}: TableNavProps<K, A>) => {
+	// Singular controls (select all, filters, search and the view toggle)
+	// render only in the top toolbar: the bottom toolbar repeats just the
+	// bulk actions and the pagination group.
+	const isTop = 'top' === which
+	const hasBulkActions = 0 < totalItems && Boolean(actions)
+
+	return isTop && Boolean(extraTableNav ?? endTableNav) || hasBulkActions || 0 < totalPages
 		? <div className={`tablenav ${which}`}>
 
 			{0 < totalItems && actions && doAction && (
@@ -183,22 +184,23 @@ export const TableNav = <K extends Key, A extends string>({
 					onActionSuccess={() => setSelected(new Set())}
 				/>)}
 
-			{'top' === which && selectAll && visibleKeys
-				? <SelectAllControl {...{ visibleKeys, selected, setSelected }} />
+			{isTop && selectAllKeys
+				? <SelectAllControl keys={selectAllKeys} selected={selected} setSelected={setSelected} />
 				: null}
 
-			{'top' === which ? extraTableNav?.(which) : null}
+			{isTop ? extraTableNav?.(which) : null}
 
-			{0 < totalPages || 'top' === which && endTableNav
+			{0 < totalPages || isTop && endTableNav
 				? <div className="tablenav-end-group">
 					{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
-					{'top' === which ? endTableNav : null}
+					{isTop ? endTableNav?.(which) : null}
 				</div>
 				: null}
 
 			<br className="clear" />
 		</div>
 		: null
+}
 
 export interface TableNavigationProps<K extends Key, A extends string> extends ListTableNavProps<K, A>,
 	Omit<TablePaginationProps, 'totalPages' | 'which'> {
@@ -206,7 +208,7 @@ export interface TableNavigationProps<K extends Key, A extends string> extends L
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 	totalItems: number
 	totalPages: number | undefined
-	visibleKeys?: K[]
+	selectAllKeys?: K[]
 }
 
 export const TableNavigation = <K extends Key, A extends string>({
