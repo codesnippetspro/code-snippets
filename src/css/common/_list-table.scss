@@ -207,22 +207,21 @@
 		text-align: start;
 	}
 
-	&.truncate-row-values {
-		td.column-name > .snippet-name,
-		td.column-desc .snippet-description-content {
-			display: block;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+	// Snippet names always stay on a single line, truncating gracefully;
+	// the full name is exposed through the title attribute.
+	td.column-name > .snippet-name {
+		display: block;
+		max-inline-size: min(15rem, 30vw);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 
-		td.column-name > .snippet-name {
-			max-inline-size: min(15rem, 30vw);
-		}
-
-		td.column-desc .snippet-description-content {
-			max-inline-size: min(25rem, 45vw);
-			overflow: clip;
-		}
+	&.truncate-row-values td.column-desc .snippet-description-content {
+		display: block;
+		max-inline-size: min(25rem, 45vw);
+		overflow: clip;
+		text-overflow: ellipsis;
 	}
 }
 

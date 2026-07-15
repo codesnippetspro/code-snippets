@@ -145,9 +145,17 @@
 			font-weight: 700;
 			line-height: 1.5;
 
+			// Allow the heading to shrink below its content width so the
+			// name inside can truncate to a single line.
+			min-inline-size: 0;
+
 			.snippet-name {
+				display: block;
 				color: #2271b1;
 				text-decoration: none;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 		}
 
