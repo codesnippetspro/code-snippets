@@ -349,3 +349,44 @@
 		block-size: auto;
 	}
 }
+
+// Toolbar squeeze: components shrink gracefully before the row is allowed
+// to wrap, so moderate viewports keep everything on one line.
+.snippets-list-view .tablenav {
+	.alignleft.actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: 0 1 auto;
+		min-inline-size: 0;
+
+		select {
+			inline-size: auto;
+			flex: 1 1 154px;
+			min-inline-size: 104px;
+			max-inline-size: 154px;
+		}
+	}
+
+	.tablenav-select-all {
+		flex-shrink: 0;
+	}
+
+	.snippets-search-area {
+		inline-size: auto;
+		flex: 1 1 237px;
+		min-inline-size: 150px;
+		max-inline-size: 237px;
+	}
+
+	.tablenav-end-group {
+		flex: 0 1 auto;
+		min-inline-size: 0;
+	}
+
+	@media (width <= 960px) {
+		.tablenav-pages .displaying-num {
+			display: none;
+		}
+	}
+}
