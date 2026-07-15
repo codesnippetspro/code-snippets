@@ -30,7 +30,7 @@ export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProp
 	if (localSnippetId) {
 		return (
 			<a className="button button-primary" href={getSnippetEditUrl({ id: localSnippetId })} target="_blank" rel="noopener noreferrer">
-				{__('View', 'code-snippets')}
+				{__('Edit', 'code-snippets')}
 			</a>
 		)
 	}
