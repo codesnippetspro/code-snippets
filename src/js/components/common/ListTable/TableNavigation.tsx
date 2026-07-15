@@ -188,8 +188,13 @@ export const TableNav = <K extends Key, A extends string>({
 				: null}
 
 			{'top' === which ? extraTableNav?.(which) : null}
-			{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
-			{'top' === which ? endTableNav : null}
+
+			{0 < totalPages || 'top' === which && endTableNav
+				? <div className="tablenav-end-group">
+					{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
+					{'top' === which ? endTableNav : null}
+				</div>
+				: null}
 
 			<br className="clear" />
 		</div>
