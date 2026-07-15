@@ -49,9 +49,10 @@ interface BulkActionSelectProps<A extends string> {
 	actions: ListTableAction<A>[]
 	selectedAction: A | undefined
 	setSelectedAction: Dispatch<SetStateAction<A | undefined>>
+	label: string
 }
 
-const BulkActionSelect = <A extends string>({ which, actions, selectedAction, setSelectedAction }: BulkActionSelectProps<A>) =>
+const BulkActionSelect = <A extends string>({ which, actions, selectedAction, setSelectedAction, label }: BulkActionSelectProps<A>) =>
 	<select
 		name={`action${'bottom' === which ? '-2' : ''}`}
 		id={`bulk-action-selector-${which}`}
@@ -64,7 +65,7 @@ const BulkActionSelect = <A extends string>({ which, actions, selectedAction, se
 			}
 		}}
 	>
-		<option value="-1">{__('Bulk actions', 'code-snippets')}</option>
+		<option value="-1">{label}</option>
 		<BulkActionSelectOptions actions={actions} />
 	</select>
 
@@ -72,6 +73,7 @@ interface BulkActionsProps<K extends Key, A extends string> extends Required<Pic
 	onActionSuccess?: () => void
 	disabled?: boolean
 	selected: Set<K>
+	selectLabel?: string
 }
 
 const BulkActions = function BulkActions<K extends Key, A extends string>({
@@ -80,7 +82,8 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 	selected,
 	doAction,
 	onActionSuccess,
-	disabled
+	disabled,
+	selectLabel
 }: BulkActionsProps<K, A>) {
 	const [selectedAction, setSelectedAction] = useState<A>()
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
@@ -106,7 +109,7 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 				{__('Select bulk action', 'code-snippets')}
 			</label>
 
-			<BulkActionSelect {...{ which, actions, selectedAction, setSelectedAction }} />
+			<BulkActionSelect {...{ which, actions, selectedAction, setSelectedAction }} label={selectLabel ?? __('Bulk actions', 'code-snippets')} />
 
 			<SubmitButton
 				id={`doaction${'bottom' === which ? '-2' : ''}`}
@@ -163,6 +166,7 @@ export const TableNav = <K extends Key, A extends string>({
 	extraTableNav,
 	endTableNav,
 	selectAllKeys,
+	bulkSelectLabel,
 	...paginationProps
 }: TableNavProps<K, A>) => {
 	// Singular controls (select all, filters, search and the view toggle)
@@ -181,6 +185,7 @@ export const TableNav = <K extends Key, A extends string>({
 					doAction={doAction}
 					disabled={paginationProps.disabled}
 					selected={selected}
+					selectLabel={bulkSelectLabel}
 					onActionSuccess={() => setSelected(new Set())}
 				/>)}
 
@@ -209,6 +214,7 @@ export interface TableNavigationProps<K extends Key, A extends string> extends L
 	totalItems: number
 	totalPages: number | undefined
 	selectAllKeys?: K[]
+	bulkSelectLabel?: string
 }
 
 export const TableNavigation = <K extends Key, A extends string>({
