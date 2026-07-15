@@ -316,13 +316,27 @@
 	display: flex;
 	align-items: center;
 	gap: 12px;
+	inline-size: 237px;
+
+	search {
+		display: flex;
+		flex: 1 1 auto;
+		min-inline-size: 0;
+	}
 
 	.search-box {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: 1 1 auto;
+		min-inline-size: 0;
 		float: none;
 		margin: 0;
 
 		input[type='search'] {
-			inline-size: 260px;
+			flex: 1 1 auto;
+			min-inline-size: 0;
+			border-color: #e3e3e4;
 		}
 	}
 }
