@@ -211,7 +211,11 @@ export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({ snippet, i
 				{0 < snippet.tags.length || snippet.modified
 					? <div className="snippet-card-meta">
 						{0 < snippet.tags.length
-							? <span className="snippet-card-tags"><TagsColumn snippet={snippet} /></span>
+							? <span className="snippet-card-tags">
+								<span className="snippet-card-tags-label">{__('Tags:', 'code-snippets')}</span>
+								{' '}
+								<TagsColumn snippet={snippet} />
+							</span>
 							: null}
 
 						<CardModifiedDate snippet={snippet} />
