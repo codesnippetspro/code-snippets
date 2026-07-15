@@ -37,20 +37,25 @@
 		border-end-end-radius: 5px;
 	}
 
+	// The status label shrinks and clips away under pressure rather than
+	// pushing the action buttons onto a second line.
 	.snippet-card-footer-status {
 		display: flex;
 		align-items: center;
 		gap: 8px;
+		flex: 0 1 auto;
+		min-inline-size: 0;
+		overflow: hidden;
+		white-space: nowrap;
 	}
 
 	.snippet-card-footer-actions {
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		gap: 8px;
-		flex: 1 1 auto;
-		min-inline-size: 0;
+		flex: 0 0 auto;
 
 		.button:not(.kebab-menu-trigger) {
 			min-inline-size: 103px;
