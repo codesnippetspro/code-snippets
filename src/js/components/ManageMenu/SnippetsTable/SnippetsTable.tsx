@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
 import React, { useMemo, useState } from 'react'
 import classnames from 'classnames'
@@ -84,6 +84,7 @@ const SafeModeNotice = () =>
 const SnippetsTableInner = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 	const { snippetView, setSnippetView } = useSnippetView()
+	const { currentType } = useSnippetsFilters()
 	const { snippetsList } = useSnippetsList()
 
 	const countedSnippets = useMemo(
@@ -124,7 +125,11 @@ const SnippetsTableInner = () => {
 			<ScreenMetaSlot />
 
 			<div className="snippets-page-header">
-				<h1>{__('Manage Code Snippets', 'code-snippets')}</h1>
+				<h1>{sprintf(
+					// translators: %s: label of the currently selected snippet type.
+					__('Local Snippets: %s', 'code-snippets'),
+					currentType ? SNIPPET_TYPE_LABELS[currentType] : __('All Snippets', 'code-snippets')
+				)}</h1>
 				<a href={getSnippetEditUrl()} className="button button-primary">
 					{__('Create new Snippet', 'code-snippets')}
 				</a>
