@@ -351,9 +351,15 @@
 	}
 }
 
-// Toolbar squeeze: components shrink gracefully before the row is allowed
-// to wrap, so moderate viewports keep everything on one line.
+// Toolbar squeeze: above the mobile breakpoint the row never wraps —
+// components shrink gracefully instead (flex-wrap would otherwise win
+// before flex-shrink ever engages). Wrapping remains the small-screen
+// fallback only.
 .snippets-list-view .tablenav {
+	@media (width > 782px) {
+		flex-wrap: nowrap;
+	}
+
 	.alignleft.actions {
 		display: flex;
 		align-items: center;
@@ -385,7 +391,8 @@
 		min-inline-size: 0;
 	}
 
-	@media (width <= 960px) {
+	// The item count is the first thing to give way when space runs short.
+	@media (width <= 1240px) {
 		.tablenav-pages .displaying-num {
 			display: none;
 		}
