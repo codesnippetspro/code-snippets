@@ -236,7 +236,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 		: __('Pagination, after the table', 'code-snippets')
 
 	return (
-		<nav aria-label={navLabel}>
+		<nav className="tablenav-pages-nav" aria-label={navLabel}>
 			<form
 				className={classnames('tablenav-pages', {
 					'one-page': totalPages && 1 === totalPages,

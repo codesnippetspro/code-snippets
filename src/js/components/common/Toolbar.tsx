@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import React, { useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { buildUrl, fetchQueryParam } from '../../utils/urls'
-import { BlueprintIcon, CommunityIcon, ImportIcon, LibraryIcon, SettingsIcon, SnippetsIcon } from './icons/ToolbarIcons'
+import { BlueprintIcon, CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
 import type { ReactNode } from 'react'
 
@@ -69,14 +69,6 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		icon: <LibraryIcon aria-hidden="true" />,
 		pro: true,
 		subpage: 'cloud-library'
-	},
-	{
-		name: 'import',
-		url: window.CODE_SNIPPETS?.urls.import,
-		label: __('Import', 'code-snippets'),
-		icon: <ImportIcon aria-hidden="true" />,
-		pageSlug: 'import-code-snippets',
-		end: true
 	},
 	{
 		name: 'settings',

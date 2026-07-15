@@ -61,21 +61,6 @@
 	display: table-cell !important;
 }
 
-.snippets-card-grid-container {
-	.snippets-cards-toolbar {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-
-		.snippets-cards-select-all,
-		.snippets-cards-sort {
-			display: flex;
-			align-items: center;
-			gap: 6px;
-		}
-	}
-}
-
 .snippets-card-grid {
 	// Three equal-height cards per row; descriptions are clamped so height
 	// stays uniform regardless of text length. The compound selector wins
@@ -229,22 +214,152 @@
 	}
 }
 
-// Shared top table-navigation layout for both snippet views: bulk actions
-// and filters on the left, with the search field filling the remaining
-// width of the row.
+// Unified results toolbar shared by the table and card snippet views:
+// bulk actions, select-all, tag filter and search grouped on the
+// inline-start side, with the item count, pagination and view toggle
+// grouped on the inline-end side.
 .snippets-list-view .tablenav.top {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
 	block-size: auto;
+	gap: 12px 18px;
 	margin-block-end: 20px;
 
+	.actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		float: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.bulkactions select,
+	#snippets-tag-filter {
+		inline-size: 154px;
+	}
+
+	.snippets-search-area {
+		gap: 8px;
+	}
+
+	// The trailing float-clearing break would otherwise register as an
+	// empty flex item and contribute a stray column gap.
+	br.clear {
+		display: none;
+	}
+}
+
+.snippets-list-view label.snippets-select-all {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+
+	input[type='checkbox'] {
+		inline-size: 20px;
+		block-size: 20px;
+		margin: 0;
+		border: 1px solid #c3c4c7;
+		border-radius: 5px;
+		box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
+	}
+}
+
+// Search field uses a lighter border than the other toolbar controls.
+.snippets-list-view .tablenav .search-box {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	input[type='search'] {
+		border-color: #e3e3e4;
+	}
+}
+
+// Inline-end toolbar group: item count and pagination pushed to the end of
+// the row, with the view toggle following at a 24px gap (18px column gap
+// plus 6px margin).
+.snippets-list-view .tablenav.top .tablenav-pages-nav {
+	margin-inline-start: auto;
+}
+
+.snippets-list-view .tablenav.top .snippet-view-toggle {
+	margin-inline-start: auto;
+	padding-inline-end: 0;
+}
+
+.snippets-list-view .tablenav.top .tablenav-pages-nav + .snippet-view-toggle {
+	margin-inline-start: 6px;
 }
 
 .tablenav-pages {
 	.displaying-num {
 		color: #646970;
+		font-size: 14px;
 		white-space: nowrap;
+	}
+}
+
+// Pagination controls: square outline arrow tiles around a wide
+// current-page box with a muted "of N" indicator.
+.snippets-list-view .tablenav .tablenav-pages {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+	margin: 0;
+	float: none;
+
+	.pagination-links {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+
+		.paging-input {
+			gap: 8px;
+			margin-inline: 4px;
+		}
+
+		.button,
+		.tablenav-pages-navspan.button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			inline-size: 38px;
+			min-inline-size: 38px;
+			block-size: 38px;
+			min-block-size: 38px;
+			box-sizing: border-box;
+			padding: 0;
+			margin: 0;
+			background: #fff;
+			border: 1px solid theme.$accent;
+			border-radius: 5.6px;
+			color: theme.$accent;
+			font-size: 16px;
+			line-height: 1;
+		}
+
+		.tablenav-pages-navspan.button.disabled {
+			background: #fff;
+			border-color: #c3c4c7;
+			color: #a7aaad;
+		}
+
+		input.current-page {
+			inline-size: 45px;
+			min-block-size: 38px;
+			box-sizing: border-box;
+			margin: 0;
+			text-align: center;
+			color: #2c3337;
+		}
+
+		.tablenav-paging-text {
+			font-size: 14px;
+			color: #646970;
+		}
 	}
 }
 

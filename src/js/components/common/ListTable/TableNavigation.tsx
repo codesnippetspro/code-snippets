@@ -122,6 +122,36 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 	)
 }
 
+interface SelectAllControlProps<K extends Key> {
+	visibleKeys: K[]
+	selected: Set<K>
+	setSelected: Dispatch<SetStateAction<Set<K>>>
+}
+
+const SelectAllControl = <K extends Key>({ visibleKeys, selected, setSelected }: SelectAllControlProps<K>) =>
+	<label className="snippets-select-all">
+		<input
+			type="checkbox"
+			checked={0 < visibleKeys.length && visibleKeys.every(key => selected.has(key))}
+			disabled={0 === visibleKeys.length}
+			aria-label={__('Select all items', 'code-snippets')}
+			onChange={event => {
+				setSelected(previous => {
+					const updated = new Set(previous)
+					visibleKeys.forEach(key => {
+						if (event.target.checked) {
+							updated.add(key)
+						} else {
+							updated.delete(key)
+						}
+					})
+					return updated
+				})
+			}}
+		/>
+		{__('Select all', 'code-snippets')}
+	</label>
+
 export interface TableNavProps<K extends Key, A extends string> extends TableNavigationProps<K, A> {
 	which: 'top' | 'bottom'
 }
@@ -135,6 +165,9 @@ export const TableNav = <K extends Key, A extends string>({
 	totalItems,
 	totalPages = 0,
 	extraTableNav,
+	selectAll,
+	endTableNav,
+	visibleKeys,
 	...paginationProps
 }: TableNavProps<K, A>) =>
 	extraTableNav || 0 < totalItems && actions
@@ -150,8 +183,13 @@ export const TableNav = <K extends Key, A extends string>({
 					onActionSuccess={() => setSelected(new Set())}
 				/>)}
 
+			{'top' === which && selectAll && visibleKeys
+				? <SelectAllControl {...{ visibleKeys, selected, setSelected }} />
+				: null}
+
 			{extraTableNav?.(which)}
 			{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
+			{'top' === which ? endTableNav : null}
 
 			<br className="clear" />
 		</div>
@@ -163,6 +201,7 @@ export interface TableNavigationProps<K extends Key, A extends string> extends L
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 	totalItems: number
 	totalPages: number | undefined
+	visibleKeys?: K[]
 }
 
 export const TableNavigation = <K extends Key, A extends string>({
