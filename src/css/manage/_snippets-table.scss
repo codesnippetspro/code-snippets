@@ -61,12 +61,6 @@
 	display: table-cell !important;
 }
 
-// The accent pill styling lives in common/_switch.scss; keep the switch from
-// shrinking inside the flex card header.
-.snippet-card-header input[type='checkbox'].switch {
-	flex-shrink: 0;
-}
-
 .snippets-card-grid {
 	// Three equal-height cards per row; descriptions are clamped so height
 	// stays uniform regardless of text length. The compound selector wins
@@ -147,6 +141,12 @@
 
 		.extra-icons:empty {
 			display: none;
+		}
+
+		// The accent pill styling lives in common/_switch.scss; keep the
+		// switch from shrinking inside the flex card header.
+		input[type='checkbox'].switch {
+			flex-shrink: 0;
 		}
 	}
 
