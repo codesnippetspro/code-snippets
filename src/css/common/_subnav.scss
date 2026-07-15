@@ -17,10 +17,21 @@
 
 	// Core admin switches to 10px #wpcontent padding, 0/12px .wrap margins
 	// below 782px; mirror them so the bar stays flush without overflowing
-	// the viewport.
+	// the viewport. The tabs stop wrapping and the band scrolls inline
+	// instead, so it never stacks or clips.
 	@media screen and (width <= 782px) {
 		margin-inline-start: -10px;
 		inline-size: calc(100% + 22px);
+		overflow-x: auto;
+		scrollbar-width: thin;
+
+		ul {
+			flex-wrap: nowrap;
+		}
+
+		.snippet-type-link {
+			white-space: nowrap;
+		}
 	}
 
 	ul {
