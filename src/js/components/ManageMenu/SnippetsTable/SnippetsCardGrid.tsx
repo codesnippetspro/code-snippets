@@ -77,7 +77,8 @@ const useSortedPagedSnippets = ({ snippets, itemsPerPage, currentPage }: SortedP
 }
 
 export interface SnippetsCardGridProps<A extends string>
-	extends Pick<ListTableNavProps<Snippet['id'], A>, 'extraTableNav' | 'selectAll' | 'endTableNav'> {
+	extends Pick<ListTableNavProps<Snippet['id'], A>, 'extraTableNav' | 'endTableNav'> {
+	selectAllControl?: boolean
 	snippets: Snippet[]
 	actions: ListTableAction<A>[]
 	doAction: (action: A, selected: Set<Snippet['id']>) => Promise<void>
@@ -91,7 +92,7 @@ export const SnippetsCardGrid = <A extends string>({
 	actions,
 	doAction,
 	extraTableNav,
-	selectAll,
+	selectAllControl,
 	endTableNav,
 	itemsPerPage,
 	noItems,
@@ -113,11 +114,10 @@ export const SnippetsCardGrid = <A extends string>({
 				pageSearchParam=""
 				selected={getVisibleSelection(selected, visibleSnippets)}
 				setSelected={setSelected}
-				visibleKeys={visibleSnippets.map(snippet => snippet.id)}
+				selectAllKeys={selectAllControl ? visibleSnippets.map(snippet => snippet.id) : undefined}
 				actions={actions}
 				doAction={doAction}
 				extraTableNav={extraTableNav}
-				selectAll={selectAll}
 				endTableNav={endTableNav}
 			>
 				{beforeGrid}
