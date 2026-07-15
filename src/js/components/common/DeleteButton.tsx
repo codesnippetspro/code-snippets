@@ -89,7 +89,7 @@ export const useDeleteSnippet = ({ snippet, setIsWorking, onSuccess, onError }: 
 	return { requestDelete, confirmDialog }
 }
 
-export interface DeleteButtonProps extends ButtonProps, Omit<UseDeleteSnippetOptions, 'snippet'> {
+export interface DeleteButtonProps extends Omit<ButtonProps, 'onError'>, Omit<UseDeleteSnippetOptions, 'snippet'> {
 	snippet: Snippet
 }
 

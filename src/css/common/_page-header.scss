@@ -1,3 +1,5 @@
+@use 'theme';
+
 // Contextual page header row shared by the plugin admin screens: the page
 // title on the inline-start side and the primary page action, if any,
 // aligned to the inline-end side of the same row.
@@ -35,4 +37,9 @@
 	font-size: 14px;
 	line-height: 1.5;
 	color: #646970;
+
+	a {
+		color: theme.$accent;
+		text-decoration: underline;
+	}
 }
