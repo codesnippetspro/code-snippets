@@ -125,16 +125,10 @@
 		align-items: center;
 		gap: 8px;
 		font-size: 14px;
+		color: #646970;
 
-		input.snippet-priority {
-			inline-size: 52px;
-			block-size: 30px;
-			margin: 0;
-			padding-block: 0;
-			padding-inline: 4px;
-			border: 1px solid #e2e2e4;
-			border-radius: 4px;
-			text-align: center;
+		.code-snippets-preview-modal__priority-value {
+			font-weight: 600;
 			color: #2c3337;
 		}
 	}

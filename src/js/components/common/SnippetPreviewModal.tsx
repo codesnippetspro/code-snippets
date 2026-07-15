@@ -9,7 +9,6 @@ import { cloneSnippetObject, getSnippetEditUrl } from '../../utils/snippets/snip
 import { Badge } from './Badge'
 import { Button } from './Button'
 import { useDeleteSnippet } from './DeleteButton'
-import { SnippetPriorityInput } from './SnippetPriorityInput'
 import type { BadgeName } from './Badge'
 import type { EditorFromTextArea } from 'codemirror'
 import type { Snippet } from '../../types/Snippet'
@@ -46,26 +45,9 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({ snippet, 
 
 	return (
 		<div className="code-snippets-preview-modal__buttons">
-			{snippet.locked
-				? null
-				: <Button
-					link
-					className="code-snippets-preview-modal__trash"
-					onClick={requestDelete}
-				>
-					{__('Trash', 'code-snippets')}
-				</Button>}
-
-			<Button
-				secondary
-				onClick={() => {
-					api.export(snippet)
-						.then(response => downloadSnippetExportFile(response, snippet))
-						.catch(handleUnknownError)
-				}}
-			>
-				{__('Export', 'code-snippets')}
-			</Button>
+			<a className="button button-primary" href={getSnippetEditUrl(snippet)}>
+				{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
+			</a>
 
 			<Button
 				secondary
@@ -79,9 +61,26 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({ snippet, 
 				{__('Clone', 'code-snippets')}
 			</Button>
 
-			<a className="button button-primary" href={getSnippetEditUrl(snippet)}>
-				{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
-			</a>
+			<Button
+				secondary
+				onClick={() => {
+					api.export(snippet)
+						.then(response => downloadSnippetExportFile(response, snippet))
+						.catch(handleUnknownError)
+				}}
+			>
+				{__('Export', 'code-snippets')}
+			</Button>
+
+			{snippet.locked
+				? null
+				: <Button
+					link
+					className="code-snippets-preview-modal__trash"
+					onClick={requestDelete}
+				>
+					{__('Trash', 'code-snippets')}
+				</Button>}
 		</div>
 	)
 }
@@ -93,8 +92,6 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({ snippet, 
  */
 const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({ snippet, closeModal }) => {
 	const { refreshSnippetsList } = useSnippetsList()
-	const priorityInputId = `snippet-${snippet.id}-preview-priority`
-
 	const { requestDelete, confirmDialog } = useDeleteSnippet({
 		snippet,
 		onSuccess: () => {
@@ -106,12 +103,12 @@ const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({ snippet, 
 
 	return (
 		<div className="code-snippets-preview-modal__footer">
-			<div className="code-snippets-preview-modal__priority">
-				<label htmlFor={priorityInputId}>{__('Priority', 'code-snippets')}</label>
-				<SnippetPriorityInput snippet={snippet} inputId={priorityInputId} />
-			</div>
-
 			<SnippetPreviewButtons snippet={snippet} closeModal={closeModal} requestDelete={requestDelete} />
+
+			<div className="code-snippets-preview-modal__priority">
+				<span>{__('Priority', 'code-snippets')}</span>
+				<span className="code-snippets-preview-modal__priority-value">{snippet.priority}</span>
+			</div>
 
 			{confirmDialog}
 		</div>
