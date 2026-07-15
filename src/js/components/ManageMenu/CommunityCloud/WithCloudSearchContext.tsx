@@ -120,8 +120,7 @@ const processSearchParams = (params: CloudSearchParams, previous: CloudSearchPar
 }
 
 const unpackSearchResponse = ({ data }: AxiosResponse<CloudSnippetsSchema>, baseUrl: string) => ({
-	// The cloud API reports zero-based page numbers.
-	page: data.page + 1,
+	page: data.page,
 	isFeatured: baseUrl === SEARCH_URLS.FEATURED,
 	snippets: data.snippets,
 	totalItems: data.total_snippets,

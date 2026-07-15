@@ -151,6 +151,6 @@ class Cloud_Public_Client {
 			[ 'headers' => $this->connection->get_request_headers() ]
 		);
 
-		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ) );
+		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ), $page );
 	}
 }
