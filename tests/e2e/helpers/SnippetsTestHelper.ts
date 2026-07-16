@@ -212,9 +212,9 @@ export class SnippetsTestHelper {
 	private async selectSnippetLocation(location: keyof typeof SNIPPET_LOCATIONS): Promise<void> {
 		const locationLabel = SNIPPET_LOCATIONS[location]
 
-		const combobox = this.page.getByRole('combobox', { name: /location/i }).first()
-		await expect(combobox).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-		await combobox.click()
+		const locationSelect = this.page.locator(SELECTORS.LOCATION_SELECT)
+		await expect(locationSelect).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await locationSelect.click()
 
 		const listbox = this.page.getByRole('listbox').first()
 		await expect(listbox).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
