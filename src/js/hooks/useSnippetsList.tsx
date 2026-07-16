@@ -14,7 +14,9 @@ const [Context, useSnippetsList] = createContextHook<SnippetsListContext>('useSn
 
 export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { fetchAll } = useSnippetsAPI()
-	const [snippetsList, setSnippetsList] = useState<Snippet[]>()
+	// Seed from the list localized with the page so counts and rows render
+	// immediately; the mount-time refresh below keeps the data fresh.
+	const [snippetsList, setSnippetsList] = useState<Snippet[] | undefined>(() => window.CODE_SNIPPETS_MANAGE?.snippetsList)
 
 	const refreshSnippetsList = useCallback(async (): Promise<void> => {
 		try {
