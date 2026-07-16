@@ -6,8 +6,15 @@ import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
-import { isNetworkAdmin } from '../../../utils/screen'
-import { cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
+import {
+	canModifySnippet,
+	cloneSnippetObject,
+	getSnippetDisplayName,
+	getSnippetEditUrl,
+	getSnippetType,
+	isNetworkOnlySnippet,
+	isSnippetActive
+} from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
 import { useDeleteSnippet } from '../../common/DeleteButton'
 import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../common/KebabMenu'
@@ -20,12 +27,6 @@ import type { Snippet } from '../../../types/Snippet'
 interface SnippetCardActionsProps {
 	snippet: Snippet
 }
-
-const isNetworkOnly = (snippet: Snippet): boolean =>
-	!isNetworkAdmin() && snippet.network && !snippet.shared_network
-
-const canModifySnippet = (snippet: Snippet): boolean =>
-	!isNetworkOnly(snippet) && !(snippet.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
 
 const CardPreviewButton: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
@@ -146,7 +147,7 @@ const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 
 const CardFooterActions: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 	<>
-		{isNetworkOnly(snippet)
+		{isNetworkOnlySnippet(snippet)
 			? snippet.active
 				? <span className="network-active">{__('Network Active', 'code-snippets')}</span>
 				: <span className="network-only">{__('Network Only', 'code-snippets')}</span>
@@ -165,13 +166,13 @@ const CardFooterActions: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 
 const CardModifiedDate: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 	snippet.modified
-		? <span className="snippet-card-modified" title={snippet.modified}>
+		? <time className="snippet-card-modified" dateTime={snippet.modified} title={snippet.modified}>
 			{sprintf(
 				/* translators: %s: human-readable time difference, including "ago" suffix. */
 				__('Modified %s', 'code-snippets'),
 				humanTimeDiff(snippet.modified, undefined)
 			)}
-		</span>
+		</time>
 		: null
 
 export interface ManageSnippetCardProps {

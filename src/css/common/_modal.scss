@@ -62,16 +62,6 @@
 		min-inline-size: 90vw;
 	}
 
-	.code-snippets-preview-modal__title {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-
-		.badge {
-			margin-inline-start: auto;
-		}
-	}
-
 	.components-modal__content {
 		overflow: auto;
 	}
