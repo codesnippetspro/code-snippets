@@ -126,13 +126,33 @@ class Manage_Menu_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Type counts combine compatible scopes and exclude trashed snippets.
+	 * The inline snippets threshold can be disabled for constrained installations.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_applies_inline_snippets_limit_filter(): void {
+		add_filter( 'code_snippets/manage/inline_snippets_limit', '__return_zero' );
+
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
+		$localized_offset = is_string( $data ) ? strrpos( $data, 'var CODE_SNIPPETS_MANAGE = ' ) : false;
+
+		remove_filter( 'code_snippets/manage/inline_snippets_limit', '__return_zero' );
+
+		$this->assertIsString( $data );
+		$this->assertNotFalse( $localized_offset );
+		$this->assertStringNotContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
+	}
+
+	/**
+	 * Localized type counts combine compatible scopes and exclude trashed snippets.
 	 *
 	 * @return void
 	 *
 	 * @throws ReflectionException Creates instance of ReflectionMethod class.
 	 */
-	public function test_count_snippets_by_type_groups_scopes_and_excludes_trashed_snippets(): void {
+	public function test_enqueue_assets_localizes_grouped_non_trashed_type_counts(): void {
 		$menu = new Manage_Menu();
 		$method = new ReflectionMethod( $menu, 'count_snippets_by_type' );
 		$method->setAccessible( true );
@@ -146,12 +166,18 @@ class Manage_Menu_Test extends UnitTestCase {
 		$this->assertInstanceOf( Snippet::class, $trashed );
 		trash_snippet( $trashed->id );
 
-		$after = $method->invoke( $menu );
+		$menu->enqueue_assets();
+		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
+		$prefix = 'var CODE_SNIPPETS_MANAGE = ';
+		$offset = is_string( $data ) ? strrpos( $data, $prefix ) : false;
+		$this->assertNotFalse( $offset );
+		$json = substr( $data, $offset + strlen( $prefix ) );
+		$localized = json_decode( substr( $json, 0, strrpos( $json, ';' ) ), true );
 
-		$this->assertSame( ( $before['all'] ?? 0 ) + 3, $after['all'] );
-		$this->assertSame( ( $before['php'] ?? 0 ) + 2, $after['php'] );
-		$this->assertSame( ( $before['html'] ?? 0 ) + 1, $after['html'] );
-		$this->assertSame( $before['css'] ?? 0, $after['css'] ?? 0 );
+		$this->assertSame( ( $before['all'] ?? 0 ) + 3, $localized['typeCounts']['all'] );
+		$this->assertSame( ( $before['php'] ?? 0 ) + 2, $localized['typeCounts']['php'] );
+		$this->assertSame( ( $before['html'] ?? 0 ) + 1, $localized['typeCounts']['html'] );
+		$this->assertSame( $before['css'] ?? 0, $localized['typeCounts']['css'] ?? 0 );
 	}
 
 	/**
