@@ -85,11 +85,13 @@ test.describe('Code Snippets Admin', () => {
 
 	test('Back navigation confirms before discarding unsaved changes', async ({ page }) => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
-		await helper.createSnippet({
+		await helper.clickAddNewSnippet()
+		await helper.fillSnippetForm({
 			name: snippetName,
 			code: "add_filter('show_admin_bar', '__return_false');"
 		})
-		await helper.openSnippet(snippetName)
+		await helper.saveSnippet()
+		await expect(page).toHaveURL(/page=edit-snippet/)
 
 		const editedName = `${snippetName} edited`
 		await page.locator('#title').fill(editedName)
@@ -104,7 +106,7 @@ test.describe('Code Snippets Admin', () => {
 
 		page.once('dialog', dialog => dialog.accept())
 		await page.goBack()
-		await expect(page).toHaveURL(/page=snippets/)
+		await expect(page).toHaveURL(/page=add-snippet/)
 
 		await helper.cleanupSnippet(snippetName)
 	})
