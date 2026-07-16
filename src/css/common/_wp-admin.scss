@@ -103,8 +103,10 @@
 	}
 
 	// Primary buttons: WP 7.0 recolours these with the modern accent and drops the solid
-	// fill. Restore the classic solid brand-accent fill with white text.
-	.button-primary {
+	// fill. Restore the classic solid brand-accent fill with white text. The `:not`
+	// matches the secondary rule's specificity so a `.button-small.button-primary`
+	// keeps the token height instead of collapsing to the 26px small size.
+	.button-primary:not(.button-link) {
 		min-block-size: theme.$control-height;
 		padding-block: 0;
 		padding-inline: 12px;
