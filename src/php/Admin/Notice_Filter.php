@@ -112,11 +112,11 @@ class Notice_Filter {
 		}
 
 		foreach ( code_snippets()->admin->menus as $menu ) {
-			$hookname = $menu->get_hookname();
-
-			foreach ( [ $hookname, $hookname . '-network' ] as $candidate ) {
-				if ( $screen->id === $candidate || $screen->base === $candidate ) {
-					return true;
+			foreach ( $menu->get_hooknames() as $hookname ) {
+				foreach ( [ $hookname, $hookname . '-network' ] as $candidate ) {
+					if ( $screen->id === $candidate || $screen->base === $candidate ) {
+						return true;
+					}
 				}
 			}
 		}
