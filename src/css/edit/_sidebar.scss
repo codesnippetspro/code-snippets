@@ -124,8 +124,17 @@
 				background: none;
 				box-shadow: none;
 
+				// WordPress paints a fill on disabled buttons with !important;
+				// keep the disabled trash flat like the rest of the row.
+				&:disabled {
+					background: none !important;
+					border: 0;
+					box-shadow: none;
+				}
+
 				&:hover:not(:disabled),
-				&:focus:not(:disabled) {
+				&:focus:not(:disabled),
+				&:active:not(:disabled) {
 					background: none;
 					border: 0;
 					box-shadow: none;
