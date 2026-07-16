@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
@@ -145,6 +145,16 @@ const EditFormWrap: React.FC = () => {
 	const { snippet, isReadOnly } = useSnippetForm()
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
+
+	// The Add New link and the post-save transition swap the snippet in place via
+	// history.pushState (no reload). Without this, the browser Back/Forward buttons
+	// change the URL but leave the stale form mounted; reload so the server
+	// re-renders the snippet that matches the restored URL.
+	useEffect(() => {
+		const handlePopState = () => window.location.reload()
+		window.addEventListener('popstate', handlePopState)
+		return () => window.removeEventListener('popstate', handlePopState)
+	}, [])
 
 	return (
 		<>
