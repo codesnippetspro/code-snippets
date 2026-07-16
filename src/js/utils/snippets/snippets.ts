@@ -51,6 +51,11 @@ export const getSnippetEditUrl = (snippet?: Pick<Snippet, 'id'>): string | undef
 		? buildUrl(window.CODE_SNIPPETS?.urls.edit, { id: snippet.id })
 		: window.CODE_SNIPPETS?.urls.addNew
 
+export const getSnippetAddNewUrl = (type?: SnippetType): string | undefined =>
+	type
+		? buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type })
+		: window.CODE_SNIPPETS?.urls.addNew
+
 export const getSnippetDisplayName = (snippet: Pick<Snippet, 'name' | 'id' | 'scope'>): string =>
 	'' === snippet.name.trim()
 		// translators: %s: snippet identifier.

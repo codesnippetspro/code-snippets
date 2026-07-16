@@ -8,7 +8,7 @@ import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
 import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
-import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, getSnippetType, isProType } from '../../../utils/snippets/snippets'
+import { SNIPPET_TYPE_LABELS, getSnippetAddNewUrl, getSnippetType, isProType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Notice } from '../../common/Notice'
@@ -131,7 +131,7 @@ const SnippetsTableInner = () => {
 					__('Local Snippets: %s', 'code-snippets'),
 					currentType ? SNIPPET_TYPE_LABELS[currentType] : __('All Snippets', 'code-snippets')
 				)}</h1>
-				<a href={getSnippetEditUrl()} className="button button-primary">
+				<a href={getSnippetAddNewUrl(currentType)} className="button button-primary">
 					{__('Create new Snippet', 'code-snippets')}
 				</a>
 			</div>
