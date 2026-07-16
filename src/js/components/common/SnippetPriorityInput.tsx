@@ -22,6 +22,13 @@ export const SnippetPriorityInput: React.FC<SnippetPriorityInputProps> = ({ snip
 	const { refreshSnippetsList } = useSnippetsList()
 
 	const handleUpdate = () => {
+		// The kebab menu can focus this input on open, so a blur without a
+		// real change must not trigger a write.
+		if (Number.isNaN(value) || value === snippet.priority) {
+			setValue(snippet.priority)
+			return
+		}
+
 		snippetsAPI.update({ ...snippet, priority: value })
 			.then(response => {
 				if (response.id === snippet.id) {
