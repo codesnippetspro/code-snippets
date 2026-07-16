@@ -15,13 +15,15 @@ $sidebar-gap: 30px;
 .snippet-type-container .code-snippets-select {
 	block-size: 100%;
 
-	> div {
+	// Target the control box only (:first-of-type). The open menu is a later
+	// sibling div; matching it here would clamp and flex-row the option list.
+	> div:first-of-type {
 		min-block-size: 45px;
 		block-size: 45px;
 		max-block-size: 45px;
 	}
 
-	> div > div:first-child {
+	> div:first-of-type > div:first-child {
 		display: flex;
 		align-items: center;
 		block-size: 45px;
@@ -53,7 +55,6 @@ $sidebar-gap: 30px;
 	.button.button-large {
 		display: flex;
 		align-items: center;
-		justify-content: center;
 		gap: 8px;
 		inline-size: 100%;
 		border-color: #ccc;
