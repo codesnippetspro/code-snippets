@@ -201,7 +201,7 @@ $status-colors: (
 			border-radius: 5px;
 		}
 
-		.button:not(.button-primary) {
+		.button:not(.button-primary, .cloud-pro-button) {
 			background: #fff;
 		}
 	}
