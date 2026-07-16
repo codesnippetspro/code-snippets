@@ -125,13 +125,13 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 	)
 }
 
-interface SelectAllControlProps<K extends Key> {
+export interface SelectAllControlProps<K extends Key> {
 	keys: K[]
 	selected: Set<K>
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-const SelectAllControl = <K extends Key>({ keys, selected, setSelected }: SelectAllControlProps<K>) =>
+export const SelectAllControl = <K extends Key>({ keys, selected, setSelected }: SelectAllControlProps<K>) =>
 	<label className="tablenav-select-all">
 		<input
 			type="checkbox"

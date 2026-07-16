@@ -3,7 +3,6 @@ import { __, sprintf } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
 import { fetchConstQueryParam, updateQueryParams } from '../../../utils/urls'
-import { SnippetsIcon } from '../../common/icons/ToolbarIcons'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { SubnavTabs } from '../../common/SubnavTabs'
 import { WithCloudSearchContext, useCloudSearch } from './WithCloudSearchContext'
@@ -34,17 +33,11 @@ const CommunityCloudInner = () => {
 					{
 						name: 'snippets',
 						label: TAB_LABELS.snippets,
-						icon: <SnippetsIcon aria-hidden="true" />,
 						count: searchResults?.totalItems
 					},
 					{
 						name: 'bundles',
 						label: TAB_LABELS.bundles,
-						icon:
-							<span
-								className="dashicons dashicons-screenoptions snippet-type-icon"
-								aria-hidden="true"
-							></span>,
 						pro: true
 					}
 				]}
