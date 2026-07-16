@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS } from './helpers/constants'
-import type { Page } from '@playwright/test'
+import type { Page, Route } from '@playwright/test'
 
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
@@ -90,9 +90,14 @@ test.describe('Code Snippets List Page Actions', () => {
 	test('Can clone a snippet once from the preview modal', async ({ page }) => {
 		let createRequests = 0
 
-		await page.route('**/wp-json/code-snippets/v1/snippets*', async route => {
+		const trackCreateRequest = async (route: Route) => {
 			const request = route.request()
-			const isCreateRequest = 'POST' === request.method() && /\/snippets\/?(?:\?.*)?$/.test(request.url())
+			const requestUrl = new URL(request.url())
+			const restRoute = requestUrl.searchParams.get('rest_route')
+			const isCreateRequest = 'POST' === request.method() && (
+				requestUrl.pathname.endsWith('/code-snippets/v1/snippets') ||
+				'/code-snippets/v1/snippets' === restRoute
+			)
 
 			if (isCreateRequest) {
 				createRequests += 1
@@ -100,7 +105,10 @@ test.describe('Code Snippets List Page Actions', () => {
 			}
 
 			await route.continue()
-		})
+		}
+
+		await page.route('**/wp-json/code-snippets/v1/snippets*', trackCreateRequest)
+		await page.route(/\/index\.php\?rest_route=/, trackCreateRequest)
 
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
