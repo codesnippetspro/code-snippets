@@ -1,6 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
@@ -80,6 +80,8 @@ const SafeModeNotice = () =>
 		</Notice>
 		: null
 
+// Counts render immediately from the values localized with the page, then
+// switch to live values derived from the snippets list once it has loaded.
 const useSnippetTypeCounts = () => {
 	const { snippetsList } = useSnippetsList()
 
@@ -96,14 +98,23 @@ const useSnippetTypeCounts = () => {
 		[countedSnippets]
 	)
 
-	return { countedSnippets, typeCounts }
+	const localized = window.CODE_SNIPPETS_MANAGE?.typeCounts
+
+	const getCount = useCallback(
+		(type?: SnippetType) => countedSnippets
+			? type ? typeCounts?.get(type) ?? 0 : countedSnippets.length
+			: localized?.[type ?? 'all'],
+		[countedSnippets, typeCounts, localized]
+	)
+
+	return { getCount }
 }
 
 const SnippetsTableInner = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 	const { snippetView, setSnippetView } = useSnippetView()
 	const { currentType } = useSnippetsFilters()
-	const { countedSnippets, typeCounts } = useSnippetTypeCounts()
+	const { getCount } = useSnippetTypeCounts()
 
 	return (
 		<>
@@ -112,12 +123,12 @@ const SnippetsTableInner = () => {
 				aria-label={__('Snippet types', 'code-snippets')}
 			>
 				<ul>
-					<SnippetTypeTab count={countedSnippets?.length} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
+					<SnippetTypeTab count={getCount()} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
 					{SNIPPET_TYPES.map(type =>
 						<SnippetTypeTab
 							key={type}
 							type={type}
-							count={countedSnippets && (typeCounts?.get(type) ?? 0)}
+							count={getCount(type)}
 							setIsUpgradeDialogOpen={setIsUpgradeDialogOpen}
 						/>)}
 				</ul>

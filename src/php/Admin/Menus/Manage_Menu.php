@@ -234,6 +234,7 @@ class Manage_Menu extends Admin_Menu {
 			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
 			'editorTheme'          => get_setting( 'editor', 'theme' ),
+			'typeCounts'           => $this->count_snippets_by_type(),
 		];
 
 		// Only the manage-table view consumes the full snippets list; skip the
@@ -270,6 +271,30 @@ class Manage_Menu extends Admin_Menu {
 	public static function get_default_snippets_per_page(): int {
 		$default = apply_filters( 'code_snippets/snippets_per_page_default', self::DEFAULT_SNIPPETS_PER_PAGE );
 		return max( 1, intval( $default ) );
+	}
+
+		/**
+         * Count non-trashed snippets per type with a single grouped query, so the
+         * type tabs can render their counts without loading full snippet data.
+         *
+         * @return array<string, int> Map of type name to snippet count, including 'all'.
+         */
+	private function count_snippets_by_type(): array {
+		global $wpdb;
+		$table = code_snippets()->db->get_table_name();
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotSafe -- table name from trusted source; counts are cheap and rendered per-request.
+		$results = $wpdb->get_results( "SELECT scope, COUNT(*) AS count FROM $table WHERE active >= 0 GROUP BY scope" );
+
+		$counts = [ 'all' => 0 ];
+
+		foreach ( $results as $row ) {
+			$type = Snippet::get_type_from_scope( $row->scope );
+			$counts[ $type ] = ( $counts[ $type ] ?? 0 ) + (int) $row->count;
+			$counts['all'] += (int) $row->count;
+		}
+
+		return $counts;
 	}
 
 	/**
