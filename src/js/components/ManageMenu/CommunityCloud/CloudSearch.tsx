@@ -3,21 +3,18 @@ import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
-import { handleUnknownError } from '../../../utils/errors'
 import { REST_BASES } from '../../../utils/restAPI'
 import { isLicensed } from '../../../utils/screen'
 import { isProSnippet } from '../../../utils/snippets/snippets'
-import { SelectAllControl } from '../../common/ListTable/TableNavigation'
-import { TablePagination } from '../../common/ListTable/TablePagination'
+import { TableNav } from '../../common/ListTable/TableNavigation'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
-import { SubmitButton } from '../../common/SubmitButton'
 import { CloudSnippetsTable } from './CloudSnippetsTable'
 import { CloudSnippetAuthor, SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { SnippetView } from '../../../types/SnippetView'
-import type { TablePaginationProps } from '../../common/ListTable/TablePagination'
+import type { ListTableAction } from '../../common/ListTable/ListTable'
 import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
 const SearchBox = () => {
@@ -72,60 +69,6 @@ const SearchBox = () => {
 const isSnippetDownloadable = (snippet: CloudSnippetSchema): boolean =>
 	!snippet.local_id && (isLicensed() || !isProSnippet(snippet))
 
-interface BulkEditActionsProps {
-	selected: Set<CloudSnippetSchema['id']>
-}
-
-const BulkEditActions: React.FC<BulkEditActionsProps> = ({ selected }) => {
-	const { api } = useRestAPI()
-	const { searchResults, isSearching, doSearch } = useCloudSearch()
-	const [selectedAction, setSelectedAction] = useState('')
-	const [isPerformingAction, setIsPerformingAction] = useState(false)
-
-	const applyDownloadAction = () => {
-		const downloadable = searchResults?.snippets
-			.filter(snippet => selected.has(snippet.id) && isSnippetDownloadable(snippet)) ?? []
-
-		setIsPerformingAction(true)
-		Promise.all(downloadable.map(snippet =>
-			api.post(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)))
-			.then(() => doSearch())
-			.catch(handleUnknownError)
-			.finally(() => setIsPerformingAction(false))
-	}
-
-	return (
-		<div className="alignleft actions bulkactions">
-			<label htmlFor="cloud-bulk-action-selector" className="screen-reader-text">
-				{/* translators: Hidden accessibility text. */}
-				{__('Select bulk action', 'code-snippets')}
-			</label>
-
-			<select
-				id="cloud-bulk-action-selector"
-				value={selectedAction}
-				onChange={event => setSelectedAction('download' === event.target.value ? 'download' : '')}
-			>
-				<option value="">{__('Bulk Edit', 'code-snippets')}</option>
-				<option value="download">{__('Download', 'code-snippets')}</option>
-			</select>
-
-			<SubmitButton
-				name="cloud_bulk_action"
-				text={__('Apply', 'code-snippets')}
-				className="action"
-				disabled={isSearching || isPerformingAction || !selectedAction || 0 === selected.size}
-				onClick={event => {
-					event.preventDefault()
-					applyDownloadAction()
-				}}
-			/>
-
-			{isPerformingAction ? <Spinner /> : null}
-		</div>
-	)
-}
-
 interface SearchResultsGridProps {
 	snippets: CloudSnippetSchema[]
 	selected: Set<CloudSnippetSchema['id']>
@@ -165,7 +108,12 @@ interface SearchResultsViewProps {
 	setSnippetView: (view: SnippetView) => void
 }
 
+const CLOUD_BULK_ACTIONS: ListTableAction<'download'>[] = [
+	{ key: 'download', label: __('Download', 'code-snippets') }
+]
+
 const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
+	const { api } = useRestAPI()
 	const { searchResults, isSearching, doSearch } = useCloudSearch()
 	const [selected, setSelected] = useState<Set<CloudSnippetSchema['id']>>(new Set())
 
@@ -181,39 +129,48 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 
 	const { totalItems, totalPages, page } = searchResults
 
-	const paginationProps: Omit<TablePaginationProps, 'which'> = {
+	const doAction = (_action: 'download', selectedIds: Set<CloudSnippetSchema['id']>): Promise<void> => {
+		const downloadable = searchResults.snippets
+			.filter(snippet => selectedIds.has(snippet.id) && isSnippetDownloadable(snippet))
+
+		return Promise.all(downloadable.map(snippet =>
+			api.post(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)))
+			.then(() => doSearch())
+	}
+
+	// Shared across the top and bottom toolbars; the bottom toolbar omits the
+	// action and selection controls, showing only the pagination group.
+	const navProps = {
 		totalItems,
 		totalPages,
+		selected,
+		setSelected,
 		disabled: isSearching,
 		currentPage: page,
-		setCurrentPage: newPage => doSearch({ page: newPage })
+		setCurrentPage: (newPage: number) => doSearch({ page: newPage })
 	}
 
 	return (
 		<div className="snippets-list-view">
-			<div className="tablenav top">
-				<BulkEditActions selected={selected} />
-				<SelectAllControl
-					keys={searchResults.snippets.map(snippet => snippet.id)}
-					selected={selected}
-					setSelected={setSelected}
-				/>
-				<SearchFilters />
-				<div className="tablenav-end-group">
-					<TablePagination which="top" {...paginationProps} />
-					<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
-				</div>
-				<br className="clear" />
-			</div>
+			<TableNav
+				which="top"
+				actions={CLOUD_BULK_ACTIONS}
+				doAction={doAction}
+				bulkSelectLabel={__('Bulk Edit', 'code-snippets')}
+				selectAllKeys={searchResults.snippets.map(snippet => snippet.id)}
+				extraTableNav={() => <SearchFilters />}
+				endTableNav={which =>
+					'top' === which
+						? <SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
+						: null}
+				{...navProps}
+			/>
 
 			{'card' === snippetView
 				? <SearchResultsGrid snippets={searchResults.snippets} selected={selected} setSelected={setSelected} />
 				: <CloudSnippetsTable snippets={searchResults.snippets} />}
 
-			<div className="tablenav bottom">
-				<TablePagination which="bottom" {...paginationProps} />
-				<br className="clear" />
-			</div>
+			<TableNav which="bottom" {...navProps} />
 		</div>
 	)
 }

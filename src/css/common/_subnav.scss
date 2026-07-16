@@ -207,3 +207,26 @@
 .snippet-type-nav .snippet-type-link.active-type .subnav-count {
 	color: #2271b1;
 }
+
+// The short "All" form of the all-snippets label only replaces "All Snippets"
+// once the bar collapses; the full form is shown at every wider width.
+.snippet-type-name-short {
+	display: none;
+}
+
+// Mid-width collapse: drop the type names so each tab shows just its badge and
+// count, and shorten "All Snippets" to "All". Only the badged manage nav owns
+// a .snippet-type-name; the text-only import/settings subnav tabs are untouched.
+@media (782px < width <= 1210px) {
+	.snippet-type-nav .snippet-type-link:not(.all-type-link) .snippet-type-name {
+		display: none;
+	}
+
+	.snippet-type-nav .all-type-link .snippet-type-name-full {
+		display: none;
+	}
+
+	.snippet-type-nav .all-type-link .snippet-type-name-short {
+		display: inline;
+	}
+}
