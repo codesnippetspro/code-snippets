@@ -7,6 +7,7 @@ import { handleUnknownError } from '../../../utils/errors'
 import { REST_BASES } from '../../../utils/restAPI'
 import { isLicensed } from '../../../utils/screen'
 import { isProSnippet } from '../../../utils/snippets/snippets'
+import { SelectAllControl } from '../../common/ListTable/TableNavigation'
 import { TablePagination } from '../../common/ListTable/TablePagination'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { SubmitButton } from '../../common/SubmitButton'
@@ -192,9 +193,17 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 		<div className="snippets-list-view">
 			<div className="tablenav top">
 				<BulkEditActions selected={selected} />
+				<SelectAllControl
+					keys={searchResults.snippets.map(snippet => snippet.id)}
+					selected={selected}
+					setSelected={setSelected}
+				/>
 				<SearchFilters />
-				<TablePagination which="top" {...paginationProps} />
-				<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
+				<div className="tablenav-end-group">
+					<TablePagination which="top" {...paginationProps} />
+					<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
+				</div>
+				<br className="clear" />
 			</div>
 
 			{'card' === snippetView
@@ -203,6 +212,7 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 
 			<div className="tablenav bottom">
 				<TablePagination which="bottom" {...paginationProps} />
+				<br className="clear" />
 			</div>
 		</div>
 	)
