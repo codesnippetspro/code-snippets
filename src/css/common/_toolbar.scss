@@ -106,6 +106,15 @@ $wpcontent-inline-start-indent: 20px;
 			block-size: 26px;
 		}
 
+		// Label and its optional pro chip travel together as one inline group so
+		// each item stays exactly two rows (icon over label) once the bar stacks,
+		// keeping every icon and label on a shared baseline regardless of chips.
+		.toolbar-nav-label {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+		}
+
 		&.active-link, &:hover, &:focus, &:active {
 			color: #2271b1;
 		}
