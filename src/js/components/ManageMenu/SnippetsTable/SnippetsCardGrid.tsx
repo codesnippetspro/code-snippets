@@ -1,14 +1,13 @@
 import classnames from 'classnames'
 import React, { useMemo, useState } from 'react'
-import { getSnippetDisplayName } from '../../../utils/snippets/snippets'
+import { fetchQueryParam } from '../../../utils/urls'
 import { TableNavigation } from '../../common/ListTable/TableNavigation'
 import { ManageSnippetCard } from './ManageSnippetCard'
 import type { ListTableAction, ListTableNavProps } from '../../common/ListTable'
 import type { Snippet } from '../../../types/Snippet'
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 
-const compareSnippetNames = (snippetA: Snippet, snippetB: Snippet): number =>
-	getSnippetDisplayName(snippetA).localeCompare(getSnippetDisplayName(snippetB), undefined, { sensitivity: 'base' })
+const PAGE_SEARCH_PARAM = 'paged'
 
 interface CardGridProps {
 	snippets: Snippet[]
@@ -49,41 +48,34 @@ const CardGrid: React.FC<CardGridProps> = ({ snippets, noItems, selected, setSel
 const getVisibleSelection = (selected: Set<Snippet['id']>, visible: Snippet[]): Set<Snippet['id']> =>
 	new Set([...selected].filter(id => visible.some(snippet => snippet.id === id)))
 
-interface SortedPagedSnippetsParams {
+interface PagedSnippetsParams {
 	snippets: Snippet[]
 	itemsPerPage: number | undefined
 	currentPage: number
 }
 
 interface PagedSnippets {
-	sortedSnippets: Snippet[]
 	totalPages: number
 	safePage: number
 	visibleSnippets: Snippet[]
 }
 
-const useSortedPagedSnippets = ({ snippets, itemsPerPage, currentPage }: SortedPagedSnippetsParams): PagedSnippets => {
-	const sortedSnippets = useMemo(
-		() => snippets.toSorted(compareSnippetNames),
-		[snippets]
-	)
-
-	const totalPages = itemsPerPage ? Math.ceil(sortedSnippets.length / itemsPerPage) : 0
+const usePagedSnippets = ({ snippets, itemsPerPage, currentPage }: PagedSnippetsParams): PagedSnippets => {
+	const totalPages = itemsPerPage ? Math.ceil(snippets.length / itemsPerPage) : 0
 	const safePage = totalPages ? Math.min(currentPage, totalPages) : 1
 
 	const visibleSnippets = useMemo(
 		() => itemsPerPage
-			? sortedSnippets.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage)
-			: sortedSnippets,
-		[sortedSnippets, itemsPerPage, safePage]
+			? snippets.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage)
+			: snippets,
+		[snippets, itemsPerPage, safePage]
 	)
 
-	return { sortedSnippets, totalPages, safePage, visibleSnippets }
+	return { totalPages, safePage, visibleSnippets }
 }
 
 export interface SnippetsCardGridProps<A extends string>
 	extends Pick<ListTableNavProps<Snippet['id'], A>, 'extraTableNav' | 'endTableNav'> {
-	selectAllControl?: boolean
 	snippets: Snippet[]
 	actions: ListTableAction<A>[]
 	doAction: (action: A, selected: Set<Snippet['id']>) => Promise<void>
@@ -97,29 +89,27 @@ export const SnippetsCardGrid = <A extends string>({
 	actions,
 	doAction,
 	extraTableNav,
-	selectAllControl,
 	endTableNav,
 	itemsPerPage,
 	noItems,
 	beforeGrid
 }: SnippetsCardGridProps<A>) => {
 	const [selected, setSelected] = useState(() => new Set<Snippet['id']>())
-	const [currentPage, setCurrentPage] = useState(1)
+	const [currentPage, setCurrentPage] = useState(() => Number(fetchQueryParam(PAGE_SEARCH_PARAM)) || 1)
 
-	const { sortedSnippets, totalPages, safePage, visibleSnippets } =
-		useSortedPagedSnippets({ snippets, itemsPerPage, currentPage })
+	const { totalPages, safePage, visibleSnippets } = usePagedSnippets({ snippets, itemsPerPage, currentPage })
 
 	return (
 		<div className="snippets-card-grid-container">
 			<TableNavigation
-				totalItems={sortedSnippets.length}
-				totalPages={totalPages || undefined}
+				totalItems={snippets.length}
+				totalPages={0 < totalPages ? totalPages : undefined}
 				currentPage={safePage}
 				setCurrentPage={setCurrentPage}
-				pageSearchParam=""
+				pageSearchParam={PAGE_SEARCH_PARAM}
 				selected={getVisibleSelection(selected, visibleSnippets)}
 				setSelected={setSelected}
-				selectAllKeys={selectAllControl ? visibleSnippets.map(snippet => snippet.id) : undefined}
+				selectAllKeys={visibleSnippets.map(snippet => snippet.id)}
 				actions={actions}
 				doAction={doAction}
 				extraTableNav={extraTableNav}

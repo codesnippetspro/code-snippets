@@ -231,7 +231,6 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			doAction={doAction}
 			itemsPerPage={itemsPerPage}
 			extraTableNav={extraTableNav}
-			selectAllControl
 			endTableNav={endTableNav}
 			noItems={<NoItemsMessage />}
 			beforeGrid={<SearchResultsIndicator />}
