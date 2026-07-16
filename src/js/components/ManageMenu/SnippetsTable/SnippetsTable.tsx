@@ -49,8 +49,13 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count, setIsUpgra
 				}}
 			>
 				{type && <Badge name={type} />}
-				<span className={`${tabName}-label`}>
-					{type ? SNIPPET_TYPE_LABELS[type] : __('All Snippets', 'code-snippets')}
+				<span className={classnames(`${tabName}-label`, 'snippet-type-name')}>
+					{type
+						? SNIPPET_TYPE_LABELS[type]
+						: <>
+							<span className="snippet-type-name-full">{__('All Snippets', 'code-snippets')}</span>
+							<span className="snippet-type-name-short">{__('All', 'code-snippets')}</span>
+						</>}
 				</span>
 				{count ? <span className="subnav-count">{count}</span> : null}
 				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
