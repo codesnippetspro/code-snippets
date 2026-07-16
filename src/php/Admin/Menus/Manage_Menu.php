@@ -279,12 +279,12 @@ class Manage_Menu extends Admin_Menu {
 		return max( 1, intval( $default ) );
 	}
 
-		/**
-         * Count non-trashed snippets per type with a single grouped query, so the
-         * type tabs can render their counts without loading full snippet data.
-         *
-         * @return array<string, int> Map of type name to snippet count, including 'all'.
-         */
+	/**
+	 * Count non-trashed snippets per type with a single grouped query, so the
+	 * type tabs can render their counts without loading full snippet data.
+	 *
+	 * @return array<string, int> Map of type name to snippet count, including 'all'.
+	 */
 	private function count_snippets_by_type(): array {
 		global $wpdb;
 		$table = code_snippets()->db->get_table_name();
