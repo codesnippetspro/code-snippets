@@ -225,10 +225,12 @@
 	display: none;
 }
 
-// Mid-width collapse: drop the type names so each tab shows just its badge and
-// count, and shorten "All Snippets" to "All". Only the badged manage nav owns
-// a .snippet-type-name; the text-only import/settings subnav tabs are untouched.
-@media (782px < width <= 1210px) {
+// Collapse at mid-width and below (through mobile): drop the type names so each
+// tab shows just its badge and count, and shorten "All Snippets" to "All". Only
+// the badged manage nav owns a .snippet-type-name; the text-only import/settings
+// subnav tabs are untouched. Below 782px the bar still scrolls sideways (above),
+// now with the compact collapsed tabs.
+@media (width <= 1210px) {
 	.snippet-type-nav .snippet-type-link:not(.all-type-link) .snippet-type-name {
 		display: none;
 	}
