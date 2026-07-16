@@ -51,12 +51,12 @@ class Notice_Filter_Test extends UnitTestCase {
 		parent::set_up();
 
 		wp_set_current_user( self::$admin_user_id );
-		set_current_screen( 'toplevel_page_' . code_snippets()->get_menu_slug() );
+		set_current_screen( 'dashboard' );
 
-		if ( ! isset( code_snippets()->admin ) ) {
-			code_snippets()->admin = new Bootstrap_Admin();
-			code_snippets()->admin->load_classes();
-		}
+		code_snippets()->admin = new Bootstrap_Admin();
+		code_snippets()->admin->load_classes();
+
+		set_current_screen( code_snippets()->admin->menus['manage']->get_hookname() );
 
 		$this->notice_filter = new Notice_Filter();
 	}
@@ -85,6 +85,22 @@ class Notice_Filter_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_registers_filtering_on_code_snippets_screen(): void {
+		$this->notice_filter->register_filtering( get_current_screen() );
+
+		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
+		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'print_fallback_styles' ] ) );
+	}
+
+	/**
+	 * The separate Add New editor screen also registers notice filtering.
+	 *
+	 * @return void
+	 */
+	public function test_registers_filtering_on_add_new_screen(): void {
+		$edit_menu = code_snippets()->admin->menus['edit'];
+		$hooknames = $edit_menu->get_hooknames();
+		set_current_screen( $hooknames[1] );
+
 		$this->notice_filter->register_filtering( get_current_screen() );
 
 		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
