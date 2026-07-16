@@ -71,6 +71,7 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgrade
 			<Select
 				inputId="snippet-type-select-input"
 				className="code-snippets-select"
+				isSearchable={false}
 				isDisabled={isReadOnly || 0 !== snippet.id && 'cond' === snippetType}
 				options={0 === snippet.id ? OPTIONS : OPTIONS.filter(option => 'cond' !== option.value)}
 				menuPlacement="bottom"
