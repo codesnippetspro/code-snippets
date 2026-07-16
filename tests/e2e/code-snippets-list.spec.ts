@@ -397,6 +397,23 @@ test.describe('Manage table Screen Options', () => {
 		}
 	}
 
+	test('Card pagination initializes from the page URL', async ({ page }) => {
+		await SnippetsTestHelper.setSnippetsPerPage(1)
+
+		try {
+			await helper.navigateToSnippetsAdmin()
+			await page.getByRole('button', { name: 'Card view' }).click()
+			await expect(page.locator('.snippets-card-grid')).toBeVisible()
+
+			await page.goto('/wp-admin/admin.php?page=snippets&paged=2')
+			await expect(page.locator('.tablenav.top .current-page')).toHaveValue('2')
+			await expect(page.locator('.snippets-card-grid .code-snippets-card')).toHaveCount(1)
+		} finally {
+			await page.getByRole('button', { name: 'Table view' }).click().catch(() => undefined)
+			await SnippetsTestHelper.resetSnippetsPerPage()
+		}
+	})
+
 	test('Column visibility toggle hides and shows columns in real time', async ({ page }) => {
 		await openScreenOptions(page)
 
