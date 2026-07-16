@@ -12,7 +12,9 @@ export interface SnippetFormContext {
 	snippet: Snippet
 	isWorking: boolean
 	isReadOnly: boolean
+	isDirty: boolean
 	setSnippet: Dispatch<SetStateAction<Snippet>>
+	acceptSnippet: (snippet: Snippet) => void
 	updateSnippet: Dispatch<SetStateAction<Snippet>>
 	setIsWorking: Dispatch<SetStateAction<boolean>>
 	currentNotice: ScreenNotice | undefined
@@ -28,8 +30,24 @@ export interface WithSnippetFormContextProps extends PropsWithChildren {
 	initialSnippet: () => Snippet
 }
 
+const getSnippetDraftState = (snippet: Snippet) => ({
+	name: snippet.name,
+	desc: snippet.desc,
+	code: snippet.code,
+	tags: snippet.tags,
+	scope: snippet.scope,
+	priority: snippet.priority,
+	active: snippet.active,
+	locked: snippet.locked,
+	network: snippet.network,
+	sharedNetwork: snippet.shared_network,
+	conditionId: snippet.conditionId
+})
+
 export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ children, initialSnippet }) => {
-	const [snippet, setSnippet] = useState<Snippet>(initialSnippet)
+	const [initialValue] = useState<Snippet>(initialSnippet)
+	const [snippet, setSnippet] = useState<Snippet>(initialValue)
+	const [savedSnippet, setSavedSnippet] = useState<Snippet>(initialValue)
 	const [isWorking, setIsWorking] = useState(false)
 	const [currentNotice, setCurrentNotice] = useState<ScreenNotice>()
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
@@ -38,6 +56,14 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		() => snippet.locked || !isLicensed() && isProSnippet({ scope: snippet.scope }),
 		[snippet.locked, snippet.scope]
 	)
+	const isDirty = useMemo(
+		() => JSON.stringify(getSnippetDraftState(snippet)) !== JSON.stringify(getSnippetDraftState(savedSnippet)),
+		[snippet, savedSnippet]
+	)
+	const acceptSnippet = useCallback((value: Snippet) => {
+		setSnippet(value)
+		setSavedSnippet(value)
+	}, [])
 
 	const handleRequestError = useCallback((error: unknown, message?: string) => {
 		console.error('Request failed', error)
@@ -58,7 +84,9 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		snippet,
 		isWorking,
 		isReadOnly,
+		isDirty,
 		setSnippet,
+		acceptSnippet,
 		setIsWorking,
 		updateSnippet,
 		currentNotice,

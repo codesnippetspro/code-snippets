@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
@@ -141,20 +141,36 @@ const ConditionsEditor: React.FC = () => {
 		: null
 }
 
+const useReloadOnPopState = (isDirty: boolean) => {
+	const currentUrl = useRef(window.location.href)
+
+	useEffect(() => {
+		currentUrl.current = window.location.href
+	})
+
+	useEffect(() => {
+		const handlePopState = () => {
+			if (isDirty && !window.confirm(
+				__('You have unsaved changes. Leave this page and discard them?', 'code-snippets')
+			)) {
+				window.history.pushState({}, document.title, currentUrl.current)
+				return
+			}
+
+			window.location.reload()
+		}
+
+		window.addEventListener('popstate', handlePopState)
+		return () => window.removeEventListener('popstate', handlePopState)
+	}, [isDirty])
+}
+
 const EditFormWrap: React.FC = () => {
-	const { snippet, isReadOnly } = useSnippetForm()
+	const { snippet, isReadOnly, isDirty } = useSnippetForm()
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
-	// The Add New link and the post-save transition swap the snippet in place via
-	// history.pushState (no reload). Without this, the browser Back/Forward buttons
-	// change the URL but leave the stale form mounted; reload so the server
-	// re-renders the snippet that matches the restored URL.
-	useEffect(() => {
-		const handlePopState = () => window.location.reload()
-		window.addEventListener('popstate', handlePopState)
-		return () => window.removeEventListener('popstate', handlePopState)
-	}, [])
+	useReloadOnPopState(isDirty)
 
 	return (
 		<>

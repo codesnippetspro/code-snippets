@@ -83,6 +83,32 @@ test.describe('Code Snippets Admin', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
+	test('Back navigation confirms before discarding unsaved changes', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.createSnippet({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+		await helper.openSnippet(snippetName)
+
+		const editedName = `${snippetName} edited`
+		await page.locator('#title').fill(editedName)
+		page.once('dialog', async dialog => {
+			expect(dialog.message()).toContain('unsaved changes')
+			await dialog.dismiss()
+		})
+		await page.goBack()
+
+		await expect(page).toHaveURL(/page=edit-snippet/)
+		await expect(page.locator('#title')).toHaveValue(editedName)
+
+		page.once('dialog', dialog => dialog.accept())
+		await page.goBack()
+		await expect(page).toHaveURL(/page=snippets/)
+
+		await helper.cleanupSnippet(snippetName)
+	})
+
 	test('Shows an error notice when activation fails after saving', async ({ page }) => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.clickAddNewSnippet()
