@@ -94,7 +94,7 @@
 		.snippet-export-buttons {
 			display: flex;
 			flex-wrap: nowrap;
-			gap: 0;
+			gap: 6px;
 			min-inline-size: 0;
 		}
 
@@ -120,6 +120,7 @@
 			&:not(.snippet-lock-button) {
 				border: 0;
 				border-radius: 0;
+				padding-inline: 0;
 				background: none;
 				box-shadow: none;
 
