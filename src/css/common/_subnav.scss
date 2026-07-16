@@ -5,7 +5,7 @@
 	// The tab band scrolls sideways instead of wrapping at any width.
 	overflow-x: auto;
 	scrollbar-width: thin;
-	background: #fff;
+	background: #f7f7f8;
 
 	// The toolbar band above already draws the 1px separator, so only a
 	// bottom border here — a top border would double the line weight.
@@ -109,7 +109,7 @@
 		&.active-type {
 			background: #f0f0f1;
 			border-color: #f0f0f1;
-			color: #2c3337;
+			color: #2271b1;
 
 			// Children paint over the parent nav's border, so this recolours
 			// the 1px band separator beneath the active tab to match its fill.
@@ -212,4 +212,9 @@
 	line-height: 1.5;
 	color: #2c3337;
 	opacity: 0.4;
+}
+
+// The active tab's count adopts the accent alongside its label.
+.snippet-type-nav .snippet-type-link.active-type .subnav-count {
+	color: #2271b1;
 }
