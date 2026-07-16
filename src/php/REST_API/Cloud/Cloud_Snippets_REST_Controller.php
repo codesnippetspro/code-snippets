@@ -195,13 +195,16 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
-	 * Augment the standard controller collection query params with the correct per_page default value.
+	 * Return collection parameters without a route-level per-page default.
 	 *
 	 * @return array Query parameters for the collection.
 	 */
 	public function get_collection_params(): array {
 		$params = parent::get_collection_params();
-		$params['per_page']['default'] = Manage_Menu::get_cloud_search_per_page();
+
+		// REST route defaults are registered globally, while this value belongs to the current user.
+		unset( $params['per_page']['default'] );
+
 		return $params;
 	}
 

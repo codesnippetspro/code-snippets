@@ -3,6 +3,7 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
+use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Migration\Export\Download_Code;
 use Code_Snippets\Model\Snippet;
@@ -264,7 +265,8 @@ class Manage_Menu extends Admin_Menu {
 	 * @return int
 	 */
 	public static function get_cloud_search_per_page(): int {
-		return intval( apply_filters( 'code_snippets/cloud_search/per_page', self::get_snippets_per_page() ) );
+		$per_page = intval( apply_filters( 'code_snippets/cloud_search/per_page', self::get_snippets_per_page() ) );
+		return min( Cloud_Search_Controller::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
 	}
 
 	/**
