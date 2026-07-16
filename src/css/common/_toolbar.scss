@@ -115,6 +115,19 @@ $wpcontent-inline-start-indent: 20px;
 		margin-inline-start: auto;
 	}
 
+	// Mid widths: stack each item's label beneath its icon and shrink the type
+	// so the full nav still fits on one row without the labels colliding.
+	@media (782px < width <= 1140px) {
+		li a {
+			flex-direction: column;
+			justify-content: center;
+			gap: 4px;
+			padding-inline: 14px;
+			font-size: 13px;
+			text-align: center;
+		}
+	}
+
 	// Mobile: the primary navigation scrolls horizontally on its band rather
 	// than wrapping, with the scrollbar chrome hidden.
 	@media screen and (width <= 782px) {
