@@ -251,7 +251,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 					{
 						sprintf(
 							// translators: %s: Number of items.
-							_n('%s item', '%s items', totalItems),
+							_n('%s item', '%s items', totalItems, 'code-snippets'),
 							totalItems
 						)
 					}

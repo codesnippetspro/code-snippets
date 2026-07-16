@@ -8,7 +8,6 @@ import type { ReactNode } from 'react'
 export interface SubnavTab<T extends string> {
 	name: T
 	label: string
-	icon?: ReactNode
 	pro?: boolean
 	count?: number
 }
@@ -23,11 +22,11 @@ export interface SubnavTabsProps<T extends string> {
 }
 
 /**
- * Toolbar-style subnavigation bar shared across manage pages: tab buttons
- * with an icon beside the label, pro-gated tabs showing an upsell chip and
- * dialog for unlicensed users, and an optional end slot for extra items
- * such as the card/table view toggle. Uses the same design language as the
- * snippet-type nav on the manage snippets page.
+ * Toolbar-style subnavigation bar shared across manage pages: text tab
+ * buttons, pro-gated tabs showing an upsell chip and dialog for unlicensed
+ * users, and an optional end slot for extra items such as the card/table
+ * view toggle. Uses the same design language as the snippet-type nav on the
+ * manage snippets page.
  */
 export const SubnavTabs = <T extends string>({
 	tabs,
@@ -61,7 +60,7 @@ export const SubnavTabs = <T extends string>({
 								}}
 							>
 								<span>{tab.label}</span>
-								{undefined !== tab.count && <span className="subnav-count">{tab.count}</span>}
+								{tab.count ? <span className="subnav-count">{tab.count}</span> : null}
 								{tab.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 							</button>
 						</li>)}

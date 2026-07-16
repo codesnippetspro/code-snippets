@@ -91,7 +91,9 @@ interface PopoverBehaviourOptions {
 }
 
 // Flip the popover above the trigger when it would overflow the viewport,
-// and move focus to its first interactive element on open.
+// and move focus to its first menu item on open. Focus falls back to the
+// popover itself rather than the first focusable element, so embedded form
+// fields with blur handlers are never focused without user intent.
 const usePopoverPlacement = ({ isOpen, triggerRef, popoverRef }: PopoverBehaviourOptions): boolean => {
 	const [isFlipped, setIsFlipped] = useState(false)
 
@@ -100,7 +102,9 @@ const usePopoverPlacement = ({ isOpen, triggerRef, popoverRef }: PopoverBehaviou
 			const popover = popoverRef.current.getBoundingClientRect()
 			const trigger = triggerRef.current?.getBoundingClientRect()
 			setIsFlipped(popover.bottom > window.innerHeight && (trigger?.top ?? 0) > popover.height)
-			popoverRef.current.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus()
+
+			const firstItem = popoverRef.current.querySelector<HTMLElement>('[role="menuitem"]:not(:disabled)')
+			;(firstItem ?? popoverRef.current).focus()
 		} else {
 			setIsFlipped(false)
 		}
@@ -130,13 +134,30 @@ const usePopoverDismissal = ({ isOpen, setIsOpen, closeMenu, containerRef, popov
 				return
 			}
 
-			if ('Tab' !== event.key || !popoverRef.current) {
+			if (!popoverRef.current) {
 				return
 			}
 
 			const focusable = Array.from(popoverRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
 			const active = document.activeElement
 			const currentIndex = active instanceof HTMLElement ? focusable.indexOf(active) : -1
+
+			if ('ArrowDown' === event.key || 'ArrowUp' === event.key || 'Home' === event.key || 'End' === event.key) {
+				if (0 < focusable.length) {
+					event.preventDefault()
+					const offset = 'ArrowDown' === event.key ? currentIndex + 1 : currentIndex - 1
+					const target = 'Home' === event.key
+						? 0
+						: 'End' === event.key ? focusable.length - 1 : (offset + focusable.length) % focusable.length
+					focusable[target].focus()
+				}
+
+				return
+			}
+
+			if ('Tab' !== event.key) {
+				return
+			}
 
 			if (0 === focusable.length) {
 				event.preventDefault()
@@ -208,6 +229,7 @@ export const KebabMenu: React.FC<KebabMenuProps> = ({ label, className, children
 						ref={popoverRef}
 						id={menuId}
 						role="menu"
+						tabIndex={-1}
 						aria-label={label}
 						className={classnames('kebab-menu-popover', { 'kebab-menu-popover-top': isFlipped })}
 					>
