@@ -10,6 +10,7 @@ use WP_Error;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
+use function Code_Snippets\trash_snippet;
 
 /**
  * Tests for the manage menu registration.
@@ -122,6 +123,35 @@ class Manage_Menu_Test extends UnitTestCase {
 		$this->assertFalse( wp_script_is( 'csslint', 'enqueued' ) );
 		$this->assertFalse( wp_script_is( 'jshint', 'enqueued' ) );
 		$this->assertFalse( wp_script_is( 'code-snippets-code-editor', 'enqueued' ) );
+	}
+
+	/**
+	 * Type counts combine compatible scopes and exclude trashed snippets.
+	 *
+	 * @return void
+	 *
+	 * @throws ReflectionException Creates instance of ReflectionMethod class.
+	 */
+	public function test_count_snippets_by_type_groups_scopes_and_excludes_trashed_snippets(): void {
+		$menu = new Manage_Menu();
+		$method = new ReflectionMethod( $menu, 'count_snippets_by_type' );
+		$method->setAccessible( true );
+		$before = $method->invoke( $menu );
+
+		save_snippet( new Snippet( [ 'scope' => 'global' ] ) );
+		save_snippet( new Snippet( [ 'scope' => 'admin' ] ) );
+		save_snippet( new Snippet( [ 'scope' => 'content' ] ) );
+		$trashed = save_snippet( new Snippet( [ 'scope' => 'site-css' ] ) );
+
+		$this->assertInstanceOf( Snippet::class, $trashed );
+		trash_snippet( $trashed->id );
+
+		$after = $method->invoke( $menu );
+
+		$this->assertSame( ( $before['all'] ?? 0 ) + 3, $after['all'] );
+		$this->assertSame( ( $before['php'] ?? 0 ) + 2, $after['php'] );
+		$this->assertSame( ( $before['html'] ?? 0 ) + 1, $after['html'] );
+		$this->assertSame( $before['css'] ?? 0, $after['css'] ?? 0 );
 	}
 
 	/**
