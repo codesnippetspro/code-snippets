@@ -23,8 +23,6 @@ export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setI
 				: <>
 					<strong>{__('Conditions', 'code-snippets')}</strong>
 
-					<Badge name="beta" small>{__('beta', 'code-snippets')}</Badge>
-
 					{!isLicensed() && <Badge name="pro" small>{__('Pro', 'code-snippets')}</Badge>}
 
 					<Button large disabled={isReadOnly} onClick={() => setIsDialogOpen(true)}>

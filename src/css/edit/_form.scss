@@ -9,6 +9,18 @@ $sidebar-gap: 30px;
 	block-size: 45px
 }
 
+// The type selector is a react-select control that sizes to its content;
+// pin it to the same 45px as the adjacent title field.
+.snippet-type-container .code-snippets-select {
+	block-size: 100%;
+
+	> div {
+		min-block-size: 45px;
+		max-block-size: 45px;
+		overflow: hidden;
+	}
+}
+
 .snippet-type-option {
 	display: flex;
 	align-items: center;
