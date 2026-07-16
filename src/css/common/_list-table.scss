@@ -269,9 +269,9 @@
 	align-items: center;
 	flex-wrap: wrap;
 
-	// The 12px row gap only shows once controls wrap onto a second row: below
-	// ~1280px the pagination group and view toggle drop to their own
-	// end-aligned row while the left cluster keeps its 18px column gaps.
+	// The row gap only shows once controls wrap onto a second row (see the
+	// tablet collapse below, where the selection + pagination cluster drops to
+	// its own row); the 18px column gap spaces the left cluster on one line.
 	gap: 12px 18px;
 }
 
@@ -563,39 +563,53 @@
 	}
 }
 
-// Mid-width collapse: rather than let the single toolbar row overflow, break
-// the top toolbar onto two rows. Row one keeps the bulk actions against the
-// pagination + view-toggle cluster; row two keeps "Select all" against the
-// filter dropdowns and search. The forced full-width break between the two
-// groups pins each pair to its own row independent of content width.
+// Tablet collapse (iPad-class widths): rather than let the single toolbar row
+// overflow, break the top toolbar onto two rows. Row one keeps the working
+// controls — bulk actions, the tag filter and the search box (stretched to
+// fill the remainder). Row two carries the selection + navigation cluster:
+// "Select all" at the start, the pagination + view-toggle group pinned to the
+// end. A forced full-width break keeps the split deterministic regardless of
+// content width.
 @media (782px < width <= 1210px) {
 	.snippets-list-view .tablenav.top {
 		flex-wrap: wrap;
-		row-gap: 4px;
+		row-gap: 8px;
 
+		// Both rows spread edge-to-edge: the first control sits at the start,
+		// the last at the end, with the slack distributed between.
+		justify-content: space-between;
+
+		// Row one: bulk actions, tag filter, search — at its design width so the
+		// space-between slack lands in the gaps rather than stretching the field.
 		.bulkactions {
 			order: 1;
 		}
 
-		.tablenav-end-group {
+		.alignleft.actions:not(.bulkactions) {
 			order: 2;
+		}
+
+		.snippets-search-area {
+			order: 3;
+			flex: 0 1 237px;
+			inline-size: 237px;
+			max-inline-size: 100%;
 		}
 
 		&::after {
 			content: '';
-			order: 3;
+			order: 4;
 			flex-basis: 100%;
 			block-size: 0;
 		}
 
+		// Row two: select all at the start, pagination + view-toggle at the end.
 		.tablenav-select-all {
-			order: 4;
-			margin-inline-end: auto;
+			order: 5;
 		}
 
-		.alignleft.actions:not(.bulkactions),
-		.snippets-search-area {
-			order: 5;
+		.tablenav-end-group {
+			order: 6;
 		}
 	}
 }
