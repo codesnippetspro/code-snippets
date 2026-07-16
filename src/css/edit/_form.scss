@@ -38,6 +38,12 @@ $sidebar-gap: 30px;
 	flex-flow: row;
 	gap: 2em;
 
+	.snippet-type-option-main {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
 	.small-badge {
 		margin-inline-start: 0.5em;
 	}
@@ -144,4 +150,13 @@ $sidebar-gap: 30px;
 		flex-flow: column;
 		min-inline-size: 180px;
 	}
+}
+
+// Match the location selector's control height to the adjacent conditions
+// button so the two sidebar controls line up. This targets a different
+// container than the type selector rules above, so their relative order does
+// not affect the cascade.
+// stylelint-disable-next-line no-descending-specificity
+.snippet-editor-sidebar .code-snippets-select.code-snippets-select-location > div:first-of-type {
+	min-block-size: 48px;
 }
