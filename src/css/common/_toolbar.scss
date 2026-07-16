@@ -83,7 +83,8 @@ $wpcontent-inline-start-indent: 20px;
 		display: flex;
 	}
 
-	// Items fill the 60px band so the 4px active underline sits flush on its bottom edge.
+	// Items fill the 60px band; the active tab is indicated by accent colour on
+	// its icon and label, with no underline.
 	li a {
 		display: flex;
 		margin: 0;
@@ -98,8 +99,6 @@ $wpcontent-inline-start-indent: 20px;
 		letter-spacing: -0.16px;
 		text-decoration: none;
 		box-sizing: border-box;
-		transition: border unset;
-		border-block-end: 3px solid transparent;
 		cursor: pointer;
 
 		svg {
@@ -109,7 +108,6 @@ $wpcontent-inline-start-indent: 20px;
 
 		&.active-link, &:hover, &:focus, &:active {
 			color: #2271b1;
-			border-block-end-color: currentcolor;
 		}
 	}
 
@@ -147,15 +145,16 @@ $wpcontent-inline-start-indent: 20px;
 .code-snippets-toolbar-lower .pro-chip,
 .nav-tab .pro-chip,
 .snippet-type-link .pro-chip {
-	color: #fff;
-	background: #2271b1;
+	color: #2271b1;
+	background: #eff5f9;
+	border: 1px solid rgb(34 113 177 / 10%);
 	text-transform: uppercase;
 	border-radius: 999px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	box-sizing: border-box;
-	padding: 3px 9px;
+	padding: 8px 12px;
 	font-weight: 700;
 }
 
