@@ -64,8 +64,7 @@
 		}
 	}
 
-	&.is-selectable,
-	&.has-corner-controls {
+	&.is-selectable {
 		position: relative;
 	}
 
@@ -115,10 +114,6 @@
 
 	&.is-selectable .card-inner > h3 {
 		margin-inline-end: 48px;
-	}
-
-	&.has-corner-controls .card-inner > h3 {
-		margin-inline-end: 96px;
 	}
 
 	&.is-selected {
