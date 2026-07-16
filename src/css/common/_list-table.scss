@@ -555,3 +555,40 @@
 		}
 	}
 }
+
+// Mid-width collapse: rather than let the single toolbar row overflow, break
+// the top toolbar onto two rows. Row one keeps the bulk actions against the
+// pagination + view-toggle cluster; row two keeps "Select all" against the
+// filter dropdowns and search. The forced full-width break between the two
+// groups pins each pair to its own row independent of content width.
+@media (782px < width <= 1210px) {
+	.snippets-list-view .tablenav.top {
+		flex-wrap: wrap;
+		row-gap: 4px;
+
+		.bulkactions {
+			order: 1;
+		}
+
+		.tablenav-end-group {
+			order: 2;
+		}
+
+		&::after {
+			content: '';
+			order: 3;
+			flex-basis: 100%;
+			block-size: 0;
+		}
+
+		.tablenav-select-all {
+			order: 4;
+			margin-inline-end: auto;
+		}
+
+		.alignleft.actions:not(.bulkactions),
+		.snippets-search-area {
+			order: 5;
+		}
+	}
+}
