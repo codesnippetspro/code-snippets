@@ -113,6 +113,61 @@ const usePopoverPlacement = ({ isOpen, triggerRef, popoverRef }: PopoverBehaviou
 	return isFlipped
 }
 
+const movePopoverFocus = (
+	event: KeyboardEvent,
+	focusable: HTMLElement[],
+	currentIndex: number
+): boolean => {
+	if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+		return false
+	}
+
+	if (0 < focusable.length) {
+		event.preventDefault()
+		const offset = 'ArrowDown' === event.key ? currentIndex + 1 : currentIndex - 1
+		const target = 'Home' === event.key
+			? 0
+			: 'End' === event.key ? focusable.length - 1 : (offset + focusable.length) % focusable.length
+		focusable[target].focus()
+	}
+
+	return true
+}
+
+const handlePopoverKeyDown = (
+	event: KeyboardEvent,
+	popover: HTMLUListElement | null,
+	closeMenu: () => void
+) => {
+	if ('Escape' === event.key) {
+		event.preventDefault()
+		closeMenu()
+		return
+	}
+
+	if (!popover) {
+		return
+	}
+
+	const focusable = Array.from(popover.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+	const active = document.activeElement
+	const currentIndex = active instanceof HTMLElement ? focusable.indexOf(active) : -1
+
+	if (movePopoverFocus(event, focusable, currentIndex) || 'Tab' !== event.key) {
+		return
+	}
+
+	if (0 === focusable.length) {
+		event.preventDefault()
+	} else if (event.shiftKey && 0 >= currentIndex) {
+		event.preventDefault()
+		focusable[focusable.length - 1].focus()
+	} else if (!event.shiftKey && (-1 === currentIndex || currentIndex === focusable.length - 1)) {
+		event.preventDefault()
+		focusable[0].focus()
+	}
+}
+
 // Close the open popover on outside clicks or Escape, and trap Tab focus
 // within it while it remains open.
 const usePopoverDismissal = ({ isOpen, setIsOpen, closeMenu, containerRef, popoverRef }: PopoverBehaviourOptions) => {
@@ -127,48 +182,8 @@ const usePopoverDismissal = ({ isOpen, setIsOpen, closeMenu, containerRef, popov
 			}
 		}
 
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if ('Escape' === event.key) {
-				event.preventDefault()
-				closeMenu()
-				return
-			}
-
-			if (!popoverRef.current) {
-				return
-			}
-
-			const focusable = Array.from(popoverRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
-			const active = document.activeElement
-			const currentIndex = active instanceof HTMLElement ? focusable.indexOf(active) : -1
-
-			if ('ArrowDown' === event.key || 'ArrowUp' === event.key || 'Home' === event.key || 'End' === event.key) {
-				if (0 < focusable.length) {
-					event.preventDefault()
-					const offset = 'ArrowDown' === event.key ? currentIndex + 1 : currentIndex - 1
-					const target = 'Home' === event.key
-						? 0
-						: 'End' === event.key ? focusable.length - 1 : (offset + focusable.length) % focusable.length
-					focusable[target].focus()
-				}
-
-				return
-			}
-
-			if ('Tab' !== event.key) {
-				return
-			}
-
-			if (0 === focusable.length) {
-				event.preventDefault()
-			} else if (event.shiftKey && 0 >= currentIndex) {
-				event.preventDefault()
-				focusable[focusable.length - 1].focus()
-			} else if (!event.shiftKey && (-1 === currentIndex || currentIndex === focusable.length - 1)) {
-				event.preventDefault()
-				focusable[0].focus()
-			}
-		}
+		const handleKeyDown = (event: KeyboardEvent) =>
+			handlePopoverKeyDown(event, popoverRef.current, closeMenu)
 
 		document.addEventListener('mousedown', handlePointerDown)
 		document.addEventListener('keydown', handleKeyDown)
