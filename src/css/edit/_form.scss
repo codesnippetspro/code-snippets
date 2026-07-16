@@ -9,15 +9,23 @@ $sidebar-gap: 30px;
 	block-size: 45px
 }
 
-// The type selector is a react-select control that sizes to its content;
-// pin it to the same 45px as the adjacent title field.
+// The type selector is a react-select control that sizes to its content; pin
+// its bordered control box to the same 45px as the adjacent title field and
+// keep the selected value vertically centred within it.
 .snippet-type-container .code-snippets-select {
 	block-size: 100%;
 
 	> div {
 		min-block-size: 45px;
+		block-size: 45px;
 		max-block-size: 45px;
-		overflow: hidden;
+	}
+
+	> div > div:first-child {
+		display: flex;
+		align-items: center;
+		block-size: 45px;
+		padding-block: 0;
 	}
 }
 
@@ -35,12 +43,19 @@ $sidebar-gap: 30px;
 
 
 .conditions-editor-open {
-	.button.button-large {
-		block-size: 100%;
+	.conditions-editor-header {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		gap: 8px;
-		flex: 1;
+	}
+
+	.button.button-large {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		inline-size: 100%;
 		border-color: #ccc;
 		padding-block: 6px;
 		padding-inline: 12px;
