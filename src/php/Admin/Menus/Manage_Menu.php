@@ -12,7 +12,7 @@ use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\Settings\get_setting;
-use function Code_Snippets\Utils\enqueue_code_editor;
+use function Code_Snippets\Utils\enqueue_code_preview_editor;
 use const Code_Snippets\PLUGIN_FILE;
 use const Code_Snippets\PLUGIN_VERSION;
 
@@ -217,9 +217,7 @@ class Manage_Menu extends Admin_Menu {
 
 		Code_Highlighter::enqueue_all_prism_themes();
 
-		// Load the CodeMirror library so the snippet preview modal can render a
-		// read-only editor that honours the configured editor theme.
-		enqueue_code_editor( 'php' );
+		enqueue_code_preview_editor( 'php' );
 
 		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
 		code_snippets()->localize_script( self::JS_HANDLE );

@@ -104,6 +104,27 @@ class Manage_Menu_Test extends UnitTestCase {
 	}
 
 	/**
+	 * The manage screen loads only the assets required for read-only code previews.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_loads_preview_editor_without_full_editor_dependencies(): void {
+		foreach ( [ 'htmlhint', 'csslint', 'jshint', 'code-snippets-code-editor' ] as $handle ) {
+			wp_dequeue_script( $handle );
+		}
+
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+
+		$this->assertTrue( wp_script_is( 'code-editor', 'enqueued' ) );
+		$this->assertTrue( wp_style_is( 'code-editor', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'htmlhint', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'csslint', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'jshint', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'code-snippets-code-editor', 'enqueued' ) );
+	}
+
+	/**
 	 * The manage screen renders a truncation toggle in Screen Options.
 	 *
 	 * @return void

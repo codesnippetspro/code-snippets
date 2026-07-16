@@ -162,12 +162,8 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 		? <ModalWithNodeTitle
 			className="code-snippets-preview-modal"
 			onRequestClose={() => setIsOpen(false)}
-			title={
-				<span className="code-snippets-preview-modal__title">
-					{title}
-					<Badge name={type as BadgeName} />
-				</span>
-			}
+			title={title}
+			headerActions={<Badge name={type as BadgeName} />}
 		>
 			<div className="code-snippets-preview-modal__editor">
 				<textarea

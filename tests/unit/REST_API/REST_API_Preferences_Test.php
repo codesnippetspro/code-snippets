@@ -83,13 +83,13 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	}
 
 	/**
-	 * With no saved preference, the snippet view defaults to cards.
+	 * With no saved preference, the snippet view defaults to the table.
 	 */
-	public function test_snippet_view_defaults_to_card() {
+	public function test_snippet_view_defaults_to_table() {
 		$response = $this->dispatch( 'GET' );
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertSame( [ 'view' => 'card' ], $response->get_data() );
+		$this->assertSame( [ 'view' => 'table' ], $response->get_data() );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	public function test_invalid_stored_option_falls_back_to_default() {
 		update_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION, 'nonsense' );
 
-		$this->assertSame( 'card', Preferences_REST_Controller::get_snippet_view() );
+		$this->assertSame( 'table', Preferences_REST_Controller::get_snippet_view() );
 	}
 
 	/**
