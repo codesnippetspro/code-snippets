@@ -10,17 +10,6 @@ $sections: general, editor, debug, version-switch;
 	color: #2c3337;
 }
 
-// Settings tab tiles sit slightly darker than the manage-page subnav so
-// they read against the plain white settings page background.
-.settings-type-nav .snippet-type-link {
-	background: #e5e5e6;
-	border-inline-end: 1px solid #c3c4c7;
-
-	&.active-type {
-		background: #f0f0f1;
-	}
-}
-
 p.submit {
 	display: flex;
 	justify-content: flex-start;
