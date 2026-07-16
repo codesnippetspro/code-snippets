@@ -234,26 +234,27 @@
 	.subsubsub {
 		display: flex;
 		align-items: center;
-		gap: 0;
+		gap: 9px;
 		margin: 0;
 		padding: 0;
 		font-size: 13px;
+		line-height: 1.5;
 
 		li {
 			display: flex;
 			align-items: center;
+			gap: 9px;
 			margin: 0;
-			padding-inline: 10px;
+			padding: 0;
 		}
 
-		// Vertical rules between the status links, sized to the 13px text.
-		li + li {
-			border-inline-start: 1px solid #c3c4c7;
-			line-height: 1;
-		}
-
-		li:first-child {
-			padding-inline-start: 0;
+		// A thin vertical rule precedes every status after the first, sized to the
+		// 13px text rather than the taller line box.
+		li + li::before {
+			content: '';
+			inline-size: 1px;
+			block-size: 13px;
+			background: #c3c4c7;
 		}
 	}
 }
@@ -282,25 +283,27 @@
 	}
 }
 
-/* Status filter links (All | Active | Inactive | …): the current view keeps the accent colour
-   while the remaining links stay muted. */
-/* stylelint-disable-next-line no-descending-specificity -- unrelated element; ordering is fine. */
-.subsubsub a:not(.current) {
+/* Status filter links (All | Active | Inactive | …): the current view reads as plain
+   body text while the remaining views are accent-coloured links; every count stays
+   in the body-text colour regardless of its link state. */
+/* stylelint-disable no-descending-specificity -- unrelated element; ordering is fine. */
+.subsubsub a.current {
 	color: #2c3337;
+}
+
+.subsubsub a:not(.current) {
+	color: theme.$accent;
 
 	&:hover,
 	&:focus {
-		color: theme.$accent;
+		color: theme.$accent-hover;
 	}
 }
 
-.subsubsub a.current {
-	color: theme.$accent;
-
-	.count {
-		color: theme.$accent;
-	}
+.snippets-table-toolbar .subsubsub a .count {
+	color: #2c3337;
 }
+/* stylelint-enable no-descending-specificity */
 
 .wp-core-ui .button.clear-filters {
 	vertical-align: baseline;
