@@ -35,15 +35,13 @@ interface SnippetTypeOptionProps {
 
 const SnippetTypeOption: React.FC<SnippetTypeOptionProps> = ({ option: { value, label }, context }) =>
 	<div className={classnames('snippet-type-option', { 'inverted-badges': isProType(value) && !isLicensed() })}>
-		{'menu' === context
-			? <div>
-				{label}
-				{isProType(value) && !isLicensed()
-					? <Badge name="pro" small>{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</Badge>
-					: null}
-			</div>
+		<span className="snippet-type-option-main">
+			<Badge name={value} />
+			{'menu' === context ? label : null}
+		</span>
+		{'menu' === context && isProType(value) && !isLicensed()
+			? <Badge name="pro" small>{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</Badge>
 			: null}
-		<Badge name={value} />
 	</div>
 
 export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgradeDialogOpen }) => {
