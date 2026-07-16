@@ -5,7 +5,7 @@ import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../utils/errors'
 import { downloadSnippetExportFile } from '../../utils/files'
-import { cloneSnippetObject, getSnippetEditUrl } from '../../utils/snippets/snippets'
+import { canModifySnippet, cloneSnippetObject, getSnippetEditUrl } from '../../utils/snippets/snippets'
 import { Badge } from './Badge'
 import { Button } from './Button'
 import { useDeleteSnippet } from './DeleteButton'
@@ -42,24 +42,27 @@ interface SnippetPreviewButtonsProps extends SnippetPreviewActionsProps {
 const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({ snippet, closeModal, requestDelete }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
+	const canModify = canModifySnippet(snippet)
 
 	return (
 		<div className="code-snippets-preview-modal__buttons">
 			<a className="button button-primary" href={getSnippetEditUrl(snippet)}>
-				{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
+				{snippet.locked || !canModify ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
 			</a>
 
-			<Button
-				secondary
-				onClick={() => {
-					api.create(cloneSnippetObject(snippet))
-						.then(refreshSnippetsList)
-						.then(closeModal)
-						.catch(handleUnknownError)
-				}}
-			>
-				{__('Clone', 'code-snippets')}
-			</Button>
+			{canModify
+				? <Button
+					secondary
+					onClick={() => {
+						api.create(cloneSnippetObject(snippet))
+							.then(refreshSnippetsList)
+							.then(closeModal)
+							.catch(handleUnknownError)
+					}}
+				>
+					{__('Clone', 'code-snippets')}
+				</Button>
+				: null}
 
 			<Button
 				secondary
@@ -72,7 +75,7 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({ snippet, 
 				{__('Export', 'code-snippets')}
 			</Button>
 
-			{snippet.locked
+			{snippet.locked || !canModify
 				? null
 				: <Button
 					link
