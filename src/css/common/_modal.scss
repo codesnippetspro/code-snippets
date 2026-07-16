@@ -107,6 +107,14 @@
 			min-block-size: 0;
 			block-size: 100%;
 		}
+
+		textarea {
+			flex: 1;
+			min-block-size: 0;
+			inline-size: 100%;
+			resize: none;
+			font-family: monospace;
+		}
 	}
 
 	.code-snippets-preview-modal__footer {
