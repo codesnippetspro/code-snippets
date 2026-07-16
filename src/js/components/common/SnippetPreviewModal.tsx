@@ -10,8 +10,13 @@ import { Badge } from './Badge'
 import { Button } from './Button'
 import { useDeleteSnippet } from './DeleteButton'
 import type { BadgeName } from './Badge'
+import type { ComponentProps, ReactNode } from 'react'
 import type { EditorFromTextArea } from 'codemirror'
 import type { Snippet } from '../../types/Snippet'
+
+// The vendor type only declares `title` as a string, but the component renders
+// it as a plain ReactNode, which is needed here to include the type badge.
+const ModalWithNodeTitle = Modal as React.FC<Omit<ComponentProps<typeof Modal>, 'title'> & { title?: ReactNode }>
 
 export interface SnippetPreviewModalProps {
 	title: string
@@ -154,7 +159,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 	}, [isOpen, type])
 
 	return isOpen
-		? <Modal
+		? <ModalWithNodeTitle
 			className="code-snippets-preview-modal"
 			onRequestClose={() => setIsOpen(false)}
 			title={
@@ -176,6 +181,6 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			{snippet
 				? <SnippetPreviewActions snippet={snippet} closeModal={() => setIsOpen(false)} />
 				: null}
-		</Modal>
+		</ModalWithNodeTitle>
 		: null
 }
