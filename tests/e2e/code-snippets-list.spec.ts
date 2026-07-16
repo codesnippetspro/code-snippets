@@ -87,6 +87,55 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 	})
 
+	test('Can clone a snippet once from the preview modal', async ({ page }) => {
+		let createRequests = 0
+
+		await page.route('**/wp-json/code-snippets/v1/snippets*', async route => {
+			const request = route.request()
+			const isCreateRequest = 'POST' === request.method() && /\/snippets\/?(?:\?.*)?$/.test(request.url())
+
+			if (isCreateRequest) {
+				createRequests += 1
+				await new Promise(resolve => setTimeout(resolve, 500))
+			}
+
+			await route.continue()
+		})
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		await snippetRow.getByRole('button', { name: 'Preview' }).click()
+
+		const previewModal = page.getByRole('dialog', { name: snippetName })
+		const cloneButton = previewModal.getByRole('button', { name: 'Clone' })
+		await cloneButton.click()
+		await expect(cloneButton).toBeDisabled()
+		await cloneButton.click({ force: true })
+
+		await expect(previewModal).toBeHidden()
+		expect(createRequests).toBe(1)
+		await helper.cleanupSnippet(`${snippetName} [CLONE]`)
+	})
+
+	test('Can trash a snippet from the preview modal', async ({ page }) => {
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		await snippetRow.getByRole('button', { name: 'Preview' }).click()
+
+		const previewModal = page.getByRole('dialog', { name: snippetName })
+		await previewModal.getByRole('button', { name: 'Trash' }).click()
+
+		const confirmDialog = page.getByRole('dialog', { name: 'Are you sure?' })
+		await confirmDialog.getByRole('button', { name: 'Trash' }).click()
+		await expect(previewModal).toBeHidden()
+
+		await page.locator('a[href*="status=trashed"]').first().click()
+		await expect(page).toHaveURL(/status=trashed/)
+		await expect(page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()).toBeVisible()
+	})
+
 	test('Can delete snippet from list page', async ({ page }) => {
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
