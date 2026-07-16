@@ -157,8 +157,10 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 							}}
 						>
 							{link.icon}
-							<span>{link.label}</span>
-							{link.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+							<span className="toolbar-nav-label">
+								<span>{link.label}</span>
+								{link.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+							</span>
 						</a>
 					</li>)}
 			</ul>
