@@ -239,12 +239,18 @@ class Manage_Menu extends Admin_Menu {
 		// Only the manage-table view consumes the full snippets list; skip the
 		// table scan and inline payload on subpages that don't render the table.
 		if ( $this->is_manage_table_view() ) {
-			$localized['snippetsList'] = array_map(
-				function ( $snippet ) {
-					return $snippet->get_fields();
-				},
-				get_snippets()
-			);
+			$snippets = get_snippets();
+
+			// The inline payload includes full code bodies, so its size grows with
+			// library content; larger libraries defer to the REST fetch instead.
+			if ( count( $snippets ) <= 100 ) {
+				$localized['snippetsList'] = array_map(
+					function ( $snippet ) {
+						return $snippet->get_fields();
+					},
+					$snippets
+				);
+			}
 		}
 
 		wp_localize_script( self::JS_HANDLE, 'CODE_SNIPPETS_MANAGE', $localized );
