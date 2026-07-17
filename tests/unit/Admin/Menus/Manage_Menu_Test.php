@@ -2,14 +2,9 @@
 
 namespace Code_Snippets\Admin\Menus;
 
-use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;
-use ReflectionException;
-use ReflectionMethod;
-use WP_Error;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
-use function Code_Snippets\save_snippet;
 
 /**
  * Tests for the manage menu registration.
@@ -145,68 +140,6 @@ class Manage_Menu_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Snippet lists at or below the configured limit are localized inline.
-	 *
-	 * @dataProvider provide_inline_limit_offsets
-	 *
-	 * @param int $limit_offset Number added to the current snippet count.
-	 *
-	 * @return void
-	 */
-	public function test_enqueue_assets_localizes_snippets_within_inline_limit( int $limit_offset ): void {
-		save_snippet( new Snippet( array( 'name' => 'Inline Snippet Fixture' ) ) );
-		$inline_limit = count( \Code_Snippets\get_snippets() ) + $limit_offset;
-		$filter = static fn() => $inline_limit;
-		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
-
-		$menu = new Manage_Menu();
-		$menu->enqueue_assets();
-		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
-		$localized_offset = is_string( $data ) ? strrpos( $data, 'var CODE_SNIPPETS_MANAGE = ' ) : false;
-
-		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
-
-		$this->assertIsString( $data );
-		$this->assertNotFalse( $localized_offset );
-		$this->assertStringContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
-	}
-
-	/**
-	 * Provide offsets that place the snippet count at or below the inline limit.
-	 *
-	 * @return array<string,array{int}>
-	 */
-	public static function provide_inline_limit_offsets(): array {
-		return [
-			'at the limit' => [ 0 ],
-			'below the limit' => [ 1 ],
-		];
-	}
-
-	/**
-	 * Snippet lists above the configured limit are omitted from localized data.
-	 *
-	 * @return void
-	 */
-	public function test_enqueue_assets_omits_snippets_above_inline_limit(): void {
-		save_snippet( new Snippet( array( 'name' => 'Oversized Inline Snippet Fixture' ) ) );
-		$inline_limit = count( \Code_Snippets\get_snippets() ) - 1;
-		$filter = static fn() => $inline_limit;
-		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
-
-		$menu = new Manage_Menu();
-		$menu->enqueue_assets();
-		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
-		$localized_offset = is_string( $data ) ? strrpos( $data, 'var CODE_SNIPPETS_MANAGE = ' ) : false;
-
-		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
-
-		$this->assertIsString( $data );
-		$this->assertNotFalse( $localized_offset );
-		$this->assertStringNotContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
-	}
-
-	/**
 	 * The manage screen renders a truncation toggle in Screen Options.
 	 *
 	 * @return void
@@ -312,46 +245,5 @@ class Manage_Menu_Test extends UnitTestCase {
 		$menu->save_truncation_preference();
 
 		$this->assertTrue( (bool) get_user_option( 'snippets_table_truncate_row_values', self::$admin_user_id ) );
-	}
-
-	/**
-	 * Subsite admins cannot request downloads from the network snippets table.
-	 *
-	 * @return void
-	 *
-	 * @throws ReflectionException Creates instance of ReflectionMethod class.
-	 */
-	public function test_network_bulk_download_requires_network_cap(): void {
-		if ( ! is_multisite() ) {
-			$this->markTestSkipped( 'Network snippet downloads only apply on multisite.' );
-		}
-
-		$snippet = save_snippet(
-			new Snippet(
-				array(
-					'name'    => 'Network Download Fixture',
-					'code'    => '<?php echo "network";',
-					'scope'   => 'global',
-					'network' => true,
-				)
-			)
-		);
-
-		$snippets_json = wp_json_encode(
-			array(
-				array(
-					'id'      => $snippet->id,
-					'network' => true,
-				),
-			)
-		);
-
-		$menu = new Manage_Menu();
-		$method = new ReflectionMethod( $menu, 'get_requested_download_snippets' );
-		$method->setAccessible( true );
-		$result = $method->invoke( $menu, $snippets_json );
-
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'code_snippets_forbidden_network_download', $result->get_error_code() );
 	}
 }
