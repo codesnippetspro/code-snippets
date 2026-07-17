@@ -27,7 +27,9 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
 		? <>
 			<a
 				className={`${className} button`}
-				href={buildUrl(window.location.href, { [pageSearchParam]: 1 === newPage ? undefined : newPage })}
+				href={buildUrl(window.location.href, {
+					[pageSearchParam]: 1 === newPage ? undefined : newPage
+				})}
 				onClick={event => {
 					event.preventDefault()
 					setCurrentPage(newPage)
@@ -49,7 +51,10 @@ interface NavigationButtonsProps {
 	setCurrentPage: (page: number) => void
 }
 
-const BackwardNavigationButtons: React.FC<NavigationButtonsProps> = ({ currentPage, ...buttonProps }) =>
+const BackwardNavigationButtons: React.FC<NavigationButtonsProps> = ({
+	currentPage,
+	...buttonProps
+}) =>
 	1 === currentPage
 		? <>
 			<span className="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>{'\n'}
@@ -78,7 +83,11 @@ interface ForwardNavigationButtonsProps extends NavigationButtonsProps {
 	totalPages: number
 }
 
-const ForwardNavigationButtons: React.FC<ForwardNavigationButtonsProps> = ({ currentPage, totalPages, ...buttonProps }) =>
+const ForwardNavigationButtons: React.FC<ForwardNavigationButtonsProps> = ({
+	currentPage,
+	totalPages,
+	...buttonProps
+}) =>
 	totalPages === currentPage
 		? <>
 			<span className="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>{'\n'}
@@ -146,7 +155,12 @@ interface CurrentPageProps extends PagingInputProps {
 	currentPage: number
 }
 
-const CurrentPage: React.FC<CurrentPageProps> = ({ which, totalPages, currentPage, ...inputProps }) =>
+const CurrentPage: React.FC<CurrentPageProps> = ({
+	which,
+	totalPages,
+	currentPage,
+	...inputProps
+}) =>
 	'bottom' === which
 		? <>
 			{/* translators: Hidden accessibility text. */}

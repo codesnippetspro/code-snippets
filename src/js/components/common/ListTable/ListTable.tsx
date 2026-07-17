@@ -97,7 +97,8 @@ const getVisibleSelected = <T, K extends Key>(
 ): Set<K> =>
 	new Set(visibleItems.map(getKey).filter(key => selected.has(key)))
 
-interface TableBorderProps<T, K extends Key> extends ListTableBorderProps, Omit<ColumnHeadingsProps<T, K>, 'which'> {
+interface TableBorderProps<T, K extends Key>
+	extends ListTableBorderProps, Omit<ColumnHeadingsProps<T, K>, 'which'> {
 	children: ReactNode
 }
 
@@ -138,7 +139,9 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 	...tableProps
 }: ListTableProps<T, K, A>) => {
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
-	const [currentPage, setCurrentPage] = useState(() => pageSearchParam && Number(fetchQueryParam(pageSearchParam)) || 1)
+	const [currentPage, setCurrentPage] = useState(
+		() => pageSearchParam && Number(fetchQueryParam(pageSearchParam)) || 1
+	)
 	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>('asc')
 
 	const visibleItems: T[] = useMemo(
@@ -158,8 +161,11 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 	)
 }
 
-export interface PartialDataListTableProps<T, K extends Key, A extends string> extends ListTablePaginationProps,
-	ListTableBorderProps, ListTableRowsProps<T, K>, ListTableNavProps<K, A> {
+export interface PartialDataListTableProps<T, K extends Key, A extends string>
+	extends ListTablePaginationProps,
+	ListTableBorderProps,
+	ListTableRowsProps<T, K>,
+	ListTableNavProps<K, A> {
 	sortColumn: ListTableColumn<T> | undefined
 	totalItems: number
 	currentPage: number
@@ -172,7 +178,8 @@ export interface PartialDataListTableProps<T, K extends Key, A extends string> e
 	setSortDirection: (direction: ListTableSortDirection) => void
 }
 
-interface PartialDataListTableContentProps<T, K extends Key> extends ListTableBorderProps, ListTableRowsProps<T, K> {
+interface PartialDataListTableContentProps<T, K extends Key>
+	extends ListTableBorderProps, ListTableRowsProps<T, K> {
 	visibleItems: T[]
 	beforeTable?: ReactNode
 	selected: Set<K>
@@ -207,7 +214,16 @@ const PartialDataListTableContent = <T, K extends Key>({
 			fixed={fixed}
 			striped={striped}
 			className={className}
-			{...{ columns, getKey, selected, sortColumn, sortDirection, setSelected, setSortColumn, setSortDirection }}
+			{...{
+				columns,
+				getKey,
+				selected,
+				sortColumn,
+				sortDirection,
+				setSelected,
+				setSortColumn,
+				setSortDirection
+			}}
 		>
 			<TableRows
 				items={visibleItems}
@@ -219,7 +235,13 @@ const PartialDataListTableContent = <T, K extends Key>({
 		</TableBorder>
 	</>
 
-export const PartialDataListTable = <T, K extends Key, A extends string>({
+interface PartialDataListTableViewProps<T, K extends Key, A extends string>
+	extends PartialDataListTableProps<T, K, A> {
+	selected: Set<K>
+	setSelected: Dispatch<SetStateAction<Set<K>>>
+}
+
+const PartialDataListTableView = <T, K extends Key, A extends string>({
 	fixed,
 	getKey,
 	columns,
@@ -240,25 +262,40 @@ export const PartialDataListTable = <T, K extends Key, A extends string>({
 	endTableNav,
 	selectAllControl,
 	setCurrentPage,
+	selected,
+	setSelected,
 	pageSearchParam,
 	setSortDirection,
 	...tableRowsProps
-}: PartialDataListTableProps<T, K, A>) => {
+}: PartialDataListTableViewProps<T, K, A>) =>
+	<TableNavigation
+		totalItems={totalItems}
+		selected={getVisibleSelected(visibleItems, getKey, selected)}
+		selectAllKeys={selectAllControl ? visibleItems.map(getKey) : undefined}
+		{...{ actions, doAction, extraTableNav, endTableNav, disabled, currentPage, totalPages }}
+		{...{ pageSearchParam, setSelected, setCurrentPage }}
+	>
+		<PartialDataListTableContent
+			{...{
+				fixed,
+				getKey,
+				columns,
+				striped,
+				className,
+				selected,
+				sortColumn,
+				beforeTable,
+				visibleItems
+			}}
+			{...{ setSelected, sortDirection, setSortColumn, setSortDirection }}
+			{...tableRowsProps}
+		/>
+	</TableNavigation>
+
+export const PartialDataListTable = <T, K extends Key, A extends string>(
+	props: PartialDataListTableProps<T, K, A>
+) => {
 	const [selected, setSelected] = useState(() => new Set<K>())
 
-	return (
-		<TableNavigation
-			totalItems={totalItems}
-			selected={getVisibleSelected(visibleItems, getKey, selected)}
-			selectAllKeys={selectAllControl ? visibleItems.map(getKey) : undefined}
-			{...{ actions, doAction, extraTableNav, endTableNav, disabled, currentPage, totalPages }}
-			{...{ pageSearchParam, setSelected, setCurrentPage }}
-		>
-			<PartialDataListTableContent
-				{...{ fixed, getKey, columns, striped, className, selected, sortColumn, beforeTable, visibleItems }}
-				{...{ setSelected, sortDirection, setSortColumn, setSortDirection }}
-				{...tableRowsProps}
-			/>
-		</TableNavigation>
-	)
+	return <PartialDataListTableView {...props} selected={selected} setSelected={setSelected} />
 }

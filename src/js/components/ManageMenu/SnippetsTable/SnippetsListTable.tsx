@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
-import { createInterpolateElement } from '@wordpress/element'
 import { getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
@@ -25,7 +24,9 @@ interface ManageTableSettings {
 }
 
 const useManageTableSettings = (): ManageTableSettings => {
-	const [hiddenColumns, setHiddenColumns] = useState(() => new Set(window.CODE_SNIPPETS_MANAGE?.hiddenColumns ?? []))
+	const [hiddenColumns, setHiddenColumns] = useState(
+		() => new Set(window.CODE_SNIPPETS_MANAGE?.hiddenColumns ?? [])
+	)
 	const [truncateRowValues, setTruncateRowValues] = useState(
 		() => 0 !== Number(window.CODE_SNIPPETS_MANAGE?.truncateRowValues ?? 1)
 	)
@@ -39,12 +40,16 @@ const useManageTableSettings = (): ManageTableSettings => {
 
 		const updateHiddenColumns = () => {
 			setHiddenColumns(
-				new Set(Array.from(screenOptions.querySelectorAll<HTMLInputElement>('.hide-column-tog:not(:checked)'))
+				new Set(Array.from(screenOptions.querySelectorAll<HTMLInputElement>(
+					'.hide-column-tog:not(:checked)'
+				))
 					.map(toggle => toggle.value))
 			)
 
 			setTruncateRowValues(
-				screenOptions.querySelector<HTMLInputElement>('#snippets-table-truncate-row-values')?.checked ?? true
+				screenOptions.querySelector<HTMLInputElement>(
+					'#snippets-table-truncate-row-values'
+				)?.checked ?? true
 			)
 		}
 
@@ -61,25 +66,27 @@ const useManageTableSettings = (): ManageTableSettings => {
 
 const NoItemsMessage = () => {
 	const { currentType, currentTag, searchQuery } = useSnippetsFilters()
+	const emptyMessage = currentType
+		? __("You don't have snippets of this type yet.", 'code-snippets')
+		: __("You don't have any snippets yet.", 'code-snippets')
 
 	return searchQuery || currentTag
 		? <>
 			{__('No snippets were found matching the current search query.', 'code-snippets')}
 			{__(' Please enter a new query or use the "Clear Filters" button above.', 'code-snippets')}
 		</>
-		: <>{createInterpolateElement(
-			currentType
-				? __("It looks like you don't have any snippets of this type. <a>Perhaps you would like to add a new one?</a>", 'code-snippets')
-				: __("It looks like you don't have any snippets. <a>Perhaps you would like to add a new one?</a>", 'code-snippets'),
-			{
-				// eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
-				a: <a href={buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type: currentType })} />
-			}
-		)}
+		: <>
+			{emptyMessage}{' '}
+			<a href={buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type: currentType })}>
+				{__('Add a new snippet.', 'code-snippets')}
+			</a>
 		</>
 }
 
-const getRowClassName = (snippet: Snippet, activeByCondition: Map<Snippet['id'], Snippet[]>): string =>
+const getRowClassName = (
+	snippet: Snippet,
+	activeByCondition: Map<Snippet['id'], Snippet[]>
+): string =>
 	classnames(
 		'snippet',
 		`snippet ${isSnippetActive(snippet, activeByCondition) ? 'active' : 'inactive'}-snippet`,
@@ -153,7 +160,10 @@ export interface SnippetsListTableProps {
 	setSnippetView: (view: SnippetView) => void
 }
 
-export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ snippetView, setSnippetView }) => {
+export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({
+	snippetView,
+	setSnippetView
+}) => {
 	const { snippetsByStatus } = useFilteredSnippets()
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { hiddenColumns, truncateRowValues } = useManageTableSettings()
