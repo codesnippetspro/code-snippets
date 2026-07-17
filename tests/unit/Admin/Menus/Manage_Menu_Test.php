@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Admin\Menus;
 
+use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\UnitTestCase;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
@@ -137,6 +138,29 @@ class Manage_Menu_Test extends UnitTestCase {
 		$this->assertIsString( $data );
 		$this->assertNotFalse( $localized_offset );
 		$this->assertStringNotContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
+	}
+
+	/**
+	 * The cloud per-page filter is limited to values accepted by the REST API.
+	 *
+	 * @return void
+	 */
+	public function test_cloud_search_per_page_filter_is_clamped_to_rest_api_bounds(): void {
+		$filter = static function (): int {
+			return 0;
+		};
+
+		add_filter( 'code_snippets/cloud_search/per_page', $filter );
+		$this->assertSame( 1, Manage_Menu::get_cloud_search_per_page() );
+		remove_filter( 'code_snippets/cloud_search/per_page', $filter );
+
+		$filter = static function (): int {
+			return Cloud_Search_Controller::MAX_RESULTS_PER_PAGE + 1;
+		};
+
+		add_filter( 'code_snippets/cloud_search/per_page', $filter );
+		$this->assertSame( Cloud_Search_Controller::MAX_RESULTS_PER_PAGE, Manage_Menu::get_cloud_search_per_page() );
+		remove_filter( 'code_snippets/cloud_search/per_page', $filter );
 	}
 
 	/**
