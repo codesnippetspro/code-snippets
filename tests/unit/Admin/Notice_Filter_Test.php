@@ -3,8 +3,10 @@
 namespace Code_Snippets\Admin;
 
 use Code_Snippets\UnitTestCase;
+use ReflectionMethod;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
+use const Code_Snippets\PLUGIN_FILE;
 
 /**
  * Tests for foreign admin notice filtering on Code Snippets screens.
@@ -58,6 +60,10 @@ class Notice_Filter_Test extends UnitTestCase {
 
 		set_current_screen( code_snippets()->admin->menus['manage']->get_hookname() );
 
+		$manage_menu = code_snippets()->admin->menus['manage'];
+		$manage_menu->register();
+		set_current_screen( $manage_menu->get_hookname() );
+
 		$this->notice_filter = new Notice_Filter();
 	}
 
@@ -77,6 +83,21 @@ class Notice_Filter_Test extends UnitTestCase {
 
 		$this->assertFalse( has_action( 'admin_notices', $foreign ) );
 		$this->assertNotFalse( has_action( 'admin_notices', $owned ) );
+	}
+
+	/**
+	 * Callback ownership requires a complete plugin directory boundary.
+	 *
+	 * @return void
+	 */
+	public function test_callback_ownership_requires_plugin_directory_boundary(): void {
+		$method = new ReflectionMethod( $this->notice_filter, 'is_code_snippets_file' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $this->notice_filter, PLUGIN_FILE ) );
+		$this->assertFalse(
+			$method->invoke( $this->notice_filter, dirname( PLUGIN_FILE ) . '-extra/callback.php' )
+		);
 	}
 
 	/**

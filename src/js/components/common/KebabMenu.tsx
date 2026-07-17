@@ -1,5 +1,14 @@
 import classnames from 'classnames'
-import React, { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
+import React, {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useId,
+	useLayoutEffect,
+	useRef,
+	useState
+} from 'react'
 import type { Dispatch, PropsWithChildren, ReactNode, RefObject, SetStateAction } from 'react'
 
 const FOCUSABLE_SELECTOR = [
@@ -45,7 +54,11 @@ export const KebabMenuItem: React.FC<PropsWithChildren<KebabMenuItemProps>> = ({
 		<li>
 			<button
 				type="button"
-				className={classnames('kebab-menu-item', { 'kebab-menu-item-destructive': destructive }, className)}
+				className={classnames(
+					'kebab-menu-item',
+					{ 'kebab-menu-item-destructive': destructive },
+					className
+				)}
 				disabled={disabled}
 				onClick={() => {
 					onSelect?.()
@@ -68,13 +81,23 @@ export interface KebabMenuRowProps {
 	className?: string
 }
 
-export const KebabMenuRow: React.FC<PropsWithChildren<KebabMenuRowProps>> = ({ className, children }) =>
+export const KebabMenuRow: React.FC<PropsWithChildren<KebabMenuRowProps>> = ({
+	className,
+	children
+}) =>
 	<li className={classnames('kebab-menu-row', className)}>
 		{children}
 	</li>
 
 const KebabIcon: React.FC = () =>
-	<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+	<svg
+		width="18"
+		height="18"
+		viewBox="0 0 18 18"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		aria-hidden="true"
+	>
 		<circle cx="9" cy="3.5" r="1.6" fill="currentColor" />
 		<circle cx="9" cy="9" r="1.6" fill="currentColor" />
 		<circle cx="9" cy="14.5" r="1.6" fill="currentColor" />
@@ -93,7 +116,11 @@ interface PopoverBehaviourOptions {
 // and move focus to its first action button on open. Focus falls back to the
 // popover itself rather than the first focusable element, so embedded form
 // fields with blur handlers are never focused without user intent.
-const usePopoverPlacement = ({ isOpen, triggerRef, popoverRef }: PopoverBehaviourOptions): boolean => {
+const usePopoverPlacement = ({
+	isOpen,
+	triggerRef,
+	popoverRef
+}: PopoverBehaviourOptions): boolean => {
 	const [isFlipped, setIsFlipped] = useState(false)
 
 	useLayoutEffect(() => {
@@ -112,31 +139,9 @@ const usePopoverPlacement = ({ isOpen, triggerRef, popoverRef }: PopoverBehaviou
 	return isFlipped
 }
 
-const movePopoverFocus = (
-	event: KeyboardEvent,
-	focusable: HTMLElement[],
-	currentIndex: number
-): boolean => {
-	if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-		return false
-	}
-
-	if (0 < focusable.length) {
-		event.preventDefault()
-		const offset = 'ArrowDown' === event.key ? currentIndex + 1 : currentIndex - 1
-		const target = 'Home' === event.key
-			? 0
-			: 'End' === event.key ? focusable.length - 1 : (offset + focusable.length) % focusable.length
-		focusable[target].focus()
-	}
-
-	return true
-}
-
 const handlePopoverKeyDown = (
 	event: KeyboardEvent,
-	popover: HTMLUListElement | null,
-	closeMenu: () => void
+	{ closeMenu, popoverRef }: Pick<PopoverBehaviourOptions, 'closeMenu' | 'popoverRef'>
 ) => {
 	if ('Escape' === event.key) {
 		event.preventDefault()
@@ -144,32 +149,41 @@ const handlePopoverKeyDown = (
 		return
 	}
 
-	if (!popover) {
+	if (!popoverRef.current) {
 		return
 	}
 
-	const focusable = Array.from(popover.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+	const focusable = Array.from(popoverRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
 	const active = document.activeElement
 	const currentIndex = active instanceof HTMLElement ? focusable.indexOf(active) : -1
 
-	if (movePopoverFocus(event, focusable, currentIndex) || 'Tab' !== event.key) {
-		return
-	}
+	if (
+		'ArrowDown' === event.key ||
+		'ArrowUp' === event.key ||
+		'Home' === event.key ||
+		'End' === event.key
+	) {
+		if (0 < focusable.length) {
+			event.preventDefault()
+			const offset = 'ArrowDown' === event.key ? currentIndex + 1 : currentIndex - 1
+			const target = 'Home' === event.key
+				? 0
+				: 'End' === event.key ? focusable.length - 1 : (offset + focusable.length) % focusable.length
+			focusable[target].focus()
+		}
 
-	if (0 === focusable.length) {
-		event.preventDefault()
-	} else if (event.shiftKey && 0 >= currentIndex) {
-		event.preventDefault()
-		focusable[focusable.length - 1].focus()
-	} else if (!event.shiftKey && (-1 === currentIndex || currentIndex === focusable.length - 1)) {
-		event.preventDefault()
-		focusable[0].focus()
+		return
 	}
 }
 
-// Close the open popover on outside clicks or Escape, and trap Tab focus
-// within it while it remains open.
-const usePopoverDismissal = ({ isOpen, setIsOpen, closeMenu, containerRef, popoverRef }: PopoverBehaviourOptions) => {
+// Close the open popover on outside clicks, outside focus, or Escape.
+const usePopoverDismissal = ({
+	isOpen,
+	setIsOpen,
+	closeMenu,
+	containerRef,
+	popoverRef
+}: PopoverBehaviourOptions) => {
 	useEffect(() => {
 		if (!isOpen) {
 			return
@@ -181,14 +195,22 @@ const usePopoverDismissal = ({ isOpen, setIsOpen, closeMenu, containerRef, popov
 			}
 		}
 
+		const handleFocusIn = (event: FocusEvent) => {
+			if (event.target instanceof Node && !containerRef.current?.contains(event.target)) {
+				setIsOpen(false)
+			}
+		}
+
 		const handleKeyDown = (event: KeyboardEvent) =>
-			handlePopoverKeyDown(event, popoverRef.current, closeMenu)
+			handlePopoverKeyDown(event, { closeMenu, popoverRef })
 
 		document.addEventListener('mousedown', handlePointerDown)
+		document.addEventListener('focusin', handleFocusIn)
 		document.addEventListener('keydown', handleKeyDown)
 
 		return () => {
 			document.removeEventListener('mousedown', handlePointerDown)
+			document.removeEventListener('focusin', handleFocusIn)
 			document.removeEventListener('keydown', handleKeyDown)
 		}
 	}, [isOpen, setIsOpen, closeMenu, containerRef, popoverRef])

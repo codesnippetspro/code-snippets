@@ -6,6 +6,7 @@ use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\trash_snippet;
 
@@ -46,23 +47,35 @@ class Manage_Menu_Assets_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Hidden columns and table preferences are localized.
+	 * Localized data retains the expected manage data keys.
 	 *
 	 * @return void
 	 */
-	public function test_enqueue_localizes_manage_table_preferences(): void {
-		$screen = get_current_screen();
-		update_user_option( self::$admin_user_id, 'manage' . $screen->id . 'columnshidden', [ 'desc', 'date' ] );
-		update_user_option( self::$admin_user_id, 'snippets_table_truncate_row_values', 0 );
+	public function test_enqueue_localizes_manage_data(): void {
+		$filter = static fn() => PHP_INT_MAX;
+		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
 
 		$this->enqueue_assets();
-		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
+		$localized = $this->get_localized_data();
 
-		$this->assertIsString( $data );
-		$this->assertStringContainsString( '"hiddenColumns":["desc","date"]', $data );
-		$this->assertStringContainsString( '"truncateRowValues":"0"', $data );
-		$this->assertStringContainsString( '"bulkDownloadNonce":"', $data );
-		$this->assertStringContainsString( '"supportsZipDownloads":', $data );
+		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$this->assertSame(
+			[
+				'hasNetworkCap',
+				'hiddenColumns',
+				'truncateRowValues',
+				'snippetsPerPage',
+				'cloudSearchPerPage',
+				'isSafeModeActive',
+				'bulkDownloadNonce',
+				'supportsZipDownloads',
+				'editorTheme',
+				'typeCounts',
+				'snippetsList',
+			],
+			array_keys( $localized )
+		);
 	}
 
 	/**
@@ -86,22 +99,73 @@ class Manage_Menu_Assets_Test extends UnitTestCase {
 	}
 
 	/**
-	 * The inline snippets threshold remains filterable.
+	 * The inline snippets threshold can be disabled.
 	 *
 	 * @return void
 	 */
-	public function test_enqueue_applies_inline_snippets_limit_filter(): void {
+	public function test_enqueue_applies_disabled_inline_snippets_limit(): void {
 		add_filter( 'code_snippets/manage/inline_snippets_limit', '__return_zero' );
 
 		$this->enqueue_assets();
-		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
-		$localized_offset = is_string( $data ) ? strrpos( $data, 'var CODE_SNIPPETS_MANAGE = ' ) : false;
+		$localized = $this->get_localized_data();
 
 		remove_filter( 'code_snippets/manage/inline_snippets_limit', '__return_zero' );
 
-		$this->assertIsString( $data );
-		$this->assertNotFalse( $localized_offset );
-		$this->assertStringNotContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
+		$this->assertArrayNotHasKey( 'snippetsList', $localized );
+	}
+
+	/**
+	 * Snippet lists at or below the configured limit are localized inline.
+	 *
+	 * @dataProvider provide_inline_limit_offsets
+	 *
+	 * @param int $limit_offset Number added to the current snippet count.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_localizes_snippets_within_inline_limit( int $limit_offset ): void {
+		save_snippet( new Snippet( [ 'name' => 'Inline Snippet Fixture' ] ) );
+		$inline_limit = count( get_snippets() ) + $limit_offset;
+		$filter = static fn() => $inline_limit;
+		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$this->enqueue_assets();
+		$localized = $this->get_localized_data();
+
+		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$this->assertArrayHasKey( 'snippetsList', $localized );
+	}
+
+	/**
+	 * Provide offsets that place the snippet count at or below the inline limit.
+	 *
+	 * @return array<string,array{int}>
+	 */
+	public static function provide_inline_limit_offsets(): array {
+		return [
+			'at the limit' => [ 0 ],
+			'below the limit' => [ 1 ],
+		];
+	}
+
+	/**
+	 * Snippet lists above the configured limit are omitted.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_omits_snippets_above_inline_limit(): void {
+		save_snippet( new Snippet( [ 'name' => 'Oversized Inline Snippet Fixture' ] ) );
+		$inline_limit = count( get_snippets() ) - 1;
+		$filter = static fn() => $inline_limit;
+		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$this->enqueue_assets();
+		$localized = $this->get_localized_data();
+
+		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$this->assertArrayNotHasKey( 'snippetsList', $localized );
 	}
 
 	/**
