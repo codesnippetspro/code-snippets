@@ -6,7 +6,12 @@ import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
-import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../../utils/snippets/snippets'
+import {
+	createSnippetObject,
+	getSnippetType,
+	isCondition,
+	validateSnippet
+} from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { Toolbar } from '../../common/Toolbar'
@@ -126,7 +131,9 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 				{children}
 			</form>
 
-			<ConfirmSubmitDialog {...{ doSubmit, submitAction, setSubmitAction, validationWarning, setValidationWarning }} />
+			<ConfirmSubmitDialog
+				{...{ doSubmit, submitAction, setSubmitAction, validationWarning, setValidationWarning }}
+			/>
 		</>
 	)
 }
@@ -228,7 +235,9 @@ export const SnippetForm: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsAPIContext>
 			<WithSnippetsListContext>
-				<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
+				<WithSnippetFormContext
+					initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}
+				>
 					<Toolbar />
 					<EditFormWrap />
 				</WithSnippetFormContext>

@@ -21,8 +21,12 @@ class Snippet_Type_Counter {
 		global $wpdb;
 		$table = code_snippets()->db->get_table_name();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotSafe -- The table name comes from the database service.
+		// The table name comes from the plugin database service and cannot be parameterized.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotSafe
 		$results = $wpdb->get_results( "SELECT scope, COUNT(*) AS count FROM $table WHERE active >= 0 GROUP BY scope" );
+		// phpcs:enable
 
 		$counts = [ 'all' => 0 ];
 

@@ -5,7 +5,11 @@ import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../utils/errors'
 import { downloadSnippetExportFile } from '../../utils/files'
-import { canModifySnippet, cloneSnippetObject, getSnippetEditUrl } from '../../utils/snippets/snippets'
+import {
+	canModifySnippet,
+	cloneSnippetObject,
+	getSnippetEditUrl
+} from '../../utils/snippets/snippets'
 import { Badge } from './Badge'
 import { Button } from './Button'
 import { useDeleteSnippet } from './DeleteButton'
@@ -118,7 +122,8 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
 	extraActions
 }) => {
 	const canModify = canModifySnippet(snippet)
-	const { handleClone, handleExport } = usePreviewActionHandlers({ snippet, closeModal, beginWorking, finishWorking })
+	const actionOptions = { snippet, closeModal, beginWorking, finishWorking }
+	const { handleClone, handleExport } = usePreviewActionHandlers(actionOptions)
 
 	return (
 		<div className="code-snippets-preview-modal__buttons">
@@ -177,7 +182,12 @@ const useWorkingState = () => {
 		return true
 	}
 
-	return { isWorking, beginWorking, finishWorking: () => updateWorking(false), setIsWorking: updateWorking }
+	return {
+		isWorking,
+		beginWorking,
+		finishWorking: () => updateWorking(false),
+		setIsWorking: updateWorking
+	}
 }
 
 /**
@@ -185,7 +195,11 @@ const useWorkingState = () => {
  * and snippets list contexts, so it is only rendered when the modal receives a
  * full snippet object rather than bare title/code/type values.
  */
-const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({ snippet, closeModal, extraActions }) => {
+const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({
+	snippet,
+	closeModal,
+	extraActions
+}) => {
 	const { refreshSnippetsList } = useSnippetsList()
 	const { isWorking, beginWorking, finishWorking, setIsWorking } = useWorkingState()
 	const { requestDelete, confirmDialog } = useDeleteSnippet({
@@ -269,7 +283,11 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			</div>
 
 			{snippet
-				? <SnippetPreviewActions snippet={snippet} extraActions={extraActions} closeModal={() => setIsOpen(false)} />
+				? <SnippetPreviewActions
+					snippet={snippet}
+					extraActions={extraActions}
+					closeModal={() => setIsOpen(false)}
+				/>
 				: null}
 		</Modal>
 		: null
