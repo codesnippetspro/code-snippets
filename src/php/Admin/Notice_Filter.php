@@ -152,6 +152,18 @@ class Notice_Filter {
 			return true;
 		}
 
-		return 0 === strpos( $file, dirname( PLUGIN_FILE ) );
+		return $this->is_code_snippets_file( $file );
+	}
+
+	/**
+	 * Determine whether a file is beneath the Code Snippets plugin directory.
+	 *
+	 * @param string $file File path to inspect.
+	 *
+	 * @return bool
+	 */
+	private function is_code_snippets_file( string $file ): bool {
+		$plugin_directory = trailingslashit( wp_normalize_path( dirname( PLUGIN_FILE ) ) );
+		return 0 === strpos( wp_normalize_path( $file ), $plugin_directory );
 	}
 }

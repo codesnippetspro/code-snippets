@@ -156,7 +156,7 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 				which="top"
 				actions={CLOUD_BULK_ACTIONS}
 				doAction={doAction}
-				bulkSelectLabel={__('Bulk Edit', 'code-snippets')}
+				bulkSelectLabel={__('Bulk actions', 'code-snippets')}
 				selectAllKeys={searchResults.snippets.map(snippet => snippet.id)}
 				extraTableNav={() => <SearchFilters />}
 				endTableNav={which =>

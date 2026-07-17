@@ -7,7 +7,7 @@ import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../../../types/Snippet'
 import { isLicensed } from '../../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetType, isProType } from '../../../../utils/snippets/snippets'
 import { Badge } from '../../../common/Badge'
-import type { FormatOptionLabelContext } from 'react-select'
+import type { FormatOptionLabelContext, StylesConfig } from 'react-select'
 import type { Dispatch, SetStateAction } from 'react'
 import type { SnippetCodeType, SnippetType } from '../../../../types/Snippet'
 import type { SelectOption } from '../../../../types/SelectOption'
@@ -27,6 +27,16 @@ const EDITOR_MODES: Record<SnippetCodeType, string> = {
 const OPTIONS: SelectOption<SnippetType>[] =
 	SNIPPET_TYPES.map(type =>
 		({ value: type, label: SNIPPET_TYPE_LABELS[type] }))
+
+const SELECT_STYLES: StylesConfig<SelectOption<SnippetType>> = {
+	menu: provided => ({
+		...provided,
+		zIndex: 9999,
+		width: 'max-content',
+		minWidth: '100%'
+	}),
+	input: provided => ({ ...provided, boxShadow: 'none' })
+}
 
 interface SnippetTypeOptionProps {
 	option: SelectOption<SnippetType>
@@ -66,22 +76,14 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgrade
 			<label htmlFor="snippet-type-select-input" className="screen-reader-text">
 				{__('Snippet Type', 'code-snippets')}
 			</label>
-			<Select
+			<Select<SelectOption<SnippetType>>
 				inputId="snippet-type-select-input"
 				className="code-snippets-select"
 				isSearchable={false}
 				isDisabled={isReadOnly || 0 !== snippet.id && 'cond' === snippetType}
 				options={0 === snippet.id ? OPTIONS : OPTIONS.filter(option => 'cond' !== option.value)}
 				menuPlacement="bottom"
-				styles={{
-					menu: provided => ({
-						...provided,
-						zIndex: 9999,
-						width: 'max-content',
-						minWidth: '100%'
-					}),
-					input: provided => ({ ...provided, boxShadow: 'none' })
-				}}
+				styles={SELECT_STYLES}
 				value={OPTIONS.find(option => option.value === snippetType)}
 				formatOptionLabel={(data, meta) =>
 					<SnippetTypeOption option={data} context={meta.context} />}
