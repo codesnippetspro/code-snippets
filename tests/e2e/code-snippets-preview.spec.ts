@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS, TIMEOUTS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
+import type { Locator, Page } from '@playwright/test'
 
 const MAXIMUM_FOCUS_ATTEMPTS = 10
 
@@ -24,6 +25,34 @@ const setSyntaxHighlighting = (enabled: boolean): Promise<string> => {
 test.describe('Code Snippets Preview Modal', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
+	const openPreviewEditor = async (page: Page): Promise<Locator> => {
+		await setSyntaxHighlighting(true)
+		await helper.navigateToSnippetsAdmin()
+		await helper.filterSnippetsByName(snippetName)
+
+		const row = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+
+		await row.hover()
+		await row.locator(SELECTORS.PREVIEW_ACTION).first().click()
+
+		const editor = page.locator('.code-snippets-preview-modal .CodeMirror')
+		await expect(editor).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		return editor
+	}
+	const focusPreviewEditor = async (page: Page, editor: Locator): Promise<void> => {
+		for (let attempt = 0; attempt < MAXIMUM_FOCUS_ATTEMPTS; attempt++) {
+			if (await editor.evaluate(element => element.classList.contains('CodeMirror-focused'))) {
+				break
+			}
+
+			await page.keyboard.press('Tab')
+		}
+
+		await expect(editor).toHaveClass(/CodeMirror-focused/)
+	}
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
@@ -64,33 +93,11 @@ test.describe('Code Snippets Preview Modal', () => {
 	})
 
 	test('Preview code can be selected with the keyboard without being changed', async ({ page }) => {
-		await setSyntaxHighlighting(true)
-		await helper.navigateToSnippetsAdmin()
-		await helper.filterSnippetsByName(snippetName)
-
-		const row = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
-		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-
-		await row.hover()
-		await row.locator(SELECTORS.PREVIEW_ACTION).first().click()
-
+		const editor = await openPreviewEditor(page)
 		const preview = page.locator('.code-snippets-preview-modal')
-		const editor = preview.locator('.CodeMirror')
-		const codeArea = preview.getByLabel('Snippet code preview')
+		const codeArea = preview.locator('textarea[aria-label="Snippet code preview"]')
 		const initialValue = await codeArea.inputValue()
-		await expect(editor).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-
-		for (let attempt = 0; attempt < MAXIMUM_FOCUS_ATTEMPTS; attempt++) {
-			if (await editor.evaluate(element => element.classList.contains('CodeMirror-focused'))) {
-				break
-			}
-
-			await page.keyboard.press('Tab')
-		}
-
-		await expect(editor).toHaveClass(/CodeMirror-focused/)
+		await focusPreviewEditor(page, editor)
 		await page.keyboard.press('Shift+ArrowRight')
 
 		await expect.poll(() => editor.evaluate(element => {
@@ -102,4 +109,23 @@ test.describe('Code Snippets Preview Modal', () => {
 		})).not.toBe('')
 		await expect(codeArea).toHaveValue(initialValue)
 	})
+
+	test('Preview editor exposes its accessible label', async ({ page }) => {
+		const editor = await openPreviewEditor(page)
+
+		await expect(editor.locator('[aria-label="Snippet code preview"]')).toBeAttached()
+	})
+
+	for (const keypress of <const> ['Tab', 'Shift+Tab']) {
+		test(`${keypress} leaves the preview editor`, async ({ page }) => {
+			const editor = await openPreviewEditor(page)
+			await focusPreviewEditor(page, editor)
+
+			await page.keyboard.press(keypress)
+
+			await expect.poll(
+				() => editor.evaluate(element => element.contains(document.activeElement))
+			).toBe(false)
+		})
+	}
 })

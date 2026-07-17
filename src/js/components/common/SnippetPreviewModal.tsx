@@ -10,7 +10,7 @@ import { Badge } from './Badge'
 import { Button } from './Button'
 import { useDeleteSnippet } from './DeleteButton'
 import type { BadgeName } from './Badge'
-import type { EditorFromTextArea } from 'codemirror'
+import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
 import type { ReactNode } from 'react'
 import type { Snippet } from '../../types/Snippet'
 
@@ -24,6 +24,8 @@ export interface PreviewWorkingState {
 }
 
 type PreviewExtraActions = ReactNode | ((working: PreviewWorkingState) => ReactNode)
+
+const CODE_PREVIEW_LABEL = __('Snippet code preview', 'code-snippets')
 
 export interface SnippetPreviewModalProps {
 	title: string
@@ -42,6 +44,18 @@ const EDITOR_MODES: Record<string, string> = {
 	php: 'text/x-php',
 	html: 'application/x-httpd-php'
 }
+
+const getPreviewEditorSettings = (type: string): EditorConfiguration => ({
+	extraKeys: {
+		'Tab': false,
+		'Shift-Tab': false
+	},
+	readOnly: true,
+	lineNumbers: true,
+	theme: window.CODE_SNIPPETS_MANAGE?.editorTheme ?? 'default',
+	mode: EDITOR_MODES[type] ?? EDITOR_MODES.php,
+	screenReaderLabel: CODE_PREVIEW_LABEL
+})
 
 interface SnippetPreviewActionsProps {
 	snippet: Snippet
@@ -228,14 +242,10 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			return undefined
 		}
 
-		const instance = window.wp.codeEditor.initialize(textareaRef.current, {
-			codemirror: {
-				readOnly: true,
-				lineNumbers: true,
-				theme: window.CODE_SNIPPETS_MANAGE?.editorTheme ?? 'default',
-				mode: EDITOR_MODES[type] ?? EDITOR_MODES.php
-			}
-		})
+		const instance = window.wp.codeEditor.initialize(
+			textareaRef.current,
+			{ codemirror: getPreviewEditorSettings(type) }
+		)
 
 		return () => {
 			(instance.codemirror as EditorFromTextArea).toTextArea()
@@ -253,7 +263,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 				<textarea
 					ref={textareaRef}
 					readOnly
-					aria-label={__('Snippet code preview', 'code-snippets')}
+					aria-label={CODE_PREVIEW_LABEL}
 					defaultValue={`${'php' === type ? '<?php\n\n' : ''}${code}`}
 				/>
 			</div>
