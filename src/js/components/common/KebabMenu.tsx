@@ -42,10 +42,9 @@ export const KebabMenuItem: React.FC<PropsWithChildren<KebabMenuItemProps>> = ({
 	const { closeMenu } = useKebabMenu()
 
 	return (
-		<li role="presentation">
+		<li>
 			<button
 				type="button"
-				role="menuitem"
 				className={classnames('kebab-menu-item', { 'kebab-menu-item-destructive': destructive }, className)}
 				disabled={disabled}
 				onClick={() => {
@@ -63,14 +62,14 @@ export const KebabMenuItem: React.FC<PropsWithChildren<KebabMenuItemProps>> = ({
 }
 
 export const KebabMenuDivider: React.FC = () =>
-	<li role="separator" aria-orientation="horizontal" className="kebab-menu-divider" />
+	<li aria-hidden="true" className="kebab-menu-divider" />
 
 export interface KebabMenuRowProps {
 	className?: string
 }
 
 export const KebabMenuRow: React.FC<PropsWithChildren<KebabMenuRowProps>> = ({ className, children }) =>
-	<li role="presentation" className={classnames('kebab-menu-row', className)}>
+	<li className={classnames('kebab-menu-row', className)}>
 		{children}
 	</li>
 
@@ -91,7 +90,7 @@ interface PopoverBehaviourOptions {
 }
 
 // Flip the popover above the trigger when it would overflow the viewport,
-// and move focus to its first menu item on open. Focus falls back to the
+// and move focus to its first action button on open. Focus falls back to the
 // popover itself rather than the first focusable element, so embedded form
 // fields with blur handlers are never focused without user intent.
 const usePopoverPlacement = ({ isOpen, triggerRef, popoverRef }: PopoverBehaviourOptions): boolean => {
@@ -103,7 +102,7 @@ const usePopoverPlacement = ({ isOpen, triggerRef, popoverRef }: PopoverBehaviou
 			const trigger = triggerRef.current?.getBoundingClientRect()
 			setIsFlipped(popover.bottom > window.innerHeight && (trigger?.top ?? 0) > popover.height)
 
-			const firstItem = popoverRef.current.querySelector<HTMLElement>('[role="menuitem"]:not(:disabled)')
+			const firstItem = popoverRef.current.querySelector<HTMLElement>('button:not(:disabled)')
 			;(firstItem ?? popoverRef.current).focus()
 		} else {
 			setIsFlipped(false)
@@ -230,7 +229,6 @@ export const KebabMenu: React.FC<KebabMenuProps> = ({ label, className, children
 				type="button"
 				className="kebab-menu-trigger"
 				aria-label={label}
-				aria-haspopup="true"
 				aria-expanded={isOpen}
 				aria-controls={menuId}
 				onClick={() => setIsOpen(open => !open)}
@@ -243,7 +241,6 @@ export const KebabMenu: React.FC<KebabMenuProps> = ({ label, className, children
 					<ul
 						ref={popoverRef}
 						id={menuId}
-						role="menu"
 						tabIndex={-1}
 						aria-label={label}
 						className={classnames('kebab-menu-popover', { 'kebab-menu-popover-top': isFlipped })}

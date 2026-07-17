@@ -217,7 +217,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 
 		const instance = window.wp.codeEditor.initialize(textareaRef.current, {
 			codemirror: {
-				readOnly: true,
+				readOnly: 'nocursor',
 				lineNumbers: true,
 				theme: window.CODE_SNIPPETS_MANAGE?.editorTheme ?? 'default',
 				mode: EDITOR_MODES[type] ?? EDITOR_MODES.php
