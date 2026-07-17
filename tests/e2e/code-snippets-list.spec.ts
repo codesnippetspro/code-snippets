@@ -26,6 +26,16 @@ test.describe('Code Snippets List Page Actions', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
+	test('Filters snippets as the search query changes without a submit control', async ({ page }) => {
+		const search = page.getByRole('search')
+		const searchInput = search.getByRole('searchbox', { name: 'Search Snippets:' })
+
+		await searchInput.fill(snippetName)
+
+		await expect(page.getByRole('row', { name: new RegExp(snippetName) })).toBeVisible()
+		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
+	})
+
 	test('Can toggle snippet activation from list page', async ({ page }) => {
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)

@@ -7,28 +7,19 @@ const SearchBox = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
 
 	return (
-		<search aria-label={__('Search Snippets', 'code-snippets')}>
-			<form
-				className="search-box"
-				onSubmit={event => event.preventDefault()}
-			>
-				<input
-					type="search"
-					id="snippets_search"
-					name="s"
-					value={searchQuery ?? ''}
-					aria-label={__('Search Snippets:', 'code-snippets')}
-					onChange={event => setSearchQuery(event.target.value)}
-					placeholder={__('Search snippets', 'code-snippets')}
-				/>
-				<Button type="submit">
-					{__('Search', 'code-snippets')}
-				</Button>
-			</form>
+		<search className="search-box" aria-label={__('Search Snippets', 'code-snippets')}>
+			<input
+				type="search"
+				id="snippets_search"
+				name="s"
+				value={searchQuery ?? ''}
+				aria-label={__('Search Snippets:', 'code-snippets')}
+				onChange={event => setSearchQuery(event.target.value)}
+				placeholder={__('Search snippets', 'code-snippets')}
+			/>
 		</search>
 	)
 }
-
 
 export const SearchArea = () =>
 	<div className="snippets-search-area">
