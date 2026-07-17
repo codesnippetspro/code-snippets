@@ -60,7 +60,11 @@ interface PagedSnippets {
 	visibleSnippets: Snippet[]
 }
 
-const usePagedSnippets = ({ snippets, itemsPerPage, currentPage }: PagedSnippetsParams): PagedSnippets => {
+const usePagedSnippets = ({
+	snippets,
+	itemsPerPage,
+	currentPage
+}: PagedSnippetsParams): PagedSnippets => {
 	const totalPages = itemsPerPage ? Math.ceil(snippets.length / itemsPerPage) : 0
 	const safePage = totalPages ? Math.min(currentPage, totalPages) : 1
 
@@ -95,9 +99,15 @@ export const SnippetsCardGrid = <A extends string>({
 	beforeGrid
 }: SnippetsCardGridProps<A>) => {
 	const [selected, setSelected] = useState(() => new Set<Snippet['id']>())
-	const [currentPage, setCurrentPage] = useState(() => Number(fetchQueryParam(PAGE_SEARCH_PARAM)) || 1)
+	const [currentPage, setCurrentPage] = useState(
+		() => Number(fetchQueryParam(PAGE_SEARCH_PARAM)) || 1
+	)
 
-	const { totalPages, safePage, visibleSnippets } = usePagedSnippets({ snippets, itemsPerPage, currentPage })
+	const { totalPages, safePage, visibleSnippets } = usePagedSnippets({
+		snippets,
+		itemsPerPage,
+		currentPage
+	})
 
 	return (
 		<div className="snippets-card-grid-container">

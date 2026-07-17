@@ -61,7 +61,10 @@ const CommunityCloudInner = () => {
 			<hr className="wp-header-end" />
 
 			<p className="snippets-page-description">
-				{__('Search the community cloud for snippets shared by other users, and download them directly to your site.', 'code-snippets')}
+				{__(
+					'Search the community cloud and download user-shared snippets directly to your site.',
+					'code-snippets'
+				)}
 			</p>
 
 			{'snippets' === currentTab &&

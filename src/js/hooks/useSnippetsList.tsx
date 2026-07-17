@@ -15,10 +15,6 @@ const [Context, useSnippetsList] = createContextHook<SnippetsListContext>('useSn
 
 export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { fetchAll } = useSnippetsAPI()
-	// Seed from the list localized with the page so counts and rows render
-	// immediately; the mount-time refresh below keeps the data fresh. Raw
-	// localized fields are parsed into full snippet objects, matching the
-	// shape the REST API responses are parsed into.
 	const [snippetsList, setSnippetsList] = useState<Snippet[] | undefined>(
 		() => window.CODE_SNIPPETS_MANAGE?.snippetsList?.map(parseSnippetObject)
 	)
