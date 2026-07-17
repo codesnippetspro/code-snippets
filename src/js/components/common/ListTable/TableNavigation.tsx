@@ -52,7 +52,13 @@ interface BulkActionSelectProps<A extends string> {
 	label: string
 }
 
-const BulkActionSelect = <A extends string>({ which, actions, selectedAction, setSelectedAction, label }: BulkActionSelectProps<A>) =>
+const BulkActionSelect = <A extends string>({
+	which,
+	actions,
+	selectedAction,
+	setSelectedAction,
+	label
+}: BulkActionSelectProps<A>) =>
 	<select
 		name={`action${'bottom' === which ? '-2' : ''}`}
 		id={`bulk-action-selector-${which}`}
@@ -109,7 +115,10 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 				{__('Select bulk action', 'code-snippets')}
 			</label>
 
-			<BulkActionSelect {...{ which, actions, selectedAction, setSelectedAction }} label={selectLabel ?? __('Bulk actions', 'code-snippets')} />
+			<BulkActionSelect
+				{...{ which, actions, selectedAction, setSelectedAction }}
+				label={selectLabel ?? __('Bulk actions', 'code-snippets')}
+			/>
 
 			<SubmitButton
 				id={`doaction${'bottom' === which ? '-2' : ''}`}
@@ -131,7 +140,11 @@ export interface SelectAllControlProps<K extends Key> {
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-export const SelectAllControl = <K extends Key>({ keys, selected, setSelected }: SelectAllControlProps<K>) =>
+export const SelectAllControl = <K extends Key>({
+	keys,
+	selected,
+	setSelected
+}: SelectAllControlProps<K>) =>
 	<label className="tablenav-select-all">
 		<input
 			type="checkbox"
@@ -169,9 +182,6 @@ export const TableNav = <K extends Key, A extends string>({
 	bulkSelectLabel,
 	...paginationProps
 }: TableNavProps<K, A>) => {
-	// Singular controls (select all, filters, search and the view toggle)
-	// render only in the top toolbar: the bottom toolbar repeats just the
-	// bulk actions and the pagination group.
 	const isTop = 'top' === which
 	const hasBulkActions = 0 < totalItems && Boolean(actions)
 
@@ -197,7 +207,8 @@ export const TableNav = <K extends Key, A extends string>({
 
 			{0 < totalPages || isTop && endTableNav
 				? <div className="tablenav-end-group">
-					{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
+					{0 < totalPages &&
+						<TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
 					{isTop ? endTableNav?.(which) : null}
 				</div>
 				: null}

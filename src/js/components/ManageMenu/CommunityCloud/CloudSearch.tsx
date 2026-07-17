@@ -147,8 +147,6 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 
 	const { totalItems, totalPages, page } = searchResults
 
-	// Shared across the top and bottom toolbars; the bottom toolbar omits the
-	// action and selection controls, showing only the pagination group.
 	const navProps = {
 		totalItems,
 		totalPages,

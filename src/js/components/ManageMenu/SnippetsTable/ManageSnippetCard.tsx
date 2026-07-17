@@ -21,7 +21,14 @@ import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../
 import { SnippetCard } from '../../common/SnippetCard'
 import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import { ActivateColumn, PriorityColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
+import {
+	ActivateColumn,
+	PriorityColumn,
+	SnippetExtraIcons,
+	SnippetName,
+	TagsColumn,
+	TypeColumn
+} from './TableColumns'
 import type { Snippet } from '../../../types/Snippet'
 
 interface SnippetCardActionsProps {
@@ -84,7 +91,10 @@ interface RestoreDeleteMenuItemsProps extends SnippetCardActionsProps {
 	requestDelete: () => void
 }
 
-const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({ snippet, requestDelete }) => {
+const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
+	snippet,
+	requestDelete
+}) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
@@ -182,7 +192,11 @@ export interface ManageSnippetCardProps {
 	onSelectedChange: (isSelected: boolean) => void
 }
 
-export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({ snippet, isSelected, onSelectedChange }) => {
+export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({
+	snippet,
+	isSelected,
+	onSelectedChange
+}) => {
 	const { activeByCondition } = useFilteredSnippets()
 
 	return (

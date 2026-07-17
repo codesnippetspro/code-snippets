@@ -64,7 +64,10 @@ export const ImportMenu: React.FC = () => {
 
 			<WithRestAPIContext>
 				{TABS.map(tab =>
-					<div key={tab} className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}>
+					<div
+						key={tab}
+						className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}
+					>
 						{TAB_CONTENT[tab]}
 					</div>)}
 			</WithRestAPIContext>

@@ -50,7 +50,12 @@ export interface UseDeleteSnippetResult {
  * inactive snippets are trashed immediately. Callers must render the returned
  * dialog somewhere that stays mounted while the confirmation is open.
  */
-export const useDeleteSnippet = ({ snippet, setIsWorking, onSuccess, onError }: UseDeleteSnippetOptions): UseDeleteSnippetResult => {
+export const useDeleteSnippet = ({
+	snippet,
+	setIsWorking,
+	onSuccess,
+	onError
+}: UseDeleteSnippetOptions): UseDeleteSnippetResult => {
 	const snippetsAPI = useSnippetsAPI()
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -89,7 +94,8 @@ export const useDeleteSnippet = ({ snippet, setIsWorking, onSuccess, onError }: 
 	return { requestDelete, confirmDialog }
 }
 
-export interface DeleteButtonProps extends Omit<ButtonProps, 'onError'>, Omit<UseDeleteSnippetOptions, 'snippet'> {
+export interface DeleteButtonProps
+	extends Omit<ButtonProps, 'onError'>, Omit<UseDeleteSnippetOptions, 'snippet'> {
 	snippet: Snippet
 }
 
@@ -101,7 +107,12 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({
 	setIsWorking,
 	...buttonProps
 }) => {
-	const { requestDelete, confirmDialog } = useDeleteSnippet({ snippet, setIsWorking, onSuccess, onError })
+	const { requestDelete, confirmDialog } = useDeleteSnippet({
+		snippet,
+		setIsWorking,
+		onSuccess,
+		onError
+	})
 
 	return (
 		<>
