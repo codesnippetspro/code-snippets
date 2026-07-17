@@ -26,10 +26,6 @@ interface KebabMenuContextValue {
 
 const KebabMenuContext = createContext<KebabMenuContextValue>({ closeMenu: () => undefined })
 
-/**
- * Retrieve the close handler of the containing kebab menu, allowing custom
- * rows to dismiss the popover once their action has completed.
- */
 export const useKebabMenu = (): KebabMenuContextValue => useContext(KebabMenuContext)
 
 export interface KebabMenuItemProps {
@@ -113,10 +109,6 @@ interface PopoverBehaviourOptions {
 	popoverRef: RefObject<HTMLUListElement>
 }
 
-// Flip the popover above the trigger when it would overflow the viewport,
-// and move focus to its first menu item on open. Focus falls back to the
-// popover itself rather than the first focusable element, so embedded form
-// fields with blur handlers are never focused without user intent.
 const usePopoverPlacement = ({
 	isOpen,
 	triggerRef,
@@ -193,8 +185,6 @@ const handlePopoverKeyDown = (
 	}
 }
 
-// Close the open popover on outside clicks or Escape, and trap Tab focus
-// within it while it remains open.
 const usePopoverDismissal = ({
 	isOpen,
 	setIsOpen,
@@ -232,12 +222,6 @@ export interface KebabMenuProps {
 	children: ReactNode
 }
 
-/**
- * Generic "more actions" menu: a square trigger button that opens a popover
- * of actions anchored to its bottom-end corner, flipping above the trigger
- * when there is no room below. The popover stays open for clicks inside it
- * and closes on outside clicks, Escape, or when an item action completes.
- */
 export const KebabMenu: React.FC<KebabMenuProps> = ({ label, className, children }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement>(null)

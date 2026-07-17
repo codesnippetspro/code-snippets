@@ -146,10 +146,7 @@ const EditFormWrap: React.FC = () => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
-	// The Add New link and the post-save transition swap the snippet in place via
-	// history.pushState (no reload). Without this, the browser Back/Forward buttons
-	// change the URL but leave the stale form mounted; reload so the server
-	// re-renders the snippet that matches the restored URL.
+	// Restoring history after pushState requires a reload to render the matching snippet.
 	useEffect(() => {
 		const handlePopState = () => window.location.reload()
 		window.addEventListener('popstate', handlePopState)

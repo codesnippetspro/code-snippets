@@ -18,7 +18,10 @@ export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setI
 	const hasCondition = 0 !== snippet.conditionId
 
 	return (
-		<div className={classnames('conditions-editor-open block-form-field', hasCondition ? 'has-condition' : 'no-condition')}>
+		<div className={classnames(
+			'conditions-editor-open block-form-field',
+			hasCondition ? 'has-condition' : 'no-condition'
+		)}>
 			{isCondition(snippet) ? null
 				: <>
 					<div className="conditions-editor-header">
