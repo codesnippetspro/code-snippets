@@ -106,7 +106,7 @@ test.describe('Code Snippets Admin', () => {
 
 		page.once('dialog', dialog => dialog.accept())
 		await page.goBack()
-		await expect(page).toHaveURL(/page=add-snippet/)
+		await expect(page).toHaveURL(/page=snippets/)
 
 		await helper.cleanupSnippet(snippetName)
 	})
