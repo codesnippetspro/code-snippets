@@ -143,6 +143,7 @@ const ConditionsEditor: React.FC = () => {
 
 const useReloadOnPopState = (isDirty: boolean) => {
 	const currentUrl = useRef(window.location.href)
+	const skipNextUnloadPrompt = useRef(false)
 
 	useEffect(() => {
 		currentUrl.current = window.location.href
@@ -150,6 +151,11 @@ const useReloadOnPopState = (isDirty: boolean) => {
 
 	useEffect(() => {
 		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			if (skipNextUnloadPrompt.current) {
+				skipNextUnloadPrompt.current = false
+				return
+			}
+
 			event.preventDefault()
 			// Required by Chrome and Edge versions before 119.
 			// eslint-disable-next-line @typescript-eslint/no-deprecated
@@ -172,6 +178,7 @@ const useReloadOnPopState = (isDirty: boolean) => {
 				return
 			}
 
+			skipNextUnloadPrompt.current = isDirty
 			window.location.reload()
 		}
 
