@@ -57,7 +57,9 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		[snippet.locked, snippet.scope]
 	)
 	const isDirty = useMemo(
-		() => JSON.stringify(getSnippetDraftState(snippet)) !== JSON.stringify(getSnippetDraftState(savedSnippet)),
+		() =>
+			JSON.stringify(getSnippetDraftState(snippet)) !==
+			JSON.stringify(getSnippetDraftState(savedSnippet)),
 		[snippet, savedSnippet]
 	)
 	const acceptSnippet = useCallback((value: Snippet) => {

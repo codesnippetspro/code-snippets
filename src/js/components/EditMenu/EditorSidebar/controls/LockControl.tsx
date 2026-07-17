@@ -6,7 +6,14 @@ import { TooltipButton } from '../../../common/TooltipButton'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 
 export const LockControl: React.FC = () => {
-	const { acceptSnippet, snippet, setSnippet, isWorking, setIsWorking, setCurrentNotice } = useSnippetForm()
+	const {
+		acceptSnippet,
+		snippet,
+		setSnippet,
+		isWorking,
+		setIsWorking,
+		setCurrentNotice
+	} = useSnippetForm()
 	const { update } = useSnippetsAPI()
 
 	const handleToggle = () => {
