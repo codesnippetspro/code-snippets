@@ -19,7 +19,11 @@ export interface CloudSnippetAuthorProps {
 
 export const CloudSnippetAuthor: React.FC<CloudSnippetAuthorProps> = ({ snippet }) =>
 	<p className="cloud-snippet-author">
-		<a href={`${window.CODE_SNIPPETS?.urls.cloud}/codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
+		<a
+			href={`${window.CODE_SNIPPETS?.urls.cloud}/codevault/${snippet.codevault}`}
+			target="_blank"
+			rel="noopener noreferrer"
+		>
 			{sprintf(
 				/* translators: %s: cloud library author name. */
 				_x('By %s', 'snippet author', 'code-snippets'),
@@ -34,7 +38,11 @@ interface CloudSnippetDetailsProps {
 	setIsPreviewOpen: (isOpen: boolean) => void
 }
 
-const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, author, setIsPreviewOpen }) =>
+const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({
+	snippet,
+	author,
+	setIsPreviewOpen
+}) =>
 	<div className="cloud-snippet card-inner">
 		<div className="snippet-card-header">
 			<Badge name={getSnippetType(snippet)} />
@@ -87,7 +95,12 @@ export interface SearchResultProps {
 	onSelectedChange?: (isSelected: boolean) => void
 }
 
-export const SearchResult: React.FC<SearchResultProps> = ({ snippet, author, isSelected = false, onSelectedChange }) => {
+export const SearchResult: React.FC<SearchResultProps> = ({
+	snippet,
+	author,
+	isSelected = false,
+	onSelectedChange
+}) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	return (
@@ -119,7 +132,11 @@ export const SearchResult: React.FC<SearchResultProps> = ({ snippet, author, isS
 		>
 			<CloudSnippetDetails snippet={snippet} author={author} setIsPreviewOpen={setIsPreviewOpen} />
 
-			<CloudSnippetPreviewModal snippet={snippet} isOpen={isPreviewOpen} setIsOpen={setIsPreviewOpen} />
+			<CloudSnippetPreviewModal
+				snippet={snippet}
+				isOpen={isPreviewOpen}
+				setIsOpen={setIsPreviewOpen}
+			/>
 		</SnippetCard>
 	)
 }

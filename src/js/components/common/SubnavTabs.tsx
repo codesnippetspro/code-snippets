@@ -21,13 +21,6 @@ export interface SubnavTabsProps<T extends string> {
 	endContent?: ReactNode
 }
 
-/**
- * Toolbar-style subnavigation bar shared across manage pages: text tab
- * buttons, pro-gated tabs showing an upsell chip and dialog for unlicensed
- * users, and an optional end slot for extra items such as the card/table
- * view toggle. Uses the same design language as the snippet-type nav on the
- * manage snippets page.
- */
 export const SubnavTabs = <T extends string>({
 	tabs,
 	ariaLabel,

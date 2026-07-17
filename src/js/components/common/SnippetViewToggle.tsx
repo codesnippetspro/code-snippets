@@ -10,10 +10,6 @@ export interface SnippetViewToggleProps {
 	className?: string
 }
 
-/**
- * Switch between the card and table snippet views, presented as a
- * two-icon segmented pair with the active view shown as a filled tile.
- */
 export const SnippetViewToggle: React.FC<SnippetViewToggleProps> = ({ snippetView, setSnippetView, className }) =>
 	<div
 		className={classnames('snippet-view-toggle', className)}
