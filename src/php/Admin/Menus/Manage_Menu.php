@@ -238,10 +238,11 @@ class Manage_Menu extends Admin_Menu {
 		// table scan and inline payload on subpages that don't render the table.
 		if ( $this->is_manage_table_view() ) {
 			$snippets = get_snippets();
+			$inline_limit = max( 0, intval( apply_filters( 'code_snippets/manage/inline_snippets_limit', 100 ) ) );
 
 			// The inline payload includes full code bodies, so its size grows with
 			// library content; larger libraries defer to the REST fetch instead.
-			if ( count( $snippets ) <= 100 ) {
+			if ( 0 < $inline_limit && count( $snippets ) <= $inline_limit ) {
 				$localized['snippetsList'] = array_map(
 					function ( $snippet ) {
 						return $snippet->get_fields();

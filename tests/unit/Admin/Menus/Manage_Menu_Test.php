@@ -125,6 +125,88 @@ class Manage_Menu_Test extends UnitTestCase {
 	}
 
 	/**
+	 * The inline snippets threshold can be disabled for constrained installations.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_applies_inline_snippets_limit_filter(): void {
+		add_filter( 'code_snippets/manage/inline_snippets_limit', '__return_zero' );
+
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
+		$localized_offset = is_string( $data ) ? strrpos( $data, 'var CODE_SNIPPETS_MANAGE = ' ) : false;
+
+		remove_filter( 'code_snippets/manage/inline_snippets_limit', '__return_zero' );
+
+		$this->assertIsString( $data );
+		$this->assertNotFalse( $localized_offset );
+		$this->assertStringNotContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
+	}
+
+	/**
+	 * Snippet lists at or below the configured limit are localized inline.
+	 *
+	 * @dataProvider provide_inline_limit_offsets
+	 *
+	 * @param int $limit_offset Number added to the current snippet count.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_localizes_snippets_within_inline_limit( int $limit_offset ): void {
+		save_snippet( new Snippet( array( 'name' => 'Inline Snippet Fixture' ) ) );
+		$inline_limit = count( \Code_Snippets\get_snippets() ) + $limit_offset;
+		$filter = static fn() => $inline_limit;
+		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
+		$localized_offset = is_string( $data ) ? strrpos( $data, 'var CODE_SNIPPETS_MANAGE = ' ) : false;
+
+		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$this->assertIsString( $data );
+		$this->assertNotFalse( $localized_offset );
+		$this->assertStringContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
+	}
+
+	/**
+	 * Provide offsets that place the snippet count at or below the inline limit.
+	 *
+	 * @return array<string,array{int}>
+	 */
+	public static function provide_inline_limit_offsets(): array {
+		return [
+			'at the limit' => [ 0 ],
+			'below the limit' => [ 1 ],
+		];
+	}
+
+	/**
+	 * Snippet lists above the configured limit are omitted from localized data.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_omits_snippets_above_inline_limit(): void {
+		save_snippet( new Snippet( array( 'name' => 'Oversized Inline Snippet Fixture' ) ) );
+		$inline_limit = count( \Code_Snippets\get_snippets() ) - 1;
+		$filter = static fn() => $inline_limit;
+		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
+		$localized_offset = is_string( $data ) ? strrpos( $data, 'var CODE_SNIPPETS_MANAGE = ' ) : false;
+
+		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
+
+		$this->assertIsString( $data );
+		$this->assertNotFalse( $localized_offset );
+		$this->assertStringNotContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
+	}
+
+	/**
 	 * The manage screen renders a truncation toggle in Screen Options.
 	 *
 	 * @return void

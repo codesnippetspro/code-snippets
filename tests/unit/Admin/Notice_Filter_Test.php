@@ -113,6 +113,22 @@ class Notice_Filter_Test extends UnitTestCase {
 	}
 
 	/**
+	 * The separate Add New editor screen also registers notice filtering.
+	 *
+	 * @return void
+	 */
+	public function test_registers_filtering_on_add_new_screen(): void {
+		$edit_menu = code_snippets()->admin->menus['edit'];
+		$hooknames = $edit_menu->get_hooknames();
+		set_current_screen( $hooknames[1] );
+
+		$this->notice_filter->register_filtering( get_current_screen() );
+
+		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
+		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'print_fallback_styles' ] ) );
+	}
+
+	/**
 	 * The filter_foreign_notices filter disables filtering when set to false.
 	 *
 	 * @return void
