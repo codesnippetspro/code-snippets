@@ -43,8 +43,13 @@ interface SnippetTypeOptionProps {
 	context: FormatOptionLabelContext
 }
 
-const SnippetTypeOption: React.FC<SnippetTypeOptionProps> = ({ option: { value, label }, context }) =>
-	<div className={classnames('snippet-type-option', { 'inverted-badges': isProType(value) && !isLicensed() })}>
+const SnippetTypeOption: React.FC<SnippetTypeOptionProps> = ({
+	option: { value, label },
+	context
+}) =>
+	<div className={classnames('snippet-type-option', {
+		'inverted-badges': isProType(value) && !isLicensed()
+	})}>
 		<span className="snippet-type-option-main">
 			<Badge name={value} />
 			{'menu' === context ? label : null}
@@ -62,7 +67,10 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgrade
 		if (codeEditorInstance) {
 			const codeEditor = codeEditorInstance.codemirror
 
-			codeEditor.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType)
+			codeEditor.setOption(
+				'lint' as keyof EditorConfiguration,
+				'php' === snippetType || 'css' === snippetType
+			)
 
 			if ('cond' !== snippetType && EDITOR_MODES[snippetType]) {
 				codeEditor.setOption('mode', EDITOR_MODES[snippetType])

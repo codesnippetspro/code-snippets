@@ -1,5 +1,14 @@
 import classnames from 'classnames'
-import React, { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
+import React, {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useId,
+	useLayoutEffect,
+	useRef,
+	useState
+} from 'react'
 import type { Dispatch, PropsWithChildren, ReactNode, RefObject, SetStateAction } from 'react'
 
 const FOCUSABLE_SELECTOR = [
@@ -45,7 +54,11 @@ export const KebabMenuItem: React.FC<PropsWithChildren<KebabMenuItemProps>> = ({
 		<li>
 			<button
 				type="button"
-				className={classnames('kebab-menu-item', { 'kebab-menu-item-destructive': destructive }, className)}
+				className={classnames(
+					'kebab-menu-item',
+					{ 'kebab-menu-item-destructive': destructive },
+					className
+				)}
 				disabled={disabled}
 				onClick={() => {
 					onSelect?.()
@@ -68,13 +81,23 @@ export interface KebabMenuRowProps {
 	className?: string
 }
 
-export const KebabMenuRow: React.FC<PropsWithChildren<KebabMenuRowProps>> = ({ className, children }) =>
+export const KebabMenuRow: React.FC<PropsWithChildren<KebabMenuRowProps>> = ({
+	className,
+	children
+}) =>
 	<li className={classnames('kebab-menu-row', className)}>
 		{children}
 	</li>
 
 const KebabIcon: React.FC = () =>
-	<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+	<svg
+		width="18"
+		height="18"
+		viewBox="0 0 18 18"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		aria-hidden="true"
+	>
 		<circle cx="9" cy="3.5" r="1.6" fill="currentColor" />
 		<circle cx="9" cy="9" r="1.6" fill="currentColor" />
 		<circle cx="9" cy="14.5" r="1.6" fill="currentColor" />
@@ -93,7 +116,11 @@ interface PopoverBehaviourOptions {
 // and move focus to its first action button on open. Focus falls back to the
 // popover itself rather than the first focusable element, so embedded form
 // fields with blur handlers are never focused without user intent.
-const usePopoverPlacement = ({ isOpen, triggerRef, popoverRef }: PopoverBehaviourOptions): boolean => {
+const usePopoverPlacement = ({
+	isOpen,
+	triggerRef,
+	popoverRef
+}: PopoverBehaviourOptions): boolean => {
 	const [isFlipped, setIsFlipped] = useState(false)
 
 	useLayoutEffect(() => {
@@ -130,7 +157,12 @@ const handlePopoverKeyDown = (
 	const active = document.activeElement
 	const currentIndex = active instanceof HTMLElement ? focusable.indexOf(active) : -1
 
-	if ('ArrowDown' === event.key || 'ArrowUp' === event.key || 'Home' === event.key || 'End' === event.key) {
+	if (
+		'ArrowDown' === event.key ||
+		'ArrowUp' === event.key ||
+		'Home' === event.key ||
+		'End' === event.key
+	) {
 		if (0 < focusable.length) {
 			event.preventDefault()
 			const offset = 'ArrowDown' === event.key ? currentIndex + 1 : currentIndex - 1
@@ -145,7 +177,13 @@ const handlePopoverKeyDown = (
 }
 
 // Close the open popover on outside clicks, outside focus, or Escape.
-const usePopoverDismissal = ({ isOpen, setIsOpen, closeMenu, containerRef, popoverRef }: PopoverBehaviourOptions) => {
+const usePopoverDismissal = ({
+	isOpen,
+	setIsOpen,
+	closeMenu,
+	containerRef,
+	popoverRef
+}: PopoverBehaviourOptions) => {
 	useEffect(() => {
 		if (!isOpen) {
 			return

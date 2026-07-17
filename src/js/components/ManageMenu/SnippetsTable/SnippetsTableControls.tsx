@@ -35,7 +35,9 @@ const SnippetStatusCounts = () => {
 				<Fragment key={status}>
 					<li className={status}>
 						<a
-							href={buildUrl(window.location.href, { status: INDEX_STATUS === status ? undefined : status })}
+							href={buildUrl(window.location.href, {
+								status: INDEX_STATUS === status ? undefined : status
+							})}
 							className={currentStatus === status ? 'current' : undefined}
 							aria-current={currentStatus === status ? 'page' : undefined}
 							onClick={event => {
@@ -46,7 +48,10 @@ const SnippetStatusCounts = () => {
 							{`${label} `}
 							<span className="count">{
 								// translators: %d: number of snippets in the current view.
-								sprintf(_x('(%d)', 'table view count', 'code-snippets'), snippetsByStatus.get(status)?.length ?? 0)
+								sprintf(
+									_x('(%d)', 'table view count', 'code-snippets'),
+									snippetsByStatus.get(status)?.length ?? 0
+								)
 							}</span>
 						</a>
 					</li>
@@ -116,7 +121,10 @@ export interface SnippetsTableNavigationProps {
 	visibleSnippets: Snippet[]
 }
 
-export const SnippetsTableNavigation: React.FC<SnippetsTableNavigationProps> = ({ which, visibleSnippets }) =>
+export const SnippetsTableNavigation: React.FC<SnippetsTableNavigationProps> = ({
+	which,
+	visibleSnippets
+}) =>
 	<>
 		{'top' === which && <FilterByTagControl visibleSnippets={visibleSnippets} />}
 		<ClearRecentlyActiveButton />

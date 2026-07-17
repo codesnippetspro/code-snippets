@@ -27,7 +27,13 @@ export const SearchArea = () =>
 	</div>
 
 export const SearchResultsIndicator = () => {
-	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
+	const {
+		searchQueryText,
+		searchLineNumber,
+		currentTag,
+		setSearchQuery,
+		setCurrentTag
+	} = useSnippetsFilters()
 
 	return searchQueryText || currentTag
 		? <p className="snippets-search-subtitle">

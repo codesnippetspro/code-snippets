@@ -112,31 +112,40 @@ const CLOUD_BULK_ACTIONS: ListTableAction<'download'>[] = [
 	{ key: 'download', label: __('Download', 'code-snippets') }
 ]
 
-const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
+const useSearchResultsSelection = () => {
 	const { api } = useRestAPI()
 	const { searchResults, isSearching, doSearch } = useCloudSearch()
 	const [selected, setSelected] = useState<Set<CloudSnippetSchema['id']>>(new Set())
-
 	const snippets = searchResults?.snippets
 
 	useEffect(() => {
 		setSelected(new Set())
 	}, [snippets])
 
-	if (!searchResults) {
-		return null
-	}
-
-	const { totalItems, totalPages, page } = searchResults
-
-	const doAction = (_action: 'download', selectedIds: Set<CloudSnippetSchema['id']>): Promise<void> => {
-		const downloadable = searchResults.snippets
+	const doAction = (
+		_action: 'download',
+		selectedIds: Set<CloudSnippetSchema['id']>
+	): Promise<void> => {
+		const downloadable = (snippets ?? [])
 			.filter(snippet => selectedIds.has(snippet.id) && isSnippetDownloadable(snippet))
 
 		return Promise.all(downloadable.map(snippet =>
 			api.post(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)))
 			.then(() => doSearch())
 	}
+
+	return { doAction, doSearch, isSearching, searchResults, selected, setSelected }
+}
+
+const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
+	const { doAction, doSearch, isSearching, searchResults, selected, setSelected } =
+		useSearchResultsSelection()
+
+	if (!searchResults) {
+		return null
+	}
+
+	const { totalItems, totalPages, page } = searchResults
 
 	// Shared across the top and bottom toolbars; the bottom toolbar omits the
 	// action and selection controls, showing only the pagination group.
@@ -167,7 +176,11 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 			/>
 
 			{'card' === snippetView
-				? <SearchResultsGrid snippets={searchResults.snippets} selected={selected} setSelected={setSelected} />
+				? <SearchResultsGrid
+					snippets={searchResults.snippets}
+					selected={selected}
+					setSelected={setSelected}
+				/>
 				: <CloudSnippetsTable snippets={searchResults.snippets} />}
 
 			<TableNav which="bottom" {...navProps} />
@@ -181,7 +194,10 @@ const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView, setSnipp
 	if (isErrored) {
 		return (
 			<div className="banner banner-error">
-				<p>{__('An error occurred while fetching search results. Please try again.', 'code-snippets')}</p>
+				<p>{__(
+					'An error occurred while fetching search results. Please try again.',
+					'code-snippets'
+				)}</p>
 			</div>
 		)
 	}

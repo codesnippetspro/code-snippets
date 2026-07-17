@@ -53,7 +53,16 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 					}
 				</span>{'\n'}
 				<TablePaginationNavigation
-					{...{ which, disabled, totalPages, inputValue, currentPage, pageSearchParam, setCurrentPage, setInputValue }}
+					{...{
+						which,
+						disabled,
+						totalPages,
+						inputValue,
+						currentPage,
+						pageSearchParam,
+						setCurrentPage,
+						setInputValue
+					}}
 				/>
 			</form>
 		</nav>

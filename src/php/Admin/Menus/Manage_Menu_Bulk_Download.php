@@ -32,7 +32,10 @@ class Manage_Menu_Bulk_Download {
 		$nonce = filter_input( INPUT_POST, 'code_snippets_bulk_download_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
 		if ( ! wp_verify_nonce( $nonce, 'code_snippets_bulk_download' ) ) {
-			$this->send_error( __( 'The download request is no longer valid. Please refresh and try again.', 'code-snippets' ), 403 );
+			$this->send_error(
+				__( 'The download request is no longer valid. Please refresh and try again.', 'code-snippets' ),
+				403
+			);
 		}
 
 		$snippets_json = wp_unslash( filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '' );
