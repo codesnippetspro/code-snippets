@@ -3,8 +3,10 @@
 namespace Code_Snippets\Admin;
 
 use Code_Snippets\UnitTestCase;
+use ReflectionMethod;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
+use const Code_Snippets\PLUGIN_FILE;
 
 /**
  * Tests for foreign admin notice filtering on Code Snippets screens.
@@ -58,6 +60,10 @@ class Notice_Filter_Test extends UnitTestCase {
 			code_snippets()->admin->load_classes();
 		}
 
+		$manage_menu = code_snippets()->admin->menus['manage'];
+		$manage_menu->register();
+		set_current_screen( $manage_menu->get_hookname() );
+
 		$this->notice_filter = new Notice_Filter();
 	}
 
@@ -80,11 +86,42 @@ class Notice_Filter_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Callback ownership requires a complete plugin directory boundary.
+	 *
+	 * @return void
+	 */
+	public function test_callback_ownership_requires_plugin_directory_boundary(): void {
+		$method = new ReflectionMethod( $this->notice_filter, 'is_code_snippets_file' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $this->notice_filter, PLUGIN_FILE ) );
+		$this->assertFalse(
+			$method->invoke( $this->notice_filter, dirname( PLUGIN_FILE ) . '-extra/callback.php' )
+		);
+	}
+
+	/**
 	 * A Code Snippets screen registers the filtering hooks by default.
 	 *
 	 * @return void
 	 */
 	public function test_registers_filtering_on_code_snippets_screen(): void {
+		$this->notice_filter->register_filtering( get_current_screen() );
+
+		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
+		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'print_fallback_styles' ] ) );
+	}
+
+	/**
+	 * The separate Add New editor screen also registers notice filtering.
+	 *
+	 * @return void
+	 */
+	public function test_registers_filtering_on_add_new_screen(): void {
+		$edit_menu = code_snippets()->admin->menus['edit'];
+		$hooknames = $edit_menu->get_hooknames();
+		set_current_screen( $hooknames[1] );
+
 		$this->notice_filter->register_filtering( get_current_screen() );
 
 		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );

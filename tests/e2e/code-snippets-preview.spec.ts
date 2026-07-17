@@ -33,6 +33,7 @@ test.describe('Code Snippets Preview Modal', () => {
 
 	test.afterEach(async () => {
 		await setSyntaxHighlighting(true)
+		await wpCli(['eval', "delete_option( 'code_snippets_snippet_view' );"])
 		await helper.cleanupSnippet(snippetName)
 	})
 
@@ -40,6 +41,7 @@ test.describe('Code Snippets Preview Modal', () => {
 		const pageErrors: string[] = []
 		page.on('pageerror', error => pageErrors.push(error.message))
 
+		await wpCli(['eval', "update_option( 'code_snippets_snippet_view', 'table' );"])
 		await helper.navigateToSnippetsAdmin()
 		await helper.filterSnippetsByName(snippetName)
 
