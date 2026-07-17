@@ -44,6 +44,12 @@ const getSnippetDraftState = (snippet: Snippet) => ({
 	conditionId: snippet.conditionId
 })
 
+const isSnippetDraftDirty = (snippet: Snippet, savedSnippet: Snippet): boolean => {
+	const draftState = JSON.stringify(getSnippetDraftState(snippet))
+	const savedDraftState = JSON.stringify(getSnippetDraftState(savedSnippet))
+	return draftState !== savedDraftState
+}
+
 export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ children, initialSnippet }) => {
 	const [initialValue] = useState<Snippet>(initialSnippet)
 	const [snippet, setSnippet] = useState<Snippet>(initialValue)
@@ -57,9 +63,7 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		[snippet.locked, snippet.scope]
 	)
 	const isDirty = useMemo(
-		() =>
-			JSON.stringify(getSnippetDraftState(snippet)) !==
-			JSON.stringify(getSnippetDraftState(savedSnippet)),
+		() => isSnippetDraftDirty(snippet, savedSnippet),
 		[snippet, savedSnippet]
 	)
 	const acceptSnippet = useCallback((value: Snippet) => {
