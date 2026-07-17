@@ -1,97 +1,23 @@
-import { __, _x, sprintf } from '@wordpress/i18n'
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import { __ } from '@wordpress/i18n'
+import React, { useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { createInterpolateElement } from '@wordpress/element'
-import { useRestAPI } from '../../../hooks/useRestAPI'
-import { useSnippetsList } from '../../../hooks/useSnippetsList'
-import { handleUnknownError } from '../../../utils/errors'
-import { REST_BASES } from '../../../utils/restAPI'
 import { getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
-import { SubmitButton } from '../../common/SubmitButton'
-import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
-import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { SnippetsCardGrid } from './SnippetsCardGrid'
-import { SearchArea, SearchResultsIndicator } from './SnippetsTableSearch'
-import { BULK_ACTIONS, TRASHED_BULK_ACTIONS, useApplyBulkAction } from './useApplyBulkAction'
+import { SnippetsTableNavigation, SnippetsTableToolbar } from './SnippetsTableControls'
+import { SearchResultsIndicator } from './SnippetsTableSearch'
 import { getTableColumns } from './TableColumns'
+import { useFilteredSnippets } from './WithFilteredSnippetsContext'
+import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
+import { BULK_ACTIONS, TRASHED_BULK_ACTIONS, useApplyBulkAction } from './useApplyBulkAction'
 import type { ListTableAction } from '../../common/ListTable'
-import type { SnippetStatus } from './WithSnippetsTableFilters'
 import type { SnippetsTableAction } from './useApplyBulkAction'
 import type { Snippet } from '../../../types/Snippet'
 import type { SnippetView } from '../../../types/SnippetView'
 import type { ReactNode } from 'react'
-
-const STATUS_LABELS: [SnippetStatus, string][] = [
-	['all', __('All', 'code-snippets')],
-	['active', __('Active', 'code-snippets')],
-	['inactive', __('Inactive', 'code-snippets')],
-	['recently_active', __('Recently Active', 'code-snippets')],
-	['locked', __('Locked', 'code-snippets')],
-	['unlocked', __('Unlocked', 'code-snippets')],
-	['trashed', __('Trashed', 'code-snippets')]
-]
-
-const SnippetStatusCounts = () => {
-	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
-	const { snippetsByStatus } = useFilteredSnippets()
-
-	const visibleStatuses = STATUS_LABELS.filter(([status]) =>
-		snippetsByStatus.has(status) && ('unlocked' !== status || snippetsByStatus.has('locked')))
-
-	return (
-		<ul className="subsubsub">
-			{visibleStatuses.map(([status, label]) =>
-				<Fragment key={status}>
-					<li className={status}>
-						<a
-							href={buildUrl(window.location.href, { status: INDEX_STATUS === status ? undefined : status })}
-							className={currentStatus === status ? 'current' : undefined}
-							aria-current={currentStatus === status ? 'page' : undefined}
-							onClick={event => {
-								event.preventDefault()
-								setCurrentStatus(status)
-							}}
-						>
-							{`${label} `}
-							<span className="count">{
-								// translators: %d: number of snippets in the current view.
-								sprintf(_x('(%d)', 'table view count', 'code-snippets'), snippetsByStatus.get(status)?.length ?? 0)
-							}</span>
-						</a>
-					</li>
-				</Fragment>)}
-		</ul>
-	)
-}
-
-const ClearRecentlyActiveButton: React.FC = () => {
-	const { api } = useRestAPI()
-	const { refreshSnippetsList } = useSnippetsList()
-	const { currentStatus } = useSnippetsFilters()
-
-	return 'recently_active' === currentStatus
-		? <div className="alignleft actions">
-			<SubmitButton
-				secondary
-				name="clear-recent-list"
-				text={__('Clear List', 'code-snippets')}
-				onClick={event => {
-					event.preventDefault()
-					api.del(REST_BASES.recentlyActive)
-						.then(refreshSnippetsList)
-						.catch(handleUnknownError)
-				}}
-			/>
-		</div>
-		: null
-}
-
-interface ExtraTableNavProps {
-	visibleSnippets: Snippet[]
-}
 
 interface ManageTableSettings {
 	hiddenColumns: Set<string>
@@ -131,36 +57,6 @@ const useManageTableSettings = (): ManageTableSettings => {
 	}, [])
 
 	return { hiddenColumns, truncateRowValues }
-}
-
-const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) => {
-	const { currentTag, setCurrentTag } = useSnippetsFilters()
-
-	const tagsList: Set<string> = useMemo(
-		() => visibleSnippets.reduce((tags, snippet) => {
-			snippet.tags.forEach(tag => tags.add(tag))
-			return tags
-		}, new Set<string>()),
-		[visibleSnippets])
-
-	return 0 < tagsList.size
-		? <div className="alignleft actions">
-			<label htmlFor="snippets-tag-filter" className="screen-reader-text">
-				{__('Filter snippets by tag', 'code-snippets')}
-			</label>
-			<select
-				id="snippets-tag-filter"
-				name="tag"
-				value={currentTag}
-				aria-label={__('Filter snippets by tag', 'code-snippets')}
-				onChange={event => setCurrentTag(event.target.value)}
-			>
-				<option value="">{__('All Tags', 'code-snippets')}</option>
-				{[...tagsList].map(tag =>
-					<option key={tag} value={tag}>{tag}</option>)}
-			</select>
-		</div>
-		: null
 }
 
 const NoItemsMessage = () => {
@@ -275,17 +171,11 @@ export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ snippetVie
 	}, [currentStatus, setCurrentStatus, snippetsByStatus])
 
 	const extraTableNav = (which: 'top' | 'bottom') =>
-		<>
-			{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get('all') ?? []} />}
-			<ClearRecentlyActiveButton />
-			{'top' === which && <SearchArea />}
-		</>
+		<SnippetsTableNavigation which={which} visibleSnippets={snippetsByStatus.get('all') ?? []} />
 
 	return (
 		<>
-			<div className="snippets-table-toolbar">
-				<SnippetStatusCounts />
-			</div>
+			<SnippetsTableToolbar />
 
 			<div className="snippets-list-view">
 				<SnippetsView

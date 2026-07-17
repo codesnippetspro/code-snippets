@@ -5,7 +5,7 @@ import { ColumnHeadings } from './ColumnHeadings'
 import { TableRows } from './TableRows'
 import { TableNavigation } from './TableNavigation'
 import type { ColumnHeadingsProps } from './ColumnHeadings'
-import type { Key, ReactNode } from 'react'
+import type { Dispatch, Key, ReactNode, SetStateAction } from 'react'
 
 export interface ListTableColumn<T> {
 	id: Key
@@ -172,6 +172,53 @@ export interface PartialDataListTableProps<T, K extends Key, A extends string> e
 	setSortDirection: (direction: ListTableSortDirection) => void
 }
 
+interface PartialDataListTableContentProps<T, K extends Key> extends ListTableBorderProps, ListTableRowsProps<T, K> {
+	visibleItems: T[]
+	beforeTable?: ReactNode
+	selected: Set<K>
+	sortColumn: ListTableColumn<T> | undefined
+	setSelected: Dispatch<SetStateAction<Set<K>>>
+	sortDirection: ListTableSortDirection
+	setSortColumn: (column: ListTableColumn<T> | undefined) => void
+	setSortDirection: (direction: ListTableSortDirection) => void
+}
+
+const PartialDataListTableContent = <T, K extends Key>({
+	fixed,
+	getKey,
+	columns,
+	striped,
+	className,
+	selected,
+	sortColumn,
+	beforeTable,
+	visibleItems,
+	setSelected,
+	sortDirection,
+	setSortColumn,
+	setSortDirection,
+	...tableRowsProps
+}: PartialDataListTableContentProps<T, K>) =>
+	<>
+		{beforeTable}
+
+		<TableBorder
+			items={visibleItems}
+			fixed={fixed}
+			striped={striped}
+			className={className}
+			{...{ columns, getKey, selected, sortColumn, sortDirection, setSelected, setSortColumn, setSortDirection }}
+		>
+			<TableRows
+				items={visibleItems}
+				selected={selected}
+				setSelected={setSelected}
+				{...{ getKey, columns }}
+				{...tableRowsProps}
+			/>
+		</TableBorder>
+	</>
+
 export const PartialDataListTable = <T, K extends Key, A extends string>({
 	fixed,
 	getKey,
@@ -207,23 +254,11 @@ export const PartialDataListTable = <T, K extends Key, A extends string>({
 			{...{ actions, doAction, extraTableNav, endTableNav, disabled, currentPage, totalPages }}
 			{...{ pageSearchParam, setSelected, setCurrentPage }}
 		>
-			{beforeTable}
-
-			<TableBorder
-				items={visibleItems}
-				fixed={fixed}
-				striped={striped}
-				className={className}
-				{...{ columns, getKey, selected, sortColumn, sortDirection, setSelected, setSortColumn, setSortDirection }}
-			>
-				<TableRows
-					items={visibleItems}
-					selected={selected}
-					setSelected={setSelected}
-					{...{ getKey, columns }}
-					{...tableRowsProps}
-				/>
-			</TableBorder>
+			<PartialDataListTableContent
+				{...{ fixed, getKey, columns, striped, className, selected, sortColumn, beforeTable, visibleItems }}
+				{...{ setSelected, sortDirection, setSortColumn, setSortDirection }}
+				{...tableRowsProps}
+			/>
 		</TableNavigation>
 	)
 }
