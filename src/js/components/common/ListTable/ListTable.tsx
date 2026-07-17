@@ -17,7 +17,6 @@ export interface ListTableColumn<T> {
 	sortedValue?: (item: T) => Key
 	defaultSortDirection?: ListTableSortDirection
 }
-
 export type ListTableSortDirection = 'asc' | 'desc'
 
 export interface ListTableAction<A extends string> {
@@ -45,7 +44,6 @@ export interface ListTablePaginationProps {
 	totalPages?: number
 	pageSearchParam?: string
 }
-
 export interface ListTableBorderProps {
 	fixed?: boolean
 	striped?: boolean
@@ -130,7 +128,6 @@ export interface ListTableProps<T, K extends Key, A extends string> extends List
 	beforeTable?: ReactNode
 	selectAllControl?: boolean
 }
-
 export const ListTable = <T, K extends Key, A extends string = never>({
 	items,
 	getKey,
