@@ -58,7 +58,11 @@ test.describe('Code Snippets List Page Actions', () => {
 
 			await trigger.click()
 			await expect(popover).toBeVisible()
-			await trigger.focus()
+			await popover.getByRole('button').first().focus()
+			await page.keyboard.press('Shift+Tab')
+
+			await expect(trigger).toBeFocused()
+			await expect(popover).toBeVisible()
 			await page.keyboard.press('Shift+Tab')
 
 			await expect(card.getByRole('link', { name: 'Edit' })).toBeFocused()
