@@ -36,13 +36,13 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
-		if (!isOpen || !textareaRef.current) {
+		if (!isOpen || !textareaRef.current || !window.wp.codeEditor) {
 			return undefined
 		}
 
 		const instance = window.wp.codeEditor.initialize(textareaRef.current, {
 			codemirror: {
-				readOnly: true,
+				readOnly: 'nocursor',
 				lineNumbers: true,
 				theme: window.CODE_SNIPPETS_MANAGE?.editorTheme ?? 'default',
 				mode: EDITOR_MODES[type] ?? EDITOR_MODES.php

@@ -19,9 +19,12 @@ export interface CloudSnippetAuthorProps {
 
 export const CloudSnippetAuthor: React.FC<CloudSnippetAuthorProps> = ({ snippet }) =>
 	<p className="cloud-snippet-author">
-		{_x('By ', 'snippet author', 'code-snippets')}
 		<a href={`${window.CODE_SNIPPETS?.urls.cloud}/codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
-			{snippet.codevault}
+			{sprintf(
+				/* translators: %s: cloud library author name. */
+				_x('By %s', 'snippet author', 'code-snippets'),
+				snippet.codevault
+			)}
 		</a>
 	</p>
 
@@ -57,13 +60,13 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, auth
 					: null}
 
 				{snippet.updated
-					? <span className="snippet-card-modified" title={snippet.updated}>
+					? <time className="snippet-card-modified" dateTime={snippet.updated} title={snippet.updated}>
 						{sprintf(
 							/* translators: %s: human-readable time difference, including "ago" suffix. */
 							__('Modified %s', 'code-snippets'),
 							humanTimeDiff(snippet.updated, undefined)
 						)}
-					</span>
+					</time>
 					: null}
 			</div>
 			: null}

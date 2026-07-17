@@ -8,7 +8,10 @@ const SearchBox = () => {
 
 	return (
 		<search aria-label={__('Search Snippets', 'code-snippets')}>
-			<p className="search-box">
+			<form
+				className="search-box"
+				onSubmit={event => event.preventDefault()}
+			>
 				<input
 					type="search"
 					id="snippets_search"
@@ -18,13 +21,10 @@ const SearchBox = () => {
 					onChange={event => setSearchQuery(event.target.value)}
 					placeholder={__('Search snippets', 'code-snippets')}
 				/>
-				<Button
-					className="snippets-search-button"
-					onClick={() => setSearchQuery(searchQuery)}
-				>
+				<Button type="submit">
 					{__('Search', 'code-snippets')}
 				</Button>
-			</p>
+			</form>
 		</search>
 	)
 }

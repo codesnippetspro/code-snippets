@@ -11,7 +11,7 @@ declare global {
 	interface Window {
 		readonly wp: {
 			readonly editor?: WordPressEditor
-			readonly codeEditor: WordPressCodeEditor
+			readonly codeEditor?: WordPressCodeEditor
 		}
 		readonly pagenow: string
 		readonly ajaxurl: string
