@@ -142,24 +142,9 @@ const handlePopoverKeyDown = (
 
 		return
 	}
-
-	if ('Tab' !== event.key) {
-		return
-	}
-
-	if (0 === focusable.length) {
-		event.preventDefault()
-	} else if (event.shiftKey && 0 >= currentIndex) {
-		event.preventDefault()
-		focusable[focusable.length - 1].focus()
-	} else if (!event.shiftKey && (-1 === currentIndex || currentIndex === focusable.length - 1)) {
-		event.preventDefault()
-		focusable[0].focus()
-	}
 }
 
-// Close the open popover on outside clicks or Escape, and trap Tab focus
-// within it while it remains open.
+// Close the open popover on outside clicks, outside focus, or Escape.
 const usePopoverDismissal = ({ isOpen, setIsOpen, closeMenu, containerRef, popoverRef }: PopoverBehaviourOptions) => {
 	useEffect(() => {
 		if (!isOpen) {
@@ -172,14 +157,22 @@ const usePopoverDismissal = ({ isOpen, setIsOpen, closeMenu, containerRef, popov
 			}
 		}
 
+		const handleFocusIn = (event: FocusEvent) => {
+			if (event.target instanceof Node && !containerRef.current?.contains(event.target)) {
+				setIsOpen(false)
+			}
+		}
+
 		const handleKeyDown = (event: KeyboardEvent) =>
 			handlePopoverKeyDown(event, { closeMenu, popoverRef })
 
 		document.addEventListener('mousedown', handlePointerDown)
+		document.addEventListener('focusin', handleFocusIn)
 		document.addEventListener('keydown', handleKeyDown)
 
 		return () => {
 			document.removeEventListener('mousedown', handlePointerDown)
+			document.removeEventListener('focusin', handleFocusIn)
 			document.removeEventListener('keydown', handleKeyDown)
 		}
 	}, [isOpen, setIsOpen, closeMenu, containerRef, popoverRef])

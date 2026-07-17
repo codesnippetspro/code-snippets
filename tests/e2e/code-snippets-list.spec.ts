@@ -39,6 +39,35 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
 	})
 
+	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
+		await page.getByRole('button', { name: 'Card view' }).click()
+
+		try {
+			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: snippetName })
+			const trigger = card.getByRole('button', { name: `Actions for ${snippetName}` })
+			const popover = card.locator('.kebab-menu-popover')
+
+			await expect(card).toBeVisible()
+			await trigger.click()
+			await expect(popover).toBeVisible()
+			await popover.getByRole('button').last().focus()
+			await page.keyboard.press('Tab')
+
+			await expect(page.locator('#bulk-action-selector-bottom')).toBeFocused()
+			await expect(popover).toHaveCount(0)
+
+			await trigger.click()
+			await expect(popover).toBeVisible()
+			await trigger.focus()
+			await page.keyboard.press('Shift+Tab')
+
+			await expect(card.getByRole('link', { name: 'Edit' })).toBeFocused()
+			await expect(popover).toHaveCount(0)
+		} finally {
+			await page.getByRole('button', { name: 'Table view' }).click().catch(() => undefined)
+		}
+	})
+
 	test('Can toggle snippet activation from list page', async ({ page }) => {
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
