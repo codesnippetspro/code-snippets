@@ -29,10 +29,13 @@ test.describe('Code Snippets List Page Actions', () => {
 	test('Filters snippets as the search query changes without a submit control', async ({ page }) => {
 		const search = page.getByRole('search')
 		const searchInput = search.getByRole('searchbox', { name: 'Search Snippets:' })
+		const snippetRow = page.getByRole('row', { name: new RegExp(snippetName) })
 
 		await searchInput.fill(snippetName)
 
-		await expect(page.getByRole('row', { name: new RegExp(snippetName) })).toBeVisible()
+		await expect(snippetRow).toBeVisible()
+		await searchInput.fill(`${snippetName}-does-not-exist`)
+		await expect(snippetRow).toBeHidden()
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
 	})
 
