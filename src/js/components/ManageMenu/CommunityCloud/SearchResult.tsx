@@ -57,13 +57,13 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, auth
 					: null}
 
 				{snippet.updated
-					? <span className="snippet-card-modified" title={snippet.updated}>
+					? <time className="snippet-card-modified" dateTime={snippet.updated} title={snippet.updated}>
 						{sprintf(
 							/* translators: %s: human-readable time difference, including "ago" suffix. */
 							__('Modified %s', 'code-snippets'),
 							humanTimeDiff(snippet.updated, undefined)
 						)}
-					</span>
+					</time>
 					: null}
 			</div>
 			: null}
