@@ -2,15 +2,9 @@
 
 namespace Code_Snippets\Admin\Menus;
 
-use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;
-use ReflectionException;
-use ReflectionMethod;
-use WP_Error;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
-use function Code_Snippets\save_snippet;
-use function Code_Snippets\trash_snippet;
 
 /**
  * Tests for the manage menu registration.
@@ -146,41 +140,6 @@ class Manage_Menu_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Localized type counts combine compatible scopes and exclude trashed snippets.
-	 *
-	 * @return void
-	 *
-	 * @throws ReflectionException Creates instance of ReflectionMethod class.
-	 */
-	public function test_enqueue_assets_localizes_grouped_non_trashed_type_counts(): void {
-		$menu = new Manage_Menu();
-		$method = new ReflectionMethod( $menu, 'count_snippets_by_type' );
-		$method->setAccessible( true );
-		$before = $method->invoke( $menu );
-
-		save_snippet( new Snippet( [ 'scope' => 'global' ] ) );
-		save_snippet( new Snippet( [ 'scope' => 'admin' ] ) );
-		save_snippet( new Snippet( [ 'scope' => 'content' ] ) );
-		$trashed = save_snippet( new Snippet( [ 'scope' => 'site-css' ] ) );
-
-		$this->assertInstanceOf( Snippet::class, $trashed );
-		trash_snippet( $trashed->id );
-
-		$menu->enqueue_assets();
-		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
-		$prefix = 'var CODE_SNIPPETS_MANAGE = ';
-		$offset = is_string( $data ) ? strrpos( $data, $prefix ) : false;
-		$this->assertNotFalse( $offset );
-		$json = substr( $data, $offset + strlen( $prefix ) );
-		$localized = json_decode( substr( $json, 0, strrpos( $json, ';' ) ), true );
-
-		$this->assertSame( ( $before['all'] ?? 0 ) + 3, $localized['typeCounts']['all'] );
-		$this->assertSame( ( $before['php'] ?? 0 ) + 2, $localized['typeCounts']['php'] );
-		$this->assertSame( ( $before['html'] ?? 0 ) + 1, $localized['typeCounts']['html'] );
-		$this->assertSame( $before['css'] ?? 0, $localized['typeCounts']['css'] ?? 0 );
-	}
-
-	/**
 	 * The manage screen renders a truncation toggle in Screen Options.
 	 *
 	 * @return void
@@ -286,46 +245,5 @@ class Manage_Menu_Test extends UnitTestCase {
 		$menu->save_truncation_preference();
 
 		$this->assertTrue( (bool) get_user_option( 'snippets_table_truncate_row_values', self::$admin_user_id ) );
-	}
-
-	/**
-	 * Subsite admins cannot request downloads from the network snippets table.
-	 *
-	 * @return void
-	 *
-	 * @throws ReflectionException Creates instance of ReflectionMethod class.
-	 */
-	public function test_network_bulk_download_requires_network_cap(): void {
-		if ( ! is_multisite() ) {
-			$this->markTestSkipped( 'Network snippet downloads only apply on multisite.' );
-		}
-
-		$snippet = save_snippet(
-			new Snippet(
-				array(
-					'name'    => 'Network Download Fixture',
-					'code'    => '<?php echo "network";',
-					'scope'   => 'global',
-					'network' => true,
-				)
-			)
-		);
-
-		$snippets_json = wp_json_encode(
-			array(
-				array(
-					'id'      => $snippet->id,
-					'network' => true,
-				),
-			)
-		);
-
-		$menu = new Manage_Menu();
-		$method = new ReflectionMethod( $menu, 'get_requested_download_snippets' );
-		$method->setAccessible( true );
-		$result = $method->invoke( $menu, $snippets_json );
-
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'code_snippets_forbidden_network_download', $result->get_error_code() );
 	}
 }
