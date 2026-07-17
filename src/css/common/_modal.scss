@@ -65,4 +65,13 @@
 	.components-modal__content {
 		overflow: auto;
 	}
+
+	// Shown when the code editor is unavailable (syntax highlighting preference
+	// off): the raw read-only textarea is the functional fallback.
+	textarea {
+		inline-size: 100%;
+		min-block-size: 360px;
+		resize: none;
+		font-family: monospace;
+	}
 }
