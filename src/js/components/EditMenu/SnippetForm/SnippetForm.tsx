@@ -149,6 +149,21 @@ const useReloadOnPopState = (isDirty: boolean) => {
 	})
 
 	useEffect(() => {
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			event.preventDefault()
+			// Required by Chrome and Edge versions before 119.
+			// eslint-disable-next-line @typescript-eslint/no-deprecated
+			event.returnValue = true
+		}
+
+		if (isDirty) {
+			window.addEventListener('beforeunload', handleBeforeUnload)
+		}
+
+		return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+	}, [isDirty])
+
+	useEffect(() => {
 		const handlePopState = () => {
 			if (isDirty && !window.confirm(
 				__('You have unsaved changes. Leave this page and discard them?', 'code-snippets')

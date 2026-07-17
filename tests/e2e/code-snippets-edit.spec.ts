@@ -96,16 +96,19 @@ test.describe('Code Snippets Admin', () => {
 		const editedName = `${snippetName} edited`
 		await page.locator('#title').fill(editedName)
 		page.once('dialog', async dialog => {
-			expect(dialog.message()).toContain('unsaved changes')
+			expect(dialog.type()).toBe('beforeunload')
 			await dialog.dismiss()
 		})
-		await page.goBack()
+		await page.evaluate(() => window.history.back())
 
 		await expect(page).toHaveURL(/page=edit-snippet/)
 		await expect(page.locator('#title')).toHaveValue(editedName)
 
-		page.once('dialog', dialog => dialog.accept())
-		await page.goBack()
+		page.once('dialog', async dialog => {
+			expect(dialog.type()).toBe('beforeunload')
+			await dialog.accept()
+		})
+		await page.evaluate(() => window.history.back())
 		await expect(page).toHaveURL(/page=snippets/)
 
 		await helper.cleanupSnippet(snippetName)
