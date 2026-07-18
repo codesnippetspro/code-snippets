@@ -3,6 +3,7 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\Utils\Code_Highlighter;
 use Code_Snippets\UnitTestCase;
 use ReflectionException;
 use ReflectionMethod;
@@ -271,5 +272,21 @@ class Manage_Menu_Test extends UnitTestCase {
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'code_snippets_forbidden_network_download', $result->get_error_code() );
+	}
+
+	/**
+	 * The manage page no longer loads the Prism assets: CodeMirror renders the
+	 * preview modal, and Prism remains registered for the front-end shortcode.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_does_not_enqueue_prism(): void {
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+
+		$this->assertTrue( wp_style_is( Manage_Menu::CSS_HANDLE ) );
+		$this->assertTrue( wp_script_is( Manage_Menu::JS_HANDLE ) );
+		$this->assertFalse( wp_style_is( Code_Highlighter::PRISM_HANDLE ) );
+		$this->assertFalse( wp_script_is( Code_Highlighter::PRISM_HANDLE ) );
 	}
 }

@@ -49,6 +49,14 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			}
 		})
 
+		// CodeMirror hides the labelled source textarea and creates an unlabelled
+		// internal input. The screenReaderLabel option only exists from CodeMirror
+		// 5.59, while WordPress 5.5 ships 5.29, so label the input directly.
+		instance.codemirror.getInputField().setAttribute(
+			'aria-label',
+			__('Snippet code preview', 'code-snippets')
+		)
+
 		return () => {
 			(instance.codemirror as EditorFromTextArea).toTextArea()
 		}
@@ -59,8 +67,13 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			className="code-snippets-preview-modal"
 			onRequestClose={() => setIsOpen(false)}
 			title={title}
-			headerActions={<Badge name={type} />}
 		>
+			{/* The minimum-supported WordPress Modal (5.5–6.3) has no headerActions
+			  * prop, so the badge renders in the content and CSS moves it into the
+			  * header area. */}
+			<div className="code-snippets-preview-modal__badge">
+				<Badge name={type} />
+			</div>
 			<textarea
 				ref={textareaRef}
 				readOnly

@@ -65,6 +65,11 @@ test.describe('Code Snippets Preview Modal', () => {
 			await expect(codeArea).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 			await expect(codeArea).toHaveValue(new RegExp(snippetName))
 
+			// The type badge renders in the modal content (the minimum-supported
+			// WordPress Modal has no headerActions prop).
+			await expect(preview.locator('.code-snippets-preview-modal__badge .badge'))
+				.toBeVisible()
+
 			expect(pageErrors).toEqual([])
 		})
 
@@ -85,9 +90,18 @@ test.describe('Code Snippets Preview Modal', () => {
 
 		const preview = page.locator('.code-snippets-preview-modal')
 		const editor = preview.locator('.CodeMirror')
-		const codeArea = preview.getByLabel('Snippet code preview')
+
+		// The source textarea always precedes CodeMirror's injected wrapper in
+		// DOM order; CodeMirror's live input (labelled below) would also match
+		// a getByLabel lookup.
+		const codeArea = preview.locator('textarea').first()
 		const initialValue = await codeArea.inputValue()
 		await expect(editor).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+
+		// CodeMirror hides the labelled source textarea and focuses its own
+		// internal input; that input must carry its own accessible name.
+		await expect(editor.locator('[aria-label="Snippet code preview"]').first())
+			.toBeAttached()
 
 		for (let attempt = 0; attempt < MAXIMUM_FOCUS_ATTEMPTS; attempt++) {
 			if (await editor.evaluate(element => element.classList.contains('CodeMirror-focused'))) {

@@ -6,7 +6,6 @@ use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Migration\Export\Download_Code;
 use Code_Snippets\Model\Snippet;
-use Code_Snippets\Utils\Code_Highlighter;
 use WP_Error;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
@@ -230,8 +229,6 @@ class Manage_Menu extends Admin_Menu {
 			PLUGIN_VERSION,
 			[ 'in_footer' => true ]
 		);
-
-		Code_Highlighter::enqueue_all_prism_themes();
 
 		enqueue_code_preview_editor( 'php' );
 

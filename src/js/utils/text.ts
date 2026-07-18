@@ -24,7 +24,20 @@ export const truncateWords = (text: string, wordCount: number): string => {
 		: text
 }
 
+// Tags implying a visual break become whitespace so `<p>A</p><p>B</p>`
+// yields 'A B' rather than 'AB'; inline tags are removed without separators.
+const BLOCK_TAGS = [
+	'address', 'article', 'aside', 'blockquote', 'br', 'dd', 'div', 'dl', 'dt', 'fieldset',
+	'figcaption', 'figure', 'footer', 'form', 'h[1-6]', 'header', 'hr', 'li', 'main', 'nav',
+	'ol', 'p', 'pre', 'section', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul'
+]
+
+const BLOCK_TAG_PATTERN = new RegExp(`</?(?:${BLOCK_TAGS.join('|')})\\b[^>]*>`, 'gi')
+
 export const stripTags = (text: string): string =>
 	text
 		.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '')
+		.replace(BLOCK_TAG_PATTERN, ' ')
 		.replace(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi, '')
+		.replace(/\s+/g, ' ')
+		.trim()
