@@ -54,6 +54,18 @@ test.describe('stripTags', () => {
 
 	test('strips comments and PHP blocks', () => {
 		expect(stripTags('A<!-- hidden --><?php evil(); ?>B')).toBe('AB')
+		expect(stripTags('<!--a--><!--b-->C<??><?PHP d?>')).toBe('C')
+		expect(stripTags('A<!-- unterminated')).toBe('A<!-- unterminated')
+		expect(stripTags('B<?php unterminated')).toBe('B<?php unterminated')
+	})
+
+	test('scales linearly on repeated unmatched comment and PHP openers', () => {
+		for (const opener of ['<!--x', '<?php x']) {
+			const input = opener.repeat(16000)
+			const started = performance.now()
+			expect(stripTags(input)).toBe(input)
+			expect(performance.now() - started).toBeLessThan(2000)
+		}
 	})
 
 	test('normalises whitespace', () => {

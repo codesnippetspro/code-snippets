@@ -97,6 +97,43 @@ const buildOpenQuoteMemo = (text: string, from: number): boolean[] => {
 	return memo
 }
 
+// Comment and PHP removal is a manual scan for the same reason: the regex
+// alternation rescanned to end of input at every unmatched `<!--` or `<?`
+// opener, going quadratic on repeated unmatched openers. The lastIndexOf
+// guards make unmatched openers constant-time, and closer searches for
+// matched spans cover disjoint ranges, so the scan is linear.
+const stripCommentsAndPhp = (text: string): string => {
+	const lastCommentClose = text.lastIndexOf('-->')
+	const lastPhpClose = text.lastIndexOf('?>')
+	let result = ''
+	let copied = 0
+	let position = text.indexOf('<')
+
+	while (-1 !== position) {
+		let close = -1
+		let closeLength = 0
+
+		if (text.startsWith('<!--', position)) {
+			close = lastCommentClose >= position + '<!--'.length ? text.indexOf('-->', position + '<!--'.length) : -1
+			closeLength = '-->'.length
+		} else if (text.startsWith('<?', position)) {
+			close = lastPhpClose >= position + '<?'.length ? text.indexOf('?>', position + '<?'.length) : -1
+			closeLength = '?>'.length
+		}
+
+		if (-1 === close) {
+			position = text.indexOf('<', position + 1)
+			continue
+		}
+
+		result += text.slice(copied, position)
+		copied = close + closeLength
+		position = text.indexOf('<', copied)
+	}
+
+	return 0 === copied ? text : result + text.slice(copied)
+}
+
 // One stripping pass. Quote-aware passes remove well-formed tags, ending at
 // the first `>` outside quoted attribute values. Fallback passes then remove
 // malformed remnants that never satisfy the quote-aware parse, stripping to
@@ -154,7 +191,7 @@ const stripTagsPass = (text: string, tagNames: Set<string> | undefined, replacem
 }
 
 export const stripTags = (text: string): string => {
-	const withoutComments = text.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '')
+	const withoutComments = stripCommentsAndPhp(text)
 	const withoutTags = stripTagsPass(stripTagsPass(withoutComments, BLOCK_TAG_NAMES, ' ', true), undefined, '', true)
 	const withoutRemnants = stripTagsPass(stripTagsPass(withoutTags, BLOCK_TAG_NAMES, ' ', false), undefined, '', false)
 
