@@ -18,9 +18,6 @@ import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
 import type { ReactNode } from 'react'
 import type { Snippet } from '../../types/Snippet'
 
-// Slotted actions render inside the footer group; the function form receives
-// the modal's shared working state so injected buttons lock together with the
-// built-in actions instead of racing them.
 export interface PreviewWorkingState {
 	isWorking: boolean
 	beginWorking: () => boolean
@@ -41,7 +38,6 @@ export interface SnippetPreviewModalProps {
 	extraActions?: PreviewExtraActions
 }
 
-// Mirrors the type-to-mode mapping used by the live editor in SnippetTypeInput.
 const EDITOR_MODES: Record<string, string> = {
 	css: 'text/css',
 	js: 'javascript',
