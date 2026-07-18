@@ -32,12 +32,18 @@ const BLOCK_TAGS = [
 	'ol', 'p', 'pre', 'section', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul'
 ]
 
-const BLOCK_TAG_PATTERN = new RegExp(`</?(?:${BLOCK_TAGS.join('|')})\\b[^>]*>`, 'gi')
+// Quote-aware attribute matcher so `>` inside quoted attribute values does
+// not end the tag early, e.g. `<p title="1 > 0">`.
+const TAG_ATTRIBUTES = '(?:[^>"\']|"[^"]*"|\'[^\']*\')*'
+
+const BLOCK_TAG_PATTERN = new RegExp(`</?(?:${BLOCK_TAGS.join('|')})\\b${TAG_ATTRIBUTES}>`, 'gi')
+
+const GENERIC_TAG_PATTERN = new RegExp(`</?[a-z][a-z0-9]*\\b${TAG_ATTRIBUTES}>`, 'gi')
 
 export const stripTags = (text: string): string =>
 	text
 		.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '')
 		.replace(BLOCK_TAG_PATTERN, ' ')
-		.replace(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi, '')
+		.replace(GENERIC_TAG_PATTERN, '')
 		.replace(/\s+/g, ' ')
 		.trim()

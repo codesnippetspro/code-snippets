@@ -10,6 +10,11 @@ test.describe('stripTags', () => {
 		expect(stripTags('<ul><li>One</li><li>Two</li></ul>')).toBe('One Two')
 	})
 
+	test('handles ">" inside quoted attribute values', () => {
+		expect(stripTags('<p title="1 > 0">First</p><p>Second</p>')).toBe('First Second')
+		expect(stripTags("<span title='a > b'>inline</span>")).toBe('inline')
+	})
+
 	test('removes inline tags without adding separators', () => {
 		expect(stripTags('Co<strong>de</strong> <em>snippets</em>')).toBe('Code snippets')
 		expect(stripTags('<a href="https://example.com">link</a>')).toBe('link')
