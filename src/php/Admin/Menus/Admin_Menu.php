@@ -129,6 +129,16 @@ abstract class Admin_Menu {
 	}
 
 	/**
+	 * Retrieve every WordPress hookname registered by this menu, including any
+	 * additional pages it registers beyond its primary slug.
+	 *
+	 * @return string[]
+	 */
+	public function get_hooknames(): array {
+		return [ $this->get_hookname() ];
+	}
+
+	/**
 	 * Render the navigation bar at the top of the admin page.
 	 */
 	protected function render_navigation() {
