@@ -31,6 +31,20 @@ test.describe('stripTags', () => {
 	test('strips unterminated-quote tag remnant at end of input', () => {
 		expect(stripTags('Visible <p title="broken')).toBe('Visible')
 		expect(stripTags("Visible <span data-x='broken")).toBe('Visible')
+		expect(stripTags('keep <x till <p title="broken')).toBe('keep <x till')
+		expect(stripTags('a <x"m<z"')).toBe('a <x"m')
+		expect(stripTags('a <x "q" ok')).toBe('a <x "q" ok')
+	})
+
+	test('strips block remnants before generic remnants', () => {
+		expect(stripTags('<span <div x> y')).toBe('<span y')
+	})
+
+	test('scales linearly on repeated comparison text', () => {
+		const input = 'if (a<b && c<d) run(); '.repeat(16000)
+		const started = performance.now()
+		expect(stripTags(input)).toBe(input.trim())
+		expect(performance.now() - started).toBeLessThan(2000)
 	})
 
 	test('removes inline tags without adding separators', () => {
