@@ -240,7 +240,7 @@ export const stripTags = (text: string): string => {
 	const withoutTags = stripTagsPass(stripTagsPass(withoutComments, BLOCK_TAG_NAMES, ' ', true), undefined, '', true)
 	const withoutRemnants = stripTagsPass(stripTagsPass(withoutTags, BLOCK_TAG_NAMES, ' ', false), undefined, '', false)
 
-	// Decoding after stripping turns entities such as `&lt;` into literal text
-	// characters; the result is a plain-text value, never parsed as markup.
+	// Callers must render the returned value as text: decoded entities such as
+	// `&lt;` can contain literal markup characters.
 	return decodeEntities(withoutRemnants).replace(/\s+/g, ' ').trim()
 }
