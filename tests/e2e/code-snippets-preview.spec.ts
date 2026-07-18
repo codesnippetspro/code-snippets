@@ -39,31 +39,34 @@ test.describe('Code Snippets Preview Modal', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
-	test('Preview falls back to a readable textarea when the code editor is unavailable', async ({ page }) => {
-		const pageErrors: string[] = []
-		page.on('pageerror', error => pageErrors.push(error.message))
+	test('Preview falls back to a readable textarea when the code editor is unavailable',
+		async ({ page }) => {
+			const pageErrors: string[] = []
+			page.on('pageerror', error => pageErrors.push(error.message))
 
-		await wpCli(['eval', "update_option( 'code_snippets_snippet_view', 'table' );"])
-		await helper.navigateToSnippetsAdmin()
-		await helper.filterSnippetsByName(snippetName)
+			await wpCli(['eval', "update_option( 'code_snippets_snippet_view', 'table' );"])
+			await helper.navigateToSnippetsAdmin()
+			await helper.filterSnippetsByName(snippetName)
 
-		const row = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
-		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+			const row = page
+				.locator(
+					`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`
+				)
+				.first()
+			await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		await row.hover()
-		await row.locator(SELECTORS.PREVIEW_ACTION).first().click()
+			await row.hover()
+			await row.locator(SELECTORS.PREVIEW_ACTION).first().click()
 
-		const preview = page.locator('.code-snippets-preview-modal')
-		await expect(preview).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+			const preview = page.locator('.code-snippets-preview-modal')
+			await expect(preview).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		const codeArea = preview.getByLabel('Snippet code preview')
-		await expect(codeArea).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-		await expect(codeArea).toHaveValue(new RegExp(snippetName))
+			const codeArea = preview.getByLabel('Snippet code preview')
+			await expect(codeArea).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+			await expect(codeArea).toHaveValue(new RegExp(snippetName))
 
-		expect(pageErrors).toEqual([])
-	})
+			expect(pageErrors).toEqual([])
+		})
 
 	test('Preview code can be selected with the keyboard without being changed', async ({ page }) => {
 		await setSyntaxHighlighting(true)
@@ -71,7 +74,9 @@ test.describe('Code Snippets Preview Modal', () => {
 		await helper.filterSnippetsByName(snippetName)
 
 		const row = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(
+				`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`
+			)
 			.first()
 		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
