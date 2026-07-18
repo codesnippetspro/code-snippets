@@ -60,12 +60,6 @@ test.describe('stripTags', () => {
 	})
 
 	test('scales linearly on repeated unmatched comment and PHP openers', () => {
-		// Growth-ratio check: time the same workload at 4x the input size and
-		// bound the growth. A linear scan grows ~4x; the previous regex
-		// alternation rescanned to end of input at every unmatched opener,
-		// growing ~16x and failing this bound. The best-of-three timing and
-		// the absolute floor absorb timer noise on near-instant runs without
-		// letting quadratic growth back under an absolute threshold.
 		const timeStrip = (opener: string, repeats: number): number => {
 			const input = opener.repeat(repeats)
 			let best = Infinity
