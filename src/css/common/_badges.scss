@@ -89,10 +89,12 @@
 	}
 }
 
+// #646970 (WP gray-50) keeps white badge text at 5.5:1 so locked/unlicensed
+// states stay WCAG AA without hover; #a7aaad was 2.3:1.
 .nav-tab-inactive .badge,
 .inverted-badges .badge {
 	color: #fff;
-	background-color: #a7aaad;
+	background-color: #646970;
 	border-color: #fff !important;
 
 	.dashicons {

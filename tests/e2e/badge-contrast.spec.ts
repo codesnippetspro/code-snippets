@@ -8,6 +8,7 @@ import { expect, test } from '@playwright/test'
 
 const SNIPPET_TYPES = ['php', 'html', 'css', 'js', 'cond']
 const AA_NORMAL_TEXT = 4.5
+const AA_GRAPHICAL = 3
 const DEFAULT_TEXT_COLOR = '#fff'
 
 const themeScss = readFileSync(
@@ -58,4 +59,36 @@ test.describe('badge contrast', () => {
 			expect(contrastRatio(background, text)).toBeGreaterThanOrEqual(AA_NORMAL_TEXT)
 		})
 	}
+})
+
+// The unlicensed snippet type picker renders through the `.inverted-badges
+// .badge` override in _badges.scss rather than the theme palette, so read
+// that consumer rule directly — this test must fail if the override regresses
+// even while every $badges entry passes.
+test.describe('locked-state badge contrast', () => {
+	const badgesScss = readFileSync(
+		join(__dirname, '..', '..', 'src', 'css', 'common', '_badges.scss'),
+		'utf8'
+	)
+
+	const lockedRule =
+		/\.inverted-badges \.badge \{\s*color:\s*(?<text>#[0-9a-fA-F]{3,8});\s*background-color:\s*(?<background>#[0-9a-fA-F]{3,8});/
+			.exec(badgesScss)?.groups
+
+	const lockedIcon = /\.inverted-badges \.badge \{[\s\S]*?\.dashicons \{\s*color:\s*(?<icon>#[0-9a-fA-F]{3,8});/
+		.exec(badgesScss)?.groups
+
+	test('locked badge text meets WCAG AA for normal text', () => {
+		if (!lockedRule) {
+			throw new Error('could not resolve .inverted-badges .badge colors in _badges.scss')
+		}
+		expect(contrastRatio(lockedRule.background, lockedRule.text)).toBeGreaterThanOrEqual(AA_NORMAL_TEXT)
+	})
+
+	test('locked badge icon meets WCAG AA for graphical objects', () => {
+		if (!lockedRule || !lockedIcon) {
+			throw new Error('could not resolve .inverted-badges .badge dashicons color in _badges.scss')
+		}
+		expect(contrastRatio(lockedRule.background, lockedIcon.icon)).toBeGreaterThanOrEqual(AA_GRAPHICAL)
+	})
 })
