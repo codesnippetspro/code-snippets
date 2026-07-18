@@ -12,7 +12,7 @@ use WP_UnitTest_Factory;
  * Tests for the interface preferences REST API endpoint.
  *
  * Verifies that the snippet view preference (cards or table) defaults to
- * cards, persists through the plugin-wide option, rejects invalid values,
+ * the table, persists through the plugin-wide option, rejects invalid values,
  * and is only writable by users with snippet capabilities.
  *
  * @group rest-api
@@ -83,29 +83,29 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	}
 
 	/**
-	 * With no saved preference, the snippet view defaults to cards.
+	 * With no saved preference, the snippet view defaults to the table.
 	 */
-	public function test_snippet_view_defaults_to_card() {
+	public function test_snippet_view_defaults_to_table() {
 		$response = $this->dispatch( 'GET' );
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertSame( [ 'view' => 'card' ], $response->get_data() );
+		$this->assertSame( [ 'view' => 'table' ], $response->get_data() );
 	}
 
 	/**
 	 * Updating the preference persists it for subsequent reads.
 	 */
 	public function test_snippet_view_update_persists() {
-		$response = $this->dispatch( 'POST', [ 'view' => 'table' ] );
+		$response = $this->dispatch( 'POST', [ 'view' => 'card' ] );
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertSame( [ 'view' => 'table' ], $response->get_data() );
-		$this->assertSame( 'table', get_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION ) );
+		$this->assertSame( [ 'view' => 'card' ], $response->get_data() );
+		$this->assertSame( 'card', get_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION ) );
 
 		$response = $this->dispatch( 'GET' );
-		$this->assertSame( [ 'view' => 'table' ], $response->get_data() );
+		$this->assertSame( [ 'view' => 'card' ], $response->get_data() );
 
-		$this->assertSame( 'table', Preferences_REST_Controller::get_snippet_view() );
+		$this->assertSame( 'card', Preferences_REST_Controller::get_snippet_view() );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	public function test_invalid_stored_option_falls_back_to_default() {
 		update_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION, 'nonsense' );
 
-		$this->assertSame( 'card', Preferences_REST_Controller::get_snippet_view() );
+		$this->assertSame( 'table', Preferences_REST_Controller::get_snippet_view() );
 	}
 
 	/**
