@@ -22,6 +22,17 @@ test.describe('stripTags', () => {
 		expect(stripTags('<span data-x="broken>inline</span> text')).toBe('inline text')
 	})
 
+	test('preserves plain comparison text at end of input', () => {
+		expect(stripTags('x<y')).toBe('x<y')
+		expect(stripTags('x<y and z')).toBe('x<y and z')
+		expect(stripTags('x<p')).toBe('x<p')
+	})
+
+	test('strips unterminated-quote tag remnant at end of input', () => {
+		expect(stripTags('Visible <p title="broken')).toBe('Visible')
+		expect(stripTags("Visible <span data-x='broken")).toBe('Visible')
+	})
+
 	test('removes inline tags without adding separators', () => {
 		expect(stripTags('Co<strong>de</strong> <em>snippets</em>')).toBe('Code snippets')
 		expect(stripTags('<a href="https://example.com">link</a>')).toBe('link')
