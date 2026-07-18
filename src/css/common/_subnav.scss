@@ -150,3 +150,8 @@
 	background: #dbebf7;
 	color: #2271b1;
 }
+
+.notice + .wrap .snippet-type-nav {
+	margin-block-start: 20px;
+	border-block-start: 1px solid #c3c4c7;
+}
