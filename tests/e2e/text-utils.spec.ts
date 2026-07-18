@@ -15,6 +15,13 @@ test.describe('stripTags', () => {
 		expect(stripTags("<span title='a > b'>inline</span>")).toBe('inline')
 	})
 
+	test('handles malformed tags with unbalanced quotes', () => {
+		expect(stripTags('<p title="unterminated>Visible</p>')).toBe('Visible')
+		expect(stripTags("<p title='unterminated>Visible</p>")).toBe('Visible')
+		expect(stripTags('<div class="a>One</div><p>Two</p>')).toBe('One Two')
+		expect(stripTags('<span data-x="broken>inline</span> text')).toBe('inline text')
+	})
+
 	test('removes inline tags without adding separators', () => {
 		expect(stripTags('Co<strong>de</strong> <em>snippets</em>')).toBe('Code snippets')
 		expect(stripTags('<a href="https://example.com">link</a>')).toBe('link')

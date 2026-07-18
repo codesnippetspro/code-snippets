@@ -40,10 +40,19 @@ const BLOCK_TAG_PATTERN = new RegExp(`</?(?:${BLOCK_TAGS.join('|')})\\b${TAG_ATT
 
 const GENERIC_TAG_PATTERN = new RegExp(`</?[a-z][a-z0-9]*\\b${TAG_ATTRIBUTES}>`, 'gi')
 
+// Malformed tags with unbalanced quotes never satisfy the quote-aware
+// patterns above, e.g. `<p title="unterminated>`, so anything still looking
+// like a tag afterwards is stripped up to the nearest `>` (or end of input).
+const BLOCK_TAG_FALLBACK_PATTERN = new RegExp(`</?(?:${BLOCK_TAGS.join('|')})\\b[^>]*(?:>|$)`, 'gi')
+
+const GENERIC_TAG_FALLBACK_PATTERN = /<\/?[a-z][a-z0-9]*\b[^>]*(?:>|$)/gi
+
 export const stripTags = (text: string): string =>
 	text
 		.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '')
 		.replace(BLOCK_TAG_PATTERN, ' ')
 		.replace(GENERIC_TAG_PATTERN, '')
+		.replace(BLOCK_TAG_FALLBACK_PATTERN, ' ')
+		.replace(GENERIC_TAG_FALLBACK_PATTERN, '')
 		.replace(/\s+/g, ' ')
 		.trim()
