@@ -151,6 +151,28 @@ class Notice_Filter_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Filtering removes foreign invokable-object callbacks.
+	 *
+	 * @return void
+	 */
+	public function test_filtering_removes_foreign_invokable_object(): void {
+		$foreign_invokable = new class() {
+			/**
+			 * Emit a foreign notice.
+			 */
+			public function __invoke() {
+				echo 'foreign notice';
+			}
+		};
+
+		add_action( 'admin_notices', $foreign_invokable );
+
+		$this->notice_filter->filter_foreign_notices();
+
+		$this->assertFalse( has_action( 'admin_notices', $foreign_invokable ) );
+	}
+
+	/**
 	 * The compact-mode Tools submenu hookname activates notice filtering.
 	 *
 	 * @return void

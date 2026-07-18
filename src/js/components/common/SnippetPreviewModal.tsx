@@ -2,13 +2,13 @@ import React, { useEffect, useRef } from 'react'
 import { Modal } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { Badge } from './Badge'
-import type { BadgeName } from './Badge'
 import type { EditorFromTextArea } from 'codemirror'
+import type { SnippetType } from '../../types/Snippet'
 
 export interface SnippetPreviewModalProps {
 	title: string
 	code: string
-	type: string
+	type: SnippetType
 	isOpen: boolean
 	setIsOpen: (isOpen: boolean) => void
 }
@@ -59,7 +59,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			className="code-snippets-preview-modal"
 			onRequestClose={() => setIsOpen(false)}
 			title={title}
-			headerActions={<Badge name={type as BadgeName} />}
+			headerActions={<Badge name={type} />}
 		>
 			<textarea
 				ref={textareaRef}
