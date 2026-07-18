@@ -190,10 +190,57 @@ const stripTagsPass = (text: string, tagNames: Set<string> | undefined, replacem
 	return 0 === copied ? text : result + text.slice(copied)
 }
 
+const NAMED_ENTITIES: Record<string, string> = {
+	amp: '&',
+	apos: "'",
+	copy: '©',
+	gt: '>',
+	hellip: '…',
+	laquo: '«',
+	ldquo: '“',
+	lsquo: '‘',
+	lt: '<',
+	mdash: '—',
+	nbsp: '\u00a0',
+	ndash: '–',
+	quot: '"',
+	raquo: '»',
+	rdquo: '”',
+	reg: '®',
+	rsquo: '’',
+	trade: '™'
+}
+
+const DECIMAL_RADIX = 10
+const HEX_RADIX = 16
+const MAX_CODE_POINT = 0x10ffff
+const SURROGATE_RANGE_START = 0xd800
+const SURROGATE_RANGE_END = 0xdfff
+
+// A single left-to-right pass never rescans replacement output, so
+// double-encoded input such as `&amp;lt;` decodes to `&lt;` and not `<`.
+export const decodeEntities = (text: string): string =>
+	text.replace(
+		/&(?:#(?<decimal>\d{1,7})|#x(?<hex>[\da-f]{1,6})|(?<named>[a-z]+));/gi,
+		(match, decimal: string | undefined, hex: string | undefined, named: string | undefined) => {
+			if (undefined !== named) {
+				return NAMED_ENTITIES[named.toLowerCase()] ?? match
+			}
+
+			const code = parseInt(decimal ?? hex ?? '', undefined === decimal ? HEX_RADIX : DECIMAL_RADIX)
+
+			return 0 < code && MAX_CODE_POINT >= code && (SURROGATE_RANGE_START > code || SURROGATE_RANGE_END < code)
+				? String.fromCodePoint(code)
+				: match
+		}
+	)
+
 export const stripTags = (text: string): string => {
 	const withoutComments = stripCommentsAndPhp(text)
 	const withoutTags = stripTagsPass(stripTagsPass(withoutComments, BLOCK_TAG_NAMES, ' ', true), undefined, '', true)
 	const withoutRemnants = stripTagsPass(stripTagsPass(withoutTags, BLOCK_TAG_NAMES, ' ', false), undefined, '', false)
 
-	return withoutRemnants.replace(/\s+/g, ' ').trim()
+	// Decoding after stripping turns entities such as `&lt;` into literal text
+	// characters; the result is a plain-text value, never parsed as markup.
+	return decodeEntities(withoutRemnants).replace(/\s+/g, ' ').trim()
 }

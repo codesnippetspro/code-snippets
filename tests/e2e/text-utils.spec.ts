@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { stripTags } from '../../src/js/utils/text'
+import { decodeEntities, stripTags } from '../../src/js/utils/text'
 
 // Pure unit coverage for the text utilities used to render remote cloud
 // descriptions; runs in the Playwright runner without a browser page.
@@ -84,5 +84,37 @@ test.describe('stripTags', () => {
 	test('normalises whitespace', () => {
 		expect(stripTags('  <div> spaced\n\nout </div> ')).toBe('spaced out')
 		expect(stripTags('plain text')).toBe('plain text')
+	})
+
+	test('decodes HTML entities after stripping tags', () => {
+		expect(stripTags('<p>A &amp; B</p>')).toBe('A & B')
+		expect(stripTags('Fish&nbsp;&amp;&nbsp;chips')).toBe('Fish & chips')
+		expect(stripTags('It&#039;s &quot;quoted&quot;')).toBe('It\'s "quoted"')
+		expect(stripTags('one&hellip; <b>two</b>')).toBe('one… two')
+	})
+
+	test('decoded entities stay literal text, not markup', () => {
+		expect(stripTags('&lt;script&gt;alert(1)&lt;/script&gt;')).toBe('<script>alert(1)</script>')
+		expect(stripTags('<p>&lt;b&gt;not bold&lt;/b&gt;</p>')).toBe('<b>not bold</b>')
+	})
+})
+
+test.describe('decodeEntities', () => {
+	test('decodes named, decimal, and hexadecimal entities', () => {
+		expect(decodeEntities('A &amp; B')).toBe('A & B')
+		expect(decodeEntities('&#65;&#x42;&#X43;')).toBe('ABC')
+		expect(decodeEntities('&copy; &trade; &rsquo;')).toBe('© ™ ’')
+	})
+
+	test('does not double-decode', () => {
+		expect(decodeEntities('&amp;lt;')).toBe('&lt;')
+		expect(decodeEntities('&amp;amp;')).toBe('&amp;')
+	})
+
+	test('leaves unknown and malformed sequences untouched', () => {
+		expect(decodeEntities('&unknownentity;')).toBe('&unknownentity;')
+		expect(decodeEntities('a && b')).toBe('a && b')
+		expect(decodeEntities('&amp')).toBe('&amp')
+		expect(decodeEntities('&#0;&#x110000;&#xd800;')).toBe('&#0;&#x110000;&#xd800;')
 	})
 })
