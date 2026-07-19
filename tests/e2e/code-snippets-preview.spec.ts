@@ -53,6 +53,17 @@ test.describe('Code Snippets Preview Modal', () => {
 
 		await expect(editor).toHaveClass(/CodeMirror-focused/)
 	}
+	// The CodeMirror input differs by inputStyle ('textarea' or 'contenteditable'
+	// depending on the WordPress version), so read the document and selection
+	// through the editor instance instead of locating the input element.
+	const readPreviewEditor = (editor: Locator, method: 'getSelection' | 'getValue'): Promise<string> =>
+		editor.evaluate((element, editorMethod) => {
+			const codeMirror = (<HTMLElement & {
+				CodeMirror?: Partial<Record<'getSelection' | 'getValue', () => string>>
+			}>element).CodeMirror
+
+			return codeMirror?.[editorMethod]?.() ?? ''
+		}, method)
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
@@ -104,20 +115,13 @@ test.describe('Code Snippets Preview Modal', () => {
 
 	test('Preview code can be selected with the keyboard without being changed', async ({ page }) => {
 		const editor = await openPreviewEditor(page)
-		const preview = page.locator('.code-snippets-preview-modal')
-		const codeArea = preview.locator('textarea[aria-label="Snippet code preview"]')
-		const initialValue = await codeArea.inputValue()
+		const initialValue = await readPreviewEditor(editor, 'getValue')
+		expect(initialValue).not.toBe('')
 		await focusPreviewEditor(page, editor)
 		await page.keyboard.press('Shift+ArrowRight')
 
-		await expect.poll(() => editor.evaluate(element => {
-			const codeMirror = (<HTMLElement & {
-				CodeMirror?: { getSelection?: () => string }
-			}>element).CodeMirror
-
-			return codeMirror?.getSelection?.() ?? ''
-		})).not.toBe('')
-		await expect(codeArea).toHaveValue(initialValue)
+		await expect.poll(() => readPreviewEditor(editor, 'getSelection')).not.toBe('')
+		await expect.poll(() => readPreviewEditor(editor, 'getValue')).toBe(initialValue)
 	})
 
 	test('Preview editor exposes its accessible label', async ({ page }) => {
