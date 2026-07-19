@@ -266,11 +266,13 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * The value defaults to the user's local snippets-per-page preference but can
 	 * be overridden independently via the `code_snippets/cloud_search/per_page` filter.
+	 * The result is clamped to the REST API's per_page maximum of 100.
 	 *
 	 * @return int
 	 */
 	public static function get_cloud_search_per_page(): int {
-		return intval( apply_filters( 'code_snippets/cloud_search/per_page', self::get_snippets_per_page() ) );
+		$per_page = intval( apply_filters( 'code_snippets/cloud_search/per_page', self::get_snippets_per_page() ) );
+		return min( 100, max( 1, $per_page ) );
 	}
 
 	/**
