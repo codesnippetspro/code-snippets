@@ -19,11 +19,13 @@ $control-radius: 5px;
 
 /* format: background-color [color] */
 $badges: (
-	php: #3288bd,
-	html: #d7754e,
+	// php/html/cond darkened for WCAG AA — at least 4.5:1 against white 12px
+	// bold text; php reuses $accent, html/cond keep hue at reduced lightness.
+	php: $accent,
+	html: #cd4510,
 	css: #9b59b6,
 	js: #f7d67a #1c1f20,
-	cond: #67a5ad,
+	cond: #22826f,
 	core: #61c5cb,
 	pro: #f7e8e3 #df9279,
 	cloud: $cloud,

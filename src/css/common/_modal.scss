@@ -66,6 +66,15 @@
 		border-block-end-color: #ddd;
 	}
 
+	// The badge lives in the modal content because the minimum-supported
+	// WordPress Modal (5.5–6.3) has no headerActions prop; shift it up into
+	// the header area, clear of the close button.
+	.code-snippets-preview-modal__badge {
+		position: absolute;
+		inset-block-start: 18px;
+		inset-inline-end: 56px;
+	}
+
 	// Header and footer stay pinned; the CodeMirror editor is the only
 	// scroll region, scrolling long code both vertically and horizontally.
 	.components-modal__content {

@@ -13,10 +13,9 @@ import {
 import { Badge } from './Badge'
 import { Button } from './Button'
 import { useDeleteSnippet } from './DeleteButton'
-import type { BadgeName } from './Badge'
 import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
 import type { ReactNode } from 'react'
-import type { Snippet } from '../../types/Snippet'
+import type { Snippet, SnippetType } from '../../types/Snippet'
 
 export interface PreviewWorkingState {
 	isWorking: boolean
@@ -31,7 +30,7 @@ const CODE_PREVIEW_LABEL = __('Snippet code preview', 'code-snippets')
 export interface SnippetPreviewModalProps {
 	title: string
 	code: string
-	type: string
+	type: SnippetType
 	isOpen: boolean
 	setIsOpen: (isOpen: boolean) => void
 	snippet?: Snippet
@@ -231,6 +230,15 @@ const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({
 }
 
 /**
+ * The minimum-supported WordPress Modal (5.5–6.3) has no headerActions prop,
+ * so the badge renders in the content and CSS moves it into the header area.
+ */
+const PreviewTypeBadge: React.FC<{ type: SnippetType }> = ({ type }) =>
+	<div className="code-snippets-preview-modal__badge">
+		<Badge name={type} />
+	</div>
+
+/**
  * Modal for quickly viewing a snippet's code in a read-only CodeMirror editor,
  * without navigating to the edit page. Shared between local snippets and cloud
  * snippet previews. Passing a full snippet object adds a footer of snippet
@@ -257,6 +265,11 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			{ codemirror: getPreviewEditorSettings(type) }
 		)
 
+		// CodeMirror hides the labelled source textarea and creates an unlabelled
+		// internal input. The screenReaderLabel option only exists from CodeMirror
+		// 5.59, while WordPress 5.5 ships 5.29, so label the input directly.
+		instance.codemirror.getInputField().setAttribute('aria-label', CODE_PREVIEW_LABEL)
+
 		return () => {
 			(instance.codemirror as EditorFromTextArea).toTextArea()
 		}
@@ -267,8 +280,8 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			className="code-snippets-preview-modal"
 			onRequestClose={() => setIsOpen(false)}
 			title={title}
-			headerActions={<Badge name={type as BadgeName} />}
 		>
+			<PreviewTypeBadge type={type} />
 			<div className="code-snippets-preview-modal__editor">
 				<textarea
 					ref={textareaRef}

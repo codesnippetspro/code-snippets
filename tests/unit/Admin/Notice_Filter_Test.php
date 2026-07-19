@@ -60,10 +60,6 @@ class Notice_Filter_Test extends UnitTestCase {
 
 		set_current_screen( code_snippets()->admin->menus['manage']->get_hookname() );
 
-		$manage_menu = code_snippets()->admin->menus['manage'];
-		$manage_menu->register();
-		set_current_screen( $manage_menu->get_hookname() );
-
 		$this->notice_filter = new Notice_Filter();
 	}
 
@@ -152,5 +148,49 @@ class Notice_Filter_Test extends UnitTestCase {
 		$this->notice_filter->register_filtering( get_current_screen() );
 
 		$this->assertFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
+	}
+
+	/**
+	 * Filtering removes foreign invokable-object callbacks.
+	 *
+	 * @return void
+	 */
+	public function test_filtering_removes_foreign_invokable_object(): void {
+		$foreign_invokable = new class() {
+			/**
+			 * Emit a foreign notice.
+			 */
+			public function __invoke() {
+				echo 'foreign notice';
+			}
+		};
+
+		add_action( 'admin_notices', $foreign_invokable );
+
+		$this->notice_filter->filter_foreign_notices();
+
+		$this->assertFalse( has_action( 'admin_notices', $foreign_invokable ) );
+	}
+
+	/**
+	 * The compact-mode Tools submenu hookname activates notice filtering.
+	 *
+	 * @return void
+	 */
+	public function test_registers_filtering_on_compact_menu_screen(): void {
+		add_filter( 'code_snippets_compact_menu', '__return_true' );
+
+		$manage_menu = code_snippets()->admin->menus['manage'];
+		$hooknames = $manage_menu->get_hooknames();
+		$compact_hookname = get_plugin_page_hookname( code_snippets()->get_menu_slug(), 'tools.php' );
+
+		$this->assertContains( $compact_hookname, $hooknames );
+
+		set_current_screen( $compact_hookname );
+		$this->notice_filter->register_filtering( get_current_screen() );
+
+		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
+
+		remove_filter( 'code_snippets_compact_menu', '__return_true' );
 	}
 }

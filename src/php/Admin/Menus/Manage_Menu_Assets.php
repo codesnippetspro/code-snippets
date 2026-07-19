@@ -3,7 +3,6 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Integration\Evaluate_Functions;
-use Code_Snippets\Utils\Code_Highlighter;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\Settings\get_setting;
@@ -70,7 +69,6 @@ class Manage_Menu_Assets {
 			[ 'in_footer' => true ]
 		);
 
-		Code_Highlighter::enqueue_all_prism_themes();
 		enqueue_code_preview_editor( 'php' );
 		wp_set_script_translations( Manage_Menu::JS_HANDLE, 'code-snippets' );
 		code_snippets()->localize_script( Manage_Menu::JS_HANDLE );

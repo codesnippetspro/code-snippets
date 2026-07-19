@@ -119,6 +119,22 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Retrieve every hookname registered by this menu, including the compact
+	 * Tools submenu hookname when compact mode is active.
+	 *
+	 * @return string[]
+	 */
+	public function get_hooknames(): array {
+		$hooknames = parent::get_hooknames();
+
+		if ( code_snippets()->is_compact_menu() ) {
+			$hooknames[] = get_plugin_page_hookname( $this->base_slug, 'tools.php' );
+		}
+
+		return $hooknames;
+	}
+
+	/**
 	 * Add menu pages for the compact menu
 	 */
 	public function register_compact_menu() {
@@ -163,6 +179,7 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * The value defaults to the user's local snippets-per-page preference but can
 	 * be overridden independently via the `code_snippets/cloud_search/per_page` filter.
+	 * The result is clamped to the REST API's per_page maximum of 100.
 	 *
 	 * @return int
 	 */

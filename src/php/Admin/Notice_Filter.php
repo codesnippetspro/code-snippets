@@ -141,6 +141,8 @@ class Notice_Filter {
 			} elseif ( is_string( $callback ) && false !== strpos( $callback, '::' ) ) {
 				[ $class, $method ] = explode( '::', $callback, 2 );
 				$file = ( new ReflectionMethod( $class, $method ) )->getFileName();
+			} elseif ( is_object( $callback ) && ! $callback instanceof \Closure ) {
+				$file = ( new ReflectionMethod( $callback, '__invoke' ) )->getFileName();
 			} else {
 				$file = ( new ReflectionFunction( $callback ) )->getFileName();
 			}

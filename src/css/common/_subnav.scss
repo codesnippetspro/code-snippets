@@ -231,3 +231,10 @@
 		display: inline;
 	}
 }
+
+// When an admin notice pushes the page content down, restore the gap and top
+// border above the subnav bar.
+.notice + .wrap .snippet-type-nav {
+	margin-block-start: 20px;
+	border-block-start: 1px solid #c3c4c7;
+}
