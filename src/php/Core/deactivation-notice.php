@@ -27,7 +27,9 @@ function code_snippets_deactivation_notice() {
 	$required_php_version = '7.4';
 
 	if ( version_compare( phpversion(), $required_php_version, '<' ) ) {
-		echo '<div class="error fade"><p><strong>';
+		// The code-snippets-notice class exempts this notice from the plugin's
+		// own admin notice filtering on Code Snippets screens.
+		echo '<div class="code-snippets-notice error fade"><p><strong>';
 		// translators: %s: required PHP version number.
 		echo esc_html( sprintf( __( 'Code Snippets requires PHP %s or later.', 'code-snippets' ), $required_php_version ) );
 		echo '</strong><br>';
@@ -46,7 +48,7 @@ function code_snippets_deactivation_notice() {
 	}
 
 	if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
-		echo '<div class="error fade"><p>';
+		echo '<div class="code-snippets-notice error fade"><p>';
 		esc_html_e( 'Another version of Code Snippets appears to be installed. Deactivating this version.', 'code-snippets' );
 		echo '</p></div>';
 
