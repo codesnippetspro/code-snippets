@@ -177,4 +177,17 @@ class Cloud_Snippets_Test extends UnitTestCase {
 		$this->assertSame( 0, $result->page );
 		$this->assertSame( [], $result->available_filters );
 	}
+
+	/**
+	 * Malformed remote description values are normalised to strings at the model boundary.
+	 *
+	 * @return void
+	 */
+	public function test_malformed_description_is_normalised_to_string(): void {
+		$this->assertSame( 'ok', ( new Cloud_Snippet( [ 'description' => 'ok' ] ) )->description );
+		$this->assertSame( '123', ( new Cloud_Snippet( [ 'description' => 123 ] ) )->description );
+		$this->assertSame( '', ( new Cloud_Snippet( [ 'description' => null ] ) )->description );
+		$this->assertSame( '', ( new Cloud_Snippet( [ 'description' => [ 'nested' ] ] ) )->description );
+		$this->assertSame( '', ( new Cloud_Snippet() )->description );
+	}
 }
