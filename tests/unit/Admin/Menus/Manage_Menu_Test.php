@@ -3,6 +3,7 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Controller\Cloud_Search_Controller;
+use Code_Snippets\Utils\Code_Highlighter;
 use Code_Snippets\UnitTestCase;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
@@ -269,5 +270,21 @@ class Manage_Menu_Test extends UnitTestCase {
 		$menu->save_truncation_preference();
 
 		$this->assertTrue( (bool) get_user_option( 'snippets_table_truncate_row_values', self::$admin_user_id ) );
+	}
+
+	/**
+	 * The manage page no longer loads the Prism assets: CodeMirror renders the
+	 * preview modal, and Prism remains registered for the front-end shortcode.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_does_not_enqueue_prism(): void {
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+
+		$this->assertTrue( wp_style_is( Manage_Menu::CSS_HANDLE ) );
+		$this->assertTrue( wp_script_is( Manage_Menu::JS_HANDLE ) );
+		$this->assertFalse( wp_style_is( Code_Highlighter::PRISM_HANDLE ) );
+		$this->assertFalse( wp_script_is( Code_Highlighter::PRISM_HANDLE ) );
 	}
 }
