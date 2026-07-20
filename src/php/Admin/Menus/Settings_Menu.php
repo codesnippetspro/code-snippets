@@ -200,7 +200,7 @@ class Settings_Menu extends Admin_Menu {
 		<div class="wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
 			<?php $this->render_section_tabs(); ?>
 
-			<h2 class="screen-reader-text"><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h2>
+			<h2><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h2>
 
 			<?php
 			if ( code_snippets()->is_compact_menu() ) {
