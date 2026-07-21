@@ -1,7 +1,7 @@
 export const SELECTORS = <const> {
 	TITLE_INPUT: '#title',
 	CODE_MIRROR_TEXTAREA: '.CodeMirror textarea',
-	SNIPPET_TYPE_SELECT: '#snippet-type-select-input',
+	SNIPPET_TYPE_SELECT: '.snippet-type-container .code-snippets-select',
 	LOCATION_SELECT: '.code-snippets-select-location',
 
 	SUCCESS_MESSAGE: '.snippet-editor-sidebar .notice.updated',

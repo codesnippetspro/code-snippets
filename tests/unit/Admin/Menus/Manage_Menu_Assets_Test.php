@@ -8,6 +8,7 @@ use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
+use function Code_Snippets\trash_snippet;
 
 /**
  * Tests for manage menu assets and localized data.
@@ -46,11 +47,11 @@ class Manage_Menu_Assets_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Localized data retains the exact Task 2 keys.
+	 * Localized data retains the expected manage data keys.
 	 *
 	 * @return void
 	 */
-	public function test_enqueue_localizes_task_two_manage_data(): void {
+	public function test_enqueue_localizes_manage_data(): void {
 		$filter = static fn() => PHP_INT_MAX;
 		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
 
@@ -70,11 +71,11 @@ class Manage_Menu_Assets_Test extends UnitTestCase {
 				'bulkDownloadNonce',
 				'supportsZipDownloads',
 				'editorTheme',
+				'typeCounts',
 				'snippetsList',
 			],
 			array_keys( $localized )
 		);
-		$this->assertArrayNotHasKey( 'typeCounts', $localized );
 	}
 
 	/**
@@ -168,12 +169,38 @@ class Manage_Menu_Assets_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Localized type counts retain their grouped, non-trashed shape.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_localizes_grouped_non_trashed_type_counts(): void {
+		$counter = new Snippet_Type_Counter();
+		$before = $counter->count();
+
+		save_snippet( new Snippet( [ 'scope' => 'global' ] ) );
+		save_snippet( new Snippet( [ 'scope' => 'admin' ] ) );
+		save_snippet( new Snippet( [ 'scope' => 'content' ] ) );
+		$trashed = save_snippet( new Snippet( [ 'scope' => 'site-css' ] ) );
+
+		$this->assertInstanceOf( Snippet::class, $trashed );
+		trash_snippet( $trashed->id );
+
+		$this->enqueue_assets();
+		$localized = $this->get_localized_data();
+
+		$this->assertSame( ( $before['all'] ?? 0 ) + 3, $localized['typeCounts']['all'] );
+		$this->assertSame( ( $before['php'] ?? 0 ) + 2, $localized['typeCounts']['php'] );
+		$this->assertSame( ( $before['html'] ?? 0 ) + 1, $localized['typeCounts']['html'] );
+		$this->assertSame( $before['css'] ?? 0, $localized['typeCounts']['css'] ?? 0 );
+	}
+
+	/**
 	 * Enqueue assets through the extracted service.
 	 *
 	 * @return void
 	 */
 	private function enqueue_assets(): void {
-		$assets = new Manage_Menu_Assets( new Manage_Menu_Screen_Options() );
+		$assets = new Manage_Menu_Assets( new Manage_Menu_Screen_Options(), new Snippet_Type_Counter() );
 		$assets->enqueue( Admin_Menu::$script_deps, Admin_Menu::$style_deps );
 	}
 
