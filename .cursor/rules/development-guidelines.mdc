@@ -17,17 +17,14 @@ alwaysApply: true
 
 ## File Organization
 
-- Break code into multiple smaller files instead of creating large monolithic files
 - Keep files focused on a single responsibility or closely related functionality
-- Aim for files under 200-300 lines when possible
-- Split large components, services, or modules into logical sub-modules
+- Treat file length as a signal; split only for reuse, meaningful separation, or clearer testing
+- Avoid single-use helper files and pass-through abstractions
 - Use clear directory structure to organize related files
 
 ## Testing Requirements
 
-- Write tests for all new code functionality
-- Add tests when modifying existing code to ensure no regressions
-- Focus on testing the most critical paths and edge cases
+- Follow the testing requirements in `AGENTS.md`
 - Follow existing testing patterns and conventions in the codebase
 - Ensure tests are deterministic and properly isolated
 

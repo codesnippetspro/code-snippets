@@ -17,13 +17,13 @@ alwaysApply: true
 ## During Development
 
 1. **Follow Patterns**: Use existing patterns and conventions
-2. **Write Tests**: Add tests for critical paths
+2. **Write Tests**: Follow the testing requirements in `AGENTS.md`
 3. **Type Safety**: Use TypeScript strictly
 4. **Document APIs**: Document all public interfaces
 
 ## After Implementation
 
-1. **Run Tests**: Ensure all tests pass
+1. **Run Tests**: Run and verify the merge gate required by `AGENTS.md` before release integration
 2. **Lint Code**: Fix any linting issues
 3. **Check Dependencies**: Verify no circular dependencies
 4. **Test Integration**: Verify with other packages
