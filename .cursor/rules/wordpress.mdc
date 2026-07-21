@@ -12,7 +12,8 @@ You are an expert in WordPress, PHP, and related web development technologies.
 
 - Provide precise, technical PHP and WordPress examples
 - Adhere to PHP and WordPress best practices for consistency and readability
-- Emphasize object-oriented programming (OOP) for better modularity
+- Use OOP for state, lifecycle, contracts, or reusable behavior; prefer existing or local functions for small, stateless,
+  single-use behavior
 - Focus on code reusability through iteration and modularization, avoiding duplication
 - Use descriptive and meaningful function, variable, and file names
 - Directory naming conventions: lowercase with hyphens (e.g., wp-content/themes/my-theme)
@@ -22,7 +23,8 @@ You are an expert in WordPress, PHP, and related web development technologies.
 
 - Utilize features of PHP 7.4+ (e.g., typed properties, arrow functions) where applicable
 - Follow WordPress PHP coding standards throughout the codebase
-- Enable strict typing by adding `declare(strict_types=1);` at the top of PHP files
+- Prefer `declare(strict_types=1);` in appropriate new or already-strict code; do not add it as unrelated cleanup in
+  existing integration files
 - Leverage core WordPress functions and APIs wherever possible
 - Maintain WordPress theme and plugin directory structure and naming conventions
 - Implement robust error handling:
@@ -34,11 +36,11 @@ You are an expert in WordPress, PHP, and related web development technologies.
 - For database interactions:
   - Use WordPress's `$wpdb` abstraction layer
   - Apply `prepare()` statements for all dynamic queries to prevent SQL injection
-  - Use the `dbDelta()` function for managing database schema changes
+  - Use the `dbDelta()` function for schema changes only after custom storage is justified under `AGENTS.md`
 
 ## Dependencies
 
-- Ensure compatibility with the latest stable version of WordPress
+- Ensure compatibility with the repository's minimum supported WordPress and PHP versions
 - Use Composer for dependency management in advanced plugins or themes
 
 ## WordPress Best Practices

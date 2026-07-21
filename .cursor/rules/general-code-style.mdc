@@ -22,7 +22,8 @@ alwaysApply: true
 ## Self-Documented Code
 
 - Avoid adding comments that can be a constant or a well-named function
-- Always prefer to create small functions that describe themselves
+- Prefer existing or local functions for small, stateless, single-use behavior; extract helpers when they provide reuse
+  or meaningful separation
 - Only add comments to explain "why" when it is truly not understandable from the code itself
 - Do NOT add comments that explain "what" the code does (the code should be self-explanatory)
 - Examples of unnecessary comments to avoid:
