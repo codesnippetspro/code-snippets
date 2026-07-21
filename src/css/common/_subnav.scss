@@ -134,10 +134,6 @@
 		}
 	}
 
-	.snippet-view-toggle-nav-item {
-		margin-inline-start: auto;
-		align-items: center;
-	}
 }
 
 // Card/table view toggle: a two-icon segmented pair of square tiles with
@@ -183,12 +179,6 @@
 	}
 }
 
-// Inset the toggle from the band edge when hosted inside a subnav bar.
-.snippet-type-nav .snippet-view-toggle-nav-item .snippet-view-toggle {
-	padding-inline-end: 16px;
-}
-
-
 // Slot that adopts the WordPress Screen Options / Help tabs so they appear
 // directly below the snippet-type nav instead of above the page content.
 .snippets-screen-meta-slot {
@@ -204,14 +194,12 @@
 	}
 }
 
-
 // Item count shown after a subnav tab's label, as muted text.
 .snippet-type-nav .subnav-count {
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.5;
-	color: #2c3337;
-	opacity: 0.4;
+	color: #646970;
 }
 
 // The active tab's count adopts the accent alongside its label.

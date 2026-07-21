@@ -59,7 +59,7 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function __construct() {
 		$this->screen_options = new Manage_Menu_Screen_Options();
-		$this->assets = new Manage_Menu_Assets( $this->screen_options );
+		$this->assets = new Manage_Menu_Assets( $this->screen_options, new Snippet_Type_Counter() );
 		$this->bulk_download = new Manage_Menu_Bulk_Download();
 		$this->registration = new Manage_Menu_Registration();
 

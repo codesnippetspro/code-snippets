@@ -47,10 +47,9 @@ export const KebabMenuItem: React.FC<PropsWithChildren<KebabMenuItemProps>> = ({
 	const { closeMenu } = useKebabMenu()
 
 	return (
-		<li role="presentation">
+		<li>
 			<button
 				type="button"
-				role="menuitem"
 				className={classnames(
 					'kebab-menu-item',
 					{ 'kebab-menu-item-destructive': destructive },
@@ -72,7 +71,7 @@ export const KebabMenuItem: React.FC<PropsWithChildren<KebabMenuItemProps>> = ({
 }
 
 export const KebabMenuDivider: React.FC = () =>
-	<li role="separator" aria-orientation="horizontal" className="kebab-menu-divider" />
+	<li aria-hidden="true" className="kebab-menu-divider" />
 
 export interface KebabMenuRowProps {
 	className?: string
@@ -82,7 +81,7 @@ export const KebabMenuRow: React.FC<PropsWithChildren<KebabMenuRowProps>> = ({
 	className,
 	children
 }) =>
-	<li role="presentation" className={classnames('kebab-menu-row', className)}>
+	<li className={classnames('kebab-menu-row', className)}>
 		{children}
 	</li>
 
@@ -122,9 +121,7 @@ const usePopoverPlacement = ({
 			const trigger = triggerRef.current?.getBoundingClientRect()
 			setIsFlipped(popover.bottom > window.innerHeight && (trigger?.top ?? 0) > popover.height)
 
-			const firstItem = popoverRef.current.querySelector<HTMLElement>(
-				'[role="menuitem"]:not(:disabled)'
-			)
+			const firstItem = popoverRef.current.querySelector<HTMLElement>('button:not(:disabled)')
 			;(firstItem ?? popoverRef.current).focus()
 		} else {
 			setIsFlipped(false)
@@ -169,20 +166,6 @@ const handlePopoverKeyDown = (
 
 		return
 	}
-
-	if ('Tab' !== event.key) {
-		return
-	}
-
-	if (0 === focusable.length) {
-		event.preventDefault()
-	} else if (event.shiftKey && 0 >= currentIndex) {
-		event.preventDefault()
-		focusable[focusable.length - 1].focus()
-	} else if (!event.shiftKey && (-1 === currentIndex || currentIndex === focusable.length - 1)) {
-		event.preventDefault()
-		focusable[0].focus()
-	}
 }
 
 const usePopoverDismissal = ({
@@ -203,14 +186,22 @@ const usePopoverDismissal = ({
 			}
 		}
 
+		const handleFocusIn = (event: FocusEvent) => {
+			if (event.target instanceof Node && !containerRef.current?.contains(event.target)) {
+				setIsOpen(false)
+			}
+		}
+
 		const handleKeyDown = (event: KeyboardEvent) =>
 			handlePopoverKeyDown(event, { closeMenu, popoverRef })
 
 		document.addEventListener('mousedown', handlePointerDown)
+		document.addEventListener('focusin', handleFocusIn)
 		document.addEventListener('keydown', handleKeyDown)
 
 		return () => {
 			document.removeEventListener('mousedown', handlePointerDown)
+			document.removeEventListener('focusin', handleFocusIn)
 			document.removeEventListener('keydown', handleKeyDown)
 		}
 	}, [isOpen, setIsOpen, closeMenu, containerRef, popoverRef])
@@ -245,7 +236,6 @@ export const KebabMenu: React.FC<KebabMenuProps> = ({ label, className, children
 				type="button"
 				className="kebab-menu-trigger"
 				aria-label={label}
-				aria-haspopup="true"
 				aria-expanded={isOpen}
 				aria-controls={menuId}
 				onClick={() => setIsOpen(open => !open)}
@@ -258,7 +248,6 @@ export const KebabMenu: React.FC<KebabMenuProps> = ({ label, className, children
 					<ul
 						ref={popoverRef}
 						id={menuId}
-						role="menu"
 						tabIndex={-1}
 						aria-label={label}
 						className={classnames('kebab-menu-popover', { 'kebab-menu-popover-top': isFlipped })}

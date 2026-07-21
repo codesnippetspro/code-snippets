@@ -83,39 +83,71 @@
 
 	.code-snippets-card {
 		min-inline-size: 0;
+	}
 
-		footer {
-			flex-wrap: wrap;
-			justify-content: flex-end;
+	// Reveal the bulk-select checkbox on hover or keyboard focus, and keep
+	// every checkbox visible while any card in the grid is selected so an
+	// in-progress selection is never hidden.
+	.snippet-card-select {
+		opacity: 0;
+		transition: opacity 0.15s ease;
+
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
 		}
 	}
 
-	// Match the light-blue tint that active snippet rows receive in the
-	// table view (.active-snippet td/th).
-	.code-snippets-card.active-snippet {
-		background-color: rgb(120 200 230 / 6%);
+	.snippet-card-select:checked,
+	&.has-selection .snippet-card-select,
+	.code-snippets-card:hover .snippet-card-select,
+	.code-snippets-card:focus-within .snippet-card-select {
+		opacity: 1;
 	}
 
-	.snippet-card-more-toggle {
-		display: inline-flex;
+	// Card body bands: header row, meta row, then a separated description.
+	.card-inner {
+		display: flex;
+		flex-flow: column;
+		gap: 16px;
+	}
+
+	.snippet-card-header {
+		display: flex;
 		align-items: center;
-		gap: 4px;
+		gap: 10px;
 
-		.dashicons {
-			font-size: 16px;
-			block-size: 16px;
-			inline-size: 16px;
-			transition: transform 0.25s ease;
+		// Keep header content clear of the absolutely-positioned selection checkbox.
+		padding-inline-end: 32px;
+
+		h3 {
+			margin: 0;
+			font-size: 18px;
+			font-weight: 700;
+			line-height: 1.5;
+
+			// Let the heading shrink inside the flex row so long names
+			// truncate instead of pushing the header icons out of the card.
+			min-inline-size: 0;
+
+			.snippet-name {
+				display: block;
+				color: #2271b1;
+				text-decoration: none;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
 		}
 
-		&[aria-expanded='true'] .dashicons {
-			transform: rotate(90deg);
+		.extra-icons:empty {
+			display: none;
 		}
-	}
 
-	.card-inner h3 {
-		margin: 0;
-		font-size: 1.1em;
+		// The accent pill styling lives in common/_switch.scss; keep the
+		// switch from shrinking inside the flex card header.
+		input[type='checkbox'].switch {
+			flex-shrink: 0;
+		}
 	}
 
 	.snippet-card-meta {
@@ -123,74 +155,66 @@
 		align-items: center;
 		flex-wrap: wrap;
 		gap: 16px;
-		margin-block-start: 16px;
+		font-size: 14px;
 
-		.snippet-card-tags .dashicons {
-			color: #787c82;
-			margin-inline-end: 2px;
+		.snippet-card-tags-label {
+			color: #646970;
+		}
+
+		.snippet-card-tags a {
+			color: #2271b1;
+			text-decoration: none;
+		}
+
+		.snippet-card-modified {
+			color: #646970;
+			margin-inline-start: auto;
 		}
 	}
 
 	.snippet-description-content {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 3;
-		line-clamp: 3;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		overflow: hidden;
-		margin-block-start: 12px;
+		font-size: 14px;
+		color: #646970;
+		border-block-start: 1px solid #dcdcde;
+		padding-block-start: 16px;
 	}
 
-	.snippet-card-priority {
-		display: flex;
-		align-items: center;
-		gap: 6px;
+	// Align the selection checkbox with the taller card header row.
+	.snippet-card-corner {
+		inset-block-start: 28px;
+	}
+
+	.code-snippets-card footer {
+		.button {
+			font-size: 14px;
+			line-height: 2.5714;
+			border-radius: 5px;
+		}
+
+		.button:not(.button-primary) {
+			background: #fff;
+		}
+	}
+
+	.kebab-menu-priority {
+		justify-content: space-between;
 
 		input.snippet-priority {
-			inline-size: 4em;
-		}
-	}
-
-	.snippet-card-actions {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 8px;
-		margin-inline-start: auto;
-	}
-
-	// Expanding actions row: animating grid-template-rows from 0fr to 1fr
-	// gives a smooth height transition without a hard-coded max height.
-	.snippet-card-more {
-		display: grid;
-		grid-template-rows: 0fr;
-		transition: grid-template-rows 0.25s ease;
-		background: #f6f7f7;
-
-		&.is-expanded {
-			grid-template-rows: 1fr;
-		}
-	}
-
-	.snippet-card-more-inner {
-		overflow: hidden;
-		min-block-size: 0;
-	}
-
-	.snippet-card-more-row {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 8px;
-		background: #f6f7f7;
-		border-block-start: 1px solid #dcdcde;
-		padding-inline: 24px;
-		padding-block: 12px;
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.snippet-card-more,
-		.snippet-card-more-toggle .dashicons {
-			transition-duration: 0.01s;
+			inline-size: 52px;
+			block-size: 30px;
+			box-sizing: border-box;
+			margin: 0;
+			padding-block: 0;
+			padding-inline: 4px;
+			border: 1px solid #e2e2e4;
+			border-radius: 4px;
+			text-align: center;
+			color: #2c3337;
 		}
 	}
 }

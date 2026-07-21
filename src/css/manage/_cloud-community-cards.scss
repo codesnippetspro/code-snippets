@@ -1,0 +1,179 @@
+@use 'sass:color';
+@use '../common/theme';
+@use '../common/cards';
+
+.cloud-search-result {
+	p:last-child {
+		margin-block-end: 0;
+	}
+
+	.card-inner {
+		display: flex;
+		flex-flow: column;
+		gap: 16px;
+	}
+
+	.snippet-card-header {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		// Keep header content clear of the absolutely-positioned selection checkbox.
+		padding-inline-end: 32px;
+
+		h3 {
+			margin: 0;
+			font-size: 18px;
+			font-weight: 700;
+			line-height: 1.5;
+			min-inline-size: 0;
+		}
+
+		.cloud-snippet-title-button {
+			display: block;
+			max-inline-size: 100%;
+			margin: 0;
+			padding: 0;
+			border: none;
+			background: none;
+			font: inherit;
+			color: #2271b1;
+			cursor: pointer;
+			text-align: start;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+
+			&:hover, &:focus {
+				text-decoration: underline;
+			}
+
+			&:focus-visible {
+				outline: 2px solid #2271b1;
+				outline-offset: 2px;
+				border-radius: 2px;
+			}
+		}
+	}
+
+	.snippet-card-meta {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 16px;
+		font-size: 14px;
+
+		.cloud-snippet-tags {
+			color: #2271b1;
+		}
+
+		.snippet-card-modified {
+			color: #6c7e7e;
+			margin-inline-start: auto;
+		}
+	}
+
+	.snippet-description-content {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
+		margin: 0;
+		font-size: 14px;
+		color: #646970;
+		border-block-start: 1px solid #dcdcde;
+		padding-block-start: 16px;
+	}
+
+	.cloud-snippet-author {
+		margin: 0;
+		font-size: 14px;
+		color: #646970;
+
+		a {
+			color: theme.$accent;
+		}
+	}
+
+	footer {
+		.dashicons-warning {
+			color: #b32d2e;
+		}
+
+		.cloud-snippet-update svg {
+			display: block;
+		}
+
+		.button {
+			font-size: 14px;
+			line-height: 2.5714;
+			border-radius: 5px;
+		}
+
+		.button:not(.button-primary, .cloud-pro-button) {
+			background: #fff;
+		}
+	}
+}
+
+.cloud-search-results .cloud-search-result footer .components-spinner {
+	margin: 0;
+}
+
+// Anchored to the card container so this keeps its brand-orange fill above the WP-admin
+// compatibility layer's secondary-button styling (equal specificity, resolved by source order).
+.cloud-search-result .cloud-pro-button.button {
+	background-color: theme.$secondary;
+	border-color: theme.$secondary;
+	color: #fff;
+
+	&:hover,
+	&:focus {
+		background-color: color.adjust(theme.$secondary, $lightness: -10%);
+		border-color: color.adjust(theme.$secondary, $lightness: -10%);
+		color: #fff;
+	}
+}
+
+// Three equal-height snippet cards per row, matching the manage snippets
+// grid. minmax(0, 1fr) lets columns shrink below their content width so
+// the grid never overflows the page.
+ul.cloud-search-results.code-snippets-cards {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+
+	@media screen and (width <= 1100px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	@media screen and (width <= 782px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.code-snippets-card {
+		min-inline-size: 0;
+
+		footer {
+			flex-wrap: wrap;
+		}
+	}
+
+	// Reveal the bulk-select checkbox on hover or keyboard focus, and keep
+	// every checkbox visible while any card in the grid is selected so an
+	// in-progress selection is never hidden.
+	.snippet-card-select {
+		opacity: 0;
+		transition: opacity 0.15s ease;
+
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
+		}
+	}
+
+	.snippet-card-select:checked,
+	&.has-selection .snippet-card-select,
+	.code-snippets-card:hover .snippet-card-select,
+	.code-snippets-card:focus-within .snippet-card-select {
+		opacity: 1;
+	}
+}

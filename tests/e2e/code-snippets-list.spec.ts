@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS } from './helpers/constants'
-import type { Page } from '@playwright/test'
+import type { Page, Route } from '@playwright/test'
 
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
@@ -37,6 +37,39 @@ test.describe('Code Snippets List Page Actions', () => {
 		await searchInput.fill(`${snippetName}-does-not-exist`)
 		await expect(snippetRow).toBeHidden()
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
+	})
+
+	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
+		await page.getByRole('button', { name: 'Card view' }).click()
+
+		try {
+			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: snippetName })
+			const trigger = card.getByRole('button', { name: `Actions for ${snippetName}` })
+			const popover = card.locator('.kebab-menu-popover')
+
+			await expect(card).toBeVisible()
+			await trigger.click()
+			await expect(popover).toBeVisible()
+			await popover.getByRole('button').last().focus()
+			await page.keyboard.press('Tab')
+
+			await expect(page.locator('#bulk-action-selector-bottom')).toBeFocused()
+			await expect(popover).toHaveCount(0)
+
+			await trigger.click()
+			await expect(popover).toBeVisible()
+			await popover.getByRole('button').first().focus()
+			await page.keyboard.press('Shift+Tab')
+
+			await expect(trigger).toBeFocused()
+			await expect(popover).toBeVisible()
+			await page.keyboard.press('Shift+Tab')
+
+			await expect(card.getByRole('link', { name: 'Edit' })).toBeFocused()
+			await expect(popover).toHaveCount(0)
+		} finally {
+			await page.getByRole('button', { name: 'Table view' }).click().catch(() => undefined)
+		}
 	})
 
 	test('Can toggle snippet activation from list page', async ({ page }) => {
@@ -98,6 +131,63 @@ test.describe('Code Snippets List Page Actions', () => {
 		// Clean up the clone by trashing it
 		await clonedRow.locator(SELECTORS.DELETE_ACTION).click()
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
+	})
+
+	test('Can clone a snippet once from the preview modal', async ({ page }) => {
+		let createRequests = 0
+
+		const trackCreateRequest = async (route: Route) => {
+			const request = route.request()
+			const requestUrl = new URL(request.url())
+			const restRoute = requestUrl.searchParams.get('rest_route')
+			const isCreateRequest = 'POST' === request.method() && (
+				requestUrl.pathname.endsWith('/code-snippets/v1/snippets') ||
+				'/code-snippets/v1/snippets' === restRoute
+			)
+
+			if (isCreateRequest) {
+				createRequests += 1
+				await new Promise(resolve => setTimeout(resolve, 500))
+			}
+
+			await route.continue()
+		}
+
+		await page.route('**/wp-json/code-snippets/v1/snippets*', trackCreateRequest)
+		await page.route(/\/index\.php\?rest_route=/, trackCreateRequest)
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		await snippetRow.getByRole('button', { name: 'Preview' }).click()
+
+		const previewModal = page.getByRole('dialog', { name: snippetName })
+		const cloneButton = previewModal.getByRole('button', { name: 'Clone' })
+		await cloneButton.click()
+		await expect(cloneButton).toBeDisabled()
+		await cloneButton.click({ force: true })
+
+		await expect(previewModal).toBeHidden()
+		expect(createRequests).toBe(1)
+		await helper.cleanupSnippet(`${snippetName} [CLONE]`)
+	})
+
+	test('Can trash a snippet from the preview modal', async ({ page }) => {
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		await snippetRow.getByRole('button', { name: 'Preview' }).click()
+
+		const previewModal = page.getByRole('dialog', { name: snippetName })
+		await previewModal.getByRole('button', { name: 'Trash' }).click()
+
+		const confirmDialog = page.getByRole('dialog', { name: 'Are you sure?' })
+		await confirmDialog.getByRole('button', { name: 'Trash' }).click()
+		await expect(previewModal).toBeHidden()
+
+		await page.locator('a[href*="status=trashed"]').first().click()
+		await expect(page).toHaveURL(/status=trashed/)
+		await expect(page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()).toBeVisible()
 	})
 
 	test('Can delete snippet from list page', async ({ page }) => {
@@ -360,6 +450,23 @@ test.describe('Manage table Screen Options', () => {
 			await expect(panel).toBeVisible()
 		}
 	}
+
+	test('Card pagination initializes from the page URL', async ({ page }) => {
+		await SnippetsTestHelper.setSnippetsPerPage(1)
+
+		try {
+			await helper.navigateToSnippetsAdmin()
+			await page.getByRole('button', { name: 'Card view' }).click()
+			await expect(page.locator('.snippets-card-grid')).toBeVisible()
+
+			await page.goto('/wp-admin/admin.php?page=snippets&paged=2')
+			await expect(page.locator('.tablenav.top .current-page')).toHaveValue('2')
+			await expect(page.locator('.snippets-card-grid .code-snippets-card')).toHaveCount(1)
+		} finally {
+			await page.getByRole('button', { name: 'Table view' }).click().catch(() => undefined)
+			await SnippetsTestHelper.resetSnippetsPerPage()
+		}
+	})
 
 	test('Column visibility toggle hides and shows columns in real time', async ({ page }) => {
 		await openScreenOptions(page)

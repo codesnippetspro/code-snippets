@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
+import classnames from 'classnames'
 import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { REST_BASES } from '../../../utils/restAPI'
@@ -8,7 +9,7 @@ import { isProSnippet } from '../../../utils/snippets/snippets'
 import { TableNav } from '../../common/ListTable/TableNavigation'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { CloudSnippetsTable } from './CloudSnippetsTable'
-import { SearchResult } from './SearchResult'
+import { CloudSnippetAuthor, SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
@@ -75,11 +76,16 @@ interface SearchResultsGridProps {
 }
 
 const SearchResultsGrid: React.FC<SearchResultsGridProps> = ({ snippets, selected, setSelected }) =>
-	<ul className="cloud-search-results code-snippets-cards">
+	<ul
+		className={classnames('cloud-search-results', 'code-snippets-cards', {
+			'has-selection': snippets.some(snippet => selected.has(snippet.id))
+		})}
+	>
 		{snippets.map(result =>
 			<SearchResult
 				key={result.id}
 				snippet={result}
+				author={<CloudSnippetAuthor snippet={result} />}
 				isSelected={selected.has(result.id)}
 				onSelectedChange={isSelected => {
 					setSelected(previous => {

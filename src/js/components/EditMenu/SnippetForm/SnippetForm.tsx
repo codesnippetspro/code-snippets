@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
@@ -6,7 +6,12 @@ import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
-import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../../utils/snippets/snippets'
+import {
+	createSnippetObject,
+	getSnippetType,
+	isCondition,
+	validateSnippet
+} from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { Toolbar } from '../../common/Toolbar'
@@ -96,7 +101,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 							.replace(__('Create New Condition', 'code-snippets'), __('Edit Condition', 'code-snippets'))
 
 						const newUrl = buildUrl(window.CODE_SNIPPETS.urls.edit, { id: response.id })
-						window.history.pushState({}, document.title, newUrl)
+						window.history.replaceState({}, document.title, newUrl)
 					}
 				}
 			})
@@ -126,7 +131,9 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 				{children}
 			</form>
 
-			<ConfirmSubmitDialog {...{ doSubmit, submitAction, setSubmitAction, validationWarning, setValidationWarning }} />
+			<ConfirmSubmitDialog
+				{...{ doSubmit, submitAction, setSubmitAction, validationWarning, setValidationWarning }}
+			/>
 		</>
 	)
 }
@@ -141,17 +148,58 @@ const ConditionsEditor: React.FC = () => {
 		: null
 }
 
+const useReloadOnPopState = (isDirty: boolean) => {
+	const currentUrl = useRef(window.location.href)
+	const skipNextUnloadPrompt = useRef(false)
+
+	useEffect(() => {
+		currentUrl.current = window.location.href
+	})
+
+	useEffect(() => {
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			if (skipNextUnloadPrompt.current) {
+				skipNextUnloadPrompt.current = false
+				return
+			}
+
+			event.preventDefault()
+			// Required by Chrome and Edge versions before 119.
+			// eslint-disable-next-line @typescript-eslint/no-deprecated
+			event.returnValue = true
+		}
+
+		if (isDirty) {
+			window.addEventListener('beforeunload', handleBeforeUnload)
+		}
+
+		return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+	}, [isDirty])
+
+	useEffect(() => {
+		const handlePopState = () => {
+			if (isDirty && !window.confirm(
+				__('You have unsaved changes. Leave this page and discard them?', 'code-snippets')
+			)) {
+				window.history.pushState({}, document.title, currentUrl.current)
+				return
+			}
+
+			skipNextUnloadPrompt.current = isDirty
+			window.location.reload()
+		}
+
+		window.addEventListener('popstate', handlePopState)
+		return () => window.removeEventListener('popstate', handlePopState)
+	}, [isDirty])
+}
+
 const EditFormWrap: React.FC = () => {
-	const { snippet, isReadOnly } = useSnippetForm()
+	const { snippet, isReadOnly, isDirty } = useSnippetForm()
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
-	// Restoring history after pushState requires a reload to render the matching snippet.
-	useEffect(() => {
-		const handlePopState = () => window.location.reload()
-		window.addEventListener('popstate', handlePopState)
-		return () => window.removeEventListener('popstate', handlePopState)
-	}, [])
+	useReloadOnPopState(isDirty)
 
 	return (
 		<>
@@ -187,7 +235,9 @@ export const SnippetForm: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsAPIContext>
 			<WithSnippetsListContext>
-				<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
+				<WithSnippetFormContext
+					initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}
+				>
 					<Toolbar />
 					<EditFormWrap />
 				</WithSnippetFormContext>

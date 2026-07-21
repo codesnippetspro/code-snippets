@@ -25,12 +25,24 @@ class Manage_Menu_Assets {
 	private Manage_Menu_Screen_Options $screen_options;
 
 	/**
+	 * Snippet type counter.
+	 *
+	 * @var Snippet_Type_Counter
+	 */
+	private Snippet_Type_Counter $type_counter;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param Manage_Menu_Screen_Options $screen_options Manage menu Screen Options.
+	 * @param Snippet_Type_Counter       $type_counter   Snippet type counter.
 	 */
-	public function __construct( Manage_Menu_Screen_Options $screen_options ) {
+	public function __construct(
+		Manage_Menu_Screen_Options $screen_options,
+		Snippet_Type_Counter $type_counter
+	) {
 		$this->screen_options = $screen_options;
+		$this->type_counter = $type_counter;
 	}
 
 	/**
@@ -71,6 +83,7 @@ class Manage_Menu_Assets {
 			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
 			'editorTheme'          => get_setting( 'editor', 'theme' ),
+			'typeCounts'           => $this->type_counter->count(),
 		];
 
 		if ( $this->screen_options->is_manage_table_view() ) {
