@@ -125,3 +125,31 @@
 		}
 	}
 }
+
+// Override WordPress' .wp-core-ui .button .dashicons { line-height: 1.9 } —
+// inside a button the inflated line-box would shift the glyph below the
+// badge's bottom border. Placed at end-of-file so it follows all other
+// .dashicons rules in source order (no-descending-specificity).
+.wp-core-ui .button .badge .dashicons {
+	line-height: 1;
+}
+
+
+// Pro badge consolidated to the navigation pro-chip style: a light accent pill
+// in every context, overriding the badge colour map and the inverted/nav-tab
+// variants (whose white !important border must be beaten here). This is a
+// deliberate final override, so it intentionally follows higher-specificity
+// context rules above.
+/* stylelint-disable no-descending-specificity */
+.badge.pro-badge,
+.inverted-badges .badge.pro-badge,
+.nav-tab-inactive .badge.pro-badge {
+	color: #2271b1;
+	background-color: #eff5f9;
+	border: 1px solid rgb(34 113 177 / 10%) !important;
+	border-radius: 999px;
+	padding-block: 3px;
+	padding-inline: 10px;
+	line-height: normal;
+}
+/* stylelint-enable no-descending-specificity */

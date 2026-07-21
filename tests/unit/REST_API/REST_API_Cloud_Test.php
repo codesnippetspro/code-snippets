@@ -5,6 +5,7 @@ namespace Code_Snippets\REST_API;
 use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_REST_Server;
 use WP_UnitTest_Factory;
 
 /**
@@ -41,6 +42,13 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	private string $requested_url = '';
 
 	/**
+	 * REST server that was active before the current test.
+	 *
+	 * @var WP_REST_Server|null
+	 */
+	private ?WP_REST_Server $rest_server = null;
+
+	/**
 	 * Set up fixtures before any tests run.
 	 *
 	 * @param WP_UnitTest_Factory $factory Factory object.
@@ -62,9 +70,11 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
+		global $wp_rest_server;
 
 		wp_set_current_user( self::$admin_user_id );
 		$this->requested_url = '';
+		$this->rest_server = $wp_rest_server ?? null;
 		delete_user_option( self::$admin_user_id, 'snippets_per_page' );
 		add_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ], 10, 3 );
 	}
@@ -75,8 +85,11 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function tear_down() {
+		global $wp_rest_server;
+
 		remove_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ] );
 		delete_user_option( self::$admin_user_id, 'snippets_per_page' );
+		$wp_rest_server = $this->rest_server;
 
 		parent::tear_down();
 	}
@@ -150,6 +163,11 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 * @return WP_REST_Response
 	 */
 	private function make_request( array $params ): WP_REST_Response {
+		global $wp_rest_server;
+
+		$wp_rest_server = null;
+		rest_get_server();
+
 		$request = new WP_REST_Request( 'GET', $this->endpoint );
 		$request->add_header( 'Access-Control', $this->get_connection_token() );
 

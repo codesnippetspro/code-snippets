@@ -1,4 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n'
+import { isNetworkAdmin } from '../screen'
 import { buildUrl } from '../urls'
 import { parseSnippetObject } from './objects'
 import type { SnippetSchema } from '../../types/schema/SnippetSchema'
@@ -50,6 +51,11 @@ export const getSnippetEditUrl = (snippet?: Pick<Snippet, 'id'>): string | undef
 		? buildUrl(window.CODE_SNIPPETS?.urls.edit, { id: snippet.id })
 		: window.CODE_SNIPPETS?.urls.addNew
 
+export const getSnippetAddNewUrl = (type?: SnippetType): string | undefined =>
+	type
+		? buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type })
+		: window.CODE_SNIPPETS?.urls.addNew
+
 export const getSnippetDisplayName = (snippet: Pick<Snippet, 'name' | 'id' | 'scope'>): string =>
 	'' === snippet.name.trim()
 		// translators: %s: snippet identifier.
@@ -91,3 +97,18 @@ export const isSnippetActive = (
 	'cond' === getSnippetType(snippet)
 		? 0 < (activeByCondition.get(snippet.id)?.length ?? 0)
 		: snippet.active
+
+/**
+ * Whether the snippet belongs to the network and is not shared with subsites,
+ * making it read-only outside of the network admin.
+ */
+export const isNetworkOnlySnippet = (snippet: Snippet): boolean =>
+	!isNetworkAdmin() && snippet.network && !snippet.shared_network
+
+/**
+ * Whether the current user is able to modify the snippet, either directly or
+ * through actions such as cloning and trashing.
+ */
+export const canModifySnippet = (snippet: Snippet): boolean =>
+	!isNetworkOnlySnippet(snippet) &&
+	!(snippet.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)

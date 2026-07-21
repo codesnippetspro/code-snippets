@@ -59,6 +59,7 @@ export const SnippetLocationInput: React.FC = () => {
 				inputId="snippet-location"
 				className="code-snippets-select code-snippets-select-location"
 				options={options}
+				isSearchable={false}
 				isDisabled={isReadOnly}
 				styles={{
 					menu: provided => ({ ...provided, zIndex: 9999 }),

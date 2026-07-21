@@ -8,7 +8,7 @@
 .code-snippets-card {
 	background: #fff;
 	border: 1px solid #c3c4c7;
-	border-radius: 6px;
+	border-radius: 5px;
 	margin: 0;
 	display: flex;
 	flex-flow: column;
@@ -25,19 +25,46 @@
 
 	footer {
 		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		gap: 8px;
-		background: #f6f7f7;
+		background: #f7f7f8;
 		margin-block-start: auto;
 		border-block-start: 1px solid #c3c4c7;
 		padding-inline: 24px;
 		padding-block: 12px;
-		align-items: center;
-		border-end-start-radius: 6px;
-		border-end-end-radius: 6px;
+		border-end-start-radius: 5px;
+		border-end-end-radius: 5px;
 	}
 
-	&.is-selectable,
-	&.has-corner-controls {
+	// The status label shrinks and clips away under pressure rather than
+	// pushing the action buttons onto a second line.
+	.snippet-card-footer-status {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: 0 1 auto;
+		min-inline-size: 0;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.snippet-card-footer-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: nowrap;
+		gap: 8px;
+		flex: 0 0 auto;
+
+		.button:not(.kebab-menu-trigger) {
+			min-inline-size: 103px;
+			text-align: center;
+			justify-content: center;
+		}
+	}
+
+	&.is-selectable {
 		position: relative;
 	}
 
@@ -54,12 +81,39 @@
 		}
 	}
 
-	&.is-selectable .card-inner h3 {
-		margin-inline-end: 48px;
+	input[type='checkbox'].snippet-card-select {
+		appearance: none;
+		display: grid;
+		place-content: center;
+		inline-size: 20px;
+		block-size: 20px;
+		padding: 0;
+		box-sizing: border-box;
+		background: #fff;
+		border: 1.5px solid #2271b1;
+		border-radius: 5px;
+		box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
+		cursor: pointer;
+
+		&::before {
+			content: none;
+		}
+
+		&:checked {
+			background: #2271b1;
+
+			&::before {
+				content: '';
+				inline-size: 14px;
+				block-size: 14px;
+				margin: 0;
+				background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M14.83 4.89l1.34.94-5.81 8.38H9.02L5.78 9.67l1.34-1.25 2.57 2.4z' fill='%23fff'/%3E%3C/svg%3E") center/14px no-repeat;
+			}
+		}
 	}
 
-	&.has-corner-controls .card-inner h3 {
-		margin-inline-end: 96px;
+	&.is-selectable .card-inner > h3 {
+		margin-inline-end: 48px;
 	}
 
 	&.is-selected {

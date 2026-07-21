@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { fetchQueryParam, updateQueryParams } from '../../utils/urls'
+import { ScreenMetaSlot } from '../common/ScreenMetaSlot'
+import { SubnavTabs } from '../common/SubnavTabs'
 import { Toolbar } from '../common/Toolbar'
 import { UploadForm } from './UploadForm/UploadForm'
 import { MigrateForm } from './MigrateForm/MigrateForm'
@@ -36,36 +38,39 @@ export const ImportMenu: React.FC = () => {
 	return (
 		<>
 			<Toolbar />
-			<>
-				<h2>{__('Import Snippets', 'code-snippets')}</h2>
 
-				<hr className="wp-header-end" />
+			<SubnavTabs
+				className="import-type-nav"
+				ariaLabel={__('Import sources', 'code-snippets')}
+				tabs={TABS.map(tab => ({ name: tab, label: TAB_LABELS[tab] }))}
+				currentTab={activeTab}
+				setCurrentTab={tab => {
+					setActiveTab(tab)
+					updateQueryParams({ tab })
+				}}
+			/>
 
-				<nav
-					className="nav-tab-wrapper"
-					aria-label={__('Import sources', 'code-snippets')}
-				>
-					{TABS.map(tab =>
-						<button
-							key={tab}
-							type="button"
-							className={classnames('nav-tab', { 'nav-tab-active': tab === activeTab })}
-							onClick={() => {
-								setActiveTab(tab)
-								updateQueryParams({ tab })
-							}}
-						>
-							{TAB_LABELS[tab]}
-						</button>)}
-				</nav>
+			<ScreenMetaSlot />
 
-				<WithRestAPIContext>
-					{TABS.map(tab =>
-						<div key={tab} className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}>
-							{TAB_CONTENT[tab]}
-						</div>)}
-				</WithRestAPIContext>
-			</>
+			<div className="snippets-page-header">
+				<h1>{sprintf(
+					// translators: %s: label of the currently selected import tab.
+					__('Import: %s', 'code-snippets'),
+					TAB_LABELS[activeTab]
+				)}</h1>
+			</div>
+
+			<hr className="wp-header-end" />
+
+			<WithRestAPIContext>
+				{TABS.map(tab =>
+					<div
+						key={tab}
+						className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}
+					>
+						{TAB_CONTENT[tab]}
+					</div>)}
+			</WithRestAPIContext>
 		</>
 	)
 }
