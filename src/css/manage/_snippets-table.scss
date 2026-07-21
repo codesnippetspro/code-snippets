@@ -1,4 +1,3 @@
-@use '../common/theme';
 @use '../common/list-table';
 
 .column-name,
@@ -15,16 +14,18 @@
 	}
 }
 
-// `.wp-list-table` prefix keeps this above WP 7.0's 40px control height so the borderless
-// priority field stays 30px tall and vertically aligned with the rest of the row.
+// `.wp-list-table` prefix keeps this above WP 7.0's 40px control height so the boxed
+// priority field stays 30px tall (below the 38px control token, which would stretch the
+// table rows) and vertically aligned with the rest of the row.
 .wp-list-table .priority-column input {
 	appearance: none;
-	background: none;
-	border: none;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 5px;
 	box-shadow: none;
 	box-sizing: border-box;
-	min-block-size: theme.$control-height;
-	block-size: theme.$control-height;
+	min-block-size: 30px;
+	block-size: 30px;
 	inline-size: 4em;
 
 	// Pin the box model so padding/margins/line-height match WP 6.9 regardless of WP 7.0's
@@ -35,7 +36,7 @@
 	margin-block: 0;
 	margin-inline: 1px;
 	line-height: 2;
-	color: #666;
+	color: #2c3337;
 	text-align: center;
 
 	&:disabled {
@@ -60,21 +61,6 @@
 	display: table-cell !important;
 }
 
-.snippets-card-grid-container {
-	.snippets-cards-toolbar {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-
-		.snippets-cards-select-all,
-		.snippets-cards-sort {
-			display: flex;
-			align-items: center;
-			gap: 6px;
-		}
-	}
-}
-
 .snippets-card-grid {
 	// Three equal-height cards per row; descriptions are clamped so height
 	// stays uniform regardless of text length. The compound selector wins
@@ -97,39 +83,71 @@
 
 	.code-snippets-card {
 		min-inline-size: 0;
+	}
 
-		footer {
-			flex-wrap: wrap;
-			justify-content: flex-end;
+	// Reveal the bulk-select checkbox on hover or keyboard focus, and keep
+	// every checkbox visible while any card in the grid is selected so an
+	// in-progress selection is never hidden.
+	.snippet-card-select {
+		opacity: 0;
+		transition: opacity 0.15s ease;
+
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
 		}
 	}
 
-	// Match the light-blue tint that active snippet rows receive in the
-	// table view (.active-snippet td/th).
-	.code-snippets-card.active-snippet {
-		background-color: rgb(120 200 230 / 6%);
+	.snippet-card-select:checked,
+	&.has-selection .snippet-card-select,
+	.code-snippets-card:hover .snippet-card-select,
+	.code-snippets-card:focus-within .snippet-card-select {
+		opacity: 1;
 	}
 
-	.snippet-card-more-toggle {
-		display: inline-flex;
+	// Card body bands: header row, meta row, then a separated description.
+	.card-inner {
+		display: flex;
+		flex-flow: column;
+		gap: 16px;
+	}
+
+	.snippet-card-header {
+		display: flex;
 		align-items: center;
-		gap: 4px;
+		gap: 10px;
 
-		.dashicons {
-			font-size: 16px;
-			block-size: 16px;
-			inline-size: 16px;
-			transition: transform 0.25s ease;
+		// Keep header content clear of the absolutely-positioned selection checkbox.
+		padding-inline-end: 32px;
+
+		h3 {
+			margin: 0;
+			font-size: 18px;
+			font-weight: 700;
+			line-height: 1.5;
+
+			// Let the heading shrink inside the flex row so long names
+			// truncate instead of pushing the header icons out of the card.
+			min-inline-size: 0;
+
+			.snippet-name {
+				display: block;
+				color: #2271b1;
+				text-decoration: none;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
 		}
 
-		&[aria-expanded='true'] .dashicons {
-			transform: rotate(90deg);
+		.extra-icons:empty {
+			display: none;
 		}
-	}
 
-	.card-inner h3 {
-		margin: 0;
-		font-size: 1.1em;
+		// The accent pill styling lives in common/_switch.scss; keep the
+		// switch from shrinking inside the flex card header.
+		input[type='checkbox'].switch {
+			flex-shrink: 0;
+		}
 	}
 
 	.snippet-card-meta {
@@ -137,107 +155,77 @@
 		align-items: center;
 		flex-wrap: wrap;
 		gap: 16px;
-		margin-block-start: 16px;
+		font-size: 14px;
 
-		.snippet-card-tags .dashicons {
-			color: #787c82;
-			margin-inline-end: 2px;
+		.snippet-card-tags-label {
+			color: #646970;
+		}
+
+		.snippet-card-tags a {
+			color: #2271b1;
+			text-decoration: none;
+		}
+
+		.snippet-card-modified {
+			color: #646970;
+			margin-inline-start: auto;
 		}
 	}
 
 	.snippet-description-content {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 3;
-		line-clamp: 3;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		overflow: hidden;
-		margin-block-start: 12px;
+		font-size: 14px;
+		color: #646970;
+		border-block-start: 1px solid #dcdcde;
+		padding-block-start: 16px;
 	}
 
-	// Enlarge the activation switch when shown in the card corner so it
-	// reads clearly next to the selection checkbox.
-	.snippet-card-corner input[type='checkbox'].switch {
-		inline-size: 38px;
-		block-size: 22px;
+	// Align the selection checkbox with the taller card header row.
+	.snippet-card-corner {
+		inset-block-start: 28px;
+	}
 
-		&::before {
-			block-size: 16px;
-			inline-size: 16px;
+	.code-snippets-card footer {
+		.button {
+			font-size: 14px;
+			line-height: 2.5714;
+			border-radius: 5px;
+		}
+
+		.button:not(.button-primary) {
+			background: #fff;
 		}
 	}
 
-	.snippet-card-priority {
-		display: flex;
-		align-items: center;
-		gap: 6px;
+	.kebab-menu-priority {
+		justify-content: space-between;
 
 		input.snippet-priority {
-			inline-size: 4em;
-		}
-	}
-
-	.snippet-card-actions {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 8px;
-		margin-inline-start: auto;
-	}
-
-	// Expanding actions row: animating grid-template-rows from 0fr to 1fr
-	// gives a smooth height transition without a hard-coded max height.
-	.snippet-card-more {
-		display: grid;
-		grid-template-rows: 0fr;
-		transition: grid-template-rows 0.25s ease;
-		background: #f6f7f7;
-
-		&.is-expanded {
-			grid-template-rows: 1fr;
-		}
-	}
-
-	.snippet-card-more-inner {
-		overflow: hidden;
-		min-block-size: 0;
-	}
-
-	.snippet-card-more-row {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 8px;
-		background: #f6f7f7;
-		border-block-start: 1px solid #dcdcde;
-		padding-inline: 24px;
-		padding-block: 12px;
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.snippet-card-more,
-		.snippet-card-more-toggle .dashicons {
-			transition-duration: 0.01s;
+			inline-size: 52px;
+			block-size: 30px;
+			box-sizing: border-box;
+			margin: 0;
+			padding-block: 0;
+			padding-inline: 4px;
+			border: 1px solid #e2e2e4;
+			border-radius: 4px;
+			text-align: center;
+			color: #2c3337;
 		}
 	}
 }
 
-// Shared top table-navigation layout for both snippet views: bulk actions
-// and filters on the left, with the search field filling the remaining
-// width of the row.
-.snippets-list-view .tablenav.top {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
+// Shared table-navigation layout for both snippet views and both toolbars:
+// bulk actions, select all, tag filter and search on the left, with the item
+// count, pagination and view toggle pinned to the far end of the row. The
+// bottom toolbar repeats only the bulk actions and pagination group.
+.snippets-list-view .tablenav {
 	block-size: auto;
-	margin-block-end: 20px;
-
-}
-
-.tablenav-pages {
-	.displaying-num {
-		color: #646970;
-		white-space: nowrap;
-	}
+	margin-block-end: 16px;
 }
 
 .snippets-search-subtitle {
@@ -252,12 +240,6 @@
 	gap: 1em;
 }
 
-// The visible 'N items found' count beside the search box already reports
-// the total, so hide the pagination's duplicate item count in this view.
-.snippets-list-view .tablenav-pages .displaying-num {
-	display: none;
-}
-
 // Keep every table row the same height by clamping the description cell
 // to two lines, matching the two-line name + row-actions column.
 .snippets-list-view .wp-list-table td.column-desc .snippet-description-content {
@@ -266,11 +248,4 @@
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
 	overflow: hidden;
-}
-
-// The All tab keeps the width it had with its longer label, with the
-// icon and text centred inside it.
-.snippet-type-nav .all-type-link {
-	min-inline-size: 165px;
-	justify-content: center;
 }

@@ -82,7 +82,21 @@
 
 	.inline-form-field.row-actions {
 		display: flex;
+
+		// Keep the export/download, trash and lock controls on a single row; the
+		// base .inline-form-field sets `row wrap`, which would otherwise drop the
+		// lock control onto a second line in the narrow sidebar.
+		flex-wrap: nowrap;
 		gap: 0;
+
+		// Lay the export + download pair out inline too — the group is a plain
+		// block by default, so its two links would otherwise stack vertically.
+		.snippet-export-buttons {
+			display: flex;
+			flex-wrap: nowrap;
+			gap: 12px;
+			min-inline-size: 0;
+		}
 
 		// Row-action buttons render as plain inline links. Neutralise the generic `.button`
 		// WP 7.0 compatibility styling (fill/border/radius/40px height) here — emitted after
@@ -91,7 +105,7 @@
 			block-size: auto;
 			min-block-size: theme.$control-height;
 			padding-block: 0;
-			padding-inline: 10px;
+			padding-inline: 8px;
 			font-weight: 400;
 			display: inline-flex;
 			justify-content: center;
@@ -106,11 +120,21 @@
 			&:not(.snippet-lock-button) {
 				border: 0;
 				border-radius: 0;
+				padding-inline: 0;
 				background: none;
 				box-shadow: none;
 
+				// WordPress paints a fill on disabled buttons with !important;
+				// keep the disabled trash flat like the rest of the row.
+				&:disabled {
+					background: none !important;
+					border: 0;
+					box-shadow: none;
+				}
+
 				&:hover:not(:disabled),
-				&:focus:not(:disabled) {
+				&:focus:not(:disabled),
+				&:active:not(:disabled) {
 					background: none;
 					border: 0;
 					box-shadow: none;
