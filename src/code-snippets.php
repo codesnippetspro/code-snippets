@@ -2,7 +2,7 @@
 /**
  * Plugin Name:  Code Snippets
  * Plugin URI:   https://codesnippets.pro
- * Description:  An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
+ * Description:  An easy, clean, and simple way to run code snippets on your site. No need to edit your theme's functions.php file again!
  * Author:       Code Snippets Pro
  * Author URI:   https://codesnippets.pro
  * License:      GPL-2.0-or-later
