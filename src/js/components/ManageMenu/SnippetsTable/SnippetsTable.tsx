@@ -114,6 +114,8 @@ const SnippetsTableInner = () => {
 
 			<ScreenMetaSlot />
 
+			<h2>{__('Snippets', 'code-snippets')}</h2>
+
 			<hr className="wp-header-end" />
 
 			<SafeModeNotice />

@@ -11,8 +11,15 @@ export interface NoticeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'class
 	type?: NoticeType
 }
 
+const isAssertive = (type?: NoticeType): boolean => 'error' === type || 'warning' === type
+
 export const Notice: React.FC<NoticeProps> = ({ className, type, children, ...props }) =>
-	<div className={classnames('notice', { [`notice-${type}`]: type }, className)} {...props}>
+	<div
+		className={classnames('notice', { [`notice-${type}`]: type }, className)}
+		role={isAssertive(type) ? 'alert' : 'status'}
+		aria-live={isAssertive(type) ? 'assertive' : 'polite'}
+		{...props}
+	>
 		{children}
 	</div>
 

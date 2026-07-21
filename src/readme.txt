@@ -9,7 +9,7 @@ Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4
 
-An easy, clean and simple way to enhance your site with code snippets.
+An easy, clean, and simple way to enhance your site with code snippets.
 
 == Description ==
 
