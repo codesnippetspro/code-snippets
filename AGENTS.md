@@ -103,7 +103,8 @@ plugins.
 
 - Namespace: `Code_Snippets\` — all new classes must live under this namespace and be PSR-4 autoloaded.
 - Vendor dependencies: always use the prefixed namespace `Code_Snippets\Vendor\…` (Imposter-prefixed).
-- Guard direct execution at the top of every standalone file: `defined('ABSPATH') || exit;`
+- Guard direct execution at the top of executable entry points and procedural files with
+  `defined('ABSPATH') || exit;`; do not add guards to autoloaded class files.
 - Use `wp_die()` for fatal admin errors; never `die()` or `exit` with user-facing output.
 - In `src/php/Plugin.php` (and Core bootstrap), rely on `autoload.php`; avoid manual `require_once` chains.
 - Avoid creating custom database tables. Prefer WordPress-native storage: `wp_options` for settings/flags, transients
@@ -127,8 +128,11 @@ plugins.
     - Prefer direct state updates in event handlers over using `useEffect` to synchronize multiple state values.
     - Use controlled components for forms; keep input values in React state.
     - Derive computed values at render-time rather than duplicating them in separate state.
-- **Component composition**: Break components into smaller, focused units. Use JSX for markup rather than
-  `createElement` in utility functions.
+- **Hooks**: Hooks return state and actions, not rendered elements.
+- **Clarity**: Avoid nested ternaries, trivial memoization, unnecessary ARIA roles, and props that repeat component
+  defaults.
+- **Component composition**: Separate components when doing so clarifies responsibility or enables reuse. Use JSX for
+  markup rather than `createElement` in utility functions.
 - Do not create 'index.ts' barrel files for components or hooks; import them directly to avoid circular dependencies and
   improve tree-shaking.
 - Reuse existing functions and components where possible, creating new common components under
@@ -140,10 +144,10 @@ plugins.
 
 ### Code Organization
 
-- Keep individual source files under 300 lines to improve maintainability and testability; split larger files into
-  focused modules.
-- Maintain a direct mapping between source classes and their test files; if a test file grows large, consider whether
-  the source class can be broken into smaller concerns.
+- Treat file length as a signal, not a reason to split cohesive code. Extract code only for reuse, meaningful separation,
+  or clearer testing; avoid single-use and pass-through abstractions.
+- Maintain a direct mapping between source classes and their test files; split source classes and tests only when doing
+  so creates a meaningful separation or clearer testing boundary.
 
 ---
 
@@ -154,6 +158,8 @@ plugins.
   plugins using the same libraries.
 - **Snippet model** — core data unit is `Code_Snippets\Model\Snippet`; use its API for reading/writing snippet data, not
   raw DB access.
+- **Data boundaries** — models preserve data, remote response decoding normalizes remote data, and rendering handles
+  presentation sanitation and escaping.
 - **Hook-driven extensibility** — use WordPress filters and actions as the primary extension mechanism; expose a filter
   before changing any default behaviour that may be preference-driven.
 - **Safe mode** — `src/php/Core/load.php` boots a recovery path when safe mode is active; any change to snippet
@@ -166,10 +172,15 @@ plugins.
 - **Production branch:** `core`
 - **Pre-release branch:** `core-beta`
 - **Development branches:** `feat/…`, `fix/…`, `chore/…`, `hotfix/…`
+- When creating the same logical branch on both remotes, suffix the Core branch with `-core` and the Pro branch with
+  `-pro` (for example, `chore/align-agent-rules-core` and `chore/align-agent-rules-pro`).
 - Branch from `core-beta` for all feature and fix work.
 - Open PRs back into `core-beta`.
-- Use **merge commits** (not squash/rebase) when merging dev branches into `core-beta`.
+- Preserve granular history during development and use merge commits for active stack propagation. Squash-merging a
+  large, fully reviewed chain into `core-beta` is preferred after explicit approval and a passing chain-peak matrix.
 - Hotfixes branch from `core` and merge directly back into `core`.
+- Intermediate stacked PRs may fail when the failure is understood and fixed later in the same chain. The current chain
+  peak must pass the complete required matrix before release integration.
 
 ### Commit Messages
 

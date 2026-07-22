@@ -24,11 +24,11 @@ Do not affirm my statements or assume my conclusions are correct. Question assum
 ## Coding Standards
 
 - Plan before coding, explain reasoning for complex suggestions
-- No code comments - write self-explanatory code
+- Follow the code comment guidance in `AGENTS.md`
 - Keep imports alphabetically sorted
 - Keep code SOLID but simple - separation of concerns without over-engineering
-- Aim to keep files under 300 lines - split when it improves clarity
-- Write tests for critical paths only. Use AAA pattern.
+- Treat file length as a signal; split only for reuse, meaningful separation, or clearer testing
+- Follow the testing requirements in `AGENTS.md`. Use the AAA pattern.
 - Run `npm run lint` for lint check
 
 ## Prohibited Actions
