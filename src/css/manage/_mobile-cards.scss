@@ -1,0 +1,20 @@
+@media (width <= 480px) {
+	.snippets-card-grid-container {
+		margin-inline: 8px 6px;
+	}
+
+	.snippets-card-grid {
+		.snippet-card-corner {
+			display: none;
+		}
+
+		.snippet-card-header {
+			padding-inline-end: 0;
+
+			h3 {
+				font-size: 16px;
+				font-weight: 590;
+			}
+		}
+	}
+}

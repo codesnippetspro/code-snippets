@@ -77,8 +77,9 @@
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
-		@media (width <= 782px) {
+		@media (width <= 480px) {
 			grid-template-columns: minmax(0, 1fr);
+			gap: 16px;
 		}
 	}
 

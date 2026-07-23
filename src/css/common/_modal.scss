@@ -53,13 +53,31 @@
 }
 
 .components-modal__frame.code-snippets-preview-modal {
-	min-inline-size: 520px;
+	min-inline-size: min(520px, 90vw);
 	min-block-size: 240px;
 	inline-size: min(900px, 90vw);
 	max-block-size: 85vh;
 
-	@media (width <= 600px) {
-		min-inline-size: 90vw;
+	@media (width <= 480px) {
+		min-inline-size: 0;
+		min-block-size: 0;
+		inline-size: calc(100vw - 36px);
+		block-size: calc(100vh - 36px);
+		max-inline-size: calc(100vw - 36px);
+		max-block-size: calc(100vh - 36px);
+		margin: auto;
+
+		.components-modal__header-heading-container {
+			min-inline-size: 0;
+			box-sizing: border-box;
+			padding-inline-end: 64px;
+		}
+
+		.components-modal__header-heading {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
 	}
 
 	.components-modal__header {
