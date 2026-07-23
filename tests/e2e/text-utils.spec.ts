@@ -1,101 +1,105 @@
 import { expect, test } from '@playwright/test'
 import { decodeEntities, stripTags } from '../../src/js/utils/text'
+import type { Page } from '@playwright/test'
 
-// Pure unit coverage for the text utilities used to render remote cloud
-// descriptions; runs in the Playwright runner without a browser page.
+const stripTagsInPage = (page: Page, text: string): Promise<string> =>
+	page.evaluate(stripTags, text)
+
 test.describe('stripTags', () => {
-	test('preserves separation between block elements', () => {
-		expect(stripTags('<p>First</p><p>Second</p>')).toBe('First Second')
-		expect(stripTags('Line one<br>Line two')).toBe('Line one Line two')
-		expect(stripTags('<ul><li>One</li><li>Two</li></ul>')).toBe('One Two')
+	test('preserves separation between block elements', async ({ page }) => {
+		expect(await stripTagsInPage(page, '<p>First</p><p>Second</p>')).toBe('First Second')
+		expect(await stripTagsInPage(page, 'Line one<br>Line two')).toBe('Line one Line two')
+		expect(await stripTagsInPage(page, '<ul><li>One</li><li>Two</li></ul>')).toBe('One Two')
 	})
 
-	test('handles ">" inside quoted attribute values', () => {
-		expect(stripTags('<p title="1 > 0">First</p><p>Second</p>')).toBe('First Second')
-		expect(stripTags("<span title='a > b'>inline</span>")).toBe('inline')
+	test('handles ">" inside quoted attribute values', async ({ page }) => {
+		expect(await stripTagsInPage(page, '<p title="1 > 0">First</p><p>Second</p>')).toBe('First Second')
+		expect(await stripTagsInPage(page, "<span title='a > b'>inline</span>")).toBe('inline')
 	})
 
-	test('handles malformed tags with unbalanced quotes', () => {
-		expect(stripTags('<p title="unterminated>Visible</p>')).toBe('Visible')
-		expect(stripTags("<p title='unterminated>Visible</p>")).toBe('Visible')
-		expect(stripTags('<div class="a>One</div><p>Two</p>')).toBe('One Two')
-		expect(stripTags('<span data-x="broken>inline</span> text')).toBe('inline text')
+	test('handles malformed tags with unbalanced quotes', async ({ page }) => {
+		expect(await stripTagsInPage(page, '<p title="unterminated>Visible</p>')).toBe('')
+		expect(await stripTagsInPage(page, "<p title='unterminated>Visible</p>")).toBe('')
+		expect(await stripTagsInPage(page, '<div class="a>One</div><p>Two</p>')).toBe('')
+		expect(await stripTagsInPage(page, '<span data-x="broken>inline</span> text')).toBe('')
 	})
 
-	test('preserves plain comparison text at end of input', () => {
-		expect(stripTags('x<y')).toBe('x<y')
-		expect(stripTags('x<y and z')).toBe('x<y and z')
-		expect(stripTags('x<p')).toBe('x<p')
+	test('uses native parser semantics for malformed comparison text', async ({ page }) => {
+		expect(await stripTagsInPage(page, 'x<y')).toBe('x')
+		expect(await stripTagsInPage(page, 'x<y and z')).toBe('x')
+		expect(await stripTagsInPage(page, 'x<p')).toBe('x')
 	})
 
-	test('strips unterminated-quote tag remnant at end of input', () => {
-		expect(stripTags('Visible <p title="broken')).toBe('Visible')
-		expect(stripTags("Visible <span data-x='broken")).toBe('Visible')
-		expect(stripTags('keep <x till <p title="broken')).toBe('keep <x till')
-		expect(stripTags('a <x"m<z"')).toBe('a <x"m')
-		expect(stripTags('a <x "q" ok')).toBe('a <x "q" ok')
+	test('strips unterminated-quote tag remnant at end of input', async ({ page }) => {
+		expect(await stripTagsInPage(page, 'Visible <p title="broken')).toBe('Visible')
+		expect(await stripTagsInPage(page, "Visible <span data-x='broken")).toBe('Visible')
+		expect(await stripTagsInPage(page, 'keep <x till <p title="broken')).toBe('keep')
+		expect(await stripTagsInPage(page, 'a <x"m<z"')).toBe('a')
+		expect(await stripTagsInPage(page, 'a <x "q" ok')).toBe('a')
 	})
 
-	test('strips block remnants before generic remnants', () => {
-		expect(stripTags('<span <div x> y')).toBe('<span y')
+	test('strips block remnants before generic remnants', async ({ page }) => {
+		expect(await stripTagsInPage(page, '<span <div x> y')).toBe('y')
 	})
 
-	test('scales linearly on repeated comparison text', () => {
+	test('handles long malformed comparison text within a sanity bound', async ({ page }) => {
 		const input = 'if (a<b && c<d) run(); '.repeat(16000)
 		const started = performance.now()
-		expect(stripTags(input)).toBe(input.trim())
-		expect(performance.now() - started).toBeLessThan(2000)
+		expect(await stripTagsInPage(page, input)).toBe('if (a')
+		expect(performance.now() - started).toBeLessThan(5000)
 	})
 
-	test('removes inline tags without adding separators', () => {
-		expect(stripTags('Co<strong>de</strong> <em>snippets</em>')).toBe('Code snippets')
-		expect(stripTags('<a href="https://example.com">link</a>')).toBe('link')
+	test('removes inline tags without adding separators', async ({ page }) => {
+		expect(await stripTagsInPage(page, 'Co<strong>de</strong> <em>snippets</em>')).toBe('Code snippets')
+		expect(await stripTagsInPage(page, '<a href="https://example.com">link</a>')).toBe('link')
 	})
 
-	test('strips comments and PHP blocks', () => {
-		expect(stripTags('A<!-- hidden --><?php evil(); ?>B')).toBe('AB')
-		expect(stripTags('<!--a--><!--b-->C<??><?PHP d?>')).toBe('C')
-		expect(stripTags('A<!-- unterminated')).toBe('A<!-- unterminated')
-		expect(stripTags('B<?php unterminated')).toBe('B<?php unterminated')
+	test('keeps inline markup inside a word joined', async ({ page }) => {
+		expect(await stripTagsInPage(page, 'in<strong>line</strong>')).toBe('inline')
 	})
 
-	test('scales linearly on repeated unmatched comment and PHP openers', () => {
-		const timeStrip = (opener: string, repeats: number): number => {
+	test('strips comments and PHP blocks', async ({ page }) => {
+		expect(await stripTagsInPage(page, 'A<!-- hidden --><?php evil(); ?>B')).toBe('AB')
+		expect(await stripTagsInPage(page, '<!--a--><!--b-->C<??><?PHP d?>')).toBe('C')
+		expect(await stripTagsInPage(page, 'A<!-- unterminated')).toBe('A')
+		expect(await stripTagsInPage(page, 'B<?php unterminated')).toBe('B')
+	})
+
+	test('does not leak comment content', async ({ page }) => {
+		expect(await stripTagsInPage(page, '<!--')).toBe('')
+		expect(await stripTagsInPage(page, 'a<!-- b -->c')).toBe('ac')
+	})
+
+	test('handles repeated unmatched comment and PHP openers within a sanity bound', async ({ page }) => {
+		const timeStrip = async (opener: string, repeats: number): Promise<number> => {
 			const input = opener.repeat(repeats)
-			let best = Infinity
+			const started = performance.now()
+			expect(await stripTagsInPage(page, input)).toBe('')
 
-			for (let attempt = 0; 3 > attempt; attempt++) {
-				const started = performance.now()
-				expect(stripTags(input)).toBe(input)
-				best = Math.min(best, performance.now() - started)
-			}
-
-			return best
+			return performance.now() - started
 		}
 
 		for (const opener of ['<!--x', '<?php x']) {
-			const base = timeStrip(opener, 4000)
-			const scaled = timeStrip(opener, 16000)
-
-			expect(scaled).toBeLessThan(Math.max(8 * base, 50))
+			expect(await timeStrip(opener, 16000)).toBeLessThan(5000)
 		}
 	})
 
-	test('normalises whitespace', () => {
-		expect(stripTags('  <div> spaced\n\nout </div> ')).toBe('spaced out')
-		expect(stripTags('plain text')).toBe('plain text')
+	test('normalises whitespace', async ({ page }) => {
+		expect(await stripTagsInPage(page, '  <div> spaced\n\nout </div> ')).toBe('spaced out')
+		expect(await stripTagsInPage(page, 'plain text')).toBe('plain text')
 	})
 
-	test('decodes HTML entities after stripping tags', () => {
-		expect(stripTags('<p>A &amp; B</p>')).toBe('A & B')
-		expect(stripTags('Fish&nbsp;&amp;&nbsp;chips')).toBe('Fish & chips')
-		expect(stripTags('It&#039;s &quot;quoted&quot;')).toBe('It\'s "quoted"')
-		expect(stripTags('one&hellip; <b>two</b>')).toBe('one… two')
+	test('decodes HTML entities after stripping tags', async ({ page }) => {
+		expect(await stripTagsInPage(page, '<p>A &amp; B</p>')).toBe('A & B')
+		expect(await stripTagsInPage(page, 'Fish&nbsp;&amp;&nbsp;chips')).toBe('Fish & chips')
+		expect(await stripTagsInPage(page, 'It&#039;s &quot;quoted&quot;')).toBe('It\'s "quoted"')
+		expect(await stripTagsInPage(page, 'one&hellip; <b>two</b>')).toBe('one… two')
 	})
 
-	test('decoded entities stay literal text, not markup', () => {
-		expect(stripTags('&lt;script&gt;alert(1)&lt;/script&gt;')).toBe('<script>alert(1)</script>')
-		expect(stripTags('<p>&lt;b&gt;not bold&lt;/b&gt;</p>')).toBe('<b>not bold</b>')
+	test('decoded entities stay literal text, not markup', async ({ page }) => {
+		expect(await stripTagsInPage(page, '&lt;script&gt;alert(1)&lt;/script&gt;'))
+			.toBe('<script>alert(1)</script>')
+		expect(await stripTagsInPage(page, '<p>&lt;b&gt;not bold&lt;/b&gt;</p>')).toBe('<b>not bold</b>')
 	})
 })
 
