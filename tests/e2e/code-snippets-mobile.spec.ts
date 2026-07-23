@@ -101,6 +101,9 @@ test.describe('Mobile snippets views', () => {
 
 		await expect(toggle).toBeVisible({ timeout: 5000 })
 		await expect(toggle).toHaveAccessibleName(/Expand details for/)
+		await expect(toggle).toHaveCSS('width', '40px')
+		await expect(toggle).toHaveCSS('height', '40px')
+		await expect(toggle.locator('.dashicons')).toHaveCSS('width', '24px')
 		await expect(heading).toContainText('Snippet Name')
 		await expect(footerHeading).toContainText('Snippet Name')
 		await expect(heading).toHaveCSS('background-color', 'rgb(247, 247, 248)')
