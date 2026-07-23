@@ -69,7 +69,8 @@ class Whats_New_Badge_Test extends UnitTestCase {
 			'older' => [ '1.0.0', true ],
 			'current' => [ PLUGIN_VERSION, false ],
 			'newer' => [ '99.0.0', false ],
-			'malformed' => [ [ 'unexpected' ], true ],
+			'malformed array' => [ [ 'unexpected' ], true ],
+			'malformed string' => [ 'garbage', true ],
 		];
 	}
 
