@@ -260,6 +260,7 @@
 		block-size: 52px;
 		background: linear-gradient(90deg, rgb(255 255 255 / 0%), #fff);
 		pointer-events: none;
+		transform: scaleX(var(--cs-direction-multiplier));
 	}
 
 	.snippets-screen-meta-slot {
