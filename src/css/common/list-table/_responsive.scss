@@ -1,3 +1,5 @@
+@use '../theme';
+
 // Toolbar squeeze: above the mobile breakpoint the row never wraps —
 // components shrink gracefully instead (flex-wrap would otherwise win
 // before flex-shrink ever engages). Wrapping remains the small-screen
@@ -88,7 +90,7 @@
 		}
 
 		a.button {
-			color: #2271b1;
+			color: theme.$accent;
 		}
 
 		.paging-input {

@@ -1,3 +1,5 @@
+@use 'theme';
+
 .code-snippets-cards {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
@@ -7,7 +9,7 @@
 
 .code-snippets-card {
 	background: #fff;
-	border: 1px solid #c3c4c7;
+	border: 1px solid theme.$control-border;
 	border-radius: 5px;
 	margin: 0;
 	display: flex;
@@ -16,7 +18,7 @@
 
 	a {
 		text-decoration: none;
-		color: #2271b1;
+		color: theme.$accent;
 	}
 
 	.card-inner {
@@ -30,7 +32,7 @@
 		gap: 8px;
 		background: #f7f7f8;
 		margin-block-start: auto;
-		border-block-start: 1px solid #c3c4c7;
+		border-block-start: 1px solid theme.$control-border;
 		padding-inline: 24px;
 		padding-block: 12px;
 		border-end-start-radius: 5px;
@@ -90,7 +92,7 @@
 		padding: 0;
 		box-sizing: border-box;
 		background: #fff;
-		border: 1.5px solid #2271b1;
+		border: 1.5px solid theme.$accent;
 		border-radius: 5px;
 		box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
 		cursor: pointer;
@@ -100,7 +102,7 @@
 		}
 
 		&:checked {
-			background: #2271b1;
+			background: theme.$accent;
 
 			&::before {
 				content: '';
@@ -117,7 +119,7 @@
 	}
 
 	&.is-selected {
-		border-color: #2271b1;
-		box-shadow: 0 0 0 1px #2271b1;
+		border-color: theme.$accent;
+		box-shadow: 0 0 0 1px theme.$accent;
 	}
 }

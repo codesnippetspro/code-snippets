@@ -1,5 +1,6 @@
 @use 'common/codemirror';
 @use 'common/subnav';
+@use 'common/theme';
 @use 'common/toolbar';
 @use 'common/wp-admin';
 @use 'common/page-header';
@@ -158,7 +159,7 @@ body.js {
 		background: #f0f6fc;
 		padding: 2px 8px;
 		border-radius: 3px;
-		border: 1px solid #c3c4c7;
+		border: 1px solid theme.$control-border;
 	}
 
 	#target_version {

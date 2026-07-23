@@ -35,7 +35,7 @@
 }
 
 .network-shared {
-	color: #2271b1;
+	color: theme.$accent;
 	font-size: 22px;
 	inline-size: 100%;
 	cursor: help;
@@ -144,7 +144,7 @@
 .badge.pro-badge,
 .inverted-badges .badge.pro-badge,
 .nav-tab-inactive .badge.pro-badge {
-	color: #2271b1;
+	color: theme.$accent;
 	background-color: #eff5f9;
 	border: 1px solid rgb(34 113 177 / 10%) !important;
 	border-radius: 999px;

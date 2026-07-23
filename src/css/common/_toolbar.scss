@@ -1,3 +1,4 @@
+@use 'theme';
 @use 'upsell';
 
 $toolbar-block-size: 136px;
@@ -107,7 +108,7 @@ $wpcontent-inline-start-indent: 20px;
 		}
 
 		&.active-link, &:hover, &:focus, &:active {
-			color: #2271b1;
+			color: theme.$accent;
 		}
 	}
 
@@ -145,7 +146,7 @@ $wpcontent-inline-start-indent: 20px;
 
 	// Mobile: the primary navigation scrolls horizontally on its band rather
 	// than wrapping, with the scrollbar chrome hidden.
-	@media screen and (width <= 782px) {
+	@media (width <= 782px) {
 		overflow-x: auto;
 		scrollbar-width: none;
 
@@ -167,13 +168,13 @@ $wpcontent-inline-start-indent: 20px;
 .code-snippets-toolbar-upper li a:hover,
 .code-snippets-toolbar-upper li a:focus,
 .code-snippets-toolbar-upper li a:active {
-	color: #2271b1;
+	color: theme.$accent;
 }
 
 .code-snippets-toolbar-lower .pro-chip,
 .nav-tab .pro-chip,
 .snippet-type-link .pro-chip {
-	color: #2271b1;
+	color: theme.$accent;
 	background: #eff5f9;
 	border: 1px solid rgb(34 113 177 / 10%);
 	text-transform: uppercase;

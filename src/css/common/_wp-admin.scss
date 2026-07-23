@@ -6,7 +6,7 @@
  * WordPress core ships different control metrics between versions (30/32px classic,
  * 40px with a 2px radius in the WP 7.0 "modern" redesign) and recolours secondary
  * buttons with the modern accent (#3858E9). These rules apply the plugin's own control
- * tokens — 38px height, 5px radius, #c3c4c7 borders and the brand accent (#2271b1) —
+ * tokens — 38px height, 5px radius, theme control borders and the brand accent —
  * to native elements inside our admin pages so the layout renders consistently across
  * WP versions. They deliberately leave the admin menu, admin bar and
  * `@wordpress/components` React widgets untouched — only native inputs/buttons

@@ -1,3 +1,5 @@
+@use 'theme';
+
 // Snippet-type navigation: a boxed segmented control on a white band, with
 // each tab separated by a vertical rule and the active tab shown as a
 // filled tile.
@@ -24,7 +26,7 @@
 	// below 782px; mirror them so the bar stays flush without overflowing
 	// the viewport. The tabs scroll horizontally on a single row rather than
 	// stacking, with the scrollbar chrome hidden.
-	@media screen and (width <= 782px) {
+	@media (width <= 782px) {
 		margin-inline-start: -10px;
 		inline-size: calc(100% + 22px);
 		overflow-x: auto;
@@ -109,7 +111,7 @@
 		&.active-type {
 			background: #f0f0f1;
 			border-color: #f0f0f1;
-			color: #2271b1;
+			color: theme.$accent;
 
 			// Children paint over the parent nav's border, so this recolours
 			// the 1px band separator beneath the active tab to match its fill.
@@ -119,7 +121,7 @@
 		// Suppress the persistent focus ring left behind after a mouse click;
 		// keyboard navigation still gets a visible outline via :focus-visible.
 		&:focus-visible {
-			outline: 2px solid #2271b1;
+			outline: 2px solid theme.$accent;
 			outline-offset: -2px;
 			box-shadow: none;
 		}
@@ -168,7 +170,7 @@
 		}
 
 		&.active-view {
-			background: #2271b1;
+			background: theme.$accent;
 			color: #fff;
 
 			&:hover,
@@ -204,7 +206,7 @@
 
 // The active tab's count adopts the accent alongside its label.
 .snippet-type-nav .snippet-type-link.active-type .subnav-count {
-	color: #2271b1;
+	color: theme.$accent;
 }
 
 // The short "All" form of the all-snippets label only replaces "All Snippets"
@@ -236,5 +238,5 @@
 // border above the subnav bar.
 .notice + .wrap .snippet-type-nav {
 	margin-block-start: 20px;
-	border-block-start: 1px solid #c3c4c7;
+	border-block-start: 1px solid theme.$control-border;
 }

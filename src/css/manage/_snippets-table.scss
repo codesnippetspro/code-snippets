@@ -1,4 +1,5 @@
 @use '../common/list-table';
+@use '../common/theme';
 
 .column-name,
 .column-type {
@@ -20,7 +21,7 @@
 .wp-list-table .priority-column input {
 	appearance: none;
 	background: #fff;
-	border: 1px solid #c3c4c7;
+	border: 1px solid theme.$control-border;
 	border-radius: 5px;
 	box-shadow: none;
 	box-sizing: border-box;
@@ -72,11 +73,11 @@
 	&.code-snippets-cards {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 
-		@media screen and (width <= 1100px) {
+		@media (width <= 1100px) {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
-		@media screen and (width <= 782px) {
+		@media (width <= 782px) {
 			grid-template-columns: minmax(0, 1fr);
 		}
 	}
@@ -131,7 +132,7 @@
 
 			.snippet-name {
 				display: block;
-				color: #2271b1;
+				color: theme.$accent;
 				text-decoration: none;
 				white-space: nowrap;
 				overflow: hidden;
@@ -162,7 +163,7 @@
 		}
 
 		.snippet-card-tags a {
-			color: #2271b1;
+			color: theme.$accent;
 			text-decoration: none;
 		}
 

@@ -1,4 +1,5 @@
 @use '../common/banners';
+@use '../common/theme';
 
 .cloud-snippet-status {
 	display: inline-flex;
@@ -134,7 +135,7 @@ $status-colors: (
 		margin: 0;
 		font-size: inherit;
 		font-weight: 600;
-		color: #2271b1;
+		color: theme.$accent;
 		text-decoration: none;
 		cursor: pointer;
 		text-align: start;

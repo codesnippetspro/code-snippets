@@ -1,3 +1,5 @@
+@use 'theme';
+
 // Generic kebab ("more actions") menu: a square accent-outlined trigger
 // button that opens a small popover of actions anchored to its
 // bottom-end corner, flipping above the trigger near the viewport edge.
@@ -15,8 +17,8 @@
 	box-sizing: border-box;
 	padding: 0;
 	background: #fff;
-	color: #2271b1;
-	border: 1px solid #2271b1;
+	color: theme.$accent;
+	border: 1px solid theme.$accent;
 	border-radius: 5px;
 	cursor: pointer;
 

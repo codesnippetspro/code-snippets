@@ -33,7 +33,7 @@
 	align-items: center;
 	gap: 8px;
 
-	@media screen and (width <= 1190px) {
+	@media (width <= 1190px) {
 		span:first-child:not(:last-child) {
 			display: none;
 		}
