@@ -12,6 +12,11 @@ test.describe('stripTags', () => {
 		expect(await stripTagsInPage(page, '<ul><li>One</li><li>Two</li></ul>')).toBe('One Two')
 	})
 
+	test('preserves separation between blockquotes', async ({ page }) => {
+		expect(await stripTagsInPage(page, '<blockquote>First</blockquote><blockquote>Second</blockquote>'))
+			.toBe('First Second')
+	})
+
 	test('handles ">" inside quoted attribute values', async ({ page }) => {
 		expect(await stripTagsInPage(page, '<p title="1 > 0">First</p><p>Second</p>')).toBe('First Second')
 		expect(await stripTagsInPage(page, "<span title='a > b'>inline</span>")).toBe('inline')
@@ -68,6 +73,13 @@ test.describe('stripTags', () => {
 	test('does not leak comment content', async ({ page }) => {
 		expect(await stripTagsInPage(page, '<!--')).toBe('')
 		expect(await stripTagsInPage(page, 'a<!-- b -->c')).toBe('ac')
+	})
+
+	test('does not include script or style content', async ({ page }) => {
+		expect(await stripTagsInPage(
+			page,
+			'<p>Visible</p><script>alert("hidden")</script><style>.hidden { display: none; }</style><p>Text</p>'
+		)).toBe('Visible Text')
 	})
 
 	test('handles repeated unmatched comment and PHP openers within a sanity bound', async ({ page }) => {

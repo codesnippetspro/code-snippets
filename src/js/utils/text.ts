@@ -71,9 +71,12 @@ export const decodeEntities = (text: string): string =>
 
 export const stripTags = (text: string): string => {
 	const document = new DOMParser().parseFromString(text, 'text/html')
+	const blockSelector = 'p,div,li,br,h1,h2,h3,h4,h5,h6,tr,td,ul,ol,blockquote,table,pre,hr,' +
+		'dl,dt,dd,section,article,header,footer,figure,figcaption'
 
+	document.body.querySelectorAll('script,style').forEach(element => element.remove())
 	document.body
-		.querySelectorAll('p,div,li,br,h1,h2,h3,h4,h5,h6,tr,td')
+		.querySelectorAll(blockSelector)
 		.forEach(element => element.after(document.createTextNode(' ')))
 
 	return (document.body.textContent ?? '').replace(/\s+/g, ' ').trim()
