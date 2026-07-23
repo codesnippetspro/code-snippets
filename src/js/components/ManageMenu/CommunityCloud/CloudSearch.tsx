@@ -179,7 +179,11 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 					selected={selected}
 					setSelected={setSelected}
 				/>
-				: <CloudSnippetsTable snippets={searchResults.snippets} />}
+				: <CloudSnippetsTable
+					snippets={searchResults.snippets}
+					selected={selected}
+					setSelected={setSelected}
+				/>}
 
 			<TableNav which="bottom" {...navProps} />
 		</div>

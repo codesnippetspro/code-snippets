@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { stripTags, truncateChars } from '../../../utils/text'
@@ -8,16 +8,45 @@ import { CloudSnippetDownloadButton } from '../../common/cloud/CloudSnippetDownl
 import { CloudSnippetPreviewModal } from '../../common/cloud/CloudSnippetPreviewModal'
 import { CloudStatusBadge } from '../../common/cloud/CloudStatusBadge'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
+import type { Dispatch, SetStateAction } from 'react'
+
+type CloudSnippetId = CloudSnippetSchema['id']
+type SetSelected = Dispatch<SetStateAction<Set<CloudSnippetId>>>
+
+const updateSelection = (setSelected: SetSelected, ids: CloudSnippetId[], isSelected: boolean) => {
+	setSelected(previous => {
+		const updated = new Set(previous)
+		ids.forEach(id => isSelected ? updated.add(id) : updated.delete(id))
+		return updated
+	})
+}
 
 interface CloudSnippetRowProps {
 	snippet: CloudSnippetSchema
+	selected: Set<CloudSnippetId>
+	setSelected: SetSelected
 }
 
-const CloudSnippetRow: React.FC<CloudSnippetRowProps> = ({ snippet }) => {
+const CloudSnippetRow: React.FC<CloudSnippetRowProps> = ({ snippet, selected, setSelected }) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	return (
 		<tr>
+			<th scope="row" className="check-column">
+				<input
+					id={`cb-select-${snippet.id}`}
+					type="checkbox"
+					name="checked[]"
+					checked={selected.has(snippet.id)}
+					aria-label={sprintf(
+						// translators: %s: snippet name.
+						__('Select %s', 'code-snippets'),
+						snippet.name
+					)}
+					onChange={event => updateSelection(setSelected, [snippet.id], event.target.checked)}
+				/>
+			</th>
+
 			<td className="column-name column-primary">
 				<strong>
 					<button
@@ -56,6 +85,8 @@ const CloudSnippetRow: React.FC<CloudSnippetRowProps> = ({ snippet }) => {
 
 export interface CloudSnippetsTableProps {
 	snippets: CloudSnippetSchema[]
+	selected: Set<CloudSnippetId>
+	setSelected: SetSelected
 }
 
 /**
@@ -63,10 +94,20 @@ export interface CloudSnippetsTableProps {
  * bundle contents), mirroring the card actions. Descriptions are clamped
  * so all rows stay the same height.
  */
-export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({ snippets }) =>
+export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({ snippets, selected, setSelected }) =>
 	<table className="wp-list-table widefat fixed striped cloud-snippets-table">
 		<thead>
 			<tr>
+				<th scope="col" className="check-column">
+					<input
+						id="cb-select-all-cloud-snippets"
+						type="checkbox"
+						checked={0 < snippets.length && snippets.every(snippet => selected.has(snippet.id))}
+						aria-label={__('Select all snippets', 'code-snippets')}
+						onChange={event =>
+							updateSelection(setSelected, snippets.map(snippet => snippet.id), event.target.checked)}
+					/>
+				</th>
 				<th scope="col" className="column-name column-primary">{__('Name', 'code-snippets')}</th>
 				<th scope="col" className="column-type">{__('Type', 'code-snippets')}</th>
 				<th scope="col" className="column-status">{__('Status', 'code-snippets')}</th>
@@ -78,6 +119,6 @@ export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({ snippets
 		</thead>
 		<tbody>
 			{snippets.map(snippet =>
-				<CloudSnippetRow key={snippet.id} snippet={snippet} />)}
+				<CloudSnippetRow key={snippet.id} {...{ snippet, selected, setSelected }} />)}
 		</tbody>
 	</table>
