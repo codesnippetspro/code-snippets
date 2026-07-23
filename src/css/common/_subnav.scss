@@ -11,7 +11,7 @@
 
 	// The toolbar band above already draws the 1px separator, so only a
 	// bottom border here — a top border would double the line weight.
-	border-block-end: 1px solid #e2e2e4;
+	border-block-end: 1px solid theme.$border-light;
 	min-block-size: 53px;
 
 	// Bleed across the full admin content width, flush against the plugin
@@ -88,7 +88,7 @@
 		color: #646970;
 		text-decoration: none;
 		box-sizing: border-box;
-		border-inline-end: 1px solid #e2e2e4;
+		border-inline-end: 1px solid theme.$border-light;
 
 		// The text-only "All Snippets" tab uses a slightly wider gap between
 		// its label and count than tabs that lead with a badge or icon.
@@ -136,6 +136,14 @@
 		}
 	}
 
+}
+
+.snippet-type-nav-container {
+	position: relative;
+}
+
+.snippet-type-nav-fade {
+	display: none;
 }
 
 // Card/table view toggle: a two-icon segmented pair of square tiles with
@@ -239,4 +247,22 @@
 .notice + .wrap .snippet-type-nav {
 	margin-block-start: 20px;
 	border-block-start: 1px solid theme.$control-border;
+}
+
+@media (width <= 480px) {
+	.snippet-type-nav-fade {
+		display: block;
+		position: absolute;
+		z-index: 1;
+		inset-block-start: -10px;
+		inset-inline-end: -12px;
+		inline-size: 66px;
+		block-size: 52px;
+		background: linear-gradient(90deg, rgb(255 255 255 / 0%), #fff);
+		pointer-events: none;
+	}
+
+	.snippets-screen-meta-slot {
+		display: none;
+	}
 }

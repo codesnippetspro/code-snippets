@@ -123,24 +123,27 @@ const SnippetsTableInner = () => {
 
 	return (
 		<>
-			<nav
-				className="snippet-type-nav"
-				aria-label={__('Snippet types', 'code-snippets')}
-			>
-				<ul>
-					<SnippetTypeTab
-						count={getCount()}
-						setIsUpgradeDialogOpen={setIsUpgradeDialogOpen}
-					/>
-					{SNIPPET_TYPES.map(type =>
+			<div className="snippet-type-nav-container">
+				<nav
+					className="snippet-type-nav"
+					aria-label={__('Snippet types', 'code-snippets')}
+				>
+					<ul>
 						<SnippetTypeTab
-							key={type}
-							type={type}
-							count={getCount(type)}
+							count={getCount()}
 							setIsUpgradeDialogOpen={setIsUpgradeDialogOpen}
-						/>)}
-				</ul>
-			</nav>
+						/>
+						{SNIPPET_TYPES.map(type =>
+							<SnippetTypeTab
+								key={type}
+								type={type}
+								count={getCount(type)}
+								setIsUpgradeDialogOpen={setIsUpgradeDialogOpen}
+							/>)}
+					</ul>
+				</nav>
+				<span className="snippet-type-nav-fade" aria-hidden="true" />
+			</div>
 
 			<ScreenMetaSlot />
 

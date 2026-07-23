@@ -43,3 +43,20 @@
 		text-decoration: underline;
 	}
 }
+
+@media (width <= 480px) {
+	.snippets-page-header {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 16px;
+		margin-block: 17px 24px;
+		margin-inline: 8px;
+
+		h1,
+		h2 {
+			font-size: 28px;
+			font-weight: 590;
+			letter-spacing: -0.56px;
+		}
+	}
+}

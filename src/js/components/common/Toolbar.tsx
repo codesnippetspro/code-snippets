@@ -145,7 +145,10 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 		<nav aria-label={__('Main features', 'code-snippets')}>
 			<ul>
 				{LOWER_NAV_LINKS.map(link =>
-					<li key={link.name} className={link.end ? 'toolbar-end-item' : undefined}>
+					<li
+						key={link.name}
+						className={classnames(`${link.name}-item`, { 'toolbar-end-item': link.end })}
+					>
 						<a
 							href={link.url ?? buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: link.name })}
 							className={classnames(`${link.name}-link`, { 'active-link': isActiveLink(link) })}
