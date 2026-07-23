@@ -93,6 +93,11 @@
 		position: relative;
 		inset-inline-start: 0;
 
+		.row-action,
+		.row-action-separator {
+			font-size: inherit;
+		}
+
 		// Row-action buttons render as plain inline links. On WP 7.0 the generic `.button`
 		// compatibility styling would otherwise give them a fill, border, radius and fixed
 		// height, so fully neutralise it here (this rule is emitted after the wp-admin layer

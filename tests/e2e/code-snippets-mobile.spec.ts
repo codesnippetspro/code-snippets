@@ -88,4 +88,66 @@ test.describe('Mobile snippets views', () => {
 			await switchSnippetView(page, 'Table view').catch(() => undefined)
 		}
 	})
+
+	test('Expands list rows into accessible snippet details', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const table = page.locator('.snippets-list-view .wp-list-table')
+		const heading = table.locator('thead .column-name')
+		const footerHeading = table.locator('tfoot .column-name')
+		const row = table.locator('tbody tr.snippet').first()
+		const toggle = row.locator('.mobile-row-toggle')
+
+		await expect(toggle).toBeVisible({ timeout: 5000 })
+		await expect(toggle).toHaveAccessibleName(/Expand details for/)
+		await expect(heading).toContainText('Snippet Name')
+		await expect(footerHeading).toContainText('Snippet Name')
+		await expect(heading).toHaveCSS('background-color', 'rgb(247, 247, 248)')
+		await expect(table.locator('thead .column-type')).toBeHidden()
+		await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+
+		const tableBox = await table.boundingBox()
+		const collapsedRowBox = await row.boundingBox()
+		expect(tableBox?.x).toBeCloseTo(18, 0)
+		expect((tableBox?.x ?? 0) + (tableBox?.width ?? 0)).toBeCloseTo(422, 0)
+		expect(collapsedRowBox?.height).toBeCloseTo(64, 0)
+
+		await toggle.click()
+		await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+		await expect(toggle).toHaveAccessibleName(/Collapse details for/)
+		await expect(row).toHaveClass(/is-mobile-expanded/)
+
+		for (const [column, label] of [
+			['type', 'Type'],
+			['desc', 'Description'],
+			['tags', 'Tags'],
+			['date', 'Modified'],
+			['priority', 'Priority']
+		]) {
+			const cell = row.locator(`.column-${column}`)
+			await expect(cell).toBeVisible()
+			await expect(cell).toHaveAttribute('data-label', label)
+		}
+
+		const typeCell = row.locator('.column-type')
+		const typeValue = typeCell.locator('.mobile-cell-value')
+		await expect(typeValue).toBeVisible()
+		const typeCellBox = await typeCell.boundingBox()
+		const typeValueBox = await typeValue.boundingBox()
+		expect(typeValueBox?.x).toBeCloseTo((typeCellBox?.x ?? 0) + 86, 0)
+
+		const rowActions = row.locator('.row-actions')
+		await expect(rowActions).toBeVisible()
+		await expect(rowActions.getByText('Preview', { exact: true })).toBeHidden()
+		await expect(rowActions.getByText('Edit', { exact: true })).toBeVisible()
+		await expect(rowActions.getByText('Clone', { exact: true })).toBeVisible()
+		await expect(rowActions.getByText('Export', { exact: true })).toBeVisible()
+		await expect(rowActions.getByText('Trash', { exact: true })).toBeVisible()
+		await expect(rowActions.locator('.row-action-clone .row-action-separator'))
+			.toHaveCSS('font-size', '13px')
+
+		await toggle.click()
+		await expect(row).not.toHaveClass(/is-mobile-expanded/)
+		await expect(row.locator('.column-type')).toBeHidden()
+	})
 })

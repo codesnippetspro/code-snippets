@@ -123,6 +123,23 @@ const DeleteActionLink: React.FC<{ snippet: Snippet; onSuccess: () => Promise<vo
 	)
 }
 
+interface RowActionListProps {
+	actions: { key: string; content: ReactNode }[]
+}
+
+const RowActionList: React.FC<RowActionListProps> = ({ actions }) =>
+	<>
+		{actions
+			.filter(action => action.content)
+			.map((action, index) =>
+				<span key={action.key} className={`row-action row-action-${action.key}`}>
+					{0 < index
+						? <span className="row-action-separator" aria-hidden="true"> | </span>
+						: null}
+					{action.content}
+				</span>)}
+	</>
+
 const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
@@ -165,16 +182,16 @@ const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 		? <DeleteActionLink snippet={snippet} onSuccess={refreshSnippetsList} />
 		: null
 
-	return (
-		<>
-			{[Preview, Edit, Clone, Restore, Export, Delete]
-				.filter(Action => Action)
-				.reduce<ReactNode>(
-					(Actions, Action) =>
-						null === Actions ? <>{Action}</> : <>{Actions} | {Action}</>,
-					null)}
-		</>
-	)
+	return <RowActionList
+		actions={[
+			{ key: 'preview', content: Preview },
+			{ key: 'edit', content: Edit },
+			{ key: 'clone', content: Clone },
+			{ key: 'restore', content: Restore },
+			{ key: 'export', content: Export },
+			{ key: 'delete', content: Delete }
+		]}
+	/>
 }
 
 export const RowActions: React.FC<RowActionsProps> = ({ snippet }) => {

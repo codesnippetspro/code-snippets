@@ -157,6 +157,12 @@ export const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 export const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<SnippetPriorityInput snippet={snippet} />
 
+const TYPE_COLUMN_LABEL = __('Type', 'code-snippets')
+const DESCRIPTION_COLUMN_LABEL = __('Description', 'code-snippets')
+const TAGS_COLUMN_LABEL = __('Tags', 'code-snippets')
+const MODIFIED_COLUMN_LABEL = __('Modified', 'code-snippets')
+const PRIORITY_COLUMN_LABEL = __('Priority', 'code-snippets')
+
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
@@ -165,36 +171,44 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 	},
 	{
 		id: 'name',
-		title: __('Name', 'code-snippets'),
+		title: <>
+			<span className="desktop-column-title">{__('Name', 'code-snippets')}</span>
+			<span className="mobile-column-title">{__('Snippet Name', 'code-snippets')}</span>
+		</>,
 		isPrimary: true,
 		sortedValue: snippet => getSnippetDisplayName(snippet).toLowerCase(),
 		render: snippet => <NameColumn snippet={snippet} />
 	},
 	{
 		id: 'type',
-		title: __('Type', 'code-snippets'),
+		title: TYPE_COLUMN_LABEL,
+		mobileLabel: TYPE_COLUMN_LABEL,
 		sortedValue: snippet => getSnippetType(snippet),
 		render: snippet => <TypeColumn snippet={snippet} />
 	},
 	{
 		id: 'desc',
-		title: __('Description', 'code-snippets'),
+		title: DESCRIPTION_COLUMN_LABEL,
+		mobileLabel: DESCRIPTION_COLUMN_LABEL,
 		render: snippet => <div className="snippet-description-content"><RawHTML>{snippet.desc}</RawHTML></div>
 	},
 	{
 		id: 'tags',
-		title: __('Tags', 'code-snippets'),
+		title: TAGS_COLUMN_LABEL,
+		mobileLabel: TAGS_COLUMN_LABEL,
 		render: snippet => <TagsColumn snippet={snippet} />
 	},
 	{
 		id: 'date',
-		title: __('Modified', 'code-snippets'),
+		title: MODIFIED_COLUMN_LABEL,
+		mobileLabel: MODIFIED_COLUMN_LABEL,
 		sortedValue: snippet => snippet.modified ? new Date(snippet.modified).toISOString() : '',
 		render: snippet => <DateColumn snippet={snippet} />
 	},
 	{
 		id: 'priority',
-		title: __('Priority', 'code-snippets'),
+		title: PRIORITY_COLUMN_LABEL,
+		mobileLabel: PRIORITY_COLUMN_LABEL,
 		sortedValue: snippet => snippet.priority,
 		render: snippet => <PriorityColumn snippet={snippet} />
 	}

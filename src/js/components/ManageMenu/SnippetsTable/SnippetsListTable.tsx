@@ -1,7 +1,7 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import React, { useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
-import { getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
+import { getSnippetDisplayName, getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
@@ -97,6 +97,19 @@ const getRowClassName = (
 		}
 	)
 
+const getRowExpansionLabel = (snippet: Snippet, isExpanded: boolean): string =>
+	isExpanded
+		? sprintf(
+			/* translators: %s: snippet name. */
+			__('Collapse details for %s', 'code-snippets'),
+			getSnippetDisplayName(snippet)
+		)
+		: sprintf(
+			/* translators: %s: snippet name. */
+			__('Expand details for %s', 'code-snippets'),
+			getSnippetDisplayName(snippet)
+		)
+
 interface SnippetsViewProps {
 	snippetView: SnippetView
 	setSnippetView: (view: SnippetView) => void
@@ -150,6 +163,7 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			selectAllControl
 			endTableNav={endTableNav}
 			rowClassName={snippet => getRowClassName(snippet, activeByCondition)}
+			getRowExpansionLabel={getRowExpansionLabel}
 			noItems={<NoItemsMessage />}
 			beforeTable={<SearchResultsIndicator />}
 		/>
@@ -187,7 +201,7 @@ export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({
 		<>
 			<SnippetsTableToolbar />
 
-			<div className="snippets-list-view">
+			<div className={classnames('snippets-list-view', `snippets-${snippetView}-view`)}>
 				<SnippetsView
 					snippetView={snippetView}
 					setSnippetView={setSnippetView}

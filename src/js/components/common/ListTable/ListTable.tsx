@@ -14,6 +14,7 @@ export interface ListTableColumn<T> {
 	isHidden?: boolean
 	isPrimary?: boolean
 	isHeading?: boolean
+	mobileLabel?: string
 	sortedValue?: (item: T) => Key
 	defaultSortDirection?: ListTableSortDirection
 }
@@ -39,6 +40,7 @@ export interface ListTableRowsProps<T, K extends Key> {
 	columns: ListTableColumn<T>[]
 	noItems?: ReactNode
 	rowClassName?: (item: T) => string
+	getRowExpansionLabel?: (item: T, isExpanded: boolean) => string
 }
 
 export interface ListTablePaginationProps {
@@ -191,6 +193,7 @@ export const PartialDataListTable = <T, K extends Key, A extends string>({
 	beforeTable,
 	endTableNav,
 	rowClassName,
+	getRowExpansionLabel,
 	visibleItems,
 	sortDirection = 'asc',
 	extraTableNav,
@@ -219,6 +222,7 @@ export const PartialDataListTable = <T, K extends Key, A extends string>({
 				<TableRows
 					items={visibleItems}
 					{...{ getKey, columns, noItems, rowClassName, selected, setSelected }}
+					getRowExpansionLabel={getRowExpansionLabel}
 				/>
 			</TableBorder>
 		</TableNavigation>
