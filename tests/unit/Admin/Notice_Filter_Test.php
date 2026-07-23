@@ -3,17 +3,11 @@
 namespace Code_Snippets\Admin;
 
 use Code_Snippets\UnitTestCase;
-use ReflectionMethod;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
-use const Code_Snippets\PLUGIN_FILE;
 
 /**
- * Tests for foreign admin notice filtering on Code Snippets screens.
- *
- * Callback ownership is resolved from a callback's defining file: closures declared in this test file
- * live outside the plugin directory and therefore stand in for foreign notices, while methods of real
- * plugin classes stand in for Code Snippets-owned notices.
+ * Tests for hiding foreign admin notices on Code Snippets screens.
  *
  * @group admin-notices
  */
@@ -64,36 +58,18 @@ class Notice_Filter_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Filtering removes foreign notice callbacks while keeping Code Snippets-owned callbacks.
+	 * Registering the notice filter does not remove third-party callbacks.
 	 *
 	 * @return void
 	 */
-	public function test_filtering_removes_foreign_notices_and_keeps_code_snippets_notices(): void {
+	public function test_filtering_preserves_foreign_notice_callbacks(): void {
 		$foreign = static function () {};
-		$owned = [ code_snippets()->admin, 'print_notices' ];
-
 		add_action( 'admin_notices', $foreign );
-		add_action( 'admin_notices', $owned );
 
-		$this->notice_filter->filter_foreign_notices();
+		$this->notice_filter->register_filtering( get_current_screen() );
 
-		$this->assertFalse( has_action( 'admin_notices', $foreign ) );
-		$this->assertNotFalse( has_action( 'admin_notices', $owned ) );
-	}
-
-	/**
-	 * Callback ownership requires a complete plugin directory boundary.
-	 *
-	 * @return void
-	 */
-	public function test_callback_ownership_requires_plugin_directory_boundary(): void {
-		$method = new ReflectionMethod( $this->notice_filter, 'is_code_snippets_file' );
-		$method->setAccessible( true );
-
-		$this->assertTrue( $method->invoke( $this->notice_filter, PLUGIN_FILE ) );
-		$this->assertFalse(
-			$method->invoke( $this->notice_filter, dirname( PLUGIN_FILE ) . '-extra/callback.php' )
-		);
+		$this->assertNotFalse( has_action( 'admin_notices', $foreign ) );
+		$this->assertFalse( method_exists( $this->notice_filter, 'filter_foreign_notices' ) );
 	}
 
 	/**
@@ -104,7 +80,6 @@ class Notice_Filter_Test extends UnitTestCase {
 	public function test_registers_filtering_on_code_snippets_screen(): void {
 		$this->notice_filter->register_filtering( get_current_screen() );
 
-		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
 		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'print_fallback_styles' ] ) );
 	}
 
@@ -120,7 +95,6 @@ class Notice_Filter_Test extends UnitTestCase {
 
 		$this->notice_filter->register_filtering( get_current_screen() );
 
-		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
 		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'print_fallback_styles' ] ) );
 	}
 
@@ -134,7 +108,7 @@ class Notice_Filter_Test extends UnitTestCase {
 
 		$this->notice_filter->register_filtering( get_current_screen() );
 
-		$this->assertFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
+		$this->assertFalse( has_action( 'admin_head', [ $this->notice_filter, 'print_fallback_styles' ] ) );
 	}
 
 	/**
@@ -147,29 +121,7 @@ class Notice_Filter_Test extends UnitTestCase {
 
 		$this->notice_filter->register_filtering( get_current_screen() );
 
-		$this->assertFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
-	}
-
-	/**
-	 * Filtering removes foreign invokable-object callbacks.
-	 *
-	 * @return void
-	 */
-	public function test_filtering_removes_foreign_invokable_object(): void {
-		$foreign_invokable = new class() {
-			/**
-			 * Emit a foreign notice.
-			 */
-			public function __invoke() {
-				echo 'foreign notice';
-			}
-		};
-
-		add_action( 'admin_notices', $foreign_invokable );
-
-		$this->notice_filter->filter_foreign_notices();
-
-		$this->assertFalse( has_action( 'admin_notices', $foreign_invokable ) );
+		$this->assertFalse( has_action( 'admin_head', [ $this->notice_filter, 'print_fallback_styles' ] ) );
 	}
 
 	/**
@@ -189,7 +141,7 @@ class Notice_Filter_Test extends UnitTestCase {
 		set_current_screen( $compact_hookname );
 		$this->notice_filter->register_filtering( get_current_screen() );
 
-		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'filter_foreign_notices' ] ) );
+		$this->assertNotFalse( has_action( 'admin_head', [ $this->notice_filter, 'print_fallback_styles' ] ) );
 
 		remove_filter( 'code_snippets_compact_menu', '__return_true' );
 	}

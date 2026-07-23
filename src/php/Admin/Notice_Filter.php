@@ -2,34 +2,16 @@
 
 namespace Code_Snippets\Admin;
 
-use ReflectionFunction;
-use ReflectionMethod;
-use Throwable;
 use WP_Screen;
 use function Code_Snippets\code_snippets;
-use const Code_Snippets\PLUGIN_FILE;
-
-defined( 'ABSPATH' ) || exit;
 
 /**
- * Filters out admin notices that do not originate from Code Snippets while on a Code Snippets admin screen,
+ * Hides admin notices that do not originate from Code Snippets while on a Code Snippets admin screen,
  * preventing foreign notices from disrupting the plugin's navigation and sub-tab layout.
  *
  * @package Code_Snippets
  */
 class Notice_Filter {
-
-	/**
-	 * Notice hooks cleared of foreign callbacks on Code Snippets screens.
-	 *
-	 * @var string[]
-	 */
-	private const NOTICE_HOOKS = [
-		'admin_notices',
-		'all_admin_notices',
-		'user_admin_notices',
-		'network_admin_notices',
-	];
 
 	/**
 	 * Class constructor.
@@ -54,35 +36,11 @@ class Notice_Filter {
 			return;
 		}
 
-		add_action( 'admin_head', [ $this, 'filter_foreign_notices' ], 0 );
 		add_action( 'admin_head', [ $this, 'print_fallback_styles' ] );
 	}
 
 	/**
-	 * Remove every notice callback that is not defined within the Code Snippets plugin directory.
-	 *
-	 * @return void
-	 */
-	public function filter_foreign_notices() {
-		global $wp_filter;
-
-		foreach ( self::NOTICE_HOOKS as $hook ) {
-			if ( empty( $wp_filter[ $hook ] ) ) {
-				continue;
-			}
-
-			foreach ( $wp_filter[ $hook ]->callbacks as $priority => $callbacks ) {
-				foreach ( $callbacks as $callback ) {
-					if ( ! $this->is_code_snippets_callback( $callback['function'] ) ) {
-						remove_action( $hook, $callback['function'], $priority );
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Print inline styles that hide any residual foreign notices left in the notice region.
+	 * Print inline styles that hide foreign notices in the notice region.
 	 *
 	 * @return void
 	 */
@@ -122,50 +80,5 @@ class Notice_Filter {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Determine whether a callback is defined within the Code Snippets plugin directory.
-	 *
-	 * Ownership is resolved from the callback's defining file. Reflection failures are treated as
-	 * Code Snippets-owned so unknown callbacks are never removed.
-	 *
-	 * @param callable|string|array $callback Hook callback as stored in the filter registry.
-	 *
-	 * @return bool
-	 */
-	private function is_code_snippets_callback( $callback ): bool {
-		try {
-			if ( is_array( $callback ) ) {
-				$file = ( new ReflectionMethod( $callback[0], $callback[1] ) )->getFileName();
-			} elseif ( is_string( $callback ) && false !== strpos( $callback, '::' ) ) {
-				[ $class, $method ] = explode( '::', $callback, 2 );
-				$file = ( new ReflectionMethod( $class, $method ) )->getFileName();
-			} elseif ( is_object( $callback ) && ! $callback instanceof \Closure ) {
-				$file = ( new ReflectionMethod( $callback, '__invoke' ) )->getFileName();
-			} else {
-				$file = ( new ReflectionFunction( $callback ) )->getFileName();
-			}
-		} catch ( Throwable $error ) {
-			return true;
-		}
-
-		if ( ! $file ) {
-			return true;
-		}
-
-		return $this->is_code_snippets_file( $file );
-	}
-
-	/**
-	 * Determine whether a file is beneath the Code Snippets plugin directory.
-	 *
-	 * @param string $file File path to inspect.
-	 *
-	 * @return bool
-	 */
-	private function is_code_snippets_file( string $file ): bool {
-		$plugin_directory = trailingslashit( wp_normalize_path( dirname( PLUGIN_FILE ) ) );
-		return 0 === strpos( wp_normalize_path( $file ), $plugin_directory );
 	}
 }
