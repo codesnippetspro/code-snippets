@@ -25,6 +25,7 @@ declare global {
 			isLicensed: boolean
 			hideUpsell: boolean
 			isCloudConnected: boolean
+			whatsNewUnseen: boolean
 			snippetView: SnippetView
 			restAPI: {
 				base: string

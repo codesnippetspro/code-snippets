@@ -19,6 +19,7 @@ interface NavLink {
 	pageSlug?: string
 	subpage?: typeof SUBPAGES[number]
 	end?: boolean
+	whatsNewUnseen?: boolean
 }
 
 const UPPER_NAV_LINKS: readonly NavLink[] = [
@@ -38,7 +39,8 @@ const UPPER_NAV_LINKS: readonly NavLink[] = [
 		name: 'welcome',
 		url: window.CODE_SNIPPETS?.urls.welcome,
 		label: __("What's New", 'code-snippets'),
-		pageSlug: 'code-snippets-welcome'
+		pageSlug: 'code-snippets-welcome',
+		whatsNewUnseen: window.CODE_SNIPPETS?.whatsNewUnseen
 	}
 ]
 
@@ -106,6 +108,13 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 							{...link.external && { target: '_blank', rel: 'noopener noreferrer' }}
 						>
 							{link.label}
+							{link.whatsNewUnseen && (
+								<span className="nav-dot">
+									<span className="screen-reader-text">
+										{__('New content available', 'code-snippets')}
+									</span>
+								</span>
+							)}
 						</a>
 					</li>)}
 
