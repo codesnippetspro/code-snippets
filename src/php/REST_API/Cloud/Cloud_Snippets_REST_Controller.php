@@ -245,7 +245,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function get_featured_items( WP_REST_Request $request ) {
 		$page = max( 1, intval( $request->get_param( 'page' ) ) );
-		$per_page = intval( $request->get_param( 'per_page' ) ?? Manage_Menu::get_snippets_per_page() );
+		$per_page = intval( $request->get_param( 'per_page' ) ?? Manage_Menu::get_cloud_search_per_page() );
 		$filters = $this->extract_filters( $request );
 
 		$snippets = $this->search_controller->get_featured_snippets( $page, $per_page, $filters );
