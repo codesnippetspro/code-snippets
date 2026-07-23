@@ -15,12 +15,12 @@ test.describe("What's New unseen release indicator", () => {
 
 		const upperNav = page.locator('.code-snippets-toolbar-upper')
 		const whatsNewLink = upperNav.getByRole('link', { name: /What's New/ })
-		await expect(whatsNewLink.locator('.nav-dot')).toBeVisible()
+		await expect(whatsNewLink.locator('.whats-new-dot')).toBeVisible()
 		await expect(whatsNewLink).toContainText('New content available')
 
 		await whatsNewLink.click()
 		await expect(page).toHaveURL(URLS.WELCOME_SCREEN_ADMIN)
-		await expect(upperNav.getByRole('link', { name: /What's New/ }).locator('.nav-dot')).toBeHidden()
+		await expect(upperNav.getByRole('link', { name: /What's New/ }).locator('.whats-new-dot')).toBeHidden()
 
 		const currentVersion = (await wpCli(['eval', 'echo CODE_SNIPPETS_VERSION;'])).trim()
 		const seenVersion =
@@ -28,6 +28,6 @@ test.describe("What's New unseen release indicator", () => {
 		expect(seenVersion).toBe(currentVersion)
 
 		await page.goto(URLS.SNIPPETS_ADMIN)
-		await expect(upperNav.getByRole('link', { name: /What's New/ }).locator('.nav-dot')).toBeHidden()
+		await expect(upperNav.getByRole('link', { name: /What's New/ }).locator('.whats-new-dot')).toBeHidden()
 	})
 })

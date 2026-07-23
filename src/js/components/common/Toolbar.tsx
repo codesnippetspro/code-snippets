@@ -109,7 +109,7 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 						>
 							{link.label}
 							{link.whatsNewUnseen && (
-								<span className="nav-dot">
+								<span className="whats-new-dot">
 									<span className="screen-reader-text">
 										{__('New content available', 'code-snippets')}
 									</span>
