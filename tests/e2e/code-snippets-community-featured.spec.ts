@@ -117,7 +117,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 		await page.reload()
 
 		try {
-			await expect(page.locator('.cloud-search .notice'))
+			await expect(page.getByRole('region', { name: 'Community snippets status' }))
 				.toContainText('Loading community snippets…')
 		} finally {
 			releaseRequest()

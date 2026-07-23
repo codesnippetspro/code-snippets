@@ -229,6 +229,7 @@ const SearchStatus = () => {
 				? __('An error occurred while fetching search results. Please try again.', 'code-snippets')
 				: undefined}
 			loadingNotice={__('Loading community snippets…', 'code-snippets')}
+			noticeLabel={__('Community snippets status', 'code-snippets')}
 		/>
 		: null
 }

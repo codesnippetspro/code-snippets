@@ -6,31 +6,33 @@ export interface LoadingStatusNoticesProps {
 	isLoading: boolean
 	errorMessage: string | undefined
 	loadingNotice: ReactNode
+	noticeLabel: string
 }
 
 export const LoadingStatusNotices: React.FC<LoadingStatusNoticesProps> = ({
 	isLoading,
 	errorMessage,
-	loadingNotice
+	loadingNotice,
+	noticeLabel
 }) => {
 	switch (true) {
 		case isLoading:
 			return (
-				<div className="notice inline">
+				<div aria-label={noticeLabel} className="notice inline" role="region">
 					<p>{loadingNotice}</p>
 				</div>
 			)
 
 		case errorMessage !== undefined:
 			return (
-				<div className="notice notice-error inline">
+				<div aria-label={noticeLabel} className="notice notice-error inline" role="region">
 					<p>{errorMessage}</p>
 				</div>
 			)
 
 		default:
 			return (
-				<div className="notice notice-warning inline">
+				<div aria-label={noticeLabel} className="notice notice-warning inline" role="region">
 					<p>{__('An unknown error occurred. Please try again.', 'code-snippets')}</p>
 				</div>
 			)
