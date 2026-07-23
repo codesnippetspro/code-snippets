@@ -25,7 +25,6 @@ export const CloudSnippetAuthor: React.FC<CloudSnippetAuthorProps> = ({ snippet 
 			rel="noopener noreferrer"
 		>
 			{sprintf(
-				/* translators: %s: cloud library author name. */
 				_x('By %s', 'snippet author', 'code-snippets'),
 				snippet.codevault
 			)}
