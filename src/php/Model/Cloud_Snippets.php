@@ -78,7 +78,7 @@ class Cloud_Snippets extends Model {
 		$snippets = is_array( $snippets ) ? $snippets : [ $snippets ];
 
 		foreach ( $snippets as $snippet ) {
-			$result[] = $snippet instanceof Cloud_Snippet ? $snippet : new Cloud_Snippet( $snippet );
+			$result[] = $snippet instanceof Cloud_Snippet ? $snippet : self::unpack_api_snippet( $snippet );
 		}
 
 		return $result;

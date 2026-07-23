@@ -190,6 +190,23 @@ class Cloud_Snippets_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Collection hydration sanitises remote description markup.
+	 *
+	 * @return void
+	 */
+	public function test_collection_hydration_sanitizes_descriptions(): void {
+		$result = new Cloud_Snippets(
+			[
+				'snippets' => [
+					[ 'description' => '<strong>Allowed</strong><script>alert("unsafe")</script>' ],
+				],
+			]
+		);
+
+		$this->assertSame( '<strong>Allowed</strong>alert("unsafe")', $result->snippets[0]->description );
+	}
+
+	/**
 	 * Remote descriptions are sanitised and normalised while unpacking the response.
 	 *
 	 * @return void
