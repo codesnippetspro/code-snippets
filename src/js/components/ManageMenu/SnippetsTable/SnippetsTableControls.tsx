@@ -105,7 +105,6 @@ const FilterByTagControl: React.FC<FilterByTagControlProps> = ({ visibleSnippets
 				id="snippets-tag-filter"
 				name="tag"
 				value={currentTag}
-				aria-label={__('Filter snippets by tag', 'code-snippets')}
 				onChange={event => setCurrentTag(event.target.value)}
 			>
 				<option value="">{__('All Tags', 'code-snippets')}</option>
