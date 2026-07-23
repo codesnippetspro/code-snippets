@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
+use Code_Snippets\Admin\Whats_New_Badge;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
@@ -348,6 +349,7 @@ class Plugin {
 				'isLicensed'       => $this->licensing->is_licensed(),
 				'isCloudConnected' => $this->cloud_connection->is_authenticated(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
+				'whatsNewUnseen'   => Whats_New_Badge::has_unseen_release(),
 				'snippetView'      => Preferences_REST_Controller::get_snippet_view(),
 				'restAPI'          => [
 					'base'           => esc_url_raw( rest_url() ),

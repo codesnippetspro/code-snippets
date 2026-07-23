@@ -7,6 +7,7 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Admin\Whats_New_Badge;
 use Composer\Autoload\ClassLoader;
 
 /**
@@ -84,5 +85,7 @@ function code_snippets(): Plugin {
 
 	return $plugin;
 }
+
+register_activation_hook( PLUGIN_FILE, [ Whats_New_Badge::class, 'seed_fresh_install' ] );
 
 code_snippets()->load_plugin();
