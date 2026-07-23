@@ -203,7 +203,7 @@ export const TableNav = <K extends Key, A extends string>({
 				? <SelectAllControl keys={selectAllKeys} selected={selected} setSelected={setSelected} />
 				: null}
 
-			{isTop ? extraTableNav?.(which) : null}
+			{extraTableNav?.(which)}
 
 			{0 < totalPages || isTop && endTableNav
 				? <div className="tablenav-end-group">

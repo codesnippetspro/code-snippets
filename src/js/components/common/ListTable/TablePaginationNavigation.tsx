@@ -165,10 +165,17 @@ const CurrentPage: React.FC<CurrentPageProps> = ({
 		? <>
 			{/* translators: Hidden accessibility text. */}
 			<span className="screen-reader-text">{__('Current Page', 'code-snippets')}</span>
-			<span className="paging-input">
+			<span className="paging-input desktop-paging-input">
 				<span className="tablenav-paging-text">
 					{/* translators: 1: Current page. 2: Total pages. */
 						sprintf(_x('%1$s of %2$s', 'paging', 'code-snippets'), currentPage, totalPages)}
+				</span>
+			</span>
+			<span className="paging-input mobile-paging-input">
+				<PagingInput which={which} totalPages={totalPages} {...inputProps} />
+				<span className="tablenav-paging-text">
+					{_x(' of ', 'paging', 'code-snippets')}
+					<span className="total-pages">{totalPages}</span>
 				</span>
 			</span>
 		</>

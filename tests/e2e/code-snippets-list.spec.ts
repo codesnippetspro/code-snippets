@@ -36,7 +36,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
-	test('Filters snippets as the search query changes without a submit control', async ({ page }) => {
+	test('Filters snippets as the search query changes with the desktop submit control hidden', async ({ page }) => {
 		const search = page.getByRole('search')
 		const searchInput = search.getByRole('searchbox', { name: 'Search Snippets:' })
 		const snippetRow = page.getByRole('row', { name: new RegExp(snippetName) })
@@ -46,7 +46,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(snippetRow).toBeVisible()
 		await searchInput.fill(`${snippetName}-does-not-exist`)
 		await expect(snippetRow).toBeHidden()
-		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
+		await expect(search.getByRole('button', { name: 'Search' })).toBeHidden()
 	})
 
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {

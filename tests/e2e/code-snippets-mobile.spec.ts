@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { URLS } from './helpers/constants'
+import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import type { Page } from '@playwright/test'
 
 const MOBILE_VIEWPORT = { width: 440, height: 1000 }
@@ -149,5 +150,80 @@ test.describe('Mobile snippets views', () => {
 		await toggle.click()
 		await expect(row).not.toHaveClass(/is-mobile-expanded/)
 		await expect(row.locator('.column-type')).toBeHidden()
+	})
+
+	test('Uses mobile search controls and a complete bottom toolbar', async ({ page }) => {
+		await SnippetsTestHelper.setSnippetsPerPage(2)
+
+		try {
+			await page.reload()
+			await switchSnippetView(page, 'Table view')
+
+			const top = page.locator('.snippets-table-view .tablenav.top')
+			const bottom = page.locator('.snippets-table-view .tablenav.bottom')
+			const search = top.getByRole('search')
+			const searchInput = search.getByRole('searchbox', { name: 'Search Snippets:' })
+			const searchButton = search.getByRole('button', { name: 'Search' })
+
+			await expect(searchButton).toBeVisible({ timeout: 5000 })
+			await expect(top.locator('.bulkactions')).toBeHidden()
+			await expect(top.locator('.tablenav-select-all')).toBeHidden()
+			await expect(top.locator('.snippets-tag-filter')).toBeHidden()
+			await expect(top.locator('.tablenav-pages-nav')).toBeHidden()
+			await expect(searchInput).toBeVisible()
+			await expect(searchInput).toHaveCSS('border-color', 'rgb(226, 226, 228)')
+			await expect(top.locator('.snippet-view-toggle')).toBeVisible()
+
+			const topBox = await top.boundingBox()
+			expect(topBox?.x).toBeCloseTo(18, 0)
+			expect((topBox?.x ?? 0) + (topBox?.width ?? 0)).toBeCloseTo(422, 0)
+
+			await expect(bottom.locator('.bulkactions')).toBeVisible()
+			await expect(bottom.getByRole('combobox', { name: 'Filter snippets by tag' })).toBeVisible()
+			await expect(bottom.locator('.tablenav-pages-nav')).toBeVisible()
+			await expect(bottom.locator('#current-page-selector-bottom')).toHaveValue('1')
+			await expect(bottom.locator('.pagination-links .button')).toHaveCount(4)
+
+			await switchSnippetView(page, 'Card view')
+			const cardBottom = page.locator('.snippets-card-view .tablenav.bottom')
+			await expect(cardBottom.locator('.bulkactions')).toBeHidden()
+			await expect(cardBottom.locator('.snippets-tag-filter')).toBeHidden()
+		} finally {
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+			await SnippetsTestHelper.resetSnippetsPerPage()
+		}
+	})
+
+	test('Keeps Clear List with the mobile status controls', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Mobile Recently Active')
+		await SnippetsTestHelper.createSnippetViaCli({ name: snippetName, active: true })
+
+		try {
+			await page.reload()
+			await switchSnippetView(page, 'Table view')
+			await page.getByRole('searchbox', { name: 'Search Snippets:' }).fill(snippetName)
+
+			const row = page.locator('tbody tr.snippet').filter({ hasText: snippetName })
+			const activeSwitch = row.getByRole('switch')
+			await expect(activeSwitch).toBeChecked()
+			await activeSwitch.click()
+			await expect(activeSwitch).not.toBeChecked()
+
+			const toolbar = page.locator('.snippets-table-toolbar')
+			const statusLinks = toolbar.locator('.subsubsub')
+			await statusLinks.getByRole('link', { name: /^Recently Active/ }).click()
+
+			const clearButton = toolbar.getByRole('button', { name: 'Clear List' })
+			await expect(clearButton).toBeVisible()
+			await expect(page.locator('.tablenav.top .desktop-clear-recently-active')).toBeHidden()
+
+			const statusLinksBox = await statusLinks.boundingBox()
+			const clearButtonBox = await clearButton.boundingBox()
+			expect(clearButtonBox?.y).toBeGreaterThan(
+				(statusLinksBox?.y ?? 0) + (statusLinksBox?.height ?? 0)
+			)
+		} finally {
+			await SnippetsTestHelper.cleanupSnippetsByPrefix(snippetName)
+		}
 	})
 })

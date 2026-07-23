@@ -70,7 +70,7 @@
 }
 
 .wrap .snippets-search-area input[type='search'] {
-	border-color: #e3e3e4;
+	border-color: theme.$border-light;
 }
 
 // Tablet widths: let the search area grow to fill the remainder of its row

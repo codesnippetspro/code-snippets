@@ -1,5 +1,6 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useMemo } from 'react'
+import classnames from 'classnames'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
@@ -60,16 +61,24 @@ const SnippetStatusCounts = () => {
 	)
 }
 
-const ClearRecentlyActiveButton: React.FC = () => {
+interface ClearRecentlyActiveButtonProps {
+	className?: string
+	name?: string
+}
+
+const ClearRecentlyActiveButton: React.FC<ClearRecentlyActiveButtonProps> = ({
+	className,
+	name = 'clear-recent-list'
+}) => {
 	const { api } = useRestAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 	const { currentStatus } = useSnippetsFilters()
 
 	return 'recently_active' === currentStatus
-		? <div className="alignleft actions">
+		? <div className={classnames('alignleft actions', className)}>
 			<SubmitButton
 				secondary
-				name="clear-recent-list"
+				name={name}
 				text={__('Clear List', 'code-snippets')}
 				onClick={event => {
 					event.preventDefault()
@@ -83,11 +92,13 @@ const ClearRecentlyActiveButton: React.FC = () => {
 }
 
 interface FilterByTagControlProps {
+	which: 'top' | 'bottom'
 	visibleSnippets: Snippet[]
 }
 
-const FilterByTagControl: React.FC<FilterByTagControlProps> = ({ visibleSnippets }) => {
+const FilterByTagControl: React.FC<FilterByTagControlProps> = ({ which, visibleSnippets }) => {
 	const { currentTag, setCurrentTag } = useSnippetsFilters()
+	const controlId = 'top' === which ? 'snippets-tag-filter' : 'snippets-tag-filter-bottom'
 
 	const tagsList: Set<string> = useMemo(
 		() => visibleSnippets.reduce((tags, snippet) => {
@@ -97,12 +108,12 @@ const FilterByTagControl: React.FC<FilterByTagControlProps> = ({ visibleSnippets
 		[visibleSnippets])
 
 	return 0 < tagsList.size
-		? <div className="alignleft actions">
-			<label htmlFor="snippets-tag-filter" className="screen-reader-text">
+		? <div className={classnames('alignleft actions', 'snippets-tag-filter', `snippets-tag-filter-${which}`)}>
+			<label htmlFor={controlId} className="screen-reader-text">
 				{__('Filter snippets by tag', 'code-snippets')}
 			</label>
 			<select
-				id="snippets-tag-filter"
+				id={controlId}
 				name="tag"
 				value={currentTag}
 				onChange={event => setCurrentTag(event.target.value)}
@@ -125,12 +136,16 @@ export const SnippetsTableNavigation: React.FC<SnippetsTableNavigationProps> = (
 	visibleSnippets
 }) =>
 	<>
-		{'top' === which && <FilterByTagControl visibleSnippets={visibleSnippets} />}
-		<ClearRecentlyActiveButton />
+		<FilterByTagControl which={which} visibleSnippets={visibleSnippets} />
+		{'top' === which && <ClearRecentlyActiveButton className="desktop-clear-recently-active" />}
 		{'top' === which && <SearchArea />}
 	</>
 
 export const SnippetsTableToolbar = () =>
 	<div className="snippets-table-toolbar">
 		<SnippetStatusCounts />
+		<ClearRecentlyActiveButton
+			className="mobile-clear-recently-active"
+			name="clear-recent-list-mobile"
+		/>
 	</div>

@@ -17,6 +17,13 @@ const SearchBox = () => {
 				onChange={event => setSearchQuery(event.target.value)}
 				placeholder={__('Search snippets', 'code-snippets')}
 			/>
+			<Button
+				secondary
+				className="snippets-search-submit"
+				onClick={() => setSearchQuery(searchQuery)}
+			>
+				{__('Search', 'code-snippets')}
+			</Button>
 		</search>
 	)
 }
