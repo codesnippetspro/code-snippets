@@ -5,7 +5,7 @@ import { useSnippetView } from '../../../hooks/useSnippetView'
 import { fetchConstQueryParam, updateQueryParams } from '../../../utils/urls'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { SubnavTabs } from '../../common/SubnavTabs'
-import { WithCloudSearchContext } from './WithCloudSearchContext'
+import { WithCloudSearchContext, useCloudSearch } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
 
 const TAB_QUERY_PARAM = 'tab'
@@ -22,6 +22,7 @@ const CommunityCloudInner = () => {
 	const [currentTab, setCurrentTab] =
 		useState<CommunityTab>(() => fetchConstQueryParam(TAB_QUERY_PARAM, TABS) ?? TABS[0])
 	const { snippetView, setSnippetView } = useSnippetView()
+	const { searchResults } = useCloudSearch()
 
 	return (
 		<>
@@ -31,7 +32,8 @@ const CommunityCloudInner = () => {
 				tabs={[
 					{
 						name: 'snippets',
-						label: TAB_LABELS.snippets
+						label: TAB_LABELS.snippets,
+						count: searchResults?.totalItems
 					},
 					{
 						name: 'bundles',
