@@ -4,6 +4,16 @@ import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/Sni
 import { SELECTORS } from './helpers/constants'
 import type { Page, Route } from '@playwright/test'
 
+// The view preference saves through an optimistic background request, so wait
+// for it to persist before navigating or ending the test.
+const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
+	const saved = page
+		.waitForResponse(response => response.url().includes('/snippet-view') && 'GET' !== response.request().method(), { timeout: 5000 })
+		.catch(() => undefined)
+	await page.getByRole('button', { name: view }).click()
+	await saved
+}
+
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
@@ -40,7 +50,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
-		await page.getByRole('button', { name: 'Card view' }).click()
+		await switchSnippetView(page, 'Card view')
 
 		try {
 			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: snippetName })
@@ -68,7 +78,7 @@ test.describe('Code Snippets List Page Actions', () => {
 			await expect(card.getByRole('link', { name: 'Edit' })).toBeFocused()
 			await expect(popover).toHaveCount(0)
 		} finally {
-			await page.getByRole('button', { name: 'Table view' }).click().catch(() => undefined)
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
 		}
 	})
 
@@ -456,14 +466,14 @@ test.describe('Manage table Screen Options', () => {
 
 		try {
 			await helper.navigateToSnippetsAdmin()
-			await page.getByRole('button', { name: 'Card view' }).click()
+			await switchSnippetView(page, 'Card view')
 			await expect(page.locator('.snippets-card-grid')).toBeVisible()
 
 			await page.goto('/wp-admin/admin.php?page=snippets&paged=2')
 			await expect(page.locator('.tablenav.top .current-page')).toHaveValue('2')
 			await expect(page.locator('.snippets-card-grid .code-snippets-card')).toHaveCount(1)
 		} finally {
-			await page.getByRole('button', { name: 'Table view' }).click().catch(() => undefined)
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
 			await SnippetsTestHelper.resetSnippetsPerPage()
 		}
 	})
