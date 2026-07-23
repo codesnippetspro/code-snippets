@@ -1,6 +1,39 @@
 import { expect, test } from '@playwright/test'
 import { TIMEOUTS, URLS } from './helpers/constants'
 
+const isFeaturedRequest = (url: URL): boolean =>
+	url.pathname.includes('/cloud/snippets/featured') ||
+	true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/featured')
+
+const makeCloudSnippet = (id: number, name: string, localId: number | null = null) => ({
+	id,
+	slug: `mock-cloud-snippet-${id}`,
+	name,
+	description: 'Mock description',
+	code: '<?php echo "mock";',
+	tags: [],
+	scope: 'global',
+	codevault: 'MockVault',
+	total_votes: 0,
+	vote_count: 0,
+	wp_tested: '',
+	status: 4,
+	created: '2026-01-01 00:00:00',
+	updated: '2026-01-01 00:00:00',
+	revision: 1,
+	is_owner: false,
+	local_id: localId,
+	update_available: false
+})
+
+const makeFeaturedResponse = (snippets = [makeCloudSnippet(501, 'Mock Cloud Snippet')]) => ({
+	snippets,
+	page: 1,
+	total_pages: 1,
+	total_snippets: snippets.length,
+	available_filters: {}
+})
+
 test.describe('Community Cloud Featured Snippets', () => {
 	const jsErrors: string[] = []
 
@@ -67,41 +100,49 @@ test.describe('Community Cloud Featured Snippets', () => {
 		await expect(page.locator('.cloud-snippets-heading', { hasText: 'Featured Snippets' })).not.toBeVisible()
 	})
 
-	test('Table checkboxes share the cloud selection state', async ({ page }) => {
-		await page.route(
-			url =>
-				url.pathname.includes('/cloud/snippets/featured') ||
-				true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/featured'),
-			route => route.fulfill({
+	test('Shows a page-level notice while featured snippets load', async ({ page }) => {
+		let releaseRequest = () => undefined
+		const requestPending = new Promise<void>(resolve => {
+			releaseRequest = resolve
+		})
+
+		await page.route(isFeaturedRequest, async route => {
+			await requestPending
+			await route.fulfill({
 				contentType: 'application/json',
-				body: JSON.stringify({
-					snippets: [{
-						id: 501,
-						slug: 'mock-cloud-snippet',
-						name: 'Mock Cloud Snippet',
-						description: 'Mock description',
-						code: '<?php echo "mock";',
-						tags: [],
-						scope: 'global',
-						codevault: 'MockVault',
-						total_votes: 0,
-						vote_count: 0,
-						wp_tested: '',
-						status: 4,
-						created: '2026-01-01 00:00:00',
-						updated: '2026-01-01 00:00:00',
-						revision: 1,
-						is_owner: false,
-						local_id: null,
-						update_available: false
-					}],
-					page: 1,
-					total_pages: 1,
-					total_snippets: 1,
-					available_filters: {}
-				})
+				body: JSON.stringify(makeFeaturedResponse())
 			})
-		)
+		})
+
+		await page.reload()
+
+		try {
+			await expect(page.locator('.cloud-search .notice'))
+				.toContainText('Loading community snippets…')
+		} finally {
+			releaseRequest()
+		}
+
+		await expect(page.locator('.cloud-search .notice')).toBeHidden()
+	})
+
+	test('Shows a page-level notice when featured snippets fail to load', async ({ page }) => {
+		await page.route(isFeaturedRequest, route => route.fulfill({
+			status: 500,
+			contentType: 'application/json',
+			body: JSON.stringify({ message: 'Cloud unavailable' })
+		}))
+		await page.reload()
+
+		await expect(page.locator('.cloud-search .notice-error'))
+			.toContainText('An error occurred while fetching search results. Please try again.')
+	})
+
+	test('Table checkboxes share the cloud selection state', async ({ page }) => {
+		await page.route(isFeaturedRequest, route => route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify(makeFeaturedResponse())
+		}))
 		await page.reload()
 
 		const table = page.locator('.cloud-snippets-table')
