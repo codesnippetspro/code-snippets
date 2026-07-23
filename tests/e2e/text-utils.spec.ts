@@ -17,6 +17,13 @@ test.describe('stripTags', () => {
 			.toBe('First Second')
 	})
 
+	test('preserves separation between other block elements', async ({ page }) => {
+		expect(await stripTagsInPage(page, '<address>First</address><address>Second</address>'))
+			.toBe('First Second')
+		expect(await stripTagsInPage(page, '<aside>First</aside><nav>Second</nav><main>Third</main>'))
+			.toBe('First Second Third')
+	})
+
 	test('handles ">" inside quoted attribute values', async ({ page }) => {
 		expect(await stripTagsInPage(page, '<p title="1 > 0">First</p><p>Second</p>')).toBe('First Second')
 		expect(await stripTagsInPage(page, "<span title='a > b'>inline</span>")).toBe('inline')
