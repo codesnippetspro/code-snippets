@@ -5,6 +5,8 @@ import { wpCli } from './helpers/wpCli'
 import type { Locator, Page } from '@playwright/test'
 
 const MAXIMUM_FOCUS_ATTEMPTS = 10
+const MAXIMUM_BADGE_ALIGNMENT_OFFSET = 4
+const PREVIEW_VIEWPORT_WIDTHS = [1280, 640]
 
 // Disabling the admin's "Syntax Highlighting" preference makes
 // wp_enqueue_code_editor() a no-op, so window.wp.codeEditor is undefined when
@@ -128,6 +130,34 @@ test.describe('Code Snippets Preview Modal', () => {
 		const editor = await openPreviewEditor(page)
 
 		await expect(editor.locator('[aria-label="Snippet code preview"]')).toBeAttached()
+	})
+
+	test('Preview type badge stays aligned with the title', async ({ page }) => {
+		await openPreviewEditor(page)
+
+		const modal = page.locator('.code-snippets-preview-modal')
+		const title = modal.locator('.components-modal__header-heading')
+		const badge = modal.locator('.code-snippets-preview-modal__badge')
+		const closeButton = modal.locator('.components-modal__header').getByRole('button', { name: 'Close' })
+
+		for (const width of PREVIEW_VIEWPORT_WIDTHS) {
+			await page.setViewportSize({ width, height: 800 })
+			const [titleBox, badgeBox, closeBox] =
+				await Promise.all([title.boundingBox(), badge.boundingBox(), closeButton.boundingBox()])
+
+			expect(titleBox).not.toBeNull()
+			expect(badgeBox).not.toBeNull()
+			expect(closeBox).not.toBeNull()
+
+			if (titleBox && badgeBox && closeBox) {
+				const titleCenter = titleBox.y + titleBox.height / 2
+				const badgeCenter = badgeBox.y + badgeBox.height / 2
+
+				expect(Math.abs(titleCenter - badgeCenter)).toBeLessThanOrEqual(MAXIMUM_BADGE_ALIGNMENT_OFFSET)
+				expect(titleBox.x + titleBox.width).toBeLessThan(badgeBox.x)
+				expect(badgeBox.x + badgeBox.width).toBeLessThanOrEqual(closeBox.x)
+			}
+		}
 	})
 
 	for (const keypress of <const> ['Tab', 'Shift+Tab']) {

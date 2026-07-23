@@ -71,8 +71,9 @@
 	// the header area, clear of the close button.
 	.code-snippets-preview-modal__badge {
 		position: absolute;
-		inset-block-start: 18px;
+		inset-block-start: 35px;
 		inset-inline-end: 56px;
+		transform: translateY(-50%);
 	}
 
 	// Header and footer stay pinned; the CodeMirror editor is the only
