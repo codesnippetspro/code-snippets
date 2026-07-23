@@ -3,6 +3,8 @@
 namespace Code_Snippets\Model;
 
 use Code_Snippets\UnitTestCase;
+use function Code_Snippets\get_snippet;
+use function Code_Snippets\save_snippet;
 
 /**
  * Tests for snippet field normalization.
@@ -10,18 +12,22 @@ use Code_Snippets\UnitTestCase;
 class Snippet_Test extends UnitTestCase {
 
 	/**
-	 * Descriptions preserve post-safe markup and strip executable elements.
+	 * Legacy descriptions round-trip through storage unchanged.
 	 *
 	 * @return void
 	 */
-	public function test_description_sanitizes_remote_markup(): void {
-		$snippet = new Snippet(
-			[
-				'desc' => '<strong>Allowed</strong><script>alert("unsafe")</script>',
-			]
+	public function test_description_round_trips_without_sanitization(): void {
+		$description = '<strong>Allowed</strong><script>alert("unsafe")</script>';
+		$saved = save_snippet(
+			new Snippet(
+				[
+					'name' => 'Legacy description',
+					'desc' => $description,
+				]
+			)
 		);
+		$snippet = get_snippet( $saved->id );
 
-		$this->assertStringContainsString( '<strong>Allowed</strong>', $snippet->desc );
-		$this->assertStringNotContainsString( '<script', $snippet->desc );
+		$this->assertSame( $description, $snippet->desc );
 	}
 }

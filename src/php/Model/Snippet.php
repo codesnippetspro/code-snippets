@@ -128,11 +128,6 @@ class Snippet extends Model {
 			case 'is_cloud_owner':
 				return is_bool( $value ) ? $value : (bool) $value;
 
-			case 'desc':
-				// Descriptions render as rich HTML but can originate from remote
-				// sources such as the cloud, so restrict them to post-safe markup.
-				return wp_kses_post( $value );
-
 			default:
 				return $value;
 		}

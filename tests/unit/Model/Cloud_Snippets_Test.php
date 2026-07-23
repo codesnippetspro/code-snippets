@@ -179,15 +179,34 @@ class Cloud_Snippets_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Malformed remote description values are normalised to strings at the model boundary.
+	 * Constructing a model directly preserves its description value.
 	 *
 	 * @return void
 	 */
-	public function test_malformed_description_is_normalised_to_string(): void {
-		$this->assertSame( 'ok', ( new Cloud_Snippet( [ 'description' => 'ok' ] ) )->description );
-		$this->assertSame( '123', ( new Cloud_Snippet( [ 'description' => 123 ] ) )->description );
-		$this->assertSame( '', ( new Cloud_Snippet( [ 'description' => null ] ) )->description );
-		$this->assertSame( '', ( new Cloud_Snippet( [ 'description' => [ 'nested' ] ] ) )->description );
-		$this->assertSame( '', ( new Cloud_Snippet() )->description );
+	public function test_model_preserves_description_value(): void {
+		$description = [ 'nested' ];
+
+		$this->assertSame( $description, ( new Cloud_Snippet( [ 'description' => $description ] ) )->description );
+	}
+
+	/**
+	 * Remote descriptions are sanitised and normalised while unpacking the response.
+	 *
+	 * @return void
+	 */
+	public function test_remote_descriptions_are_sanitized_during_decode(): void {
+		$result = Cloud_Snippets::unpack_api_response(
+			[
+				'snippets' => [
+					[ 'description' => '<strong>Allowed</strong><script>alert("unsafe")</script>' ],
+					[ 'description' => 123 ],
+					[ 'description' => [ 'nested' ] ],
+				],
+			]
+		);
+
+		$this->assertSame( '<strong>Allowed</strong>alert("unsafe")', $result->snippets[0]->description );
+		$this->assertSame( '123', $result->snippets[1]->description );
+		$this->assertSame( '', $result->snippets[2]->description );
 	}
 }
