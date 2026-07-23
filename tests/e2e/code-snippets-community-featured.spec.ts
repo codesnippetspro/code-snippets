@@ -138,6 +138,31 @@ test.describe('Community Cloud Featured Snippets', () => {
 			.toContainText('An error occurred while fetching search results. Please try again.')
 	})
 
+	test('Preview offers the same download or edit action as its card', async ({ page }) => {
+		await page.route(isFeaturedRequest, route => route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify(makeFeaturedResponse([
+				makeCloudSnippet(501, 'Downloadable Cloud Snippet'),
+				makeCloudSnippet(502, 'Installed Cloud Snippet', 42)
+			]))
+		}))
+		await page.reload()
+
+		const openPreview = async (snippetName: string) => {
+			await page.getByRole('button', { name: snippetName }).click()
+			await expect(page.locator('.code-snippets-preview-modal')).toBeVisible()
+		}
+
+		await openPreview('Downloadable Cloud Snippet')
+		await expect(page.locator('.code-snippets-preview-modal').getByRole('button', { name: 'Download' }))
+			.toBeVisible()
+		await page.getByRole('button', { name: 'Close' }).click()
+
+		await openPreview('Installed Cloud Snippet')
+		await expect(page.locator('.code-snippets-preview-modal').getByRole('link', { name: 'Edit' }))
+			.toBeVisible()
+	})
+
 	test('Table checkboxes share the cloud selection state', async ({ page }) => {
 		await page.route(isFeaturedRequest, route => route.fulfill({
 			contentType: 'application/json',
