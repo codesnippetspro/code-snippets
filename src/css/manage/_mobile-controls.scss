@@ -150,6 +150,15 @@
 		.tablenav-pages .displaying-num {
 			display: inline;
 		}
+
+		.tablenav-pages-nav {
+			inline-size: 100%;
+			min-inline-size: 0;
+		}
+
+		.tablenav-pages {
+			flex-wrap: wrap;
+		}
 	}
 
 	.snippets-card-view .tablenav.bottom {

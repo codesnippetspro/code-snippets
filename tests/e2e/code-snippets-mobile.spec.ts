@@ -184,6 +184,13 @@ test.describe('Mobile snippets views', () => {
 			await expect(bottom.locator('#current-page-selector-bottom')).toHaveValue('1')
 			await expect(bottom.locator('.pagination-links .button')).toHaveCount(4)
 
+			await page.setViewportSize({ width: 320, height: MOBILE_VIEWPORT.height })
+			const pageWidth = await page.evaluate(() => ({
+				scroll: document.documentElement.scrollWidth,
+				viewport: window.innerWidth
+			}))
+			expect(pageWidth.scroll).toBe(pageWidth.viewport)
+
 			await switchSnippetView(page, 'Card view')
 			const cardBottom = page.locator('.snippets-card-view .tablenav.bottom')
 			await expect(cardBottom.locator('.bulkactions')).toBeHidden()
