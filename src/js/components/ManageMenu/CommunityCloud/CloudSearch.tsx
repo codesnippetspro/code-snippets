@@ -225,8 +225,9 @@ const SearchStatus = () => {
 	return isErrored || isLoading
 		? <LoadingStatusNotices
 			isLoading={isLoading}
-			errorMessage={isErrored ? __('Please try again.', 'code-snippets') : undefined}
-			errorPrefix={__('An error occurred while fetching search results.', 'code-snippets')}
+			errorMessage={isErrored
+				? __('An error occurred while fetching search results. Please try again.', 'code-snippets')
+				: undefined}
 			loadingNotice={__('Loading community snippets…', 'code-snippets')}
 		/>
 		: null
