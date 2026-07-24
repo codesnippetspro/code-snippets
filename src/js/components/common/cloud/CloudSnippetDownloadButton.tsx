@@ -16,7 +16,7 @@ export interface DownloadSnippetResponse {
 	link_id: number
 }
 
-interface CloudSnippetDownloadButtonProps {
+export interface CloudSnippetDownloadButtonProps {
 	onDownloaded: VoidFunction
 	snippet: CloudSnippetSchema
 }
