@@ -137,24 +137,27 @@ test.describe('Code Snippets Preview Modal', () => {
 		const badge = modal.locator('.code-snippets-preview-modal__badge .badge')
 		const editor = modal.locator('.code-snippets-preview-modal__editor')
 
-		await expect(badge).toBeVisible()
-
 		for (const width of PREVIEW_VIEWPORT_WIDTHS) {
 			await page.setViewportSize({ width, height: 800 })
-			const [badgeBox, editorBox] = await Promise.all([badge.boundingBox(), editor.boundingBox()])
+			await expect(badge).toBeVisible()
+			await expect(editor).toBeVisible()
+			await expect(async () => {
+				const [badgeBox, editorBox] =
+					await Promise.all([badge.boundingBox(), editor.boundingBox()])
 
-			expect(badgeBox).not.toBeNull()
-			expect(editorBox).not.toBeNull()
+				expect(badgeBox).not.toBeNull()
+				expect(editorBox).not.toBeNull()
 
-			if (badgeBox && editorBox) {
-				const badgeInlineEnd = badgeBox.x + badgeBox.width
-				const editorInlineEnd = editorBox.x + editorBox.width
+				if (badgeBox && editorBox) {
+					const badgeInlineEnd = badgeBox.x + badgeBox.width
+					const editorInlineEnd = editorBox.x + editorBox.width
 
-				expect(Math.abs(badgeInlineEnd - editorInlineEnd)).toBeLessThanOrEqual(
-					MAXIMUM_BADGE_ALIGNMENT_OFFSET
-				)
-				expect(badgeBox.y + badgeBox.height).toBeLessThanOrEqual(editorBox.y)
-			}
+					expect(Math.abs(badgeInlineEnd - editorInlineEnd)).toBeLessThanOrEqual(
+						MAXIMUM_BADGE_ALIGNMENT_OFFSET
+					)
+					expect(badgeBox.y + badgeBox.height).toBeLessThanOrEqual(editorBox.y)
+				}
+			}).toPass({ timeout: TIMEOUTS.SHORT })
 		}
 	})
 
