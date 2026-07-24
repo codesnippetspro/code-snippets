@@ -1,5 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
+import { Notice } from './Notice'
 import type { ReactNode } from 'react'
 
 export interface LoadingStatusNoticesProps {
@@ -18,23 +19,23 @@ export const LoadingStatusNotices: React.FC<LoadingStatusNoticesProps> = ({
 	switch (true) {
 		case isLoading:
 			return (
-				<div aria-label={noticeLabel} className="notice inline" role="region">
+				<Notice aria-label={noticeLabel} className="inline">
 					<p>{loadingNotice}</p>
-				</div>
+				</Notice>
 			)
 
 		case errorMessage !== undefined:
 			return (
-				<div aria-label={noticeLabel} className="notice notice-error inline" role="region">
+				<Notice aria-label={noticeLabel} className="inline" type="error">
 					<p>{errorMessage}</p>
-				</div>
+				</Notice>
 			)
 
 		default:
 			return (
-				<div aria-label={noticeLabel} className="notice notice-warning inline" role="region">
+				<Notice aria-label={noticeLabel} className="inline" type="warning">
 					<p>{__('An unknown error occurred. Please try again.', 'code-snippets')}</p>
-				</div>
+				</Notice>
 			)
 	}
 }

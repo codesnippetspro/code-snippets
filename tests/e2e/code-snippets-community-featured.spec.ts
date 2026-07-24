@@ -101,9 +101,9 @@ test.describe('Community Cloud Featured Snippets', () => {
 	})
 
 	test('Shows a page-level notice while featured snippets load', async ({ page }) => {
-		let releaseRequest = () => undefined
+		let releaseRequest: () => void = () => undefined
 		const requestPending = new Promise<void>(resolve => {
-			releaseRequest = resolve
+			releaseRequest = () => resolve()
 		})
 
 		await page.route(isFeaturedRequest, async route => {
@@ -117,7 +117,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 		await page.reload()
 
 		try {
-			await expect(page.getByRole('region', { name: 'Community snippets status' }))
+			await expect(page.getByRole('status', { name: 'Community snippets status' }))
 				.toContainText('Loading community snippets…')
 		} finally {
 			releaseRequest()
@@ -134,7 +134,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 		}))
 		await page.reload()
 
-		await expect(page.locator('.cloud-search .notice-error'))
+		await expect(page.getByRole('alert', { name: 'Community snippets status' }))
 			.toContainText('An error occurred while fetching search results. Please try again.')
 	})
 
