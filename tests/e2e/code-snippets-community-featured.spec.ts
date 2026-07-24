@@ -1,5 +1,17 @@
 import { expect, test } from '@playwright/test'
 import { TIMEOUTS, URLS } from './helpers/constants'
+import type { Page } from '@playwright/test'
+
+const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
+	const saved = page
+		.waitForResponse(
+			response => response.url().includes('/snippet-view') && 'GET' !== response.request().method(),
+			{ timeout: TIMEOUTS.SHORT }
+		)
+		.catch(() => undefined)
+	await page.getByRole('button', { name: view }).click()
+	await saved
+}
 
 const isFeaturedRequest = (url: URL): boolean =>
 	url.pathname.includes('/cloud/snippets/featured') ||
@@ -187,15 +199,22 @@ test.describe('Community Cloud Featured Snippets', () => {
 		})
 		await page.reload()
 
-		const card = page.locator('.cloud-search-result', { hasText: 'Downloadable Cloud Snippet' })
-		await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
+		await switchSnippetView(page, 'Card view')
 
-		const preview = page.locator('.code-snippets-preview-modal')
-		await preview.getByRole('button', { name: 'Download' }).click()
+		try {
+			const card = page.locator('.cloud-search-result', { hasText: 'Downloadable Cloud Snippet' })
+			await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
 
-		await expect(card.getByRole('link', { name: 'Edit' })).toBeVisible()
-		await expect(page.getByRole('button', { name: 'Download' })).toHaveCount(0)
-		expect(downloadRequests).toBe(1)
+			const preview = page.locator('.code-snippets-preview-modal')
+			await preview.getByRole('button', { name: 'Download' }).click()
+
+			await expect(card.getByRole('link', { name: 'Edit' })).toBeVisible()
+			await expect(page.getByRole('button', { name: 'Download' })).toHaveCount(0)
+			expect(downloadRequests).toBe(1)
+		} finally {
+			await page.getByRole('button', { name: 'Close' }).click().catch(() => undefined)
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+		}
 	})
 
 	test('Table checkboxes share the cloud selection state', async ({ page }) => {
