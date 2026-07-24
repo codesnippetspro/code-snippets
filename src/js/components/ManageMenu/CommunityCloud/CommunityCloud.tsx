@@ -5,6 +5,7 @@ import { useSnippetView } from '../../../hooks/useSnippetView'
 import { fetchConstQueryParam, updateQueryParams } from '../../../utils/urls'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { SubnavTabs } from '../../common/SubnavTabs'
+import { WithCloudSnippetDownloadsContext } from '../../common/cloud/WithCloudSnippetDownloadsContext'
 import { WithCloudSearchContext, useCloudSearch } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
 
@@ -75,7 +76,9 @@ const CommunityCloudInner = () => {
 
 export const CommunityCloud = () =>
 	<WithRestAPIContext>
-		<WithCloudSearchContext>
-			<CommunityCloudInner />
-		</WithCloudSearchContext>
+		<WithCloudSnippetDownloadsContext>
+			<WithCloudSearchContext>
+				<CommunityCloudInner />
+			</WithCloudSearchContext>
+		</WithCloudSnippetDownloadsContext>
 	</WithRestAPIContext>

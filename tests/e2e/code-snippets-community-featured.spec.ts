@@ -179,18 +179,91 @@ test.describe('Community Cloud Featured Snippets', () => {
 			.toBeVisible()
 	})
 
-	test('Downloading from preview refreshes every snippet action', async ({ page }) => {
-		let isDownloaded = false
+	test('Shares pending and downloaded state before refresh completes', async ({ page }) => {
+		let releaseDownload: () => void = () => undefined
+		let releaseRefresh: () => void = () => undefined
+		const downloadPending = new Promise<void>(resolve => {
+			releaseDownload = () => resolve()
+		})
+		const refreshPending = new Promise<void>(resolve => {
+			releaseRefresh = () => resolve()
+		})
 		let downloadRequests = 0
+		let featuredRequests = 0
 
-		await page.route(isFeaturedRequest, route => route.fulfill({
-			contentType: 'application/json',
-			body: JSON.stringify(makeFeaturedResponse([
-				makeCloudSnippet(501, 'Downloadable Cloud Snippet', isDownloaded ? 42 : null)
-			]))
-		}))
+		await page.route(isFeaturedRequest, async route => {
+			featuredRequests += 1
+
+			if (1 < featuredRequests) {
+				await refreshPending
+			}
+
+			return route.fulfill({
+				contentType: 'application/json',
+				body: JSON.stringify(makeFeaturedResponse([
+					makeCloudSnippet(501, 'Downloadable Cloud Snippet')
+				]))
+			})
+		})
+		await page.route(isSnippetDownloadRequest, async route => {
+			downloadRequests += 1
+			await downloadPending
+			return route.fulfill({
+				contentType: 'application/json',
+				body: JSON.stringify({ success: true, snippet_id: 42, link_id: 501 })
+			})
+		})
+		await page.reload()
+
+		await switchSnippetView(page, 'Card view')
+
+		try {
+			const card = page.locator('.cloud-search-result', { hasText: 'Downloadable Cloud Snippet' })
+			await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
+
+			const preview = page.locator('.code-snippets-preview-modal')
+			await preview.getByRole('button', { name: 'Download' }).click()
+
+			await expect(preview.getByRole('button', { name: 'Download' })).toBeDisabled()
+			await expect(card.getByRole('button', { name: 'Download' })).toBeDisabled()
+
+			releaseDownload()
+			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
+			await expect.poll(() => featuredRequests).toBe(2)
+			await page.getByRole('button', { name: 'Close' }).click()
+
+			await expect(card.getByRole('link', { name: 'Edit' })).toBeVisible()
+			await expect(card.getByRole('button', { name: 'Download' })).toHaveCount(0)
+			expect(downloadRequests).toBe(1)
+		} finally {
+			releaseDownload()
+			releaseRefresh()
+			await page.getByRole('button', { name: 'Close' }).click().catch(() => undefined)
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+		}
+	})
+
+	test('Keeps downloaded state when refresh fails', async ({ page }) => {
+		let downloadRequests = 0
+		let featuredRequests = 0
+
+		await page.route(isFeaturedRequest, route => {
+			featuredRequests += 1
+
+			return 2 === featuredRequests
+				? route.fulfill({
+					status: 500,
+					contentType: 'application/json',
+					body: JSON.stringify({ message: 'Cloud unavailable' })
+				})
+				: route.fulfill({
+					contentType: 'application/json',
+					body: JSON.stringify(makeFeaturedResponse([
+						makeCloudSnippet(501, 'Downloadable Cloud Snippet')
+					]))
+				})
+		})
 		await page.route(isSnippetDownloadRequest, route => {
-			isDownloaded = true
 			downloadRequests += 1
 			return route.fulfill({
 				contentType: 'application/json',
@@ -208,8 +281,15 @@ test.describe('Community Cloud Featured Snippets', () => {
 			const preview = page.locator('.code-snippets-preview-modal')
 			await preview.getByRole('button', { name: 'Download' }).click()
 
+			await expect(page.getByRole('alert', { name: 'Community snippets status' }))
+				.toContainText('An error occurred while fetching search results. Please try again.')
+
+			await page.locator('.cloud-search-form')
+				.getByRole('button', { name: 'Search Cloud Library' })
+				.click()
+
 			await expect(card.getByRole('link', { name: 'Edit' })).toBeVisible()
-			await expect(page.getByRole('button', { name: 'Download' })).toHaveCount(0)
+			await expect(card.getByRole('button', { name: 'Download' })).toHaveCount(0)
 			expect(downloadRequests).toBe(1)
 		} finally {
 			await page.getByRole('button', { name: 'Close' }).click().catch(() => undefined)
