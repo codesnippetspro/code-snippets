@@ -227,21 +227,25 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 		try {
 			const card = page.locator('.cloud-search-result', { hasText: 'Downloadable Cloud Snippet' })
+			const cardActions = card.locator('.snippet-card-footer-actions')
 			await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
 
 			const preview = page.locator('.code-snippets-preview-modal')
 			await preview.getByRole('button', { name: 'Download' }).click()
 
 			await expect(preview.getByRole('button', { name: 'Download' })).toBeDisabled()
-			await expect(card.getByRole('button', { name: 'Download', includeHidden: true })).toBeDisabled()
+			await expect(cardActions.getByRole(
+				'button',
+				{ name: 'Download', exact: true, includeHidden: true }
+			)).toBeDisabled()
 
 			releaseDownload()
 			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
 			await expect.poll(() => featuredRequests).toBe(2)
 			await page.getByRole('button', { name: 'Close' }).click()
 
-			await expect(card.getByRole('link', { name: 'Edit' })).toBeVisible()
-			await expect(card.getByRole('button', { name: 'Download' })).toHaveCount(0)
+			await expect(cardActions.getByRole('link', { name: 'Edit', exact: true })).toBeVisible()
+			await expect(cardActions.getByRole('button', { name: 'Download', exact: true })).toHaveCount(0)
 			expect(downloadRequests).toBe(1)
 		} finally {
 			releaseDownload()
@@ -284,6 +288,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 		try {
 			const card = page.locator('.cloud-search-result', { hasText: 'Downloadable Cloud Snippet' })
+			const cardActions = card.locator('.snippet-card-footer-actions')
 			await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
 
 			const preview = page.locator('.code-snippets-preview-modal')
@@ -296,8 +301,8 @@ test.describe('Community Cloud Featured Snippets', () => {
 				.getByRole('button', { name: 'Search Cloud Library' })
 				.click()
 
-			await expect(card.getByRole('link', { name: 'Edit' })).toBeVisible()
-			await expect(card.getByRole('button', { name: 'Download' })).toHaveCount(0)
+			await expect(cardActions.getByRole('link', { name: 'Edit', exact: true })).toBeVisible()
+			await expect(cardActions.getByRole('button', { name: 'Download', exact: true })).toHaveCount(0)
 			expect(downloadRequests).toBe(1)
 		} finally {
 			await closePreviewIfOpen(page)
