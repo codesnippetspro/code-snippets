@@ -230,10 +230,6 @@ const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({
 	)
 }
 
-/**
- * The minimum-supported WordPress Modal (5.5–6.3) has no headerActions prop,
- * so the badge renders in the content and CSS moves it into the header area.
- */
 const PreviewTypeBadge: React.FC<{ type: SnippetType }> = ({ type }) =>
 	<div className="code-snippets-preview-modal__badge">
 		<Badge name={type} />

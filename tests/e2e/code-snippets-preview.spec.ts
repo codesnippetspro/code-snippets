@@ -107,8 +107,6 @@ test.describe('Code Snippets Preview Modal', () => {
 			await expect(codeArea).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 			await expect(codeArea).toHaveValue(new RegExp(snippetName))
 
-			// The type badge renders in the modal content (the minimum-supported
-			// WordPress Modal has no headerActions prop).
 			await expect(preview.locator('.code-snippets-preview-modal__badge .badge'))
 				.toBeVisible()
 
@@ -132,30 +130,30 @@ test.describe('Code Snippets Preview Modal', () => {
 		await expect(editor.locator('[aria-label="Snippet code preview"]')).toBeAttached()
 	})
 
-	test('Preview type badge stays aligned with the title', async ({ page }) => {
+	test('Preview type badge sits above code at inline end', async ({ page }) => {
 		await openPreviewEditor(page)
 
 		const modal = page.locator('.code-snippets-preview-modal')
-		const title = modal.locator('.components-modal__header-heading')
-		const badge = modal.locator('.code-snippets-preview-modal__badge')
-		const closeButton = modal.locator('.components-modal__header').getByRole('button', { name: 'Close' })
+		const badge = modal.locator('.code-snippets-preview-modal__badge .badge')
+		const editor = modal.locator('.code-snippets-preview-modal__editor')
+
+		await expect(badge).toBeVisible()
 
 		for (const width of PREVIEW_VIEWPORT_WIDTHS) {
 			await page.setViewportSize({ width, height: 800 })
-			const [titleBox, badgeBox, closeBox] =
-				await Promise.all([title.boundingBox(), badge.boundingBox(), closeButton.boundingBox()])
+			const [badgeBox, editorBox] = await Promise.all([badge.boundingBox(), editor.boundingBox()])
 
-			expect(titleBox).not.toBeNull()
 			expect(badgeBox).not.toBeNull()
-			expect(closeBox).not.toBeNull()
+			expect(editorBox).not.toBeNull()
 
-			if (titleBox && badgeBox && closeBox) {
-				const titleCenter = titleBox.y + titleBox.height / 2
-				const badgeCenter = badgeBox.y + badgeBox.height / 2
+			if (badgeBox && editorBox) {
+				const badgeInlineEnd = badgeBox.x + badgeBox.width
+				const editorInlineEnd = editorBox.x + editorBox.width
 
-				expect(Math.abs(titleCenter - badgeCenter)).toBeLessThanOrEqual(MAXIMUM_BADGE_ALIGNMENT_OFFSET)
-				expect(titleBox.x + titleBox.width).toBeLessThan(badgeBox.x)
-				expect(badgeBox.x + badgeBox.width).toBeLessThanOrEqual(closeBox.x)
+				expect(Math.abs(badgeInlineEnd - editorInlineEnd)).toBeLessThanOrEqual(
+					MAXIMUM_BADGE_ALIGNMENT_OFFSET
+				)
+				expect(badgeBox.y + badgeBox.height).toBeLessThanOrEqual(editorBox.y)
 			}
 		}
 	})
