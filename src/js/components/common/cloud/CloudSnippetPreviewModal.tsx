@@ -6,16 +6,22 @@ import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchem
 
 export interface CloudSnippetPreviewModalProps {
 	isOpen: boolean
+	onDownloaded: VoidFunction
 	snippet: CloudSnippetSchema
 	setIsOpen: (isOpen: boolean) => void
 }
 
-export const CloudSnippetPreviewModal: React.FC<CloudSnippetPreviewModalProps> = ({ snippet, isOpen, setIsOpen }) =>
+export const CloudSnippetPreviewModal: React.FC<CloudSnippetPreviewModalProps> = ({
+	snippet,
+	isOpen,
+	setIsOpen,
+	onDownloaded
+}) =>
 	<SnippetPreviewModal
 		title={snippet.name}
 		code={snippet.code}
 		type={getSnippetType(snippet)}
 		isOpen={isOpen}
 		setIsOpen={setIsOpen}
-		footerActions={<CloudSnippetDownloadButton snippet={snippet} />}
+		footerActions={<CloudSnippetDownloadButton snippet={snippet} onDownloaded={onDownloaded} />}
 	/>

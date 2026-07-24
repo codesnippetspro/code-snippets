@@ -5,6 +5,10 @@ const isFeaturedRequest = (url: URL): boolean =>
 	url.pathname.includes('/cloud/snippets/featured') ||
 	true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/featured')
 
+const isSnippetDownloadRequest = (url: URL): boolean =>
+	url.pathname.includes('/cloud/snippets/501/download') ||
+	true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/501/download')
+
 const makeCloudSnippet = (id: number, name: string, localId: number | null = null) => ({
 	id,
 	slug: `mock-cloud-snippet-${id}`,
@@ -161,6 +165,37 @@ test.describe('Community Cloud Featured Snippets', () => {
 		await openPreview('Installed Cloud Snippet')
 		await expect(page.locator('.code-snippets-preview-modal').getByRole('link', { name: 'Edit' }))
 			.toBeVisible()
+	})
+
+	test('Downloading from preview refreshes every snippet action', async ({ page }) => {
+		let isDownloaded = false
+		let downloadRequests = 0
+
+		await page.route(isFeaturedRequest, route => route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify(makeFeaturedResponse([
+				makeCloudSnippet(501, 'Downloadable Cloud Snippet', isDownloaded ? 42 : null)
+			]))
+		}))
+		await page.route(isSnippetDownloadRequest, route => {
+			isDownloaded = true
+			downloadRequests += 1
+			return route.fulfill({
+				contentType: 'application/json',
+				body: JSON.stringify({ success: true, snippet_id: 42, link_id: 501 })
+			})
+		})
+		await page.reload()
+
+		const card = page.locator('.cloud-search-result', { hasText: 'Downloadable Cloud Snippet' })
+		await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
+
+		const preview = page.locator('.code-snippets-preview-modal')
+		await preview.getByRole('button', { name: 'Download' }).click()
+
+		await expect(card.getByRole('link', { name: 'Edit' })).toBeVisible()
+		await expect(page.getByRole('button', { name: 'Download' })).toHaveCount(0)
+		expect(downloadRequests).toBe(1)
 	})
 
 	test('Table checkboxes share the cloud selection state', async ({ page }) => {

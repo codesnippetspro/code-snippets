@@ -17,15 +17,17 @@ export interface DownloadSnippetResponse {
 }
 
 interface CloudSnippetDownloadButtonProps {
+	onDownloaded: VoidFunction
 	snippet: CloudSnippetSchema
 }
 
-export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProps> = ({ snippet }) => {
+export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProps> = ({ snippet, onDownloaded }) => {
 	const { api } = useRestAPI()
 	const [isWorking, setIsWorking] = useState(false)
 	const [errorMessage, setErrorMessage] = useState<string>()
-	const [localSnippetId, setLocalSnippetId] = useState<number>(snippet.local_id ?? 0)
+	const [downloadedSnippetId, setDownloadedSnippetId] = useState(0)
 	const [isUpsellOpen, setIsUpsellOpen] = useState(false)
+	const localSnippetId = snippet.local_id ?? downloadedSnippetId
 
 	if (localSnippetId) {
 		return (
@@ -52,7 +54,8 @@ export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProp
 
 		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)
 			.then(response => {
-				setLocalSnippetId(response.snippet_id)
+				setDownloadedSnippetId(response.snippet_id)
+				onDownloaded()
 			})
 			.catch((error: unknown) => {
 				setErrorMessage('string' === typeof error
