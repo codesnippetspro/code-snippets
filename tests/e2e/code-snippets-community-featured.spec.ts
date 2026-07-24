@@ -13,6 +13,14 @@ const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') =
 	await saved
 }
 
+const closePreviewIfOpen = async (page: Page) => {
+	const closeButton = page.getByRole('button', { name: 'Close' })
+
+	if (await closeButton.isVisible()) {
+		await closeButton.click()
+	}
+}
+
 const isFeaturedRequest = (url: URL): boolean =>
 	url.pathname.includes('/cloud/snippets/featured') ||
 	true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/featured')
@@ -225,7 +233,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 			await preview.getByRole('button', { name: 'Download' }).click()
 
 			await expect(preview.getByRole('button', { name: 'Download' })).toBeDisabled()
-			await expect(card.getByRole('button', { name: 'Download' })).toBeDisabled()
+			await expect(card.getByRole('button', { name: 'Download', includeHidden: true })).toBeDisabled()
 
 			releaseDownload()
 			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
@@ -238,7 +246,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 		} finally {
 			releaseDownload()
 			releaseRefresh()
-			await page.getByRole('button', { name: 'Close' }).click().catch(() => undefined)
+			await closePreviewIfOpen(page)
 			await switchSnippetView(page, 'Table view').catch(() => undefined)
 		}
 	})
@@ -292,7 +300,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 			await expect(card.getByRole('button', { name: 'Download' })).toHaveCount(0)
 			expect(downloadRequests).toBe(1)
 		} finally {
-			await page.getByRole('button', { name: 'Close' }).click().catch(() => undefined)
+			await closePreviewIfOpen(page)
 			await switchSnippetView(page, 'Table view').catch(() => undefined)
 		}
 	})
@@ -303,6 +311,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 			body: JSON.stringify(makeFeaturedResponse())
 		}))
 		await page.reload()
+		await switchSnippetView(page, 'Table view')
 
 		const table = page.locator('.cloud-snippets-table')
 		await expect(table).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
