@@ -42,6 +42,7 @@ const PageNotices = () => {
 
 	return noticeText
 		? <DismissibleNotice
+			className="code-snippets-notice"
 			onDismiss={() => {
 				setNoticeText(undefined)
 			}}
