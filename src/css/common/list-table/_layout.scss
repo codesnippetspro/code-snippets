@@ -187,27 +187,40 @@
 	}
 
 	.column-activate {
-		padding-inline-end: 0 !important;
+		text-align: center;
+
+		.snippet-activation-switch,
+		input[type='checkbox'].switch {
+			margin-inline: auto;
+		}
 	}
 
 	.clear-filters {
 		vertical-align: middle;
 	}
 
-	tfoot th.check-column {
-		padding: 13px 0 0 3px;
-	}
-
+	thead th.check-column,
+	thead td.check-column,
+	tfoot th.check-column,
+	tfoot td.check-column,
 	tbody th.check-column,
 	tbody td.check-column {
-		padding-block-start: 0;
+		padding-block: 0;
+		padding-inline-start: 9px;
 		vertical-align: middle;
 	}
 
+	// Line every checkbox up on the same starting edge. Rows flagged as active
+	// draw a 2px accent border on this cell, so the same width is reserved as a
+	// transparent border elsewhere; without it the header, footer and inactive
+	// rows sit 2px further in, and rows shift as snippets are toggled.
 	thead th.check-column,
+	thead td.check-column,
 	tfoot th.check-column,
-	.inactive-snippet th.check-column {
-		padding-inline-start: 5px;
+	tfoot td.check-column,
+	tbody tr:not(.active-snippet) th.check-column,
+	tbody tr:not(.active-snippet) td.check-column {
+		border-inline-start: 2px solid transparent;
 	}
 
 	.active-snippet, .inactive-snippet {
@@ -268,12 +281,6 @@
 	}
 }
 
-.snippets-list-view .wp-list-table:not(.cloud-snippets-table) {
-	th:not(.check-column),
-	td:not(.check-column) {
-		padding-inline: 9px;
-	}
-}
 
 .snippets-table-toolbar {
 	display: flex;
