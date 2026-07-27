@@ -141,7 +141,9 @@ test.describe('Community Cloud Featured Snippets', () => {
 		await page.reload()
 
 		try {
-			await expect(page.getByRole('status', { name: 'Community snippets status' }))
+			const loadingNotice = page.getByRole('status', { name: 'Community snippets status' })
+			await expect(loadingNotice).toHaveClass(/code-snippets-notice/)
+			await expect(loadingNotice)
 				.toContainText('Loading community snippets…')
 		} finally {
 			releaseRequest()
@@ -158,7 +160,9 @@ test.describe('Community Cloud Featured Snippets', () => {
 		}))
 		await page.reload()
 
-		await expect(page.getByRole('alert', { name: 'Community snippets status' }))
+		const errorNotice = page.getByRole('alert', { name: 'Community snippets status' })
+		await expect(errorNotice).toHaveClass(/code-snippets-notice/)
+		await expect(errorNotice)
 			.toContainText('An error occurred while fetching search results. Please try again.')
 	})
 
