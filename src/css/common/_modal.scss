@@ -69,7 +69,7 @@
 	.code-snippets-preview-modal__badge {
 		display: flex;
 		flex-shrink: 0;
-		justify-content: flex-end;
+		margin-inline-end: 8px;
 	}
 
 	// Header and footer stay pinned; the CodeMirror editor is the only
@@ -82,9 +82,8 @@
 		overflow: hidden;
 	}
 
-	// Newer Modal versions wrap children in an unstyled focus container; older
-	// supported versions render the badge directly after the header.
-	.components-modal__header + div:not(.code-snippets-preview-modal__badge) {
+	// Newer Modal versions wrap children in an unstyled focus container.
+	.components-modal__header + div {
 		display: flex;
 		flex-flow: column;
 		flex: 1;

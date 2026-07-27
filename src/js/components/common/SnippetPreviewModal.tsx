@@ -299,8 +299,8 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			className="code-snippets-preview-modal"
 			onRequestClose={() => setIsOpen(false)}
 			title={title}
+			headerActions={<PreviewTypeBadge type={type} />}
 		>
-			<PreviewTypeBadge type={type} />
 			<div className="code-snippets-preview-modal__editor">
 				<textarea
 					ref={textareaRef}

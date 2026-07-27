@@ -130,32 +130,37 @@ test.describe('Code Snippets Preview Modal', () => {
 		await expect(editor.locator('[aria-label="Snippet code preview"]')).toBeAttached()
 	})
 
-	test('Preview type badge sits above code at inline end', async ({ page }) => {
+	test('Preview type badge sits in the header before the close button', async ({ page }) => {
 		await openPreviewEditor(page)
 
 		const modal = page.locator('.code-snippets-preview-modal')
-		const badge = modal.locator('.code-snippets-preview-modal__badge .badge')
-		const editor = modal.locator('.code-snippets-preview-modal__editor')
+		const header = modal.locator('.components-modal__header')
+		const heading = header.locator('.components-modal__header-heading-container')
+		const badge = header.locator('.code-snippets-preview-modal__badge .badge')
+		const closeButton = header.getByRole('button', { name: 'Close' })
 
 		for (const width of PREVIEW_VIEWPORT_WIDTHS) {
 			await page.setViewportSize({ width, height: 800 })
+			await expect(heading).toBeVisible()
 			await expect(badge).toBeVisible()
-			await expect(editor).toBeVisible()
+			await expect(closeButton).toBeVisible()
 			await expect(async () => {
-				const [badgeBox, editorBox] =
-					await Promise.all([badge.boundingBox(), editor.boundingBox()])
+				const [headingBox, badgeBox, closeButtonBox] =
+					await Promise.all([heading.boundingBox(), badge.boundingBox(), closeButton.boundingBox()])
 
+				expect(headingBox).not.toBeNull()
 				expect(badgeBox).not.toBeNull()
-				expect(editorBox).not.toBeNull()
+				expect(closeButtonBox).not.toBeNull()
 
-				if (badgeBox && editorBox) {
-					const badgeInlineEnd = badgeBox.x + badgeBox.width
-					const editorInlineEnd = editorBox.x + editorBox.width
+				if (headingBox && badgeBox && closeButtonBox) {
+					const badgeCenter = badgeBox.y + badgeBox.height / 2
+					const closeButtonCenter = closeButtonBox.y + closeButtonBox.height / 2
 
-					expect(Math.abs(badgeInlineEnd - editorInlineEnd)).toBeLessThanOrEqual(
+					expect(headingBox.x + headingBox.width).toBeLessThanOrEqual(badgeBox.x)
+					expect(badgeBox.x + badgeBox.width).toBeLessThanOrEqual(closeButtonBox.x)
+					expect(Math.abs(badgeCenter - closeButtonCenter)).toBeLessThanOrEqual(
 						MAXIMUM_BADGE_ALIGNMENT_OFFSET
 					)
-					expect(badgeBox.y + badgeBox.height).toBeLessThanOrEqual(editorBox.y)
 				}
 			}).toPass({ timeout: TIMEOUTS.SHORT })
 		}
