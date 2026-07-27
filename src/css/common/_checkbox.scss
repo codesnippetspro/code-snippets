@@ -2,15 +2,16 @@
 
 @mixin canonical {
 	appearance: none;
-	display: grid;
+	display: inline-grid;
 	place-content: center;
+	vertical-align: middle;
 	inline-size: 20px;
 	block-size: 20px;
 	padding: 0;
 	margin: 0;
 	box-sizing: border-box;
 	background: #fff;
-	border: 1.5px solid theme.$accent;
+	border: 1.5px solid theme.$control-border;
 	border-radius: 5px;
 	box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
 	cursor: pointer;
@@ -21,6 +22,7 @@
 
 	&:checked {
 		background: theme.$accent;
+		border-color: theme.$accent;
 
 		&::before {
 			content: '';

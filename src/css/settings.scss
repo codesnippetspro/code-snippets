@@ -10,6 +10,7 @@ $sections: general, editor, debug, version-switch;
 
 .settings-section input[type='checkbox']:not(.switch) {
 	@include checkbox.canonical;
+	margin-inline-end: 8px;
 }
 
 .snippets-page-header h1 {

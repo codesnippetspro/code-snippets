@@ -10,5 +10,6 @@ test.describe('Code Snippets settings', () => {
 
 		await expect(checkbox).toBeVisible()
 		await expectCanonicalCheckbox(checkbox)
+		await expect(checkbox).toHaveCSS('margin-inline-end', '8px')
 	})
 })
