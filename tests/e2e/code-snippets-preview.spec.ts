@@ -166,6 +166,19 @@ test.describe('Code Snippets Preview Modal', () => {
 		}
 	})
 
+	test('Preview trash action matches the inline padding of row buttons', async ({ page }) => {
+		await openPreviewEditor(page)
+
+		const trashButton = page.locator('.code-snippets-preview-modal')
+			.getByRole('button', { name: 'Trash' })
+
+		await expect(trashButton).toBeVisible()
+		await expect.poll(() => trashButton.evaluate(element => {
+			const styles = getComputedStyle(element)
+			return [styles.paddingInlineStart, styles.paddingInlineEnd, styles.color]
+		})).toEqual(['16px', '16px', 'rgb(179, 45, 46)'])
+	})
+
 	for (const keypress of <const> ['Tab', 'Shift+Tab']) {
 		test(`${keypress} leaves the preview editor`, async ({ page }) => {
 			const editor = await openPreviewEditor(page)
