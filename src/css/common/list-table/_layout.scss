@@ -167,6 +167,12 @@
 		padding: 13px 0 0 3px;
 	}
 
+	tbody th.check-column,
+	tbody td.check-column {
+		padding-block-start: 0;
+		vertical-align: middle;
+	}
+
 	thead th.check-column,
 	tfoot th.check-column,
 	.inactive-snippet th.check-column {
@@ -178,11 +184,6 @@
 			padding: 10px 9px;
 			box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
 		}
-	}
-
-	tbody .check-column {
-		padding-block-start: 0;
-		vertical-align: middle;
 	}
 
 	tr.active-snippet + tr.inactive-snippet th,
