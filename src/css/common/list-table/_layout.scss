@@ -78,7 +78,8 @@
 		cursor: pointer;
 		text-align: start;
 		overflow: hidden;
-		padding: 8px;
+		padding-block: 8px;
+		padding-inline: 0;
 	}
 
 	th.sortable .list-table-sort-button:focus-visible,
@@ -234,6 +235,13 @@
 		max-inline-size: min(25rem, 45vw);
 		overflow: clip;
 		text-overflow: ellipsis;
+	}
+}
+
+.snippets-list-view .wp-list-table:not(.cloud-snippets-table) {
+	th:not(.check-column),
+	td:not(.check-column) {
+		padding-inline: 9px;
 	}
 }
 

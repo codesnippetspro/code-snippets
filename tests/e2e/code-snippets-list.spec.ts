@@ -14,6 +14,8 @@ const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') =
 	await saved
 }
 
+const MAXIMUM_COLUMN_ALIGNMENT_OFFSET = 0.5
+
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
@@ -62,6 +64,38 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		for (const selector of ['.name-column', '.type-column', '.desc-column', '.priority-column']) {
 			await expect(snippetRow.locator(selector)).toHaveCSS('vertical-align', 'middle')
+		}
+	})
+
+	test('Aligns table header labels with row content', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const table = page.locator('.snippets-list-view .wp-list-table:not(.cloud-snippets-table)')
+		const snippetRow = table.locator('tbody tr').filter({ hasText: snippetName }).first()
+
+		for (const column of ['name', 'type', 'desc', 'tags', 'date', 'priority']) {
+			const headerCell = table.locator(`thead .column-${column}`).first()
+			const bodyCell = snippetRow.locator(`.column-${column}`)
+			const headerInlineStart = await headerCell.evaluate(element => {
+				const sortableTitle = element.querySelector('.sortable-column-title')
+
+				if (sortableTitle) {
+					return sortableTitle.getBoundingClientRect().left
+				}
+
+				const textNode = Array.from(element.childNodes)
+					.find(node => Node.TEXT_NODE === node.nodeType && node.textContent?.trim())
+				const range = document.createRange()
+				range.selectNode(textNode ?? element)
+				return range.getBoundingClientRect().left
+			})
+			const bodyInlineStart = await bodyCell.evaluate(element => {
+				const styles = getComputedStyle(element)
+				return element.getBoundingClientRect().left + Number.parseFloat(styles.paddingInlineStart)
+			})
+
+			expect(Math.abs(headerInlineStart - bodyInlineStart))
+				.toBeLessThanOrEqual(MAXIMUM_COLUMN_ALIGNMENT_OFFSET)
 		}
 	})
 
