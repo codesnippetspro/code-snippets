@@ -49,6 +49,18 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
 	})
 
+	test('Centers list row checkboxes', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		const checkboxCell = snippetRow.locator('.check-column')
+
+		await expect(checkboxCell).toHaveCSS('vertical-align', 'middle')
+		await expect(checkboxCell).toHaveCSS('padding-block-start', '0px')
+	})
+
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
 		await switchSnippetView(page, 'Card view')
 

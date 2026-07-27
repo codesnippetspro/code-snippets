@@ -111,6 +111,10 @@ test.describe('Community Cloud Featured Snippets', () => {
 		const rowCheckbox = table.locator('tbody').getByRole('checkbox', { name: 'Select Mock Cloud Snippet' })
 		const toolbarCheckbox = page.getByRole('checkbox', { name: 'Select all items' })
 
+		const rowCheckboxCell = rowCheckbox.locator('xpath=..')
+		await expect(rowCheckboxCell).toHaveCSS('vertical-align', 'middle')
+		await expect(rowCheckboxCell).toHaveCSS('padding-block-start', '0px')
+
 		await rowCheckbox.check()
 		await expect(rowCheckbox).toBeChecked()
 		await expect(headerCheckbox).toBeChecked()
