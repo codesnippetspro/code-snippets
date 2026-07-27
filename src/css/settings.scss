@@ -1,3 +1,4 @@
+@use 'common/checkbox';
 @use 'common/codemirror';
 @use 'common/subnav';
 @use 'common/theme';
@@ -6,6 +7,10 @@
 @use 'common/page-header';
 
 $sections: general, editor, debug, version-switch;
+
+.settings-section input[type='checkbox']:not(.switch) {
+	@include checkbox.canonical;
+}
 
 .snippets-page-header h1 {
 	color: #2c3337;

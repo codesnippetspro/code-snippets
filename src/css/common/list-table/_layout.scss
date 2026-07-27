@@ -1,3 +1,4 @@
+@use '../checkbox';
 @use '../theme';
 
 .column-name {
@@ -43,6 +44,10 @@
 }
 
 .wp-list-table {
+	.check-column input[type='checkbox'] {
+		@include checkbox.canonical;
+	}
+
 	td.column-id {
 		text-align: center;
 	}

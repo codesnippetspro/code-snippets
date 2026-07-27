@@ -1,4 +1,4 @@
-@use '../theme';
+@use '../checkbox';
 
 // The pagination group and view toggle wrap together as one end-pinned
 // cluster so narrow viewports never split them across rows.
@@ -30,12 +30,7 @@
 	font-size: 14px;
 
 	input[type='checkbox'] {
-		inline-size: 20px;
-		block-size: 20px;
-		margin: 0;
-		border: 1px solid theme.$control-border;
-		border-radius: 5px;
-		box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
+		@include checkbox.canonical;
 	}
 }
 

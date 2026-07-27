@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { expectCanonicalCheckbox } from './helpers/checkbox'
 import { SELECTORS } from './helpers/constants'
 import type { Page, Route } from '@playwright/test'
 
@@ -59,6 +60,38 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await expect(checkboxCell).toHaveCSS('vertical-align', 'middle')
 		await expect(checkboxCell).toHaveCSS('padding-block-start', '0px')
+	})
+
+	test('Uses the canonical checkbox in card view', async ({ page }) => {
+		await switchSnippetView(page, 'Card view')
+
+		const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: snippetName })
+		const checkbox = card.locator('.snippet-card-select')
+		await card.hover()
+
+		await expect(checkbox).toBeVisible()
+		await expectCanonicalCheckbox(checkbox)
+	})
+
+	test('Uses canonical checkboxes in list tables', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		const rowCheckbox = snippetRow.locator('.check-column input[type="checkbox"]')
+		const headerCheckbox = page.locator('.wp-list-table thead .check-column input[type="checkbox"]').first()
+
+		await expectCanonicalCheckbox(rowCheckbox)
+		await expectCanonicalCheckbox(headerCheckbox)
+	})
+
+	test('Uses the canonical checkbox in the select-all toolbar', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const selectAll = page.locator('.tablenav.top .tablenav-select-all input[type="checkbox"]')
+
+		await expectCanonicalCheckbox(selectAll)
 	})
 
 	test('Uses consistent list row action colors', async ({ page }) => {
