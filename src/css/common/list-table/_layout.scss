@@ -48,6 +48,13 @@
 		@include checkbox.canonical;
 	}
 
+	// Shared horizontal rhythm for every snippet table, so the cloud table lines
+	// up with the snippets table rather than keeping the wider WordPress default.
+	th:not(.check-column),
+	td:not(.check-column) {
+		padding-inline: 9px;
+	}
+
 	td.column-id {
 		text-align: center;
 	}
