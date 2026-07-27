@@ -325,6 +325,10 @@ test.describe('Community Cloud Featured Snippets', () => {
 		const rowCheckbox = table.locator('tbody').getByRole('checkbox', { name: 'Select Mock Cloud Snippet' })
 		const toolbarCheckbox = page.getByRole('checkbox', { name: 'Select all items' })
 
+		const headerCell = headerCheckbox.locator('xpath=..')
+		await expect(headerCell).toHaveClass(/column-cb/)
+		await expect(headerCell).toHaveJSProperty('tagName', 'TD')
+
 		await rowCheckbox.check()
 		await expect(rowCheckbox).toBeChecked()
 		await expect(headerCheckbox).toBeChecked()

@@ -123,7 +123,7 @@ export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({ snippets
 	<table className="wp-list-table widefat fixed striped cloud-snippets-table">
 		<thead>
 			<tr>
-				<th scope="col" className="check-column">
+				<td className="column-cb check-column">
 					<input
 						id="cb-select-all-cloud-snippets"
 						type="checkbox"
@@ -132,7 +132,7 @@ export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({ snippets
 						onChange={event =>
 							updateSelection(setSelected, snippets.map(snippet => snippet.id), event.target.checked)}
 					/>
-				</th>
+				</td>
 				<th scope="col" className="column-name column-primary">{__('Name', 'code-snippets')}</th>
 				<th scope="col" className="column-type">{__('Type', 'code-snippets')}</th>
 				<th scope="col" className="column-status">{__('Status', 'code-snippets')}</th>
