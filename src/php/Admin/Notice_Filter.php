@@ -50,7 +50,15 @@ class Notice_Filter {
 			#wpbody-content > .notice:not(.code-snippets-notice):not(.code-snippets-promotion),
 			#wpbody-content > .update-nag,
 			#wpbody-content > .updated:not(.code-snippets-notice),
-			#wpbody-content > .error:not(.code-snippets-notice) {
+			#wpbody-content > .error:not(.code-snippets-notice),
+			#manage-snippets-container > .notice:not(.code-snippets-notice):not(.code-snippets-promotion),
+			#manage-snippets-container > .update-nag,
+			#manage-snippets-container > .updated:not(.code-snippets-notice),
+			#manage-snippets-container > .error:not(.code-snippets-notice),
+			.code-snippets-settings > .notice:not(.code-snippets-notice):not(.code-snippets-promotion):not(.settings-error),
+			.code-snippets-settings > .update-nag:not(.code-snippets-notice):not(.settings-error),
+			.code-snippets-settings > .updated:not(.code-snippets-notice):not(.settings-error),
+			.code-snippets-settings > .error:not(.code-snippets-notice):not(.settings-error) {
 				display: none !important;
 			}
 		</style>

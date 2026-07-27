@@ -197,7 +197,7 @@ class Settings_Menu extends Admin_Menu {
 		$current_section = $this->get_current_section();
 
 		?>
-		<div class="wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
+		<div class="wrap code-snippets-settings" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
 			<?php $this->render_section_tabs(); ?>
 
 			<div class="snippets-page-header">
