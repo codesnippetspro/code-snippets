@@ -332,6 +332,9 @@ test.describe('Community Cloud Featured Snippets', () => {
 		const headerCell = headerCheckbox.locator('xpath=..')
 		await expect(headerCell).toHaveClass(/column-cb/)
 		await expect(headerCell).toHaveJSProperty('tagName', 'TD')
+		const rowCheckboxCell = rowCheckbox.locator('xpath=..')
+		await expect(rowCheckboxCell).toHaveCSS('vertical-align', 'middle')
+		await expect(rowCheckboxCell).toHaveCSS('padding-block-start', '0px')
 
 		await rowCheckbox.check()
 		await expect(rowCheckbox).toBeChecked()

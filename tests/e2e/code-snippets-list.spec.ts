@@ -14,6 +14,8 @@ const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') =
 	await saved
 }
 
+const MAXIMUM_COLUMN_ALIGNMENT_OFFSET = 0.5
+
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
@@ -47,6 +49,75 @@ test.describe('Code Snippets List Page Actions', () => {
 		await searchInput.fill(`${snippetName}-does-not-exist`)
 		await expect(snippetRow).toBeHidden()
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
+	})
+
+	test('Centers list row cell contents', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		const checkboxCell = snippetRow.locator('.check-column')
+
+		await expect(checkboxCell).toHaveCSS('vertical-align', 'middle')
+		await expect(checkboxCell).toHaveCSS('padding-block-start', '0px')
+
+		for (const selector of ['.name-column', '.type-column', '.desc-column', '.priority-column']) {
+			await expect(snippetRow.locator(selector)).toHaveCSS('vertical-align', 'middle')
+		}
+	})
+
+	test('Aligns table header labels with row content', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const table = page.locator('.snippets-list-view .wp-list-table:not(.cloud-snippets-table)')
+		const snippetRow = table.locator('tbody tr').filter({ hasText: snippetName }).first()
+
+		for (const column of ['name', 'type', 'desc', 'tags', 'date', 'priority']) {
+			const headerCell = table.locator(`thead .column-${column}`).first()
+			const bodyCell = snippetRow.locator(`.column-${column}`)
+			const headerInlineStart = await headerCell.evaluate(element => {
+				const sortableTitle = element.querySelector('.sortable-column-title')
+
+				if (sortableTitle) {
+					return sortableTitle.getBoundingClientRect().left
+				}
+
+				const textNode = Array.from(element.childNodes)
+					.find(node => Node.TEXT_NODE === node.nodeType && node.textContent?.trim())
+				const range = document.createRange()
+				range.selectNode(textNode ?? element)
+				return range.getBoundingClientRect().left
+			})
+			const bodyInlineStart = await bodyCell.evaluate(element => {
+				const styles = getComputedStyle(element)
+				return element.getBoundingClientRect().left + Number.parseFloat(styles.paddingInlineStart)
+			})
+
+			expect(Math.abs(headerInlineStart - bodyInlineStart))
+				.toBeLessThanOrEqual(MAXIMUM_COLUMN_ALIGNMENT_OFFSET)
+		}
+	})
+
+	test('Uses consistent list row action colors', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		const rowActions = snippetRow.locator('.row-actions')
+
+		for (const action of [
+			rowActions.getByRole('link', { name: 'Edit', exact: true }),
+			rowActions.getByRole('button', { name: 'Preview', exact: true }),
+			rowActions.getByRole('button', { name: 'Clone', exact: true }),
+			rowActions.getByRole('button', { name: 'Export', exact: true })
+		]) {
+			await expect(action).toHaveCSS('color', 'rgb(34, 113, 177)')
+		}
+
+		await expect(rowActions.getByRole('button', { name: 'Trash', exact: true }))
+			.toHaveCSS('color', 'rgb(179, 45, 46)')
 	})
 
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {

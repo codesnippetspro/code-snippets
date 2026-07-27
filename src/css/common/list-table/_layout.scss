@@ -78,7 +78,8 @@
 		cursor: pointer;
 		text-align: start;
 		overflow: hidden;
-		padding: 8px;
+		padding-block: 8px;
+		padding-inline: 0;
 	}
 
 	th.sortable .list-table-sort-button:focus-visible,
@@ -92,6 +93,10 @@
 		color: #646970;
 		position: relative;
 		inset-inline-start: 0;
+
+		a:not(.delete) {
+			color: theme.$accent;
+		}
 
 		// Row-action buttons render as plain inline links. On WP 7.0 the generic `.button`
 		// compatibility styling would otherwise give them a fill, border, radius and fixed
@@ -107,6 +112,7 @@
 			box-shadow: none;
 			line-height: inherit;
 			font-weight: 400;
+			color: theme.$accent;
 
 			&:hover:not(:disabled),
 			&:focus:not(:disabled) {
@@ -162,6 +168,12 @@
 		padding: 13px 0 0 3px;
 	}
 
+	tbody th.check-column,
+	tbody td.check-column {
+		padding-block-start: 0;
+		vertical-align: middle;
+	}
+
 	thead th.check-column,
 	tfoot th.check-column,
 	.inactive-snippet th.check-column {
@@ -172,6 +184,7 @@
 		td, th {
 			padding: 10px 9px;
 			box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
+			vertical-align: middle;
 		}
 	}
 
@@ -222,6 +235,13 @@
 		max-inline-size: min(25rem, 45vw);
 		overflow: clip;
 		text-overflow: ellipsis;
+	}
+}
+
+.snippets-list-view .wp-list-table:not(.cloud-snippets-table) {
+	th:not(.check-column),
+	td:not(.check-column) {
+		padding-inline: 9px;
 	}
 }
 
