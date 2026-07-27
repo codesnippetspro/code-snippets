@@ -61,6 +61,27 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(checkboxCell).toHaveCSS('padding-block-start', '0px')
 	})
 
+	test('Uses consistent list row action colors', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		const rowActions = snippetRow.locator('.row-actions')
+
+		for (const action of [
+			rowActions.getByRole('link', { name: 'Edit', exact: true }),
+			rowActions.getByRole('button', { name: 'Preview', exact: true }),
+			rowActions.getByRole('button', { name: 'Clone', exact: true }),
+			rowActions.getByRole('button', { name: 'Export', exact: true })
+		]) {
+			await expect(action).toHaveCSS('color', 'rgb(34, 113, 177)')
+		}
+
+		await expect(rowActions.getByRole('button', { name: 'Trash', exact: true }))
+			.toHaveCSS('color', 'rgb(179, 45, 46)')
+	})
+
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
 		await switchSnippetView(page, 'Card view')
 

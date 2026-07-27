@@ -93,6 +93,10 @@
 		position: relative;
 		inset-inline-start: 0;
 
+		a:not(.delete) {
+			color: theme.$accent;
+		}
+
 		// Row-action buttons render as plain inline links. On WP 7.0 the generic `.button`
 		// compatibility styling would otherwise give them a fill, border, radius and fixed
 		// height, so fully neutralise it here (this rule is emitted after the wp-admin layer
@@ -107,6 +111,7 @@
 			box-shadow: none;
 			line-height: inherit;
 			font-weight: 400;
+			color: theme.$accent;
 
 			&:hover:not(:disabled),
 			&:focus:not(:disabled) {
