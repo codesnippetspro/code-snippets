@@ -54,7 +54,11 @@ class Notice_Filter {
 			#manage-snippets-container > .notice:not(.code-snippets-notice):not(.code-snippets-promotion),
 			#manage-snippets-container > .update-nag,
 			#manage-snippets-container > .updated:not(.code-snippets-notice),
-			#manage-snippets-container > .error:not(.code-snippets-notice) {
+			#manage-snippets-container > .error:not(.code-snippets-notice),
+			.code-snippets-settings > .notice:not(.code-snippets-notice):not(.code-snippets-promotion):not(.settings-error),
+			.code-snippets-settings > .update-nag:not(.code-snippets-notice):not(.settings-error),
+			.code-snippets-settings > .updated:not(.code-snippets-notice):not(.settings-error),
+			.code-snippets-settings > .error:not(.code-snippets-notice):not(.settings-error) {
 				display: none !important;
 			}
 		</style>
