@@ -77,7 +77,8 @@
 	// so its solid fill below is not overwritten. The line-height centres text vertically
 	// in anchor-based buttons, which lack a button element's automatic centring.
 	.button:not(.button-primary, .button-link),
-	.button-secondary {
+	.button-secondary,
+	.page-title-action {
 		min-block-size: theme.$control-height;
 		padding-block: 0;
 		padding-inline: 12px;
