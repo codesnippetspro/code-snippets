@@ -49,7 +49,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
 	})
 
-	test('Centers list row checkboxes', async ({ page }) => {
+	test('Centers list row cell contents', async ({ page }) => {
 		await switchSnippetView(page, 'Table view')
 
 		const snippetRow = page
@@ -59,6 +59,10 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await expect(checkboxCell).toHaveCSS('vertical-align', 'middle')
 		await expect(checkboxCell).toHaveCSS('padding-block-start', '0px')
+
+		for (const selector of ['.name-column', '.type-column', '.desc-column', '.priority-column']) {
+			await expect(snippetRow.locator(selector)).toHaveCSS('vertical-align', 'middle')
+		}
 	})
 
 	test('Uses consistent list row action colors', async ({ page }) => {
