@@ -47,18 +47,18 @@ class Notice_Filter {
 	public function print_fallback_styles() {
 		?>
 		<style>
-			#wpbody-content > .notice:not(.code-snippets-notice):not(.code-snippets-promotion),
-			#wpbody-content > .update-nag,
-			#wpbody-content > .updated:not(.code-snippets-notice),
-			#wpbody-content > .error:not(.code-snippets-notice),
-			#manage-snippets-container > .notice:not(.code-snippets-notice):not(.code-snippets-promotion),
-			#manage-snippets-container > .update-nag,
-			#manage-snippets-container > .updated:not(.code-snippets-notice),
-			#manage-snippets-container > .error:not(.code-snippets-notice),
-			.code-snippets-settings > .notice:not(.code-snippets-notice):not(.code-snippets-promotion):not(.settings-error),
-			.code-snippets-settings > .update-nag:not(.code-snippets-notice):not(.settings-error),
-			.code-snippets-settings > .updated:not(.code-snippets-notice):not(.settings-error),
-			.code-snippets-settings > .error:not(.code-snippets-notice):not(.settings-error) {
+			/*
+			 * Only printed on the plugin's own screens, so foreign notices are matched
+			 * at any depth: each screen renders into its own container
+			 * (#manage-snippets-container, #edit-snippet-container, the settings
+			 * wrapper), and other plugins inject relative to whichever wrapper they
+			 * find. Notices owned by this plugin, and the notices WordPress renders
+			 * for saved settings, are excluded.
+			 */
+			#wpbody-content .notice:not(.code-snippets-notice):not(.code-snippets-promotion):not(.settings-error),
+			#wpbody-content .update-nag:not(.code-snippets-notice):not(.settings-error),
+			#wpbody-content .updated:not(.code-snippets-notice):not(.settings-error),
+			#wpbody-content .error:not(.code-snippets-notice):not(.settings-error) {
 				display: none !important;
 			}
 		</style>
