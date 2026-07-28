@@ -1,5 +1,5 @@
 import { humanTimeDiff } from '@wordpress/date'
-import { __, _x, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { stripTags, truncateChars } from '../../../utils/text'
@@ -26,7 +26,8 @@ export const CloudSnippetAuthor: React.FC<CloudSnippetAuthorProps> = ({ snippet 
 			rel="noopener noreferrer"
 		>
 			{sprintf(
-				_x('By %s', 'snippet author', 'code-snippets'),
+				/* translators: %s: cloud library author name. */
+				__('By %s', 'code-snippets'),
 				snippet.codevault
 			)}
 		</a>

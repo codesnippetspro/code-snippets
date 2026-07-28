@@ -1,4 +1,4 @@
-import { __, _x, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useMemo } from 'react'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
@@ -47,9 +47,9 @@ const SnippetStatusCounts = () => {
 						>
 							{`${label} `}
 							<span className="count">{
-								// translators: %d: number of snippets in the current view.
 								sprintf(
-									_x('(%d)', 'table view count', 'code-snippets'),
+									// translators: %d: number of snippets in the current view.
+									__('(%d)', 'code-snippets'),
 									snippetsByStatus.get(status)?.length ?? 0
 								)
 							}</span>
