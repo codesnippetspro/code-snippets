@@ -172,12 +172,13 @@ test.describe('Community Cloud Featured Snippets', () => {
 		let downloadRequests = 0
 		let featuredRequests = 0
 
-		// The refresh that follows a download fails, so the shared state is the only
-		// thing that can keep both mounts showing the snippet as downloaded.
+		// Only the refresh that follows the download fails. Later requests succeed but
+		// still report the snippet as not downloaded, so the shared state is the only
+		// thing that can keep both mounts showing it as downloaded.
 		await page.route(isFeaturedRequest, async route => {
 			featuredRequests += 1
 
-			if (1 < featuredRequests) {
+			if (2 === featuredRequests) {
 				await refreshPending
 				return route.fulfill({
 					status: 500,
@@ -228,17 +229,26 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 			releaseDownload()
 
-			// The preview updates as soon as the download resolves, without waiting for
-			// the refresh, which then fails.
+			// Both mounts settle as soon as the download resolves: the results are still
+			// reported as not downloaded, so only the shared state can update the card,
+			// and it does so without waiting for the refresh.
 			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
+			await expect(cardActions.getByRole(
+				'link',
+				{ name: 'Edit', exact: true, includeHidden: true }
+			)).toHaveCount(1)
+			await expect(cardActions.getByRole(
+				'button',
+				{ name: 'Download', exact: true, includeHidden: true }
+			)).toHaveCount(0)
+
+			expect(downloadRequests).toBe(1)
+
+			// The refresh that follows fails: the error is surfaced, and the download is
+			// not retried.
 			releaseRefresh()
 			await expect(page.getByRole('alert', { name: 'Community snippets status' }))
 				.toContainText('An error occurred while fetching search results. Please try again.')
-
-			await page.getByRole('button', { name: 'Close' }).click()
-
-			await expect(cardActions.getByRole('link', { name: 'Edit', exact: true })).toBeVisible()
-			await expect(cardActions.getByRole('button', { name: 'Download', exact: true })).toHaveCount(0)
 			expect(downloadRequests).toBe(1)
 		} finally {
 			releaseDownload()
