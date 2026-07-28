@@ -51,10 +51,7 @@ class Notice_Filter {
 	public function print_fallback_styles() {
 		?>
 		<style>
-			#wpbody-content .notice:not(.code-snippets-notice):not(.code-snippets-promotion):not(.settings-error),
-			#wpbody-content .update-nag:not(.code-snippets-notice):not(.settings-error),
-			#wpbody-content .updated:not(.code-snippets-notice):not(.settings-error),
-			#wpbody-content .error:not(.code-snippets-notice):not(.settings-error) {
+			#wpbody-content :is(.notice, .update-nag, .updated, .error):not(.code-snippets-notice):not(.code-snippets-promotion):not(.settings-error) {
 				display: none !important;
 			}
 		</style>
