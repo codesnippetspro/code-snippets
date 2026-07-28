@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n'
 import React, { useMemo, useState } from 'react'
 import { isLicensed } from '../../utils/screen'
 import { UpsellDialog } from './UpsellDialog'
-import type { ReactNode } from 'react'
 
 export interface SubnavTab<T extends string> {
 	name: T
@@ -18,7 +17,6 @@ export interface SubnavTabsProps<T extends string> {
 	className?: string
 	currentTab: T
 	setCurrentTab: (tab: T) => void
-	endContent?: ReactNode
 }
 
 export const SubnavTabs = <T extends string>({
@@ -27,7 +25,6 @@ export const SubnavTabs = <T extends string>({
 	className,
 	currentTab,
 	setCurrentTab,
-	endContent
 }: SubnavTabsProps<T>) => {
 	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
 	const hasProTabs = useMemo(() => !isLicensed() && tabs.some(tab => tab.pro), [tabs])
@@ -57,8 +54,6 @@ export const SubnavTabs = <T extends string>({
 								{tab.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 							</button>
 						</li>)}
-
-					{endContent}
 				</ul>
 			</nav>
 

@@ -7,16 +7,14 @@ import type { Snippet } from '../../types/Snippet'
 
 export interface SnippetPriorityInputProps {
 	snippet: Snippet
-	inputId?: string
 }
 
 /**
  * Inline number field for updating a snippet's priority, saving on blur or
  * form submission. Shared between the snippets list table, card kebab menu,
- * and preview modal. Pass `inputId` to keep element IDs unique when the same
- * snippet is rendered in more than one place at once.
+ * and preview modal.
  */
-export const SnippetPriorityInput: React.FC<SnippetPriorityInputProps> = ({ snippet, inputId }) => {
+export const SnippetPriorityInput: React.FC<SnippetPriorityInputProps> = ({ snippet }) => {
 	const [value, setValue] = useState(snippet.priority)
 	const snippetsAPI = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
@@ -45,7 +43,7 @@ export const SnippetPriorityInput: React.FC<SnippetPriorityInputProps> = ({ snip
 			handleUpdate()
 		}}>
 			<input
-				id={inputId ?? `snippet-${snippet.id}-priority`}
+				id={`snippet-${snippet.id}-priority`}
 				type="number"
 				className="snippet-priority"
 				value={value}

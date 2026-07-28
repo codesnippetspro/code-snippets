@@ -31,7 +31,6 @@ export const useKebabMenu = (): KebabMenuContextValue => useContext(KebabMenuCon
 export interface KebabMenuItemProps {
 	onSelect?: () => void
 	destructive?: boolean
-	keepOpen?: boolean
 	disabled?: boolean
 	className?: string
 }
@@ -39,7 +38,6 @@ export interface KebabMenuItemProps {
 export const KebabMenuItem: React.FC<PropsWithChildren<KebabMenuItemProps>> = ({
 	onSelect,
 	destructive,
-	keepOpen,
 	disabled,
 	className,
 	children
@@ -58,10 +56,7 @@ export const KebabMenuItem: React.FC<PropsWithChildren<KebabMenuItemProps>> = ({
 				disabled={disabled}
 				onClick={() => {
 					onSelect?.()
-
-					if (!keepOpen) {
-						closeMenu()
-					}
+					closeMenu()
 				}}
 			>
 				{children}

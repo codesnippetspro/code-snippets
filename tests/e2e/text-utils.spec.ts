@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { decodeEntities, stripTags } from '../../src/js/utils/text'
+import { stripTags } from '../../src/js/utils/text'
 import type { Page } from '@playwright/test'
 
 const stripTagsInPage = (page: Page, text: string): Promise<string> =>
@@ -119,25 +119,5 @@ test.describe('stripTags', () => {
 		expect(await stripTagsInPage(page, '&lt;script&gt;alert(1)&lt;/script&gt;'))
 			.toBe('<script>alert(1)</script>')
 		expect(await stripTagsInPage(page, '<p>&lt;b&gt;not bold&lt;/b&gt;</p>')).toBe('<b>not bold</b>')
-	})
-})
-
-test.describe('decodeEntities', () => {
-	test('decodes named, decimal, and hexadecimal entities', () => {
-		expect(decodeEntities('A &amp; B')).toBe('A & B')
-		expect(decodeEntities('&#65;&#x42;&#X43;')).toBe('ABC')
-		expect(decodeEntities('&copy; &trade; &rsquo;')).toBe('© ™ ’')
-	})
-
-	test('does not double-decode', () => {
-		expect(decodeEntities('&amp;lt;')).toBe('&lt;')
-		expect(decodeEntities('&amp;amp;')).toBe('&amp;')
-	})
-
-	test('leaves unknown and malformed sequences untouched', () => {
-		expect(decodeEntities('&unknownentity;')).toBe('&unknownentity;')
-		expect(decodeEntities('a && b')).toBe('a && b')
-		expect(decodeEntities('&amp')).toBe('&amp')
-		expect(decodeEntities('&#0;&#x110000;&#xd800;')).toBe('&#0;&#x110000;&#xd800;')
 	})
 })

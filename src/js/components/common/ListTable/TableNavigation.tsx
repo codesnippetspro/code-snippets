@@ -179,7 +179,6 @@ export const TableNav = <K extends Key, A extends string>({
 	extraTableNav,
 	endTableNav,
 	selectAllKeys,
-	bulkSelectLabel,
 	...paginationProps
 }: TableNavProps<K, A>) => {
 	const isTop = 'top' === which
@@ -195,7 +194,6 @@ export const TableNav = <K extends Key, A extends string>({
 					doAction={doAction}
 					disabled={paginationProps.disabled}
 					selected={selected}
-					selectLabel={bulkSelectLabel}
 					onActionSuccess={() => setSelected(new Set())}
 				/>)}
 
@@ -225,7 +223,6 @@ export interface TableNavigationProps<K extends Key, A extends string> extends L
 	totalItems: number
 	totalPages: number | undefined
 	selectAllKeys?: K[]
-	bulkSelectLabel?: string
 }
 
 export const TableNavigation = <K extends Key, A extends string>({
