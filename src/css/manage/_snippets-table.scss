@@ -210,9 +210,17 @@
 	.kebab-menu-priority {
 		justify-content: space-between;
 
+		// Balances the shorter input so the row matches the height of the menu
+		// items above and below it.
+		padding-block: 5px;
+
 		input.snippet-priority {
 			inline-size: 52px;
 			block-size: 30px;
+
+			// WordPress sizes number inputs with a min-height, which would
+			// otherwise win over the height set here.
+			min-block-size: 0;
 			box-sizing: border-box;
 			margin: 0;
 			padding-block: 0;
