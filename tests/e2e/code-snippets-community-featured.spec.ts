@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { TIMEOUTS, URLS } from './helpers/constants'
+import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
 const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
@@ -72,6 +73,12 @@ test.describe('Community Cloud Featured Snippets', () => {
 		page.on('pageerror', error => {
 			jsErrors.push(error.message)
 		})
+	})
+
+	// Restore the stored view rather than clicking the toolbar back: a failed
+	// request removes the results, and the view toggle along with them.
+	test.afterEach(async () => {
+		await wpCli(['eval', "delete_option( 'code_snippets_snippet_view' );"])
 	})
 
 	test('Page loads without JavaScript errors', async ({ page }) => {
@@ -254,7 +261,6 @@ test.describe('Community Cloud Featured Snippets', () => {
 			releaseDownload()
 			releaseRefresh()
 			await closePreviewIfOpen(page)
-			await switchSnippetView(page, 'Table view').catch(() => undefined)
 		}
 	})
 
