@@ -1,3 +1,4 @@
+@use 'checkbox';
 @use 'theme';
 
 /**
@@ -152,4 +153,22 @@
 	// conditions badge icon), pushing them out of vertical alignment. Reset it so icons stay
 	// centred — mirrors the existing `.button svg` rule for SVG icons.
 	line-height: 1;
+}
+
+// The Screen Options panel sits outside the page wrapper, in WordPress' own
+// screen meta region. These stylesheets are only loaded on the plugin's screens,
+// so its checkboxes are styled to match the ones in the page below it.
+#adv-settings {
+	input[type='checkbox'] {
+		@include checkbox.canonical;
+	}
+
+	// The canonical checkbox drops the margin WordPress relies on here, and the
+	// gap otherwise comes from whitespace in the markup, which differs between
+	// the fieldsets this plugin prints and the ones WordPress prints.
+	label {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+	}
 }
