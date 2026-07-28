@@ -378,7 +378,7 @@ class Version_Switch {
 		</p>
 
 		<?php if ( $is_switching ) : ?>
-			<div class="notice notice-info inline">
+			<div class="notice code-snippets-notice notice-info inline">
 				<p><?php esc_html_e( 'Version switch in progress. Please wait…', 'code-snippets' ); ?></p>
 			</div>
 		<?php else : ?>
@@ -412,7 +412,7 @@ class Version_Switch {
 				</button>
 			</p>
 
-			<div id="version-switch-result" class="notice" style="display: none;"></div>
+			<div id="version-switch-result" class="notice code-snippets-notice" style="display: none;"></div>
 		<?php endif; ?>
 		</div><?php
 	}
@@ -486,7 +486,7 @@ class Version_Switch {
 	 */
 	public static function render_version_switch_warning(): void {
 		?>
-		<div id="version-switch-warning" class="notice notice-warning" style="display: none; margin-top: 20px;">
+		<div id="version-switch-warning" class="notice code-snippets-notice notice-warning" style="display: none; margin-top: 20px;">
 			<p>
 				<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
 				<?php esc_html_e( 'Switching versions may cause compatibility issues. Always backup your site before switching versions.', 'code-snippets' ); ?>

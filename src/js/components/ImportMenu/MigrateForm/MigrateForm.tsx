@@ -1,6 +1,7 @@
 import React from 'react'
 import { createInterpolateElement } from '@wordpress/element'
 import { __, sprintf } from '@wordpress/i18n'
+import { Notice } from '../../common/Notice'
 import { ImportCard } from '../common/ImportCard'
 import { ImporterSelector } from './ImporterSelector'
 import { ImportOptions } from './ImportOptions'
@@ -81,10 +82,10 @@ const MigrateFormInner: React.FC = () => {
 
 	if (error?.step === MigrationStep.LoadImporters) {
 		return (
-			<div className="notice notice-error">
+			<Notice type="error">
 				{/* translators: %s: error message. */}
 				<p>{sprintf(__('Error loading importers: %s', 'code-snippets'), error.message)}</p>
-			</div>
+			</Notice>
 		)
 	}
 
