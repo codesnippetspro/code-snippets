@@ -18,7 +18,11 @@
 // plugin's own more-specific per-control rules, which are emitted later in each bundle and so
 // win on equal specificity. This lets bespoke controls (conditions button, row-action links,
 // priority input, etc.) keep their intended styling without per-element exclusions here.
-.wrap {
+.wrap,
+// Modals render through a portal on `document.body`, outside the page wrapper, so
+// the plugin's own dialogs are listed here to pick up the same control tokens.
+.code-snippets-preview-modal,
+.code-snippets-modal {
 	// Native single-line text controls and selects: token height + border.
 	// `@wordpress/components` inputs/selects (`.components-*`) keep their own design — they
 	// are excluded so React widgets such as the tags token field are left untouched.

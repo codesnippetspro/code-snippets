@@ -147,12 +147,21 @@
 		}
 
 		.button-link.code-snippets-preview-modal__trash {
-			color: #b32d2e;
+			min-block-size: 38px;
+			padding-block: 0;
 			padding-inline: 16px;
+			border: 1px solid #b32d2e;
+			border-radius: 5px;
+			background: #f6f7f7;
+			line-height: 2.5715;
+			font-weight: 400;
+			color: #b32d2e;
 			text-decoration: none;
 
 			&:hover,
 			&:focus {
+				border-color: #d63638;
+				background: #f0f0f1;
 				color: #d63638;
 			}
 		}
