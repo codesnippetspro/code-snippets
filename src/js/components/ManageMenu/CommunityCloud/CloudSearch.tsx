@@ -7,6 +7,7 @@ import { REST_BASES } from '../../../utils/restAPI'
 import { isLicensed } from '../../../utils/screen'
 import { isProSnippet } from '../../../utils/snippets/snippets'
 import { TableNav } from '../../common/ListTable/TableNavigation'
+import { LoadingStatusNotices } from '../../common/LoadingStatusNotices'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { CloudSnippetsTable } from './CloudSnippetsTable'
 import { CloudSnippetAuthor, SearchResult } from './SearchResult'
@@ -191,18 +192,7 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 }
 
 const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
-	const { searchResults, searchParams, isErrored } = useCloudSearch()
-
-	if (isErrored) {
-		return (
-			<div className="banner banner-error">
-				<p>{__(
-					'An error occurred while fetching search results. Please try again.',
-					'code-snippets'
-				)}</p>
-			</div>
-		)
-	}
+	const { searchResults, searchParams } = useCloudSearch()
 
 	if (!searchResults) {
 		return null
@@ -229,6 +219,21 @@ const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView, setSnipp
 		: null
 }
 
+const SearchStatus = () => {
+	const { isErrored, isLoading } = useCloudSearch()
+
+	return isErrored || isLoading
+		? <LoadingStatusNotices
+			isLoading={isLoading}
+			errorMessage={isErrored
+				? __('An error occurred while fetching search results. Please try again.', 'code-snippets')
+				: undefined}
+			loadingNotice={__('Loading community snippets…', 'code-snippets')}
+			noticeLabel={__('Community snippets status', 'code-snippets')}
+		/>
+		: null
+}
+
 export interface CloudSearchProps {
 	snippetView: SnippetView
 	setSnippetView: (view: SnippetView) => void
@@ -237,5 +242,6 @@ export interface CloudSearchProps {
 export const CloudSearch: React.FC<CloudSearchProps> = ({ snippetView, setSnippetView }) =>
 	<div className="cloud-search">
 		<SearchBox />
+		<SearchStatus />
 		<SearchResults snippetView={snippetView} setSnippetView={setSnippetView} />
 	</div>

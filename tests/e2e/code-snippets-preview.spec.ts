@@ -5,6 +5,9 @@ import { wpCli } from './helpers/wpCli'
 import type { Locator, Page } from '@playwright/test'
 
 const MAXIMUM_FOCUS_ATTEMPTS = 10
+const MAXIMUM_BADGE_ALIGNMENT_OFFSET = 4
+const PREVIEW_VIEWPORT_WIDTHS = [1280, 640]
+const CONTROL_HEIGHT = 38
 
 // Disabling the admin's "Syntax Highlighting" preference makes
 // wp_enqueue_code_editor() a no-op, so window.wp.codeEditor is undefined when
@@ -105,8 +108,6 @@ test.describe('Code Snippets Preview Modal', () => {
 			await expect(codeArea).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 			await expect(codeArea).toHaveValue(new RegExp(snippetName))
 
-			// The type badge renders in the modal content (the minimum-supported
-			// WordPress Modal has no headerActions prop).
 			await expect(preview.locator('.code-snippets-preview-modal__badge .badge'))
 				.toBeVisible()
 
@@ -128,6 +129,49 @@ test.describe('Code Snippets Preview Modal', () => {
 		const editor = await openPreviewEditor(page)
 
 		await expect(editor.locator('[aria-label="Snippet code preview"]')).toBeAttached()
+	})
+
+	test('Preview type badge sits in the header before the close button', async ({ page }) => {
+		await openPreviewEditor(page)
+
+		const modal = page.locator('.code-snippets-preview-modal')
+		const header = modal.locator('.components-modal__header')
+		const heading = header.locator('.components-modal__header-heading-container')
+		const badge = header.locator('.code-snippets-preview-modal__badge .badge')
+		const closeButton = header.getByRole('button', { name: 'Close' })
+
+		for (const width of PREVIEW_VIEWPORT_WIDTHS) {
+			await page.setViewportSize({ width, height: 800 })
+			await expect(heading).toBeVisible()
+			await expect(badge).toBeVisible()
+			await expect(closeButton).toBeVisible()
+			await expect(async () => {
+				const [headingBox, badgeBox, closeButtonBox] =
+					await Promise.all([heading.boundingBox(), badge.boundingBox(), closeButton.boundingBox()])
+
+				expect(headingBox).not.toBeNull()
+				expect(badgeBox).not.toBeNull()
+				expect(closeButtonBox).not.toBeNull()
+
+				if (headingBox && badgeBox && closeButtonBox) {
+					const badgeCenter = badgeBox.y + badgeBox.height / 2
+					const closeButtonCenter = closeButtonBox.y + closeButtonBox.height / 2
+
+					expect(headingBox.x + headingBox.width).toBeLessThanOrEqual(badgeBox.x)
+					expect(badgeBox.x + badgeBox.width).toBeLessThanOrEqual(closeButtonBox.x)
+					expect(Math.abs(badgeCenter - closeButtonCenter)).toBeLessThanOrEqual(
+						MAXIMUM_BADGE_ALIGNMENT_OFFSET
+					)
+				}
+			}).toPass({ timeout: TIMEOUTS.SHORT })
+		}
+
+		// Modals render through a portal outside the page wrapper, so they only pick
+		// up the plugin control styling while the dialog is covered by those rules.
+		// The dialog animates in, so poll until the height settles.
+		await expect.poll(() => modal.getByRole('button', { name: 'Clone' })
+			.evaluate(element => element.getBoundingClientRect().height))
+			.toBeCloseTo(CONTROL_HEIGHT, 0)
 	})
 
 	for (const keypress of <const> ['Tab', 'Shift+Tab']) {

@@ -66,13 +66,10 @@
 		border-block-end-color: #ddd;
 	}
 
-	// The badge lives in the modal content because the minimum-supported
-	// WordPress Modal (5.5–6.3) has no headerActions prop; shift it up into
-	// the header area, clear of the close button.
 	.code-snippets-preview-modal__badge {
-		position: absolute;
-		inset-block-start: 18px;
-		inset-inline-end: 56px;
+		display: flex;
+		flex-shrink: 0;
+		margin-inline-end: 8px;
 	}
 
 	// Header and footer stay pinned; the CodeMirror editor is the only
@@ -85,8 +82,7 @@
 		overflow: hidden;
 	}
 
-	// The modal component wraps its children in an unstyled focus container;
-	// it must join the flex chain or the editor grows to its content height.
+	// Newer Modal versions wrap children in an unstyled focus container.
 	.components-modal__header + div {
 		display: flex;
 		flex-flow: column;
@@ -151,11 +147,21 @@
 		}
 
 		.button-link.code-snippets-preview-modal__trash {
+			min-block-size: 38px;
+			padding-block: 0;
+			padding-inline: 16px;
+			border: 1px solid #b32d2e;
+			border-radius: 5px;
+			background: #f6f7f7;
+			line-height: 2.5715;
+			font-weight: 400;
 			color: #b32d2e;
 			text-decoration: none;
 
 			&:hover,
 			&:focus {
+				border-color: #d63638;
+				background: #f0f0f1;
 				color: #d63638;
 			}
 		}

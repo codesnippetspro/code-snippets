@@ -7,6 +7,7 @@ import { Button } from '../../common/Button'
 import { CloudSnippetDownloadButton } from '../../common/cloud/CloudSnippetDownloadButton'
 import { CloudSnippetPreviewModal } from '../../common/cloud/CloudSnippetPreviewModal'
 import { CloudStatusBadge } from '../../common/cloud/CloudStatusBadge'
+import { useCloudSearch } from './WithCloudSearchContext'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { Dispatch, SetStateAction } from 'react'
 
@@ -25,6 +26,38 @@ interface CloudSnippetRowProps {
 	snippet: CloudSnippetSchema
 	selected: Set<CloudSnippetId>
 	setSelected: SetSelected
+}
+
+interface CloudSnippetActionsProps extends Pick<CloudSnippetRowProps, 'snippet'> {
+	isPreviewOpen: boolean
+	setIsPreviewOpen: (isOpen: boolean) => void
+}
+
+const CloudSnippetActions: React.FC<CloudSnippetActionsProps> = ({
+	snippet,
+	isPreviewOpen,
+	setIsPreviewOpen
+}) => {
+	const { doSearch } = useCloudSearch()
+
+	return (
+		<>
+			<div className="cloud-snippet-action-buttons">
+				<Button secondary onClick={() => setIsPreviewOpen(true)}>
+					{__('Preview', 'code-snippets')}
+				</Button>
+
+				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={doSearch} />
+			</div>
+
+			<CloudSnippetPreviewModal
+				snippet={snippet}
+				isOpen={isPreviewOpen}
+				setIsOpen={setIsPreviewOpen}
+				onDownloaded={doSearch}
+			/>
+		</>
+	)
 }
 
 const CloudSnippetRow: React.FC<CloudSnippetRowProps> = ({ snippet, selected, setSelected }) => {
@@ -69,15 +102,7 @@ const CloudSnippetRow: React.FC<CloudSnippetRowProps> = ({ snippet, selected, se
 			</td>
 
 			<td className="column-actions">
-				<div className="cloud-snippet-action-buttons">
-					<Button secondary onClick={() => setIsPreviewOpen(true)}>
-						{__('Preview', 'code-snippets')}
-					</Button>
-
-					<CloudSnippetDownloadButton snippet={snippet} />
-				</div>
-
-				<CloudSnippetPreviewModal snippet={snippet} isOpen={isPreviewOpen} setIsOpen={setIsPreviewOpen} />
+				<CloudSnippetActions {...{ snippet, isPreviewOpen, setIsPreviewOpen }} />
 			</td>
 		</tr>
 	)
@@ -98,7 +123,7 @@ export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({ snippets
 	<table className="wp-list-table widefat fixed striped cloud-snippets-table">
 		<thead>
 			<tr>
-				<th scope="col" className="check-column">
+				<td className="column-cb check-column">
 					<input
 						id="cb-select-all-cloud-snippets"
 						type="checkbox"
@@ -107,7 +132,7 @@ export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({ snippets
 						onChange={event =>
 							updateSelection(setSelected, snippets.map(snippet => snippet.id), event.target.checked)}
 					/>
-				</th>
+				</td>
 				<th scope="col" className="column-name column-primary">{__('Name', 'code-snippets')}</th>
 				<th scope="col" className="column-type">{__('Type', 'code-snippets')}</th>
 				<th scope="col" className="column-status">{__('Status', 'code-snippets')}</th>

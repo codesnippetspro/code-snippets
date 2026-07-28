@@ -35,6 +35,7 @@ export interface SnippetPreviewModalProps {
 	setIsOpen: (isOpen: boolean) => void
 	snippet?: Snippet
 	extraActions?: PreviewExtraActions
+	footerActions?: ReactNode
 }
 
 const EDITOR_MODES: Record<string, string> = {
@@ -229,14 +230,31 @@ const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({
 	)
 }
 
-/**
- * The minimum-supported WordPress Modal (5.5–6.3) has no headerActions prop,
- * so the badge renders in the content and CSS moves it into the header area.
- */
 const PreviewTypeBadge: React.FC<{ type: SnippetType }> = ({ type }) =>
 	<div className="code-snippets-preview-modal__badge">
 		<Badge name={type} />
 	</div>
+
+interface PreviewFooterProps {
+	snippet?: Snippet
+	extraActions?: PreviewExtraActions
+	footerActions?: ReactNode
+	closeModal: () => void
+}
+
+const PreviewFooter: React.FC<PreviewFooterProps> = ({
+	snippet,
+	extraActions,
+	footerActions,
+	closeModal
+}) =>
+	snippet
+		? <SnippetPreviewActions {...{ snippet, extraActions, closeModal }} />
+		: footerActions
+			? <div className="code-snippets-preview-modal__footer">
+				<div className="code-snippets-preview-modal__buttons">{footerActions}</div>
+			</div>
+			: null
 
 /**
  * Modal for quickly viewing a snippet's code in a read-only CodeMirror editor,
@@ -251,7 +269,8 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 	isOpen,
 	setIsOpen,
 	snippet,
-	extraActions
+	extraActions,
+	footerActions
 }) => {
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -280,8 +299,8 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			className="code-snippets-preview-modal"
 			onRequestClose={() => setIsOpen(false)}
 			title={title}
+			headerActions={<PreviewTypeBadge type={type} />}
 		>
-			<PreviewTypeBadge type={type} />
 			<div className="code-snippets-preview-modal__editor">
 				<textarea
 					ref={textareaRef}
@@ -291,13 +310,10 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 				/>
 			</div>
 
-			{snippet
-				? <SnippetPreviewActions
-					snippet={snippet}
-					extraActions={extraActions}
-					closeModal={() => setIsOpen(false)}
-				/>
-				: null}
+			<PreviewFooter
+				{...{ snippet, extraActions, footerActions }}
+				closeModal={() => setIsOpen(false)}
+			/>
 		</Modal>
 		: null
 }

@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { expectCanonicalCheckbox } from './helpers/checkbox'
 import { SELECTORS } from './helpers/constants'
 import type { Page, Route } from '@playwright/test'
 
@@ -13,6 +14,8 @@ const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') =
 	await page.getByRole('button', { name: view }).click()
 	await saved
 }
+
+const MAXIMUM_COLUMN_ALIGNMENT_OFFSET = 0.5
 
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
@@ -47,6 +50,64 @@ test.describe('Code Snippets List Page Actions', () => {
 		await searchInput.fill(`${snippetName}-does-not-exist`)
 		await expect(snippetRow).toBeHidden()
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
+	})
+
+	test('Presents table rows with aligned columns, checkboxes and actions', async ({ page }) => {
+		await switchSnippetView(page, 'Table view')
+
+		const table = page.locator('.snippets-list-view .wp-list-table:not(.cloud-snippets-table)')
+		const snippetRow = table.locator('tbody tr').filter({ hasText: snippetName }).first()
+
+		for (const column of ['name', 'type', 'desc', 'tags', 'date', 'priority']) {
+			const headerCell = table.locator(`thead .column-${column}`).first()
+			const bodyCell = snippetRow.locator(`.column-${column}`)
+			const headerInlineStart = await headerCell.evaluate(element => {
+				const sortableTitle = element.querySelector('.sortable-column-title')
+
+				if (sortableTitle) {
+					return sortableTitle.getBoundingClientRect().left
+				}
+
+				const textNode = Array.from(element.childNodes)
+					.find(node => Node.TEXT_NODE === node.nodeType && node.textContent?.trim())
+				const range = document.createRange()
+				range.selectNode(textNode ?? element)
+				return range.getBoundingClientRect().left
+			})
+			const bodyInlineStart = await bodyCell.evaluate(element => {
+				const styles = getComputedStyle(element)
+				return element.getBoundingClientRect().left + Number.parseFloat(styles.paddingInlineStart)
+			})
+
+			expect(Math.abs(headerInlineStart - bodyInlineStart))
+				.toBeLessThanOrEqual(MAXIMUM_COLUMN_ALIGNMENT_OFFSET)
+		}
+
+		// The plugin restyles native checkboxes, which only holds while the rules
+		// out-weigh the WordPress defaults.
+		await expectCanonicalCheckbox(snippetRow.locator('.check-column input[type="checkbox"]'))
+
+		const rowActions = snippetRow.locator('.row-actions')
+
+		for (const action of [
+			rowActions.getByRole('link', { name: 'Edit', exact: true }),
+			rowActions.getByRole('button', { name: 'Preview', exact: true }),
+			rowActions.getByRole('button', { name: 'Clone', exact: true }),
+			rowActions.getByRole('button', { name: 'Export', exact: true })
+		]) {
+			await expect(action).toHaveCSS('color', 'rgb(34, 113, 177)')
+		}
+
+		await expect(rowActions.getByRole('button', { name: 'Trash', exact: true }))
+			.toHaveCSS('color', 'rgb(179, 45, 46)')
+
+		// Type badges are wrapped in links that inherit a transparent outline, so
+		// assert that some focus indicator is drawn rather than a specific one.
+		const badgeLink = snippetRow.locator('.column-type a').first()
+		await badgeLink.focus()
+
+		await expect(badgeLink).toBeFocused()
+		expect(await badgeLink.evaluate(element => getComputedStyle(element).boxShadow)).not.toBe('none')
 	})
 
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
@@ -91,6 +152,12 @@ test.describe('Code Snippets List Page Actions', () => {
 		const toggleSwitch = toggleCell.getByRole('switch').first()
 		await expect(toggleSwitch).toBeVisible()
 
+		// Active rows draw an accent border on the checkbox cell, so the same width
+		// is reserved on every other row: without it, rows jump as they are toggled.
+		const rowCheckbox = snippetRow.locator('.check-column input[type="checkbox"]')
+		const checkboxInlineStart = async () => (await rowCheckbox.boundingBox())?.x ?? 0
+		const initialInlineStart = await checkboxInlineStart()
+
 		const initialChecked = await toggleSwitch.isChecked()
 		await expect(toggleSwitch).toHaveAccessibleName(initialChecked ? /Deactivate/i : /Activate/i)
 
@@ -101,6 +168,8 @@ test.describe('Code Snippets List Page Actions', () => {
 			await expect(toggleSwitch).toBeChecked()
 		}
 		await expect(toggleSwitch).toHaveAccessibleName(!initialChecked ? /Deactivate/i : /Activate/i)
+		expect(Math.abs(await checkboxInlineStart() - initialInlineStart))
+			.toBeLessThanOrEqual(MAXIMUM_COLUMN_ALIGNMENT_OFFSET)
 
 		await toggleSwitch.click({ force: true })
 		if (initialChecked) {
