@@ -75,6 +75,10 @@ class Cloud_Snippet extends Model {
 
 			case 'is_owner':
 				return (bool) $value;
+
+			case 'description':
+				return is_scalar( $value ) ? wp_kses_post( (string) $value ) : '';
+
 			case 'tags':
 				return code_snippets_build_tags_array( $value );
 

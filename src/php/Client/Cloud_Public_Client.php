@@ -108,13 +108,7 @@ class Cloud_Public_Client {
 			return null;
 		}
 
-		$snippet_data = $data['snippet'];
-		$description = $snippet_data['description'] ?? '';
-		$snippet_data['description'] = is_scalar( $description )
-			? wp_kses_post( (string) $description )
-			: '';
-
-		return new Cloud_Snippet( $snippet_data );
+		return new Cloud_Snippet( $data['snippet'] );
 	}
 
 	/**

@@ -179,14 +179,16 @@ class Cloud_Snippets_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Constructing a model directly preserves its description value.
+	 * Descriptions are sanitised by the model itself, whichever path constructs it.
 	 *
 	 * @return void
 	 */
-	public function test_model_preserves_description_value(): void {
-		$description = [ 'nested' ];
+	public function test_model_sanitizes_description_value(): void {
+		$snippet = new Cloud_Snippet( [ 'description' => '<strong>Allowed</strong><script>alert("unsafe")</script>' ] );
+		$this->assertSame( '<strong>Allowed</strong>alert("unsafe")', $snippet->description );
 
-		$this->assertSame( $description, ( new Cloud_Snippet( [ 'description' => $description ] ) )->description );
+		$snippet->description = [ 'nested' ];
+		$this->assertSame( '', $snippet->description );
 	}
 
 	/**
@@ -225,5 +227,18 @@ class Cloud_Snippets_Test extends UnitTestCase {
 		$this->assertSame( '<strong>Allowed</strong>alert("unsafe")', $result->snippets[0]->description );
 		$this->assertSame( '123', $result->snippets[1]->description );
 		$this->assertSame( '', $result->snippets[2]->description );
+	}
+
+	/**
+	 * Snippet entries that are not lists of fields decode into empty snippets.
+	 *
+	 * @return void
+	 */
+	public function test_scalar_snippet_entries_decode_into_default_snippets(): void {
+		$result = Cloud_Snippets::unpack_api_response( [ 'snippets' => [ 'unexpected', 42 ] ] );
+
+		$this->assertCount( 2, $result->snippets );
+		$this->assertSame( '', $result->snippets[0]->name );
+		$this->assertSame( '', $result->snippets[1]->description );
 	}
 }
