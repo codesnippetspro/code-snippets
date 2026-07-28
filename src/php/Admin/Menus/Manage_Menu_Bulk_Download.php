@@ -8,8 +8,6 @@ use WP_Error;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 
-defined( 'ABSPATH' ) || exit;
-
 /**
  * Handles bulk snippet code downloads from the manage screen.
  */

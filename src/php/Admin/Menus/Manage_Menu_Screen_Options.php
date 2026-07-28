@@ -4,8 +4,6 @@ namespace Code_Snippets\Admin\Menus;
 
 use function Code_Snippets\code_snippets;
 
-defined( 'ABSPATH' ) || exit;
-
 /**
  * Provides Screen Options for the manage snippets table.
  */

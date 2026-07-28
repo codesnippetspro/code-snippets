@@ -4,8 +4,6 @@ namespace Code_Snippets\Admin\Menus;
 
 use function Code_Snippets\get_snippets;
 
-defined( 'ABSPATH' ) || exit;
-
 /**
  * Counts stored snippets by their editor type.
  */

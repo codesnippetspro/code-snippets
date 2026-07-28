@@ -10,8 +10,6 @@ use function Code_Snippets\Utils\enqueue_code_preview_editor;
 use const Code_Snippets\PLUGIN_FILE;
 use const Code_Snippets\PLUGIN_VERSION;
 
-defined( 'ABSPATH' ) || exit;
-
 /**
  * Enqueues assets and builds localized data for the manage menu.
  */
