@@ -42,6 +42,8 @@
 		.dashicons {
 			vertical-align: text-bottom;
 			color: inherit;
+			font-size: 16px;
+			padding-block-start: 2px;
 
 			// WP 7.0's taller button line-height (≈38px) leaks onto the icon and pushes it out
 			// of alignment; reset it so the glyph stays centred within the flex pill.
