@@ -140,7 +140,7 @@ const PagingInput: React.FC<PagingInputProps> = ({
 		value={inputValue}
 		size={totalPages.toString().length}
 		disabled={disabled}
-		aria-describedby="table-paging"
+		aria-describedby={`table-paging-${which}`}
 		onBlur={confirmInputValue}
 		onChange={event => {
 			const value = Number(event.target.value)
@@ -172,10 +172,11 @@ const CurrentPage: React.FC<CurrentPageProps> = ({
 				</span>
 			</span>
 		</>
-		: <span className="paging-input">
+		: <span className="paging-input" id={`table-paging-${which}`}>
 			<PagingInput which={which} totalPages={totalPages} {...inputProps} />
 			<span className="tablenav-paging-text">
-				{_x(' of ', 'paging', 'code-snippets')}
+				{/* translators: Mid-sentence: current page number of total pages. */}
+				{` ${__('of', 'code-snippets')} `}
 				<span className="total-pages">{totalPages}</span>
 			</span>
 		</span>
