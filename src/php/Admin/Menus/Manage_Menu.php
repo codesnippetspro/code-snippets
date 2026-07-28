@@ -5,6 +5,9 @@ namespace Code_Snippets\Admin\Menus;
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\Settings\get_setting;
+use const Code_Snippets\PLUGIN_FILE;
+use const Code_Snippets\PLUGIN_VERSION;
 
 /**
  * Provides the manage snippets admin menu.
@@ -41,13 +44,6 @@ class Manage_Menu extends Admin_Menu {
 	private Manage_Menu_Bulk_Download $bulk_download;
 
 	/**
-	 * Manage menu registration service.
-	 *
-	 * @var Manage_Menu_Registration
-	 */
-	private Manage_Menu_Registration $registration;
-
-	/**
 	 * Manage menu Screen Options.
 	 *
 	 * @var Manage_Menu_Screen_Options
@@ -61,7 +57,6 @@ class Manage_Menu extends Admin_Menu {
 		$this->screen_options = new Manage_Menu_Screen_Options();
 		$this->assets = new Manage_Menu_Assets( $this->screen_options, new Snippet_Type_Counter() );
 		$this->bulk_download = new Manage_Menu_Bulk_Download();
-		$this->registration = new Manage_Menu_Registration();
 
 		parent::__construct(
 			'manage',
@@ -87,7 +82,16 @@ class Manage_Menu extends Admin_Menu {
 	 * Register the top-level 'Snippets' menu and associated 'Manage' subpage
 	 */
 	public function register() {
-		$this->registration->register_top_level( $this );
+		add_menu_page(
+			__( 'Snippets', 'code-snippets' ),
+			_x( 'Snippets', 'top-level menu label', 'code-snippets' ),
+			code_snippets()->get_cap(),
+			code_snippets()->get_menu_slug(),
+			[ $this, 'render' ],
+			'none', // Added through CSS as a mask to prevent loading 'blinking'.
+			apply_filters( 'code_snippets/admin/menu_position', is_network_admin() ? 21 : 67 )
+		);
+
 		parent::register();
 	}
 
@@ -97,7 +101,27 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function register_upgrade_menu() {
-		$this->registration->register_upgrade_menu( $this );
+		if ( code_snippets()->licensing->is_licensed() || get_setting( 'general', 'hide_upgrade_menu' ) ) {
+			return;
+		}
+
+		$menu_title = sprintf(
+			'<span class="button button-primary code-snippets-upgrade-button">%s %s</span>',
+			_x( 'Go Pro', 'top-level menu label', 'code-snippets' ),
+			'<span class="dashicons dashicons-external" aria-hidden="true"></span>'
+		);
+
+		$hook = add_submenu_page(
+			code_snippets()->get_menu_slug(),
+			__( 'Upgrade to Pro', 'code-snippets' ),
+			$menu_title,
+			code_snippets()->get_cap(),
+			'code_snippets_upgrade',
+			'__return_empty_string',
+			100
+		);
+
+		add_action( "load-$hook", [ $this, 'load_upgrade_menu' ] );
 	}
 
 	/**
@@ -106,7 +130,12 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function enqueue_menu_css() {
-		$this->registration->enqueue_menu_css();
+		wp_enqueue_style(
+			'code-snippets-menu',
+			plugins_url( 'dist/menu.css', PLUGIN_FILE ),
+			[],
+			PLUGIN_VERSION
+		);
 	}
 
 	/**
@@ -115,7 +144,8 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function load_upgrade_menu() {
-		$this->registration->load_upgrade_menu();
+		wp_safe_redirect( 'https://snipco.de/JE2f' );
+		exit;
 	}
 
 	/**
@@ -138,7 +168,32 @@ class Manage_Menu extends Admin_Menu {
 	 * Add menu pages for the compact menu
 	 */
 	public function register_compact_menu() {
-		$this->registration->register_compact_menu( $this );
+		if ( ! code_snippets()->is_compact_menu() ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is matched to known classes.
+		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? sanitize_key( $_GET['sub'] ) : 'snippets' );
+		$classmap = [
+			'snippets'             => 'manage',
+			'add-snippet'          => 'edit',
+			'edit-snippet'         => 'edit',
+			'import-code-snippets' => 'import',
+			'snippets-settings'    => 'settings',
+		];
+		$menus = code_snippets()->admin->menus;
+		$class = isset( $classmap[ $sub ], $menus[ $classmap[ $sub ] ] ) ? $menus[ $classmap[ $sub ] ] : $this;
+
+		$hook = add_submenu_page(
+			'tools.php',
+			__( 'Snippets', 'code-snippets' ),
+			_x( 'Snippets', 'tools submenu label', 'code-snippets' ),
+			code_snippets()->get_cap(),
+			code_snippets()->get_menu_slug(),
+			[ $class, 'render' ]
+		);
+
+		add_action( 'load-' . $hook, [ $class, 'load' ] );
 	}
 
 	/**
