@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { expectCanonicalCheckbox } from './helpers/checkbox'
 import { URLS } from './helpers/constants'
 
 test.describe('Code Snippets admin notice filtering', () => {
@@ -62,5 +63,9 @@ test.describe('Code Snippets admin notice filtering', () => {
 		for (const pluginNotice of await settingsPage.locator(':scope > .settings-error').all()) {
 			await expect(pluginNotice).toBeVisible()
 		}
+
+		const checkbox = page.locator('.settings-section:visible input[type="checkbox"]:not(.switch)').first()
+		await expect(checkbox).toBeVisible()
+		await expectCanonicalCheckbox(checkbox)
 	})
 })

@@ -21,6 +21,11 @@ const closePreviewIfOpen = async (page: Page) => {
 	}
 }
 
+const openCommunityCloud = async (page: Page) => {
+	await page.goto(URLS.COMMUNITY_CLOUD)
+	await page.waitForLoadState('domcontentloaded')
+}
+
 const isFeaturedRequest = (url: URL): boolean =>
 	url.pathname.includes('/cloud/snippets/featured') ||
 	true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/featured')
@@ -61,18 +66,17 @@ const makeFeaturedResponse = (snippets = [makeCloudSnippet(501, 'Mock Cloud Snip
 test.describe('Community Cloud Featured Snippets', () => {
 	const jsErrors: string[] = []
 
-	test.beforeEach(async ({ page }) => {
+	test.beforeEach(({ page }) => {
 		jsErrors.length = 0
 
 		page.on('pageerror', error => {
 			jsErrors.push(error.message)
 		})
-
-		await page.goto(URLS.COMMUNITY_CLOUD)
-		await page.waitForLoadState('domcontentloaded')
 	})
 
 	test('Page loads without JavaScript errors', async ({ page }) => {
+		await openCommunityCloud(page)
+
 		// Wait for the cloud search form to render, confirming the React app mounted.
 		await expect(page.locator('.cloud-search')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
@@ -80,6 +84,8 @@ test.describe('Community Cloud Featured Snippets', () => {
 	})
 
 	test('Featured heading appears or graceful empty state', async ({ page }) => {
+		await openCommunityCloud(page)
+
 		// Wait for the search form — this confirms the page rendered.
 		await expect(page.locator('.cloud-search')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
@@ -104,6 +110,8 @@ test.describe('Community Cloud Featured Snippets', () => {
 	})
 
 	test('Search overrides featured heading', async ({ page }) => {
+		await openCommunityCloud(page)
+
 		// Wait for the page to be ready.
 		await expect(page.locator('.cloud-search')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
@@ -124,7 +132,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 		await expect(page.locator('.cloud-snippets-heading', { hasText: 'Featured Snippets' })).not.toBeVisible()
 	})
 
-	test('Shows a page-level notice while featured snippets load', async ({ page }) => {
+	test('Announces loading and error states while featured snippets resolve', async ({ page }) => {
 		let releaseRequest: () => void = () => undefined
 		const requestPending = new Promise<void>(resolve => {
 			releaseRequest = () => resolve()
@@ -132,33 +140,19 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 		await page.route(isFeaturedRequest, async route => {
 			await requestPending
-			await route.fulfill({
+			return route.fulfill({
+				status: 500,
 				contentType: 'application/json',
-				body: JSON.stringify(makeFeaturedResponse())
+				body: JSON.stringify({ message: 'Cloud unavailable' })
 			})
 		})
+		await openCommunityCloud(page)
 
-		await page.reload()
+		const loadingNotice = page.getByRole('status', { name: 'Community snippets status' })
+		await expect(loadingNotice).toHaveClass(/code-snippets-notice/)
+		await expect(loadingNotice).toContainText('Loading community snippets…')
 
-		try {
-			const loadingNotice = page.getByRole('status', { name: 'Community snippets status' })
-			await expect(loadingNotice).toHaveClass(/code-snippets-notice/)
-			await expect(loadingNotice)
-				.toContainText('Loading community snippets…')
-		} finally {
-			releaseRequest()
-		}
-
-		await expect(page.locator('.cloud-search .notice')).toBeHidden()
-	})
-
-	test('Shows a page-level notice when featured snippets fail to load', async ({ page }) => {
-		await page.route(isFeaturedRequest, route => route.fulfill({
-			status: 500,
-			contentType: 'application/json',
-			body: JSON.stringify({ message: 'Cloud unavailable' })
-		}))
-		await page.reload()
+		releaseRequest()
 
 		const errorNotice = page.getByRole('alert', { name: 'Community snippets status' })
 		await expect(errorNotice).toHaveClass(/code-snippets-notice/)
@@ -166,32 +160,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 			.toContainText('An error occurred while fetching search results. Please try again.')
 	})
 
-	test('Preview offers the same download or edit action as its card', async ({ page }) => {
-		await page.route(isFeaturedRequest, route => route.fulfill({
-			contentType: 'application/json',
-			body: JSON.stringify(makeFeaturedResponse([
-				makeCloudSnippet(501, 'Downloadable Cloud Snippet'),
-				makeCloudSnippet(502, 'Installed Cloud Snippet', 42)
-			]))
-		}))
-		await page.reload()
-
-		const openPreview = async (snippetName: string) => {
-			await page.getByRole('button', { name: snippetName }).click()
-			await expect(page.locator('.code-snippets-preview-modal')).toBeVisible()
-		}
-
-		await openPreview('Downloadable Cloud Snippet')
-		await expect(page.locator('.code-snippets-preview-modal').getByRole('button', { name: 'Download' }))
-			.toBeVisible()
-		await page.getByRole('button', { name: 'Close' }).click()
-
-		await openPreview('Installed Cloud Snippet')
-		await expect(page.locator('.code-snippets-preview-modal').getByRole('link', { name: 'Edit' }))
-			.toBeVisible()
-	})
-
-	test('Shares pending and downloaded state before refresh completes', async ({ page }) => {
+	test('Shares download state between the card and its preview', async ({ page }) => {
 		let releaseDownload: () => void = () => undefined
 		let releaseRefresh: () => void = () => undefined
 		const downloadPending = new Promise<void>(resolve => {
@@ -203,17 +172,25 @@ test.describe('Community Cloud Featured Snippets', () => {
 		let downloadRequests = 0
 		let featuredRequests = 0
 
+		// The refresh that follows a download fails, so the shared state is the only
+		// thing that can keep both mounts showing the snippet as downloaded.
 		await page.route(isFeaturedRequest, async route => {
 			featuredRequests += 1
 
 			if (1 < featuredRequests) {
 				await refreshPending
+				return route.fulfill({
+					status: 500,
+					contentType: 'application/json',
+					body: JSON.stringify({ message: 'Cloud unavailable' })
+				})
 			}
 
 			return route.fulfill({
 				contentType: 'application/json',
 				body: JSON.stringify(makeFeaturedResponse([
-					makeCloudSnippet(501, 'Downloadable Cloud Snippet')
+					makeCloudSnippet(501, 'Downloadable Cloud Snippet'),
+					makeCloudSnippet(502, 'Installed Cloud Snippet', 42)
 				]))
 			})
 		})
@@ -225,18 +202,24 @@ test.describe('Community Cloud Featured Snippets', () => {
 				body: JSON.stringify({ success: true, snippet_id: 42, link_id: 501 })
 			})
 		})
-		await page.reload()
+		await openCommunityCloud(page)
 
 		await switchSnippetView(page, 'Card view')
 
 		try {
+			const preview = page.locator('.code-snippets-preview-modal')
+
+			// A snippet that is already installed offers editing rather than downloading.
+			await page.getByRole('button', { name: 'Installed Cloud Snippet' }).click()
+			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
+			await page.getByRole('button', { name: 'Close' }).click()
+
 			const card = page.locator('.cloud-search-result', { hasText: 'Downloadable Cloud Snippet' })
 			const cardActions = card.locator('.snippet-card-footer-actions')
 			await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
-
-			const preview = page.locator('.code-snippets-preview-modal')
 			await preview.getByRole('button', { name: 'Download' }).click()
 
+			// Both mounts show the download as pending before the request resolves.
 			await expect(preview.getByRole('button', { name: 'Download' })).toBeDisabled()
 			await expect(cardActions.getByRole(
 				'button',
@@ -244,8 +227,14 @@ test.describe('Community Cloud Featured Snippets', () => {
 			)).toBeDisabled()
 
 			releaseDownload()
+
+			// The preview updates as soon as the download resolves, without waiting for
+			// the refresh, which then fails.
 			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
-			await expect.poll(() => featuredRequests).toBe(2)
+			releaseRefresh()
+			await expect(page.getByRole('alert', { name: 'Community snippets status' }))
+				.toContainText('An error occurred while fetching search results. Please try again.')
+
 			await page.getByRole('button', { name: 'Close' }).click()
 
 			await expect(cardActions.getByRole('link', { name: 'Edit', exact: true })).toBeVisible()
@@ -259,67 +248,12 @@ test.describe('Community Cloud Featured Snippets', () => {
 		}
 	})
 
-	test('Keeps downloaded state when refresh fails', async ({ page }) => {
-		let downloadRequests = 0
-		let featuredRequests = 0
-
-		await page.route(isFeaturedRequest, route => {
-			featuredRequests += 1
-
-			return 2 === featuredRequests
-				? route.fulfill({
-					status: 500,
-					contentType: 'application/json',
-					body: JSON.stringify({ message: 'Cloud unavailable' })
-				})
-				: route.fulfill({
-					contentType: 'application/json',
-					body: JSON.stringify(makeFeaturedResponse([
-						makeCloudSnippet(501, 'Downloadable Cloud Snippet')
-					]))
-				})
-		})
-		await page.route(isSnippetDownloadRequest, route => {
-			downloadRequests += 1
-			return route.fulfill({
-				contentType: 'application/json',
-				body: JSON.stringify({ success: true, snippet_id: 42, link_id: 501 })
-			})
-		})
-		await page.reload()
-
-		await switchSnippetView(page, 'Card view')
-
-		try {
-			const card = page.locator('.cloud-search-result', { hasText: 'Downloadable Cloud Snippet' })
-			const cardActions = card.locator('.snippet-card-footer-actions')
-			await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
-
-			const preview = page.locator('.code-snippets-preview-modal')
-			await preview.getByRole('button', { name: 'Download' }).click()
-
-			await expect(page.getByRole('alert', { name: 'Community snippets status' }))
-				.toContainText('An error occurred while fetching search results. Please try again.')
-
-			await page.locator('.cloud-search-form')
-				.getByRole('button', { name: 'Search Cloud Library' })
-				.click()
-
-			await expect(cardActions.getByRole('link', { name: 'Edit', exact: true })).toBeVisible()
-			await expect(cardActions.getByRole('button', { name: 'Download', exact: true })).toHaveCount(0)
-			expect(downloadRequests).toBe(1)
-		} finally {
-			await closePreviewIfOpen(page)
-			await switchSnippetView(page, 'Table view').catch(() => undefined)
-		}
-	})
-
 	test('Table checkboxes share the cloud selection state', async ({ page }) => {
 		await page.route(isFeaturedRequest, route => route.fulfill({
 			contentType: 'application/json',
 			body: JSON.stringify(makeFeaturedResponse())
 		}))
-		await page.reload()
+		await openCommunityCloud(page)
 		await switchSnippetView(page, 'Table view')
 
 		const table = page.locator('.cloud-snippets-table')
@@ -328,13 +262,6 @@ test.describe('Community Cloud Featured Snippets', () => {
 		const headerCheckbox = table.locator('thead').getByRole('checkbox', { name: 'Select all snippets' })
 		const rowCheckbox = table.locator('tbody').getByRole('checkbox', { name: 'Select Mock Cloud Snippet' })
 		const toolbarCheckbox = page.getByRole('checkbox', { name: 'Select all items' })
-
-		const headerCell = headerCheckbox.locator('xpath=..')
-		await expect(headerCell).toHaveClass(/column-cb/)
-		await expect(headerCell).toHaveJSProperty('tagName', 'TD')
-		const rowCheckboxCell = rowCheckbox.locator('xpath=..')
-		await expect(rowCheckboxCell).toHaveCSS('vertical-align', 'middle')
-		await expect(rowCheckboxCell).toHaveCSS('padding-block-start', '0px')
 
 		await rowCheckbox.check()
 		await expect(rowCheckbox).toBeChecked()

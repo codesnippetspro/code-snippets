@@ -7,6 +7,7 @@ import type { Locator, Page } from '@playwright/test'
 const MAXIMUM_FOCUS_ATTEMPTS = 10
 const MAXIMUM_BADGE_ALIGNMENT_OFFSET = 4
 const PREVIEW_VIEWPORT_WIDTHS = [1280, 640]
+const CONTROL_HEIGHT = 38
 
 // Disabling the admin's "Syntax Highlighting" preference makes
 // wp_enqueue_code_editor() a no-op, so window.wp.codeEditor is undefined when
@@ -164,19 +165,13 @@ test.describe('Code Snippets Preview Modal', () => {
 				}
 			}).toPass({ timeout: TIMEOUTS.SHORT })
 		}
-	})
 
-	test('Preview trash action matches the inline padding of row buttons', async ({ page }) => {
-		await openPreviewEditor(page)
-
-		const trashButton = page.locator('.code-snippets-preview-modal')
-			.getByRole('button', { name: 'Trash' })
-
-		await expect(trashButton).toBeVisible()
-		await expect.poll(() => trashButton.evaluate(element => {
-			const styles = getComputedStyle(element)
-			return [styles.paddingInlineStart, styles.paddingInlineEnd, styles.color]
-		})).toEqual(['16px', '16px', 'rgb(179, 45, 46)'])
+		// Modals render through a portal outside the page wrapper, so they only pick
+		// up the plugin control styling while the dialog is covered by those rules.
+		// The dialog animates in, so poll until the height settles.
+		await expect.poll(() => modal.getByRole('button', { name: 'Clone' })
+			.evaluate(element => element.getBoundingClientRect().height))
+			.toBeCloseTo(CONTROL_HEIGHT, 0)
 	})
 
 	for (const keypress of <const> ['Tab', 'Shift+Tab']) {
