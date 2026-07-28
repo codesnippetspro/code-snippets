@@ -126,6 +126,11 @@
 
 		a:not(.delete) {
 			color: theme.$accent;
+
+			&:hover,
+			&:focus {
+				color: theme.$accent-hover;
+			}
 		}
 
 		// Row-action buttons render as plain inline links. On WP 7.0 the generic `.button`
@@ -149,6 +154,11 @@
 				background: none;
 				border: 0;
 				box-shadow: none;
+			}
+
+			&:hover:not(:disabled, .delete, .snippet-cloud-update),
+			&:focus:not(:disabled, .delete, .snippet-cloud-update) {
+				color: theme.$accent-hover;
 			}
 
 			&.delete {
