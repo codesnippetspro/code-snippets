@@ -1,3 +1,4 @@
+@use '../badges';
 @use '../checkbox';
 @use '../theme';
 
@@ -105,18 +106,7 @@
 	// box shorter than the badge, so wrap the badge exactly and draw our own
 	// focus ring: the inherited one resolves to a transparent outline.
 	.column-type a {
-		display: inline-flex;
-		border-radius: 3px;
-
-		// Matches the activation switch: a white ring separates the badge from
-		// the accent ring, so the indicator does not sit tight on the border.
-		// Applied to `:focus` as well, since a click leaves the WordPress ring
-		// behind, which hugs the badge.
-		&:focus,
-		&:focus-visible {
-			outline: none;
-			box-shadow: 0 0 0 2px #fff, 0 0 0 4px theme.$accent;
-		}
+		@include badges.badge-link;
 	}
 
 	.row-actions {
