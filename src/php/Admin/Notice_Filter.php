@@ -42,19 +42,15 @@ class Notice_Filter {
 	/**
 	 * Print inline styles that hide foreign notices in the notice region.
 	 *
+	 * Printed only on the plugin's own screens, so notices are matched at any depth:
+	 * each screen renders into its own container, and other plugins inject relative
+	 * to whichever wrapper they find.
+	 *
 	 * @return void
 	 */
 	public function print_fallback_styles() {
 		?>
 		<style>
-			/*
-			 * Only printed on the plugin's own screens, so foreign notices are matched
-			 * at any depth: each screen renders into its own container
-			 * (#manage-snippets-container, #edit-snippet-container, the settings
-			 * wrapper), and other plugins inject relative to whichever wrapper they
-			 * find. Notices owned by this plugin, and the notices WordPress renders
-			 * for saved settings, are excluded.
-			 */
 			#wpbody-content .notice:not(.code-snippets-notice):not(.code-snippets-promotion):not(.settings-error),
 			#wpbody-content .update-nag:not(.code-snippets-notice):not(.settings-error),
 			#wpbody-content .updated:not(.code-snippets-notice):not(.settings-error),
