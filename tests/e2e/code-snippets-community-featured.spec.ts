@@ -66,4 +66,58 @@ test.describe('Community Cloud Featured Snippets', () => {
 		// The "Featured Snippets" heading should no longer be visible (search-mode heading replaces it).
 		await expect(page.locator('.cloud-snippets-heading', { hasText: 'Featured Snippets' })).not.toBeVisible()
 	})
+
+	test('Table checkboxes share the cloud selection state', async ({ page }) => {
+		await page.route(
+			url =>
+				url.pathname.includes('/cloud/snippets/featured') ||
+				true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/featured'),
+			route => route.fulfill({
+				contentType: 'application/json',
+				body: JSON.stringify({
+					snippets: [{
+						id: 501,
+						slug: 'mock-cloud-snippet',
+						name: 'Mock Cloud Snippet',
+						description: 'Mock description',
+						code: '<?php echo "mock";',
+						tags: [],
+						scope: 'global',
+						codevault: 'MockVault',
+						total_votes: 0,
+						vote_count: 0,
+						wp_tested: '',
+						status: 4,
+						created: '2026-01-01 00:00:00',
+						updated: '2026-01-01 00:00:00',
+						revision: 1,
+						is_owner: false,
+						local_id: null,
+						update_available: false
+					}],
+					page: 1,
+					total_pages: 1,
+					total_snippets: 1,
+					available_filters: {}
+				})
+			})
+		)
+		await page.reload()
+
+		const table = page.locator('.cloud-snippets-table')
+		await expect(table).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+
+		const headerCheckbox = table.locator('thead').getByRole('checkbox', { name: 'Select all snippets' })
+		const rowCheckbox = table.locator('tbody').getByRole('checkbox', { name: 'Select Mock Cloud Snippet' })
+		const toolbarCheckbox = page.getByRole('checkbox', { name: 'Select all items' })
+
+		await rowCheckbox.check()
+		await expect(rowCheckbox).toBeChecked()
+		await expect(headerCheckbox).toBeChecked()
+		await expect(toolbarCheckbox).toBeChecked()
+
+		await headerCheckbox.uncheck()
+		await expect(rowCheckbox).not.toBeChecked()
+		await expect(toolbarCheckbox).not.toBeChecked()
+	})
 })

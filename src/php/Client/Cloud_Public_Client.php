@@ -104,9 +104,17 @@ class Cloud_Public_Client {
 
 		$data = unpack_response_body( $response );
 
-		return is_array( $data ) && ! empty( $data['success'] ) && is_array( $data['snippet'] ?? null )
-			? new Cloud_Snippet( $data['snippet'] )
-			: null;
+		if ( ! is_array( $data ) || empty( $data['success'] ) || ! is_array( $data['snippet'] ?? null ) ) {
+			return null;
+		}
+
+		$snippet_data = $data['snippet'];
+		$description = $snippet_data['description'] ?? '';
+		$snippet_data['description'] = is_scalar( $description )
+			? wp_kses_post( (string) $description )
+			: '';
+
+		return new Cloud_Snippet( $snippet_data );
 	}
 
 	/**
@@ -151,6 +159,6 @@ class Cloud_Public_Client {
 			[ 'headers' => $this->connection->get_request_headers() ]
 		);
 
-		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ) );
+		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ), $page );
 	}
 }

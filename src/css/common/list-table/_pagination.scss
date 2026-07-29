@@ -1,0 +1,104 @@
+@use '../theme';
+
+// The pagination group and view toggle wrap together as one end-pinned
+// cluster so narrow viewports never split them across rows.
+.tablenav .tablenav-end-group {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+	margin-inline-start: auto;
+}
+
+.tablenav .tablenav-pages-nav {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	.tablenav-pages {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+	}
+}
+
+// "Select all" control shown in the toolbar beside the bulk actions.
+.tablenav .tablenav-select-all {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+
+	input[type='checkbox'] {
+		inline-size: 20px;
+		block-size: 20px;
+		margin: 0;
+		border: 1px solid theme.$control-border;
+		border-radius: 5px;
+		box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
+	}
+}
+
+.snippets-search-area {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	search {
+		flex: 1 1 auto;
+		min-inline-size: 0;
+	}
+
+	.search-box {
+		float: none;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+
+		input[type='search'] {
+			flex: 1 1 auto;
+			min-inline-size: 0;
+		}
+	}
+}
+
+// Inside the results toolbar the search area is fixed to the design width,
+// with the input flexing to fill the available space.
+.tablenav .snippets-search-area {
+	inline-size: 237px;
+}
+
+.wrap .snippets-search-area input[type='search'] {
+	border-color: theme.$border-light;
+}
+
+// Tablet widths: let the search area grow to fill the remainder of its row
+// while the fixed-width selects keep their sizing and groups wrap naturally.
+@media (width <= 1024px) {
+	.tablenav .snippets-search-area {
+		inline-size: auto;
+		flex: 1 1 237px;
+		max-inline-size: 100%;
+	}
+}
+
+@media (width <= 782px) {
+	p.search-box {
+		float: inline-start;
+		position: initial;
+		margin-block: 1em 0;
+		margin-inline: 0;
+		block-size: auto;
+	}
+
+	// Mobile: the search area takes a full row of its own, and the action
+	// groups stay visible (core admin hides .tablenav.top .actions here).
+	.tablenav .snippets-search-area {
+		flex-basis: 100%;
+	}
+
+	.tablenav .alignleft.actions {
+		display: flex;
+	}
+}

@@ -83,6 +83,66 @@ test.describe('Code Snippets Admin', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
+	test('Back navigation confirms before discarding unsaved changes', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.clickAddNewSnippet()
+		await helper.fillSnippetForm({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+		await helper.saveSnippet()
+		await expect(page).toHaveURL(/page=edit-snippet/)
+
+		const editedName = `${snippetName} edited`
+		await page.locator('#title').fill(editedName)
+		page.once('dialog', async dialog => {
+			expect(dialog.type()).toBe('beforeunload')
+			await dialog.dismiss()
+		})
+		await page.evaluate(() => window.history.back())
+
+		await expect(page).toHaveURL(/page=edit-snippet/)
+		await expect(page.locator('#title')).toHaveValue(editedName)
+
+		page.once('dialog', async dialog => {
+			expect(dialog.type()).toBe('beforeunload')
+			await dialog.accept()
+		})
+		await page.evaluate(() => window.history.back())
+		await expect(page).toHaveURL(/page=snippets/)
+
+		await helper.cleanupSnippet(snippetName)
+	})
+
+	test('Accepted in-page Back navigation shows one confirmation', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.createSnippet({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+		await helper.openSnippet(snippetName)
+
+		await page.locator('a.page-title-action').filter({ hasText: 'Add New' }).click()
+		await expect(page).toHaveURL(/page=add-snippet/)
+		await page.locator('#title').fill(`${snippetName} draft`)
+
+		const dialogs: { message: string, type: string }[] = []
+		page.on('dialog', async dialog => {
+			dialogs.push({ message: dialog.message(), type: dialog.type() })
+			await dialog.accept()
+		})
+
+		await page.evaluate(() => window.history.back())
+		await expect(page).toHaveURL(/page=edit-snippet/)
+		await expect(page.locator('#title')).toHaveValue(snippetName)
+
+		expect(dialogs).toHaveLength(1)
+		expect(dialogs[0].type).toBe('confirm')
+		expect(dialogs[0].message).toContain('unsaved changes')
+
+		await helper.cleanupSnippet(snippetName)
+	})
+
 	test('Shows an error notice when activation fails after saving', async ({ page }) => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.clickAddNewSnippet()

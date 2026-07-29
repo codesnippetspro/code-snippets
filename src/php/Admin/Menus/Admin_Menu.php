@@ -120,6 +120,25 @@ abstract class Admin_Menu {
 	}
 
 	/**
+	 * Retrieve the WordPress hookname computed for this menu's admin page.
+	 *
+	 * @return string
+	 */
+	public function get_hookname(): string {
+		return get_plugin_page_hookname( $this->slug, $this->base_slug );
+	}
+
+	/**
+	 * Retrieve every WordPress hookname registered by this menu, including any
+	 * additional pages it registers beyond its primary slug.
+	 *
+	 * @return string[]
+	 */
+	public function get_hooknames(): array {
+		return [ $this->get_hookname() ];
+	}
+
+	/**
 	 * Render the navigation bar at the top of the admin page.
 	 */
 	protected function render_navigation() {

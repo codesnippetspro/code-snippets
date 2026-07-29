@@ -14,6 +14,7 @@ export interface ListTableColumn<T> {
 	isHidden?: boolean
 	isPrimary?: boolean
 	isHeading?: boolean
+	mobileLabel?: string
 	sortedValue?: (item: T) => Key
 	defaultSortDirection?: ListTableSortDirection
 }
@@ -31,6 +32,7 @@ export interface ListTableNavProps<K extends Key, A extends string> {
 	doAction?: (action: A, selected: Set<K>) => Promise<void>
 	disabled?: boolean
 	extraTableNav?: (which: 'top' | 'bottom') => ReactNode
+	endTableNav?: (which: 'top' | 'bottom') => ReactNode
 }
 
 export interface ListTableRowsProps<T, K extends Key> {
@@ -38,6 +40,7 @@ export interface ListTableRowsProps<T, K extends Key> {
 	columns: ListTableColumn<T>[]
 	noItems?: ReactNode
 	rowClassName?: (item: T) => string
+	getRowExpansionLabel?: (item: T, isExpanded: boolean) => string
 }
 
 export interface ListTablePaginationProps {
@@ -96,7 +99,8 @@ const getVisibleSelected = <T, K extends Key>(
 ): Set<K> =>
 	new Set(visibleItems.map(getKey).filter(key => selected.has(key)))
 
-interface TableBorderProps<T, K extends Key> extends ListTableBorderProps, Omit<ColumnHeadingsProps<T, K>, 'which'> {
+interface TableBorderProps<T, K extends Key>
+	extends ListTableBorderProps, Omit<ColumnHeadingsProps<T, K>, 'which'> {
 	children: ReactNode
 }
 
@@ -126,6 +130,7 @@ export interface ListTableProps<T, K extends Key, A extends string> extends List
 	ListTableRowsProps<T, K> {
 	items: T[]
 	beforeTable?: ReactNode
+	selectAllControl?: boolean
 }
 
 export const ListTable = <T, K extends Key, A extends string = never>({
@@ -136,7 +141,9 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 	...tableProps
 }: ListTableProps<T, K, A>) => {
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
-	const [currentPage, setCurrentPage] = useState(() => pageSearchParam && Number(fetchQueryParam(pageSearchParam)) || 1)
+	const [currentPage, setCurrentPage] = useState(
+		() => pageSearchParam && Number(fetchQueryParam(pageSearchParam)) || 1
+	)
 	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>('asc')
 
 	const visibleItems: T[] = useMemo(
@@ -156,13 +163,17 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 	)
 }
 
-export interface PartialDataListTableProps<T, K extends Key, A extends string> extends ListTablePaginationProps,
-	ListTableBorderProps, ListTableRowsProps<T, K>, ListTableNavProps<K, A> {
+export interface PartialDataListTableProps<T, K extends Key, A extends string>
+	extends ListTablePaginationProps,
+	ListTableBorderProps,
+	ListTableRowsProps<T, K>,
+	ListTableNavProps<K, A> {
 	sortColumn: ListTableColumn<T> | undefined
 	totalItems: number
 	currentPage: number
 	visibleItems: T[]
 	beforeTable?: ReactNode
+	selectAllControl?: boolean
 	setSortColumn: (column: ListTableColumn<T> | undefined) => void
 	sortDirection?: ListTableSortDirection
 	setCurrentPage: (page: number) => void
@@ -170,27 +181,26 @@ export interface PartialDataListTableProps<T, K extends Key, A extends string> e
 }
 
 export const PartialDataListTable = <T, K extends Key, A extends string>({
-	fixed,
 	getKey,
-	columns,
 	actions,
-	striped,
+	columns,
+	noItems,
 	doAction,
 	disabled = false,
-	className,
 	totalItems,
 	totalPages,
-	sortColumn,
-	beforeTable,
 	currentPage,
+	beforeTable,
+	endTableNav,
+	rowClassName,
+	getRowExpansionLabel,
 	visibleItems,
 	sortDirection = 'asc',
-	setSortColumn,
 	extraTableNav,
+	selectAllControl,
 	setCurrentPage,
 	pageSearchParam,
-	setSortDirection,
-	...tableRowsProps
+	...tableBorderProps
 }: PartialDataListTableProps<T, K, A>) => {
 	const [selected, setSelected] = useState(() => new Set<K>())
 
@@ -198,23 +208,21 @@ export const PartialDataListTable = <T, K extends Key, A extends string>({
 		<TableNavigation
 			totalItems={totalItems}
 			selected={getVisibleSelected(visibleItems, getKey, selected)}
-			{...{ actions, doAction, extraTableNav, disabled, currentPage, totalPages, pageSearchParam, setSelected, setCurrentPage }}
+			selectAllKeys={selectAllControl ? visibleItems.map(getKey) : undefined}
+			{...{ actions, doAction, extraTableNav, endTableNav, disabled, currentPage, totalPages }}
+			{...{ pageSearchParam, setSelected, setCurrentPage }}
 		>
 			{beforeTable}
 
 			<TableBorder
 				items={visibleItems}
-				fixed={fixed}
-				striped={striped}
-				className={className}
-				{...{ columns, getKey, selected, sortColumn, sortDirection, setSelected, setSortColumn, setSortDirection }}
+				{...tableBorderProps}
+				{...{ getKey, columns, selected, setSelected, sortDirection }}
 			>
 				<TableRows
 					items={visibleItems}
-					selected={selected}
-					setSelected={setSelected}
-					{...{ getKey, columns }}
-					{...tableRowsProps}
+					{...{ getKey, columns, noItems, rowClassName, selected, setSelected }}
+					getRowExpansionLabel={getRowExpansionLabel}
 				/>
 			</TableBorder>
 		</TableNavigation>

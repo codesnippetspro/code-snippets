@@ -78,7 +78,7 @@ class Cloud_Snippets extends Model {
 		$snippets = is_array( $snippets ) ? $snippets : [ $snippets ];
 
 		foreach ( $snippets as $snippet ) {
-			$result[] = $snippet instanceof Cloud_Snippet ? $snippet : new Cloud_Snippet( $snippet );
+			$result[] = $snippet instanceof Cloud_Snippet ? $snippet : self::unpack_api_snippet( $snippet );
 		}
 
 		return $result;
@@ -106,6 +106,23 @@ class Cloud_Snippets extends Model {
 	}
 
 	/**
+	 * Decode a snippet from a remote response.
+	 *
+	 * @param mixed $snippet_data Remote snippet data.
+	 *
+	 * @return Cloud_Snippet Decoded cloud snippet.
+	 */
+	private static function unpack_api_snippet( $snippet_data ): Cloud_Snippet {
+		$snippet_data = is_array( $snippet_data ) ? $snippet_data : [];
+		$description = $snippet_data['description'] ?? '';
+		$snippet_data['description'] = is_scalar( $description )
+			? wp_kses_post( (string) $description )
+			: '';
+
+		return new Cloud_Snippet( $snippet_data );
+	}
+
+	/**
 	 * Normalize payloads returned by the cloud API into the shape expected by this class.
 	 *
 	 * @param array|null $response    Response data as returned from API.
@@ -123,7 +140,7 @@ class Cloud_Snippets extends Model {
 
 		if ( is_array( $snippets_data ) ) {
 			$result->snippets = array_map(
-				fn( $snippet_data ) => new Cloud_Snippet( $snippet_data ),
+				fn( $snippet_data ) => self::unpack_api_snippet( $snippet_data ),
 				$snippets_data
 			);
 		}

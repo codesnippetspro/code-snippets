@@ -1,7 +1,7 @@
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { __ } from '@wordpress/i18n'
-import React, { Fragment, useState } from 'react'
+import React, { Fragment } from 'react'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
@@ -9,6 +9,7 @@ import { isNetworkAdmin } from '../../../utils/screen'
 import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
+import { SnippetPriorityInput } from '../../common/SnippetPriorityInput'
 import { Tooltip } from '../../common/Tooltip'
 import { RowActions } from './RowActions'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
@@ -97,8 +98,16 @@ export const SnippetExtraIcons: React.FC<ColumnProps> = ({ snippet }) =>
 export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
 		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
-			? <a href={getSnippetEditUrl(snippet)} className="snippet-name">{getSnippetDisplayName(snippet)}</a>
-			: getSnippetDisplayName(snippet)}
+			? <a
+				href={getSnippetEditUrl(snippet)}
+				className="snippet-name"
+				title={getSnippetDisplayName(snippet)}
+			>
+				{getSnippetDisplayName(snippet)}
+			</a>
+			: <span className="snippet-name" title={getSnippetDisplayName(snippet)}>
+				{getSnippetDisplayName(snippet)}
+			</span>}
 
 		{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
 	</>
@@ -145,42 +154,14 @@ export const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 		</span>
 		: <>&#8212;</>
 
-export const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
-	const [value, setValue] = useState(snippet.priority)
-	const snippetsAPI = useSnippetsAPI()
-	const { refreshSnippetsList } = useSnippetsList()
-	const id = `snippet-${snippet.id}-priority`
+export const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) =>
+	<SnippetPriorityInput snippet={snippet} />
 
-	const handleUpdate = () => {
-		snippetsAPI.update({ ...snippet, priority: value })
-			.then(response => {
-				if (response.id === snippet.id) {
-					setValue(response.priority)
-				}
-			})
-			.then(refreshSnippetsList)
-			.catch(handleUnknownError)
-	}
-
-	return (
-		<form onSubmit={event => {
-			event.preventDefault()
-			handleUpdate()
-		}}>
-			<input
-				id={id}
-				type="number"
-				className="snippet-priority"
-				value={value}
-				step="1"
-				onBlur={handleUpdate}
-				aria-label={__('Snippet priority', 'code-snippets')}
-				onChange={event => setValue(Number(event.target.value))}
-				disabled={snippet.locked || snippet.trashed}
-			/>
-		</form>
-	)
-}
+const TYPE_COLUMN_LABEL = __('Type', 'code-snippets')
+const DESCRIPTION_COLUMN_LABEL = __('Description', 'code-snippets')
+const TAGS_COLUMN_LABEL = __('Tags', 'code-snippets')
+const MODIFIED_COLUMN_LABEL = __('Modified', 'code-snippets')
+const PRIORITY_COLUMN_LABEL = __('Priority', 'code-snippets')
 
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
@@ -190,36 +171,44 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 	},
 	{
 		id: 'name',
-		title: __('Name', 'code-snippets'),
+		title: <>
+			<span className="desktop-column-title">{__('Name', 'code-snippets')}</span>
+			<span className="mobile-column-title">{__('Snippet Name', 'code-snippets')}</span>
+		</>,
 		isPrimary: true,
 		sortedValue: snippet => getSnippetDisplayName(snippet).toLowerCase(),
 		render: snippet => <NameColumn snippet={snippet} />
 	},
 	{
 		id: 'type',
-		title: __('Type', 'code-snippets'),
+		title: TYPE_COLUMN_LABEL,
+		mobileLabel: TYPE_COLUMN_LABEL,
 		sortedValue: snippet => getSnippetType(snippet),
 		render: snippet => <TypeColumn snippet={snippet} />
 	},
 	{
 		id: 'desc',
-		title: __('Description', 'code-snippets'),
+		title: DESCRIPTION_COLUMN_LABEL,
+		mobileLabel: DESCRIPTION_COLUMN_LABEL,
 		render: snippet => <div className="snippet-description-content"><RawHTML>{snippet.desc}</RawHTML></div>
 	},
 	{
 		id: 'tags',
-		title: __('Tags', 'code-snippets'),
+		title: TAGS_COLUMN_LABEL,
+		mobileLabel: TAGS_COLUMN_LABEL,
 		render: snippet => <TagsColumn snippet={snippet} />
 	},
 	{
 		id: 'date',
-		title: __('Modified', 'code-snippets'),
+		title: MODIFIED_COLUMN_LABEL,
+		mobileLabel: MODIFIED_COLUMN_LABEL,
 		sortedValue: snippet => snippet.modified ? new Date(snippet.modified).toISOString() : '',
 		render: snippet => <DateColumn snippet={snippet} />
 	},
 	{
 		id: 'priority',
-		title: __('Priority', 'code-snippets'),
+		title: PRIORITY_COLUMN_LABEL,
+		mobileLabel: PRIORITY_COLUMN_LABEL,
 		sortedValue: snippet => snippet.priority,
 		render: snippet => <PriorityColumn snippet={snippet} />
 	}

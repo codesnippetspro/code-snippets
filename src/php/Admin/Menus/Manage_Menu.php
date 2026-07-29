@@ -3,23 +3,11 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
-use Code_Snippets\Integration\Evaluate_Functions;
-use Code_Snippets\Migration\Export\Download_Code;
-use Code_Snippets\Model\Snippet;
-use Code_Snippets\Utils\Code_Highlighter;
-use WP_Error;
+use Code_Snippets\Controller\Cloud_Search_Controller;
 use function Code_Snippets\code_snippets;
-use function Code_Snippets\get_snippet;
-use function Code_Snippets\get_snippets;
-use function Code_Snippets\Settings\get_setting;
-use const Code_Snippets\PLUGIN_FILE;
-use const Code_Snippets\PLUGIN_VERSION;
 
 /**
- * This class handles the manage snippets menu
- *
- * @since   2.4.0
- * @package Code_Snippets
+ * Provides the manage snippets admin menu.
  */
 class Manage_Menu extends Admin_Menu {
 
@@ -39,9 +27,42 @@ class Manage_Menu extends Admin_Menu {
 	public const DEFAULT_SNIPPETS_PER_PAGE = 100;
 
 	/**
-	 * Class constructor
+	 * Manage menu asset service.
+	 *
+	 * @var Manage_Menu_Assets
+	 */
+	private Manage_Menu_Assets $assets;
+
+	/**
+	 * Manage menu bulk download service.
+	 *
+	 * @var Manage_Menu_Bulk_Download
+	 */
+	private Manage_Menu_Bulk_Download $bulk_download;
+
+	/**
+	 * Manage menu registration service.
+	 *
+	 * @var Manage_Menu_Registration
+	 */
+	private Manage_Menu_Registration $registration;
+
+	/**
+	 * Manage menu Screen Options.
+	 *
+	 * @var Manage_Menu_Screen_Options
+	 */
+	private Manage_Menu_Screen_Options $screen_options;
+
+	/**
+	 * Class constructor.
 	 */
 	public function __construct() {
+		$this->screen_options = new Manage_Menu_Screen_Options();
+		$this->assets = new Manage_Menu_Assets( $this->screen_options, new Snippet_Type_Counter() );
+		$this->bulk_download = new Manage_Menu_Bulk_Download();
+		$this->registration = new Manage_Menu_Registration();
+
 		parent::__construct(
 			'manage',
 			_x( 'All Snippets', 'menu label', 'code-snippets' ),
@@ -66,17 +87,7 @@ class Manage_Menu extends Admin_Menu {
 	 * Register the top-level 'Snippets' menu and associated 'Manage' subpage
 	 */
 	public function register() {
-		add_menu_page(
-			__( 'Snippets', 'code-snippets' ),
-			_x( 'Snippets', 'top-level menu label', 'code-snippets' ),
-			code_snippets()->get_cap(),
-			code_snippets()->get_menu_slug(),
-			array( $this, 'render' ),
-			'none', // Added through CSS as a mask to prevent loading 'blinking'.
-			apply_filters( 'code_snippets/admin/menu_position', is_network_admin() ? 21 : 67 )
-		);
-
-		// Register the sub-menu.
+		$this->registration->register_top_level( $this );
 		parent::register();
 	}
 
@@ -86,27 +97,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function register_upgrade_menu() {
-		if ( code_snippets()->licensing->is_licensed() || get_setting( 'general', 'hide_upgrade_menu' ) ) {
-			return;
-		}
-
-		$menu_title = sprintf(
-			'<span class="button button-primary code-snippets-upgrade-button">%s %s</span>',
-			_x( 'Go Pro', 'top-level menu label', 'code-snippets' ),
-			'<span class="dashicons dashicons-external" aria-hidden="true"></span>'
-		);
-
-		$hook = add_submenu_page(
-			code_snippets()->get_menu_slug(),
-			__( 'Upgrade to Pro', 'code-snippets' ),
-			$menu_title,
-			code_snippets()->get_cap(),
-			'code_snippets_upgrade',
-			'__return_empty_string',
-			100
-		);
-
-		add_action( "load-$hook", [ $this, 'load_upgrade_menu' ] );
+		$this->registration->register_upgrade_menu( $this );
 	}
 
 	/**
@@ -115,12 +106,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function enqueue_menu_css() {
-		wp_enqueue_style(
-			'code-snippets-menu',
-			plugins_url( 'dist/menu.css', PLUGIN_FILE ),
-			[],
-			PLUGIN_VERSION
-		);
+		$this->registration->enqueue_menu_css();
 	}
 
 	/**
@@ -129,44 +115,30 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function load_upgrade_menu() {
-		wp_safe_redirect( 'https://snipco.de/JE2f' );
-		exit;
+		$this->registration->load_upgrade_menu();
+	}
+
+	/**
+	 * Retrieve every hookname registered by this menu, including the compact
+	 * Tools submenu hookname when compact mode is active.
+	 *
+	 * @return string[]
+	 */
+	public function get_hooknames(): array {
+		$hooknames = parent::get_hooknames();
+
+		if ( code_snippets()->is_compact_menu() ) {
+			$hooknames[] = get_plugin_page_hookname( $this->base_slug, 'tools.php' );
+		}
+
+		return $hooknames;
 	}
 
 	/**
 	 * Add menu pages for the compact menu
 	 */
 	public function register_compact_menu() {
-
-		if ( ! code_snippets()->is_compact_menu() ) {
-			return;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is matched to known classes.
-		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? sanitize_key( $_GET['sub'] ) : 'snippets' );
-
-		$classmap = array(
-			'snippets'             => 'manage',
-			'add-snippet'          => 'edit',
-			'edit-snippet'         => 'edit',
-			'import-code-snippets' => 'import',
-			'snippets-settings'    => 'settings',
-		);
-
-		$menus = code_snippets()->admin->menus;
-		$class = isset( $classmap[ $sub ], $menus[ $classmap[ $sub ] ] ) ? $menus[ $classmap[ $sub ] ] : $this;
-
-		/* Add a submenu to the Tools menu */
-		$hook = add_submenu_page(
-			'tools.php',
-			__( 'Snippets', 'code-snippets' ),
-			_x( 'Snippets', 'tools submenu label', 'code-snippets' ),
-			code_snippets()->get_cap(),
-			code_snippets()->get_menu_slug(),
-			array( $class, 'render' )
-		);
-
-		add_action( 'load-' . $hook, array( $class, 'load' ) );
+		$this->registration->register_compact_menu( $this );
 	}
 
 	/**
@@ -177,7 +149,7 @@ class Manage_Menu extends Admin_Menu {
 
 		$screen = get_current_screen();
 
-		if ( $screen && ! $this->is_cloud_community_view() ) {
+		if ( $screen && ! $this->screen_options->is_cloud_community_view() ) {
 			add_filter( "manage_{$screen->id}_columns", [ $this, 'get_screen_columns' ] );
 			add_filter( 'screen_settings', [ $this, 'render_screen_settings' ] );
 		}
@@ -199,49 +171,7 @@ class Manage_Menu extends Admin_Menu {
 	 * Enqueue scripts and stylesheets for the admin page.
 	 */
 	public function enqueue_assets() {
-		wp_enqueue_style(
-			self::CSS_HANDLE,
-			plugins_url( 'dist/manage.css', PLUGIN_FILE ),
-			self::$style_deps,
-			PLUGIN_VERSION
-		);
-
-		wp_enqueue_script(
-			self::JS_HANDLE,
-			plugins_url( 'dist/manage.js', PLUGIN_FILE ),
-			self::$script_deps,
-			PLUGIN_VERSION,
-			[ 'in_footer' => true ]
-		);
-
-		Code_Highlighter::enqueue_all_prism_themes();
-
-		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
-		code_snippets()->localize_script( self::JS_HANDLE );
-
-		$localized = [
-			'hasNetworkCap'        => current_user_can( code_snippets()->get_network_cap_name() ),
-			'hiddenColumns'        => $this->get_hidden_manage_columns(),
-			'truncateRowValues'    => (int) $this->truncate_row_values(),
-			'snippetsPerPage'      => self::get_snippets_per_page(),
-			'cloudSearchPerPage'   => $this->get_cloud_search_per_page(),
-			'isSafeModeActive'     => Evaluate_Functions::is_safe_mode_active(),
-			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
-			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
-		];
-
-		// Only the manage-table view consumes the full snippets list; skip the
-		// table scan and inline payload on subpages that don't render the table.
-		if ( $this->is_manage_table_view() ) {
-			$localized['snippetsList'] = array_map(
-				function ( $snippet ) {
-					return $snippet->get_fields();
-				},
-				get_snippets()
-			);
-		}
-
-		wp_localize_script( self::JS_HANDLE, 'CODE_SNIPPETS_MANAGE', $localized );
+		$this->assets->enqueue( self::$script_deps, self::$style_deps );
 	}
 
 	/**
@@ -249,11 +179,13 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * The value defaults to the user's local snippets-per-page preference but can
 	 * be overridden independently via the `code_snippets/cloud_search/per_page` filter.
+	 * The result is clamped to the REST API's per_page maximum of 100.
 	 *
 	 * @return int
 	 */
 	public static function get_cloud_search_per_page(): int {
-		return intval( apply_filters( 'code_snippets/cloud_search/per_page', self::get_snippets_per_page() ) );
+		$per_page = intval( apply_filters( 'code_snippets/cloud_search/per_page', self::get_snippets_per_page() ) );
+		return min( Cloud_Search_Controller::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
 	}
 
 	/**
@@ -299,68 +231,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return string[]
 	 */
 	public function get_screen_columns( array $columns = array() ): array {
-		return array_merge(
-			$columns,
-			array(
-				'_title'   => __( 'Columns', 'code-snippets' ),
-				'activate' => __( 'Active', 'code-snippets' ),
-				'name'     => __( 'Name', 'code-snippets' ),
-				'type'     => __( 'Type', 'code-snippets' ),
-				'desc'     => __( 'Description', 'code-snippets' ),
-				'tags'     => __( 'Tags', 'code-snippets' ),
-				'date'     => __( 'Modified', 'code-snippets' ),
-				'priority' => __( 'Priority', 'code-snippets' ),
-			)
-		);
-	}
-
-	/**
-	 * Get the list of columns hidden for the current user on the snippets screen.
-	 *
-	 * @return string[]
-	 */
-	protected function get_hidden_manage_columns(): array {
-		$screen = get_current_screen();
-
-		return $screen ? get_hidden_columns( $screen ) : array();
-	}
-
-	/**
-	 * Whether to truncate long row values in the snippets table.
-	 *
-	 * @return bool
-	 */
-	protected function truncate_row_values(): bool {
-		$setting = get_user_option( 'snippets_table_truncate_row_values' );
-		return false === $setting || $setting;
-	}
-
-	/**
-	 * Read the current `subpage` routing parameter.
-	 *
-	 * @return string
-	 */
-	protected function get_current_subpage(): string {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
-		return isset( $_REQUEST['subpage'] ) ? sanitize_key( wp_unslash( $_REQUEST['subpage'] ) ) : '';
-	}
-
-	/**
-	 * Whether the current request renders the snippets-table view (the default subpage).
-	 *
-	 * @return bool
-	 */
-	protected function is_manage_table_view(): bool {
-		return ! $this->get_current_subpage();
-	}
-
-	/**
-	 * Whether the current manage subpage is the Community Cloud view.
-	 *
-	 * @return bool
-	 */
-	protected function is_cloud_community_view(): bool {
-		return 'cloud-community' === $this->get_current_subpage();
+		return $this->screen_options->get_columns( $columns );
 	}
 
 	/**
@@ -371,30 +242,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return string
 	 */
 	public function render_screen_settings( string $screen_settings ): string {
-		if ( $this->is_cloud_community_view() ) {
-			return $screen_settings;
-		}
-
-		ob_start();
-		?>
-		<fieldset class="metabox-prefs table-options-prefs">
-			<legend><?php esc_html_e( 'Table Options', 'code-snippets' ); ?></legend>
-			<div class="metabox-prefs-container">
-				<label for="snippets-table-truncate-row-values">
-					<input
-						id="snippets-table-truncate-row-values"
-						name="snippets_table_truncate_row_values"
-						type="checkbox"
-						value="1"
-						<?php checked( $this->truncate_row_values() ); ?>
-					/>
-					<?php esc_html_e( 'Truncate long snippet names and descriptions', 'code-snippets' ); ?>
-				</label>
-			</div>
-		</fieldset>
-		<?php
-
-		return $screen_settings . ob_get_clean();
+		return $this->screen_options->render( $screen_settings );
 	}
 
 	/**
@@ -403,35 +251,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function save_truncation_preference(): void {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified below before persisting the option.
-		if ( empty( $_POST['wp_screen_options'] ) || ! is_array( $_POST['wp_screen_options'] ) ) {
-			return;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Sanitized and matched to a known admin page.
-		$page = isset( $_REQUEST['page'] ) ? sanitize_key( wp_unslash( $_REQUEST['page'] ) ) : '';
-
-		if ( code_snippets()->get_menu_slug() !== $page || ! current_user_can( code_snippets()->get_cap() ) ) {
-			return;
-		}
-
-		if ( $this->is_cloud_community_view() ) {
-			return;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified here before persisting the option.
-		$nonce = isset( $_POST['screenoptionnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['screenoptionnonce'] ) ) : '';
-
-		if ( ! wp_verify_nonce( $nonce, 'screen-options-nonce' ) ) {
-			return;
-		}
-
-		update_user_option(
-			get_current_user_id(),
-			'snippets_table_truncate_row_values',
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above before reading the checkbox state.
-			isset( $_POST['snippets_table_truncate_row_values'] ) ? 1 : 0
-		);
+		$this->screen_options->save_truncation_preference();
 	}
 
 	/**
@@ -444,7 +264,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return mixed
 	 */
 	public function save_screen_option( $status, string $option, $value ) {
-		return 'snippets_per_page' === $option ? $value : $status;
+		return $this->screen_options->save_per_page_option( $status, $option, $value );
 	}
 
 	/**
@@ -453,143 +273,6 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function handle_bulk_download_request(): void {
-		if ( ! $this->is_bulk_download_request() ) {
-			return;
-		}
-
-		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
-			$this->send_download_error( __( 'You are not allowed to download these snippets.', 'code-snippets' ), 403 );
-		}
-
-		$nonce = filter_input( INPUT_POST, 'code_snippets_bulk_download_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
-
-		if ( ! wp_verify_nonce( $nonce, 'code_snippets_bulk_download' ) ) {
-			$this->send_download_error( __( 'The download request is no longer valid. Please refresh and try again.', 'code-snippets' ), 403 );
-		}
-
-		$snippets_json = wp_unslash( filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '' );
-		$snippets = $this->get_requested_download_snippets( $snippets_json );
-
-		if ( $snippets instanceof WP_Error ) {
-			$status = $snippets->get_error_data( 'status' );
-			$this->send_download_error( $snippets->get_error_message(), is_numeric( $status ) ? (int) $status : 403 );
-		}
-
-		if ( empty( $snippets ) ) {
-			$this->send_download_error( __( 'No snippets were selected for download.', 'code-snippets' ) );
-		}
-
-		$download = 1 === count( $snippets )
-			? Download_Code::build_snippet_download( $snippets[0] )
-			: Download_Code::build_archive_download( $snippets );
-
-		if ( $download instanceof WP_Error ) {
-			$status = $download->get_error_data( 'status' );
-			$this->send_download_error( $download->get_error_message(), is_numeric( $status ) ? (int) $status : 500 );
-		}
-
-		$this->send_download_response( $download );
-	}
-
-	/**
-	 * Determine whether the current request is a bulk download request.
-	 *
-	 * @return bool
-	 */
-	private function is_bulk_download_request(): bool {
-		$page = sanitize_key( filter_input( INPUT_GET, 'page' ) ?? '' );
-		$action = sanitize_key( filter_input( INPUT_POST, 'code_snippets_action' ) ?? '' );
-
-		return code_snippets()->get_menu_slug() === $page && 'bulk-download' === $action;
-	}
-
-	/**
-	 * Resolve the snippets requested for download.
-	 *
-	 * @param string $snippets_json JSON-encoded list of requested snippets.
-	 *
-	 * @return Snippet[]|WP_Error
-	 */
-	private function get_requested_download_snippets( string $snippets_json ) {
-		$payload = '' === $snippets_json ? [] : json_decode( $snippets_json, true );
-
-		if ( ! is_array( $payload ) ) {
-			return [];
-		}
-
-		$snippets = [];
-
-		foreach ( $payload as $snippet_data ) {
-			if ( ! is_array( $snippet_data ) || empty( $snippet_data['id'] ) ) {
-				continue;
-			}
-
-			if ( ! empty( $snippet_data['network'] ) && ! current_user_can( code_snippets()->get_network_cap_name() ) ) {
-				return new WP_Error(
-					'code_snippets_forbidden_network_download',
-					__( 'You are not allowed to download network snippets.', 'code-snippets' ),
-					[ 'status' => 403 ]
-				);
-			}
-
-			$snippet = get_snippet(
-				absint( $snippet_data['id'] ),
-				! empty( $snippet_data['network'] )
-			);
-
-			if ( $snippet->id ) {
-				$snippets[] = $snippet;
-			}
-		}
-
-		return $snippets;
-	}
-
-	/**
-	 * Send a download file response and end execution.
-	 *
-	 * @param array{filename:string, content_type:string, content:string} $download Download data.
-	 *
-	 * @return void
-	 */
-	private function send_download_response( array $download ): void {
-		while ( ob_get_level() ) {
-			ob_end_clean();
-		}
-
-		nocache_headers();
-		send_nosniff_header();
-
-		header( 'Content-Description: File Transfer' );
-		header( 'Content-Type: ' . $download['content_type'] );
-		header( 'Content-Disposition: attachment; filename="' . $download['filename'] . '"' );
-		header( 'Content-Length: ' . strlen( $download['content'] ) );
-		header( 'X-Suggested-Filename: ' . $download['filename'] );
-
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary download payload.
-		echo $download['content'];
-		exit;
-	}
-
-	/**
-	 * Send a plain text download error response and end execution.
-	 *
-	 * @param string $message Error message.
-	 * @param int    $status  HTTP status code.
-	 *
-	 * @return void
-	 */
-	private function send_download_error( string $message, int $status = 400 ): void {
-		while ( ob_get_level() ) {
-			ob_end_clean();
-		}
-
-		status_header( $status );
-		nocache_headers();
-		send_nosniff_header();
-		header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ) );
-
-		echo esc_html( $message );
-		exit;
+		$this->bulk_download->handle();
 	}
 }

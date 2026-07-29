@@ -11,7 +11,7 @@ declare global {
 	interface Window {
 		readonly wp: {
 			readonly editor?: WordPressEditor
-			readonly codeEditor: WordPressCodeEditor
+			readonly codeEditor?: WordPressCodeEditor
 		}
 		readonly pagenow: string
 		readonly ajaxurl: string
@@ -66,10 +66,12 @@ declare global {
 			hiddenColumns: string[]
 			truncateRowValues: number | string
 			snippetsPerPage: number
+			typeCounts?: Record<string, number>
 			cloudSearchPerPage: number
 			isSafeModeActive: boolean
 			bulkDownloadNonce: string
 			supportsZipDownloads: boolean
+			editorTheme: string
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: SnippetSchema

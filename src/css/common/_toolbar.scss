@@ -1,6 +1,7 @@
+@use 'theme';
 @use 'upsell';
 
-$toolbar-block-size: 150px;
+$toolbar-block-size: 136px;
 $wpcontent-inline-start-indent: 20px;
 
 #wpbody {
@@ -28,8 +29,11 @@ $wpcontent-inline-start-indent: 20px;
 
 .code-snippets-toolbar-upper {
 	justify-content: space-between;
-	block-size: 77px;
+	block-size: 76px;
+	box-sizing: border-box;
+	padding-block: 16px;
 	padding-inline: 24px;
+	border-block-end: 1px solid rgb(195 196 199 / 50%);
 	display: flex;
 	align-items: center;
 
@@ -62,36 +66,101 @@ $wpcontent-inline-start-indent: 20px;
 }
 
 .code-snippets-toolbar-lower {
-	border-block: 1px solid #c3c4c7;
+	border-block-end: 1px solid theme.$border-light;
+	block-size: 60px;
+	box-sizing: border-box;
+
+	nav,
+	ul {
+		block-size: 100%;
+	}
 
 	ul {
 		display: flex;
-		align-items: end;
+		align-items: stretch;
 	}
 
+	li {
+		display: flex;
+	}
+
+	// Items fill the 60px band; the active tab is indicated by accent colour on
+	// its icon and label, with no underline.
 	li a {
 		display: flex;
 		margin: 0;
-		padding: 24px 24px 20px;
-		color: inherit;
+		block-size: 100%;
+		padding-block: 0;
+		padding-inline: 24px;
+		color: #2c3337;
 		gap: 12px;
 		align-items: center;
 		font-size: 16px;
+		font-weight: 600;
+		letter-spacing: -0.16px;
 		text-decoration: none;
-		font-weight: bold;
 		box-sizing: border-box;
-		transition: border unset;
-		border-block-end: 4px solid transparent;
 		cursor: pointer;
 
+		svg {
+			inline-size: 26px;
+			block-size: 26px;
+		}
+
 		&.active-link, &:hover, &:focus, &:active {
-			color: #2271b1;
-			border-block-end-color: currentcolor;
+			color: theme.$accent;
 		}
 	}
 
-	li:last-of-type {
+	li:not(.toolbar-end-item) + li.toolbar-end-item {
 		margin-inline-start: auto;
+	}
+
+	// Narrow widths: centre each item's label directly beneath its icon and
+	// shrink the type so the nav still fits on one row. The pro chip becomes a
+	// small badge pinned to the item's top corner, out of the flow so it never
+	// shifts the icon off-centre from its label. Below 782px the row scrolls
+	// sideways (see the mobile block below) rather than wrapping.
+	@media (width <= 1140px) {
+		li a {
+			position: relative;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 4px;
+			padding-inline: 14px;
+			font-size: 13px;
+			text-align: center;
+
+			.pro-chip {
+				position: absolute;
+				inset-block-start: 7px;
+				inset-inline-end: 4px;
+				padding-block: 1px;
+				padding-inline: 5px;
+				font-size: 8px;
+				line-height: normal;
+			}
+		}
+	}
+
+	// Mobile: the primary navigation scrolls horizontally on its band rather
+	// than wrapping, with the scrollbar chrome hidden.
+	@media (width <= 782px) {
+		overflow-x: auto;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		ul {
+			flex-wrap: nowrap;
+		}
+
+		li a {
+			white-space: nowrap;
+		}
 	}
 }
 
@@ -99,22 +168,24 @@ $wpcontent-inline-start-indent: 20px;
 .code-snippets-toolbar-upper li a:hover,
 .code-snippets-toolbar-upper li a:focus,
 .code-snippets-toolbar-upper li a:active {
-	color: #2271b1;
+	color: theme.$accent;
 }
 
 .code-snippets-toolbar-lower .pro-chip,
 .nav-tab .pro-chip,
 .snippet-type-link .pro-chip {
-	color: #d46f4d;
+	color: theme.$accent;
+	background: #eff5f9;
+	border: 1px solid rgb(34 113 177 / 10%);
 	text-transform: uppercase;
-	border: 2px solid currentcolor;
 	border-radius: 999px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	box-sizing: border-box;
-	padding: 3px 9px;
-	font-weight: 600;
+	padding: 5px 12px;
+	font-weight: 700;
+	line-height: 1;
 }
 
 
@@ -125,9 +196,65 @@ $wpcontent-inline-start-indent: 20px;
 .nav-tab .pro-chip,
 .snippet-type-link .pro-chip {
 	font-size: 10px;
-	padding: 0 6px;
 }
 
 .code-snippets-return-link {
 	float: inline-end;
+}
+
+@media (width <= 480px) {
+	#wpbody {
+		padding-block-start: 143px;
+	}
+
+	.code-snippets-toolbar {
+		block-size: 143px;
+	}
+
+	.code-snippets-toolbar-upper nav {
+		display: none;
+	}
+
+	.code-snippets-toolbar-lower {
+		block-size: 67px;
+
+		nav {
+			overflow-x: auto;
+			scrollbar-width: none;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
+		}
+
+		ul {
+			min-inline-size: 100%;
+		}
+
+		li {
+			flex: 1 0 92px;
+		}
+
+		li a {
+			inline-size: 100%;
+			padding-block: 8px;
+			padding-inline: 12px;
+			gap: 4px;
+			border-block-end: 3px solid transparent;
+			font-size: 14px;
+			font-weight: 700;
+
+			&.active-link {
+				border-block-end-color: theme.$accent;
+			}
+		}
+
+		li:not(.toolbar-end-item) + li.toolbar-end-item {
+			margin-inline-start: 0;
+		}
+
+		.cloud-library-item {
+			display: none;
+		}
+	}
 }

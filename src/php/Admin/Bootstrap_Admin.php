@@ -39,6 +39,13 @@ class Bootstrap_Admin {
 	public Welcome_Client $welcome_client;
 
 	/**
+	 * Notice_Filter class instance.
+	 *
+	 * @var Notice_Filter
+	 */
+	public Notice_Filter $notice_filter;
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -47,6 +54,7 @@ class Bootstrap_Admin {
 		}
 
 		$this->welcome_client = new Welcome_Client();
+		$this->notice_filter = new Notice_Filter();
 
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 

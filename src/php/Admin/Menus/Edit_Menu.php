@@ -71,6 +71,19 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Retrieve every hookname registered by this menu, including the separate
+	 * "Add New" page, so screen-based checks recognise both editor views.
+	 *
+	 * @return string[]
+	 */
+	public function get_hooknames(): array {
+		return [
+			$this->get_hookname(),
+			get_plugin_page_hookname( code_snippets()->get_menu_slug( 'add' ), $this->base_slug ),
+		];
+	}
+
+	/**
 	 * Hide the static Edit Snippet menu item unless a specific snippet is being edited.
 	 *
 	 * @param WP_Screen $screen Current admin screen.

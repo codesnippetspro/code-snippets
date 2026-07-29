@@ -90,7 +90,7 @@ export interface UseSubmitSnippet {
 
 export const useSubmitSnippet = (): UseSubmitSnippet => {
 	const api = useSnippetsAPI()
-	const { setIsWorking, setCurrentNotice, setSnippet } = useSnippetForm()
+	const { acceptSnippet, setIsWorking, setCurrentNotice } = useSnippetForm()
 
 	const submitSnippet: UseSubmitSnippet['submitSnippet'] = useCallback(async (snippet, action) => {
 		setCurrentNotice(undefined)
@@ -132,7 +132,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 			return undefined
 		}
 
-		setSnippet(result)
+		acceptSnippet(result)
 
 		if (result.code_error && SubmitSnippetAction.SAVE_AND_ACTIVATE === action) {
 			setCurrentNotice(getActivationErrorNotice(result))
@@ -146,7 +146,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 		}
 
 		return result
-	}, [api, setIsWorking, setCurrentNotice, setSnippet])
+	}, [acceptSnippet, api, setIsWorking, setCurrentNotice])
 
 	return { submitSnippet }
 }

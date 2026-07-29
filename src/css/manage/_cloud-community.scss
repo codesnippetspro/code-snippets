@@ -1,13 +1,13 @@
-@use 'sass:color';
-@use '../common/theme';
 @use '../common/banners';
-@use '../common/cards';
+@use '../common/theme';
 
 .cloud-snippet-status {
-	text-transform: uppercase;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
 	color: #646970;
 	font-size: 12px;
-	font-weight: 700;
+	font-weight: 500;
 	white-space: nowrap;
 
 	&::before {
@@ -16,7 +16,6 @@
 		inline-size: 10px;
 		border-radius: 50%;
 		display: inline-block;
-		margin-inline-end: 8px;
 	}
 }
 
@@ -25,7 +24,7 @@ $status-colors: (
 	private #cc96fb,
 	unverified #ea835e,
 	ai-verified #1cabcf,
-	pro-verified #7cd68a,
+	pro-verified #41a269,
 );
 
 @each $status, $color in $status-colors {
@@ -84,127 +83,10 @@ $status-colors: (
 	.banner {
 		justify-content: center;
 	}
-
-	.tablenav.top {
-		display: flex;
-		gap: 20px;
-		block-size: 40px;
-		margin-block-end: 31px;
-		align-items: center;
-
-		select {
-			inline-size: 245px;
-			block-size: 100%;
-		}
-
-		nav {
-			margin-inline-start: auto;
-		}
-
-		.tablenav-pages {
-			margin: 0;
-			margin-inline-start: auto;
-		}
-	}
 }
 
 .bundle-share-code-form {
 	max-inline-size: 60%;
-}
-
-.cloud-search-result {
-	p:last-child {
-		margin-block-end: 0;
-	}
-
-	.cloud-snippet {
-		h3 .cloud-snippet-title-button {
-			display: inline;
-			margin: 0;
-			padding: 0;
-			border: none;
-			background: none;
-			font: inherit;
-			color: #2271b1;
-			cursor: pointer;
-			text-align: start;
-
-			&:hover, &:focus {
-				text-decoration: underline;
-			}
-
-			&:focus-visible {
-				outline: 2px solid #2271b1;
-				outline-offset: 2px;
-				border-radius: 2px;
-			}
-		}
-	}
-
-	.cloud-snippet-meta {
-		display: flex;
-		gap: 16px;
-		margin-block-start: 16px;
-	}
-
-	footer {
-		.dashicons-warning {
-			color: #b32d2e;
-		}
-
-		.cloud-snippet-status {
-			margin-inline-end: auto;
-		}
-	}
-
-	.cloud-snippet-votes {
-		.dashicons {
-			color: theme.$accent;
-			padding-inline-end: 8px;
-		}
-	}
-}
-
-.cloud-search-results .cloud-search-result footer > .components-spinner {
-	margin: 0;
-}
-
-// Anchored to the card container so this keeps its brand-orange fill above the WP-admin
-// compatibility layer's secondary-button styling (equal specificity, resolved by source order).
-.cloud-search-result .cloud-pro-button.button {
-	background-color: theme.$secondary;
-	border-color: theme.$secondary;
-	color: #fff;
-
-	&:hover,
-	&:focus {
-		background-color: color.adjust(theme.$secondary, $lightness: -10%);
-		border-color: color.adjust(theme.$secondary, $lightness: -10%);
-		color: #fff;
-	}
-}
-
-// Three equal-height snippet cards per row, matching the manage snippets
-// grid. minmax(0, 1fr) lets columns shrink below their content width so
-// the grid never overflows the page.
-ul.cloud-search-results.code-snippets-cards {
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-
-	@media screen and (width <= 1100px) {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	@media screen and (width <= 782px) {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.code-snippets-card {
-		min-inline-size: 0;
-
-		footer {
-			flex-wrap: wrap;
-		}
-	}
 }
 
 .cloud-snippet-action-buttons {
@@ -213,7 +95,7 @@ ul.cloud-search-results.code-snippets-cards {
 	align-items: center;
 	gap: 8px;
 
-	// Keep the Download / View / Pro Only button a consistent width so
+	// Keep the Download / Edit / Pro Only button a consistent width so
 	// rows line up regardless of which state the snippet is in.
 	.button-primary,
 	.cloud-pro-button {
@@ -253,7 +135,7 @@ ul.cloud-search-results.code-snippets-cards {
 		margin: 0;
 		font-size: inherit;
 		font-weight: 600;
-		color: #2271b1;
+		color: theme.$accent;
 		text-decoration: none;
 		cursor: pointer;
 		text-align: start;

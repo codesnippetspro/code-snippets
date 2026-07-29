@@ -94,7 +94,43 @@ function enqueue_code_editor( string $type, array $extra_atts = [] ) {
 		[ 'in_footer' => true ]
 	);
 
-	// CodeMirror Theme.
+	enqueue_code_editor_theme();
+}
+
+/**
+ * Load the CodeMirror assets required for read-only code previews.
+ *
+ * @param string $type Type of code editor – either 'php', 'css', 'js', or 'html'.
+ *
+ * @return void
+ */
+function enqueue_code_preview_editor( string $type ): void {
+	$modes = [
+		'css'  => 'text/css',
+		'php'  => 'text/x-php',
+		'js'   => 'javascript',
+		'html' => 'application/x-httpd-php',
+	];
+
+	wp_enqueue_code_editor(
+		[
+			'type'       => $modes[ $type ] ?? $modes['php'],
+			'codemirror' => [
+				'lint'     => false,
+				'readOnly' => true,
+			],
+		]
+	);
+
+	enqueue_code_editor_theme();
+}
+
+/**
+ * Load the configured CodeMirror theme.
+ *
+ * @return void
+ */
+function enqueue_code_editor_theme(): void {
 	$theme = get_setting( 'editor', 'theme' );
 
 	if ( 'default' !== $theme ) {

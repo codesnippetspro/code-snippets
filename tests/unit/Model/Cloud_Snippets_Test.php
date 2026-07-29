@@ -177,4 +177,53 @@ class Cloud_Snippets_Test extends UnitTestCase {
 		$this->assertSame( 0, $result->page );
 		$this->assertSame( [], $result->available_filters );
 	}
+
+	/**
+	 * Constructing a model directly preserves its description value.
+	 *
+	 * @return void
+	 */
+	public function test_model_preserves_description_value(): void {
+		$description = [ 'nested' ];
+
+		$this->assertSame( $description, ( new Cloud_Snippet( [ 'description' => $description ] ) )->description );
+	}
+
+	/**
+	 * Collection hydration sanitises remote description markup.
+	 *
+	 * @return void
+	 */
+	public function test_collection_hydration_sanitizes_descriptions(): void {
+		$result = new Cloud_Snippets(
+			[
+				'snippets' => [
+					[ 'description' => '<strong>Allowed</strong><script>alert("unsafe")</script>' ],
+				],
+			]
+		);
+
+		$this->assertSame( '<strong>Allowed</strong>alert("unsafe")', $result->snippets[0]->description );
+	}
+
+	/**
+	 * Remote descriptions are sanitised and normalised while unpacking the response.
+	 *
+	 * @return void
+	 */
+	public function test_remote_descriptions_are_sanitized_during_decode(): void {
+		$result = Cloud_Snippets::unpack_api_response(
+			[
+				'snippets' => [
+					[ 'description' => '<strong>Allowed</strong><script>alert("unsafe")</script>' ],
+					[ 'description' => 123 ],
+					[ 'description' => [ 'nested' ] ],
+				],
+			]
+		);
+
+		$this->assertSame( '<strong>Allowed</strong>alert("unsafe")', $result->snippets[0]->description );
+		$this->assertSame( '123', $result->snippets[1]->description );
+		$this->assertSame( '', $result->snippets[2]->description );
+	}
 }

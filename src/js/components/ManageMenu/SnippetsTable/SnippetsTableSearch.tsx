@@ -7,22 +7,26 @@ const SearchBox = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
 
 	return (
-		<search aria-label={__('Search Snippets', 'code-snippets')}>
-			<p className="search-box">
-				<input
-					type="search"
-					id="snippets_search"
-					name="s"
-					value={searchQuery ?? ''}
-					aria-label={__('Search Snippets:', 'code-snippets')}
-					onChange={event => setSearchQuery(event.target.value)}
-					placeholder={__('Search snippets', 'code-snippets')}
-				/>
-			</p>
+		<search className="search-box" aria-label={__('Search Snippets', 'code-snippets')}>
+			<input
+				type="search"
+				id="snippets_search"
+				name="s"
+				value={searchQuery ?? ''}
+				aria-label={__('Search Snippets:', 'code-snippets')}
+				onChange={event => setSearchQuery(event.target.value)}
+				placeholder={__('Search snippets', 'code-snippets')}
+			/>
+			<Button
+				secondary
+				className="snippets-search-submit"
+				onClick={() => setSearchQuery(searchQuery)}
+			>
+				{__('Search', 'code-snippets')}
+			</Button>
 		</search>
 	)
 }
-
 
 export const SearchArea = () =>
 	<div className="snippets-search-area">
@@ -30,7 +34,13 @@ export const SearchArea = () =>
 	</div>
 
 export const SearchResultsIndicator = () => {
-	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
+	const {
+		searchQueryText,
+		searchLineNumber,
+		currentTag,
+		setSearchQuery,
+		setCurrentTag
+	} = useSnippetsFilters()
 
 	return searchQueryText || currentTag
 		? <p className="snippets-search-subtitle">
