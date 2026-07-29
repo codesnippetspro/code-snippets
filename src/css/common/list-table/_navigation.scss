@@ -1,0 +1,58 @@
+@use '../theme';
+
+.tablenav {
+	margin: 16px 0;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	// The row gap only shows once controls wrap onto a second row (see the
+	// tablet collapse below, where the selection + pagination cluster drops to
+	// its own row); the 18px column gap spaces the left cluster on one line.
+	gap: 12px 18px;
+}
+
+/* WP 7.0 changes the default admin link colour to the modern blue. Pin the classic accent on active rows (names and
+   row-action links) so links keep their original colour; inactive rows are handled by the muted link-colors mixin,
+   and the trash button keeps its dark red from the `.delete` rules. */
+.wp-list-table .active-snippet a {
+	color: theme.$accent;
+
+	&:hover,
+	&:focus {
+		color: theme.$accent-hover;
+	}
+}
+
+/* Status filter links (All | Active | Inactive | …): the current view reads as plain
+   body text while the remaining views are accent-coloured links; every count stays
+   in the body-text colour regardless of its link state. */
+/* stylelint-disable no-descending-specificity -- unrelated element; ordering is fine. */
+.subsubsub a.current {
+	color: #2c3337;
+}
+
+.subsubsub a:not(.current) {
+	color: theme.$accent;
+
+	&:hover,
+	&:focus {
+		color: theme.$accent-hover;
+	}
+}
+
+.snippets-table-toolbar .subsubsub a .count {
+	color: #2c3337;
+}
+/* stylelint-enable no-descending-specificity */
+
+.wp-core-ui .button.clear-filters {
+	vertical-align: baseline;
+}
+
+.snippet-type-description {
+	border-block-end: 1px solid #ccc;
+	margin: 0;
+	padding-block: 1em;
+	padding-inline: 0;
+}

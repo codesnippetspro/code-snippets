@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Admin\Menus;
 
+use Code_Snippets\Admin\Whats_New_Badge;
 use Code_Snippets\Client\Welcome_Client;
 use function Code_Snippets\code_snippets;
 use const Code_Snippets\PLUGIN_FILE;
@@ -39,6 +40,16 @@ class Welcome_Menu extends Admin_Menu {
 
 	/**
 	 * Load the welcome menu.
+	 *
+	 * @return void
+	 */
+	public function load() {
+		parent::load();
+		Whats_New_Badge::mark_seen_release();
+	}
+
+	/**
+	 * Render the welcome menu.
 	 *
 	 * @return void
 	 */

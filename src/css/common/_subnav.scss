@@ -1,10 +1,18 @@
-// Snippet-type navigation styled to match the main plugin toolbar: a white
-// bar with tab links showing an icon beside black text, highlighting blue
-// with a blue bottom border on hover and for the active type. The create
-// button sits at the far end of the bar.
+@use 'theme';
+
+// Snippet-type navigation: a boxed segmented control on a white band, with
+// each tab separated by a vertical rule and the active tab shown as a
+// filled tile.
 .snippet-type-nav {
+	// The tab band scrolls sideways instead of wrapping at any width.
+	overflow-x: auto;
+	scrollbar-width: thin;
 	background: #fff;
-	border-block-end: 1px solid #c3c4c7;
+
+	// The toolbar band above already draws the 1px separator, so only a
+	// bottom border here — a top border would double the line weight.
+	border-block-end: 1px solid #e2e2e4;
+	min-block-size: 53px;
 
 	// Bleed across the full admin content width, flush against the plugin
 	// toolbar above: counteract the .wrap top margin (10px) plus its 2px /
@@ -16,16 +24,32 @@
 
 	// Core admin switches to 10px #wpcontent padding, 0/12px .wrap margins
 	// below 782px; mirror them so the bar stays flush without overflowing
-	// the viewport.
-	@media screen and (width <= 782px) {
+	// the viewport. The tabs scroll horizontally on a single row rather than
+	// stacking, with the scrollbar chrome hidden.
+	@media (width <= 782px) {
 		margin-inline-start: -10px;
 		inline-size: calc(100% + 22px);
+		overflow-x: auto;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		ul {
+			flex-wrap: nowrap;
+		}
+
+		.snippet-type-link {
+			white-space: nowrap;
+		}
 	}
 
 	ul {
 		display: flex;
 		align-items: stretch;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
+		min-block-size: 52px;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -38,11 +62,9 @@
 
 	button.snippet-type-link {
 		background: none;
-		border-inline: none;
-		border-block-start: none;
+		border-block: none;
+		border-inline-start: none;
 		font-family: inherit;
-		font-size: 15px;
-		font-weight: 600;
 	}
 
 	.snippet-type-icon {
@@ -54,19 +76,25 @@
 	.snippet-type-link {
 		display: flex;
 		align-items: center;
-		gap: 10px;
-		padding: 18px 20px 14px;
+		justify-content: center;
+		gap: 8px;
+		min-inline-size: 100px;
+		padding-block: 0;
+		padding-inline: 24px;
 		cursor: pointer;
-
-		// Overlap the nav's black bottom border so the blue active/hover
-		// border paints directly on top of it with no gap between the two.
-		margin-block-end: -1px;
-		font-size: 15px;
+		font-size: 14px;
 		font-weight: 600;
-		color: #1d2327;
+		line-height: 1.5;
+		color: #646970;
 		text-decoration: none;
 		box-sizing: border-box;
-		border-block-end: 4px solid transparent;
+		border-inline-end: 1px solid #e2e2e4;
+
+		// The text-only "All Snippets" tab uses a slightly wider gap between
+		// its label and count than tabs that lead with a badge or icon.
+		&.all-type-link {
+			gap: 12px;
+		}
 
 		svg {
 			display: block;
@@ -76,16 +104,24 @@
 
 		&:hover,
 		&:focus,
-		&:active,
+		&:active {
+			color: #2c3337;
+		}
+
 		&.active-type {
-			color: #2271b1;
-			border-block-end-color: currentcolor;
+			background: #f0f0f1;
+			border-color: #f0f0f1;
+			color: theme.$accent;
+
+			// Children paint over the parent nav's border, so this recolours
+			// the 1px band separator beneath the active tab to match its fill.
+			box-shadow: 0 1px 0 0 #f0f0f1;
 		}
 
 		// Suppress the persistent focus ring left behind after a mouse click;
 		// keyboard navigation still gets a visible outline via :focus-visible.
 		&:focus-visible {
-			outline: 2px solid #2271b1;
+			outline: 2px solid theme.$accent;
 			outline-offset: -2px;
 			box-shadow: none;
 		}
@@ -100,18 +136,50 @@
 		}
 	}
 
-	.snippet-view-toggle-nav-item {
-		margin-inline-start: auto;
-		align-items: center;
-	}
-
-	.create-snippet-nav-item {
-		margin-inline-start: 24px;
-		padding-inline-end: 16px;
-		align-items: center;
-	}
 }
 
+// Card/table view toggle: a two-icon segmented pair of square tiles with
+// the active view filled in the accent colour.
+.snippet-view-toggle {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	.snippet-view-toggle-option {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: 38px;
+		block-size: 38px;
+		box-sizing: border-box;
+		padding: 0;
+		margin: 0;
+		background: #f0f0f1;
+		color: #646970;
+		border: none;
+		border-radius: 4.5px;
+		cursor: pointer;
+
+		svg {
+			display: block;
+		}
+
+		&:hover,
+		&:focus {
+			color: #2c3337;
+		}
+
+		&.active-view {
+			background: theme.$accent;
+			color: #fff;
+
+			&:hover,
+			&:focus {
+				color: #fff;
+			}
+		}
+	}
+}
 
 // Slot that adopts the WordPress Screen Options / Help tabs so they appear
 // directly below the snippet-type nav instead of above the page content.
@@ -128,31 +196,47 @@
 	}
 }
 
-
-// Count pill shown beside a subnav tab's label (e.g. total on the "All" tab).
+// Item count shown after a subnav tab's label, as muted text.
 .snippet-type-nav .subnav-count {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-inline-size: 20px;
-	block-size: 20px;
-	padding-inline: 7px;
-	border-radius: 999px;
-	background: #2271b1;
-	color: #fff;
-	font-size: 11px;
+	font-size: 14px;
 	font-weight: 600;
-	line-height: 1;
-	box-sizing: border-box;
+	line-height: 1.5;
+	color: #646970;
 }
 
-.snippet-type-nav .snippet-type-link:not(.active-type) .subnav-count {
-	background: #dbebf7;
-	color: #2271b1;
+// The active tab's count adopts the accent alongside its label.
+.snippet-type-nav .snippet-type-link.active-type .subnav-count {
+	color: theme.$accent;
 }
 
-// Add a proper separation between the navigation and any admin notices that are displayed above it.
+// The short "All" form of the all-snippets label only replaces "All Snippets"
+// once the bar collapses; the full form is shown at every wider width.
+.snippet-type-name-short {
+	display: none;
+}
+
+// Collapse at mid-width and below (through mobile): drop the type names so each
+// tab shows just its badge and count, and shorten "All Snippets" to "All". Only
+// the badged manage nav owns a .snippet-type-name; the text-only import/settings
+// subnav tabs are untouched. Below 782px the bar still scrolls sideways (above),
+// now with the compact collapsed tabs.
+@media (width <= 1210px) {
+	.snippet-type-nav .snippet-type-link:not(.all-type-link) .snippet-type-name {
+		display: none;
+	}
+
+	.snippet-type-nav .all-type-link .snippet-type-name-full {
+		display: none;
+	}
+
+	.snippet-type-nav .all-type-link .snippet-type-name-short {
+		display: inline;
+	}
+}
+
+// When an admin notice pushes the page content down, restore the gap and top
+// border above the subnav bar.
 .notice + .wrap .snippet-type-nav {
 	margin-block-start: 20px;
-	border-block-start: 1px solid #c3c4c7;
+	border-block-start: 1px solid theme.$control-border;
 }

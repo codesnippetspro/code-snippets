@@ -1,4 +1,3 @@
-@use 'common/theme';
 
 #adminmenu {
 	.toplevel_page_snippets div.wp-menu-image::before {
@@ -15,12 +14,13 @@
 		border: none;
 
 		// WP 7.0 restyles `.button`/`.button-primary` with wider padding, a 2px radius and a
-		// 40px min-height; pin these so the menu pill keeps its classic dimensions and stays
-		// aligned with the surrounding submenu items across WP versions.
+		// 40px min-height; pin these (independent of the plugin control tokens, which are
+		// sized for page content rather than the admin menu) so the pill keeps its compact
+		// dimensions and stays aligned with the surrounding submenu items across WP versions.
 		border-radius: 3px;
 		padding-block: 0;
 		padding-inline: 10px;
-		min-block-size: theme.$control-height;
+		min-block-size: 30px;
 		block-size: auto;
 		text-align: center;
 		font-weight: bold;

@@ -18,6 +18,8 @@ interface NavLink {
 	pro?: boolean
 	pageSlug?: string
 	subpage?: typeof SUBPAGES[number]
+	end?: boolean
+	whatsNewUnseen?: boolean
 }
 
 const UPPER_NAV_LINKS: readonly NavLink[] = [
@@ -37,7 +39,8 @@ const UPPER_NAV_LINKS: readonly NavLink[] = [
 		name: 'welcome',
 		url: window.CODE_SNIPPETS?.urls.welcome,
 		label: __("What's New", 'code-snippets'),
-		pageSlug: 'code-snippets-welcome'
+		pageSlug: 'code-snippets-welcome',
+		whatsNewUnseen: window.CODE_SNIPPETS?.whatsNewUnseen
 	}
 ]
 
@@ -48,6 +51,13 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		label: __('Snippets', 'code-snippets'),
 		icon: <SnippetsIcon aria-hidden="true" />,
 		pageSlug: 'snippets'
+	},
+	{
+		name: 'blueprints',
+		label: __('Blueprints', 'code-snippets'),
+		icon: <BlueprintIcon />,
+		pro: true,
+		subpage: 'blueprints'
 	},
 	{
 		name: 'cloud-community',
@@ -63,18 +73,12 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		subpage: 'cloud-library'
 	},
 	{
-		name: 'blueprints',
-		label: __('Blueprints', 'code-snippets'),
-		icon: <BlueprintIcon />,
-		pro: true,
-		subpage: 'blueprints'
-	},
-	{
 		name: 'settings',
 		url: window.CODE_SNIPPETS?.urls.settings,
 		label: __('Settings', 'code-snippets'),
 		icon: <SettingsIcon aria-hidden="true" />,
-		pageSlug: 'snippets-settings'
+		pageSlug: 'snippets-settings',
+		end: true
 	}
 ]
 
@@ -104,6 +108,13 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 							{...link.external && { target: '_blank', rel: 'noopener noreferrer' }}
 						>
 							{link.label}
+							{link.whatsNewUnseen && (
+								<span className="whats-new-dot">
+									<span className="screen-reader-text">
+										{__('New content available', 'code-snippets')}
+									</span>
+								</span>
+							)}
 						</a>
 					</li>)}
 
@@ -143,7 +154,7 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 		<nav aria-label={__('Main features', 'code-snippets')}>
 			<ul>
 				{LOWER_NAV_LINKS.map(link =>
-					<li key={link.name}>
+					<li key={link.name} className={link.end ? 'toolbar-end-item' : undefined}>
 						<a
 							href={link.url ?? buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: link.name })}
 							className={classnames(`${link.name}-link`, { 'active-link': isActiveLink(link) })}
@@ -155,7 +166,7 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 							}}
 						>
 							{link.icon}
-							<span>{link.label}</span>
+							<span className="toolbar-nav-label">{link.label}</span>
 							{link.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 						</a>
 					</li>)}

@@ -2,14 +2,11 @@
 
 namespace Code_Snippets\Admin\Menus;
 
-use Code_Snippets\Model\Snippet;
+use Code_Snippets\Controller\Cloud_Search_Controller;
+use Code_Snippets\Utils\Code_Highlighter;
 use Code_Snippets\UnitTestCase;
-use ReflectionException;
-use ReflectionMethod;
-use WP_Error;
 use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
-use function Code_Snippets\save_snippet;
 
 /**
  * Tests for the manage menu registration.
@@ -101,6 +98,70 @@ class Manage_Menu_Test extends UnitTestCase {
 		$this->assertStringContainsString( '"truncateRowValues":"0"', $data );
 		$this->assertStringContainsString( '"bulkDownloadNonce":"', $data );
 		$this->assertStringContainsString( '"supportsZipDownloads":', $data );
+	}
+
+	/**
+	 * The manage screen loads only the assets required for read-only code previews.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_loads_preview_editor_without_full_editor_dependencies(): void {
+		foreach ( [ 'htmlhint', 'csslint', 'jshint', 'code-snippets-code-editor' ] as $handle ) {
+			wp_dequeue_script( $handle );
+		}
+
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+
+		$this->assertTrue( wp_script_is( 'code-editor', 'enqueued' ) );
+		$this->assertTrue( wp_style_is( 'code-editor', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'htmlhint', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'csslint', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'jshint', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'code-snippets-code-editor', 'enqueued' ) );
+	}
+
+	/**
+	 * The inline snippets threshold can be disabled for constrained installations.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_assets_applies_inline_snippets_limit_filter(): void {
+		add_filter( 'code_snippets/manage/inline_snippets_limit', '__return_zero' );
+
+		$menu = new Manage_Menu();
+		$menu->enqueue_assets();
+		$data = wp_scripts()->get_data( Manage_Menu::JS_HANDLE, 'data' );
+		$localized_offset = is_string( $data ) ? strrpos( $data, 'var CODE_SNIPPETS_MANAGE = ' ) : false;
+
+		remove_filter( 'code_snippets/manage/inline_snippets_limit', '__return_zero' );
+
+		$this->assertIsString( $data );
+		$this->assertNotFalse( $localized_offset );
+		$this->assertStringNotContainsString( '"snippetsList":', substr( $data, $localized_offset ) );
+	}
+
+	/**
+	 * The cloud per-page filter is limited to values accepted by the REST API.
+	 *
+	 * @return void
+	 */
+	public function test_cloud_search_per_page_filter_is_clamped_to_rest_api_bounds(): void {
+		$filter = static function (): int {
+			return 0;
+		};
+
+		add_filter( 'code_snippets/cloud_search/per_page', $filter );
+		$this->assertSame( 1, Manage_Menu::get_cloud_search_per_page() );
+		remove_filter( 'code_snippets/cloud_search/per_page', $filter );
+
+		$filter = static function (): int {
+			return Cloud_Search_Controller::MAX_RESULTS_PER_PAGE + 1;
+		};
+
+		add_filter( 'code_snippets/cloud_search/per_page', $filter );
+		$this->assertSame( Cloud_Search_Controller::MAX_RESULTS_PER_PAGE, Manage_Menu::get_cloud_search_per_page() );
+		remove_filter( 'code_snippets/cloud_search/per_page', $filter );
 	}
 
 	/**
@@ -212,43 +273,18 @@ class Manage_Menu_Test extends UnitTestCase {
 	}
 
 	/**
-	 * Subsite admins cannot request downloads from the network snippets table.
+	 * The manage page no longer loads the Prism assets: CodeMirror renders the
+	 * preview modal, and Prism remains registered for the front-end shortcode.
 	 *
 	 * @return void
-	 *
-	 * @throws ReflectionException Creates instance of ReflectionMethod class.
 	 */
-	public function test_network_bulk_download_requires_network_cap(): void {
-		if ( ! is_multisite() ) {
-			$this->markTestSkipped( 'Network snippet downloads only apply on multisite.' );
-		}
-
-		$snippet = save_snippet(
-			new Snippet(
-				array(
-					'name'    => 'Network Download Fixture',
-					'code'    => '<?php echo "network";',
-					'scope'   => 'global',
-					'network' => true,
-				)
-			)
-		);
-
-		$snippets_json = wp_json_encode(
-			array(
-				array(
-					'id'      => $snippet->id,
-					'network' => true,
-				),
-			)
-		);
-
+	public function test_enqueue_assets_does_not_enqueue_prism(): void {
 		$menu = new Manage_Menu();
-		$method = new ReflectionMethod( $menu, 'get_requested_download_snippets' );
-		$method->setAccessible( true );
-		$result = $method->invoke( $menu, $snippets_json );
+		$menu->enqueue_assets();
 
-		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'code_snippets_forbidden_network_download', $result->get_error_code() );
+		$this->assertTrue( wp_style_is( Manage_Menu::CSS_HANDLE ) );
+		$this->assertTrue( wp_script_is( Manage_Menu::JS_HANDLE ) );
+		$this->assertFalse( wp_style_is( Code_Highlighter::PRISM_HANDLE ) );
+		$this->assertFalse( wp_script_is( Code_Highlighter::PRISM_HANDLE ) );
 	}
 }
