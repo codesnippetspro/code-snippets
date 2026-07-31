@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Admin\Menus;
+namespace Code_Snippets\Admin\Menus\Manage;
 
 use function Code_Snippets\code_snippets;
 
@@ -8,6 +8,37 @@ use function Code_Snippets\code_snippets;
  * Provides Screen Options for the manage snippets table.
  */
 class Manage_Menu_Screen_Options {
+
+	/**
+	 * Register hooks this class.
+	 */
+	public function __construct() {
+		add_action( 'admin_init', [ $this, 'save_truncation_preference' ] );
+		add_filter( 'set-screen-option', [ $this, 'save_per_page_option' ], 10, 3 );
+	}
+
+	/**
+	 * Load the screen options for the current page.
+	 *
+	 * @return void
+	 */
+	public function load() {
+		$screen = get_current_screen();
+
+		if ( $screen && ! $this->is_cloud_community_view() ) {
+			add_filter( "manage_{$screen->id}_columns", [ $this, 'get_columns' ] );
+			add_filter( 'screen_settings', [ $this, 'render' ] );
+		}
+
+		add_screen_option(
+			'per_page',
+			[
+				'label'   => __( 'Snippets per page', 'code-snippets' ),
+				'default' => Manage_Menu::get_default_snippets_per_page(),
+				'option'  => 'snippets_per_page',
+			]
+		);
+	}
 
 	/**
 	 * Add the snippets table columns.

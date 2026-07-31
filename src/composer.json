@@ -22,7 +22,7 @@
     },
     "autoload": {
         "files": [
-            "php/Admin/Menus/Manage_Menu.php",
+            "php/Admin/Menus/Manage/Manage_Menu.php",
             "php/Utils/requests.php"
         ],
         "psr-4": {

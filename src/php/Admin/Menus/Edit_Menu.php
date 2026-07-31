@@ -22,12 +22,12 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Handle for JavaScript asset file.
 	 */
-	public const JS_HANDLE = 'code-snippets-edit-menu';
+	private const JS_HANDLE = 'code-snippets-edit-menu';
 
 	/**
 	 * Handle for CSS asset file.
 	 */
-	public const CSS_HANDLE = 'code-snippets-edit';
+	private const CSS_HANDLE = 'code-snippets-edit';
 
 	/**
 	 * The snippet object currently being edited

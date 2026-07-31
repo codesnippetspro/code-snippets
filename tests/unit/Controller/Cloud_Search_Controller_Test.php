@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Controller;
 
+use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\UnitTestCase;
 use WP_Error;
@@ -268,5 +269,28 @@ class Cloud_Search_Controller_Test extends UnitTestCase {
 		$result = self::make_controller()->fetch_search_results( 'term', 'woo', 3 );
 
 		$this->assertSame( 3, $result->page );
+	}
+
+	/**
+	 * The cloud per-page filter is limited to values accepted by the REST API.
+	 *
+	 * @return void
+	 */
+	public function test_cloud_search_per_page_filter_is_clamped_to_rest_api_bounds(): void {
+		$filter = static function (): int {
+			return 0;
+		};
+
+		add_filter( 'code_snippets/cloud_search/per_page', $filter );
+		$this->assertSame( 1, Manage_Menu::get_cloud_search_per_page() );
+		remove_filter( 'code_snippets/cloud_search/per_page', $filter );
+
+		$filter = static function (): int {
+			return Cloud_Search_Controller::MAX_RESULTS_PER_PAGE + 1;
+		};
+
+		add_filter( 'code_snippets/cloud_search/per_page', $filter );
+		$this->assertSame( Cloud_Search_Controller::MAX_RESULTS_PER_PAGE, Manage_Menu::get_cloud_search_per_page() );
+		remove_filter( 'code_snippets/cloud_search/per_page', $filter );
 	}
 }

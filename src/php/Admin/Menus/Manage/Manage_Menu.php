@@ -1,8 +1,9 @@
 <?php
 
-namespace Code_Snippets\Admin\Menus;
+namespace Code_Snippets\Admin\Menus\Manage;
 
 use Code_Snippets\Admin\Contextual_Help;
+use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\get_setting;
@@ -15,19 +16,9 @@ use const Code_Snippets\PLUGIN_VERSION;
 class Manage_Menu extends Admin_Menu {
 
 	/**
-	 * Handle for JavaScript asset file.
-	 */
-	public const JS_HANDLE = 'code-snippets-manage-menu';
-
-	/**
-	 * Handle for CSS asset file.
-	 */
-	public const CSS_HANDLE = 'code-snippets-manage';
-
-	/**
 	 * Default number of snippets shown per page in the manage table.
 	 */
-	public const DEFAULT_SNIPPETS_PER_PAGE = 100;
+	private const DEFAULT_SNIPPETS_PER_PAGE = 100;
 
 	/**
 	 * Manage menu asset service.
@@ -35,13 +26,6 @@ class Manage_Menu extends Admin_Menu {
 	 * @var Manage_Menu_Assets
 	 */
 	private Manage_Menu_Assets $assets;
-
-	/**
-	 * Manage menu bulk download service.
-	 *
-	 * @var Manage_Menu_Bulk_Download
-	 */
-	private Manage_Menu_Bulk_Download $bulk_download;
 
 	/**
 	 * Manage menu Screen Options.
@@ -54,10 +38,6 @@ class Manage_Menu extends Admin_Menu {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->screen_options = new Manage_Menu_Screen_Options();
-		$this->assets = new Manage_Menu_Assets( $this->screen_options, new Snippet_Type_Counter() );
-		$this->bulk_download = new Manage_Menu_Bulk_Download();
-
 		parent::__construct(
 			'manage',
 			_x( 'All Snippets', 'menu label', 'code-snippets' ),
@@ -69,10 +49,10 @@ class Manage_Menu extends Admin_Menu {
 			add_action( 'network_admin_menu', array( $this, 'register_compact_menu' ), 2 );
 		}
 
+		$this->screen_options = new Manage_Menu_Screen_Options();
+		new Manage_Menu_Bulk_Download();
+
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
-		add_action( 'admin_init', array( $this, 'handle_bulk_download_request' ) );
-		add_action( 'admin_init', array( $this, 'save_truncation_preference' ) );
-		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_menu_css' ) );
 		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
@@ -93,6 +73,15 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		parent::register();
+	}
+
+	/**
+	 * Render the snippets table interface.
+	 *
+	 * @return void
+	 */
+	public function render() {
+		echo '<div id="manage-snippets-container" class="wrap"></div>';
 	}
 
 	/**
@@ -202,21 +191,7 @@ class Manage_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		$screen = get_current_screen();
-
-		if ( $screen && ! $this->screen_options->is_cloud_community_view() ) {
-			add_filter( "manage_{$screen->id}_columns", [ $this, 'get_screen_columns' ] );
-			add_filter( 'screen_settings', [ $this, 'render_screen_settings' ] );
-		}
-
-		add_screen_option(
-			'per_page',
-			[
-				'label'   => __( 'Snippets per page', 'code-snippets' ),
-				'default' => $this->get_default_snippets_per_page(),
-				'option'  => 'snippets_per_page',
-			]
-		);
+		$this->screen_options->load();
 
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
@@ -226,7 +201,8 @@ class Manage_Menu extends Admin_Menu {
 	 * Enqueue scripts and stylesheets for the admin page.
 	 */
 	public function enqueue_assets() {
-		$this->assets->enqueue( self::$script_deps, self::$style_deps );
+		$assets = new Manage_Menu_Assets( $this->screen_options );
+		$assets->enqueue( self::$script_deps, self::$style_deps );
 	}
 
 	/**
@@ -267,67 +243,5 @@ class Manage_Menu extends Admin_Menu {
 				$per_page > 0 ? $per_page : self::get_default_snippets_per_page()
 			)
 		);
-	}
-
-	/**
-	 * Render the snippets table interface.
-	 *
-	 * @return void
-	 */
-	public function render() {
-		echo '<div id="manage-snippets-container" class="wrap"></div>';
-	}
-
-	/**
-	 * Return the columns available in Screen Options for the snippets table.
-	 *
-	 * @param string[] $columns Existing columns.
-	 *
-	 * @return string[]
-	 */
-	public function get_screen_columns( array $columns = array() ): array {
-		return $this->screen_options->get_columns( $columns );
-	}
-
-	/**
-	 * Render extra Screen Options controls for the snippets table.
-	 *
-	 * @param string $screen_settings Existing screen settings HTML.
-	 *
-	 * @return string
-	 */
-	public function render_screen_settings( string $screen_settings ): string {
-		return $this->screen_options->render( $screen_settings );
-	}
-
-	/**
-	 * Persist the snippets table truncation preference from Screen Options.
-	 *
-	 * @return void
-	 */
-	public function save_truncation_preference(): void {
-		$this->screen_options->save_truncation_preference();
-	}
-
-	/**
-	 * Handles saving the user's snippets per page preference
-	 *
-	 * @param mixed  $status Current screen option status.
-	 * @param string $option The screen option name.
-	 * @param mixed  $value  Screen option value.
-	 *
-	 * @return mixed
-	 */
-	public function save_screen_option( $status, string $option, $value ) {
-		return $this->screen_options->save_per_page_option( $status, $option, $value );
-	}
-
-	/**
-	 * Handle bulk snippet code downloads from the manage screen.
-	 *
-	 * @return void
-	 */
-	public function handle_bulk_download_request(): void {
-		$this->bulk_download->handle();
 	}
 }

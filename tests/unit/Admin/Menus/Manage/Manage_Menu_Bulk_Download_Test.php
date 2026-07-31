@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Admin\Menus;
+namespace Code_Snippets\Admin\Menus\Manage;
 
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;

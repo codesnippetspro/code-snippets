@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Admin\Menus;
+namespace Code_Snippets\Admin\Menus\Manage;
 
 use Code_Snippets\Migration\Export\Download_Code;
 use Code_Snippets\Model\Snippet;
@@ -12,6 +12,13 @@ use function Code_Snippets\get_snippet;
  * Handles bulk snippet code downloads from the manage screen.
  */
 class Manage_Menu_Bulk_Download {
+
+	/**
+	 * Register hooks for this class.
+	 */
+	public function __construct() {
+		add_action( 'admin_init', [ $this, 'handle_bulk_download_request' ] );
+	}
 
 	/**
 	 * Handle a bulk download request.

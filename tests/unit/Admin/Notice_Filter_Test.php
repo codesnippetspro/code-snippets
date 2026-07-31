@@ -2,8 +2,7 @@
 
 namespace Code_Snippets\Admin;
 
-use Code_Snippets\UnitTestCase;
-use WP_UnitTest_Factory;
+use Code_Snippets\AdminUnitTestCase;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -11,14 +10,7 @@ use function Code_Snippets\code_snippets;
  *
  * @group admin-notices
  */
-class Notice_Filter_Test extends UnitTestCase {
-
-	/**
-	 * Administrator user ID.
-	 *
-	 * @var int
-	 */
-	protected static int $admin_user_id;
+class Notice_Filter_Test extends AdminUnitTestCase {
 
 	/**
 	 * Notice filter under test.
@@ -28,17 +20,6 @@ class Notice_Filter_Test extends UnitTestCase {
 	private Notice_Filter $notice_filter;
 
 	/**
-	 * Set up fixtures before any tests run.
-	 *
-	 * @param WP_UnitTest_Factory $factory Factory object.
-	 *
-	 * @return void
-	 */
-	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
-		self::$admin_user_id = $factory->user->create( [ 'role' => 'administrator' ] );
-	}
-
-	/**
 	 * Set up before each test.
 	 *
 	 * @return void
@@ -46,7 +27,6 @@ class Notice_Filter_Test extends UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
-		wp_set_current_user( self::$admin_user_id );
 		set_current_screen( 'dashboard' );
 
 		code_snippets()->admin = new Bootstrap_Admin();
@@ -63,7 +43,8 @@ class Notice_Filter_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_filtering_preserves_foreign_notice_callbacks(): void {
-		$foreign = static function () {};
+		$foreign = static function () {
+		};
 		add_action( 'admin_notices', $foreign );
 
 		$this->notice_filter->register_filtering( get_current_screen() );

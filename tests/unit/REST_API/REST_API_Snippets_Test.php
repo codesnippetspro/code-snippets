@@ -2,10 +2,9 @@
 
 namespace Code_Snippets\REST_API;
 
+use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;
-use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
-use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\save_snippet;
@@ -15,7 +14,7 @@ use function Code_Snippets\save_snippet;
  *
  * @group rest-api
  */
-class REST_API_Snippets_Test extends UnitTestCase {
+class REST_API_Snippets_Test extends AdminUnitTestCase {
 
 	/**
 	 * REST API namespace and base route.
@@ -32,32 +31,11 @@ class REST_API_Snippets_Test extends UnitTestCase {
 	protected string $base_route = 'snippets';
 
 	/**
-	 * Administrator user ID.
-	 *
-	 * @var int
-	 */
-	protected static int $admin_user_id;
-
-	/**
-	 * Set up fixtures before any tests run.
-	 *
-	 * @param WP_UnitTest_Factory $factory Factory object.
-	 */
-	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
-		self::$admin_user_id = $factory->user->create(
-			[
-				'role' => 'administrator',
-			]
-		);
-	}
-
-	/**
 	 * Set up before each test.
 	 */
 	public function set_up() {
 		parent::set_up();
 
-		wp_set_current_user( self::$admin_user_id );
 		$this->clear_all_snippets();
 		$this->seed_test_snippets();
 	}
