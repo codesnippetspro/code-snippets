@@ -15,21 +15,18 @@ import type { ReactNode } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 
 export interface CloudSnippetAuthorProps {
-	snippet: CloudSnippetSchema
+	codevaultSlug: string
 }
 
-export const CloudSnippetAuthor: React.FC<CloudSnippetAuthorProps> = ({ snippet }) =>
+export const CloudSnippetAuthor: React.FC<CloudSnippetAuthorProps> = ({ codevaultSlug }) =>
 	<p className="cloud-snippet-author">
 		<a
-			href={`${window.CODE_SNIPPETS?.urls.cloud}/codevault/${snippet.codevault}`}
+			href={`${window.CODE_SNIPPETS?.urls.cloud}/codevault/${codevaultSlug}`}
 			target="_blank"
 			rel="noopener noreferrer"
 		>
-			{sprintf(
-				/* translators: %s: cloud library author name. */
-				__('By %s', 'code-snippets'),
-				snippet.codevault
-			)}
+			{// translators: %s: cloud library author name.
+				sprintf(__('By %s', 'code-snippets'), codevaultSlug)}
 		</a>
 	</p>
 
@@ -62,29 +59,22 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({
 			</h3>
 		</div>
 
-		{0 < snippet.tags.length || snippet.updated
-			? <div className="snippet-card-meta">
-				{0 < snippet.tags.length
-					? <span className="cloud-snippet-tags">{snippet.tags.join(', ')}</span>
-					: null}
+		{0 < snippet.tags.length || snippet.updated && (
+			<div className="snippet-card-meta">
+				{0 < snippet.tags.length && (
+					<span className="cloud-snippet-tags">{snippet.tags.join(', ')}</span>)}
 
-				{snippet.updated
-					? <time className="snippet-card-modified" dateTime={snippet.updated} title={snippet.updated}>
-						{sprintf(
-							/* translators: %s: human-readable time difference, including "ago" suffix. */
-							__('Modified %s', 'code-snippets'),
-							humanTimeDiff(snippet.updated, undefined)
-						)}
-					</time>
-					: null}
-			</div>
-			: null}
+				{snippet.updated && (
+					<time className="snippet-card-modified" dateTime={snippet.updated} title={snippet.updated}>
+						{/* translators: %s: human-readable time difference, including "ago" suffix. */
+							sprintf(__('Modified %s', 'code-snippets'), humanTimeDiff(snippet.updated, undefined))}
+					</time>)}
+			</div>)}
 
-		{snippet.description
-			? <p className="snippet-description-content">
+		{snippet.description && (
+			<p className="snippet-description-content">
 				{truncateChars(stripTags(snippet.description))}
-			</p>
-			: null}
+			</p>)}
 
 		{author}
 	</div>

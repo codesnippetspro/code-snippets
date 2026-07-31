@@ -1,39 +1,30 @@
-import { __, _n, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import React from 'react'
 import { Button } from '../../common/Button'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
 
-const SearchBox = () => {
+export const SearchArea = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
 
 	return (
-		<search className="search-box" aria-label={__('Search Snippets', 'code-snippets')}>
-			<input
-				type="search"
-				id="snippets_search"
-				name="s"
-				value={searchQuery ?? ''}
-				aria-label={__('Search Snippets:', 'code-snippets')}
-				onChange={event => setSearchQuery(event.target.value)}
-				placeholder={__('Search snippets', 'code-snippets')}
-			/>
-		</search>
+		<div className="snippets-search-area">
+			<search className="search-box" aria-label={__('Search Snippets', 'code-snippets')}>
+				<input
+					type="search"
+					id="snippets_search"
+					name="s"
+					value={searchQuery ?? ''}
+					aria-label={__('Search Snippets:', 'code-snippets')}
+					onChange={event => setSearchQuery(event.target.value)}
+					placeholder={__('Search snippets', 'code-snippets')}
+				/>
+			</search>
+		</div>
 	)
 }
 
-export const SearchArea = () =>
-	<div className="snippets-search-area">
-		<SearchBox />
-	</div>
-
 export const SearchResultsIndicator = () => {
-	const {
-		searchQueryText,
-		searchLineNumber,
-		currentTag,
-		setSearchQuery,
-		setCurrentTag
-	} = useSnippetsFilters()
+	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
 
 	return searchQueryText || currentTag
 		? <p className="snippets-search-subtitle">

@@ -154,9 +154,6 @@ export const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 		</span>
 		: <>&#8212;</>
 
-export const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) =>
-	<SnippetPriorityInput snippet={snippet} />
-
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
@@ -196,7 +193,7 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 		id: 'priority',
 		title: __('Priority', 'code-snippets'),
 		sortedValue: snippet => snippet.priority,
-		render: snippet => <PriorityColumn snippet={snippet} />
+		render: snippet => <SnippetPriorityInput snippet={snippet} />
 	}
 ]
 

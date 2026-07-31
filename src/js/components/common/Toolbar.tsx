@@ -51,13 +51,6 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		pageSlug: 'snippets'
 	},
 	{
-		name: 'blueprints',
-		label: __('Blueprints', 'code-snippets'),
-		icon: <BlueprintIcon />,
-		pro: true,
-		subpage: 'blueprints'
-	},
-	{
 		name: 'cloud-community',
 		label: __('Community Cloud', 'code-snippets'),
 		icon: <CommunityIcon aria-hidden="true" />,
@@ -69,6 +62,13 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		icon: <LibraryIcon aria-hidden="true" />,
 		pro: true,
 		subpage: 'cloud-library'
+	},
+	{
+		name: 'blueprints',
+		label: __('Blueprints', 'code-snippets'),
+		icon: <BlueprintIcon />,
+		pro: true,
+		subpage: 'blueprints'
 	},
 	{
 		name: 'settings',

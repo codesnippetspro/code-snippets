@@ -15,7 +15,7 @@ import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { SnippetView } from '../../../types/SnippetView'
-import type { ListTableAction } from '../../common/ListTable/ListTable'
+import type { ListTableAction } from '../../common/ListTable'
 import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
 const SearchBox = () => {
@@ -52,7 +52,7 @@ const SearchBox = () => {
 				/>
 				<span role="status" aria-live="polite">
 					{isSearching &&
-						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>}
+			  <span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>}
 				</span>
 			</div>
 
@@ -86,7 +86,7 @@ const SearchResultsGrid: React.FC<SearchResultsGridProps> = ({ snippets, selecte
 			<SearchResult
 				key={result.id}
 				snippet={result}
-				author={<CloudSnippetAuthor snippet={result} />}
+				author={<CloudSnippetAuthor codevaultSlug={result.codevault} />}
 				isSelected={selected.has(result.id)}
 				onSelectedChange={isSelected => {
 					setSelected(previous => {
@@ -109,7 +109,9 @@ interface SearchResultsViewProps {
 	setSnippetView: (view: SnippetView) => void
 }
 
-const CLOUD_BULK_ACTIONS: ListTableAction<'download'>[] = [
+type CloudSearchAction = 'download'
+
+const CLOUD_BULK_ACTIONS: ListTableAction<CloudSearchAction>[] = [
 	{ key: 'download', label: __('Download', 'code-snippets') }
 ]
 
@@ -117,22 +119,22 @@ const useSearchResultsSelection = () => {
 	const { api } = useRestAPI()
 	const { searchResults, isSearching, doSearch } = useCloudSearch()
 	const [selected, setSelected] = useState<Set<CloudSnippetSchema['id']>>(new Set())
-	const snippets = searchResults?.snippets
 
 	useEffect(() => {
 		setSelected(new Set())
-	}, [snippets])
+	}, [searchResults?.snippets])
 
-	const doAction = (
-		_action: 'download',
+	const doAction = async (
+		action: CloudSearchAction | undefined,
 		selectedIds: Set<CloudSnippetSchema['id']>
 	): Promise<void> => {
-		const downloadable = (snippets ?? [])
-			.filter(snippet => selectedIds.has(snippet.id) && isSnippetDownloadable(snippet))
+		if ('download' === action) {
+			await Promise.all((searchResults?.snippets ?? [])
+				.filter(snippet => selectedIds.has(snippet.id) && isSnippetDownloadable(snippet))
+				.map(({ id }) => api.post(`${REST_BASES.cloud.snippets}/${id}/download`)))
 
-		return Promise.all(downloadable.map(snippet =>
-			api.post(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)))
-			.then(() => doSearch())
+			doSearch()
+		}
 	}
 
 	return { doAction, doSearch, isSearching, searchResults, selected, setSelected }

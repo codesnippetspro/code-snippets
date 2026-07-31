@@ -6,12 +6,7 @@ import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
-import {
-	createSnippetObject,
-	getSnippetType,
-	isCondition,
-	validateSnippet
-} from '../../../utils/snippets/snippets'
+import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { Toolbar } from '../../common/Toolbar'
@@ -101,7 +96,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 							.replace(__('Create New Condition', 'code-snippets'), __('Edit Condition', 'code-snippets'))
 
 						const newUrl = buildUrl(window.CODE_SNIPPETS.urls.edit, { id: response.id })
-						window.history.replaceState({}, document.title, newUrl)
+						window.history.pushState({}, document.title, newUrl)
 					}
 				}
 			})

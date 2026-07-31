@@ -102,7 +102,7 @@ interface SnippetsViewProps {
 	setSnippetView: (view: SnippetView) => void
 	snippets: Snippet[]
 	actions: ListTableAction<SnippetsTableAction>[]
-	doAction: (action: SnippetsTableAction, selected: Set<Snippet['id']>) => Promise<void>
+	doAction: (action: SnippetsTableAction | undefined, selected: Set<Snippet['id']>) => Promise<void>
 	extraTableNav: (which: 'top' | 'bottom') => ReactNode
 	hiddenColumns: Set<string>
 	truncateRowValues: boolean

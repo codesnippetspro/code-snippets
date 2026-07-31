@@ -6,29 +6,14 @@ import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
-import {
-	canModifySnippet,
-	cloneSnippetObject,
-	getSnippetDisplayName,
-	getSnippetEditUrl,
-	getSnippetType,
-	isNetworkOnlySnippet,
-	isSnippetActive
-} from '../../../utils/snippets/snippets'
+import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isNetworkOnlySnippet, isSnippetActive } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
 import { useDeleteSnippet } from '../../common/DeleteButton'
 import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../common/KebabMenu'
 import { SnippetCard } from '../../common/SnippetCard'
 import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import {
-	ActivateColumn,
-	PriorityColumn,
-	SnippetExtraIcons,
-	SnippetName,
-	TagsColumn,
-	TypeColumn
-} from './TableColumns'
+import { ActivateColumn, PriorityColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
 import type { Snippet } from '../../../types/Snippet'
 
 interface SnippetCardActionsProps {

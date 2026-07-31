@@ -82,7 +82,7 @@ export interface SnippetsCardGridProps<A extends string>
 	extends Pick<ListTableNavProps<Snippet['id'], A>, 'extraTableNav' | 'endTableNav'> {
 	snippets: Snippet[]
 	actions: ListTableAction<A>[]
-	doAction: (action: A, selected: Set<Snippet['id']>) => Promise<void>
+	doAction: (action: A | undefined, selected: Set<Snippet['id']>) => Promise<void>
 	itemsPerPage?: number
 	noItems: ReactNode
 	beforeGrid?: ReactNode

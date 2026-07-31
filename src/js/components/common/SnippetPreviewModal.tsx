@@ -5,16 +5,12 @@ import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../utils/errors'
 import { downloadSnippetExportFile } from '../../utils/files'
-import {
-	canModifySnippet,
-	cloneSnippetObject,
-	getSnippetEditUrl
-} from '../../utils/snippets/snippets'
+import { canModifySnippet, cloneSnippetObject, getSnippetEditUrl } from '../../utils/snippets/snippets'
 import { Badge } from './Badge'
 import { Button } from './Button'
 import { useDeleteSnippet } from './DeleteButton'
 import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
-import type { ReactNode } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import type { Snippet, SnippetType } from '../../types/Snippet'
 
 const CODE_PREVIEW_LABEL = __('Snippet code preview', 'code-snippets')
@@ -182,24 +178,12 @@ const PreviewTypeBadge: React.FC<{ type: SnippetType }> = ({ type }) =>
 		<Badge name={type} />
 	</div>
 
-interface PreviewFooterProps {
-	snippet?: Snippet
-	footerActions?: ReactNode
-	closeModal: () => void
-}
-
-const PreviewFooter: React.FC<PreviewFooterProps> = ({
-	snippet,
-	footerActions,
-	closeModal
-}) =>
-	snippet
-		? <SnippetPreviewActions {...{ snippet, closeModal }} />
-		: footerActions
-			? <div className="code-snippets-preview-modal__footer">
-				<div className="code-snippets-preview-modal__buttons">{footerActions}</div>
-			</div>
-			: null
+const PreviewFooterActionsWrapper: React.FC<PropsWithChildren> = ({ children }) =>
+	children
+		? <div className="code-snippets-preview-modal__footer">
+			<div className="code-snippets-preview-modal__buttons">{children}</div>
+		</div>
+		: null
 
 /**
  * Modal for quickly viewing a snippet's code in a read-only CodeMirror editor,
@@ -228,7 +212,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			{ codemirror: getPreviewEditorSettings(type) }
 		)
 
-		// CodeMirror hides the labelled source textarea and creates an unlabelled
+		// CodeMirror hides the labeled source textarea and creates an unlabelled
 		// internal input. The screenReaderLabel option only exists from CodeMirror
 		// 5.59, while WordPress 5.5 ships 5.29, so label the input directly.
 		instance.codemirror.getInputField().setAttribute('aria-label', CODE_PREVIEW_LABEL)
@@ -254,10 +238,9 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 				/>
 			</div>
 
-			<PreviewFooter
-				{...{ snippet, footerActions }}
-				closeModal={() => setIsOpen(false)}
-			/>
+			{snippet
+				? <SnippetPreviewActions snippet={snippet} closeModal={() => setIsOpen(false)} />
+				: <PreviewFooterActionsWrapper>{footerActions}</PreviewFooterActionsWrapper>}
 		</Modal>
 		: null
 }
