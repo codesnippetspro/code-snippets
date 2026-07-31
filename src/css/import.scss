@@ -1,6 +1,13 @@
+@use 'common/checkbox';
 @use 'common/toolbar';
+@use 'common/subnav';
 @use 'common/wp-admin';
+@use 'common/page-header';
 @use 'import/page';
 @use 'import/card';
 @use 'import/upload';
 @use 'import/migrate';
+
+.wp-list-table .check-column input[type='checkbox'] {
+	@include checkbox.canonical;
+}

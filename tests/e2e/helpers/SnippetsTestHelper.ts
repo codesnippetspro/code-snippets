@@ -212,9 +212,9 @@ export class SnippetsTestHelper {
 	private async selectSnippetLocation(location: keyof typeof SNIPPET_LOCATIONS): Promise<void> {
 		const locationLabel = SNIPPET_LOCATIONS[location]
 
-		const combobox = this.page.getByRole('combobox', { name: /location/i }).first()
-		await expect(combobox).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-		await combobox.click()
+		const locationSelect = this.page.locator(SELECTORS.LOCATION_SELECT)
+		await expect(locationSelect).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await locationSelect.click()
 
 		const listbox = this.page.getByRole('listbox').first()
 		await expect(listbox).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
@@ -264,13 +264,12 @@ export class SnippetsTestHelper {
 		await this.page.fill(SELECTORS.TITLE_INPUT, options.name)
 
 		if (options.type && 'PHP' !== options.type) {
-			const snippetTypeInput = this.page.locator(SELECTORS.SNIPPET_TYPE_SELECT)
-			await snippetTypeInput.click()
+			const snippetTypeSelect = this.page.locator(SELECTORS.SNIPPET_TYPE_SELECT)
+			await snippetTypeSelect.click()
 
 			// React Select renders options in a listbox; scope the click to options to avoid matching
 			// other UI strings like "Skip to main content".
-			const listboxId = await snippetTypeInput.getAttribute('aria-controls')
-			const listbox = listboxId ? this.page.locator(`#${listboxId}`) : this.page.getByRole('listbox')
+			const listbox = this.page.getByRole('listbox')
 			const optionLabel = SNIPPET_TYPES[options.type]
 
 			await listbox.getByRole('option', { name: new RegExp(escapeRegExp(optionLabel), 'i') }).click()

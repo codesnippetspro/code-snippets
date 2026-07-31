@@ -18,6 +18,7 @@ interface NavLink {
 	pro?: boolean
 	pageSlug?: string
 	subpage?: typeof SUBPAGES[number]
+	end?: boolean
 }
 
 const UPPER_NAV_LINKS: readonly NavLink[] = [
@@ -74,7 +75,8 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		url: window.CODE_SNIPPETS?.urls.settings,
 		label: __('Settings', 'code-snippets'),
 		icon: <SettingsIcon aria-hidden="true" />,
-		pageSlug: 'snippets-settings'
+		pageSlug: 'snippets-settings',
+		end: true
 	}
 ]
 
@@ -143,7 +145,7 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 		<nav aria-label={__('Main features', 'code-snippets')}>
 			<ul>
 				{LOWER_NAV_LINKS.map(link =>
-					<li key={link.name}>
+					<li key={link.name} className={link.end ? 'toolbar-end-item' : undefined}>
 						<a
 							href={link.url ?? buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: link.name })}
 							className={classnames(`${link.name}-link`, { 'active-link': isActiveLink(link) })}
@@ -155,7 +157,7 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 							}}
 						>
 							{link.icon}
-							<span>{link.label}</span>
+							<span className="toolbar-nav-label">{link.label}</span>
 							{link.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 						</a>
 					</li>)}

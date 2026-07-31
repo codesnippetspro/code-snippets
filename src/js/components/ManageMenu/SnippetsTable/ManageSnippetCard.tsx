@@ -1,19 +1,19 @@
-import React, { useState } from 'react'
-import classnames from 'classnames'
-import { __, sprintf } from '@wordpress/i18n'
+import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
+import { __, sprintf } from '@wordpress/i18n'
+import React, { useState } from 'react'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
-import { isNetworkAdmin } from '../../../utils/screen'
-import { cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
+import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isNetworkOnlySnippet, isSnippetActive } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
-import { DeleteButton } from '../../common/DeleteButton'
+import { useDeleteSnippet } from '../../common/DeleteButton'
+import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../common/KebabMenu'
 import { SnippetCard } from '../../common/SnippetCard'
 import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import { ActivateColumn, DateColumn, PriorityColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
+import { ActivateColumn, PriorityColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
 import type { Snippet } from '../../../types/Snippet'
 
 interface SnippetCardActionsProps {
@@ -35,120 +35,141 @@ const CardPreviewButton: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 				type={getSnippetType(snippet)}
 				isOpen={isPreviewOpen}
 				setIsOpen={setIsPreviewOpen}
+				snippet={snippet}
 			/>
 		</>
 	)
 }
 
-const EditCloneExportButtons: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
+const CloneExportMenuItems: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
 	return (
 		<>
-			<a className="button button-primary" href={getSnippetEditUrl(snippet)}>
-				{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
-			</a>
-
-			<Button
-				secondary
-				onClick={() => {
+			<KebabMenuItem
+				onSelect={() => {
 					api.create(cloneSnippetObject(snippet))
 						.then(refreshSnippetsList)
 						.catch(handleUnknownError)
 				}}
 			>
 				{__('Clone', 'code-snippets')}
-			</Button>
+			</KebabMenuItem>
 
-			<Button
-				secondary
-				onClick={() => {
+			<KebabMenuItem
+				onSelect={() => {
 					api.export(snippet)
 						.then(response => downloadSnippetExportFile(response, snippet))
 						.catch(handleUnknownError)
 				}}
 			>
 				{__('Export', 'code-snippets')}
-			</Button>
+			</KebabMenuItem>
+
+			<KebabMenuDivider />
 		</>
 	)
 }
 
-const SnippetCardActions: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
+interface RestoreDeleteMenuItemsProps extends SnippetCardActionsProps {
+	requestDelete: () => void
+}
+
+const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
+	snippet,
+	requestDelete
+}) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
-	if (!isNetworkAdmin() && snippet.network && !snippet.shared_network) {
-		return (
-			<span className="snippet-card-actions">
-				{snippet.active
-					? <span className="network-active">{__('Network Active', 'code-snippets')}</span>
-					: <span className="network-only">{__('Network Only', 'code-snippets')}</span>}
-			</span>
-		)
-	}
-
-	if (snippet.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap) {
-		return null
-	}
-
 	return (
-		<span className="snippet-card-actions">
-			{!snippet.trashed && <EditCloneExportButtons snippet={snippet} />}
+		<>
+			<KebabMenuDivider />
 
-			{snippet.trashed && (
-				<Button
-					secondary
-					onClick={() => {
+			{snippet.trashed
+				? <KebabMenuItem
+					onSelect={() => {
 						api.restore(snippet)
 							.then(refreshSnippetsList)
 							.catch(handleUnknownError)
 					}}
 				>
 					{__('Restore', 'code-snippets')}
-				</Button>)}
+				</KebabMenuItem>
+				: null}
 
-			{(!snippet.locked || snippet.trashed) && (
-				<DeleteButton secondary className="snippet-card-delete" snippet={snippet} onSuccess={refreshSnippetsList} />)}
-		</span>
-	)
-}
-
-const CardActionsArea: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
-	const [isExpanded, setIsExpanded] = useState(false)
-
-	return (
-		<>
-			<footer>
-				<CardPreviewButton snippet={snippet} />
-
-				<Button
-					primary
-					className="snippet-card-more-toggle"
-					aria-expanded={isExpanded}
-					onClick={() => setIsExpanded(previous => !previous)}
-				>
-					{isExpanded ? __('Show less', 'code-snippets') : __('Show more', 'code-snippets')}
-					<span className="dashicons dashicons-arrow-right-alt2" aria-hidden="true"></span>
-				</Button>
-			</footer>
-
-			<div className={classnames('snippet-card-more', { 'is-expanded': isExpanded })}>
-				<div className="snippet-card-more-inner">
-					<div className="snippet-card-more-row">
-						<span className="snippet-card-priority">
-							<span aria-hidden="true">{__('Priority', 'code-snippets')}</span>
-							<PriorityColumn snippet={snippet} />
-						</span>
-
-						<SnippetCardActions snippet={snippet} />
-					</div>
-				</div>
-			</div>
+			<KebabMenuItem destructive onSelect={requestDelete}>
+				{snippet.trashed ? __('Delete Permanently', 'code-snippets') : __('Trash', 'code-snippets')}
+			</KebabMenuItem>
 		</>
 	)
 }
+
+const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
+	const { refreshSnippetsList } = useSnippetsList()
+	const canModify = canModifySnippet(snippet)
+	const { requestDelete, confirmDialog } = useDeleteSnippet({
+		snippet,
+		onSuccess: refreshSnippetsList,
+		onError: handleUnknownError
+	})
+
+	return (
+		<>
+			<KebabMenu
+				label={sprintf(
+					/* translators: %s: name of the snippet. */
+					__('Actions for %s', 'code-snippets'),
+					getSnippetDisplayName(snippet)
+				)}
+			>
+				{canModify && !snippet.trashed ? <CloneExportMenuItems snippet={snippet} /> : null}
+
+				<KebabMenuRow className="kebab-menu-priority">
+					<label htmlFor={`snippet-${snippet.id}-priority`}>{__('Priority', 'code-snippets')}</label>
+					<PriorityColumn snippet={snippet} />
+				</KebabMenuRow>
+
+				{canModify && (snippet.trashed || !snippet.locked)
+					? <RestoreDeleteMenuItems snippet={snippet} requestDelete={requestDelete} />
+					: null}
+			</KebabMenu>
+
+			{confirmDialog}
+		</>
+	)
+}
+
+const CardFooterActions: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
+	<>
+		{isNetworkOnlySnippet(snippet)
+			? snippet.active
+				? <span className="network-active">{__('Network Active', 'code-snippets')}</span>
+				: <span className="network-only">{__('Network Only', 'code-snippets')}</span>
+			: null}
+
+		{!snippet.trashed ? <CardPreviewButton snippet={snippet} /> : null}
+
+		{!snippet.trashed && canModifySnippet(snippet)
+			? <a className="button button-primary" href={getSnippetEditUrl(snippet)}>
+				{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
+			</a>
+			: null}
+
+		<CardActionsMenu snippet={snippet} />
+	</>
+
+const CardModifiedDate: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
+	snippet.modified
+		? <time className="snippet-card-modified" dateTime={snippet.modified} title={snippet.modified}>
+			{sprintf(
+				/* translators: %s: human-readable time difference, including "ago" suffix. */
+				__('Modified %s', 'code-snippets'),
+				humanTimeDiff(snippet.modified, undefined)
+			)}
+		</time>
+		: null
 
 export interface ManageSnippetCardProps {
 	snippet: Snippet
@@ -156,7 +177,11 @@ export interface ManageSnippetCardProps {
 	onSelectedChange: (isSelected: boolean) => void
 }
 
-export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({ snippet, isSelected, onSelectedChange }) => {
+export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({
+	snippet,
+	isSelected,
+	onSelectedChange
+}) => {
 	const { activeByCondition } = useFilteredSnippets()
 
 	return (
@@ -174,34 +199,34 @@ export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({ snippet, i
 				__('Select %s', 'code-snippets'),
 				getSnippetDisplayName(snippet)
 			)}
-			cornerControls={<ActivateColumn snippet={snippet} />}
+			footer={<CardFooterActions snippet={snippet} />}
 		>
 			<div className="card-inner">
-				<h3><SnippetName snippet={snippet} /></h3>
-
-				<div className="snippet-card-meta">
+				<div className="snippet-card-header">
+					<ActivateColumn snippet={snippet} />
 					<TypeColumn snippet={snippet} />
-
-					<span className="snippet-card-modified">
-						<em>{__('Last Modified: ', 'code-snippets')}</em>
-						<DateColumn snippet={snippet} />
-					</span>
-
-					{0 < snippet.tags.length && (
-						<span className="snippet-card-tags">
-							<span className="dashicons dashicons-tag" aria-hidden="true"></span>
-							<TagsColumn snippet={snippet} />
-						</span>)}
-
+					<h3><SnippetName snippet={snippet} /></h3>
 					<SnippetExtraIcons snippet={snippet} />
 				</div>
+
+				{0 < snippet.tags.length || snippet.modified
+					? <div className="snippet-card-meta">
+						{0 < snippet.tags.length
+							? <span className="snippet-card-tags">
+								<span className="snippet-card-tags-label">{__('Tags:', 'code-snippets')}</span>
+								{' '}
+								<TagsColumn snippet={snippet} />
+							</span>
+							: null}
+
+						<CardModifiedDate snippet={snippet} />
+					</div>
+					: null}
 
 				{snippet.desc
 					? <div className="snippet-description-content"><RawHTML>{snippet.desc}</RawHTML></div>
 					: null}
 			</div>
-
-			<CardActionsArea snippet={snippet} />
 		</SnippetCard>
 	)
 }

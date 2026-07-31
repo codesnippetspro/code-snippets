@@ -1,14 +1,14 @@
-import { __, _n, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import React from 'react'
 import { Button } from '../../common/Button'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
 
-const SearchBox = () => {
+export const SearchArea = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
 
 	return (
-		<search aria-label={__('Search Snippets', 'code-snippets')}>
-			<p className="search-box">
+		<div className="snippets-search-area">
+			<search className="search-box" aria-label={__('Search Snippets', 'code-snippets')}>
 				<input
 					type="search"
 					id="snippets_search"
@@ -18,16 +18,10 @@ const SearchBox = () => {
 					onChange={event => setSearchQuery(event.target.value)}
 					placeholder={__('Search snippets', 'code-snippets')}
 				/>
-			</p>
-		</search>
+			</search>
+		</div>
 	)
 }
-
-
-export const SearchArea = () =>
-	<div className="snippets-search-area">
-		<SearchBox />
-	</div>
 
 export const SearchResultsIndicator = () => {
 	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()

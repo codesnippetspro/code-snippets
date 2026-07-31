@@ -15,7 +15,7 @@ const isAssertive = (type?: NoticeType): boolean => 'error' === type || 'warning
 
 export const Notice: React.FC<NoticeProps> = ({ className, type, children, ...props }) =>
 	<div
-		className={classnames('notice', { [`notice-${type}`]: type }, className)}
+		className={classnames('notice', 'code-snippets-notice', { [`notice-${type}`]: type }, className)}
 		role={isAssertive(type) ? 'alert' : 'status'}
 		aria-live={isAssertive(type) ? 'assertive' : 'polite'}
 		{...props}

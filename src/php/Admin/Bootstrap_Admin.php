@@ -5,7 +5,7 @@ namespace Code_Snippets\Admin;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Admin\Menus\Edit_Menu;
 use Code_Snippets\Admin\Menus\Import_Menu;
-use Code_Snippets\Admin\Menus\Manage_Menu;
+use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Admin\Menus\Settings_Menu;
 use Code_Snippets\Admin\Menus\Welcome_Menu;
 use Code_Snippets\Client\Welcome_Client;
@@ -47,6 +47,7 @@ class Bootstrap_Admin {
 		}
 
 		$this->welcome_client = new Welcome_Client();
+		new Notice_Filter();
 
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 

@@ -1,0 +1,105 @@
+@use 'theme';
+
+// Generic kebab ("more actions") menu: a square accent-outlined trigger
+// button that opens a small popover of actions anchored to its
+// bottom-end corner, flipping above the trigger near the viewport edge.
+.kebab-menu {
+	position: relative;
+	display: inline-flex;
+}
+
+.kebab-menu-trigger {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 38px;
+	block-size: 38px;
+	box-sizing: border-box;
+	padding: 0;
+	background: #fff;
+	color: theme.$accent;
+	border: 1px solid theme.$accent;
+	border-radius: 5px;
+	cursor: pointer;
+
+	svg {
+		display: block;
+	}
+
+	&:hover,
+	&:focus {
+		background: #f0f6fc;
+	}
+}
+
+.kebab-menu-popover {
+	position: absolute;
+	inset-block-start: calc(100% + 4px);
+	inset-inline-end: 0;
+	z-index: 1000;
+	inline-size: 224px;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	background: #fff;
+	border: 1px solid #e2e2e4;
+	border-radius: 5px;
+	box-shadow: 0 3px 16px rgb(0 0 0 / 15%);
+
+	&.kebab-menu-popover-top {
+		inset-block: auto calc(100% + 4px);
+	}
+
+	li {
+		margin: 0;
+	}
+}
+
+.kebab-menu-item {
+	display: block;
+	inline-size: 100%;
+	box-sizing: border-box;
+	padding-block: 10px;
+	padding-inline: 14px;
+	background: none;
+	border: none;
+	font-family: inherit;
+	font-size: 14px;
+	line-height: 1.4;
+	color: #2c3337;
+	text-align: start;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		background: #f0f0f1;
+	}
+
+	&:disabled {
+		color: #a7aaad;
+		cursor: default;
+		background: none;
+	}
+
+	&.kebab-menu-item-destructive {
+		color: #d63638;
+	}
+}
+
+.kebab-menu-divider {
+	margin-block: 6px;
+	border-block-start: 1px solid #e2e2e4;
+}
+
+.kebab-menu-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	box-sizing: border-box;
+	padding-block: 10px;
+	padding-inline: 14px;
+	font-size: 14px;
+	line-height: 1.4;
+	color: #2c3337;
+}

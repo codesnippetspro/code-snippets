@@ -1,7 +1,7 @@
 export const SELECTORS = <const> {
 	TITLE_INPUT: '#title',
 	CODE_MIRROR_TEXTAREA: '.CodeMirror textarea',
-	SNIPPET_TYPE_SELECT: '#snippet-type-select-input',
+	SNIPPET_TYPE_SELECT: '.snippet-type-container .code-snippets-select',
 	LOCATION_SELECT: '.code-snippets-select-location',
 
 	SUCCESS_MESSAGE: '.snippet-editor-sidebar .notice.updated',
@@ -13,6 +13,7 @@ export const SELECTORS = <const> {
 	SNIPPET_NAME_LINK: '.snippet-name',
 	SNIPPET_SEARCH_INPUT: '#snippets_search',
 
+	PREVIEW_ACTION: '.row-actions button:has-text("Preview")',
 	CLONE_ACTION: '.row-actions button:has-text("Clone")',
 	DELETE_ACTION: '.row-actions button:has-text("Trash")',
 	EXPORT_ACTION: '.row-actions button:has-text("Export")',

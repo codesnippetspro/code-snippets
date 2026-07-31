@@ -164,6 +164,7 @@ const useRequestIds = () => {
 export interface CloudSearchContext {
 	isErrored: boolean
 	doSearch: (paramsDelta?: Partial<CloudSearchParams>) => void
+	isLoading: boolean
 	isSearching: boolean
 	searchParams: CloudSearchParams
 	searchResults: CloudSearchResults | undefined
@@ -175,6 +176,7 @@ const useSearchApi = () => {
 	const { api } = useRestAPI()
 	const { isCurrentRequest, nextRequestId } = useRequestIds()
 	const [currentSearch, setCurrentSearch] = useState(false)
+	const [isLoading, setIsLoading] = useState(false)
 	const [searchResults, setSearchResults] = useState<CloudSearchResults | false | undefined>()
 	const [availableFilters, setAvailableFilters] = useState<AvailableCloudFilters>({})
 
@@ -182,6 +184,7 @@ const useSearchApi = () => {
 		const requestId = nextRequestId()
 		const isFeaturedSearch = '' === params.query.trim()
 
+		setIsLoading(true)
 		setCurrentSearch(!isFeaturedSearch)
 		const baseUrl = isFeaturedSearch ? SEARCH_URLS.FEATURED : SEARCH_URLS.SEARCH_QUERY
 
@@ -197,10 +200,16 @@ const useSearchApi = () => {
 					setSearchResults(false)
 				}
 			})
-			.finally(() => setCurrentSearch(false))
+			.finally(() => {
+				if (isCurrentRequest(requestId)) {
+					setCurrentSearch(false)
+					setIsLoading(false)
+				}
+			})
 	}, [api, nextRequestId, isCurrentRequest])
 
 	return {
+		isLoading,
 		isSearching: currentSearch,
 		searchResults,
 		availableFilters,
@@ -211,7 +220,7 @@ const useSearchApi = () => {
 const [Context, useCloudSearch] = createContextHook<CloudSearchContext>('useCloudSearch')
 
 export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }) => {
-	const { isSearching, makeSearchRequest, availableFilters, searchResults } = useSearchApi()
+	const { isLoading, isSearching, makeSearchRequest, availableFilters, searchResults } = useSearchApi()
 	const [searchParams, setSearchParams] = useState<CloudSearchParams>(fetchSearchQueryParams)
 	const [madeInitialRequest, setMadeInitialRequest] = useState(false)
 
@@ -236,6 +245,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 
 	const value: CloudSearchContext = {
 		doSearch,
+		isLoading,
 		isSearching,
 		searchParams,
 		availableFilters,

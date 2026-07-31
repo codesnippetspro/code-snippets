@@ -197,10 +197,12 @@ class Settings_Menu extends Admin_Menu {
 		$current_section = $this->get_current_section();
 
 		?>
-		<div class="wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
+		<div class="wrap code-snippets-settings" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
 			<?php $this->render_section_tabs(); ?>
 
-			<h2><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h2>
+			<div class="snippets-page-header">
+				<h1><?php esc_html_e( 'Snippets Settings', 'code-snippets' ); ?></h1>
+			</div>
 
 			<?php
 			if ( code_snippets()->is_compact_menu() ) {
@@ -261,23 +263,14 @@ class Settings_Menu extends Admin_Menu {
 		$sections = $this->get_sections();
 		$active_tab = $this->get_current_section();
 
-		$icons = [
-			'general'        => 'admin-generic',
-			'editor'         => 'editor-code',
-			'debug'          => 'admin-tools',
-			'version-switch' => 'backup',
-			'license'        => 'admin-network',
-		];
-
 		echo '<nav class="snippet-type-nav settings-type-nav" id="settings-sections-tabs" aria-label="' . esc_attr__( 'Settings tabs', 'code-snippets' ) . '"><ul>';
 
 		foreach ( $sections as $section ) {
 			printf(
-				'<li><a class="snippet-type-link%s" data-section="%s" href="%s"><span class="dashicons dashicons-%s snippet-type-icon" aria-hidden="true"></span><span>%s</span></a></li>',
+				'<li><a class="snippet-type-link%s" data-section="%s" href="%s"><span>%s</span></a></li>',
 				esc_attr( $active_tab ) === $section['id'] ? ' active-type' : '',
 				esc_attr( $section['id'] ),
 				esc_url( add_query_arg( 'section', $section['id'] ) ),
-				esc_attr( $icons[ $section['id'] ] ?? 'admin-generic' ),
 				esc_html( $section['title'] )
 			);
 		}

@@ -1,0 +1,318 @@
+@use '../badges';
+@use '../checkbox';
+@use '../theme';
+
+.column-name {
+	.extra-icons {
+		float: inline-end;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 5px;
+	}
+
+	.dashicons-lock {
+		color: #646970;
+		opacity: 0.7;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+}
+
+.active-snippet {
+	td, th {
+		background-color: rgb(120 200 230 / 6%);
+	}
+
+	th.check-column {
+		border-inline-start: 2px solid #2ea2cc;
+	}
+
+	.column-name > .snippet-name {
+		font-weight: 600;
+	}
+}
+
+.inactive-snippet {
+	@include theme.link-colors(#579);
+}
+
+.paging-input {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.wp-list-table {
+	.check-column input[type='checkbox'] {
+		@include checkbox.canonical;
+	}
+
+	// Shared horizontal rhythm for every snippet table, so the cloud table lines
+	// up with the snippets table rather than keeping the wider WordPress default.
+	th:not(.check-column),
+	td:not(.check-column) {
+		padding-inline: 9px;
+	}
+
+	td.column-id {
+		text-align: center;
+	}
+
+	tr {
+		background: #fff;
+	}
+
+	ol, ul {
+		margin-block: 0 1.5em;
+		margin-inline: 1.5em 0;
+	}
+
+	ul {
+		list-style: disc;
+	}
+
+	.sortable-column-title {
+		display: flex;
+	}
+
+	th.sortable .list-table-sort-button,
+	th.sorted .list-table-sort-button {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		inline-size: 100%;
+		margin: 0;
+		border: none;
+		background: none;
+		font: inherit;
+		color: theme.$accent;
+		cursor: pointer;
+		text-align: start;
+		overflow: hidden;
+		padding-block: 8px;
+		padding-inline: 0;
+	}
+
+	th.sortable .list-table-sort-button:focus-visible,
+	th.sorted .list-table-sort-button:focus-visible {
+		outline: 2px solid theme.$accent;
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	// The type badge is wrapped in an unclassed link that lays out as an inline
+	// box shorter than the badge, so wrap the badge exactly and draw our own
+	// focus ring: the inherited one resolves to a transparent outline.
+	.column-type a {
+		@include badges.badge-link;
+	}
+
+	.row-actions {
+		color: #646970;
+		position: relative;
+		inset-inline-start: 0;
+
+		a:not(.delete) {
+			color: theme.$accent;
+
+			&:hover,
+			&:focus {
+				color: theme.$accent-hover;
+			}
+		}
+
+		// Row-action buttons render as plain inline links. On WP 7.0 the generic `.button`
+		// compatibility styling would otherwise give them a fill, border, radius and fixed
+		// height, so fully neutralise it here (this rule is emitted after the wp-admin layer
+		// at equal specificity, so it wins). Non-delete links inherit the accent text colour.
+		.button-link {
+			block-size: auto;
+			min-block-size: 0;
+			padding: 0;
+			border: 0;
+			border-radius: 0;
+			background: none;
+			box-shadow: none;
+			line-height: inherit;
+			font-weight: 400;
+			color: theme.$accent;
+
+			&:hover:not(:disabled),
+			&:focus:not(:disabled) {
+				background: none;
+				border: 0;
+				box-shadow: none;
+			}
+
+			&:hover:not(:disabled, .delete, .snippet-cloud-update),
+			&:focus:not(:disabled, .delete, .snippet-cloud-update) {
+				color: theme.$accent-hover;
+			}
+
+			&.delete {
+				color: #b32d2e;
+			}
+
+			&.snippet-cloud-update {
+				color: #ff851b;
+			}
+		}
+
+		.snippet-row-action-feedback,
+		.snippet-row-action-error {
+			display: inline-flex;
+			align-items: center;
+			gap: .5em;
+
+			.components-spinner {
+				margin: 0;
+				inline-size: 1em;
+				block-size: 1em;
+			}
+		}
+
+		.snippet-row-action-error {
+			color: #b32d2e;
+		}
+
+		.delete.disabled {
+			color: #a7aaad;
+			cursor: not-allowed;
+			pointer-events: none;
+		}
+	}
+
+	.column-activate {
+		text-align: center;
+
+		.snippet-activation-switch,
+		input[type='checkbox'].switch {
+			margin-inline: auto;
+		}
+	}
+
+	.clear-filters {
+		vertical-align: middle;
+	}
+
+	thead th.check-column,
+	thead td.check-column,
+	tfoot th.check-column,
+	tfoot td.check-column,
+	tbody th.check-column,
+	tbody td.check-column {
+		padding-block: 0;
+		padding-inline-start: 9px;
+		vertical-align: middle;
+	}
+
+	// Line every checkbox up on the same starting edge. Rows flagged as active
+	// draw a 2px accent border on this cell, so the same width is reserved as a
+	// transparent border elsewhere; without it the header, footer and inactive
+	// rows sit 2px further in, and rows shift as snippets are toggled.
+	thead th.check-column,
+	thead td.check-column,
+	tfoot th.check-column,
+	tfoot td.check-column,
+	tbody tr:not(.active-snippet) th.check-column,
+	tbody tr:not(.active-snippet) td.check-column {
+		border-inline-start: 2px solid transparent;
+	}
+
+	.active-snippet, .inactive-snippet {
+		td, th {
+			padding: 10px 9px;
+			box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
+			vertical-align: middle;
+		}
+	}
+
+	tr.active-snippet + tr.inactive-snippet th,
+	tr.active-snippet + tr.inactive-snippet td {
+		border-block-start: 1px solid rgb(0 0 0 / 3%);
+		box-shadow: inset 0 1px 0 rgb(0 0 0 / 2%), inset 0 -1px 0 #e1e1e1;
+	}
+
+	.delete {
+		color: #b32d2e;
+	}
+
+	a.delete:not(.disabled) {
+		&:hover, &:focus, &:active {
+			border-block-end: 1px solid #f00;
+			color: #f00;
+		}
+	}
+
+	td.column-date, th.column-date {
+		white-space: nowrap;
+		inline-size: 130px; /* fixed column width */
+		min-inline-size: 130px;
+		max-inline-size: 130px;
+		text-align: end;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	td.column-date .modified-column-content {
+		display: block;
+		text-align: start;
+	}
+
+	// Snippet names always stay on a single line, truncating gracefully;
+	// the full name is exposed through the title attribute.
+	td.column-name > .snippet-name {
+		display: block;
+		max-inline-size: min(15rem, 30vw);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	&.truncate-row-values td.column-desc .snippet-description-content {
+		display: block;
+		max-inline-size: min(25rem, 45vw);
+		overflow: clip;
+		text-overflow: ellipsis;
+	}
+}
+
+.snippets-table-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	// The preceding page header owns the 16px gap above; a `wp-header-end` <hr>
+	// sits between them and prevents margin collapse, so this row keeps only its
+	// own 16px gap below (to the tablenav) and no top margin of its own.
+	margin-block: 0 16px;
+
+	.subsubsub {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+		margin: 0;
+		padding: 0;
+		font-size: 13px;
+		line-height: 1.5;
+
+		li {
+			display: flex;
+			align-items: center;
+			gap: 9px;
+			margin: 0;
+			padding: 0;
+		}
+
+		// A thin vertical rule precedes every status after the first, sized to the
+		// 13px text rather than the taller line box.
+		li + li::before {
+			content: '';
+			inline-size: 1px;
+			block-size: 13px;
+			background: theme.$control-border;
+		}
+	}
+}

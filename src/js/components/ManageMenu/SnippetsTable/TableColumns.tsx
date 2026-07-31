@@ -1,7 +1,7 @@
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { __ } from '@wordpress/i18n'
-import React, { Fragment, useState } from 'react'
+import React, { Fragment } from 'react'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
@@ -9,6 +9,7 @@ import { isNetworkAdmin } from '../../../utils/screen'
 import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
+import { SnippetPriorityInput } from '../../common/SnippetPriorityInput'
 import { Tooltip } from '../../common/Tooltip'
 import { RowActions } from './RowActions'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
@@ -97,8 +98,16 @@ export const SnippetExtraIcons: React.FC<ColumnProps> = ({ snippet }) =>
 export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
 		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
-			? <a href={getSnippetEditUrl(snippet)} className="snippet-name">{getSnippetDisplayName(snippet)}</a>
-			: getSnippetDisplayName(snippet)}
+			? <a
+				href={getSnippetEditUrl(snippet)}
+				className="snippet-name"
+				title={getSnippetDisplayName(snippet)}
+			>
+				{getSnippetDisplayName(snippet)}
+			</a>
+			: <span className="snippet-name" title={getSnippetDisplayName(snippet)}>
+				{getSnippetDisplayName(snippet)}
+			</span>}
 
 		{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
 	</>
@@ -145,43 +154,6 @@ export const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 		</span>
 		: <>&#8212;</>
 
-export const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
-	const [value, setValue] = useState(snippet.priority)
-	const snippetsAPI = useSnippetsAPI()
-	const { refreshSnippetsList } = useSnippetsList()
-	const id = `snippet-${snippet.id}-priority`
-
-	const handleUpdate = () => {
-		snippetsAPI.update({ ...snippet, priority: value })
-			.then(response => {
-				if (response.id === snippet.id) {
-					setValue(response.priority)
-				}
-			})
-			.then(refreshSnippetsList)
-			.catch(handleUnknownError)
-	}
-
-	return (
-		<form onSubmit={event => {
-			event.preventDefault()
-			handleUpdate()
-		}}>
-			<input
-				id={id}
-				type="number"
-				className="snippet-priority"
-				value={value}
-				step="1"
-				onBlur={handleUpdate}
-				aria-label={__('Snippet priority', 'code-snippets')}
-				onChange={event => setValue(Number(event.target.value))}
-				disabled={snippet.locked || snippet.trashed}
-			/>
-		</form>
-	)
-}
-
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
@@ -221,7 +193,7 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 		id: 'priority',
 		title: __('Priority', 'code-snippets'),
 		sortedValue: snippet => snippet.priority,
-		render: snippet => <PriorityColumn snippet={snippet} />
+		render: snippet => <SnippetPriorityInput snippet={snippet} />
 	}
 ]
 

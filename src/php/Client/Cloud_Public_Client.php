@@ -104,9 +104,11 @@ class Cloud_Public_Client {
 
 		$data = unpack_response_body( $response );
 
-		return is_array( $data ) && ! empty( $data['success'] ) && is_array( $data['snippet'] ?? null )
-			? new Cloud_Snippet( $data['snippet'] )
-			: null;
+		if ( ! is_array( $data ) || empty( $data['success'] ) || ! is_array( $data['snippet'] ?? null ) ) {
+			return null;
+		}
+
+		return new Cloud_Snippet( $data['snippet'] );
 	}
 
 	/**
@@ -151,6 +153,6 @@ class Cloud_Public_Client {
 			[ 'headers' => $this->connection->get_request_headers() ]
 		);
 
-		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ) );
+		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ), $page );
 	}
 }

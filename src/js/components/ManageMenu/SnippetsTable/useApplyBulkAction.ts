@@ -94,7 +94,7 @@ const applyAndRefresh = async (
 
 export const useApplyBulkAction = (
 	allSnippets: Snippet[]
-): (action: SnippetsTableAction, selected: Set<Snippet['id']>) => Promise<void> => {
+): (action: SnippetsTableAction | undefined, selected: Set<Snippet['id']>) => Promise<void> => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
@@ -140,7 +140,9 @@ export const useApplyBulkAction = (
 					snippet => api.delete({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 				break
+
+			case undefined:
+				break
 		}
 	}
 }
-

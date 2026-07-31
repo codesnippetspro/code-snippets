@@ -2,9 +2,12 @@
 
 namespace Code_Snippets\REST_API;
 
+use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
+use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_REST_Server;
 use WP_UnitTest_Factory;
 
 /**
@@ -12,7 +15,7 @@ use WP_UnitTest_Factory;
  *
  * @group rest-api
  */
-class REST_API_Cloud_Test extends UnitTestCase {
+class REST_API_Cloud_Test extends AdminUnitTestCase {
 
 	/**
 	 * Default per-page value used when none is configured.
@@ -27,13 +30,6 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	protected string $endpoint = '/code-snippets/v1/cloud/snippets';
 
 	/**
-	 * Administrator user ID.
-	 *
-	 * @var int
-	 */
-	protected static int $admin_user_id;
-
-	/**
 	 * Most recent outbound cloud search URL.
 	 *
 	 * @var string
@@ -41,19 +37,11 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	private string $requested_url = '';
 
 	/**
-	 * Set up fixtures before any tests run.
+	 * REST server that was active before the current test.
 	 *
-	 * @param WP_UnitTest_Factory $factory Factory object.
-	 *
-	 * @return void
+	 * @var WP_REST_Server|null
 	 */
-	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
-		self::$admin_user_id = $factory->user->create(
-			[
-				'role' => 'administrator',
-			]
-		);
-	}
+	private ?WP_REST_Server $rest_server = null;
 
 	/**
 	 * Set up before each test.
@@ -62,10 +50,11 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
+		global $wp_rest_server;
 
-		wp_set_current_user( self::$admin_user_id );
 		$this->requested_url = '';
-		delete_user_option( self::$admin_user_id, 'snippets_per_page' );
+		$this->rest_server = $wp_rest_server ?? null;
+		delete_user_option( $this->get_user_id(), 'snippets_per_page' );
 		add_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ], 10, 3 );
 	}
 
@@ -75,8 +64,11 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function tear_down() {
+		global $wp_rest_server;
+
 		remove_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ] );
-		delete_user_option( self::$admin_user_id, 'snippets_per_page' );
+		delete_user_option( $this->get_user_id(), 'snippets_per_page' );
+		$wp_rest_server = $this->rest_server;
 
 		parent::tear_down();
 	}
@@ -91,7 +83,7 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 * @return mixed
 	 */
 	public function mock_cloud_search_request( $preempt, array $parsed_args, string $url ) {
-		if ( false === strpos( $url, 'public/search' ) ) {
+		if ( false === strpos( $url, 'public/search' ) && false === strpos( $url, 'public/featured' ) ) {
 			return $preempt;
 		}
 
@@ -146,11 +138,17 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 * Make a REST API request to the cloud endpoint.
 	 *
 	 * @param array<string, bool|int|string> $params Request params.
+	 * @param string                         $route  Optional route suffix.
 	 *
 	 * @return WP_REST_Response
 	 */
-	private function make_request( array $params ): WP_REST_Response {
-		$request = new WP_REST_Request( 'GET', $this->endpoint );
+	private function make_request( array $params, string $route = '' ): WP_REST_Response {
+		global $wp_rest_server;
+
+		$wp_rest_server = null;
+		rest_get_server();
+
+		$request = new WP_REST_Request( 'GET', $this->endpoint . $route );
 		$request->add_header( 'Access-Control', $this->get_connection_token() );
 
 		foreach ( $params as $key => $value ) {
@@ -180,7 +178,7 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_get_items_uses_snippets_per_page_user_option(): void {
-		update_user_option( self::$admin_user_id, 'snippets_per_page', 7 );
+		update_user_option( $this->get_user_id(), 'snippets_per_page', 7 );
 
 		$response = $this->make_request(
 			[
@@ -202,7 +200,7 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_get_items_caps_snippets_per_page_user_option_at_one_hundred(): void {
-		update_user_option( self::$admin_user_id, 'snippets_per_page', 250 );
+		update_user_option( $this->get_user_id(), 'snippets_per_page', 250 );
 
 		$response = $this->make_request(
 			[
@@ -224,7 +222,7 @@ class REST_API_Cloud_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_get_items_respects_explicit_per_page_request(): void {
-		update_user_option( self::$admin_user_id, 'snippets_per_page', 7 );
+		update_user_option( $this->get_user_id(), 'snippets_per_page', 7 );
 
 		$response = $this->make_request(
 			[
@@ -239,5 +237,41 @@ class REST_API_Cloud_Test extends UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '3', $query_args['per_page'] ?? null );
 		$this->assertSame( '1', $query_args['page'] ?? null );
+	}
+
+	/**
+	 * Featured snippets use the default cloud search page size.
+	 *
+	 * @return void
+	 */
+	public function test_get_featured_items_uses_default_cloud_search_page_size(): void {
+		$expected_per_page = Manage_Menu::get_cloud_search_per_page();
+
+		$response = $this->make_request( [], '/featured' );
+
+		parse_str( (string) wp_parse_url( $this->requested_url, PHP_URL_QUERY ), $query_args );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( (string) $expected_per_page, $query_args['per_page'] ?? null );
+	}
+
+	/**
+	 * Featured snippets honour the cloud search page-size filter.
+	 *
+	 * @return void
+	 */
+	public function test_get_featured_items_uses_filtered_cloud_search_page_size(): void {
+		$filter = static fn() => 6;
+		add_filter( 'code_snippets/cloud_search/per_page', $filter );
+
+		$this->assertSame( 6, Manage_Menu::get_cloud_search_per_page() );
+
+		$response = $this->make_request( [], '/featured' );
+
+		remove_filter( 'code_snippets/cloud_search/per_page', $filter );
+		parse_str( (string) wp_parse_url( $this->requested_url, PHP_URL_QUERY ), $query_args );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '6', $query_args['per_page'] ?? null );
 	}
 }

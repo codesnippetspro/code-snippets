@@ -29,7 +29,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 	return (
 		<div className="snippet-editor-sidebar">
 			<div className="box">
-				{snippet.id && !isCondition(snippet) && <ActivationSwitch />}
+				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
 
 				{isNetworkAdmin() && <MultisiteSharingSettings />}
 
@@ -40,8 +40,8 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 				<ShortcodeInfo />
 				<PriorityInput />
 
-				{snippet.id && (
-					<div className="row-actions visible inline-form-field">
+				{snippet.id
+					? <div className="row-actions visible inline-form-field">
 						<ExportButtons />
 						<DeleteButton
 							snippet={snippet}
@@ -54,8 +54,9 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 								handleRequestError(error, __('Could not delete snippet.', 'code-snippets'))
 							}}
 						/>
-						{snippet.id ? <LockControl /> : null}
-					</div>)}
+						<LockControl />
+					</div>
+					: null}
 			</div>
 
 			<p className="submit">

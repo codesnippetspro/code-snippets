@@ -22,12 +22,12 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Handle for JavaScript asset file.
 	 */
-	public const JS_HANDLE = 'code-snippets-edit-menu';
+	private const JS_HANDLE = 'code-snippets-edit-menu';
 
 	/**
 	 * Handle for CSS asset file.
 	 */
-	public const CSS_HANDLE = 'code-snippets-edit';
+	private const CSS_HANDLE = 'code-snippets-edit';
 
 	/**
 	 * The snippet object currently being edited
@@ -68,6 +68,19 @@ class Edit_Menu extends Admin_Menu {
 			_x( 'Add New', 'menu label', 'code-snippets' ),
 			__( 'Create New Snippet', 'code-snippets' )
 		);
+	}
+
+	/**
+	 * Retrieve every hookname registered by this menu, including the separate
+	 * "Add New" page, so screen-based checks recognise both editor views.
+	 *
+	 * @return string[]
+	 */
+	public function get_hooknames(): array {
+		return [
+			$this->get_hookname(),
+			get_plugin_page_hookname( code_snippets()->get_menu_slug( 'add' ), $this->base_slug ),
+		];
 	}
 
 	/**

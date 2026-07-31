@@ -27,30 +27,34 @@ function code_snippets_deactivation_notice() {
 	$required_php_version = '7.4';
 
 	if ( version_compare( phpversion(), $required_php_version, '<' ) ) {
-		echo '<div class="error fade"><p><strong>';
-		// translators: %s: required PHP version number.
-		echo esc_html( sprintf( __( 'Code Snippets requires PHP %s or later.', 'code-snippets' ), $required_php_version ) );
-		echo '</strong><br>';
+		$plugins[] = plugin_basename( dirname( dirname( __FILE__ ) ) . '/code-snippets.php' );
+
+		printf(
+			'<div class="code-snippets-notice error fade" role="region" aria-label="%s"><p><strong>%s</strong>',
+			esc_attr__( 'Code Snippets PHP version notice', 'code-snippets' ),
+			// translators: %s: required PHP version number.
+			esc_html( sprintf( __( 'Code Snippets requires PHP %s or later.', 'code-snippets' ), $required_php_version ) )
+		);
 
 		$update_url = function_exists( 'wp_get_default_update_php_url' ) ?
 			wp_get_default_update_php_url() :
 			'https://wordpress.org/support/update-php/';
 
 		// translators: %s: Update PHP URL.
-		$text = __( 'Please <a href="%s">upgrade your server to the latest version of PHP</a> to continue using Code Snippets.', 'code-snippets' );
+		$update_text = __( 'Please <a href="%s">upgrade your server to the latest version of PHP</a> to continue using Code Snippets.', 'code-snippets' );
 
-		echo wp_kses( sprintf( $text, $update_url ), array( 'a' => array( 'href' => array() ) ) );
+		echo '<br>', wp_kses( sprintf( $update_text, $update_url ), array( 'a' => array( 'href' => array() ) ) );
 		echo '</p></div>';
-
-		$plugins[] = plugin_basename( dirname( dirname( __FILE__ ) ) . '/code-snippets.php' );
 	}
 
 	if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
-		echo '<div class="error fade"><p>';
-		esc_html_e( 'Another version of Code Snippets appears to be installed. Deactivating this version.', 'code-snippets' );
-		echo '</p></div>';
-
 		$plugins[] = 'code-snippets/code-snippets.php';
+
+		printf(
+			'<div class="code-snippets-notice error fade" role="region" aria-label="%s"><p>%s</p></div>',
+			esc_attr__( 'Code Snippets duplicate plugin notice', 'code-snippets' ),
+			esc_html__( 'Another version of Code Snippets appears to be installed. Deactivating this version.', 'code-snippets' )
+		);
 	}
 
 	if ( $plugins ) {

@@ -80,7 +80,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 
 	useEffect(() => {
 		setCodeEditorInstance(editorInstance => {
-			if (textareaRef.current && !editorInstance) {
+			if (textareaRef.current && !editorInstance && window.wp.codeEditor) {
 				editorInstance = window.wp.codeEditor.initialize(textareaRef.current)
 
 				editorInstance.codemirror.on('changes', instance => {

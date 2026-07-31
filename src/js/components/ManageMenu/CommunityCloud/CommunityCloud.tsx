@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
 import { fetchConstQueryParam, updateQueryParams } from '../../../utils/urls'
-import { SnippetsIcon } from '../../common/icons/ToolbarIcons'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
-import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { SubnavTabs } from '../../common/SubnavTabs'
+import { WithCloudSnippetDownloadsContext } from '../../common/cloud/WithCloudSnippetDownloadsContext'
 import { WithCloudSearchContext, useCloudSearch } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
 
@@ -14,6 +13,11 @@ const TAB_QUERY_PARAM = 'tab'
 const TABS = ['snippets', 'bundles'] as const
 
 type CommunityTab = typeof TABS[number]
+
+const TAB_LABELS: Record<CommunityTab, string> = {
+	snippets: __('Snippets', 'code-snippets'),
+	bundles: __('Bundles', 'code-snippets')
+}
 
 const CommunityCloudInner = () => {
 	const [currentTab, setCurrentTab] =
@@ -29,18 +33,12 @@ const CommunityCloudInner = () => {
 				tabs={[
 					{
 						name: 'snippets',
-						label: __('Code Snippets', 'code-snippets'),
-						icon: <SnippetsIcon aria-hidden="true" />,
+						label: TAB_LABELS.snippets,
 						count: searchResults?.totalItems
 					},
 					{
 						name: 'bundles',
-						label: __('Bundles', 'code-snippets'),
-						icon:
-							<span
-								className="dashicons dashicons-screenoptions snippet-type-icon"
-								aria-hidden="true"
-							></span>,
+						label: TAB_LABELS.bundles,
 						pro: true
 					}
 				]}
@@ -49,27 +47,38 @@ const CommunityCloudInner = () => {
 					updateQueryParams({ [TAB_QUERY_PARAM]: tab })
 					setCurrentTab(tab)
 				}}
-				endContent={
-					<li className="snippet-view-toggle-nav-item">
-						<SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
-					</li>
-				}
 			/>
 
 			<ScreenMetaSlot />
 
-			<h2>{__('Community Cloud', 'code-snippets')}</h2>
+			<div className="snippets-page-header">
+				<h1>{sprintf(
+					// translators: %s: label of the currently selected community cloud tab.
+					__('Community Cloud: %s', 'code-snippets'),
+					TAB_LABELS[currentTab]
+				)}</h1>
+			</div>
 
 			<hr className="wp-header-end" />
 
-			{'snippets' === currentTab && <CloudSearch snippetView={snippetView} />}
+			<p className="snippets-page-description">
+				{__(
+					'Search the community cloud and download user-shared snippets directly to your site.',
+					'code-snippets'
+				)}
+			</p>
+
+			{'snippets' === currentTab && (
+				<CloudSearch snippetView={snippetView} setSnippetView={setSnippetView} />)}
 		</>
 	)
 }
 
 export const CommunityCloud = () =>
 	<WithRestAPIContext>
-		<WithCloudSearchContext>
-			<CommunityCloudInner />
-		</WithCloudSearchContext>
+		<WithCloudSnippetDownloadsContext>
+			<WithCloudSearchContext>
+				<CommunityCloudInner />
+			</WithCloudSearchContext>
+		</WithCloudSnippetDownloadsContext>
 	</WithRestAPIContext>

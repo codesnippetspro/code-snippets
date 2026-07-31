@@ -1,3 +1,6 @@
+@use 'checkbox';
+@use 'theme';
+
 .code-snippets-cards {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
@@ -7,8 +10,8 @@
 
 .code-snippets-card {
 	background: #fff;
-	border: 1px solid #c3c4c7;
-	border-radius: 6px;
+	border: 1px solid theme.$control-border;
+	border-radius: 5px;
 	margin: 0;
 	display: flex;
 	flex-flow: column;
@@ -16,7 +19,7 @@
 
 	a {
 		text-decoration: none;
-		color: #2271b1;
+		color: theme.$accent;
 	}
 
 	.card-inner {
@@ -25,19 +28,46 @@
 
 	footer {
 		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		gap: 8px;
-		background: #f6f7f7;
+		background: #f7f7f8;
 		margin-block-start: auto;
-		border-block-start: 1px solid #c3c4c7;
+		border-block-start: 1px solid theme.$control-border;
 		padding-inline: 24px;
 		padding-block: 12px;
-		align-items: center;
-		border-end-start-radius: 6px;
-		border-end-end-radius: 6px;
+		border-end-start-radius: 5px;
+		border-end-end-radius: 5px;
 	}
 
-	&.is-selectable,
-	&.has-corner-controls {
+	// The status label shrinks and clips away under pressure rather than
+	// pushing the action buttons onto a second line.
+	.snippet-card-footer-status {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: 0 1 auto;
+		min-inline-size: 0;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.snippet-card-footer-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: nowrap;
+		gap: 8px;
+		flex: 0 0 auto;
+
+		.button:not(.kebab-menu-trigger) {
+			min-inline-size: 103px;
+			text-align: center;
+			justify-content: center;
+		}
+	}
+
+	&.is-selectable {
 		position: relative;
 	}
 
@@ -54,16 +84,16 @@
 		}
 	}
 
-	&.is-selectable .card-inner h3 {
+	input[type='checkbox'].snippet-card-select {
+		@include checkbox.canonical;
+	}
+
+	&.is-selectable .card-inner > h3 {
 		margin-inline-end: 48px;
 	}
 
-	&.has-corner-controls .card-inner h3 {
-		margin-inline-end: 96px;
-	}
-
 	&.is-selected {
-		border-color: #2271b1;
-		box-shadow: 0 0 0 1px #2271b1;
+		border-color: theme.$accent;
+		box-shadow: 0 0 0 1px theme.$accent;
 	}
 }

@@ -50,7 +50,7 @@ abstract class Model {
 	 */
 	public function set_fields( $data ) {
 		// Only accept arrays or objects.
-		if ( ! $data || is_string( $data ) ) {
+		if ( ! is_array( $data ) && ! is_object( $data ) ) {
 			return;
 		}
 

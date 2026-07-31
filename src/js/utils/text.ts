@@ -24,7 +24,16 @@ export const truncateWords = (text: string, wordCount: number): string => {
 		: text
 }
 
-export const stripTags = (text: string): string =>
-	text
-		.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '')
-		.replace(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi, '')
+export const stripTags = (text: string): string => {
+	const document = new DOMParser().parseFromString(text, 'text/html')
+	const blockSelector = 'p,div,li,br,h1,h2,h3,h4,h5,h6,tr,td,th,ul,ol,blockquote,table,pre,hr,' +
+		'dl,dt,dd,section,article,header,footer,figure,figcaption,' +
+		'address,aside,nav,main,fieldset,form,details,summary,dialog,hgroup,caption'
+
+	document.body.querySelectorAll('script,style').forEach(element => element.remove())
+	document.body
+		.querySelectorAll(blockSelector)
+		.forEach(element => element.after(document.createTextNode(' ')))
+
+	return (document.body.textContent ?? '').replace(/\s+/g, ' ').trim()
+}

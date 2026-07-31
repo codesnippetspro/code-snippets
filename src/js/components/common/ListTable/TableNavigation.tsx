@@ -49,9 +49,16 @@ interface BulkActionSelectProps<A extends string> {
 	actions: ListTableAction<A>[]
 	selectedAction: A | undefined
 	setSelectedAction: Dispatch<SetStateAction<A | undefined>>
+	label: string
 }
 
-const BulkActionSelect = <A extends string>({ which, actions, selectedAction, setSelectedAction }: BulkActionSelectProps<A>) =>
+const BulkActionSelect = <A extends string>({
+	which,
+	actions,
+	selectedAction,
+	setSelectedAction,
+	label
+}: BulkActionSelectProps<A>) =>
 	<select
 		name={`action${'bottom' === which ? '-2' : ''}`}
 		id={`bulk-action-selector-${which}`}
@@ -64,7 +71,7 @@ const BulkActionSelect = <A extends string>({ which, actions, selectedAction, se
 			}
 		}}
 	>
-		<option value="-1">{__('Bulk actions', 'code-snippets')}</option>
+		<option value="-1">{label}</option>
 		<BulkActionSelectOptions actions={actions} />
 	</select>
 
@@ -72,6 +79,7 @@ interface BulkActionsProps<K extends Key, A extends string> extends Required<Pic
 	onActionSuccess?: () => void
 	disabled?: boolean
 	selected: Set<K>
+	selectLabel?: string
 }
 
 const BulkActions = function BulkActions<K extends Key, A extends string>({
@@ -80,7 +88,8 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 	selected,
 	doAction,
 	onActionSuccess,
-	disabled
+	disabled,
+	selectLabel
 }: BulkActionsProps<K, A>) {
 	const [selectedAction, setSelectedAction] = useState<A>()
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
@@ -106,7 +115,10 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 				{__('Select bulk action', 'code-snippets')}
 			</label>
 
-			<BulkActionSelect {...{ which, actions, selectedAction, setSelectedAction }} />
+			<BulkActionSelect
+				{...{ which, actions, selectedAction, setSelectedAction }}
+				label={selectLabel ?? __('Bulk actions', 'code-snippets')}
+			/>
 
 			<SubmitButton
 				id={`doaction${'bottom' === which ? '-2' : ''}`}
@@ -122,6 +134,36 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 	)
 }
 
+export interface SelectAllControlProps<K extends Key> {
+	keys: K[]
+	selected: Set<K>
+	setSelected: Dispatch<SetStateAction<Set<K>>>
+}
+
+export const SelectAllControl = <K extends Key>({
+	keys,
+	selected,
+	setSelected
+}: SelectAllControlProps<K>) =>
+	<label className="tablenav-select-all">
+		<input
+			type="checkbox"
+			checked={0 < keys.length && keys.every(key => selected.has(key))}
+			disabled={0 === keys.length}
+			aria-label={__('Select all items', 'code-snippets')}
+			onChange={event => {
+				const { checked } = event.target
+
+				setSelected(previous => {
+					const updated = new Set(previous)
+					keys.forEach(key => checked ? updated.add(key) : updated.delete(key))
+					return updated
+				})
+			}}
+		/>
+		{__('Select all', 'code-snippets')}
+	</label>
+
 export interface TableNavProps<K extends Key, A extends string> extends TableNavigationProps<K, A> {
 	which: 'top' | 'bottom'
 }
@@ -135,9 +177,14 @@ export const TableNav = <K extends Key, A extends string>({
 	totalItems,
 	totalPages = 0,
 	extraTableNav,
+	endTableNav,
+	selectAllKeys,
 	...paginationProps
-}: TableNavProps<K, A>) =>
-	extraTableNav || 0 < totalItems && actions
+}: TableNavProps<K, A>) => {
+	const isTop = 'top' === which
+	const hasBulkActions = 0 < totalItems && Boolean(actions)
+
+	return isTop && Boolean(extraTableNav ?? endTableNav) || hasBulkActions || 0 < totalPages
 		? <div className={`tablenav ${which}`}>
 
 			{0 < totalItems && actions && doAction && (
@@ -150,12 +197,24 @@ export const TableNav = <K extends Key, A extends string>({
 					onActionSuccess={() => setSelected(new Set())}
 				/>)}
 
-			{extraTableNav?.(which)}
-			{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
+			{isTop && selectAllKeys
+				? <SelectAllControl keys={selectAllKeys} selected={selected} setSelected={setSelected} />
+				: null}
+
+			{isTop ? extraTableNav?.(which) : null}
+
+			{0 < totalPages || isTop && endTableNav
+				? <div className="tablenav-end-group">
+					{0 < totalPages &&
+						<TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
+					{isTop ? endTableNav?.(which) : null}
+				</div>
+				: null}
 
 			<br className="clear" />
 		</div>
 		: null
+}
 
 export interface TableNavigationProps<K extends Key, A extends string> extends ListTableNavProps<K, A>,
 	Omit<TablePaginationProps, 'totalPages' | 'which'> {
@@ -163,6 +222,7 @@ export interface TableNavigationProps<K extends Key, A extends string> extends L
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 	totalItems: number
 	totalPages: number | undefined
+	selectAllKeys?: K[]
 }
 
 export const TableNavigation = <K extends Key, A extends string>({

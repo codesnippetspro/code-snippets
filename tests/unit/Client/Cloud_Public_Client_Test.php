@@ -109,6 +109,27 @@ class Cloud_Public_Client_Test extends UnitTestCase {
 	}
 
 	/**
+	 * A single snippet description is sanitised while decoding the response.
+	 *
+	 * @return void
+	 */
+	public function test_get_single_snippet_sanitizes_description(): void {
+		$this->mock_response = $this->json_response(
+			[
+				'snippet' => [
+					'id'          => 5,
+					'description' => '<strong>Allowed</strong><script>alert("unsafe")</script>',
+				],
+				'success' => true,
+			]
+		);
+
+		$result = $this->client->get_cloud_snippet( 5 );
+
+		$this->assertSame( '<strong>Allowed</strong>alert("unsafe")', $result->description );
+	}
+
+	/**
 	 * A failed/empty single-snippet request returns null without erroring.
 	 *
 	 * @return void

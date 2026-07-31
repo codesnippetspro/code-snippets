@@ -39,7 +39,7 @@ final class Preferences_REST_Controller extends REST_Controller {
 	/**
 	 * The snippet view shown when no preference has been saved.
 	 */
-	public const DEFAULT_SNIPPET_VIEW = 'card';
+	public const DEFAULT_SNIPPET_VIEW = 'table';
 
 	/**
 	 * Retrieve the current snippet view preference, falling back to the

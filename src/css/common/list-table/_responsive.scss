@@ -1,0 +1,190 @@
+@use '../theme';
+
+// Toolbar squeeze: above the mobile breakpoint the row never wraps —
+// components shrink gracefully instead (flex-wrap would otherwise win
+// before flex-shrink ever engages). Wrapping remains the small-screen
+// fallback only.
+.snippets-list-view .tablenav {
+	flex-wrap: wrap;
+
+	@media (width > 782px) {
+		flex-wrap: nowrap;
+	}
+
+	.alignleft.actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		float: none;
+		margin: 0;
+		padding: 0;
+		flex: 0 1 auto;
+		min-inline-size: 0;
+
+		select {
+			inline-size: auto;
+			flex: 1 1 154px;
+			min-inline-size: 104px;
+			max-inline-size: 154px;
+		}
+	}
+
+	.tablenav-select-all {
+		flex-shrink: 0;
+	}
+
+	.snippets-search-area {
+		inline-size: auto;
+		flex: 1 1 237px;
+		min-inline-size: 150px;
+		max-inline-size: 237px;
+
+		// The inner search row never wraps — the field shrinks instead.
+		search,
+		form,
+		p.search-box {
+			display: flex;
+			align-items: center;
+			flex-wrap: nowrap;
+			gap: 8px;
+			min-inline-size: 0;
+			margin: 0;
+		}
+
+		input[type='search'] {
+			min-inline-size: 110px;
+		}
+
+		.button {
+			flex: 0 0 auto;
+		}
+	}
+
+	// Pagination labels stay on one line while the row squeezes.
+	.tablenav-pages,
+	.tablenav-pages .paging-input,
+	.tablenav-pages .tablenav-paging-text {
+		white-space: nowrap;
+		flex-wrap: nowrap;
+	}
+
+	// Square pagination tiles with a compact page-number box between them.
+	// Enabled arrows pick up the accent border/text from the shared control
+	// styling; disabled arrows keep the native WordPress treatment.
+	.pagination-links {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		.button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			inline-size: 38px;
+			block-size: 38px;
+			min-block-size: 38px;
+			box-sizing: border-box;
+			padding: 0;
+			margin: 0;
+			border-radius: 5.6px;
+		}
+
+		a.button {
+			color: theme.$accent;
+		}
+
+		.paging-input {
+			gap: 8px;
+			margin-inline: 4px;
+		}
+
+		.current-page {
+			inline-size: 45px;
+			min-block-size: 38px;
+			box-sizing: border-box;
+			margin: 0;
+			text-align: center;
+			color: #2c3337;
+		}
+
+		.tablenav-paging-text {
+			font-size: 14px;
+			color: #646970;
+		}
+	}
+
+	.tablenav-pages .displaying-num {
+		font-size: 14px;
+		color: #646970;
+		white-space: nowrap;
+	}
+
+	// The trailing float-clearing break would otherwise register as an
+	// empty flex item and contribute a stray column gap.
+	br.clear {
+		display: none;
+	}
+
+	.tablenav-end-group {
+		flex: 0 1 auto;
+		min-inline-size: 0;
+	}
+
+	// The item count is the first thing to give way when space runs short.
+	@media (width <= 1240px) {
+		.tablenav-pages .displaying-num {
+			display: none;
+		}
+	}
+}
+
+// Tablet collapse (iPad-class widths): rather than let the single toolbar row
+// overflow, break the top toolbar onto two rows. Row one keeps the working
+// controls — bulk actions, the tag filter and the search box (stretched to
+// fill the remainder). Row two carries the selection + navigation cluster:
+// "Select all" at the start, the pagination + view-toggle group pinned to the
+// end. A forced full-width break keeps the split deterministic regardless of
+// content width.
+@media (782px < width <= 1210px) {
+	.snippets-list-view .tablenav.top {
+		flex-wrap: wrap;
+		row-gap: 8px;
+
+		// Both rows spread edge-to-edge: the first control sits at the start,
+		// the last at the end, with the slack distributed between.
+		justify-content: space-between;
+
+		// Row one: bulk actions, tag filter, search — at its design width so the
+		// space-between slack lands in the gaps rather than stretching the field.
+		.bulkactions {
+			order: 1;
+		}
+
+		.alignleft.actions:not(.bulkactions) {
+			order: 2;
+		}
+
+		.snippets-search-area {
+			order: 3;
+			flex: 0 1 237px;
+			inline-size: 237px;
+			max-inline-size: 100%;
+		}
+
+		&::after {
+			content: '';
+			order: 4;
+			flex-basis: 100%;
+			block-size: 0;
+		}
+
+		// Row two: select all at the start, pagination + view-toggle at the end.
+		.tablenav-select-all {
+			order: 5;
+		}
+
+		.tablenav-end-group {
+			order: 6;
+		}
+	}
+}

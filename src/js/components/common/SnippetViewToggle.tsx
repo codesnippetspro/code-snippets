@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
+import { CardViewIcon, TableViewIcon } from './icons/ViewIcons'
 import type { SnippetView } from '../../types/SnippetView'
 
 export interface SnippetViewToggleProps {
@@ -9,31 +10,31 @@ export interface SnippetViewToggleProps {
 	className?: string
 }
 
-/**
- * Switch between the table and card snippet views, styled like the
- * snippet activation toggle. Checked means the card view is active.
- */
 export const SnippetViewToggle: React.FC<SnippetViewToggleProps> = ({ snippetView, setSnippetView, className }) =>
-	<div className={classnames('snippet-view-toggle', className)}>
-		<span id="snippet-view-toggle-table-label" aria-hidden="true">
-			{__('Table', 'code-snippets')}
-		</span>
+	<div
+		className={classnames('snippet-view-toggle', className)}
+		role="group"
+		aria-label={__('Snippet view', 'code-snippets')}
+	>
+		<button
+			type="button"
+			className={classnames('snippet-view-toggle-option', { 'active-view': 'card' === snippetView })}
+			aria-pressed={'card' === snippetView}
+			title={__('Switch to card view', 'code-snippets')}
+			onClick={() => setSnippetView('card')}
+		>
+			<CardViewIcon aria-hidden="true" />
+			<span className="screen-reader-text">{__('Card view', 'code-snippets')}</span>
+		</button>
 
-		<input
-			id="snippet-view-toggle-switch"
-			type="checkbox"
-			role="switch"
-			className="switch"
-			checked={'card' === snippetView}
-			aria-checked={'card' === snippetView}
-			title={'card' === snippetView
-				? __('Switch to table view', 'code-snippets')
-				: __('Switch to card view', 'code-snippets')}
-			aria-label={__('Display snippets as cards instead of a table', 'code-snippets')}
-			onChange={event => setSnippetView(event.target.checked ? 'card' : 'table')}
-		/>
-
-		<span id="snippet-view-toggle-card-label" aria-hidden="true">
-			{__('Cards', 'code-snippets')}
-		</span>
+		<button
+			type="button"
+			className={classnames('snippet-view-toggle-option', { 'active-view': 'table' === snippetView })}
+			aria-pressed={'table' === snippetView}
+			title={__('Switch to table view', 'code-snippets')}
+			onClick={() => setSnippetView('table')}
+		>
+			<TableViewIcon aria-hidden="true" />
+			<span className="screen-reader-text">{__('Table view', 'code-snippets')}</span>
+		</button>
 	</div>

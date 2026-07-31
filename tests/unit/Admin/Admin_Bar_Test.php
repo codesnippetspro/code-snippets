@@ -2,12 +2,11 @@
 
 namespace Code_Snippets\Admin;
 
+use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Integration\Admin_Bar;
 use Code_Snippets\Model\Snippet;
-use Code_Snippets\UnitTestCase;
 use ReflectionClass;
 use WP_Admin_Bar;
-use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\Settings\update_setting;
@@ -17,29 +16,7 @@ use function Code_Snippets\Settings\update_setting;
  *
  * @group admin-bar
  */
-class Admin_Bar_Test extends UnitTestCase {
-
-	/**
-	 * Administrator user ID.
-	 *
-	 * @var int
-	 */
-	protected static int $admin_user_id;
-
-	/**
-	 * Set up fixtures before any tests run.
-	 *
-	 * @param WP_UnitTest_Factory $factory Factory object.
-	 *
-	 * @return void
-	 */
-	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
-		self::$admin_user_id = $factory->user->create(
-			[
-				'role' => 'administrator',
-			]
-		);
-	}
+class Admin_Bar_Test extends AdminUnitTestCase {
 
 	/**
 	 * Set up before each test.
@@ -48,8 +25,6 @@ class Admin_Bar_Test extends UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
-
-		wp_set_current_user( self::$admin_user_id );
 
 		add_filter( 'show_admin_bar', '__return_true' );
 
