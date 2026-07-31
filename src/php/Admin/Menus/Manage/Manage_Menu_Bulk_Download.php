@@ -17,7 +17,7 @@ class Manage_Menu_Bulk_Download {
 	 * Register hooks for this class.
 	 */
 	public function __construct() {
-		add_action( 'admin_init', [ $this, 'handle_bulk_download_request' ] );
+		add_action( 'admin_init', [ $this, 'handle' ] );
 	}
 
 	/**
