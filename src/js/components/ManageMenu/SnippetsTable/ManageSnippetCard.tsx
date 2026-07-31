@@ -12,8 +12,9 @@ import { useDeleteSnippet } from '../../common/DeleteButton'
 import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../common/KebabMenu'
 import { SnippetCard } from '../../common/SnippetCard'
 import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
+import { SnippetPriorityInput } from '../../common/SnippetPriorityInput'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import { ActivateColumn, PriorityColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
+import { ActivateColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
 import type { Snippet } from '../../../types/Snippet'
 
 interface SnippetCardActionsProps {
@@ -128,7 +129,7 @@ const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 
 				<KebabMenuRow className="kebab-menu-priority">
 					<label htmlFor={`snippet-${snippet.id}-priority`}>{__('Priority', 'code-snippets')}</label>
-					<PriorityColumn snippet={snippet} />
+					<SnippetPriorityInput snippet={snippet} />
 				</KebabMenuRow>
 
 				{canModify && (snippet.trashed || !snippet.locked)

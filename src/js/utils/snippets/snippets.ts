@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n'
-import { isNetworkAdmin } from '../screen'
+import { isLicensed, isNetworkAdmin } from '../screen'
 import { buildUrl } from '../urls'
 import { parseSnippetObject } from './objects'
 import type { SnippetSchema } from '../../types/schema/SnippetSchema'
@@ -52,7 +52,7 @@ export const getSnippetEditUrl = (snippet?: Pick<Snippet, 'id'>): string | undef
 		: window.CODE_SNIPPETS?.urls.addNew
 
 export const getSnippetAddNewUrl = (type?: SnippetType): string | undefined =>
-	type
+	type && (isLicensed() || !isProType(type))
 		? buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type })
 		: window.CODE_SNIPPETS?.urls.addNew
 

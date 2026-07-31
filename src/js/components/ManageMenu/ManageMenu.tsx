@@ -1,9 +1,10 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
 import { fetchConstQueryParam, fetchQueryParam, updateQueryParams } from '../../utils/urls'
 import { DismissibleNotice } from '../common/Notice'
 import { SUBPAGES, Toolbar } from '../common/Toolbar'
+import { UpsellPage } from '../common/UpsellDialog'
 import { CommunityCloud } from './CommunityCloud/CommunityCloud'
 import { SnippetsTable } from './SnippetsTable'
 
@@ -66,7 +67,7 @@ const PageContent: React.FC<PageContentParams> = ({ subpage }) => {
 
 		case 'blueprints':
 		case 'cloud-library':
-			return <Fragment />
+			return <UpsellPage />
 	}
 }
 

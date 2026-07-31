@@ -2,49 +2,57 @@ import React, { useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
-import { fetchConstQueryParam, updateQueryParams } from '../../../utils/urls'
+import { updateQueryParams } from '../../../utils/urls'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
-import { SubnavTabs } from '../../common/SubnavTabs'
+import { SubnavTabs, getTabFromQuery } from '../../common/SubnavTabs'
 import { WithCloudSnippetDownloadsContext } from '../../common/cloud/WithCloudSnippetDownloadsContext'
+import { UpsellPage } from '../../common/UpsellDialog'
 import { WithCloudSearchContext, useCloudSearch } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
+import type { SubnavTab} from '../../common/SubnavTabs'
 
 const TAB_QUERY_PARAM = 'tab'
-const TABS = ['snippets', 'bundles'] as const
 
-type CommunityTab = typeof TABS[number]
-
-const TAB_LABELS: Record<CommunityTab, string> = {
-	snippets: __('Snippets', 'code-snippets'),
-	bundles: __('Bundles', 'code-snippets')
-}
+const TABS: SubnavTab[] = [
+	{
+		name: 'snippets',
+		label: __('Snippets', 'code-snippets')
+	},
+	{
+		name: 'bundles',
+		label: __('Bundles', 'code-snippets'),
+		pro: true
+	}
+]
 
 const CommunityCloudInner = () => {
-	const [currentTab, setCurrentTab] =
-		useState<CommunityTab>(() => fetchConstQueryParam(TAB_QUERY_PARAM, TABS) ?? TABS[0])
+	const [currentTab, setCurrentTab] = useState(() => getTabFromQuery(TABS, TAB_QUERY_PARAM))
 	const { snippetView, setSnippetView } = useSnippetView()
 	const { searchResults } = useCloudSearch()
+
+	const TabContent = () => {
+		switch (currentTab.name) {
+			case 'snippets':
+				return <CloudSearch snippetView={snippetView} setSnippetView={setSnippetView} />
+
+			case 'bundles':
+				return <UpsellPage />
+
+			default:
+				return null
+		}
+	}
 
 	return (
 		<>
 			<SubnavTabs
 				className="community-cloud-nav"
 				ariaLabel={__('Community Cloud types', 'code-snippets')}
-				tabs={[
-					{
-						name: 'snippets',
-						label: TAB_LABELS.snippets,
-						count: searchResults?.totalItems
-					},
-					{
-						name: 'bundles',
-						label: TAB_LABELS.bundles,
-						pro: true
-					}
-				]}
+				tabs={TABS}
+				getTabCount={tab => 'snippets' === tab.name ? searchResults?.totalItems : undefined}
 				currentTab={currentTab}
 				setCurrentTab={tab => {
-					updateQueryParams({ [TAB_QUERY_PARAM]: tab })
+					updateQueryParams({ [TAB_QUERY_PARAM]: tab.name })
 					setCurrentTab(tab)
 				}}
 			/>
@@ -52,24 +60,18 @@ const CommunityCloudInner = () => {
 			<ScreenMetaSlot />
 
 			<div className="snippets-page-header">
-				<h1>{sprintf(
+				<h1>{
 					// translators: %s: label of the currently selected community cloud tab.
-					__('Community Cloud: %s', 'code-snippets'),
-					TAB_LABELS[currentTab]
-				)}</h1>
+					sprintf(__('Community Cloud: %s', 'code-snippets'), currentTab.label)}</h1>
 			</div>
 
 			<hr className="wp-header-end" />
 
 			<p className="snippets-page-description">
-				{__(
-					'Search the community cloud and download user-shared snippets directly to your site.',
-					'code-snippets'
-				)}
+				{__('Search the community cloud and download user-shared snippets directly to your site.', 'code-snippets')}
 			</p>
 
-			{'snippets' === currentTab && (
-				<CloudSearch snippetView={snippetView} setSnippetView={setSnippetView} />)}
+			<TabContent />
 		</>
 	)
 }

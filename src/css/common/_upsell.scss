@@ -40,31 +40,8 @@
 	}
 }
 
-.code-snippets-upsell-dialog {
-	background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
-	inline-size: 794px;
-	box-shadow: 0 4px 80px rgb(0 0 0 / 10%);
-	border-radius: 8px;
-	font-family: 'SF Pro', sans-serif;
-	color: #1c3f41;
-	line-height: 1.5;
-	max-block-size: unset;
-
-	.components-modal__content {
-		margin: 0;
-		padding-block: 48px;
-		padding-inline: 80px;
-	}
-
-	.components-modal__content > div:last-child {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		gap: 18px;
-		overflow: auto;
-	}
-
+.code-snippets-upsell-dialog,
+.wrap .code-snippets-upsell-page {
 	h1 {
 		font-size: 32px;
 		margin: 0;
@@ -78,6 +55,7 @@
 		margin-block: 0;
 		margin-inline: 2em;
 		font-size: 16px;
+		max-inline-size: 750px;
 	}
 
 	img {
@@ -89,6 +67,7 @@
 		inline-size: 100%;
 		grid-auto-flow: column;
 		grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+		max-inline-size: 750px;
 	}
 
 	li {
@@ -124,4 +103,36 @@
 			background-color: color.adjust(#d46f4d, $lightness: -10%);
 		}
 	}
+}
+
+.code-snippets-upsell-page,
+.code-snippets-upsell-dialog .components-modal__content {
+	margin: 0;
+	padding-block: 48px;
+	padding-inline: 80px;
+}
+
+.code-snippets-upsell-page,
+.code-snippets-upsell-dialog {
+	color: #1c3f41;
+	line-height: 1.5;
+	background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
+	box-shadow: 0 4px 80px rgb(0 0 0 / 10%);
+	border-radius: 8px;
+}
+
+.code-snippets-upsell-page,
+.code-snippets-upsell-dialog .components-modal__content > div:last-child  {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 18px;
+}
+
+.code-snippets-upsell-dialog {
+	max-block-size: unset;
+	font-family: 'SF Pro', sans-serif;
+	inline-size: 794px;
+	overflow: auto;
 }

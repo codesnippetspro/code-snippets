@@ -80,11 +80,11 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 	}
 ]
 
-interface NavProps {
+interface UpperNavProps {
 	setIsUpsellDialogOpen: (isOpen: boolean) => void
 }
 
-const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
+const UpperNav: React.FC<UpperNavProps> = ({ setIsUpsellDialogOpen }) =>
 	<div className="code-snippets-toolbar-upper">
 		<div className="logo">
 			<img
@@ -140,7 +140,7 @@ const isActiveLink = ({ pageSlug, subpage }: Readonly<NavLink>): boolean => {
 	return false
 }
 
-const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
+const LowerNav = () =>
 	<div className="code-snippets-toolbar-lower">
 		<nav aria-label={__('Main features', 'code-snippets')}>
 			<ul>
@@ -149,12 +149,6 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 						<a
 							href={link.url ?? buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: link.name })}
 							className={classnames(`${link.name}-link`, { 'active-link': isActiveLink(link) })}
-							onClick={event => {
-								if (link.pro && !isLicensed()) {
-									event.preventDefault()
-									setIsUpsellDialogOpen(true)
-								}
-							}}
 						>
 							{link.icon}
 							<span className="toolbar-nav-label">{link.label}</span>
@@ -171,7 +165,7 @@ export const Toolbar = () => {
 	return (
 		<div className="code-snippets-toolbar">
 			<UpperNav setIsUpsellDialogOpen={setIsUpsellDialogOpen} />
-			<LowerNav setIsUpsellDialogOpen={setIsUpsellDialogOpen} />
+			<LowerNav />
 			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
 		</div>
 	)
