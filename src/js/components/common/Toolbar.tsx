@@ -39,6 +39,12 @@ const UPPER_NAV_LINKS: readonly NavLink[] = [
 		url: window.CODE_SNIPPETS?.urls.welcome,
 		label: __("What's New", 'code-snippets'),
 		pageSlug: 'code-snippets-welcome'
+	},
+	{
+		name: 'import-snippets',
+		url: window.CODE_SNIPPETS?.urls.import,
+		label: __('Import', 'code-snippets'),
+		pageSlug: 'import-code-snippets'
 	}
 ]
 
