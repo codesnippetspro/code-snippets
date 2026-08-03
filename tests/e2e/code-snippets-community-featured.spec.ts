@@ -226,19 +226,12 @@ test.describe('Community Cloud Featured Snippets', () => {
 				{ name: 'Download', exact: true, includeHidden: true }
 			)).toBeDisabled()
 
-			// Assert against the state that follows the download rather than the one
-			// being torn down as it resolves.
 			const downloaded = page.waitForResponse(response => isSnippetDownloadRequest(new URL(response.url())))
 			releaseDownload()
 			await downloaded
 
 			// The card offers editing as soon as the download resolves, before the
 			// refresh that follows it has returned.
-			//
-			// Only the card is checked from here on. Replacing the focused download
-			// button with a link closes the preview on some WordPress versions and
-			// leaves it open on others, since the modal comes from the WordPress
-			// version in use rather than from this plugin.
 			await expect(cardActions.getByRole(
 				'link',
 				{ name: 'Edit', exact: true, includeHidden: true }
