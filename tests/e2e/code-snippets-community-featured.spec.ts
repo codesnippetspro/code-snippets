@@ -232,19 +232,22 @@ test.describe('Community Cloud Featured Snippets', () => {
 			releaseDownload()
 			await downloaded
 
-			// Both mounts offer editing as soon as the download resolves, before the
-			// refresh that follows it has returned. The preview stays open.
-			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
+			// The card offers editing as soon as the download resolves, before the
+			// refresh that follows it has returned.
+			//
+			// Only the card is checked from here on. Replacing the focused download
+			// button with a link closes the preview on some WordPress versions and
+			// leaves it open on others, since the modal comes from the WordPress
+			// version in use rather than from this plugin.
 			await expect(cardActions.getByRole(
 				'link',
 				{ name: 'Edit', exact: true, includeHidden: true }
 			)).toHaveCount(1)
 			expect(featuredRequests).toBeLessThan(3)
 
-			// The refresh still reports the snippet as not downloaded, and both mounts
-			// keep offering editing regardless.
+			// The refresh still reports the snippet as not downloaded, and the card
+			// keeps offering editing regardless.
 			await expect.poll(() => featuredRequests).toBeGreaterThan(1)
-			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
 			await expect(cardActions.getByRole(
 				'link',
 				{ name: 'Edit', exact: true, includeHidden: true }
