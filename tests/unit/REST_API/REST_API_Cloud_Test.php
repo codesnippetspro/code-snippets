@@ -4,11 +4,13 @@ namespace Code_Snippets\REST_API;
 
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\AdminUnitTestCase;
+use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use WP_UnitTest_Factory;
+use function Code_Snippets\save_snippet;
 
 /**
  * Tests for the Cloud REST API endpoint.
@@ -273,5 +275,45 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '6', $query_args['per_page'] ?? null );
+	}
+
+	/**
+	 * Cloud snippets already downloaded to this site are reported with their local ID.
+	 *
+	 * @return void
+	 */
+	public function test_get_items_reports_local_ids_for_downloaded_snippets(): void {
+		$local = save_snippet( new Snippet( [ 'name' => 'Downloaded snippet' ] ) );
+		$local->cloud_id = 2;
+		save_snippet( $local );
+
+		$response = $this->make_request( [ 'query' => 'test' ] );
+		$snippets = $response->get_data()['snippets'] ?? [];
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertNotEmpty( $snippets );
+
+		$local_ids = wp_list_pluck( $snippets, 'local_id', 'id' );
+
+		$this->assertSame( $local->id, $local_ids[2] ?? null );
+		$this->assertArrayHasKey( 1, $local_ids );
+		$this->assertNull( $local_ids[1] );
+	}
+
+	/**
+	 * Featured snippets report local IDs in the same way as search results.
+	 *
+	 * @return void
+	 */
+	public function test_get_featured_items_reports_local_ids_for_downloaded_snippets(): void {
+		$local = save_snippet( new Snippet( [ 'name' => 'Downloaded featured snippet' ] ) );
+		$local->cloud_id = 3;
+		save_snippet( $local );
+
+		$response = $this->make_request( [], '/featured' );
+		$snippets = $response->get_data()['snippets'] ?? [];
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( $local->id, wp_list_pluck( $snippets, 'local_id', 'id' )[3] ?? null );
 	}
 }

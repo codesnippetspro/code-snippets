@@ -70,8 +70,10 @@ class Cloud_Snippet extends Model {
 		switch ( $field ) {
 			case 'id':
 			case 'revision':
-			case 'local_id':
 				return absint( $value );
+
+			case 'local_id':
+				return is_null( $value ) ? null : absint( $value );
 
 			case 'is_owner':
 				return (bool) $value;
