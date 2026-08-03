@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
@@ -43,7 +43,7 @@ const UPPER_NAV_LINKS: readonly NavLink[] = [
 	{
 		name: 'import-snippets',
 		url: window.CODE_SNIPPETS?.urls.import,
-		label: __('Import', 'code-snippets'),
+		label: _x('Import', 'snippets', 'code-snippets'),
 		pageSlug: 'import-code-snippets'
 	}
 ]
