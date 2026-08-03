@@ -96,7 +96,7 @@ test.describe('Code Snippets Admin', () => {
 		const editedName = `${snippetName} edited`
 		await page.locator('#title').fill(editedName)
 		page.once('dialog', async dialog => {
-			expect(dialog.type()).toBe('beforeunload')
+			expect(dialog.type()).toBe('confirm')
 			await dialog.dismiss()
 		})
 		await page.evaluate(() => window.history.back())
@@ -105,11 +105,12 @@ test.describe('Code Snippets Admin', () => {
 		await expect(page.locator('#title')).toHaveValue(editedName)
 
 		page.once('dialog', async dialog => {
-			expect(dialog.type()).toBe('beforeunload')
+			expect(dialog.type()).toBe('confirm')
 			await dialog.accept()
 		})
 		await page.evaluate(() => window.history.back())
-		await expect(page).toHaveURL(/page=snippets/)
+		// The snippet was created through Add New, so that form is the entry behind it.
+		await expect(page).toHaveURL(/page=add-snippet/)
 
 		await helper.cleanupSnippet(snippetName)
 	})
