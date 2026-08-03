@@ -169,7 +169,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 			.toContainText('An error occurred while fetching search results. Please try again.')
 	})
 
-	test('Card adopts a download made from its preview', async ({ page }) => {
+	test('Shares download state between the card and its preview', async ({ page }) => {
 		let releaseDownload: () => void = () => undefined
 		const downloadPending = new Promise<void>(resolve => {
 			releaseDownload = () => resolve()
@@ -177,8 +177,8 @@ test.describe('Community Cloud Featured Snippets', () => {
 		let featuredRequests = 0
 
 		// Every search result reports the snippet as not downloaded, including the
-		// refresh that follows the download, so only the state shared with the preview
-		// can show it as downloaded on the card.
+		// refresh that follows the download, so only the state shared between the two
+		// mounts can show it as downloaded.
 		await page.route(isFeaturedRequest, async route => {
 			featuredRequests += 1
 
@@ -219,25 +219,32 @@ test.describe('Community Cloud Featured Snippets', () => {
 			await card.getByRole('button', { name: 'Downloadable Cloud Snippet' }).click()
 			await preview.getByRole('button', { name: 'Download' }).click()
 
-			// The card follows the preview into the pending state.
+			// Both mounts show the download as pending before the request resolves.
+			await expect(preview.getByRole('button', { name: 'Download' })).toBeDisabled()
 			await expect(cardActions.getByRole(
 				'button',
 				{ name: 'Download', exact: true, includeHidden: true }
 			)).toBeDisabled()
 
+			// Assert against the state that follows the download rather than the one
+			// being torn down as it resolves.
+			const downloaded = page.waitForResponse(response => isSnippetDownloadRequest(new URL(response.url())))
 			releaseDownload()
+			await downloaded
 
-			// The card offers editing as soon as the download resolves, before the
-			// refresh that follows it has returned.
+			// Both mounts offer editing as soon as the download resolves, before the
+			// refresh that follows it has returned. The preview stays open.
+			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
 			await expect(cardActions.getByRole(
 				'link',
 				{ name: 'Edit', exact: true, includeHidden: true }
 			)).toHaveCount(1)
 			expect(featuredRequests).toBeLessThan(3)
 
-			// The refresh still reports the snippet as not downloaded, and the card keeps
-			// offering editing regardless.
+			// The refresh still reports the snippet as not downloaded, and both mounts
+			// keep offering editing regardless.
 			await expect.poll(() => featuredRequests).toBeGreaterThan(1)
+			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
 			await expect(cardActions.getByRole(
 				'link',
 				{ name: 'Edit', exact: true, includeHidden: true }

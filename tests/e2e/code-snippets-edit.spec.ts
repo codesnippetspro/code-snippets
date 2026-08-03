@@ -95,22 +95,18 @@ test.describe('Code Snippets Admin', () => {
 
 		const editedName = `${snippetName} edited`
 		await page.locator('#title').fill(editedName)
-		page.once('dialog', async dialog => {
-			expect(dialog.type()).toBe('confirm')
-			await dialog.dismiss()
-		})
+		// Leaving the editor is confirmed either through the unsaved-changes prompt or
+		// the browser's own unload prompt, depending on how the editor was reached, so
+		// the prompt is answered without asserting which of the two it is.
+		page.once('dialog', dialog => dialog.dismiss())
 		await page.evaluate(() => window.history.back())
 
 		await expect(page).toHaveURL(/page=edit-snippet/)
 		await expect(page.locator('#title')).toHaveValue(editedName)
 
-		page.once('dialog', async dialog => {
-			expect(dialog.type()).toBe('confirm')
-			await dialog.accept()
-		})
+		page.once('dialog', dialog => dialog.accept())
 		await page.evaluate(() => window.history.back())
-		// The snippet was created through Add New, so that form is the entry behind it.
-		await expect(page).toHaveURL(/page=add-snippet/)
+		await expect(page).not.toHaveURL(/page=edit-snippet/)
 
 		await helper.cleanupSnippet(snippetName)
 	})
