@@ -27,6 +27,13 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	protected string $endpoint = '/code-snippets/v1/preferences/snippet-view';
 
 	/**
+	 * REST API endpoint for the Insights chart view preferences.
+	 *
+	 * @var string
+	 */
+	protected string $insights_chart_views_endpoint = '/code-snippets/v1/preferences/insights-chart-views';
+
+	/**
 	 * Administrator user ID.
 	 *
 	 * @var int
@@ -62,6 +69,7 @@ class REST_API_Preferences_Test extends UnitTestCase {
 
 		wp_set_current_user( self::$admin_id );
 		delete_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION );
+		delete_option( Preferences_REST_Controller::INSIGHTS_CHART_VIEWS_OPTION );
 	}
 
 	/**
@@ -74,6 +82,24 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	 */
 	protected function dispatch( string $method, array $params = [] ): WP_REST_Response {
 		$request = new WP_REST_Request( $method, $this->endpoint );
+
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
+
+		return rest_do_request( $request );
+	}
+
+	/**
+	 * Dispatch a REST request for the Insights chart view preferences.
+	 *
+	 * @param string               $method HTTP method.
+	 * @param array<string, mixed> $params Request parameters.
+	 *
+	 * @return WP_REST_Response
+	 */
+	protected function dispatch_insights_chart_views( string $method, array $params = [] ): WP_REST_Response {
+		$request = new WP_REST_Request( $method, $this->insights_chart_views_endpoint );
 
 		foreach ( $params as $key => $value ) {
 			$request->set_param( $key, $value );
@@ -128,6 +154,70 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	}
 
 	/**
+	 * With no saved preference, Insights uses its intended default chart views.
+	 */
+	public function test_insights_chart_views_default_to_the_expected_mix() {
+		$response = $this->dispatch_insights_chart_views( 'GET' );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(
+			[ 'views' => Preferences_REST_Controller::DEFAULT_INSIGHTS_CHART_VIEWS ],
+			$response->get_data()
+		);
+	}
+
+	/**
+	 * Updating every Insights chart view persists the complete preference map.
+	 */
+	public function test_insights_chart_views_update_persists() {
+		$views = [
+			'type'       => 'pie',
+			'activation' => 'bar',
+			'location'   => 'pie',
+		];
+		$response = $this->dispatch_insights_chart_views( 'POST', [ 'views' => $views ] );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( [ 'views' => $views ], $response->get_data() );
+		$this->assertSame( $views, get_option( Preferences_REST_Controller::INSIGHTS_CHART_VIEWS_OPTION ) );
+		$this->assertSame( $views, Preferences_REST_Controller::get_insights_chart_views() );
+	}
+
+	/**
+	 * Missing chart keys and invalid view names cannot replace the saved preference.
+	 */
+	public function test_invalid_insights_chart_views_are_rejected() {
+		$response = $this->dispatch_insights_chart_views(
+			'POST',
+			[
+				'views' => [
+					'type'       => 'pie',
+					'activation' => 'donut',
+				],
+			]
+		);
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertFalse( get_option( Preferences_REST_Controller::INSIGHTS_CHART_VIEWS_OPTION ) );
+	}
+
+	/**
+	 * Partially saved preferences are normalized without losing the supported defaults.
+	 */
+	public function test_incomplete_stored_insights_chart_views_are_normalized() {
+		update_option( Preferences_REST_Controller::INSIGHTS_CHART_VIEWS_OPTION, [ 'type' => 'pie' ] );
+
+		$this->assertSame(
+			[
+				'type'       => 'pie',
+				'activation' => 'pie',
+				'location'   => 'bar',
+			],
+			Preferences_REST_Controller::get_insights_chart_views()
+		);
+	}
+
+	/**
 	 * Users without snippet capabilities cannot read or write the preference.
 	 */
 	public function test_editor_is_blocked() {
@@ -139,5 +229,15 @@ class REST_API_Preferences_Test extends UnitTestCase {
 		$response = $this->dispatch( 'POST', [ 'view' => 'table' ] );
 		$this->assertContains( $response->get_status(), [ 401, 403 ] );
 		$this->assertFalse( get_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION ) );
+
+		$response = $this->dispatch_insights_chart_views( 'GET' );
+		$this->assertContains( $response->get_status(), [ 401, 403 ] );
+
+		$response = $this->dispatch_insights_chart_views(
+			'POST',
+			[ 'views' => Preferences_REST_Controller::DEFAULT_INSIGHTS_CHART_VIEWS ]
+		);
+		$this->assertContains( $response->get_status(), [ 401, 403 ] );
+		$this->assertFalse( get_option( Preferences_REST_Controller::INSIGHTS_CHART_VIEWS_OPTION ) );
 	}
 }

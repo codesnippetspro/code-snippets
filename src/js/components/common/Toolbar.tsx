@@ -35,6 +35,12 @@ const UPPER_NAV_LINKS: readonly NavLink[] = [
 		external: true
 	},
 	{
+		name: 'insights',
+		url: window.CODE_SNIPPETS?.urls.insights,
+		label: __('Insights', 'code-snippets'),
+		pageSlug: 'code-snippets-insights'
+	},
+	{
 		name: 'welcome',
 		url: window.CODE_SNIPPETS?.urls.welcome,
 		label: __("What's New", 'code-snippets'),

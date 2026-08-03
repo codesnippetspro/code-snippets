@@ -200,6 +200,7 @@ class Plugin {
 		$import = [ 'import', 'import-snippets', 'import-code-snippets' ];
 		$settings = [ 'settings', 'snippets-settings' ];
 		$cloud = [ 'cloud', 'cloud-snippets' ];
+		$insights = [ 'insights', 'code-snippets-insights' ];
 		$welcome = [ 'welcome', 'getting-started', 'code-snippets' ];
 
 		if ( in_array( $menu, $edit, true ) ) {
@@ -212,6 +213,8 @@ class Plugin {
 			return 'snippets-settings';
 		} elseif ( in_array( $menu, $cloud, true ) ) {
 			return 'snippets&subpage=cloud-community';
+		} elseif ( in_array( $menu, $insights, true ) ) {
+			return 'code-snippets-insights';
 		} elseif ( in_array( $menu, $welcome, true ) ) {
 			return 'code-snippets-welcome';
 		} else {
@@ -349,6 +352,7 @@ class Plugin {
 				'isCloudConnected' => $this->cloud_connection->is_authenticated(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'snippetView'      => Preferences_REST_Controller::get_snippet_view(),
+				'insightsChartViews' => Preferences_REST_Controller::get_insights_chart_views(),
 				'restAPI'          => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
@@ -367,6 +371,7 @@ class Plugin {
 					'manage'   => esc_url_raw( $this->get_menu_url() ),
 					'edit'     => esc_url_raw( $this->get_menu_url( 'edit' ) ),
 					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
+					'insights' => esc_url_raw( $this->get_menu_url( 'insights' ) ),
 					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
 					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
 					'cloud'    => esc_url_raw( $this->cloud_connection->get_base_url() ),
