@@ -93,7 +93,7 @@ const UpperNav: React.FC<UpperNavProps> = ({ setIsUpsellDialogOpen }) =>
 				aria-hidden="true"
 			/>
 
-			<h1>{__('Code Snippets', 'code-snippets')}</h1>
+			<div>{__('Code Snippets', 'code-snippets')}</div>
 		</div>
 
 		<nav aria-label={__('Main links', 'code-snippets')}>
