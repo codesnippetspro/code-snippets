@@ -1,4 +1,4 @@
-export const INSIGHTS_CHART_KEYS = <const> ['type', 'activation', 'location', 'tags']
+export const INSIGHTS_CHART_KEYS = <const> ['total', 'type', 'activation', 'location', 'tags']
 
 export type InsightsChartKey = typeof INSIGHTS_CHART_KEYS[number]
 
@@ -30,6 +30,7 @@ export interface InsightsChartDefinition {
 	readonly colors: Readonly<Record<string, string>>
 	readonly view: InsightsChartView
 	readonly setView?: (view: InsightsChartView) => void
+	readonly total?: InsightsChartEntry
 }
 
 export interface InsightsSummary {

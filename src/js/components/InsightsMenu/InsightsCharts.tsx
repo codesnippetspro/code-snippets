@@ -40,6 +40,7 @@ interface InsightsChartProps {
 	view: InsightsChartView
 	setView?: (view: InsightsChartView) => void
 	colors: Readonly<Record<string, string>>
+	total?: InsightsChartEntry
 }
 
 const getCount = (entry: InsightsChartEntry): number => Number(entry.count)
@@ -131,18 +132,26 @@ export const InsightsChart: React.FC<InsightsChartProps> = ({
 	entries,
 	setView,
 	title,
+	total,
 	view
 }) => {
 	const largestCount = getLargestCount(entries)
 	const totalCount = getTotalCount(entries)
 
-	return <section className="insights-chart-card" data-insights-chart={chart} data-view={view}>
-		<div className="insights-chart-card-header">
-			<h2>{title}</h2>
-			{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} />}
-		</div>
-		{'bar' === view
-			? <BarChart colors={colors} entries={entries} largestCount={largestCount} />
-			: <PieChart colors={colors} entries={entries} totalCount={totalCount} />}
+	return <section className="insights-chart-card" data-insights-chart={chart} data-view={total ? undefined : view}>
+		{total
+			? <div className="insights-number-chart">
+				<strong className="insights-number-chart-value">{total.count}</strong>
+				<span className="insights-number-chart-label">{total.label}</span>
+			</div>
+			: <>
+				<div className="insights-chart-card-header">
+					<h2>{title}</h2>
+					{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} />}
+				</div>
+				{'bar' === view
+					? <BarChart colors={colors} entries={entries} largestCount={largestCount} />
+					: <PieChart colors={colors} entries={entries} totalCount={totalCount} />}
+			</>}
 	</section>
 }

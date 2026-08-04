@@ -44,6 +44,25 @@
 	}
 }
 
+.insights-number-chart {
+	display: grid;
+	gap: 4px;
+	justify-items: center;
+	padding-block: 12px;
+	text-align: center;
+}
+
+.insights-number-chart-value {
+	font-size: 140px;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+}
+
+.insights-number-chart-label {
+	color: #646970;
+	font-size: 13px;
+}
+
 .insights-chart-view-toggle {
 	display: flex;
 	align-items: center;

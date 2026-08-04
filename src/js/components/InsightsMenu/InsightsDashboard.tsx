@@ -8,18 +8,41 @@ import {
 	InsightsChart
 } from './InsightsCharts'
 import type { InsightsChartDefinition, InsightsSummary } from '../../types/Insights'
+import type { UseInsightsChartViews } from '../../hooks/useInsightsChartViews'
 
 interface InsightsDashboardProps {
 	summary: InsightsSummary
 }
 
-export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary }) => {
-	const { chartViews, setChartView } = useInsightsChartViews()
+interface InsightsChartDefinitionsProps {
+	chartViews: UseInsightsChartViews['chartViews']
+	setChartView: UseInsightsChartViews['setChartView']
+	summary: InsightsSummary
+}
+
+const getTotalChartDefinition = (summary: InsightsSummary): InsightsChartDefinition => ({
+	key: 'total',
+	title: __('Total snippets', 'code-snippets'),
+	entries: {},
+	colors: {},
+	view: 'bar',
+	total: {
+		label: __('Total snippets', 'code-snippets'),
+		count: Number(summary.active) + Number(summary.inactive)
+	}
+})
+
+const getChartDefinitions = ({
+	chartViews,
+	setChartView,
+	summary
+}: InsightsChartDefinitionsProps): readonly InsightsChartDefinition[] => {
 	const activationEntries = {
 		active: { label: __('Active', 'code-snippets'), count: summary.active },
 		inactive: { label: __('Inactive', 'code-snippets'), count: summary.inactive }
 	}
-	const chartDefinitions: readonly InsightsChartDefinition[] = [
+	return [
+		getTotalChartDefinition(summary),
 		{
 			key: 'type',
 			title: __('Snippet type', 'code-snippets'),
@@ -52,6 +75,11 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 			view: 'bar'
 		}
 	]
+}
+
+export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary }) => {
+	const { chartViews, setChartView } = useInsightsChartViews()
+	const chartDefinitions = getChartDefinitions({ chartViews, setChartView, summary })
 
 	return <>
 		<div className="snippets-page-header">
@@ -61,7 +89,7 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 		<hr className="wp-header-end"></hr>
 
 		<section className="insights-chart-grid">
-			{chartDefinitions.map(({ colors, entries, key, setView, title, view }) =>
+			{chartDefinitions.map(({ colors, entries, key, setView, title, total, view }) =>
 				<InsightsChart
 					key={key}
 					chart={key}
@@ -70,6 +98,7 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 					view={view}
 					setView={setView}
 					colors={colors}
+					total={total}
 				/>) }
 		</section>
 	</>
