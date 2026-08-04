@@ -59,22 +59,32 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({
 			</h3>
 		</div>
 
-		{0 < snippet.tags.length || snippet.updated && (
-			<div className="snippet-card-meta">
-				{0 < snippet.tags.length && (
-					<span className="cloud-snippet-tags">{snippet.tags.join(', ')}</span>)}
+		{0 < snippet.tags.length || snippet.updated
+			? <div className="snippet-card-meta">
+				{0 < snippet.tags.length
+					? <span className="cloud-snippet-tags">
+						<span className="snippet-card-tags-label">{__('Tags:', 'code-snippets')}</span>
+						{' '}{snippet.tags.join(', ')}
+					</span>
+					: null}
 
-				{snippet.updated && (
-					<time className="snippet-card-modified" dateTime={snippet.updated} title={snippet.updated}>
-						{/* translators: %s: human-readable time difference, including "ago" suffix. */
-							sprintf(__('Modified %s', 'code-snippets'), humanTimeDiff(snippet.updated, undefined))}
-					</time>)}
-			</div>)}
+				{snippet.updated
+					? <time className="snippet-card-modified" dateTime={snippet.updated} title={snippet.updated}>
+						{sprintf(
+							/* translators: %s: human-readable time difference. */
+							__('Modified %s', 'code-snippets'),
+							humanTimeDiff(snippet.updated, undefined)
+						)}
+					</time>
+					: null}
+			</div>
+			: null}
 
-		{snippet.description && (
-			<p className="snippet-description-content">
+		{snippet.description
+			? <p className="snippet-description-content">
 				{truncateChars(stripTags(snippet.description))}
-			</p>)}
+			</p>
+			: null}
 
 		{author}
 	</div>
