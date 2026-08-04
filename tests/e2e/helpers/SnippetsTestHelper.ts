@@ -32,6 +32,7 @@ export interface CreateSnippetCliOptions {
 	name: string;
 	active: boolean;
 	conditionId?: number;
+	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
 
@@ -101,7 +102,7 @@ export class SnippetsTestHelper {
 				'scope' => ${JSON.stringify(scope)},
 				'active' => ${options.active ? 'true' : 'false'},
 				'condition_id' => ${options.conditionId ?? 0},
-				'tags' => [],
+				'tags' => ${JSON.stringify(options.tags ?? [])},
 			]);
 			$snippet = \\Code_Snippets\\save_snippet($snippet);
 			echo $snippet->id;

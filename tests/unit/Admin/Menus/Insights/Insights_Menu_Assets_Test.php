@@ -29,6 +29,74 @@ class Insights_Menu_Assets_Test extends AdminUnitTestCase {
 		$this->assertSame( 0, $summary['typeCounts']['php']['count'] );
 		$this->assertSame( 0, $summary['typeCounts']['cond']['count'] );
 		$this->assertSame( [], $summary['locationCounts'] );
+		$this->assertSame( [], $summary['tagCounts'] );
+	}
+
+	/**
+	 * The summary counts each tag once per saved snippet and orders tag entries by usage.
+	 *
+	 * @return void
+	 */
+	public function test_summary_counts_and_orders_used_tags(): void {
+		save_snippet(
+			new Snippet(
+				[
+					'name'   => 'First tag fixture',
+					'scope'  => 'global',
+					'active' => true,
+					'tags'   => [ 'Shared', 'Alpha', 'Shared' ],
+				]
+			)
+		);
+		save_snippet(
+			new Snippet(
+				[
+					'name'   => 'Second tag fixture',
+					'scope'  => 'global',
+					'active' => true,
+					'tags'   => [ 'Shared', 'Beta' ],
+				]
+			)
+		);
+		$trashed = save_snippet(
+			new Snippet(
+				[
+					'name'   => 'Trashed tag fixture',
+					'scope'  => 'global',
+					'active' => false,
+					'tags'   => [ 'Ignored' ],
+				]
+			)
+		);
+
+		$this->assertInstanceOf( Snippet::class, $trashed );
+		trash_snippet( $trashed->id );
+
+		$summary = ( new Insights_Menu_Assets() )->get_summary();
+
+		$this->assertSame( [ 'Shared', 'Alpha', 'Beta' ], array_keys( $summary['tagCounts'] ) );
+		$this->assertSame(
+			[
+				'label' => 'Shared',
+				'count' => 2,
+			],
+			$summary['tagCounts']['Shared']
+		);
+		$this->assertSame(
+			[
+				'label' => 'Alpha',
+				'count' => 1,
+			],
+			$summary['tagCounts']['Alpha']
+		);
+		$this->assertSame(
+			[
+				'label' => 'Beta',
+				'count' => 1,
+			],
+			$summary['tagCounts']['Beta']
+		);
+		$this->assertArrayNotHasKey( 'Ignored', $summary['tagCounts'] );
 	}
 
 	/**
@@ -220,7 +288,7 @@ class Insights_Menu_Assets_Test extends AdminUnitTestCase {
 		$localized = json_decode( substr( $json, 0, strrpos( $json, ';' ) ), true );
 
 		$this->assertSame(
-			[ 'active', 'inactive', 'typeCounts', 'locationCounts' ],
+			[ 'active', 'inactive', 'typeCounts', 'locationCounts', 'tagCounts' ],
 			array_keys( $localized )
 		);
 	}

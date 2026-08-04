@@ -89,6 +89,31 @@ test.describe('Insights screen', () => {
 		expect(await activationPie.evaluate(element => element.style.background)).toContain('60%')
 	})
 
+	test('shows used tags in a fixed bar chart', async ({ page }) => {
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Shared and Alpha Tags',
+			active: true,
+			tags: ['Shared', 'Alpha', 'Shared']
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Shared and Beta Tags',
+			active: true,
+			tags: ['Shared', 'Beta']
+		})
+
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		const tagsChart = page.locator('[data-insights-chart="tags"]')
+
+		await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible()
+		await expect(tagsChart).toHaveAttribute('data-view', 'bar')
+		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Shared')
+		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('2')
+		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Alpha')
+		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Beta')
+		await expect(tagsChart.locator('.insights-chart-view-toggle')).toHaveCount(0)
+		await expect(tagsChart.locator('.insights-pie-chart')).toHaveCount(0)
+	})
+
 	test('switches and restores each Insights chart view', async ({ page }) => {
 		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
 

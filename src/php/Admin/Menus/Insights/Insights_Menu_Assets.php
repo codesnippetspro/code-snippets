@@ -28,7 +28,8 @@ class Insights_Menu_Assets {
 	 *     active: int,
 	 *     inactive: int,
 	 *     typeCounts: array<string, array{label: string, count: int}>,
-	 *     locationCounts: array<string, array{label: string, count: int}>
+	 *     locationCounts: array<string, array{label: string, count: int}>,
+	 *     tagCounts: array<string, array{label: string, count: int}>
 	 * }
 	 */
 	public function get_summary(): array {

@@ -1,12 +1,16 @@
-export const INSIGHTS_CHART_KEYS = <const> ['type', 'activation', 'location']
+export const INSIGHTS_CHART_KEYS = <const> ['type', 'activation', 'location', 'tags']
 
 export type InsightsChartKey = typeof INSIGHTS_CHART_KEYS[number]
+
+export const INSIGHTS_CONFIGURABLE_CHART_KEYS = <const> ['type', 'activation', 'location']
+
+export type InsightsConfigurableChartKey = typeof INSIGHTS_CONFIGURABLE_CHART_KEYS[number]
 
 export const INSIGHTS_CHART_VIEWS = <const> ['pie', 'bar']
 
 export type InsightsChartView = typeof INSIGHTS_CHART_VIEWS[number]
 
-export type InsightsChartViews = Readonly<Record<InsightsChartKey, InsightsChartView>>
+export type InsightsChartViews = Readonly<Record<InsightsConfigurableChartKey, InsightsChartView>>
 
 export const DEFAULT_INSIGHTS_CHART_VIEWS: InsightsChartViews = {
 	type: 'bar',
@@ -24,6 +28,8 @@ export interface InsightsChartDefinition {
 	readonly title: string
 	readonly entries: Readonly<Record<string, InsightsChartEntry>>
 	readonly colors: Readonly<Record<string, string>>
+	readonly view: InsightsChartView
+	readonly setView?: (view: InsightsChartView) => void
 }
 
 export interface InsightsSummary {
@@ -31,4 +37,5 @@ export interface InsightsSummary {
 	readonly inactive: number | string
 	readonly typeCounts: Readonly<Record<string, InsightsChartEntry>>
 	readonly locationCounts: Readonly<Record<string, InsightsChartEntry>>
+	readonly tagCounts: Readonly<Record<string, InsightsChartEntry>>
 }

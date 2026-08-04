@@ -3,11 +3,11 @@ import { DEFAULT_INSIGHTS_CHART_VIEWS } from '../types/Insights'
 import { handleUnknownError } from '../utils/errors'
 import { REST_BASES } from '../utils/restAPI'
 import { useRestAPI } from './useRestAPI'
-import type { InsightsChartKey, InsightsChartView, InsightsChartViews } from '../types/Insights'
+import type { InsightsChartView, InsightsChartViews, InsightsConfigurableChartKey } from '../types/Insights'
 
 export interface UseInsightsChartViews {
 	chartViews: InsightsChartViews
-	setChartView: (chart: InsightsChartKey, view: InsightsChartView) => void
+	setChartView: (chart: InsightsConfigurableChartKey, view: InsightsChartView) => void
 }
 
 export const useInsightsChartViews = (): UseInsightsChartViews => {
@@ -17,7 +17,7 @@ export const useInsightsChartViews = (): UseInsightsChartViews => {
 	)
 	const chartViewsRef = useRef(chartViews)
 
-	const setChartView = useCallback((chart: InsightsChartKey, view: InsightsChartView) => {
+	const setChartView = useCallback((chart: InsightsConfigurableChartKey, view: InsightsChartView) => {
 		const previousViews = chartViewsRef.current
 		const views = { ...previousViews, [chart]: view }
 

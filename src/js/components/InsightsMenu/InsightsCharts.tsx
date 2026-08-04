@@ -38,7 +38,7 @@ interface InsightsChartProps {
 	entries: Readonly<Record<string, InsightsChartEntry>>
 	title: string
 	view: InsightsChartView
-	setView: (view: InsightsChartView) => void
+	setView?: (view: InsightsChartView) => void
 	colors: Readonly<Record<string, string>>
 }
 
@@ -139,7 +139,7 @@ export const InsightsChart: React.FC<InsightsChartProps> = ({
 	return <section className="insights-chart-card" data-insights-chart={chart} data-view={view}>
 		<div className="insights-chart-card-header">
 			<h2>{title}</h2>
-			<InsightsChartViewToggle title={title} view={view} setView={setView} />
+			{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} />}
 		</div>
 		{'bar' === view
 			? <BarChart colors={colors} entries={entries} largestCount={largestCount} />

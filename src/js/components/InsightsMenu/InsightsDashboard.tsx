@@ -24,19 +24,32 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 			key: 'type',
 			title: __('Snippet type', 'code-snippets'),
 			entries: summary.typeCounts,
-			colors: INSIGHTS_TYPE_COLORS
+			colors: INSIGHTS_TYPE_COLORS,
+			view: chartViews.type,
+			setView: view => setChartView('type', view)
 		},
 		{
 			key: 'activation',
 			title: __('Activation status', 'code-snippets'),
 			entries: activationEntries,
-			colors: INSIGHTS_ACTIVATION_COLORS
+			colors: INSIGHTS_ACTIVATION_COLORS,
+			view: chartViews.activation,
+			setView: view => setChartView('activation', view)
 		},
 		{
 			key: 'location',
 			title: __('Location', 'code-snippets'),
 			entries: summary.locationCounts,
-			colors: INSIGHTS_LOCATION_COLORS
+			colors: INSIGHTS_LOCATION_COLORS,
+			view: chartViews.location,
+			setView: view => setChartView('location', view)
+		},
+		{
+			key: 'tags',
+			title: __('Tags', 'code-snippets'),
+			entries: summary.tagCounts,
+			colors: {},
+			view: 'bar'
 		}
 	]
 
@@ -48,14 +61,14 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 		<hr className="wp-header-end"></hr>
 
 		<section className="insights-chart-grid">
-			{chartDefinitions.map(({ colors, entries, key, title }) =>
+			{chartDefinitions.map(({ colors, entries, key, setView, title, view }) =>
 				<InsightsChart
 					key={key}
 					chart={key}
 					title={title}
 					entries={entries}
-					view={chartViews[key]}
-					setView={view => setChartView(key, view)}
+					view={view}
+					setView={setView}
 					colors={colors}
 				/>) }
 		</section>

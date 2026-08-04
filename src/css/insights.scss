@@ -47,7 +47,7 @@
 .insights-chart-view-toggle {
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: 6px;
 
 	.insights-chart-view-toggle-option {
 		display: flex;
@@ -103,13 +103,14 @@
 
 .insights-bar-chart {
 	display: grid;
-	gap: 12px;
+	gap: 10px;
 
 	li {
 		display: grid;
 		grid-template-columns: minmax(110px, 1fr) minmax(80px, 3fr) auto;
 		align-items: center;
 		gap: 10px;
+		margin: 0;
 	}
 
 	strong {
@@ -163,6 +164,7 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 16px;
+		margin: 0;
 	}
 
 	span {

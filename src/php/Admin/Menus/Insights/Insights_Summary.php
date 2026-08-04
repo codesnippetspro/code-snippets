@@ -24,7 +24,8 @@ final class Insights_Summary {
 	 *     active: int,
 	 *     inactive: int,
 	 *     typeCounts: array<string, array{label: string, count: int}>,
-	 *     locationCounts: array<string, array{label: string, count: int}>
+	 *     locationCounts: array<string, array{label: string, count: int}>,
+	 *     tagCounts: array<string, array{label: string, count: int}>
 	 * }
 	 */
 	public function get(): array {
@@ -40,7 +41,8 @@ final class Insights_Summary {
 	 *     active: int,
 	 *     inactive: int,
 	 *     typeCounts: array<string, array{label: string, count: int}>,
-	 *     locationCounts: array<string, array{label: string, count: int}>
+	 *     locationCounts: array<string, array{label: string, count: int}>,
+	 *     tagCounts: array<string, array{label: string, count: int}>
 	 * }
 	 */
 	private function create_summary( array $snippets ): array {
@@ -62,6 +64,7 @@ final class Insights_Summary {
 
 		$type_counts = array_fill_keys( self::TYPE_ORDER, 0 );
 		$location_counts = array_fill_keys( array_keys( $this->get_location_labels() ), 0 );
+		$tag_counts = [];
 		$active = 0;
 
 		foreach ( $snippets as $snippet ) {
@@ -84,6 +87,12 @@ final class Insights_Summary {
 			if ( $is_active ) {
 				++$active;
 			}
+
+			foreach ( array_unique( $snippet->tags, SORT_STRING ) as $tag ) {
+				if ( '' !== $tag ) {
+					$tag_counts[ $tag ] = ( $tag_counts[ $tag ] ?? 0 ) + 1;
+				}
+			}
 		}
 
 		return [
@@ -91,7 +100,42 @@ final class Insights_Summary {
 			'inactive'       => count( $snippets ) - $active,
 			'typeCounts'     => $this->create_chart_entries( $type_counts, $this->get_type_labels(), true ),
 			'locationCounts' => $this->create_chart_entries( $location_counts, $this->get_location_labels() ),
+			'tagCounts'      => $this->create_tag_chart_entries( $tag_counts ),
 		];
+	}
+
+	/**
+	 * Convert tag counts into usage-ordered chart entries.
+	 *
+	 * @param array<string, int> $counts Count for each tag.
+	 *
+	 * @return array<string, array{label: string, count: int}>
+	 */
+	private function create_tag_chart_entries( array $counts ): array {
+		uksort(
+			$counts,
+			static function ( string $first_tag, string $second_tag ) use ( $counts ): int {
+				$count_comparison = $counts[ $second_tag ] <=> $counts[ $first_tag ];
+
+				if ( 0 !== $count_comparison ) {
+					return $count_comparison;
+				}
+
+				$label_comparison = strnatcasecmp( $first_tag, $second_tag );
+				return 0 !== $label_comparison ? $label_comparison : strcmp( $first_tag, $second_tag );
+			}
+		);
+
+		$entries = [];
+
+		foreach ( $counts as $tag => $count ) {
+			$entries[ $tag ] = [
+				'label' => $tag,
+				'count' => $count,
+			];
+		}
+
+		return $entries;
 	}
 
 	/**
