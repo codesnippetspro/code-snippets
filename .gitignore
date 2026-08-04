@@ -38,3 +38,5 @@ tmp
 .codex
 # Local environment overrides (license keys, secrets)
 /.env
+.superpowers/
+docs/superpowers/
