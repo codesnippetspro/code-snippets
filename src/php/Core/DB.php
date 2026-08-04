@@ -222,9 +222,7 @@ class DB {
 
 			if ( $ms_snippets ) {
 				$active_shared_ids = get_option( 'active_shared_network_snippets', [] );
-				$active_shared_ids = is_array( $active_shared_ids )
-					? array_map( 'intval', $active_shared_ids )
-					: [];
+				$active_shared_ids = is_array( $active_shared_ids ) ? array_map( 'intval', $active_shared_ids ) : [];
 
 				foreach ( $ms_snippets as $snippet ) {
 					$id = intval( $snippet['id'] );
