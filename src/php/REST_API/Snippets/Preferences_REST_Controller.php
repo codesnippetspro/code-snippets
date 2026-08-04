@@ -44,7 +44,7 @@ final class Preferences_REST_Controller extends REST_Controller {
 	/**
 	 * The name of the option used to store Insights chart view preferences.
 	 */
-	public const INSIGHTS_CHART_VIEWS_OPTION = 'code_snippets_insights_chart_views';
+	public const INSIGHTS_CHART_VIEWS_OPTION = 'code_snippets_insights_preferences';
 
 	/**
 	 * Insights charts with independently configurable views.

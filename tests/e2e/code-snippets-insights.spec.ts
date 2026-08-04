@@ -21,7 +21,7 @@ const clearSnippets = async () => {
 }
 
 const clearInsightsChartViews = async () => {
-	await wpCli(['eval', "delete_option( 'code_snippets_insights_chart_views' );"])
+	await wpCli(['eval', "delete_option( 'code_snippets_insights_preferences' );"])
 }
 
 test.describe('Insights screen', () => {
