@@ -48,6 +48,30 @@ jobs:
         with:
           files: ${{ steps.zip.outputs.path }}
 
+  sync-pro:
+    # Only core releases sync downstream; this job is inert in the pro repository.
+    if: github.repository == 'codesnippetspro/code-snippets'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch core to pro sync workflow
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT }}
+        run: |
+          target_repo="codesnippetspro/.github-private"
+          workflow_file="sync-core-to-pro.yml"
+
+          echo "::notice::Dispatching core to pro sync for ${{ github.event.release.tag_name }}"
+
+          if ! gh workflow run "$workflow_file" \
+            --repo "$target_repo" \
+            --ref main \
+            --field tag="${{ github.event.release.tag_name }}"; then
+            echo "::error::Failed to dispatch $workflow_file in $target_repo"
+            exit 1
+          fi
+
+          echo "::notice::Successfully dispatched core to pro sync"
+
   deploy:
     needs: [build, upload]
     runs-on: ubuntu-latest
