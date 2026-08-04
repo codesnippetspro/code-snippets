@@ -4,8 +4,7 @@ import classnames from 'classnames'
 import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { REST_BASES } from '../../../utils/restAPI'
-import { isLicensed } from '../../../utils/screen'
-import { isProSnippet } from '../../../utils/snippets/snippets'
+import { isCloudSnippetDownloadable } from '../../../utils/snippets/cloud'
 import { TableNav } from '../../common/ListTable/TableNavigation'
 import { LoadingStatusNotices } from '../../common/LoadingStatusNotices'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
@@ -67,9 +66,6 @@ const SearchBox = () => {
 	)
 }
 
-const isSnippetDownloadable = (snippet: CloudSnippetSchema): boolean =>
-	!snippet.local_id && (isLicensed() || !isProSnippet(snippet))
-
 interface SearchResultsGridProps {
 	snippets: CloudSnippetSchema[]
 	selected: Set<CloudSnippetSchema['id']>
@@ -88,19 +84,21 @@ const SearchResultsGrid: React.FC<SearchResultsGridProps> = ({ snippets, selecte
 				snippet={result}
 				author={<CloudSnippetAuthor codevaultSlug={result.codevault} />}
 				isSelected={selected.has(result.id)}
-				onSelectedChange={isSelected => {
-					setSelected(previous => {
-						const updated = new Set(previous)
+				onSelectedChange={isCloudSnippetDownloadable(result)
+					? isSelected => {
+						setSelected(previous => {
+							const updated = new Set(previous)
 
-						if (isSelected) {
-							updated.add(result.id)
-						} else {
-							updated.delete(result.id)
-						}
+							if (isSelected) {
+								updated.add(result.id)
+							} else {
+								updated.delete(result.id)
+							}
 
-						return updated
-					})
-				}}
+							return updated
+						})
+					}
+					: undefined}
 			/>)}
 	</ul>
 
@@ -130,7 +128,7 @@ const useSearchResultsSelection = () => {
 	): Promise<void> => {
 		if ('download' === action) {
 			await Promise.all((searchResults?.snippets ?? [])
-				.filter(snippet => selectedIds.has(snippet.id) && isSnippetDownloadable(snippet))
+				.filter(snippet => selectedIds.has(snippet.id) && isCloudSnippetDownloadable(snippet))
 				.map(({ id }) => api.post(`${REST_BASES.cloud.snippets}/${id}/download`)))
 
 			doSearch()
@@ -166,7 +164,11 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 				which="top"
 				actions={CLOUD_BULK_ACTIONS}
 				doAction={doAction}
-				selectAllKeys={searchResults.snippets.map(snippet => snippet.id)}
+				selectAllKeys={'card' === snippetView
+					? searchResults.snippets
+						.filter(snippet => isCloudSnippetDownloadable(snippet))
+						.map(snippet => snippet.id)
+					: undefined}
 				extraTableNav={() => <SearchFilters />}
 				endTableNav={which =>
 					'top' === which
