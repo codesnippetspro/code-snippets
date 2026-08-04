@@ -57,7 +57,7 @@ export const SelectFiles: React.FC<SelectFilesProps> = ({
 
 	return (
 		<ImportCard className="import-upload-card">
-			<h3>{__('Choose files', 'code-snippets')}</h3>
+			<h2>{__('Choose files', 'code-snippets')}</h2>
 			<p className="description">
 				{__('Choose one or more Code Snippets (.xml or .json) files to parse and preview.', 'code-snippets')}
 			</p>

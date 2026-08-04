@@ -213,8 +213,8 @@ const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView, setSnipp
 	return searchResults.snippets.length
 		? <>
 			{searchResults.isFeatured
-				? <h3 className="cloud-featured-heading">{__('Featured Snippets', 'code-snippets')}</h3>
-				: <h3 className="cloud-snippets-heading">{__('Search Results', 'code-snippets')}</h3>}
+				? <h2 className="cloud-featured-heading">{__('Featured Snippets', 'code-snippets')}</h2>
+				: <h2 className="cloud-snippets-heading">{__('Search Results', 'code-snippets')}</h2>}
 			<SearchResultsTable snippetView={snippetView} setSnippetView={setSnippetView} />
 		</>
 		: null

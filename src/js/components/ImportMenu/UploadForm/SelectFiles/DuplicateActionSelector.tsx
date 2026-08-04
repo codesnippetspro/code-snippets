@@ -19,7 +19,7 @@ export interface DuplicateActionSelectorProps {
 
 export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = ({ value, onChange }) =>
 	<ImportCard className="duplicate-action-selector-card">
-		<h3>{__('Duplicate snippets', 'code-snippets')}</h3>
+		<h2>{__('Duplicate snippets', 'code-snippets')}</h2>
 
 		<p className="description">
 			{__('What should happen if an existing snippet is found with an identical name to an imported snippet?', 'code-snippets')}
