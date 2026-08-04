@@ -48,6 +48,7 @@ declare global {
 				edit: string
 				insights: string
 				welcome: string
+				import: string
 				settings: string
 				cloud: string
 			}

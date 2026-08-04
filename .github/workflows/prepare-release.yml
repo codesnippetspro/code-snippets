@@ -1,4 +1,4 @@
-name: "(Tag): Prepare"
+name: "(Release): Prepare"
 
 permissions:
   contents: write
@@ -9,10 +9,15 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to create the tag for (e.g. 3.6.9) or `next`'
+        description: 'Version to prepare the release for (e.g. 3.6.9) or `next`'
         required: true
         type: string
         default: next
+      auto_changelog:
+        description: 'Auto-create changelog and readme entries with AI'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   version:
@@ -66,7 +71,7 @@ jobs:
           workflow_file="${{ steps.validate.outputs.workflow_file }}"
           version="${{ needs.version.outputs.version || github.event.inputs.version }}"
           
-          echo "::notice::Dispatching workflow '$workflow_file' to generate changelog and readme entries..."
+          echo "::notice::Dispatching workflow '$workflow_file' to prepare the release pull request..."
           echo "   Calling repo: $target_repo"
           echo "   Version: $version"
           echo "   Changelog path: ${GITHUB_EVENT_INPUTS_CHANGELOG_PATH:-./CHANGELOG.md}"
@@ -79,19 +84,26 @@ jobs:
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
             --field version="$version" \
-            --field readme_path="./src/readme.txt" ; then
+            --field readme_path="./src/readme.txt" \
+            --field generate_changelog="${{ github.event.inputs.auto_changelog }}" ; then
             echo "::error::Failed to dispatch workflow '$workflow_file' in $target_repo"
             exit 1
           fi
+
+          # Runs are identified by their run-name so concurrent dispatches from
+          # the other repository are never mistaken for this one.
+          echo "expected_title=Prepare release v$version for ${{ github.repository }}" >> $GITHUB_OUTPUT
           
           echo "::notice::Successfully dispatched changelog generation"
           
           # Wait a moment for the run to be created
           echo "Waiting for workflow run to be created..."
           sleep 10
-          
+
           # Get the workflow run URL for monitoring
-          if run_url=$(gh run list --repo "$target_repo" --workflow "$workflow_file" --limit 1 --json url -q '.[0].url' 2>/dev/null); then
+          if run_url=$(gh run list --repo "$target_repo" --workflow "$workflow_file" --limit 15 \
+            --json url,displayTitle \
+            -q "[.[] | select(.displayTitle == \"Prepare release v$version for ${{ github.repository }}\")][0].url" 2>/dev/null); then
             if [ -n "$run_url" ] && [ "$run_url" != "null" ]; then
               echo "::notice::Workflow run: $run_url"
               echo "run_url=$run_url" >> $GITHUB_OUTPUT
@@ -104,21 +116,22 @@ jobs:
         run: |
           target_repo="${{ steps.validate.outputs.target_repo }}"
           workflow_file="${{ steps.validate.outputs.workflow_file }}"
+          expected_title="${{ steps.dispatch.outputs.expected_title }}"
           max_attempts=30
           attempt=0
-          
+
           echo "::notice::Monitoring workflow completion..."
-          
+
           while [ $attempt -lt $max_attempts ]; do
             attempt=$((attempt + 1))
-            
-            # Get latest run status
+
+            # Get the status of this dispatch's run, matched by its run-name
             run_data=$(gh run list \
               --repo "$target_repo" \
               --workflow "$workflow_file" \
-              --limit 1 \
-              --json status,conclusion,url \
-              -q '.[0] | [.status, .conclusion, .url] | @tsv' 2>/dev/null)
+              --limit 15 \
+              --json status,conclusion,url,displayTitle \
+              -q "[.[] | select(.displayTitle == \"$expected_title\")][0] | [.status, .conclusion, .url] | @tsv" 2>/dev/null)
             
             if [ -n "$run_data" ]; then
               status=$(echo "$run_data" | cut -f1)

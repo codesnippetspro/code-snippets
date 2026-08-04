@@ -373,6 +373,7 @@ class Plugin {
 					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
 					'insights' => esc_url_raw( $this->get_menu_url( 'insights' ) ),
 					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
+					'import'   => esc_url_raw( $this->get_menu_url( 'import' ) ),
 					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
 					'cloud'    => esc_url_raw( $this->cloud_connection->get_base_url() ),
 				],

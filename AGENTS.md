@@ -172,8 +172,10 @@ plugins.
 - **Production branch:** `core`
 - **Pre-release branch:** `core-beta`
 - **Development branches:** `feat/…`, `fix/…`, `chore/…`, `hotfix/…`
-- When creating the same logical branch on both remotes, suffix the Core branch with `-core` and the Pro branch with
-  `-pro` (for example, `chore/align-agent-rules-core` and `chore/align-agent-rules-pro`).
+- Name every new branch with an edition suffix as its final path segment: `/core` in the Core repository and `/pro`
+  in the Pro repository (for example, `chore/align-agent-rules/core` and `chore/align-agent-rules/pro`). Repository
+  rules reject branch creation without the suffix. Release automation follows the same pattern
+  (`release/v…/core`, `sync/core-v…/pro`).
 - Branch from `core-beta` for all feature and fix work.
 - Open PRs back into `core-beta`.
 - Preserve granular history during development and use merge commits for active stack propagation. Squash-merging a
