@@ -87,6 +87,15 @@ class Cloud_Snippet extends Model {
 			case 'language':
 				return is_array( $value ) ? ( $value['name'] ?? '' ) : (string) $value;
 
+			case 'name':
+			case 'code':
+			case 'scope':
+			case 'codevault':
+			case 'wp_tested':
+			case 'created':
+			case 'updated':
+				return is_scalar( $value ) ? (string) $value : '';
+
 			default:
 				return $value;
 		}
