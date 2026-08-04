@@ -140,8 +140,16 @@ const handlePopoverKeyDown = (
 		return
 	}
 
-	const focusable = Array.from(popoverRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
 	const active = document.activeElement
+
+	const isFormInput = active instanceof HTMLElement &&
+		(active.isContentEditable || active.matches('input, select, textarea'))
+
+	if (isFormInput) {
+		return
+	}
+
+	const focusable = Array.from(popoverRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
 	const currentIndex = active instanceof HTMLElement ? focusable.indexOf(active) : -1
 
 	if (
