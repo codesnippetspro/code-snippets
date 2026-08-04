@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n'
+import { __, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useMemo } from 'react'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
@@ -47,9 +47,9 @@ const SnippetStatusCounts = () => {
 						>
 							{`${label} `}
 							<span className="count">{
+								// translators: %d: number of snippets in the current view.
 								sprintf(
-									// translators: %d: number of snippets in the current view.
-									__('(%d)', 'code-snippets'),
+									_x('(%d)', 'table view count', 'code-snippets'),
 									snippetsByStatus.get(status)?.length ?? 0
 								)
 							}</span>
@@ -105,6 +105,7 @@ const FilterByTagControl: React.FC<FilterByTagControlProps> = ({ visibleSnippets
 				id="snippets-tag-filter"
 				name="tag"
 				value={currentTag}
+				aria-label={__('Filter snippets by tag', 'code-snippets')}
 				onChange={event => setCurrentTag(event.target.value)}
 			>
 				<option value="">{__('All Tags', 'code-snippets')}</option>
