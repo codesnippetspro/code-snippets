@@ -31,6 +31,7 @@ export interface SnippetFormOptions {
 export interface CreateSnippetCliOptions {
 	name: string;
 	active: boolean;
+	conditionId?: number;
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
 
@@ -72,7 +73,7 @@ export class SnippetsTestHelper {
 		await wpCli(['eval', php])
 	}
 
-	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<void> {
+	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<number> {
 		const type = options.type ?? 'php'
 		let scope = 'global'
 		switch (type) {
@@ -99,12 +100,14 @@ export class SnippetsTestHelper {
 				'code' => ${JSON.stringify(code)},
 				'scope' => ${JSON.stringify(scope)},
 				'active' => ${options.active ? 'true' : 'false'},
+				'condition_id' => ${options.conditionId ?? 0},
 				'tags' => [],
 			]);
-			\\Code_Snippets\\save_snippet($snippet);
+			$snippet = \\Code_Snippets\\save_snippet($snippet);
+			echo $snippet->id;
 		`
 
-		await wpCli(['eval', php])
+		return Number(await wpCli(['eval', php]))
 	}
 
 	static async cleanupSnippetsByPrefix(prefix: string): Promise<void> {

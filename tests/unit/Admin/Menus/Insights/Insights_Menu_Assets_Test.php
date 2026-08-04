@@ -6,6 +6,7 @@ use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\trash_snippet;
 
@@ -28,6 +29,40 @@ class Insights_Menu_Assets_Test extends AdminUnitTestCase {
 		$this->assertSame( 0, $summary['typeCounts']['php']['count'] );
 		$this->assertSame( 0, $summary['typeCounts']['cond']['count'] );
 		$this->assertSame( [], $summary['locationCounts'] );
+	}
+
+	/**
+	 * The summary includes snippets supplied through the snippets filter.
+	 *
+	 * @return void
+	 */
+	public function test_summary_includes_filtered_snippets(): void {
+		$filter = static function ( array $snippets ): array {
+			$snippets[] = new Snippet(
+				[
+					'name'   => 'Filtered Insight Fixture',
+					'scope'  => 'global',
+					'active' => true,
+				]
+			);
+
+			return $snippets;
+		};
+
+		clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
+		add_filter( 'code_snippets/get_snippets', $filter );
+
+		try {
+			$summary = ( new Insights_Summary() )->get();
+
+			$this->assertSame( 1, $summary['active'] );
+			$this->assertSame( 0, $summary['inactive'] );
+			$this->assertSame( 1, $summary['typeCounts']['php']['count'] );
+			$this->assertSame( 1, $summary['locationCounts']['global']['count'] );
+		} finally {
+			remove_filter( 'code_snippets/get_snippets', $filter );
+			clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
+		}
 	}
 
 	/**

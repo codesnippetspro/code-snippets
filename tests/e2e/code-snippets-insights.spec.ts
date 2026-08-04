@@ -52,9 +52,15 @@ test.describe('Insights screen', () => {
 	})
 
 	test('shows current snippet distributions', async ({ page }) => {
+		const conditionId = await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Active Conditions',
+			active: true,
+			type: 'cond'
+		})
 		await SnippetsTestHelper.createSnippetViaCli({
 			name: 'Insights Active PHP',
 			active: true,
+			conditionId,
 			type: 'php'
 		})
 		await SnippetsTestHelper.createSnippetViaCli({
@@ -72,12 +78,6 @@ test.describe('Insights screen', () => {
 			active: false,
 			type: 'js'
 		})
-		await SnippetsTestHelper.createSnippetViaCli({
-			name: 'Insights Active Conditions',
-			active: true,
-			type: 'cond'
-		})
-
 		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
 		const activationPie = page.locator('[data-insights-chart="activation"] .insights-pie-chart')
 
