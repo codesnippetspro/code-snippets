@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
@@ -39,6 +39,12 @@ const UPPER_NAV_LINKS: readonly NavLink[] = [
 		url: window.CODE_SNIPPETS?.urls.welcome,
 		label: __("What's New", 'code-snippets'),
 		pageSlug: 'code-snippets-welcome'
+	},
+	{
+		name: 'import-snippets',
+		url: window.CODE_SNIPPETS?.urls.import,
+		label: _x('Import', 'snippets', 'code-snippets'),
+		pageSlug: 'import-code-snippets'
 	}
 ]
 
@@ -93,7 +99,7 @@ const UpperNav: React.FC<UpperNavProps> = ({ setIsUpsellDialogOpen }) =>
 				aria-hidden="true"
 			/>
 
-			<h1>{__('Code Snippets', 'code-snippets')}</h1>
+			<div>{__('Code Snippets', 'code-snippets')}</div>
 		</div>
 
 		<nav aria-label={__('Main links', 'code-snippets')}>

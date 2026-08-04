@@ -1,15 +1,18 @@
 # Changelog
 
-## [4.0.0] (UPCOMING)
+## [3.10.0] (UPCOMING)
 
 ### Added
 * New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
+* Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud.
+* Snippet preview modal for viewing snippet code from the snippets table without opening the editor.
+* Automatic hiding of unrelated admin notices from other plugins on Code Snippets screens.
 * Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from the WordPress admin bar.
 * Snippet locking to help prevent accidental edits or deletion of important snippets. Props to https://github.com/mgiannopoulos24.
 * Improved screen options on the main snippets table, including controls for visible columns and truncating long snippet names or descriptions.
 * Bulk actions and bulk code download support in the redesigned snippets table.
 * Featured snippets and improved browsing in Community Cloud.
-* WordPress 7.0 admin styling compatibility.
+* WordPress modern theme admin styling compatibility.
 * Clearer accessibility labels, headings, tab markup, table checkboxes, sort buttons, copy buttons, and drag-and-drop upload controls.
 
 ### Changed
@@ -27,6 +30,10 @@
 * Fixed redundant frontend logic, improving overall performance.
 * Fixed Community Cloud search results and pagination to respect WordPress screen options.
 * Fixed snippet saving and activation feedback to improve validation and runtime error display.
+* Fixed downloaded Community Cloud snippets appearing as not downloaded after a page reload.
+* Fixed network snippet lookups using the wrong database table on multisite.
+* Fixed the inactive snippets count including trashed snippets.
+* Fixed featured Community Cloud snippets failing to load with some cloud API responses.
 
 ## [3.9.6] (2026-04-28)
 

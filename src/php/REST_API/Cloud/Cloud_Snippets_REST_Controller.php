@@ -4,12 +4,14 @@ namespace Code_Snippets\REST_API\Cloud;
 
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
+use Code_Snippets\Model\Cloud_Snippets;
 use Code_Snippets\REST_API\REST_Collection_Controller;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\get_snippets;
 
 /**
  * Allows fetching cloud snippets through the WordPress REST API.
@@ -210,6 +212,32 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Record which of the given cloud snippets have already been downloaded to this site.
+	 *
+	 * Downloading stores the remote identifier on the local snippet, so the local
+	 * snippets are the only record of the link once the browser has been reloaded.
+	 *
+	 * @param Cloud_Snippets $snippets Cloud snippets as retrieved from the cloud API.
+	 *
+	 * @return Cloud_Snippets The same collection, with local identifiers attached.
+	 */
+	private function attach_local_ids( Cloud_Snippets $snippets ): Cloud_Snippets {
+		$local_ids = [];
+
+		foreach ( get_snippets() as $local_snippet ) {
+			if ( $local_snippet->cloud_id && ! $local_snippet->trashed ) {
+				$local_ids[ $local_snippet->cloud_id ] = $local_snippet->id;
+			}
+		}
+
+		foreach ( $snippets->snippets as $cloud_snippet ) {
+			$cloud_snippet->local_id = $local_ids[ $cloud_snippet->id ] ?? null;
+		}
+
+		return $snippets;
+	}
+
+	/**
 	 * Retrieve cloud snippets using a search query.
 	 *
 	 * @param WP_REST_Request $request The request object containing the search parameters.
@@ -228,7 +256,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 			->fetch_search_results( $method, $query, $page, $per_page, $filters );
 
 		return $snippets
-			? rest_ensure_response( $snippets->to_rest_response() )
+			? rest_ensure_response( $this->attach_local_ids( $snippets )->to_rest_response() )
 			: new WP_Error(
 				'code_snippets_get_snippets_failure',
 				esc_html__( 'Could not fetch snippets.', 'code-snippets' ),
@@ -251,7 +279,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 		$snippets = $this->search_controller->get_featured_snippets( $page, $per_page, $filters );
 
 		return $snippets
-			? rest_ensure_response( $snippets->to_rest_response() )
+			? rest_ensure_response( $this->attach_local_ids( $snippets )->to_rest_response() )
 			: new WP_Error(
 				'code_snippets_featured_snippets_failure',
 				esc_html__( 'Could not fetch featured snippets.', 'code-snippets' ),

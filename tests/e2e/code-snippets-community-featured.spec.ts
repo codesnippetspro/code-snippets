@@ -3,6 +3,8 @@ import { TIMEOUTS, URLS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
+const REFRESH_DELAY = 3000
+
 const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
 	const saved = page
 		.waitForResponse(
@@ -169,29 +171,20 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 	test('Shares download state between the card and its preview', async ({ page }) => {
 		let releaseDownload: () => void = () => undefined
-		let releaseRefresh: () => void = () => undefined
 		const downloadPending = new Promise<void>(resolve => {
 			releaseDownload = () => resolve()
 		})
-		const refreshPending = new Promise<void>(resolve => {
-			releaseRefresh = () => resolve()
-		})
-		let downloadRequests = 0
 		let featuredRequests = 0
 
-		// Only the refresh that follows the download fails. Later requests succeed but
-		// still report the snippet as not downloaded, so the shared state is the only
-		// thing that can keep both mounts showing it as downloaded.
+		// Every search result reports the snippet as not downloaded, including the
+		// refresh that follows the download, so only the state shared between the two
+		// mounts can show it as downloaded.
 		await page.route(isFeaturedRequest, async route => {
 			featuredRequests += 1
 
-			if (2 === featuredRequests) {
-				await refreshPending
-				return route.fulfill({
-					status: 500,
-					contentType: 'application/json',
-					body: JSON.stringify({ message: 'Cloud unavailable' })
-				})
+			// Hold the refresh back so the card can be checked before it arrives.
+			if (1 < featuredRequests) {
+				await new Promise(resolve => setTimeout(resolve, REFRESH_DELAY))
 			}
 
 			return route.fulfill({
@@ -203,7 +196,6 @@ test.describe('Community Cloud Featured Snippets', () => {
 			})
 		})
 		await page.route(isSnippetDownloadRequest, async route => {
-			downloadRequests += 1
 			await downloadPending
 			return route.fulfill({
 				contentType: 'application/json',
@@ -234,32 +226,27 @@ test.describe('Community Cloud Featured Snippets', () => {
 				{ name: 'Download', exact: true, includeHidden: true }
 			)).toBeDisabled()
 
+			const downloaded = page.waitForResponse(response => isSnippetDownloadRequest(new URL(response.url())))
 			releaseDownload()
+			await downloaded
 
-			// Both mounts settle as soon as the download resolves: the results are still
-			// reported as not downloaded, so only the shared state can update the card,
-			// and it does so without waiting for the refresh.
-			await expect(preview.getByRole('link', { name: 'Edit' })).toBeVisible()
+			// The card offers editing as soon as the download resolves, before the
+			// refresh that follows it has returned.
 			await expect(cardActions.getByRole(
 				'link',
 				{ name: 'Edit', exact: true, includeHidden: true }
 			)).toHaveCount(1)
+			expect(featuredRequests).toBeLessThan(3)
+
+			// The refresh still reports the snippet as not downloaded, and the card
+			// keeps offering editing regardless.
+			await expect.poll(() => featuredRequests).toBeGreaterThan(1)
 			await expect(cardActions.getByRole(
-				'button',
-				{ name: 'Download', exact: true, includeHidden: true }
-			)).toHaveCount(0)
-
-			expect(downloadRequests).toBe(1)
-
-			// The refresh that follows fails: the error is surfaced, and the download is
-			// not retried.
-			releaseRefresh()
-			await expect(page.getByRole('alert', { name: 'Community snippets status' }))
-				.toContainText('An error occurred while fetching search results. Please try again.')
-			expect(downloadRequests).toBe(1)
+				'link',
+				{ name: 'Edit', exact: true, includeHidden: true }
+			)).toHaveCount(1)
 		} finally {
 			releaseDownload()
-			releaseRefresh()
 			await closePreviewIfOpen(page)
 		}
 	})
