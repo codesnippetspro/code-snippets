@@ -17,6 +17,23 @@ $control-text: #2c3338;
 $control-height: 38px;
 $control-radius: 5px;
 
+// Runtime design tokens. Sass variables keep compile-time helpers available;
+// custom properties expose the approved system to every rendered component.
+:root {
+	--cs-color-accent: #2271b1;
+	--cs-color-accent-hover: #0a4b78;
+	--cs-color-text: #2c3338;
+	--cs-color-text-muted: #646970;
+	--cs-color-surface: #fff;
+	--cs-color-surface-subtle: #f6f7f7;
+	--cs-color-border: #c3c4c7;
+	--cs-color-border-subtle: #dcdcde;
+	--cs-control-height: 38px;
+	--cs-control-radius: 5px;
+	--cs-font-size-body: 14px;
+	--cs-line-height-body: 1.5;
+}
+
 /* format: background-color [color] */
 $badges: (
 	// php/html/cond darkened for WCAG AA — at least 4.5:1 against white 12px

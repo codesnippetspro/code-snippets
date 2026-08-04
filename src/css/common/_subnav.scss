@@ -196,17 +196,18 @@
 	}
 }
 
-// Item count shown after a subnav tab's label, as muted text.
+// Item count shown after a subnav tab's label, using the label colour at reduced opacity.
 .snippet-type-nav .subnav-count {
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.5;
-	color: #646970;
+	color: currentcolor;
+	opacity: 0.65;
 }
 
-// The active tab's count adopts the accent alongside its label.
+// Keep the active count tied to its active label rather than assigning a separate colour.
 .snippet-type-nav .snippet-type-link.active-type .subnav-count {
-	color: theme.$accent;
+	color: currentcolor;
 }
 
 // The short "All" form of the all-snippets label only replaces "All Snippets"

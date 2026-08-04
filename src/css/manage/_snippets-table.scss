@@ -173,7 +173,10 @@
 		}
 
 		.snippet-card-modified {
-			color: #646970;
+			color: var(--cs-color-text-muted);
+		}
+
+		&.has-tags .snippet-card-modified {
 			margin-inline-start: auto;
 		}
 	}
