@@ -330,7 +330,7 @@ class File_Import_REST_Controller extends REST_Controller {
 				'id'          => $snippet_data['id'] ?? uniqid(),
 				'title'       => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
 				'scope'       => $snippet_data['scope'] ?? 'global',
-				'tags'        => is_array( $snippet_data['tags'] ?? [] ) ? implode( ', ', $snippet_data['tags'] ) : '',
+				'tags'        => is_array( $snippet_data['tags'] ) ? implode( ', ', $snippet_data['tags'] ) : '',
 				'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
 				'type'        => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
 			];
