@@ -54,6 +54,18 @@
 	overflow-x: auto;
 	scrollbar-width: thin;
 
+	@media (width <= 960px) {
+		li {
+			flex: 1 1 0;
+		}
+
+		.snippet-type-link {
+			inline-size: 100%;
+			min-inline-size: 100px;
+			padding-inline: 4px;
+		}
+	}
+
 	@media (width <= 782px) {
 		scrollbar-width: none;
 
