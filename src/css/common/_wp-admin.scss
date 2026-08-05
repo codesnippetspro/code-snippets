@@ -1,6 +1,11 @@
 @use 'checkbox';
 @use 'theme';
 
+// Match the active subnavigation tile so it blends into the admin canvas.
+body.wp-admin {
+	background: #f0f0f1;
+}
+
 /**
  * Native form control styling.
  *

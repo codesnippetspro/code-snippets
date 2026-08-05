@@ -14,7 +14,6 @@
 	inline-size: calc(100% + 42px);
 	overflow: hidden;
 	background: #fff;
-	border-block-end: 1px solid #e2e2e4;
 
 	&::before,
 	&::after {
@@ -54,6 +53,9 @@
 	overflow-x: auto;
 	scrollbar-width: thin;
 
+	// The row line is painted on the scrollport so it remains fixed while tabs scroll.
+	background: linear-gradient(to top, #e2e2e4 1px, #fff 1px);
+
 	@media (width <= 960px) {
 		li {
 			flex: 1 1 0;
@@ -78,7 +80,7 @@
 		display: flex;
 		align-items: stretch;
 		flex-wrap: nowrap;
-		min-block-size: 52px;
+		min-block-size: 53px;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -143,10 +145,6 @@
 			background: #f0f0f1;
 			border-color: #f0f0f1;
 			color: theme.$accent;
-
-			// Children paint over the parent nav's border, so this recolours
-			// the 1px band separator beneath the active tab to match its fill.
-			box-shadow: 0 1px 0 0 #f0f0f1;
 		}
 
 		// Suppress the persistent focus ring left behind after a mouse click;
