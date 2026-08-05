@@ -3,8 +3,7 @@
 $sidebar-width: 321px;
 $sidebar-gap: 30px;
 
-.snippet-form #titlediv #title,
-.snippet-type-container {
+.snippet-form #titlediv #title {
 	border-color: theme.$control-border;
 	block-size: 45px
 }
@@ -18,6 +17,7 @@ $sidebar-gap: 30px;
 	// Target the control box only (:first-of-type). The open menu is a later
 	// sibling div; matching it here would clamp and flex-row the option list.
 	> div:first-of-type {
+		border-color: theme.$control-border;
 		min-block-size: 45px;
 		block-size: 45px;
 		max-block-size: 45px;
