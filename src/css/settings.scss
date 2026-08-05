@@ -242,12 +242,16 @@ body.js {
 }
 
 #settings-sections-tabs {
-	display: flex;
-	align-items: stretch;
 	margin-block-end: 15px;
 	padding: 0;
-	background: #fff;
-	border-block-end: 1px solid theme.$control-border;
+
+	ul {
+		display: flex;
+		align-items: stretch;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
 
 	.snippet-type-link {
 		display: flex;
@@ -284,7 +288,7 @@ body.js {
 
 @media (width <= 782px) {
 	body.js {
-		#settings-sections-tabs {
+		.settings-type-nav-wrapper {
 			display: none;
 		}
 

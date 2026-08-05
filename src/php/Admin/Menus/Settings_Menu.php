@@ -268,7 +268,7 @@ class Settings_Menu extends Admin_Menu {
 		$sections = $this->get_sections();
 		$active_tab = $this->get_current_section();
 
-		echo '<nav class="snippet-type-nav settings-type-nav" id="settings-sections-tabs" aria-label="' . esc_attr__( 'Settings tabs', 'code-snippets' ) . '"><ul>';
+		echo '<div class="snippet-type-nav-wrapper settings-type-nav-wrapper"><nav class="snippet-type-nav settings-type-nav" id="settings-sections-tabs" aria-label="' . esc_attr__( 'Settings tabs', 'code-snippets' ) . '"><ul>';
 
 		foreach ( $sections as $section ) {
 			printf(
@@ -280,7 +280,7 @@ class Settings_Menu extends Admin_Menu {
 			);
 		}
 
-		echo '</ul></nav>';
+		echo '</ul></nav></div>';
 		echo '<div id="snippets-screen-meta-slot" class="snippets-screen-meta-slot"></div>';
 	}
 
