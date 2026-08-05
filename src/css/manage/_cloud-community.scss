@@ -109,12 +109,9 @@ $status-colors: (
 }
 
 .cloud-snippets-table {
-	// Body rows only: the header row also holds a `td` for the select-all cell,
-	// and a fixed height there would make this header taller than the one on the
-	// snippets table.
+	// Body rows inherit the shared table-cell padding so descriptions can grow
+	// naturally instead of being constrained to a fixed row height.
 	tbody td {
-		box-sizing: border-box;
-		block-size: 60px;
 		vertical-align: middle;
 	}
 
