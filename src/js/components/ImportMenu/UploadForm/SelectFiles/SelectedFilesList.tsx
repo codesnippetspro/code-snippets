@@ -47,13 +47,13 @@ export interface SelectedFilesListProps {
 
 export const SelectedFilesList: React.FC<SelectedFilesListProps> = ({ files, onRemoveFile }) =>
 	<div className="selected-files">
-		<h4>
+		<h3>
 			{sprintf(
 				// translators: %d: number of selected files.
 				__('Selected files: (%d)', 'code-snippets'),
 				files.length
 			)}
-		</h4>
+		</h3>
 
 		<div className="selected-files-list">
 			{files.map(file =>
