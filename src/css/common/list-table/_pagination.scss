@@ -1,4 +1,5 @@
 @use '../checkbox';
+@use '../theme';
 
 // The pagination group and view toggle wrap together as one end-pinned
 // cluster so narrow viewports never split them across rows.
@@ -65,7 +66,7 @@
 }
 
 .wrap .snippets-search-area input[type='search'] {
-	border-color: #e3e3e4;
+	border-color: theme.$control-border;
 }
 
 // Tablet widths: let the search area grow to fill the remainder of its row
