@@ -57,7 +57,7 @@ const ChangelogSection: React.FC<ChangelogSectionProps> = ({ section, entries })
 export const Changelog = () =>
 	<div className="code-snippets-changelog">
 		<div className="code-snippets-header-wrapper">
-			<h3>{__('Latest changes', 'code-snippets')}</h3>
+			<h2>{__('Latest changes', 'code-snippets')}</h2>
 			<a
 				href="https://wordpress.org/plugins/code-snippets/changelog"
 				className="button button-primary button-large"

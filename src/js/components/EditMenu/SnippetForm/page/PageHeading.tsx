@@ -28,7 +28,7 @@ export const PageHeading: React.FC = () => {
 
 	return (
 		<>
-			<h2>
+			<h1>
 				{snippet.id
 					? <>
 						{`${getPageHeading(snippet)} `}
@@ -58,7 +58,7 @@ export const PageHeading: React.FC = () => {
 						<a key={label} href={url} className="page-title-action">{label}</a>{' '}
 					</>
 				)}
-			</h2>
+			</h1>
 
 			<hr className="wp-header-end" />
 		</>

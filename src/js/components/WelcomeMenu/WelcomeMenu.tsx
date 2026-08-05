@@ -12,7 +12,7 @@ const HeroImage = () => {
 	return (
 		<div className="code-snippets-hero">
 			<div className="code-snippets-header-wrapper">
-				<h3>{DATA?.hero.name}</h3>
+				<h2>{DATA?.hero.name}</h2>
 				<a
 					className="button button-primary button-large"
 					href={DATA?.hero.follow_url}
@@ -101,7 +101,7 @@ export const WelcomeMenu = () =>
 	<>
 		<Toolbar />
 		<div className="code-snippets-welcome">
-			<h2>{__('Resources and Updates', 'code-snippets')}</h2>
+			<h1>{__('Resources and Updates', 'code-snippets')}</h1>
 
 			<hr className="wp-header-end" />
 
