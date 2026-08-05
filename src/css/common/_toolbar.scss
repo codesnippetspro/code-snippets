@@ -68,6 +68,52 @@ $wpcontent-inline-start-indent: 20px;
 		color: inherit;
 		text-decoration: none;
 	}
+
+	@media (width <= 960px) {
+		padding-inline: 16px;
+		gap: 12px;
+
+		.logo {
+			flex: 0 1 auto;
+			min-inline-size: 0;
+
+			div {
+				white-space: nowrap;
+			}
+		}
+
+		nav {
+			margin-inline-start: auto;
+		}
+
+		ul {
+			gap: 0;
+		}
+
+		li:not(.toolbar-upgrade-item) {
+			display: none;
+		}
+
+		.toolbar-upgrade-item .button {
+			white-space: nowrap;
+		}
+	}
+
+	@media (width <= 480px) {
+		padding-inline: 10px;
+
+		.logo img {
+			block-size: 34px;
+		}
+
+		.logo div {
+			display: none;
+		}
+
+		.toolbar-upgrade-item .button {
+			padding-inline: 10px;
+		}
+	}
 }
 
 .code-snippets-toolbar-lower {

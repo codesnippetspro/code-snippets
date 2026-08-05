@@ -116,7 +116,7 @@ const UpperNav: React.FC<UpperNavProps> = ({ setIsUpsellDialogOpen }) =>
 					</li>)}
 
 				{shouldShowUpsell() && (
-					<li>
+					<li className="toolbar-upgrade-item">
 						<a
 							className="button button-large button-secondary"
 							href="https://codesnippets.pro/pricing/"

@@ -57,20 +57,25 @@ class Settings_Menu extends Admin_Menu {
 	 */
 	public function enqueue_assets() {
 		$this->enqueue_codemirror();
-		$handle = 'code-snippets-settings';
+		$handle      = 'code-snippets-settings';
+		$plugin_dir  = plugin_dir_path( PLUGIN_FILE );
+		$css_version = filemtime( $plugin_dir . 'dist/settings.css' );
+		$js_version  = filemtime( $plugin_dir . 'dist/settings.js' );
+		$css_version = false !== $css_version ? $css_version : PLUGIN_VERSION;
+		$js_version  = false !== $js_version ? $js_version : PLUGIN_VERSION;
 
 		wp_enqueue_style(
 			$handle,
 			plugins_url( 'dist/settings.css', PLUGIN_FILE ),
 			self::$style_deps + [ 'code-editor' ],
-			PLUGIN_VERSION
+			$css_version
 		);
 
 		wp_enqueue_script(
 			$handle,
 			plugins_url( 'dist/settings.js', PLUGIN_FILE ),
 			self::$script_deps + [ 'code-snippets-code-editor' ],
-			PLUGIN_VERSION,
+			$js_version,
 			true
 		);
 
