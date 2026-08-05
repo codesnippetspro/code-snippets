@@ -269,7 +269,9 @@ body.js {
 			background: #f6f7f7;
 		}
 
-		&.active-type {
+		&.active-type,
+		&.active-type:hover,
+		&.active-type:focus {
 			position: relative;
 			z-index: 1;
 			margin-block-end: -1px;
@@ -301,6 +303,10 @@ body.js {
 		.settings-section {
 			display: block !important;
 			margin-block-end: 40px;
+		}
+
+		.wrap[data-active-tab='license'] .submit {
+			display: flex;
 		}
 	}
 }

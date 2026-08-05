@@ -69,36 +69,6 @@ $wpcontent-inline-start-indent: 20px;
 		text-decoration: none;
 	}
 
-	@media (width <= 960px) {
-		padding-inline: 16px;
-		gap: 12px;
-
-		.logo {
-			flex: 0 1 auto;
-			min-inline-size: 0;
-
-			div {
-				white-space: nowrap;
-			}
-		}
-
-		nav {
-			margin-inline-start: auto;
-		}
-
-		ul {
-			gap: 0;
-		}
-
-		li:not(.toolbar-upgrade-item) {
-			display: none;
-		}
-
-		.toolbar-upgrade-item .button {
-			white-space: nowrap;
-		}
-	}
-
 	@media (width <= 480px) {
 		padding-inline: 10px;
 
@@ -256,4 +226,96 @@ $wpcontent-inline-start-indent: 20px;
 
 .code-snippets-return-link {
 	float: inline-end;
+}
+
+.code-snippets-toolbar-upper .toolbar-more-item {
+	display: none;
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu {
+	position: relative;
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu summary {
+	cursor: pointer;
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu ul {
+	position: absolute;
+	inset-block-start: calc(100% + 8px);
+	inset-inline-end: 0;
+	z-index: 2;
+	display: grid;
+	min-inline-size: 180px;
+	block-size: auto;
+	margin: 0;
+	padding: 8px;
+	background: #fff;
+	border: 1px solid theme.$control-border;
+	box-shadow: 0 3px 8px rgb(0 0 0 / 15%);
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu li {
+	margin: 0;
+}
+
+// The upper and lower toolbars are distinct navigation trees; keep this rule
+// after the lower-toolbar link state rules so the compact menu owns its hover state.
+// stylelint-disable-next-line no-descending-specificity
+.code-snippets-toolbar-upper .toolbar-more-menu a {
+	display: block;
+	padding: 8px;
+	white-space: nowrap;
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu a:hover,
+.code-snippets-toolbar-upper .toolbar-more-menu a:focus {
+	background: #f6f7f7;
+}
+
+@media (width <= 960px) {
+	.code-snippets-toolbar-upper {
+		gap: 12px;
+		padding-inline: 16px;
+	}
+
+	.code-snippets-toolbar-upper .logo {
+		flex: 0 1 auto;
+		min-inline-size: 0;
+	}
+
+	.code-snippets-toolbar-upper nav {
+		margin-inline-start: auto;
+	}
+
+	.code-snippets-toolbar-upper > nav > ul {
+		gap: 8px;
+	}
+
+	.code-snippets-toolbar-upper > nav > ul > li:not(.toolbar-upgrade-item, .toolbar-more-item) {
+		display: none;
+	}
+
+	.code-snippets-toolbar-upper .toolbar-more-item {
+		display: flex;
+	}
+
+	.code-snippets-toolbar-upper .toolbar-more-menu summary {
+		padding: 8px;
+		white-space: nowrap;
+	}
+
+	.code-snippets-toolbar-upper .toolbar-upgrade-item .button {
+		display: block;
+		max-inline-size: 180px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+@media (width <= 640px) {
+	.code-snippets-toolbar-upper .logo div {
+		display: none;
+	}
 }
