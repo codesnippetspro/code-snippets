@@ -34,12 +34,34 @@ const updateHttpReferer = (section: string) => {
 	httpReferer.value = newReferer + (newReferer === httpReferer.value ? `&section=${section}` : '')
 }
 
+const setupHorizontalOverflow = (tabs: HTMLElement) => {
+	const wrapper = tabs.closest<HTMLElement>('.snippet-type-nav-wrapper')
+	if (!wrapper) {
+		return
+	}
+
+	const updateFades = () => {
+		const remainingScroll = tabs.scrollWidth - tabs.clientWidth - tabs.scrollLeft
+		wrapper.classList.toggle('has-scroll-start', 1 < tabs.scrollLeft)
+		wrapper.classList.toggle('has-scroll-end', 1 < remainingScroll)
+	}
+
+	tabs.addEventListener('scroll', updateFades, { passive: true })
+
+	const observer = new ResizeObserver(updateFades)
+	observer.observe(tabs)
+	observer.observe(tabs.firstElementChild ?? tabs)
+	updateFades()
+}
+
 export const handleSettingsTabs = () => {
 	const tabsWrapper = document.getElementById('settings-sections-tabs')
 	if (!tabsWrapper) {
 		console.error('Could not find snippets tabs')
 		return
 	}
+
+	setupHorizontalOverflow(tabsWrapper)
 
 	const tabs = tabsWrapper.querySelectorAll('.snippet-type-link')
 
