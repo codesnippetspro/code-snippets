@@ -62,6 +62,7 @@
 		flex-wrap: wrap;
 		gap: 16px;
 		font-size: 14px;
+		line-height: 1.5;
 
 		.cloud-snippet-tags {
 			color: theme.$accent;
@@ -81,6 +82,7 @@
 		overflow: hidden;
 		margin: 0;
 		font-size: 14px;
+		line-height: 1.5;
 		color: #646970;
 		border-block-start: 1px solid #dcdcde;
 		padding-block-start: 16px;
