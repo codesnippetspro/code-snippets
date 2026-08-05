@@ -1,3 +1,4 @@
+import { IconChevronDown } from '@tabler/icons-react'
 import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useState } from 'react'
@@ -93,7 +94,10 @@ interface UpperNavProps {
 const MoreNav = () =>
 	<li className="toolbar-more-item">
 		<details className="toolbar-more-menu">
-			<summary>{__('More', 'code-snippets')}</summary>
+			<summary>
+				{__('More', 'code-snippets')}
+				<IconChevronDown size={16} stroke={2} aria-hidden="true" />
+			</summary>
 			<ul>
 				{UPPER_NAV_LINKS.map(link =>
 					<li key={link.name}>

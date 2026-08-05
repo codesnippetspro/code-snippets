@@ -237,6 +237,9 @@ $wpcontent-inline-start-indent: 20px;
 }
 
 .code-snippets-toolbar-upper .toolbar-more-menu summary {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 	cursor: pointer;
 }
 
