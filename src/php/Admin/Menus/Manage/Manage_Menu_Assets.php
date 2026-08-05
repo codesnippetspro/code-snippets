@@ -70,18 +70,24 @@ class Manage_Menu_Assets {
 	 * @return void
 	 */
 	public function enqueue( array $script_dependencies, array $style_dependencies ): void {
+		$plugin_dir = plugin_dir_path( PLUGIN_FILE );
+		$css_version = filemtime( $plugin_dir . 'dist/manage.css' );
+		$js_version  = filemtime( $plugin_dir . 'dist/manage.js' );
+		$css_version = false !== $css_version ? $css_version : PLUGIN_VERSION;
+		$js_version  = false !== $js_version ? $js_version : PLUGIN_VERSION;
+
 		wp_enqueue_style(
 			self::CSS_HANDLE,
 			plugins_url( 'dist/manage.css', PLUGIN_FILE ),
 			$style_dependencies,
-			PLUGIN_VERSION
+			$css_version
 		);
 
 		wp_enqueue_script(
 			self::JS_HANDLE,
 			plugins_url( 'dist/manage.js', PLUGIN_FILE ),
 			$script_dependencies,
-			PLUGIN_VERSION,
+			$js_version,
 			[ 'in_footer' => true ]
 		);
 
