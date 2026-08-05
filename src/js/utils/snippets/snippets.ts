@@ -2,6 +2,7 @@ import { __, sprintf } from '@wordpress/i18n'
 import { isLicensed, isNetworkAdmin } from '../screen'
 import { buildUrl } from '../urls'
 import { parseSnippetObject } from './objects'
+import type { CloudSnippetSchema } from '../../types/schema/CloudSnippetSchema'
 import type { SnippetSchema } from '../../types/schema/SnippetSchema'
 import type { Snippet, SnippetScope, SnippetType } from '../../types/Snippet'
 
@@ -112,3 +113,8 @@ export const isNetworkOnlySnippet = (snippet: Snippet): boolean =>
 export const canModifySnippet = (snippet: Snippet): boolean =>
 	!isNetworkOnlySnippet(snippet) &&
 	!(snippet.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
+
+export const isCloudSnippetDownloadable = (
+	snippet: Pick<CloudSnippetSchema, 'scope' | 'local_id'>
+): boolean =>
+	!snippet.local_id && (!isProSnippet(snippet) || isLicensed())

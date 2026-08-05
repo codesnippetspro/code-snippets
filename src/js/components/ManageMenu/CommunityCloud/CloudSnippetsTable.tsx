@@ -1,7 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { isCloudSnippetDownloadable } from '../../../utils/snippets/cloud'
-import { getSnippetType } from '../../../utils/snippets/snippets'
+import { getSnippetType , isCloudSnippetDownloadable } from '../../../utils/snippets/snippets'
 import { stripTags, truncateChars } from '../../../utils/text'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
@@ -134,8 +133,8 @@ export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({
 	return <table className="wp-list-table widefat fixed striped cloud-snippets-table">
 		<thead>
 			<tr>
-				{selected && setSelected
-					? <td className="column-cb check-column">
+				{selected && setSelected && (
+					<td className="column-cb check-column">
 						<input
 							id="cb-select-all-cloud-snippets"
 							type="checkbox"
@@ -144,8 +143,7 @@ export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({
 							onChange={event =>
 								updateSelection(setSelected, downloadable.map(snippet => snippet.id), event.target.checked)}
 						/>
-					</td>
-					: null}
+					</td>)}
 				<th scope="col" className="column-name column-primary">{__('Name', 'code-snippets')}</th>
 				<th scope="col" className="column-type">{__('Type', 'code-snippets')}</th>
 				<th scope="col" className="column-status">{__('Status', 'code-snippets')}</th>

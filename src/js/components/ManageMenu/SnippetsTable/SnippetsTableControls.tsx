@@ -45,13 +45,9 @@ const SnippetStatusCounts = () => {
 								setCurrentStatus(status)
 							}}
 						>
-							{`${label} `}
-							<span className="count">{
-								// translators: %d: number of snippets in the current view.
-								sprintf(
-									_x('(%d)', 'table view count', 'code-snippets'),
-									snippetsByStatus.get(status)?.length ?? 0
-								)
+							{label} <span className="count">{
+							// translators: %d: number of snippets in the current view.
+								sprintf(_x('(%d)', 'table view count', 'code-snippets'), snippetsByStatus.get(status)?.length ?? 0)
 							}</span>
 						</a>
 					</li>

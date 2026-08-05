@@ -21,7 +21,7 @@ const FOCUSABLE_SELECTOR = [
 ].join(', ')
 
 interface KebabMenuContextValue {
-	closeMenu: () => void
+	closeMenu: VoidFunction
 }
 
 const KebabMenuContext = createContext<KebabMenuContextValue>({ closeMenu: () => undefined })
@@ -29,7 +29,7 @@ const KebabMenuContext = createContext<KebabMenuContextValue>({ closeMenu: () =>
 export const useKebabMenu = (): KebabMenuContextValue => useContext(KebabMenuContext)
 
 export interface KebabMenuItemProps {
-	onSelect?: () => void
+	onSelect?: VoidFunction
 	destructive?: boolean
 	disabled?: boolean
 	className?: string
@@ -152,22 +152,25 @@ const handlePopoverKeyDown = (
 	const focusable = Array.from(popoverRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
 	const currentIndex = active instanceof HTMLElement ? focusable.indexOf(active) : -1
 
-	if (
-		'ArrowDown' === event.key ||
-		'ArrowUp' === event.key ||
-		'Home' === event.key ||
-		'End' === event.key
-	) {
-		if (0 < focusable.length) {
-			event.preventDefault()
-			const offset = 'ArrowDown' === event.key ? currentIndex + 1 : currentIndex - 1
-			const target = 'Home' === event.key
-				? 0
-				: 'End' === event.key ? focusable.length - 1 : (offset + focusable.length) % focusable.length
-			focusable[target].focus()
+	if (0 < focusable.length && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+		event.preventDefault()
+
+		const getTarget = () => {
+			switch (event.key) {
+				case 'Home':
+					return 0
+
+				case 'End':
+					return focusable.length - 1
+
+				default: {
+					const offset = currentIndex + ('ArrowDown' === event.key ? 1 : -1)
+					return (offset + focusable.length) % focusable.length
+				}
+			}
 		}
 
-		return
+		focusable[getTarget()].focus()
 	}
 }
 

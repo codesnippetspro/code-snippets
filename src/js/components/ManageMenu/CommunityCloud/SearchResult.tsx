@@ -63,8 +63,9 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({
 			? <div className="snippet-card-meta">
 				{0 < snippet.tags.length
 					? <span className="cloud-snippet-tags">
-						<span className="snippet-card-tags-label">{__('Tags:', 'code-snippets')}</span>
-						{' '}{snippet.tags.join(', ')}
+						<span className="snippet-card-tags-label">
+							{__('Tags:', 'code-snippets')}
+						</span> {snippet.tags.join(', ')}
 					</span>
 					: null}
 

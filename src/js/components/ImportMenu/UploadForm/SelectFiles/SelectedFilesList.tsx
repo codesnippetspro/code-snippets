@@ -48,11 +48,8 @@ export interface SelectedFilesListProps {
 export const SelectedFilesList: React.FC<SelectedFilesListProps> = ({ files, onRemoveFile }) =>
 	<div className="selected-files">
 		<h3>
-			{sprintf(
-				// translators: %d: number of selected files.
-				__('Selected files: (%d)', 'code-snippets'),
-				files.length
-			)}
+			{// translators: %d: number of selected files.
+				sprintf(__('Selected files: (%d)', 'code-snippets'), files.length)}
 		</h3>
 
 		<div className="selected-files-list">
