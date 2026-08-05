@@ -28,7 +28,7 @@ interface SnippetTypeTabProps {
 const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
-	const showCount = count !== undefined && (isLicensed() || !type || !isProType(type))
+	const showCount = count !== undefined && (!type || 'php' === type || 'html' === type)
 
 	return (
 		<li>
