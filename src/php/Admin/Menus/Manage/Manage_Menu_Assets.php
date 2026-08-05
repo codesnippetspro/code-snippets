@@ -42,6 +42,26 @@ class Manage_Menu_Assets {
 	}
 
 	/**
+	 * Count non-trashed snippets by type.
+	 *
+	 * @return array<string, int> Map of type name to snippet count, including 'all'.
+	 */
+	private function get_snippet_type_counts(): array {
+		$counts = [ 'all' => 0 ];
+
+		foreach ( get_snippets() as $snippet ) {
+			if ( $snippet->trashed ) {
+				continue;
+			}
+
+			$counts[ $snippet->type ] = ( $counts[ $snippet->type ] ?? 0 ) + 1;
+			++$counts['all'];
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Enqueue manage assets and localize their runtime data.
 	 *
 	 * @param string[] $script_dependencies JavaScript dependencies.
@@ -79,6 +99,7 @@ class Manage_Menu_Assets {
 			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
 			'editorTheme'          => get_setting( 'editor', 'theme' ),
+			'typeCounts'           => $this->get_snippet_type_counts(),
 		];
 
 		if ( $this->screen_options->is_manage_table_view() ) {

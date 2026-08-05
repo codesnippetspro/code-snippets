@@ -1,15 +1,15 @@
 import { __, sprintf } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import classnames from 'classnames'
 import { useHorizontalScrollOverflow } from '../../../hooks/useHorizontalScrollOverflow'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
-import { WithSnippetsListContext } from '../../../hooks/useSnippetsList'
+import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
 import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
-import { SNIPPET_TYPE_LABELS, getSnippetAddNewUrl, isProType } from '../../../utils/snippets/snippets'
+import { SNIPPET_TYPE_LABELS, getSnippetAddNewUrl, getSnippetType, isProType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Notice } from '../../common/Notice'
@@ -22,11 +22,13 @@ import type { SnippetType } from '../../../types/Snippet'
 
 interface SnippetTypeTabProps {
 	type?: SnippetType
+	count?: number
 }
 
-const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type }) => {
+const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
+	const showCount = count !== undefined && (isLicensed() || !type || !isProType(type))
 
 	return (
 		<li>
@@ -51,6 +53,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type }) => {
 							<span className="snippet-type-name-short">{__('All', 'code-snippets')}</span>
 						</>}
 				</span>
+				{showCount && <span className="subnav-count">{count}</span>}
 				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>
@@ -78,9 +81,40 @@ const SafeModeNotice = () =>
 		</Notice>
 		: null
 
+// Counts render immediately from the values localized with the page, then
+// switch to live values derived from the snippets list once it has loaded.
+const useSnippetTypeCounts = () => {
+	const { snippetsList } = useSnippetsList()
+
+	const countedSnippets = useMemo(
+		() => snippetsList?.filter(snippet => !snippet.trashed),
+		[snippetsList]
+	)
+
+	const typeCounts = useMemo(
+		() => countedSnippets?.reduce((counts, snippet) => {
+			const type = getSnippetType(snippet)
+			return counts.set(type, (counts.get(type) ?? 0) + 1)
+		}, new Map<SnippetType, number>()),
+		[countedSnippets]
+	)
+
+	const localized = window.CODE_SNIPPETS_MANAGE?.typeCounts
+
+	const getCount = useCallback(
+		(type?: SnippetType) => countedSnippets
+			? type ? typeCounts?.get(type) ?? 0 : countedSnippets.length
+			: localized?.[type ?? 'all'],
+		[countedSnippets, typeCounts, localized]
+	)
+
+	return { getCount }
+}
+
 const SnippetsTableInner = () => {
 	const { snippetView, setSnippetView } = useSnippetView()
 	const { currentType } = useSnippetsFilters()
+	const { getCount } = useSnippetTypeCounts()
 	const { atStart, atEnd, scrollRef } = useHorizontalScrollOverflow()
 
 	return (
@@ -97,8 +131,8 @@ const SnippetsTableInner = () => {
 					aria-label={__('Snippet types', 'code-snippets')}
 				>
 					<ul>
-						<SnippetTypeTab />
-						{SNIPPET_TYPES.map(type => <SnippetTypeTab key={type} type={type} />)}
+						<SnippetTypeTab count={getCount()} />
+						{SNIPPET_TYPES.map(type => <SnippetTypeTab key={type} type={type} count={getCount(type)} />)}
 					</ul>
 				</nav>
 			</div>
