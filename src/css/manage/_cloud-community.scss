@@ -1,4 +1,5 @@
 @use '../common/banners';
+@use '../common/checkbox';
 @use '../common/theme';
 
 .cloud-snippet-status {
@@ -98,8 +99,10 @@ $status-colors: (
 	// Keep the Download / Edit / Pro Only button a consistent width so
 	// rows line up regardless of which state the snippet is in.
 	.button-primary,
-	.cloud-pro-button {
-		min-inline-size: 90px;
+	.cloud-pro-button,
+	.button:not(.button-primary) {
+		inline-size: 103px;
+		min-inline-size: 103px;
 		text-align: center;
 		justify-content: center;
 	}
@@ -115,6 +118,14 @@ $status-colors: (
 		vertical-align: middle;
 	}
 
+	.check-column {
+		vertical-align: middle;
+
+		input[type='checkbox'] {
+			@include checkbox.canonical;
+		}
+	}
+
 	.column-name {
 		inline-size: 22%;
 	}
@@ -128,7 +139,7 @@ $status-colors: (
 	}
 
 	.column-actions {
-		inline-size: 210px;
+		inline-size: 234px;
 	}
 
 	.cloud-table-name-button {

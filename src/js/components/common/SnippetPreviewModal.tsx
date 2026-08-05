@@ -83,6 +83,35 @@ const usePreviewActionHandlers = ({
 	return { handleClone, handleExport }
 }
 
+const CopyCodeButton: React.FC<{ code: string }> = ({ code }) => {
+	const [copyStatus, setCopyStatus] = useState<'copied' | 'failed' | null>(null)
+
+	const copyCode = () => {
+		const clipboard = navigator.clipboard as Clipboard | undefined
+
+		if (!window.isSecureContext || !clipboard) {
+			setCopyStatus('failed')
+			return
+		}
+
+		void clipboard.writeText(code)
+			.then(() => setCopyStatus('copied'))
+			.catch(() => setCopyStatus('failed'))
+	}
+
+	const label = 'copied' === copyStatus
+		? __('Copied', 'code-snippets')
+		: 'failed' === copyStatus
+			? __('Copy unavailable', 'code-snippets')
+			: __('Copy code', 'code-snippets')
+
+	return (
+		<Button secondary onClick={copyCode}>
+			{label}
+		</Button>
+	)
+}
+
 const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
 	snippet,
 	closeModal,
@@ -117,6 +146,8 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
 			>
 				{__('Export', 'code-snippets')}
 			</Button>
+
+			<CopyCodeButton code={snippet.code} />
 
 			{snippet.locked || !canModify
 				? null
@@ -178,10 +209,13 @@ const PreviewTypeBadge: React.FC<{ type: SnippetType }> = ({ type }) =>
 		<Badge name={type} />
 	</div>
 
-const PreviewFooterActionsWrapper: React.FC<PropsWithChildren> = ({ children }) =>
+const PreviewFooterActionsWrapper: React.FC<PropsWithChildren<{ code: string }>> = ({ children, code }) =>
 	children
 		? <div className="code-snippets-preview-modal__footer">
-			<div className="code-snippets-preview-modal__buttons">{children}</div>
+			<div className="code-snippets-preview-modal__buttons">
+				{children}
+				<CopyCodeButton code={code} />
+			</div>
 		</div>
 		: null
 
@@ -240,7 +274,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 
 			{snippet
 				? <SnippetPreviewActions snippet={snippet} closeModal={() => setIsOpen(false)} />
-				: <PreviewFooterActionsWrapper>{footerActions}</PreviewFooterActionsWrapper>}
+				: <PreviewFooterActionsWrapper code={code}>{footerActions}</PreviewFooterActionsWrapper>}
 		</Modal>
 		: null
 }
