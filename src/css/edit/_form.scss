@@ -54,8 +54,14 @@ $sidebar-gap: 30px;
 	.conditions-editor-header {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: flex-start;
 		gap: 8px;
+		margin-block-end: 8px;
+
+		strong {
+			font-size: 14px;
+			line-height: 20px;
+		}
 	}
 
 	.button.button-large {
@@ -64,8 +70,14 @@ $sidebar-gap: 30px;
 		gap: 8px;
 		inline-size: 100%;
 		border-color: #ccc;
+		background: #fff;
 		padding-block: 6px;
 		padding-inline: 12px;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			background: #f6f7f7;
+		}
 	}
 
 	&.no-condition .cond-badge {
@@ -116,8 +128,15 @@ $sidebar-gap: 30px;
 		grid-area: span 3 / sidebar;
 		max-inline-size: $sidebar-width;
 		position: sticky;
-		inset-block-start: 32px;
+
+		// Keep the sidebar clear of the fixed WordPress admin bar and leave a
+		// usable visual gap beneath it while the editor scrolls.
+		inset-block-start: 48px;
 		align-self: start;
+
+		@media (width <= 782px) {
+			position: static;
+		}
 	}
 
 	@media (width <= 1024px) {
