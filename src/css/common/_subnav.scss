@@ -3,45 +3,62 @@
 // Snippet-type navigation: a boxed segmented control on a white band, with
 // each tab separated by a vertical rule and the active tab shown as a
 // filled tile.
+.snippet-type-nav-wrapper {
+	position: relative;
+
+	// Bleed across the full admin content width, flush against the plugin toolbar.
+	box-sizing: border-box;
+	min-block-size: 53px;
+	margin-block-start: -10px;
+	margin-inline-start: -22px;
+	inline-size: calc(100% + 42px);
+	overflow: hidden;
+	background: #fff;
+	border-block-end: 1px solid #e2e2e4;
+
+	&::before,
+	&::after {
+		position: absolute;
+		inset-block: 0;
+		z-index: 1;
+		inline-size: 32px;
+		content: '';
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 150ms ease;
+	}
+
+	&::before {
+		inset-inline-start: 0;
+		background: linear-gradient(to right, #fff, transparent);
+	}
+
+	&::after {
+		inset-inline-end: 0;
+		background: linear-gradient(to left, #fff, transparent);
+	}
+
+	&.has-scroll-start::before,
+	&.has-scroll-end::after {
+		opacity: 1;
+	}
+
+	@media (width <= 782px) {
+		margin-inline-start: -10px;
+		inline-size: calc(100% + 22px);
+	}
+}
+
 .snippet-type-nav {
 	// The tab band scrolls sideways instead of wrapping at any width.
 	overflow-x: auto;
 	scrollbar-width: thin;
-	background: #fff;
 
-	// The toolbar band above already draws the 1px separator, so only a
-	// bottom border here — a top border would double the line weight.
-	border-block-end: 1px solid #e2e2e4;
-	min-block-size: 53px;
-
-	// Bleed across the full admin content width, flush against the plugin
-	// toolbar above: counteract the .wrap top margin (10px) plus its 2px /
-	// 20px inline margins and the #wpcontent 20px inline padding.
-	box-sizing: border-box;
-	margin-block-start: -10px;
-	margin-inline-start: -22px;
-	inline-size: calc(100% + 42px);
-
-	// Core admin switches to 10px #wpcontent padding, 0/12px .wrap margins
-	// below 782px; mirror them so the bar stays flush without overflowing
-	// the viewport. The tabs scroll horizontally on a single row rather than
-	// stacking, with the scrollbar chrome hidden.
 	@media (width <= 782px) {
-		margin-inline-start: -10px;
-		inline-size: calc(100% + 22px);
-		overflow-x: auto;
 		scrollbar-width: none;
 
 		&::-webkit-scrollbar {
 			display: none;
-		}
-
-		ul {
-			flex-wrap: nowrap;
-		}
-
-		.snippet-type-link {
-			white-space: nowrap;
 		}
 	}
 
@@ -57,6 +74,7 @@
 
 	li {
 		display: flex;
+		flex: 0 0 auto;
 		margin: 0;
 	}
 
@@ -85,6 +103,7 @@
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 1.5;
+		white-space: nowrap;
 		color: #646970;
 		text-decoration: none;
 		box-sizing: border-box;
@@ -237,7 +256,7 @@
 
 // When an admin notice pushes the page content down, restore the gap and top
 // border above the subnav bar.
-.notice + .wrap .snippet-type-nav {
+.notice + .wrap .snippet-type-nav-wrapper {
 	margin-block-start: 20px;
 	border-block-start: 1px solid theme.$control-border;
 }

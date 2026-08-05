@@ -149,22 +149,27 @@ $wpcontent-inline-start-indent: 20px;
 		}
 	}
 
-	// Mobile: the primary navigation scrolls horizontally on its band rather
-	// than wrapping, with the scrollbar chrome hidden.
+	// On narrow screens Settings remains available through the WordPress submenu.
+	// The remaining primary destinations fill the toolbar evenly rather than
+	// becoming a second horizontally-scrolling navigation row.
 	@media (width <= 782px) {
-		overflow-x: auto;
-		scrollbar-width: none;
-
-		&::-webkit-scrollbar {
+		li.toolbar-end-item {
 			display: none;
 		}
 
-		ul {
-			flex-wrap: nowrap;
+		li:not(.toolbar-end-item) {
+			flex: 1 1 0;
+			min-inline-size: 0;
+		}
+
+		li:not(.toolbar-end-item) + li.toolbar-end-item {
+			margin-inline-start: 0;
 		}
 
 		li a {
-			white-space: nowrap;
+			inline-size: 100%;
+			padding-inline: 8px;
+			white-space: normal;
 		}
 	}
 }

@@ -5,12 +5,9 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;
-use Code_Snippets\UnitTestCase;
-use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
-use function Code_Snippets\trash_snippet;
 
 /**
  * Tests for manage menu assets and localized data.
@@ -53,7 +50,6 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 				'bulkDownloadNonce',
 				'supportsZipDownloads',
 				'editorTheme',
-				'typeCounts',
 				'snippetsList',
 			],
 			array_keys( $localized )
@@ -148,32 +144,6 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
 
 		$this->assertArrayNotHasKey( 'snippetsList', $localized );
-	}
-
-	/**
-	 * Compatible scopes are combined and trashed snippets are excluded.
-	 *
-	 * @return void
-	 */
-	public function test_count_returns_non_trashed_counts_by_snippet_type(): void {
-		$this->enqueue_assets();
-		$before = $this->get_localized_data();
-
-		save_snippet( new Snippet( [ 'scope' => 'global' ] ) );
-		save_snippet( new Snippet( [ 'scope' => 'admin' ] ) );
-		save_snippet( new Snippet( [ 'scope' => 'content' ] ) );
-		$trashed = save_snippet( new Snippet( [ 'scope' => 'site-css' ] ) );
-
-		$this->assertInstanceOf( Snippet::class, $trashed );
-		trash_snippet( $trashed->id );
-
-		$this->enqueue_assets();
-		$localized = $this->get_localized_data();
-
-		$this->assertSame( ( $before['typeCounts']['all'] ?? 0 ) + 3, $localized['typeCounts']['all'] );
-		$this->assertSame( ( $before['typeCounts']['php'] ?? 0 ) + 2, $localized['typeCounts']['php'] );
-		$this->assertSame( ( $before['typeCounts']['html'] ?? 0 ) + 1, $localized['typeCounts']['html'] );
-		$this->assertArrayNotHasKey( 'css', $localized['typeCounts'], 'css' );
 	}
 
 	/**

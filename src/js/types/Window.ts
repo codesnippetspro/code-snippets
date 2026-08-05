@@ -67,7 +67,6 @@ declare global {
 			hiddenColumns: string[]
 			truncateRowValues: number | string
 			snippetsPerPage: number
-			typeCounts?: Record<string, number>
 			cloudSearchPerPage: number
 			isSafeModeActive: boolean
 			bulkDownloadNonce: string
