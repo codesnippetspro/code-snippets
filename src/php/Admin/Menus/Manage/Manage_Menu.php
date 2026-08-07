@@ -21,13 +21,6 @@ class Manage_Menu extends Admin_Menu {
 	private const DEFAULT_SNIPPETS_PER_PAGE = 100;
 
 	/**
-	 * Manage menu asset service.
-	 *
-	 * @var Manage_Menu_Assets
-	 */
-	private Manage_Menu_Assets $assets;
-
-	/**
 	 * Manage menu Screen Options.
 	 *
 	 * @var Manage_Menu_Screen_Options

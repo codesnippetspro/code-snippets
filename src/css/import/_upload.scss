@@ -5,7 +5,7 @@ $type-colors: (
 );
 
 .import-upload-card {
-	h3 {
+	h2 {
 		margin: 0 0 1em;
 	}
 
@@ -105,7 +105,7 @@ $type-colors: (
 .selected-files {
 	margin-block-end: 20px;
 
-	h4 {
+	h3 {
 		margin: 0 0 12px;
 		font-size: 14px;
 		font-weight: 600;
@@ -162,7 +162,7 @@ $type-colors: (
 }
 
 .duplicate-action-selector-card {
-	h3 {
+	h2 {
 		margin: 0 0 1em;
 	}
 
@@ -199,7 +199,7 @@ $type-colors: (
 		flex: 1;
 	}
 
-	h4 {
+	h2 {
 		margin: 0 0 8px;
 		font-size: 16px;
 		font-weight: 600
@@ -220,10 +220,10 @@ $type-colors: (
 		}
 	}
 
-	p.import-result-warnings {
+	.import-result-warnings {
 		margin-block-start: 12px;
 
-		h4 {
+		h3 {
 			margin: 0 0 8px;
 			font-size: 14px;
 			color: #d63638;
@@ -280,7 +280,7 @@ $type-colors: (
 		align-items: center;
 		margin-block-end: 10px;
 
-		h4 {
+		h2 {
 			margin: 0;
 		}
 

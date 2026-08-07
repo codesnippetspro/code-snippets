@@ -71,7 +71,7 @@ npm run watch
 
 ## Pre-commit hooks (automatic linting & autofix) 🔧
 
-We use Husky + lint-staged to run linters only on the files being committed. The hook will:
+We use a native Git hook and lint-staged to run linters only on the files being committed. The hook will:
 
 - Run the appropriate autofix for the changed files (PHP, JS/TS, CSS/SCSS).
 - Automatically stage any files that were fixed so the fixes are included in the same commit.
@@ -85,7 +85,7 @@ Files → actions (configured in this repository):
 
 Setup
 
-1. Install node deps (this will also prepare Husky via the `prepare` script):
+1. Install node deps. The `prepare` script configures Git to use this repository's hooks:
 
 ```shell
 npm install

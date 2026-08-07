@@ -297,7 +297,7 @@ class Settings_Menu extends Admin_Menu {
 
 			if ( $section['title'] ) {
 				printf(
-					'<h3 id="%s-settings" class="settings-section-title">%s</h3>' . "\n",
+					'<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
 					esc_attr( $section['id'] ),
 					esc_html( $section['title'] )
 				);

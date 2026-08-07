@@ -1,5 +1,5 @@
-import { __, sprintf } from '@wordpress/i18n'
-import React, { Fragment, useMemo } from 'react'
+import { __, _x, sprintf } from '@wordpress/i18n'
+import React, { Fragment, useId, useMemo } from 'react'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
@@ -45,13 +45,9 @@ const SnippetStatusCounts = () => {
 								setCurrentStatus(status)
 							}}
 						>
-							{`${label} `}
-							<span className="count">{
-								sprintf(
-									// translators: %d: number of snippets in the current view.
-									__('(%d)', 'code-snippets'),
-									snippetsByStatus.get(status)?.length ?? 0
-								)
+							{label} <span className="count">{
+							// translators: %d: number of snippets in the current view.
+								sprintf(_x('(%d)', 'table view count', 'code-snippets'), snippetsByStatus.get(status)?.length ?? 0)
 							}</span>
 						</a>
 					</li>
@@ -88,6 +84,7 @@ interface FilterByTagControlProps {
 
 const FilterByTagControl: React.FC<FilterByTagControlProps> = ({ visibleSnippets }) => {
 	const { currentTag, setCurrentTag } = useSnippetsFilters()
+	const tagFilterId = useId()
 
 	const tagsList: Set<string> = useMemo(
 		() => visibleSnippets.reduce((tags, snippet) => {
@@ -98,13 +95,14 @@ const FilterByTagControl: React.FC<FilterByTagControlProps> = ({ visibleSnippets
 
 	return 0 < tagsList.size
 		? <div className="alignleft actions">
-			<label htmlFor="snippets-tag-filter" className="screen-reader-text">
+			<label htmlFor={tagFilterId} className="screen-reader-text">
 				{__('Filter snippets by tag', 'code-snippets')}
 			</label>
 			<select
-				id="snippets-tag-filter"
+				id={tagFilterId}
 				name="tag"
 				value={currentTag}
+				aria-label={__('Filter snippets by tag', 'code-snippets')}
 				onChange={event => setCurrentTag(event.target.value)}
 			>
 				<option value="">{__('All Tags', 'code-snippets')}</option>

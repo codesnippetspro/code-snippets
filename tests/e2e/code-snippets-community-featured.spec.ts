@@ -264,15 +264,16 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 		const headerCheckbox = table.locator('thead').getByRole('checkbox', { name: 'Select all snippets' })
 		const rowCheckbox = table.locator('tbody').getByRole('checkbox', { name: 'Select Mock Cloud Snippet' })
-		const toolbarCheckbox = page.getByRole('checkbox', { name: 'Select all items' })
+
+		// The table owns the only select-all control; the toolbar checkbox is
+		// reserved for the card view.
+		await expect(page.getByRole('checkbox', { name: 'Select all items' })).toHaveCount(0)
 
 		await rowCheckbox.check()
 		await expect(rowCheckbox).toBeChecked()
 		await expect(headerCheckbox).toBeChecked()
-		await expect(toolbarCheckbox).toBeChecked()
 
 		await headerCheckbox.uncheck()
 		await expect(rowCheckbox).not.toBeChecked()
-		await expect(toolbarCheckbox).not.toBeChecked()
 	})
 })

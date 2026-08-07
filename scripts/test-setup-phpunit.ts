@@ -42,7 +42,7 @@ const main = () => {
 	const wpTestsDir = resolve(process.cwd(), '.wp-tests-lib')
 	const wpCoreDir = resolve(process.cwd(), '.wp-core')
 	const wpTestsConfig = resolve(wpTestsDir, 'wp-tests-config.php')
-	const installScript = resolve(process.cwd(), 'tests', 'install-wp-tests.sh')
+	const installScript = resolve(process.cwd(), 'scripts', 'install-wp-tests.sh')
 
 	// Create the database if needed (avoid install-wp-tests.sh prompt / destructive behavior).
 	const mysqlArgs = buildMysqlArgs({ user: dbUser, password: dbPass, host: dbHost })
@@ -65,6 +65,26 @@ const main = () => {
 			WP_CORE_DIR: wpCoreDir
 		}
 	})
+
+	// Ensure a clean test schema before WordPress bootstraps installation.
+	run('mysql', [
+		...mysqlArgs,
+		dbName,
+		'-e',
+		[
+			'SET FOREIGN_KEY_CHECKS = 0',
+			'SET @tables = (SELECT GROUP_CONCAT(table_name)' +
+				` FROM information_schema.tables WHERE table_schema = '${dbName}' AND table_name LIKE 'wptests\\_%')`,
+			"SET @drop = IF(@tables IS NULL, 'SELECT 1', CONCAT('DROP TABLE ', @tables))",
+			'PREPARE stmt FROM @drop',
+			'EXECUTE stmt',
+			'DEALLOCATE PREPARE stmt',
+			'SET FOREIGN_KEY_CHECKS = 1'
+		].join('; ')
+	])
+
+	// Initialize WordPress test tables so `npm run test:php` works on a fresh DB.
+	run('php', [resolve(wpTestsDir, 'includes', 'install.php'), wpTestsConfig])
 }
 
 try {

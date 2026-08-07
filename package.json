@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "git config core.hooksPath .githooks || true",
     "test:php": "WP_TESTS_DIR=./.wp-tests-lib src/vendor/bin/phpunit -c phpunit.xml",
     "test:php:watch": "npm run test:php -- --testdox",
     "test:playwright": "playwright test -c config/playwright/playwright.config.ts",
@@ -106,7 +106,6 @@
     "eslint-webpack-plugin": "^4.2.0",
     "glob": "^11.1.0",
     "globals": "^15.14.0",
-    "husky": "^8.0.0",
     "lint-staged": "^15.5.2",
     "mini-css-extract-plugin": "^2.9.2",
     "postcss": "^8.5.2",

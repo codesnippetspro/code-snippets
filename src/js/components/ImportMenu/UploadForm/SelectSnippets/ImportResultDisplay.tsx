@@ -27,7 +27,7 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ succes
 			</div>
 
 			<div>
-				<h4>
+				<h2>
 					{'upload' === step && (success
 						? __('File upload successful', 'code-snippets')
 						: __('File upload error', 'code-snippets'))}
@@ -35,7 +35,7 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ succes
 					{'select' === step && (success
 						? __('Import successful', 'code-snippets')
 						: __('Import error', 'code-snippets'))}
-				</h4>
+				</h2>
 
 				<p className="import-result-message">{message}</p>
 
@@ -52,7 +52,7 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ succes
 
 				{warnings && 0 < warnings.length && (
 					<div className="import-result-warnings">
-						<h4>{__('Warnings:', 'code-snippets')}</h4>
+						<h3>{__('Warnings:', 'code-snippets')}</h3>
 						<ul>
 							{warnings.map(warning => <li key={warning}>{warning}</li>)}
 						</ul>

@@ -226,10 +226,22 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-	 * Navigate to the Code Snippets admin page
+	 * Navigate to the Code Snippets admin page.
+	 *
+	 * The snippet view preference persists server-side per user, so an earlier
+	 * card-view test can leave the manage page rendering cards. Callers of this
+	 * helper expect the table, so switch back whenever cards are active.
 	 */
 	async navigateToSnippetsAdmin(): Promise<void> {
 		await this.page.goto(URLS.SNIPPETS_ADMIN)
+
+		const viewToggle = this.page.getByRole('button', { name: 'Table view' })
+		await viewToggle.waitFor({ timeout: TIMEOUTS.DEFAULT })
+
+		if (0 === await this.page.locator(SELECTORS.SNIPPETS_TABLE).count()) {
+			await viewToggle.click()
+		}
+
 		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
 	}
 

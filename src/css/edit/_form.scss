@@ -71,8 +71,7 @@ $sidebar-gap: 30px;
 		inline-size: 100%;
 		border-color: theme.$control-border;
 		background: transparent;
-		padding-block: 6px;
-		padding-inline: 12px;
+		padding: 6px 12px;
 
 		&:hover:not(:disabled),
 		&:focus:not(:disabled) {

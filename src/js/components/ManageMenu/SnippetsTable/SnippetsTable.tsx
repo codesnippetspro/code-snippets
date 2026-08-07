@@ -28,7 +28,6 @@ interface SnippetTypeTabProps {
 const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
-	const showCount = count !== undefined && (!type || 'php' === type || 'html' === type)
 
 	return (
 		<li>
@@ -53,7 +52,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 							<span className="snippet-type-name-short">{__('All', 'code-snippets')}</span>
 						</>}
 				</span>
-				{showCount && <span className="subnav-count">{count}</span>}
+				{count !== undefined && (!type || 'php' === type || 'html' === type) && <span className="subnav-count">{count}</span>}
 				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>

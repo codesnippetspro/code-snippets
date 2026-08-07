@@ -15,6 +15,14 @@ import type { Snippet, SnippetType } from '../../types/Snippet'
 
 const CODE_PREVIEW_LABEL = __('Snippet code preview', 'code-snippets')
 
+export interface PreviewWorkingState {
+	isWorking: boolean
+	beginWorking: () => boolean
+	finishWorking: () => void
+}
+
+export type PreviewExtraActions = (working: PreviewWorkingState) => ReactNode
+
 export interface SnippetPreviewModalProps {
 	title: string
 	code: string
@@ -23,6 +31,7 @@ export interface SnippetPreviewModalProps {
 	setIsOpen: (isOpen: boolean) => void
 	snippet?: Snippet
 	footerActions?: ReactNode
+	extraActions?: PreviewExtraActions
 }
 
 const EDITOR_MODES: Record<string, string> = {
@@ -47,19 +56,49 @@ const getPreviewEditorSettings = (type: string): EditorConfiguration => ({
 interface SnippetPreviewActionsProps {
 	snippet: Snippet
 	closeModal: () => void
+	extraActions?: PreviewExtraActions
 }
 
 interface SnippetPreviewButtonsProps extends SnippetPreviewActionsProps {
 	requestDelete: () => void
-	isWorking: boolean
-	setIsWorking: (working: boolean) => void
+	working: PreviewWorkingState & { setIsWorking: (working: boolean) => void }
+}
+
+/**
+ * Tracks whether a footer action is in flight. The ref mirrors the state so
+ * `beginWorking` can reject re-entry within the same tick, before React
+ * re-renders with the disabled buttons.
+ */
+const useWorkingState = () => {
+	const [isWorking, setIsWorking] = useState(false)
+	const isWorkingRef = useRef(false)
+	const updateWorking = (value: boolean) => {
+		isWorkingRef.current = value
+		setIsWorking(value)
+	}
+
+	return {
+		isWorking,
+		beginWorking: () => {
+			if (isWorkingRef.current) {
+				return false
+			}
+
+			updateWorking(true)
+			return true
+		},
+		finishWorking: () => updateWorking(false),
+		setIsWorking: updateWorking
+	}
 }
 
 const usePreviewActionHandlers = ({
 	snippet,
 	closeModal,
 	setIsWorking
-}: Omit<SnippetPreviewButtonsProps, 'requestDelete' | 'isWorking'>) => {
+}: Pick<SnippetPreviewActionsProps, 'snippet' | 'closeModal'> & {
+	setIsWorking: (working: boolean) => void
+}) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 	const handleClone = () => {
@@ -116,10 +155,11 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
 	snippet,
 	closeModal,
 	requestDelete,
-	isWorking,
-	setIsWorking
+	working,
+	extraActions
 }) => {
 	const canModify = canModifySnippet(snippet)
+	const { isWorking, setIsWorking } = working
 	const actionOptions = { snippet, closeModal, setIsWorking }
 	const { handleClone, handleExport } = usePreviewActionHandlers(actionOptions)
 
@@ -148,6 +188,7 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
 			</Button>
 
 			<CopyCodeButton code={snippet.code} />
+			{extraActions?.(working)}
 
 			{snippet.locked || !canModify
 				? null
@@ -170,13 +211,14 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
  */
 const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({
 	snippet,
-	closeModal
+	closeModal,
+	extraActions
 }) => {
 	const { refreshSnippetsList } = useSnippetsList()
-	const [isWorking, setIsWorking] = useState(false)
+	const working = useWorkingState()
 	const { requestDelete, confirmDialog } = useDeleteSnippet({
 		snippet,
-		setIsWorking,
+		setIsWorking: working.setIsWorking,
 		onSuccess: () => {
 			closeModal()
 			return refreshSnippetsList()
@@ -190,8 +232,8 @@ const SnippetPreviewActions: React.FC<SnippetPreviewActionsProps> = ({
 				snippet={snippet}
 				closeModal={closeModal}
 				requestDelete={requestDelete}
-				isWorking={isWorking}
-				setIsWorking={setIsWorking}
+				working={working}
+				extraActions={extraActions}
 			/>
 
 			<div className="code-snippets-preview-modal__priority">
@@ -209,12 +251,11 @@ const PreviewTypeBadge: React.FC<{ type: SnippetType }> = ({ type }) =>
 		<Badge name={type} />
 	</div>
 
-const PreviewFooterActionsWrapper: React.FC<PropsWithChildren<{ code: string }>> = ({ children, code }) =>
+const PreviewFooterActionsWrapper: React.FC<PropsWithChildren> = ({ children }) =>
 	children
 		? <div className="code-snippets-preview-modal__footer">
 			<div className="code-snippets-preview-modal__buttons">
 				{children}
-				<CopyCodeButton code={code} />
 			</div>
 		</div>
 		: null
@@ -232,7 +273,8 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 	isOpen,
 	setIsOpen,
 	snippet,
-	footerActions
+	footerActions,
+	extraActions
 }) => {
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -273,8 +315,15 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({
 			</div>
 
 			{snippet
-				? <SnippetPreviewActions snippet={snippet} closeModal={() => setIsOpen(false)} />
-				: <PreviewFooterActionsWrapper code={code}>{footerActions}</PreviewFooterActionsWrapper>}
+				? <SnippetPreviewActions
+					snippet={snippet}
+					extraActions={extraActions}
+					closeModal={() => setIsOpen(false)}
+				/>
+				: <PreviewFooterActionsWrapper>
+					{footerActions}
+					<CopyCodeButton code={code} />
+				</PreviewFooterActionsWrapper>}
 		</Modal>
 		: null
 }

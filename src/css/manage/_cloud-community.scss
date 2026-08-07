@@ -84,6 +84,10 @@ $status-colors: (
 	.banner {
 		justify-content: center;
 	}
+
+	.cloud-search-filters select {
+		inline-size: 245px;
+	}
 }
 
 .bundle-share-code-form {

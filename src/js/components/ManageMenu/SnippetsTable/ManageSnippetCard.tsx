@@ -1,3 +1,4 @@
+import classnames from 'classnames'
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { __, sprintf } from '@wordpress/i18n'
@@ -187,12 +188,12 @@ export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({
 
 	return (
 		<SnippetCard
-			className={[
+			className={classnames(
 				'snippet',
 				`${isSnippetActive(snippet, activeByCondition) ? 'active' : 'inactive'}-snippet`,
 				`${getSnippetType(snippet)}-snippet`,
 				`${snippet.scope}-snippet`
-			].join(' ')}
+			)}
 			isSelected={isSelected}
 			onSelectedChange={onSelectedChange}
 			selectionLabel={sprintf(
@@ -210,23 +211,20 @@ export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({
 					<SnippetExtraIcons snippet={snippet} />
 				</div>
 
-				{0 < snippet.tags.length || snippet.modified
-					? <div className={`snippet-card-meta${0 < snippet.tags.length ? ' has-tags' : ''}`}>
-						{0 < snippet.tags.length
-							? <span className="snippet-card-tags">
-								<span className="snippet-card-tags-label">{__('Tags:', 'code-snippets')}</span>
-								{' '}
-								<TagsColumn snippet={snippet} />
-							</span>
-							: null}
+				{0 < snippet.tags.length || snippet.modified && (
+					<div className={classnames('snippet-card-meta', { 'has-tags': 0 < snippet.tags.length })}>
+						{0 < snippet.tags.length && (
+							<span className="snippet-card-tags">
+								<span className="snippet-card-tags-label">
+									{__('Tags:', 'code-snippets')}
+								</span> <TagsColumn snippet={snippet} />
+							</span>)}
 
 						<CardModifiedDate snippet={snippet} />
-					</div>
-					: null}
+					</div>)}
 
-				{snippet.desc
-					? <div className="snippet-description-content"><RawHTML>{snippet.desc}</RawHTML></div>
-					: null}
+				{snippet.desc && (
+					<div className="snippet-description-content"><RawHTML>{snippet.desc}</RawHTML></div>)}
 			</div>
 		</SnippetCard>
 	)
