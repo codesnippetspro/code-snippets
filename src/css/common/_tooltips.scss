@@ -1,4 +1,4 @@
-$bg-color: hsl(0deg 0% 20% / 90%);
+$bg-color: rgb(19 18 18 / 90%);
 
 .tooltip {
 	position: relative;
@@ -57,15 +57,15 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 .tooltip-content {
 	z-index: 1000;
 	padding: 8px;
-	background-color: $bg-color;
+	background-color: rgb(19 18 18 / 90%);
 	color: #fff;
 	border-radius: 6px;
 	position: absolute;
-	font-size: small;
+	font-size: 12px;
 	font-weight: normal;
 	text-transform: none;
-	min-inline-size: auto;
-	max-inline-size: 300px;
+	inline-size: max-content;
+	max-inline-size: 200px;
 	backdrop-filter: blur(3px);
 
 	.tooltip-block & {
