@@ -64,7 +64,8 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 	font-size: small;
 	font-weight: normal;
 	text-transform: none;
-	min-inline-size: 200px;
+	min-inline-size: auto;
+	max-inline-size: 300px;
 	backdrop-filter: blur(3px);
 
 	.tooltip-block & {
