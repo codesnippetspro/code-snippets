@@ -264,9 +264,8 @@
 	}
 }
 
-// When an admin notice pushes the page content down, restore the gap and top
-// border above the subnav bar.
+// When an admin notice pushes the page content down, restore the top border
+// above the subnav bar (no extra margin — the wrapper sits flush).
 .notice + .wrap .snippet-type-nav-wrapper {
-	margin-block-start: 20px;
 	border-block-start: 1px solid theme.$control-border;
 }
