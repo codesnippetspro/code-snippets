@@ -57,11 +57,11 @@ const CommunityCloudInner = () => {
 				}}
 			/>
 
+			<ScreenMetaSlot hidden={'bundles' === currentTab.name} />
+
 			{'bundles' === currentTab.name
 				? null
 				: <>
-					<ScreenMetaSlot />
-
 					<div className="snippets-page-header">
 						<h1>{
 							// translators: %s: label of the currently selected community cloud tab.
