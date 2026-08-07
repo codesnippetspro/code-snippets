@@ -1,11 +1,10 @@
 import { __ } from '@wordpress/i18n'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 import classnames from 'classnames'
 import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { REST_BASES } from '../../../utils/restAPI'
-import { isLicensed } from '../../../utils/screen'
-import { isProSnippet } from '../../../utils/snippets/snippets'
+import { isCloudSnippetDownloadable } from '../../../utils/snippets/snippets'
 import { TableNav } from '../../common/ListTable/TableNavigation'
 import { LoadingStatusNotices } from '../../common/LoadingStatusNotices'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
@@ -20,6 +19,7 @@ import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
 const SearchBox = () => {
 	const { searchParams, updateSearchParams, isSearching, doSearch } = useCloudSearch()
+	const searchMethodId = useId()
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
@@ -28,11 +28,11 @@ const SearchBox = () => {
 
 	return (
 		<form className="cloud-search-form" onSubmit={handleSubmit}>
-			<label className="screen-reader-text" htmlFor="cloud-search-method">
+			<label htmlFor={searchMethodId} className="screen-reader-text">
 				{__('Search method', 'code-snippets')}
 			</label>
 			<select
-				id="cloud-search-method"
+				id={searchMethodId}
 				value={searchParams.method}
 				onChange={event =>
 					updateSearchParams({ method: 'codevault' === event.target.value ? 'codevault' : 'term' })}
@@ -67,9 +67,6 @@ const SearchBox = () => {
 	)
 }
 
-const isSnippetDownloadable = (snippet: CloudSnippetSchema): boolean =>
-	!snippet.local_id && (isLicensed() || !isProSnippet(snippet))
-
 interface SearchResultsGridProps {
 	snippets: CloudSnippetSchema[]
 	selected: Set<CloudSnippetSchema['id']>
@@ -88,19 +85,21 @@ const SearchResultsGrid: React.FC<SearchResultsGridProps> = ({ snippets, selecte
 				snippet={result}
 				author={<CloudSnippetAuthor codevaultSlug={result.codevault} />}
 				isSelected={selected.has(result.id)}
-				onSelectedChange={isSelected => {
-					setSelected(previous => {
-						const updated = new Set(previous)
+				onSelectedChange={isCloudSnippetDownloadable(result)
+					? isSelected => {
+						setSelected(previous => {
+							const updated = new Set(previous)
 
-						if (isSelected) {
-							updated.add(result.id)
-						} else {
-							updated.delete(result.id)
-						}
+							if (isSelected) {
+								updated.add(result.id)
+							} else {
+								updated.delete(result.id)
+							}
 
-						return updated
-					})
-				}}
+							return updated
+						})
+					}
+					: undefined}
 			/>)}
 	</ul>
 
@@ -130,7 +129,7 @@ const useSearchResultsSelection = () => {
 	): Promise<void> => {
 		if ('download' === action) {
 			await Promise.all((searchResults?.snippets ?? [])
-				.filter(snippet => selectedIds.has(snippet.id) && isSnippetDownloadable(snippet))
+				.filter(snippet => selectedIds.has(snippet.id) && isCloudSnippetDownloadable(snippet))
 				.map(({ id }) => api.post(`${REST_BASES.cloud.snippets}/${id}/download`)))
 
 			doSearch()
@@ -166,7 +165,11 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 				which="top"
 				actions={CLOUD_BULK_ACTIONS}
 				doAction={doAction}
-				selectAllKeys={searchResults.snippets.map(snippet => snippet.id)}
+				selectAllKeys={'card' === snippetView
+					? searchResults.snippets
+						.filter(snippet => isCloudSnippetDownloadable(snippet))
+						.map(snippet => snippet.id)
+					: undefined}
 				extraTableNav={() => <SearchFilters />}
 				endTableNav={which =>
 					'top' === which
@@ -213,8 +216,8 @@ const SearchResults: React.FC<SearchResultsViewProps> = ({ snippetView, setSnipp
 	return searchResults.snippets.length
 		? <>
 			{searchResults.isFeatured
-				? <h3 className="cloud-featured-heading">{__('Featured Snippets', 'code-snippets')}</h3>
-				: <h3 className="cloud-snippets-heading">{__('Search Results', 'code-snippets')}</h3>}
+				? <h2 className="cloud-featured-heading">{__('Featured Snippets', 'code-snippets')}</h2>
+				: <h2 className="cloud-snippets-heading">{__('Search Results', 'code-snippets')}</h2>}
 			<SearchResultsTable snippetView={snippetView} setSnippetView={setSnippetView} />
 		</>
 		: null

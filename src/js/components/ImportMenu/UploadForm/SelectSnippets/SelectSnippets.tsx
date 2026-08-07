@@ -8,7 +8,7 @@ import { Button } from '../../../common/Button'
 import { ImportCard } from '../../common/ImportCard'
 import { useSelection } from '../../../../hooks/useSelection'
 import { SnippetSelectionTable } from './SnippetSelectionTable'
-import type { FormEventHandler, ReactNode} from 'react'
+import type { FormEventHandler, ReactNode } from 'react'
 import type { UseSelection } from '../../../../hooks/useSelection'
 import type { ImportResult } from './ImportResultDisplay'
 import type { ImportableSnippetSchema } from '../../../../types/schema/ImportableSnippetSchema'
@@ -67,11 +67,8 @@ const SelectSnippetsForm: React.FC<SelectSnippetsFormProps> = ({ availableSnippe
 		<>
 			<div className="tablenav top">
 				<div>
-					<h4>{sprintf(
-						// translators: %d: number of available snippets.
-						__('Available snippets (%d)', 'code-snippets'),
-						availableSnippets.length
-					)}</h4>
+					<h2>{// translators: %d: number of available snippets.
+						sprintf(__('Available snippets (%d)', 'code-snippets'), availableSnippets.length)}</h2>
 					<p>{__('Select the snippets you would like to import.', 'code-snippets')}</p>
 				</div>
 				<div className="table-actions">

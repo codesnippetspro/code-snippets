@@ -3,6 +3,7 @@
 namespace Code_Snippets\Admin\Menus\Manage;
 
 use Code_Snippets\Integration\Evaluate_Functions;
+use Code_Snippets\Model\Snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\Settings\get_setting;
@@ -89,11 +90,13 @@ class Manage_Menu_Assets {
 		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
 		code_snippets()->localize_script( self::JS_HANDLE );
 
+		$snippets_per_page = Manage_Menu::get_snippets_per_page();
+
 		$localized = [
 			'hasNetworkCap'        => current_user_can( code_snippets()->get_network_cap_name() ),
 			'hiddenColumns'        => $this->screen_options->get_hidden_columns(),
 			'truncateRowValues'    => (int) $this->screen_options->should_truncate_rows(),
-			'snippetsPerPage'      => Manage_Menu::get_snippets_per_page(),
+			'snippetsPerPage'      => $snippets_per_page,
 			'cloudSearchPerPage'   => Manage_Menu::get_cloud_search_per_page(),
 			'isSafeModeActive'     => Evaluate_Functions::is_safe_mode_active(),
 			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
@@ -103,15 +106,21 @@ class Manage_Menu_Assets {
 		];
 
 		if ( $this->screen_options->is_manage_table_view() ) {
-			$snippets = get_snippets();
-			$inline_limit = max( 0, intval( apply_filters( 'code_snippets/manage/inline_snippets_limit', 100 ) ) );
-
 			// Full code bodies make this payload grow with the size of the snippet library.
-			if ( 0 < $inline_limit && count( $snippets ) <= $inline_limit ) {
-				$localized['snippetsList'] = array_map(
-					fn( $snippet ) => $snippet->get_fields(),
-					$snippets
-				);
+			$snippets = array_map(
+				function ( Snippet $snippet ) {
+					$fields = $snippet->get_fields();
+					$fields['code'] = '';
+					return $fields;
+				},
+				get_snippets()
+			);
+
+			$inline_limit = apply_filters( 'code_snippets/manage/inline_snippets_limit', min( $snippets_per_page, 100 ) );
+			$inline_limit = max( 0, intval( $inline_limit ) );
+
+			if ( $inline_limit > 0 ) {
+				$localized['snippetsList'] = array_slice( $snippets, 0, $inline_limit );
 			}
 		}
 

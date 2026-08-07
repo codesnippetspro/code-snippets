@@ -24,11 +24,8 @@ const TableNav: React.FC<TableNavProps> = ({ which, onImport, isImporting, selec
 		>
 			{isImporting
 				? __('Importing…', 'code-snippets')
-				: sprintf(
-					// translators: %d: number of selected snippets.
-					__('Import Selected (%d)', 'code-snippets'),
-					selection.selectedItems.size
-				)}
+				// translators: %d: number of selected snippets.
+				: sprintf(__('Import Selected (%d)', 'code-snippets'), selection.selectedItems.size)}
 		</Button>
 	</div>
 

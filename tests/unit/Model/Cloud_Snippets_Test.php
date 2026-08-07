@@ -241,4 +241,32 @@ class Cloud_Snippets_Test extends UnitTestCase {
 		$this->assertSame( '', $result->snippets[0]->name );
 		$this->assertSame( '', $result->snippets[1]->description );
 	}
+
+	/**
+	 * String fields coerce scalar values and fall back to an empty string for
+	 * non-scalar values, so malformed remote data never reaches the frontend.
+	 *
+	 * @return void
+	 */
+	public function test_string_fields_normalise_non_string_values(): void {
+		$snippet = new Cloud_Snippet(
+			[
+				'name'      => 123,
+				'scope'     => [ 'not', 'a', 'string' ],
+				'code'      => 4.5,
+				'codevault' => null,
+				'wp_tested' => [ 'nested' => 'array' ],
+				'created'   => false,
+				'updated'   => 20260101,
+			]
+		);
+
+		$this->assertSame( '123', $snippet->name );
+		$this->assertSame( '', $snippet->scope );
+		$this->assertSame( '4.5', $snippet->code );
+		$this->assertSame( '', $snippet->codevault );
+		$this->assertSame( '', $snippet->wp_tested );
+		$this->assertSame( '', $snippet->created );
+		$this->assertSame( '20260101', $snippet->updated );
+	}
 }

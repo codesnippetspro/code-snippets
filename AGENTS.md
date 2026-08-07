@@ -131,6 +131,13 @@ plugins.
 - **Hooks**: Hooks return state and actions, not rendered elements.
 - **Clarity**: Avoid nested ternaries, trivial memoization, unnecessary ARIA roles, and props that repeat component
   defaults.
+- **Conditional rendering**: Use `condition && <element>`; reserve `condition ? <element> : null` for numeric or
+  string conditions that React would otherwise render (a stray `0` or `''`).
+- **Utilities**: Extend the closest existing utility module rather than creating a new file for a single function.
+- **Callback types**: Type no-argument callbacks as `VoidFunction`, not `() => void`.
+- **Translator comments**: Place `// translators:` comments on the line immediately before the translatable string,
+  not before the enclosing JSX expression.
+- **Headings**: Admin screens render a single `h1`; section headings within a page start at `h2`.
 - **Component composition**: Separate components when doing so clarifies responsibility or enables reuse. Use JSX for
   markup rather than `createElement` in utility functions.
 - Do not create 'index.ts' barrel files for components or hooks; import them directly to avoid circular dependencies and

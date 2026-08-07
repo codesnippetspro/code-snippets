@@ -47,7 +47,7 @@ const StatusMessages: React.FC = () => {
 				</StatusDisplay>)}
 
 			{0 < importedIds.length && (
-			// translators: %d: number of imported snippets.
+				// translators: %d: number of imported snippets.
 				<StatusDisplay type="success" title={sprintf(__('%d snippets imported!', 'code-snippets'), importedIds.length)}>
 					{createInterpolateElement(
 						__('Selected snippets have been successfully imported to your <a>Code Snippets library</a>.', 'code-snippets'),
@@ -59,8 +59,8 @@ const StatusMessages: React.FC = () => {
 				</StatusDisplay>)}
 
 			{selectedImporter &&
-					isWorking !== MigrationStep.FetchSnippets && error?.step !== MigrationStep.FetchSnippets &&
-					0 === snippetSelection.availableItems.length && 0 === importedIds.length && (
+				isWorking !== MigrationStep.FetchSnippets && error?.step !== MigrationStep.FetchSnippets &&
+				0 === snippetSelection.availableItems.length && 0 === importedIds.length && (
 				<ImportCard className="no-snippets-card" role="status" aria-live="polite">
 					<div className="card-inner">
 						<div className="card-icon" aria-hidden="true">📭</div>

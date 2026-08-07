@@ -15,7 +15,7 @@ Always write React code in a declarative style.
 3. Use hooks (`useState`, `useReducer`, `useEffect`, `useMemo`, `useCallback`) responsibly:
    - Avoid running imperative logic in `useEffect` that can be expressed through declarative data-flow.
    - Derive data instead of duplicating state.
-4. Separate components when doing so clarifies responsibility or enables reuse. Prefer conditional rendering (`{condition && <Component />}`) and array mapping to create lists.
+4. Separate components when doing so clarifies responsibility or enables reuse. Prefer conditional rendering (`{condition && <Component />}`) and array mapping to create lists. Reserve `condition ? <Component /> : null` for numeric or string conditions that would otherwise render.
 5. Keep side-effects isolated; only place effectful code inside `useEffect`, `useLayoutEffect`, or custom hooks.
 6. Use **refs** sparingly and only for non-DOM data persistence, not for styling or visibility toggling.
 7. Prefer **controlled components** for forms. Keep input values in React state.
