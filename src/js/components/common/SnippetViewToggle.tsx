@@ -1,7 +1,8 @@
 import React from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { CardViewIcon, TableViewIcon } from './icons/ViewIcons'
+import { CardViewIcon } from './icons/CardViewIcon'
+import { TableViewIcon } from './icons/TableViewIcon'
 import type { SnippetView } from '../../types/SnippetView'
 
 export interface SnippetViewToggleProps {

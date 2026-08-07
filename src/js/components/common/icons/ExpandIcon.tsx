@@ -1,7 +1,7 @@
 import React from 'react'
 import type { SVGProps } from 'react'
 
-export const ExpandIcon = (props: SVGProps<SVGSVGElement>) =>
+export const ExpandIcon: React.FC<SVGProps<SVGSVGElement>> = props =>
 	<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path d="M12 3H15V6" />
 		<path d="M10.5 7.5L15 3L10.5 7.5Z" />
