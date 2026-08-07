@@ -9,7 +9,7 @@
 	// Bleed across the full admin content width, flush against the plugin toolbar.
 	box-sizing: border-box;
 	min-block-size: 53px;
-	margin-block-start: 0;
+	margin-block-start: -1px;
 	margin-inline-start: -22px;
 	inline-size: calc(100% + 42px);
 	overflow: hidden;
