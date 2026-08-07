@@ -57,19 +57,23 @@ const CommunityCloudInner = () => {
 				}}
 			/>
 
-			<ScreenMetaSlot />
+			{'bundles' === currentTab.name
+				? null
+				: <>
+					<ScreenMetaSlot />
 
-			<div className="snippets-page-header">
-				<h1>{
-					// translators: %s: label of the currently selected community cloud tab.
-					sprintf(__('Community Cloud: %s', 'code-snippets'), currentTab.label)}</h1>
-			</div>
+					<div className="snippets-page-header">
+						<h1>{
+							// translators: %s: label of the currently selected community cloud tab.
+							sprintf(__('Community Cloud: %s', 'code-snippets'), currentTab.label)}</h1>
+					</div>
 
-			<hr className="wp-header-end" />
+					<hr className="wp-header-end" />
 
-			<p className="snippets-page-description">
-				{__('Search the community cloud and download user-shared snippets directly to your site.', 'code-snippets')}
-			</p>
+					<p className="snippets-page-description">
+						{__('Search the community cloud and download user-shared snippets directly to your site.', 'code-snippets')}
+					</p>
+				</>}
 
 			<TabContent />
 		</>

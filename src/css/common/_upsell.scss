@@ -98,7 +98,10 @@
 		margin-inline: auto;
 		border-color: currentcolor;
 
-		&:hover {
+		// Matches the specificity of the native-control override in _wp-admin.scss
+		// (.wrap .button-primary:not(.button-link):hover:not(:disabled)) so this
+		// upsell-specific hover colour isn't overridden by the shared button rule.
+		&:hover:not(.button-link):not(:disabled) {
 			background-color: #0ca0a9;
 		}
 	}

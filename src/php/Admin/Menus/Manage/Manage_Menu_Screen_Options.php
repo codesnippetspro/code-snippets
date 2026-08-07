@@ -10,6 +10,14 @@ use function Code_Snippets\code_snippets;
 class Manage_Menu_Screen_Options {
 
 	/**
+	 * Subpage slugs that render an upsell in place of their normal content
+	 * (Pro-only features shown to non-Pro users).
+	 *
+	 * @var string[]
+	 */
+	private const UPSELL_SUBPAGES = [ 'blueprints', 'cloud-library' ];
+
+	/**
 	 * Register hooks this class.
 	 */
 	public function __construct() {
@@ -126,7 +134,7 @@ class Manage_Menu_Screen_Options {
 	 * @return bool
 	 */
 	public function is_upsell_view(): bool {
-		return in_array( $this->get_current_subpage(), [ 'blueprints', 'cloud-library' ], true );
+		return in_array( $this->get_current_subpage(), self::UPSELL_SUBPAGES, true );
 	}
 
 	/**
