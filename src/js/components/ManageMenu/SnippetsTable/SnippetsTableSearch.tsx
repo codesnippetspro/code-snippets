@@ -10,7 +10,7 @@ export const SearchArea = () => {
 	useEffect(() => setQuery(searchQuery ?? ''), [searchQuery])
 
 	return (
-		<div className="snippets-search-area">
+		<search className="snippets-search-area">
 			<form
 				className="search-box"
 				aria-label={__('Search Snippets', 'code-snippets')}
@@ -33,7 +33,7 @@ export const SearchArea = () => {
 					{__('Search', 'code-snippets')}
 				</Button>
 			</form>
-		</div>
+		</search>
 	)
 }
 

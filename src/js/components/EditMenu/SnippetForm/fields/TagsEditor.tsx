@@ -11,8 +11,8 @@ export const TagsEditor: React.FC = () => {
 	return options?.enabled
 		? <div className="snippet-tags-container">
 			<FormTokenField
+				label={__('Snippet Tags', 'code-snippets')}
 				value={snippet.tags}
-				aria-label={__('Snippet Tags', 'code-snippets')}
 				disabled={isReadOnly}
 				suggestions={options.availableTags}
 				tokenizeOnBlur

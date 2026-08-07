@@ -145,7 +145,7 @@ const SnippetsTableInner = () => {
 					currentType ? SNIPPET_TYPE_LABELS[currentType] : __('All Snippets', 'code-snippets')
 				)}</h1>
 				<a href={getSnippetAddNewUrl(currentType)} className="button button-primary">
-					{__('Create New', 'code-snippets')}
+					{__('Add Snippet', 'code-snippets')}
 				</a>
 			</div>
 
