@@ -117,7 +117,11 @@ class Manage_Menu_Assets {
 			);
 
 			$inline_limit = apply_filters( 'code_snippets/manage/inline_snippets_limit', min( $snippets_per_page, 100 ) );
-			$localized['snippetsList'] = array_slice( $snippets, 0, max( 0, intval( $inline_limit ) ) );
+			$inline_limit = max( 0, intval( $inline_limit ) );
+
+			if ( $inline_limit > 0 ) {
+				$localized['snippetsList'] = array_slice( $snippets, 0, $inline_limit );
+			}
 		}
 
 		wp_localize_script( self::JS_HANDLE, 'CODE_SNIPPETS_MANAGE', $localized );
