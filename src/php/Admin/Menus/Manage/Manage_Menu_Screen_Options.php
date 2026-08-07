@@ -25,6 +25,13 @@ class Manage_Menu_Screen_Options {
 	public function load() {
 		$screen = get_current_screen();
 
+		if ( $this->is_upsell_view() ) {
+			// The upsell page has no table or settings of its own, so the whole
+			// screen-meta-links block (Screen Options + Help tabs) is unhooked.
+			add_filter( 'screen_options_show_screen', '__return_false' );
+			return;
+		}
+
 		if ( $screen && ! $this->is_cloud_community_view() ) {
 			add_filter( "manage_{$screen->id}_columns", [ $this, 'get_columns' ] );
 			add_filter( 'screen_settings', [ $this, 'render' ] );
@@ -110,6 +117,16 @@ class Manage_Menu_Screen_Options {
 	 */
 	public function is_cloud_community_view(): bool {
 		return 'cloud-community' === $this->get_current_subpage();
+	}
+
+	/**
+	 * Whether the current request renders an upsell page (Blueprints or Cloud
+	 * Library on Core, where these features require Pro).
+	 *
+	 * @return bool
+	 */
+	public function is_upsell_view(): bool {
+		return in_array( $this->get_current_subpage(), [ 'blueprints', 'cloud-library' ], true );
 	}
 
 	/**
