@@ -18,13 +18,34 @@ final class Insights_Summary {
 	private const TYPE_ORDER = [ 'php', 'html', 'css', 'js', 'cond' ];
 
 	/**
+	 * Recognised executable locations, in display order. Labels are resolved on
+	 * the front-end, which already maintains these strings for the editor.
+	 *
+	 * @var string[]
+	 */
+	private const LOCATION_ORDER = [
+		'global',
+		'admin',
+		'front-end',
+		'single-use',
+		'content',
+		'head-content',
+		'body-content',
+		'footer-content',
+		'admin-css',
+		'site-css',
+		'site-head-js',
+		'site-footer-js',
+	];
+
+	/**
 	 * Build an aggregate of saved snippets for the Insights screen.
 	 *
 	 * @return array{
 	 *     active: int,
 	 *     inactive: int,
 	 *     typeCounts: array<string, array{label: string, count: int}>,
-	 *     locationCounts: array<string, array{label: string, count: int}>,
+	 *     locationCounts: array<string, int>,
 	 *     tagCounts: array<string, array{label: string, count: int}>
 	 * }
 	 */
@@ -41,7 +62,7 @@ final class Insights_Summary {
 	 *     active: int,
 	 *     inactive: int,
 	 *     typeCounts: array<string, array{label: string, count: int}>,
-	 *     locationCounts: array<string, array{label: string, count: int}>,
+	 *     locationCounts: array<string, int>,
 	 *     tagCounts: array<string, array{label: string, count: int}>
 	 * }
 	 */
@@ -63,7 +84,7 @@ final class Insights_Summary {
 		}
 
 		$type_counts = array_fill_keys( self::TYPE_ORDER, 0 );
-		$location_counts = array_fill_keys( array_keys( $this->get_location_labels() ), 0 );
+		$location_counts = array_fill_keys( self::LOCATION_ORDER, 0 );
 		$tag_counts = [];
 		$active = 0;
 
@@ -98,8 +119,8 @@ final class Insights_Summary {
 		return [
 			'active'         => $active,
 			'inactive'       => count( $snippets ) - $active,
-			'typeCounts'     => $this->create_chart_entries( $type_counts, $this->get_type_labels(), true ),
-			'locationCounts' => $this->create_chart_entries( $location_counts, $this->get_location_labels() ),
+			'typeCounts'     => $this->create_chart_entries( $type_counts, $this->get_type_labels() ),
+			'locationCounts' => array_filter( $location_counts ),
 			'tagCounts'      => $this->create_tag_chart_entries( $tag_counts ),
 		];
 	}
@@ -139,19 +160,18 @@ final class Insights_Summary {
 	}
 
 	/**
-	 * Convert non-zero aggregate counts into labelled chart entries.
+	 * Convert aggregate counts into labelled chart entries.
 	 *
-	 * @param array<string, int>    $counts Count for each type or scope.
-	 * @param array<string, string> $labels Display label for each type or scope.
-	 * @param bool                  $include_zero_counts Whether zero-count entries should be included.
+	 * @param array<string, int>    $counts Count for each type.
+	 * @param array<string, string> $labels Display label for each type.
 	 *
 	 * @return array<string, array{label: string, count: int}>
 	 */
-	private function create_chart_entries( array $counts, array $labels, bool $include_zero_counts = false ): array {
+	private function create_chart_entries( array $counts, array $labels ): array {
 		$entries = [];
 
 		foreach ( $counts as $key => $count ) {
-			if ( ( $include_zero_counts || 0 < $count ) && isset( $labels[ $key ] ) ) {
+			if ( isset( $labels[ $key ] ) ) {
 				$entries[ $key ] = [
 					'label' => $labels[ $key ],
 					'count' => $count,
@@ -174,28 +194,6 @@ final class Insights_Summary {
 			'css'  => __( 'CSS', 'code-snippets' ),
 			'js'   => __( 'JS', 'code-snippets' ),
 			'cond' => __( 'Conditions', 'code-snippets' ),
-		];
-	}
-
-	/**
-	 * Retrieve display labels for executable snippet locations.
-	 *
-	 * @return array<string, string>
-	 */
-	private function get_location_labels(): array {
-		return [
-			'global'         => __( 'Run everywhere', 'code-snippets' ),
-			'admin'          => __( 'Only run in administration area', 'code-snippets' ),
-			'front-end'      => __( 'Only run on site front-end', 'code-snippets' ),
-			'single-use'     => __( 'Only run once', 'code-snippets' ),
-			'content'        => __( 'Where inserted in editor', 'code-snippets' ),
-			'head-content'   => __( 'In site header (<head> section)', 'code-snippets' ),
-			'body-content'   => __( 'In site content (start of <body>)', 'code-snippets' ),
-			'footer-content' => __( 'In site footer (end of <body>)', 'code-snippets' ),
-			'admin-css'      => __( 'Administration area', 'code-snippets' ),
-			'site-css'       => __( 'Site front-end', 'code-snippets' ),
-			'site-head-js'   => __( 'In site header (<head> section)', 'code-snippets' ),
-			'site-footer-js' => __( 'In site footer (end of <body>)', 'code-snippets' ),
 		];
 	}
 }

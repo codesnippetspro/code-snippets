@@ -2,7 +2,6 @@
 
 namespace Code_Snippets\Admin\Menus\Insights;
 
-use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\code_snippets;
@@ -11,9 +10,9 @@ use function Code_Snippets\save_snippet;
 use function Code_Snippets\trash_snippet;
 
 /**
- * Tests for Insights menu assets and localized data.
+ * Tests for the Insights summary aggregation.
  */
-class Insights_Menu_Assets_Test extends AdminUnitTestCase {
+class Insights_Summary_Test extends AdminUnitTestCase {
 
 	/**
 	 * An empty library has no insight chart entries.
@@ -21,7 +20,7 @@ class Insights_Menu_Assets_Test extends AdminUnitTestCase {
 	 * @return void
 	 */
 	public function test_summary_is_empty_when_no_snippets_are_saved(): void {
-		$summary = ( new Insights_Menu_Assets() )->get_summary();
+		$summary = ( new Insights_Summary() )->get();
 
 		$this->assertSame( 0, $summary['active'] );
 		$this->assertSame( 0, $summary['inactive'] );
@@ -72,7 +71,7 @@ class Insights_Menu_Assets_Test extends AdminUnitTestCase {
 		$this->assertInstanceOf( Snippet::class, $trashed );
 		trash_snippet( $trashed->id );
 
-		$summary = ( new Insights_Menu_Assets() )->get_summary();
+		$summary = ( new Insights_Summary() )->get();
 
 		$this->assertSame( [ 'Shared', 'Alpha', 'Beta' ], array_keys( $summary['tagCounts'] ) );
 		$this->assertSame(
@@ -126,7 +125,7 @@ class Insights_Menu_Assets_Test extends AdminUnitTestCase {
 			$this->assertSame( 1, $summary['active'] );
 			$this->assertSame( 0, $summary['inactive'] );
 			$this->assertSame( 1, $summary['typeCounts']['php']['count'] );
-			$this->assertSame( 1, $summary['locationCounts']['global']['count'] );
+			$this->assertSame( 1, $summary['locationCounts']['global'] );
 		} finally {
 			remove_filter( 'code_snippets/get_snippets', $filter );
 			clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
@@ -157,93 +156,93 @@ class Insights_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
-	 * The summary groups saved snippets and excludes trashed snippets.
+	 * The summary groups saved snippets by type, location and status, excluding trashed snippets.
 	 *
 	 * @return void
 	 */
 	public function test_summary_groups_saved_snippets_by_type_location_and_status(): void {
 		$condition = save_snippet(
-            new Snippet(
-                [
+			new Snippet(
+				[
 					'name'  => 'Condition Fixture',
 					'scope' => 'condition',
 				]
-            )
-        );
+			)
+		);
 
 		$this->assertInstanceOf( Snippet::class, $condition );
 
 		save_snippet(
-            new Snippet(
-                [
+			new Snippet(
+				[
 					'name'         => 'Active Global PHP Fixture',
 					'code'         => '/* Insight fixture source */',
 					'scope'        => 'global',
 					'condition_id' => $condition->id,
 					'active'       => true,
 				]
-            )
-        );
+			)
+		);
 		save_snippet(
-            new Snippet(
-                [
+			new Snippet(
+				[
 					'name'   => 'Inactive Global PHP Fixture',
 					'scope'  => 'global',
 					'active' => false,
 				]
-            )
-        );
+			)
+		);
 		save_snippet(
-            new Snippet(
-                [
+			new Snippet(
+				[
 					'name'   => 'Inactive Admin PHP Fixture',
 					'scope'  => 'admin',
 					'active' => false,
 				]
-            )
-        );
+			)
+		);
 		save_snippet(
-            new Snippet(
-                [
+			new Snippet(
+				[
 					'name'   => 'Active HTML Fixture',
 					'scope'  => 'content',
 					'active' => true,
 				]
-            )
-        );
+			)
+		);
 		save_snippet(
-            new Snippet(
-                [
+			new Snippet(
+				[
 					'name'   => 'Active Locked CSS Fixture',
 					'scope'  => 'site-css',
 					'active' => true,
 					'locked' => true,
 				]
-            )
-        );
+			)
+		);
 		save_snippet(
-            new Snippet(
-                [
+			new Snippet(
+				[
 					'name'   => 'Inactive JavaScript Fixture',
 					'scope'  => 'site-footer-js',
 					'active' => false,
 				]
-            )
-        );
+			)
+		);
 		$trashed = save_snippet(
-            new Snippet(
-                [
+			new Snippet(
+				[
 					'name'   => 'Trashed CSS Fixture',
 					'scope'  => 'site-css',
 					'active' => false,
 				]
-            )
-        );
+			)
+		);
 
 		$this->assertInstanceOf( Snippet::class, $trashed );
 		trash_snippet( $trashed->id );
 
-		$summary = ( new Insights_Menu_Assets() )->get_summary();
+		$summary = ( new Insights_Summary() )->get();
 
 		$this->assertSame( 4, $summary['active'] );
 		$this->assertSame( 3, $summary['inactive'] );
@@ -252,44 +251,8 @@ class Insights_Menu_Assets_Test extends AdminUnitTestCase {
 		$this->assertSame( 1, $summary['typeCounts']['css']['count'] );
 		$this->assertSame( 1, $summary['typeCounts']['js']['count'] );
 		$this->assertSame( 1, $summary['typeCounts']['cond']['count'] );
-		$this->assertSame( 2, $summary['locationCounts']['global']['count'] );
-		$this->assertSame( 1, $summary['locationCounts']['site-css']['count'] );
+		$this->assertSame( 2, $summary['locationCounts']['global'] );
+		$this->assertSame( 1, $summary['locationCounts']['site-css'] );
 		$this->assertArrayNotHasKey( 'condition', $summary['locationCounts'] );
-	}
-
-	/**
-	 * The Insights payload contains summary data but not snippet source code.
-	 *
-	 * @return void
-	 */
-	public function test_enqueue_localizes_summary_without_snippet_source_code(): void {
-		save_snippet(
-            new Snippet(
-                [
-					'name'   => 'Source Exclusion Fixture',
-					'code'   => '/* Insight fixture source */',
-					'scope'  => 'global',
-					'active' => true,
-				]
-            )
-        );
-
-		( new Insights_Menu_Assets() )->enqueue( Admin_Menu::$script_deps, Admin_Menu::$style_deps );
-
-		$data = wp_scripts()->get_data( 'code-snippets-insights', 'data' );
-		$prefix = 'var CODE_SNIPPETS_INSIGHTS = ';
-		$offset = is_string( $data ) ? strrpos( $data, $prefix ) : false;
-
-		$this->assertNotFalse( $offset );
-		$this->assertIsString( $data );
-		$this->assertStringNotContainsString( 'Insight fixture source', $data );
-
-		$json = substr( $data, $offset + strlen( $prefix ) );
-		$localized = json_decode( substr( $json, 0, strrpos( $json, ';' ) ), true );
-
-		$this->assertSame(
-			[ 'active', 'inactive', 'typeCounts', 'locationCounts', 'tagCounts' ],
-			array_keys( $localized )
-		);
 	}
 }

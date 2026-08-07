@@ -2,10 +2,11 @@ import classnames from 'classnames'
 import React from 'react'
 import { InsightsChartViewToggle } from './InsightsChartViewToggle'
 import type { InsightsChartEntry, InsightsChartKey, InsightsChartView } from '../../types/Insights'
+import type { SnippetCodeScope, SnippetType } from '../../types/Snippet'
 
 const PERCENTAGE_MAX = 100
 
-export const INSIGHTS_TYPE_COLORS: Readonly<Record<string, string>> = {
+export const INSIGHTS_TYPE_COLORS: Readonly<Record<SnippetType, string>> = {
 	php: '#2271b1',
 	html: '#cd4510',
 	css: '#9b59b6',
@@ -18,7 +19,7 @@ export const INSIGHTS_ACTIVATION_COLORS: Readonly<Record<string, string>> = {
 	inactive: '#cd4510'
 }
 
-export const INSIGHTS_LOCATION_COLORS: Readonly<Record<string, string>> = {
+export const INSIGHTS_LOCATION_COLORS: Readonly<Record<SnippetCodeScope, string>> = {
 	'global': '#ff9800',
 	'admin': '#03c7d2',
 	'front-end': '#d46f4d',
@@ -81,7 +82,7 @@ interface BarChartProps extends Pick<InsightsChartProps, 'colors' | 'entries'> {
 	largestCount: number
 }
 
-const BarChart: React.FC<BarChartProps> = ({ colors, entries, largestCount }) => (
+const BarChart: React.FC<BarChartProps> = ({ colors, entries, largestCount }) =>
 	<ul className="insights-bar-chart">
 		{Object.entries(entries).map(([key, entry]) =>
 			<li key={key}>
@@ -98,20 +99,17 @@ const BarChart: React.FC<BarChartProps> = ({ colors, entries, largestCount }) =>
 				<strong>{entry.count}</strong>
 			</li>)}
 	</ul>
-)
 
 interface PieChartProps extends Pick<InsightsChartProps, 'colors' | 'entries'> {
 	totalCount: number
 }
 
-const PieChart: React.FC<PieChartProps> = ({ colors, entries, totalCount }) => {
-	const isEmpty = 0 === totalCount
-
-	return <div className="insights-pie-chart-content">
+const PieChart: React.FC<PieChartProps> = ({ colors, entries, totalCount }) =>
+	<div className="insights-pie-chart-content">
 		<div
-			className={classnames('insights-pie-chart', { 'is-empty': isEmpty })}
+			className={classnames('insights-pie-chart', { 'is-empty': 0 === totalCount })}
 			aria-hidden="true"
-			style={isEmpty ? undefined : { background: getPieBackground(entries, colors, totalCount) }}
+			style={0 === totalCount ? undefined : { background: getPieBackground(entries, colors, totalCount) }}
 		/>
 		<ul className="insights-pie-chart-legend">
 			{Object.entries(entries).map(([key, entry]) =>
@@ -124,7 +122,6 @@ const PieChart: React.FC<PieChartProps> = ({ colors, entries, totalCount }) => {
 				</li>)}
 		</ul>
 	</div>
-}
 
 export const InsightsChart: React.FC<InsightsChartProps> = ({
 	chart,

@@ -1,14 +1,11 @@
 import { __ } from '@wordpress/i18n'
 import React from 'react'
 import { useInsightsChartViews } from '../../hooks/useInsightsChartViews'
-import {
-	INSIGHTS_ACTIVATION_COLORS,
-	INSIGHTS_LOCATION_COLORS,
-	INSIGHTS_TYPE_COLORS,
-	InsightsChart
-} from './InsightsCharts'
-import type { InsightsChartDefinition, InsightsSummary } from '../../types/Insights'
+import { SNIPPET_SCOPE_DESCRIPTIONS } from '../../utils/snippets/snippets'
+import { INSIGHTS_ACTIVATION_COLORS, INSIGHTS_LOCATION_COLORS, INSIGHTS_TYPE_COLORS, InsightsChart } from './InsightsCharts'
+import type { InsightsChartDefinition, InsightsChartEntry, InsightsSummary } from '../../types/Insights'
 import type { UseInsightsChartViews } from '../../hooks/useInsightsChartViews'
+import type { SnippetCodeScope } from '../../types/Snippet'
 
 interface InsightsDashboardProps {
 	summary: InsightsSummary
@@ -41,6 +38,10 @@ const getChartDefinitions = ({
 		active: { label: __('Active', 'code-snippets'), count: summary.active },
 		inactive: { label: __('Inactive', 'code-snippets'), count: summary.inactive }
 	}
+	const locationEntries: Record<string, InsightsChartEntry> = Object.fromEntries(
+		Object.entries(summary.locationCounts).map(([scope, count]) =>
+			[scope, { label: SNIPPET_SCOPE_DESCRIPTIONS[scope as SnippetCodeScope], count }])
+	)
 	return [
 		getTotalChartDefinition(summary),
 		{
@@ -62,7 +63,7 @@ const getChartDefinitions = ({
 		{
 			key: 'location',
 			title: __('Location', 'code-snippets'),
-			entries: summary.locationCounts,
+			entries: locationEntries,
 			colors: INSIGHTS_LOCATION_COLORS,
 			view: chartViews.location,
 			setView: view => setChartView('location', view)

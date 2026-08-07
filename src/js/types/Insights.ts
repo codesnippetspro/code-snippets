@@ -37,6 +37,6 @@ export interface InsightsSummary {
 	readonly active: number | string
 	readonly inactive: number | string
 	readonly typeCounts: Readonly<Record<string, InsightsChartEntry>>
-	readonly locationCounts: Readonly<Record<string, InsightsChartEntry>>
+	readonly locationCounts: Readonly<Record<string, number>>
 	readonly tagCounts: Readonly<Record<string, InsightsChartEntry>>
 }

@@ -1,6 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { DEFAULT_INSIGHTS_CHART_VIEWS } from '../types/Insights'
-import { handleUnknownError } from '../utils/errors'
 import { REST_BASES } from '../utils/restAPI'
 import { useRestAPI } from './useRestAPI'
 import type { InsightsChartView, InsightsChartViews, InsightsConfigurableChartKey } from '../types/Insights'
@@ -15,26 +14,20 @@ export const useInsightsChartViews = (): UseInsightsChartViews => {
 	const [chartViews, setChartViews] = useState<InsightsChartViews>(
 		() => window.CODE_SNIPPETS?.insightsChartViews ?? DEFAULT_INSIGHTS_CHART_VIEWS
 	)
-	const chartViewsRef = useRef(chartViews)
 
 	const setChartView = useCallback((chart: InsightsConfigurableChartKey, view: InsightsChartView) => {
-		const previousViews = chartViewsRef.current
+		const previousViews = chartViews
 		const views = { ...previousViews, [chart]: view }
 
-		chartViewsRef.current = views
 		setChartViews(views)
 		api.post<{ views: InsightsChartViews }, { views: InsightsChartViews }>(
 			`${REST_BASES.preferences}/insights-chart-views`,
 			{ views }
 		).catch((error: unknown) => {
-			if (views === chartViewsRef.current) {
-				chartViewsRef.current = previousViews
-				setChartViews(previousViews)
-			}
-
-			handleUnknownError(error)
+			setChartViews(currentViews => currentViews === views ? previousViews : currentViews)
+			console.error(error)
 		})
-	}, [api])
+	}, [api, chartViews])
 
 	return { chartViews, setChartView }
 }
