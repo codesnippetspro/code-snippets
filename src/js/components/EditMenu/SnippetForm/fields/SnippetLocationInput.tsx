@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n'
-import React from 'react'
+import React, { useId } from 'react'
 import Select from 'react-select'
 import { useSnippetForm } from '../WithSnippetFormContext'
 import { SNIPPET_TYPE_SCOPES } from '../../../../types/Snippet'
@@ -39,6 +39,7 @@ const SCOPE_DESCRIPTIONS: Record<SnippetCodeScope, string> = {
 
 export const SnippetLocationInput: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
+	const locationId = useId()
 
 	const options: SelectOption<SnippetCodeScope>[] = SNIPPET_TYPE_SCOPES[getSnippetType(snippet)]
 		.filter(scope => 'condition' !== scope)
@@ -51,12 +52,12 @@ export const SnippetLocationInput: React.FC = () => {
 	return isCondition(snippet)
 		? null
 		: <div className="block-form-field">
-			<label htmlFor="snippet-location">
+			<label htmlFor={locationId}>
 				{__('Location', 'code-snippets')}
 			</label>
 
 			<Select
-				inputId="snippet-location"
+				inputId={locationId}
 				className="code-snippets-select code-snippets-select-location"
 				options={options}
 				isSearchable={false}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useId } from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../../../hooks/useSubmitSnippet'
@@ -7,10 +7,11 @@ import { handleUnknownError } from '../../../../utils/errors'
 export const ActivationSwitch = () => {
 	const { snippet, isWorking } = useSnippetForm()
 	const { submitSnippet } = useSubmitSnippet()
+	const activationSwitchId = useId()
 
 	return (
 		<div className="inline-form-field activation-switch-container">
-			<label htmlFor="activation-switch" id="snippet-activation-switch-label">
+			<label htmlFor={activationSwitchId} id="snippet-activation-switch-label">
 				{__('Status', 'code-snippets')}
 			</label>
 
@@ -21,7 +22,7 @@ export const ActivationSwitch = () => {
 			</span>
 
 			<input
-				id="activation-switch"
+				id={activationSwitchId}
 				type="checkbox"
 				checked={snippet.active}
 				disabled={isWorking || !!snippet.shared_network}

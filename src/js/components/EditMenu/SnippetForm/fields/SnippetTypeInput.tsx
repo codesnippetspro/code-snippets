@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useId } from 'react'
 import classnames from 'classnames'
 import { __, _x } from '@wordpress/i18n'
 import Select from 'react-select'
@@ -62,6 +62,7 @@ const SnippetTypeOption: React.FC<SnippetTypeOptionProps> = ({
 export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgradeDialogOpen }) => {
 	const { snippet, setSnippet, codeEditorInstance, isReadOnly } = useSnippetForm()
 	const snippetType = getSnippetType(snippet)
+	const snippetTypeId = useId()
 
 	useEffect(() => {
 		if (codeEditorInstance) {
@@ -81,11 +82,11 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgrade
 
 	return (
 		<div className="snippet-type-container">
-			<label htmlFor="snippet-type-select-input" className="screen-reader-text">
+			<label htmlFor={snippetTypeId} className="screen-reader-text">
 				{__('Snippet Type', 'code-snippets')}
 			</label>
 			<Select<SelectOption<SnippetType>>
-				inputId="snippet-type-select-input"
+				inputId={snippetTypeId}
 				className="code-snippets-select"
 				isSearchable={false}
 				isDisabled={isReadOnly || 0 !== snippet.id && 'cond' === snippetType}
