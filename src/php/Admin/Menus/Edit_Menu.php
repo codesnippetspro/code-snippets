@@ -192,10 +192,6 @@ class Edit_Menu extends Admin_Menu {
 
 		enqueue_code_editor( $this->snippet->type );
 
-		$plugin_dir = plugin_dir_path( PLUGIN_FILE );
-		$css_version = filemtime( $plugin_dir . 'dist/edit.css' );
-		$js_version = filemtime( $plugin_dir . 'dist/edit.js' );
-
 		wp_enqueue_style(
 			self::CSS_HANDLE,
 			plugins_url( 'dist/edit.css', PLUGIN_FILE ),
@@ -203,14 +199,14 @@ class Edit_Menu extends Admin_Menu {
 				'code-editor',
 				'wp-components',
 			],
-			false !== $css_version ? $css_version : PLUGIN_VERSION
+			PLUGIN_VERSION
 		);
 
 		wp_enqueue_script(
 			self::JS_HANDLE,
 			plugins_url( 'dist/edit.js', PLUGIN_FILE ),
 			[ 'code-snippets-code-editor' ] + self::$script_deps,
-			false !== $js_version ? $js_version : PLUGIN_VERSION,
+			PLUGIN_VERSION,
 			[ 'in_footer' => true ]
 		);
 

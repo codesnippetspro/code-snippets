@@ -31,7 +31,7 @@ export interface SnippetPreviewModalProps {
 	setIsOpen: (isOpen: boolean) => void
 	snippet?: Snippet
 	footerActions?: ReactNode
-	extraActions?: PreviewExtraActions
+	extraActions?: ReactNode
 }
 
 const EDITOR_MODES: Record<string, string> = {
@@ -56,7 +56,7 @@ const getPreviewEditorSettings = (type: string): EditorConfiguration => ({
 interface SnippetPreviewActionsProps {
 	snippet: Snippet
 	closeModal: () => void
-	extraActions?: PreviewExtraActions
+	extraActions?: ReactNode
 }
 
 interface SnippetPreviewButtonsProps extends SnippetPreviewActionsProps {
@@ -188,7 +188,7 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
 			</Button>
 
 			<CopyCodeButton code={snippet.code} />
-			{extraActions?.(working)}
+			{extraActions}
 
 			{snippet.locked || !canModify
 				? null

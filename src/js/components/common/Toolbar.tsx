@@ -1,4 +1,3 @@
-import { IconChevronDown } from '@tabler/icons-react'
 import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useState } from 'react'
@@ -96,7 +95,7 @@ const MoreNav = () =>
 		<details className="toolbar-more-menu">
 			<summary>
 				{__('More', 'code-snippets')}
-				<IconChevronDown size={16} stroke={2} aria-hidden="true" />
+				<span className="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
 			</summary>
 			<ul>
 				{UPPER_NAV_LINKS.map(link =>

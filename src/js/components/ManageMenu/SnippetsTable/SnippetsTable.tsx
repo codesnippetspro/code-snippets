@@ -52,7 +52,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 							<span className="snippet-type-name-short">{__('All', 'code-snippets')}</span>
 						</>}
 				</span>
-				{count !== undefined && (!type || 'php' === type || 'html' === type) && <span className="subnav-count">{count}</span>}
+				{count !== undefined && (isLicensed() || !type || !isProType(type)) && <span className="subnav-count">{count}</span>}
 				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>

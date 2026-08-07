@@ -211,7 +211,7 @@ export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({
 					<SnippetExtraIcons snippet={snippet} />
 				</div>
 
-				{0 < snippet.tags.length || snippet.modified && (
+				{(0 < snippet.tags.length || !!snippet.modified) && (
 					<div className={classnames('snippet-card-meta', { 'has-tags': 0 < snippet.tags.length })}>
 						{0 < snippet.tags.length && (
 							<span className="snippet-card-tags">
