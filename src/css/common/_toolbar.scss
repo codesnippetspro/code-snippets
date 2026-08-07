@@ -130,6 +130,7 @@ $wpcontent-inline-start-indent: 20px;
 
 		&.active-link, &:hover, &:focus, &:active {
 			color: theme.$accent;
+			z-index: 1;
 		}
 	}
 
