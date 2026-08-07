@@ -113,10 +113,21 @@ class Manage_Menu_Screen_Options {
 	/**
 	 * Whether the current request renders Community Cloud.
 	 *
+	 * The "Bundles" tab within Community Cloud is a Pro-only upsell rather than
+	 * genuine Community Cloud content, so it is excluded here and picked up by
+	 * {@see is_upsell_view()} instead.
+	 *
 	 * @return bool
 	 */
 	public function is_cloud_community_view(): bool {
-		return 'cloud-community' === $this->get_current_subpage();
+		if ( 'cloud-community' !== $this->get_current_subpage() ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
+		$tab = isset( $_REQUEST['tab'] ) ? sanitize_key( wp_unslash( $_REQUEST['tab'] ) ) : '';
+
+		return 'bundles' !== $tab;
 	}
 
 	/**
