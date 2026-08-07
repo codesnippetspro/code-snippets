@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useId } from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 import { Tooltip } from '../../../common/Tooltip'
 
 export const PriorityInput = () => {
 	const { snippet, isReadOnly, setSnippet } = useSnippetForm()
+	const priorityId = useId()
 
 	return (
 		<div className="snippet-priority inline-form-field">
-			<label htmlFor="snippet-priority" id="snippet-priority-label">
+			<label htmlFor={priorityId} id="snippet-priority-label">
 				{__('Priority', 'code-snippets')}
 			</label>
 
@@ -18,7 +19,7 @@ export const PriorityInput = () => {
 
 			<input
 				type="number"
-				id="snippet-priority"
+				id={priorityId}
 				name="snippet_priority"
 				value={snippet.priority}
 				disabled={isReadOnly}

@@ -12,6 +12,7 @@ import type { Dispatch, RefObject, SetStateAction } from 'react'
 
 interface EditorTextareaProps {
 	textareaRef: RefObject<HTMLTextAreaElement>
+	snippetCodeId: string
 }
 
 const useFocusEditorShortcut = (
@@ -37,7 +38,7 @@ const useFocusEditorShortcut = (
 	}, [codeEditorInstance, textareaRef])
 }
 
-const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
+const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef, snippetCodeId }) => {
 	const descriptionId = useId()
 	const { snippet, setSnippet } = useSnippetForm()
 
@@ -53,7 +54,7 @@ const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
 			</p>
 			<textarea
 				ref={textareaRef}
-				id="snippet-code"
+				id={snippetCodeId}
 				name="snippet_code"
 				value={snippet.code}
 				aria-label={__('Snippet code', 'code-snippets')}
@@ -77,6 +78,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance } = useSnippetForm()
 	const { submitSnippet } = useSubmitSnippet()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
+	const snippetCodeId = useId()
 
 	useEffect(() => {
 		setCodeEditorInstance(editorInstance => {
@@ -115,7 +117,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 	return (
 		<div className="snippet-code-container">
 			<div className="above-snippet-code">
-				<label htmlFor="snippet-code">
+				<label htmlFor={snippetCodeId}>
 					{__('Snippet Content', 'code-snippets')}
 				</label>
 
@@ -125,7 +127,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 				</Button>
 			</div>
 
-			<EditorTextarea textareaRef={textareaRef} />
+			<EditorTextarea textareaRef={textareaRef} snippetCodeId={snippetCodeId} />
 		</div>
 	)
 }
