@@ -218,6 +218,10 @@
 		justify-content: flex-end;
 		margin: 0;
 		border-color: #e2e2e4;
+
+		.show-settings {
+			border-color: #e2e2e4;
+		}
 	}
 
 	#screen-meta {
@@ -267,5 +271,5 @@
 // When an admin notice pushes the page content down, restore the top border
 // above the subnav bar (no extra margin — the wrapper sits flush).
 .notice + .wrap .snippet-type-nav-wrapper {
-	border-block-start: 1px solid theme.$control-border;
+	border-block-start: 1px solid #e2e2e4;
 }

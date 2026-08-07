@@ -6,6 +6,12 @@ body.wp-admin {
 	background: #f0f0f1;
 }
 
+// Remove the WordPress core 10px top margin on the manage snippets container
+// so the subnav band sits flush against the toolbar.
+#manage-snippets-container.wrap {
+	margin-block-start: 0;
+}
+
 /**
  * Native form control styling.
  *
