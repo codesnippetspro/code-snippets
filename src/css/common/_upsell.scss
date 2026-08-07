@@ -121,6 +121,19 @@
 	border-radius: 8px;
 }
 
+// Bleed the upsell to the full width of the admin content area and fill the
+// remaining viewport height, so it reads as a full page rather than a small
+// boxed card floating in the subpage. 168px accounts for the WP admin bar
+// (32px) plus the plugin toolbar ($toolbar-block-size, 136px in _toolbar.scss).
+.code-snippets-upsell-page {
+	box-sizing: border-box;
+	margin-inline-start: -22px;
+	inline-size: calc(100% + 42px);
+	min-block-size: calc(100vh - 168px);
+	border-radius: 0;
+	justify-content: center;
+}
+
 .code-snippets-upsell-page,
 .code-snippets-upsell-dialog .components-modal__content > div:last-child  {
 	display: flex;
