@@ -10,14 +10,6 @@ use function Code_Snippets\code_snippets;
 class Manage_Menu_Screen_Options {
 
 	/**
-	 * Subpage slugs that render an upsell in place of their normal content
-	 * (Pro-only features shown to non-Pro users).
-	 *
-	 * @var string[]
-	 */
-	private const UPSELL_SUBPAGES = [ 'blueprints', 'cloud-library' ];
-
-	/**
 	 * Register hooks this class.
 	 */
 	public function __construct() {
@@ -128,13 +120,17 @@ class Manage_Menu_Screen_Options {
 	}
 
 	/**
-	 * Whether the current request renders an upsell page (Blueprints or Cloud
-	 * Library on Core, where these features require Pro).
+	 * Whether the current request renders an upsell page.
+	 *
+	 * Every genuine Core subpage has its own positive `is_*_view()` detection
+	 * above; a subpage that matches none of them (Blueprints, Cloud Library,
+	 * and any future Pro-only addition) has no real content of its own and
+	 * falls through to the upsell placeholder.
 	 *
 	 * @return bool
 	 */
 	public function is_upsell_view(): bool {
-		return in_array( $this->get_current_subpage(), self::UPSELL_SUBPAGES, true );
+		return ! $this->is_manage_table_view() && ! $this->is_cloud_community_view();
 	}
 
 	/**
