@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 import classnames from 'classnames'
 import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
@@ -19,6 +19,7 @@ import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
 const SearchBox = () => {
 	const { searchParams, updateSearchParams, isSearching, doSearch } = useCloudSearch()
+	const searchMethodId = useId()
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
@@ -27,11 +28,11 @@ const SearchBox = () => {
 
 	return (
 		<form className="cloud-search-form" onSubmit={handleSubmit}>
-			<label className="screen-reader-text" htmlFor="cloud-search-method">
+			<label htmlFor={searchMethodId} className="screen-reader-text">
 				{__('Search method', 'code-snippets')}
 			</label>
 			<select
-				id="cloud-search-method"
+				id={searchMethodId}
 				value={searchParams.method}
 				onChange={event =>
 					updateSearchParams({ method: 'codevault' === event.target.value ? 'codevault' : 'term' })}
