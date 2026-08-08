@@ -76,7 +76,7 @@ const BulkActionSelect = <A extends string>({
 	</select>
 
 interface BulkActionsProps<K extends Key, A extends string> extends Required<Pick<TableNavProps<K, A>, 'which' | 'actions' | 'doAction'>> {
-	onActionSuccess?: () => void
+	onActionSuccess?: VoidFunction
 	disabled?: boolean
 	selected: Set<K>
 	selectLabel?: string

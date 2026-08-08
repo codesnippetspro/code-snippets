@@ -235,6 +235,12 @@ $wpcontent-inline-start-indent: 20px;
 
 .code-snippets-toolbar-upper .toolbar-more-menu {
 	position: relative;
+
+	.dashicons, .dashicons::before {
+		inline-size: 16px;
+		block-size: 16px;
+		font-size: 16px;
+	}
 }
 
 .code-snippets-toolbar-upper .toolbar-more-menu summary {

@@ -29,15 +29,18 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
 
+	const isActive = type === currentType
+	const isProLocked = type && isProType(type) && !isLicensed()
+
 	return (
 		<li>
 			<a
 				href={buildUrl(window.location.href, { type: tabName })}
 				className={classnames('snippet-type-link', `${tabName}-type-link`, {
-					'active-type': type === currentType,
-					'pro-locked-type': type && type !== currentType && !isLicensed() && isProType(type)
+					'active-type': isActive,
+					'pro-locked-type': isProLocked && !isActive
 				})}
-				aria-current={type === currentType ? 'page' : undefined}
+				aria-current={isActive ? 'page' : undefined}
 				onClick={event => {
 					event.preventDefault()
 					setCurrentType(type)
@@ -52,8 +55,8 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 							<span className="snippet-type-name-short">{__('All', 'code-snippets')}</span>
 						</>}
 				</span>
-				{count !== undefined && (isLicensed() || !type || !isProType(type)) && <span className="subnav-count">{count}</span>}
-				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+				{count && !isProLocked && <span className="subnav-count">{count}</span>}
+				{isProLocked && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>
 	)

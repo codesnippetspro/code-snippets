@@ -40,7 +40,7 @@ export interface UseDeleteSnippetOptions {
 }
 
 export interface UseDeleteSnippetResult {
-	requestDelete: () => void
+	requestDelete: VoidFunction
 	confirmDialog: ReactNode
 }
 

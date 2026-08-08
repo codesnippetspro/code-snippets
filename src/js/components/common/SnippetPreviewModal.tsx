@@ -18,10 +18,8 @@ const CODE_PREVIEW_LABEL = __('Snippet code preview', 'code-snippets')
 export interface PreviewWorkingState {
 	isWorking: boolean
 	beginWorking: () => boolean
-	finishWorking: () => void
+	finishWorking: VoidFunction
 }
-
-export type PreviewExtraActions = (working: PreviewWorkingState) => ReactNode
 
 export interface SnippetPreviewModalProps {
 	title: string
@@ -55,12 +53,12 @@ const getPreviewEditorSettings = (type: string): EditorConfiguration => ({
 
 interface SnippetPreviewActionsProps {
 	snippet: Snippet
-	closeModal: () => void
+	closeModal: VoidFunction
 	extraActions?: ReactNode
 }
 
 interface SnippetPreviewButtonsProps extends SnippetPreviewActionsProps {
-	requestDelete: () => void
+	requestDelete: VoidFunction
 	working: PreviewWorkingState & { setIsWorking: (working: boolean) => void }
 }
 
@@ -122,31 +120,38 @@ const usePreviewActionHandlers = ({
 	return { handleClone, handleExport }
 }
 
-const CopyCodeButton: React.FC<{ code: string }> = ({ code }) => {
-	const [copyStatus, setCopyStatus] = useState<'copied' | 'failed' | null>(null)
+enum CopyStatus { Ready, Copied, Failed}
 
-	const copyCode = () => {
+const CopyCodeButton: React.FC<{ code: string }> = ({ code }) => {
+	const [copyStatus, setCopyStatus] = useState(CopyStatus.Ready)
+
+	const handleCopy = () => {
 		const clipboard = navigator.clipboard as Clipboard | undefined
 
 		if (!window.isSecureContext || !clipboard) {
-			setCopyStatus('failed')
+			setCopyStatus(CopyStatus.Failed)
 			return
 		}
 
 		void clipboard.writeText(code)
-			.then(() => setCopyStatus('copied'))
-			.catch(() => setCopyStatus('failed'))
+			.then(() => setCopyStatus(CopyStatus.Copied))
+			.catch(() => setCopyStatus(CopyStatus.Failed))
 	}
 
-	const label = 'copied' === copyStatus
-		? __('Copied', 'code-snippets')
-		: 'failed' === copyStatus
-			? __('Copy unavailable', 'code-snippets')
-			: __('Copy code', 'code-snippets')
+	const Label = () => {
+		switch (copyStatus) {
+			case CopyStatus.Copied:
+				return __('Copied', 'code-snippets')
+			case CopyStatus.Failed:
+				return __('Copy unavailable', 'code-snippets')
+			case CopyStatus.Ready:
+				return __('Copy code', 'code-snippets')
+		}
+	}
 
 	return (
-		<Button secondary onClick={copyCode}>
-			{label}
+		<Button secondary onClick={handleCopy}>
+			<Label />
 		</Button>
 	)
 }
@@ -166,18 +171,15 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
 	return (
 		<div className="code-snippets-preview-modal__buttons">
 			<a className="button button-primary" href={getSnippetEditUrl(snippet)}>
-				{snippet.locked || !canModify ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
+				{snippet.locked || !canModify
+					? __('View', 'code-snippets')
+					: __('Edit', 'code-snippets')}
 			</a>
 
-			{canModify
-				? <Button
-					secondary
-					disabled={isWorking}
-					onClick={handleClone}
-				>
+			{canModify && (
+				<Button secondary disabled={isWorking} onClick={handleClone}>
 					{__('Clone', 'code-snippets')}
-				</Button>
-				: null}
+				</Button>)}
 
 			<Button
 				secondary
@@ -190,16 +192,15 @@ const SnippetPreviewButtons: React.FC<SnippetPreviewButtonsProps> = ({
 			<CopyCodeButton code={snippet.code} />
 			{extraActions}
 
-			{snippet.locked || !canModify
-				? null
-				: <Button
+			{!snippet.locked && canModify && (
+				<Button
 					link
 					className="code-snippets-preview-modal__trash"
 					disabled={isWorking}
 					onClick={requestDelete}
 				>
 					{__('Trash', 'code-snippets')}
-				</Button>}
+				</Button>)}
 		</div>
 	)
 }

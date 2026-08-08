@@ -16,10 +16,10 @@ export interface CodeEditorSettings {
 	csslint: Record<string, unknown>
 	htmlhint: Record<string, unknown>
 	jshint: Record<string, unknown>
-	onTabNext: () => void
-	onTabPrevious: () => void
-	onChangeLintingErrors: () => void
-	onUpdateErrorNotice: () => void
+	onTabNext: VoidFunction
+	onTabPrevious: VoidFunction
+	onChangeLintingErrors: VoidFunction
+	onUpdateErrorNotice: VoidFunction
 }
 
 export interface WordPressCodeEditor {

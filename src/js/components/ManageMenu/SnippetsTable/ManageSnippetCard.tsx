@@ -75,7 +75,7 @@ const CloneExportMenuItems: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 }
 
 interface RestoreDeleteMenuItemsProps extends SnippetCardActionsProps {
-	requestDelete: () => void
+	requestDelete: VoidFunction
 }
 
 const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
