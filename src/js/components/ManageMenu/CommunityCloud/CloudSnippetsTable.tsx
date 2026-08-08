@@ -5,8 +5,8 @@ import { stripTags, truncateChars } from '../../../utils/text'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { CloudSnippetDownloadButton } from '../../common/cloud/CloudSnippetDownloadButton'
-import { CloudSnippetPreviewModal } from '../../common/cloud/CloudSnippetPreviewModal'
 import { CloudStatusBadge } from '../../common/cloud/CloudStatusBadge'
+import { CloudSnippetPreviewModal } from '../../common/SnippetPreviewModal'
 import { useCloudSearch } from './WithCloudSearchContext'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { Dispatch, SetStateAction } from 'react'
@@ -50,12 +50,8 @@ const CloudSnippetActions: React.FC<CloudSnippetActionsProps> = ({
 				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={doSearch} />
 			</div>
 
-			<CloudSnippetPreviewModal
-				snippet={snippet}
-				isOpen={isPreviewOpen}
-				setIsOpen={setIsPreviewOpen}
-				onDownloaded={doSearch}
-			/>
+			{isPreviewOpen && (
+				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={doSearch} />)}
 		</>
 	)
 }

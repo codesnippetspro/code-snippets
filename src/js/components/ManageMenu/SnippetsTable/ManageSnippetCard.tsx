@@ -31,14 +31,7 @@ const CardPreviewButton: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 				{__('Preview', 'code-snippets')}
 			</Button>
 
-			<SnippetPreviewModal
-				title={getSnippetDisplayName(snippet)}
-				code={snippet.code}
-				type={getSnippetType(snippet)}
-				isOpen={isPreviewOpen}
-				setIsOpen={setIsPreviewOpen}
-				snippet={snippet}
-			/>
+			{isPreviewOpen && <SnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} />}
 		</>
 	)
 }

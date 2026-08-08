@@ -6,7 +6,7 @@ import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetEditUrl } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
 import { DeleteButton } from '../../common/DeleteButton'
 import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
@@ -26,14 +26,7 @@ const PreviewLink: React.FC<RowActionsProps> = ({ snippet }) => {
 				{__('Preview', 'code-snippets')}
 			</Button>
 
-			<SnippetPreviewModal
-				title={getSnippetDisplayName(snippet)}
-				code={snippet.code}
-				type={getSnippetType(snippet)}
-				isOpen={isPreviewOpen}
-				setIsOpen={setIsPreviewOpen}
-				snippet={snippet}
-			/>
+			{isPreviewOpen && <SnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} />}
 		</>
 	)
 }
