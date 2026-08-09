@@ -16,6 +16,10 @@
 	box-shadow: 0 2px 2px rgb(0 0 0 / 5%);
 	cursor: pointer;
 
+	&:focus {
+		outline: 2px solid var(--wp-admin-theme-color);
+	}
+
 	&::before {
 		content: none;
 	}
