@@ -1,6 +1,7 @@
 import { Modal } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useRef, useState } from 'react'
+import { useDeleteSnippet } from '../../hooks/useDeleteSnippet'
 import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../utils/errors'
@@ -9,7 +10,6 @@ import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippet
 import { Badge } from './Badge'
 import { Button } from './Button'
 import { CloudSnippetDownloadButton } from './cloud/CloudSnippetDownloadButton'
-import { useDeleteSnippet } from './DeleteButton'
 import type { CloudSnippetSchema } from '../../types/schema/CloudSnippetSchema'
 import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
 import type { ReactNode } from 'react'
@@ -232,7 +232,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 	const { refreshSnippetsList } = useSnippetsList()
 	const { isWorking, setIsWorking } = useWorkingState()
 
-	const { requestDelete, confirmDialog } = useDeleteSnippet({
+	const { requestDelete, ConfirmDeleteDialog } = useDeleteSnippet({
 		snippet,
 		setIsWorking,
 		onSuccess: () => {
@@ -265,7 +265,12 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 					<CopyCodeButton code={snippet.code} />
 
 					{!snippet.locked && canModify && (
-						<Button link className="code-snippets-preview-modal__trash" disabled={isWorking} onClick={requestDelete}>
+						<Button
+							link
+							className="code-snippets-preview-modal__trash"
+							disabled={isWorking}
+							onClick={() => void requestDelete()}
+						>
 							{__('Trash', 'code-snippets')}
 						</Button>)}
 				</div>
@@ -275,7 +280,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 					<span className="code-snippets-preview-modal__priority-value">{snippet.priority}</span>
 				</div>
 
-				{confirmDialog}
+				<ConfirmDeleteDialog />
 			</div>
 		</PreviewModal>
 	)
