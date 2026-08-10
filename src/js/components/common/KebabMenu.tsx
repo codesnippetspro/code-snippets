@@ -84,7 +84,7 @@ export const KebabMenuRow: React.FC<PropsWithChildren<KebabMenuRowProps>> = ({
 interface PopoverBehaviourOptions {
 	isOpen: boolean
 	setIsOpen: Dispatch<SetStateAction<boolean>>
-	closeMenu: () => void
+	closeMenu: VoidFunction
 	containerRef: RefObject<HTMLDivElement>
 	triggerRef: RefObject<HTMLButtonElement>
 	popoverRef: RefObject<HTMLUListElement>

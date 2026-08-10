@@ -3,9 +3,8 @@
 $sidebar-width: 321px;
 $sidebar-gap: 30px;
 
-.snippet-form #titlediv #title,
-.snippet-type-container {
-	border-color: #ccc;
+.snippet-form #titlediv #title {
+	border-color: theme.$control-border;
 	block-size: 45px
 }
 
@@ -18,6 +17,7 @@ $sidebar-gap: 30px;
 	// Target the control box only (:first-of-type). The open menu is a later
 	// sibling div; matching it here would clamp and flex-row the option list.
 	> div:first-of-type {
+		border-color: theme.$control-border;
 		min-block-size: 45px;
 		block-size: 45px;
 		max-block-size: 45px;
@@ -54,8 +54,14 @@ $sidebar-gap: 30px;
 	.conditions-editor-header {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: flex-start;
 		gap: 8px;
+		margin-block-end: 8px;
+
+		strong {
+			font-size: 14px;
+			line-height: 20px;
+		}
 	}
 
 	.button.button-large {
@@ -63,8 +69,14 @@ $sidebar-gap: 30px;
 		align-items: center;
 		gap: 8px;
 		inline-size: 100%;
-		border-color: #ccc;
+		border-color: theme.$control-border;
+		background: transparent;
 		padding: 6px 12px;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			background: #f6f7f7;
+		}
 	}
 
 	&.no-condition .cond-badge {
@@ -115,8 +127,15 @@ $sidebar-gap: 30px;
 		grid-area: span 3 / sidebar;
 		max-inline-size: $sidebar-width;
 		position: sticky;
-		inset-block-start: 32px;
+
+		// Keep the sidebar clear of the fixed WordPress admin bar and leave a
+		// usable visual gap beneath it while the editor scrolls.
+		inset-block-start: 48px;
 		align-self: start;
+
+		@media (width <= 782px) {
+			position: static;
+		}
 	}
 
 	@media (width <= 1024px) {

@@ -186,6 +186,10 @@ class Manage_Menu extends Admin_Menu {
 
 		$this->screen_options->load();
 
+		if ( $this->screen_options->is_upsell_view() ) {
+			return;
+		}
+
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
 	}

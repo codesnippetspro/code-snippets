@@ -3,13 +3,13 @@ import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
+import { useDeleteSnippet } from '../../../hooks/useDeleteSnippet'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isNetworkOnlySnippet, isSnippetActive } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
-import { useDeleteSnippet } from '../../common/DeleteButton'
 import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../common/KebabMenu'
 import { SnippetCard } from '../../common/SnippetCard'
 import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
@@ -31,14 +31,7 @@ const CardPreviewButton: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 				{__('Preview', 'code-snippets')}
 			</Button>
 
-			<SnippetPreviewModal
-				title={getSnippetDisplayName(snippet)}
-				code={snippet.code}
-				type={getSnippetType(snippet)}
-				isOpen={isPreviewOpen}
-				setIsOpen={setIsPreviewOpen}
-				snippet={snippet}
-			/>
+			{isPreviewOpen && <SnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} />}
 		</>
 	)
 }
@@ -75,7 +68,7 @@ const CloneExportMenuItems: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 }
 
 interface RestoreDeleteMenuItemsProps extends SnippetCardActionsProps {
-	requestDelete: () => void
+	requestDelete: VoidFunction
 }
 
 const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
@@ -111,7 +104,7 @@ const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
 const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
 	const canModify = canModifySnippet(snippet)
-	const { requestDelete, confirmDialog } = useDeleteSnippet({
+	const { requestDelete, ConfirmDeleteDialog } = useDeleteSnippet({
 		snippet,
 		onSuccess: refreshSnippetsList,
 		onError: handleUnknownError
@@ -133,12 +126,11 @@ const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 					<SnippetPriorityInput snippet={snippet} />
 				</KebabMenuRow>
 
-				{canModify && (snippet.trashed || !snippet.locked)
-					? <RestoreDeleteMenuItems snippet={snippet} requestDelete={requestDelete} />
-					: null}
+				{canModify && (snippet.trashed || !snippet.locked) && (
+					<RestoreDeleteMenuItems snippet={snippet} requestDelete={() => void requestDelete()} />)}
 			</KebabMenu>
 
-			{confirmDialog}
+			<ConfirmDeleteDialog />
 		</>
 	)
 }
@@ -211,8 +203,8 @@ export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({
 					<SnippetExtraIcons snippet={snippet} />
 				</div>
 
-				{(0 < snippet.tags.length || snippet.modified) && (
-					<div className="snippet-card-meta">
+				{(0 < snippet.tags.length || !!snippet.modified) && (
+					<div className={classnames('snippet-card-meta', { 'has-tags': 0 < snippet.tags.length })}>
 						{0 < snippet.tags.length && (
 							<span className="snippet-card-tags">
 								<span className="snippet-card-tags-label">

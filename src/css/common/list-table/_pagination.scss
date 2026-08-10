@@ -1,4 +1,5 @@
 @use '../checkbox';
+@use '../theme';
 
 // The pagination group and view toggle wrap together as one end-pinned
 // cluster so narrow viewports never split them across rows.
@@ -65,7 +66,7 @@
 }
 
 .wrap .snippets-search-area input[type='search'] {
-	border-color: #e3e3e4;
+	border-color: theme.$control-border;
 }
 
 // Tablet widths: let the search area grow to fill the remainder of its row
@@ -79,6 +80,14 @@
 }
 
 @media (width <= 782px) {
+	// Wide table columns scroll inside the results region instead of extending
+	// the WordPress admin document horizontally.
+	.snippets-list-view {
+		max-inline-size: 100%;
+		overflow-x: auto;
+		overscroll-behavior-inline: contain;
+	}
+
 	p.search-box {
 		float: inline-start;
 		position: initial;
@@ -87,10 +96,21 @@
 		block-size: auto;
 	}
 
-	// Mobile: the search area takes a full row of its own, and the action
-	// groups stay visible (core admin hides .tablenav.top .actions here).
+
+	// Mobile keeps the filters compact. Pagination remains below the results,
+	// avoiding a second navigation cluster above the table.
+	.tablenav.top .tablenav-pages-nav {
+		display: none;
+	}
+
+	.tablenav.top .tablenav-end-group {
+		margin-inline-start: 0;
+	}
+
 	.tablenav .snippets-search-area {
-		flex-basis: 100%;
+		flex: 0 1 20rem;
+		inline-size: min(100%, 20rem);
+		max-inline-size: 20rem;
 	}
 
 	.tablenav .alignleft.actions {

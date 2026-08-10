@@ -142,7 +142,7 @@ abstract class Admin_Menu {
 	 * Render the navigation bar at the top of the admin page.
 	 */
 	protected function render_navigation() {
-		echo '<div id="code-snippets-toolbar-container" class="wrap"></div>';
+		echo '<div id="code-snippets-toolbar-container"></div>';
 	}
 
 	/**

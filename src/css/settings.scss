@@ -242,5 +242,75 @@ body.js {
 }
 
 #settings-sections-tabs {
-	margin-block-end: 15px;
+	margin: 0;
+	padding: 0;
+
+	ul {
+		display: flex;
+		align-items: stretch;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.snippet-type-link {
+		display: flex;
+		align-items: center;
+		min-block-size: 52px;
+		margin: 0;
+		padding-inline: 24px;
+		color: #646970;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.5;
+		border: 0;
+		border-inline-end: 1px solid #e2e2e4;
+		background: transparent;
+
+		&:hover,
+		&:focus {
+			color: #2c3337;
+			background: #f6f7f7;
+		}
+
+		&.active-type,
+		&.active-type:hover,
+		&.active-type:focus {
+			position: relative;
+			z-index: 1;
+			margin-block-end: -1px;
+			color: theme.$accent;
+			background: #f0f0f1;
+			border-color: #f0f0f1;
+		}
+	}
+}
+
+@media (width <= 782px) {
+	body.js {
+		.settings-type-nav-wrapper {
+			display: none;
+		}
+
+		.settings-section-title {
+			position: static;
+			inline-size: auto;
+			block-size: auto;
+			margin: 0 0 16px;
+			overflow: visible;
+			clip: auto;
+			clip-path: none;
+			font-size: 20px;
+			line-height: 1.3;
+		}
+
+		.settings-section {
+			display: block !important;
+			margin-block-end: 40px;
+		}
+
+		.wrap[data-active-tab='license'] .submit {
+			display: flex;
+		}
+	}
 }

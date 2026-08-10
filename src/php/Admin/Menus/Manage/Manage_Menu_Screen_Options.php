@@ -25,6 +25,13 @@ class Manage_Menu_Screen_Options {
 	public function load() {
 		$screen = get_current_screen();
 
+		if ( $this->is_upsell_view() ) {
+			// The upsell page has no table or settings of its own, so the whole
+			// screen-meta-links block (Screen Options + Help tabs) is unhooked.
+			add_filter( 'screen_options_show_screen', '__return_false' );
+			return;
+		}
+
 		if ( $screen && ! $this->is_cloud_community_view() ) {
 			add_filter( "manage_{$screen->id}_columns", [ $this, 'get_columns' ] );
 			add_filter( 'screen_settings', [ $this, 'render' ] );
@@ -106,10 +113,35 @@ class Manage_Menu_Screen_Options {
 	/**
 	 * Whether the current request renders Community Cloud.
 	 *
+	 * The "Bundles" tab within Community Cloud is a Pro-only upsell rather than
+	 * genuine Community Cloud content, so it is excluded here and picked up by
+	 * {@see is_upsell_view()} instead.
+	 *
 	 * @return bool
 	 */
 	public function is_cloud_community_view(): bool {
-		return 'cloud-community' === $this->get_current_subpage();
+		if ( 'cloud-community' !== $this->get_current_subpage() ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
+		$tab = isset( $_REQUEST['tab'] ) ? sanitize_key( wp_unslash( $_REQUEST['tab'] ) ) : '';
+
+		return 'bundles' !== $tab;
+	}
+
+	/**
+	 * Whether the current request renders an upsell page.
+	 *
+	 * Every genuine Core subpage has its own positive `is_*_view()` detection
+	 * above; a subpage that matches none of them (Blueprints, Cloud Library,
+	 * and any future Pro-only addition) has no real content of its own and
+	 * falls through to the upsell placeholder.
+	 *
+	 * @return bool
+	 */
+	public function is_upsell_view(): bool {
+		return ! $this->is_manage_table_view() && ! $this->is_cloud_community_view();
 	}
 
 	/**

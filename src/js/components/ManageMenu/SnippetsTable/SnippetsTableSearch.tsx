@@ -1,25 +1,39 @@
 import { __, sprintf } from '@wordpress/i18n'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '../../common/Button'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
 
 export const SearchArea = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
+	const [query, setQuery] = useState(searchQuery ?? '')
+
+	useEffect(() => setQuery(searchQuery ?? ''), [searchQuery])
 
 	return (
-		<div className="snippets-search-area">
-			<search className="search-box" aria-label={__('Search Snippets', 'code-snippets')}>
+		<search className="snippets-search-area">
+			<form
+				className="search-box"
+				aria-label={__('Search Snippets', 'code-snippets')}
+				onSubmit={event => {
+					event.preventDefault()
+					setSearchQuery(query)
+				}}
+			>
 				<input
 					type="search"
 					id="snippets_search"
 					name="s"
-					value={searchQuery ?? ''}
+					value={query}
 					aria-label={__('Search Snippets:', 'code-snippets')}
-					onChange={event => setSearchQuery(event.target.value)}
+					onChange={event => setQuery(event.target.value)}
 					placeholder={__('Search snippets', 'code-snippets')}
 				/>
-			</search>
-		</div>
+
+				<Button secondary type="submit">
+					{__('Search', 'code-snippets')}
+				</Button>
+			</form>
+		</search>
 	)
 }
 

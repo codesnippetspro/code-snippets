@@ -2,6 +2,7 @@ import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import React from 'react'
 import { isLicensed } from '../../utils/screen'
+import { useHorizontalScrollOverflow } from '../../hooks/useHorizontalScrollOverflow'
 import { fetchQueryParam, updateQueryParams } from '../../utils/urls'
 
 export interface SubnavTab {
@@ -43,34 +44,46 @@ export const SubnavTabs = <Tab extends SubnavTab>({
 	getTabCount,
 	setCurrentTab,
 	queryParamName,
-}: SubnavTabsProps<Tab>) =>
-	<nav className={classnames('snippet-type-nav', className)} aria-label={ariaLabel}>
-		<ul>
-			{tabs.map(tab => {
-				const count = getTabCount?.(tab)
+}: SubnavTabsProps<Tab>) => {
+	const { atStart, atEnd, scrollRef } = useHorizontalScrollOverflow()
 
-				return (
-					<li key={tab.name}>
-						<button
-							type="button"
-							className={classnames('snippet-type-link', `${tab.name}-subnav-link`, {
-								'active-type': tab.name === currentTab.name
-							})}
-							aria-current={tab.name === currentTab.name ? 'page' : undefined}
-							onClick={() => {
-								setCurrentTab(tab)
-
-								if (queryParamName) {
-									updateQueryParams({ [queryParamName]: tab.name })
-								}
-							}}
-						>
-							<span>{tab.label}</span>
-							{count && <span className="subnav-count">{count}</span>}
-							{tab.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
-						</button>
-					</li>
-				)
+	return (
+		<div
+			className={classnames('snippet-type-nav-wrapper', {
+				'has-scroll-start': !atStart,
+				'has-scroll-end': !atEnd
 			})}
-		</ul>
-	</nav>
+		>
+			<nav ref={scrollRef} className={classnames('snippet-type-nav', className)} aria-label={ariaLabel}>
+				<ul>
+					{tabs.map(tab => {
+						const count = getTabCount?.(tab)
+
+						return (
+							<li key={tab.name}>
+								<button
+									type="button"
+									className={classnames('snippet-type-link', `${tab.name}-subnav-link`, {
+										'active-type': tab.name === currentTab.name
+									})}
+									aria-current={tab.name === currentTab.name ? 'page' : undefined}
+									onClick={() => {
+										setCurrentTab(tab)
+
+										if (queryParamName) {
+											updateQueryParams({ [queryParamName]: tab.name })
+										}
+									}}
+								>
+									<span>{tab.label}</span>
+									{count && <span className="subnav-count">{count}</span>}
+									{tab.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+								</button>
+							</li>
+						)
+					})}
+				</ul>
+			</nav>
+		</div>
+	)
+}

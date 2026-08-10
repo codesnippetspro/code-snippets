@@ -2,6 +2,7 @@ import { __, sprintf } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
 import React, { useCallback, useMemo } from 'react'
 import classnames from 'classnames'
+import { useHorizontalScrollOverflow } from '../../../hooks/useHorizontalScrollOverflow'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
@@ -28,15 +29,18 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
 
+	const isActive = type === currentType
+	const isProLocked = type && isProType(type) && !isLicensed()
+
 	return (
 		<li>
 			<a
 				href={buildUrl(window.location.href, { type: tabName })}
 				className={classnames('snippet-type-link', `${tabName}-type-link`, {
-					'active-type': type === currentType,
-					'pro-locked-type': type && type !== currentType && !isLicensed() && isProType(type)
+					'active-type': isActive,
+					'pro-locked-type': isProLocked && !isActive
 				})}
-				aria-current={type === currentType ? 'page' : undefined}
+				aria-current={isActive ? 'page' : undefined}
 				onClick={event => {
 					event.preventDefault()
 					setCurrentType(type)
@@ -51,8 +55,8 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 							<span className="snippet-type-name-short">{__('All', 'code-snippets')}</span>
 						</>}
 				</span>
-				{count ? <span className="subnav-count">{count}</span> : null}
-				{type && isProType(type) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+				{count && !isProLocked && <span className="subnav-count">{count}</span>}
+				{isProLocked && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>
 	)
@@ -113,19 +117,27 @@ const SnippetsTableInner = () => {
 	const { snippetView, setSnippetView } = useSnippetView()
 	const { currentType } = useSnippetsFilters()
 	const { getCount } = useSnippetTypeCounts()
+	const { atStart, atEnd, scrollRef } = useHorizontalScrollOverflow()
 
 	return (
 		<>
-			<nav
-				className="snippet-type-nav"
-				aria-label={__('Snippet types', 'code-snippets')}
+			<div
+				className={classnames('snippet-type-nav-wrapper', {
+					'has-scroll-start': !atStart,
+					'has-scroll-end': !atEnd
+				})}
 			>
-				<ul>
-					<SnippetTypeTab count={getCount()} />
-					{SNIPPET_TYPES.map(type =>
-						<SnippetTypeTab key={type} type={type} count={getCount(type)} />)}
-				</ul>
-			</nav>
+				<nav
+					ref={scrollRef}
+					className="snippet-type-nav"
+					aria-label={__('Snippet types', 'code-snippets')}
+				>
+					<ul>
+						<SnippetTypeTab count={getCount()} />
+						{SNIPPET_TYPES.map(type => <SnippetTypeTab key={type} type={type} count={getCount(type)} />)}
+					</ul>
+				</nav>
+			</div>
 
 			<ScreenMetaSlot />
 
@@ -136,7 +148,7 @@ const SnippetsTableInner = () => {
 					currentType ? SNIPPET_TYPE_LABELS[currentType] : __('All Snippets', 'code-snippets')
 				)}</h1>
 				<a href={getSnippetAddNewUrl(currentType)} className="button button-primary">
-					{__('Create new Snippet', 'code-snippets')}
+					{__('Add Snippet', 'code-snippets')}
 				</a>
 			</div>
 

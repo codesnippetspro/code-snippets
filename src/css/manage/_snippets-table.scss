@@ -162,6 +162,7 @@
 		flex-wrap: wrap;
 		gap: 16px;
 		font-size: 14px;
+		line-height: 1.5;
 
 		.snippet-card-tags-label {
 			color: #646970;
@@ -173,7 +174,10 @@
 		}
 
 		.snippet-card-modified {
-			color: #646970;
+			color: var(--cs-color-text-muted);
+		}
+
+		&.has-tags .snippet-card-modified {
 			margin-inline-start: auto;
 		}
 	}
@@ -185,6 +189,7 @@
 		line-clamp: 2;
 		overflow: hidden;
 		font-size: 14px;
+		line-height: 1.5;
 		color: #646970;
 		border-block-start: 1px solid #dcdcde;
 		padding-block-start: 16px;
@@ -203,7 +208,7 @@
 		}
 
 		.button:not(.button-primary) {
-			background: #fff;
+			background: transparent;
 		}
 	}
 

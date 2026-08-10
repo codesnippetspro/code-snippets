@@ -94,6 +94,28 @@ interface UpperNavProps {
 	setIsUpsellDialogOpen: (isOpen: boolean) => void
 }
 
+const MoreNav = () =>
+	<li className="toolbar-more-item">
+		<details className="toolbar-more-menu">
+			<summary>
+				{__('More', 'code-snippets')}
+				<span className="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
+			</summary>
+			<ul>
+				{UPPER_NAV_LINKS.map(link =>
+					<li key={link.name}>
+						<a
+							href={link.url}
+							className={classnames(`${link.name}-link`, { 'active-link': isActiveLink(link) })}
+							{...link.external && { target: '_blank', rel: 'noopener noreferrer' }}
+						>
+							{link.label}
+						</a>
+					</li>)}
+			</ul>
+		</details>
+	</li>
+
 const UpperNav: React.FC<UpperNavProps> = ({ setIsUpsellDialogOpen }) =>
 	<div className="code-snippets-toolbar-upper">
 		<div className="logo">
@@ -119,8 +141,10 @@ const UpperNav: React.FC<UpperNavProps> = ({ setIsUpsellDialogOpen }) =>
 						</a>
 					</li>)}
 
+				<MoreNav />
+
 				{shouldShowUpsell() && (
-					<li>
+					<li className="toolbar-upgrade-item">
 						<a
 							className="button button-large button-secondary"
 							href="https://codesnippets.pro/pricing/"

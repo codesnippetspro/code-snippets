@@ -6,10 +6,10 @@ import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetEditUrl } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
-import { DeleteButton } from '../../common/DeleteButton'
 import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
+import { useDeleteSnippet } from '../../../hooks/useDeleteSnippet'
 import type { ReactNode } from 'react'
 import type { Snippet } from '../../../types/Snippet'
 
@@ -26,14 +26,7 @@ const PreviewLink: React.FC<RowActionsProps> = ({ snippet }) => {
 				{__('Preview', 'code-snippets')}
 			</Button>
 
-			<SnippetPreviewModal
-				title={getSnippetDisplayName(snippet)}
-				code={snippet.code}
-				type={getSnippetType(snippet)}
-				isOpen={isPreviewOpen}
-				setIsOpen={setIsPreviewOpen}
-				snippet={snippet}
-			/>
+			{isPreviewOpen && <SnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} />}
 		</>
 	)
 }
@@ -106,24 +99,26 @@ const SnippetActionButton: React.FC<SnippetActionButtonProps> = ({ action, label
 	)
 }
 
-const DeleteActionLink: React.FC<{ snippet: Snippet; onSuccess: () => Promise<void> }> = ({ snippet, onSuccess }) => {
-	const [isDeleting, setIsDeleting] = useState(false)
+const DeleteActionLink: React.FC<RowActionsProps> = ({ snippet }) => {
+	const { refreshSnippetsList } = useSnippetsList()
+	const { requestDelete, ConfirmDeleteDialog } = useDeleteSnippet({ snippet, onSuccess: refreshSnippetsList })
 
 	return (
 		<>
-			<DeleteButton
-				link
-				className={classnames('delete')}
-				snippet={snippet}
-				setIsWorking={setIsDeleting}
-				onSuccess={onSuccess}
+			<SnippetActionButton
+				action={requestDelete}
+				className="delete"
+				label={snippet.trashed ? __('Delete Permanently', 'code-snippets') : __('Trash', 'code-snippets')}
+				workingLabel={snippet.trashed ? __('Deleting…', 'code-snippets') : __('Trashing…', 'code-snippets')}
+				failedLabel={__('Failed to delete', 'code-snippets')}
 			/>
-			{isDeleting ? <span className="snippet-row-action-feedback"><Spinner /> {__('Deleting…', 'code-snippets')}</span> : null}
+
+			<ConfirmDeleteDialog />
 		</>
 	)
 }
 
-const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
+const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
@@ -162,7 +157,7 @@ const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 		: null
 
 	const Delete = !snippet.locked || snippet.trashed
-		? <DeleteActionLink snippet={snippet} onSuccess={refreshSnippetsList} />
+		? <DeleteActionLink snippet={snippet} />
 		: null
 
 	return (
@@ -189,7 +184,7 @@ export const RowActions: React.FC<RowActionsProps> = ({ snippet }) => {
 	}
 
 	if (snippet.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap) {
-		return undefined
+		return null
 	}
 
 	return (
