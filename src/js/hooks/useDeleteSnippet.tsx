@@ -32,7 +32,7 @@ const PermanentDeleteConfirmMessage = () =>
 export interface UseDeleteSnippetProps {
 	snippet: Snippet
 	setIsWorking?: (isWorking: boolean) => void
-	onSuccess?: () => Promise<void>
+	onSuccess?: (() => Promise<void>) | VoidFunction
 	onError?: (error: unknown) => void
 }
 

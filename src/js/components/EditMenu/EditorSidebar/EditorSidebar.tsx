@@ -52,7 +52,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 				<ShortcodeInfo />
 				<PriorityInput />
 
-				{snippet.id && (
+				{!!snippet.id && (
 					<div className="row-actions visible inline-form-field">
 						<ExportButtons />
 

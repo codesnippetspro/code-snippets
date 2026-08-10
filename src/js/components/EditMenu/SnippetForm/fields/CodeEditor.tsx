@@ -15,29 +15,6 @@ interface EditorTextareaProps {
 	snippetCodeId: string
 }
 
-const useFocusEditorShortcut = (
-	textareaRef: RefObject<HTMLTextAreaElement>
-) => {
-	const { codeEditorInstance } = useSnippetForm()
-
-	useEffect(() => {
-		const focusEditor = () => {
-			if (codeEditorInstance) {
-				codeEditorInstance.codemirror.focus()
-				return
-			}
-
-			textareaRef.current?.focus()
-		}
-
-		window.addEventListener('code_snippets_focus_editor', focusEditor)
-
-		return () => {
-			window.removeEventListener('code_snippets_focus_editor', focusEditor)
-		}
-	}, [codeEditorInstance, textareaRef])
-}
-
 const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef, snippetCodeId }) => {
 	const descriptionId = useId()
 	const { snippet, setSnippet } = useSnippetForm()
@@ -111,8 +88,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 			})
 		}
 	}, [submitSnippet, codeEditorInstance, snippet])
-
-	useFocusEditorShortcut(textareaRef)
 
 	return (
 		<div className="snippet-code-container">
