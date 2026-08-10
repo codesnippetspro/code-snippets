@@ -1,133 +1,12 @@
 @use '../common/theme';
 
-.code-snippets-modal {
-	p h4 {
-		margin-block-start: 0;
-	}
-}
-
-.snippet-editor-sidebar {
-	.button-large {
-		block-size: 48px;
+.snippet-priority {
+	.priority-input-tooltip {
+		margin-inline-end: auto;
 	}
 
-	.row-actions {
-		display: flex;
-
-		.button {
-			background: none;
-			border: none;
-		}
-	}
-
-	.delete-button {
-		color: #cc1818;
-
-		&:hover {
-			color: #9e1313;
-		}
-
-		&:focus {
-			color: #710d0d;
-			border-color: #710d0d;
-		}
-	}
-
-	.help-tooltip {
-		margin-block: 0;
-		margin-inline: 5px auto;
-	}
-
-	.box {
-		background-color: #fff;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		padding: 1.5em;
-		display: flex;
-		flex-flow: column;
-		gap: 1em;
-
-		h4 {
-			margin-block: 0.5em;
-			margin-inline: 0;
-		}
-
-		.inline-form-field {
-			display: flex;
-			flex-flow: row wrap;
-			align-items: center;
-			gap: 5px;
-
-			> :last-child {
-				margin-inline-start: auto;
-			}
-		}
-
-		.block-form-field {
-			display: flex;
-			flex-flow: column;
-			gap: 4px;
-
-			h4 {
-				margin-block-end: 0;
-			}
-		}
-	}
-
-	h4 .badge {
-		float: inline-end;
-
-		+ .badge {
-			margin-inline-end: 5px;
-		}
-	}
-
-	.beta-badge {
-		color: theme.$accent;
-		border: 1px solid currentcolor;
-	}
-
-	.components-form-token-field {
-		inline-size: 100%;
-	}
-
-	.generate-button {
-		margin-inline-start: auto;
-	}
-}
-
-.snippet-priority input {
-	inline-size: 4em;
-}
-
-p.submit {
-	display: flex;
-	flex-flow: column;
-	gap: 8px;
-	margin-block-start: 17px;
-	padding-block-start: 0;
-}
-
-.activation-switch-container label {
-	display: flex;
-	flex-flow: row;
-	gap: 5px;
-	justify-content: center;
-}
-
-.shortcode-tag-wrapper {
-	background: #fff;
-	min-block-size: 54px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 10px;
-	box-sizing: border-box;
-
-	code {
-		background: transparent;
-		padding-inline: 0.5em;
-		text-indent: -0.5em;
+	input {
+		inline-size: 4em;
 	}
 }
 
@@ -151,5 +30,182 @@ p.submit {
 
 	.components-spinner {
 		block-size: 12px;
+	}
+}
+
+.activation-switch-container {
+	inline-size: 100%;
+	display: flex;
+	flex-flow: row;
+	gap: 5px;
+	justify-content: center;
+	align-items: center;
+
+	label {
+		font-weight: 600;
+	}
+
+	span:first-of-type {
+		margin-inline-start: auto;
+	}
+}
+
+.snippet-editor-sidebar {
+	.button-large {
+		block-size: 48px;
+	}
+
+	.box {
+		background-color: #fff;
+		border: 1px solid theme.$control-border;
+		border-radius: 4px;
+		padding: 1.5em;
+		display: flex;
+		flex-flow: column;
+		gap: 1em;
+
+		.inline-form-field {
+			display: flex;
+			flex-flow: row wrap;
+			justify-content: space-between;
+			align-items: center;
+			gap: 5px;
+		}
+
+		.block-form-field {
+			display: flex;
+			flex-flow: column;
+			gap: 4px;
+
+		}
+	}
+
+	.inline-form-field.row-actions {
+		display: flex;
+
+		// Keep the export/download, trash and lock controls on a single row; the
+		// base .inline-form-field sets `row wrap`, which would otherwise drop the
+		// lock control onto a second line in the narrow sidebar.
+		flex-wrap: nowrap;
+		gap: 0;
+
+		// Lay the export + download pair out inline too — the group is a plain
+		// block by default, so its two links would otherwise stack vertically.
+		.snippet-export-buttons {
+			display: flex;
+			flex-wrap: nowrap;
+			gap: 12px;
+			min-inline-size: 0;
+		}
+
+		// Row-action buttons render as plain inline links. Neutralise the generic `.button`
+		// WP 7.0 compatibility styling (fill/border/radius/40px height) here — emitted after
+		// the wp-admin layer at equal specificity, so it wins. Export/Download inherit the accent.
+		.button {
+			block-size: auto;
+			min-block-size: theme.$control-height;
+			padding-block: 0;
+			padding-inline: 8px;
+			font-weight: 400;
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+
+			.dashicons {
+				color: inherit;
+				line-height: 1;
+				vertical-align: text-bottom;
+			}
+
+			&:not(.snippet-lock-button) {
+				border: 0;
+				border-radius: 0;
+				padding-inline: 0;
+				background: none;
+				box-shadow: none;
+
+				// WordPress paints a fill on disabled buttons with !important;
+				// keep the disabled trash flat like the rest of the row.
+				&:disabled {
+					background: none !important;
+					border: 0;
+					box-shadow: none;
+				}
+
+				&:hover:not(:disabled),
+				&:focus:not(:disabled),
+				&:active:not(:disabled) {
+					background: none;
+					border: 0;
+					box-shadow: none;
+				}
+			}
+		}
+
+		// Nested under `.row-actions` so the dark-red trash colour outranks the generic
+		// `.button` accent text colour from the wp-admin compatibility layer.
+		.delete-button {
+			color: #cc1818;
+
+			&:disabled {
+				color: #a7aaad;
+				cursor: not-allowed;
+			}
+
+			&:hover:not(:disabled) {
+				color: #9e1313;
+			}
+
+			&:focus:not(:disabled) {
+				color: #710d0d;
+			}
+		}
+	}
+
+	.help-tooltip {
+		margin-block: 0;
+		margin-inline: 5px auto;
+	}
+
+	label {
+		font-weight: 600;
+	}
+
+	.beta-badge {
+		color: theme.$accent;
+		border: 1px solid currentcolor;
+		margin-inline-start: auto;
+	}
+
+	.components-form-token-field {
+		inline-size: 100%;
+	}
+
+	.generate-button {
+		margin-inline-start: auto;
+	}
+}
+
+p.submit {
+	display: flex;
+	flex-flow: column;
+	gap: 8px;
+	margin-block-start: 17px;
+	padding-block-start: 0;
+}
+
+.shortcode-tag-wrapper {
+	background: #fff;
+	min-block-size: 54px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	box-sizing: border-box;
+
+	code {
+		background: transparent;
+		padding-inline: 0.5em;
+		text-indent: -0.5em;
 	}
 }

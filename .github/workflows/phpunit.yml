@@ -1,0 +1,275 @@
+name: "(Test): PHPUnit"
+
+on:
+  pull_request:
+    types: [labeled, synchronize, opened, reopened]
+  push:
+    branches:
+      - 'core'
+      - 'pro'
+      - 'core-beta'
+      - 'pro-beta'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.gitignore'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+
+concurrency:
+  group: phpunit-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  phpunit:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+    uses: ./.github/workflows/phpunit-test.yml
+    with:
+      php-version: ${{ matrix.php-version }}
+
+  test-result:
+    needs: [phpunit]
+    if: always() && needs.phpunit.result != 'skipped'
+    runs-on: ubuntu-22.04
+    name: PHPUnit - Test Results Summary
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Test status summary
+        run: |
+          echo "PHPUnit matrix result: ${{ needs.phpunit.result }}"
+
+      - name: Delete previous PR failure comment on success
+        if: github.event_name == 'pull_request' && needs.phpunit.result == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- phpunit-result-comment -->';
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.filter(c => typeof c.body === 'string' && c.body.startsWith(marker));
+
+            for (const comment of existing) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+              });
+            }
+
+      - name: Download PHPUnit artifacts
+        if: github.event_name == 'pull_request' && needs.phpunit.result == 'failure'
+        uses: actions/download-artifact@v5
+        with:
+          pattern: phpunit-test-results-php-*
+          path: phpunit-artifacts
+          merge-multiple: true
+
+      - name: Build distinct error summary
+        if: github.event_name == 'pull_request' && needs.phpunit.result == 'failure'
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import glob
+          import os
+          import re
+          import xml.etree.ElementTree as ET
+          from collections import defaultdict
+
+          artifacts_dir = 'phpunit-artifacts'
+
+          def version_from_path(path: str) -> str:
+            base = os.path.basename(path)
+            m = re.search(r'phpunit-([0-9]+\.[0-9]+)\.xml$', base)
+            if m:
+              return m.group(1)
+            m = re.search(r'phpunit-([0-9]+\.[0-9]+)\.log$', base)
+            if m:
+              return m.group(1)
+            return 'unknown'
+
+          def add_entry(grouped, key, version, message):
+            if not message.strip():
+              return
+            grouped[key]['versions'].add(version)
+            # Keep the first representative message we see for this key.
+            if not grouped[key]['message']:
+              grouped[key]['message'] = message.strip()
+
+          grouped = defaultdict(lambda: {'versions': set(), 'message': ''})
+          versions_seen = set()
+
+          # Prefer JUnit XML when present.
+          for xml_path in sorted(glob.glob(os.path.join(artifacts_dir, '**', '*.xml'), recursive=True)):
+            version = version_from_path(xml_path)
+            versions_seen.add(version)
+            try:
+              root = ET.parse(xml_path).getroot()
+            except Exception:
+              continue
+
+            for testcase in root.iter('testcase'):
+              for tag in ('error', 'failure'):
+                for node in testcase.findall(tag):
+                  etype = (node.attrib.get('type') or tag).strip()
+                  msg = (node.attrib.get('message') or '').strip()
+                  details = (node.text or '').strip()
+                  combined = f"{etype}: {msg}".strip(': ')
+                  if details:
+                    combined = combined + "\n" + details
+
+                  testcase_id = (
+                    (testcase.attrib.get('classname') or '').strip() +
+                    '::' +
+                    (testcase.attrib.get('name') or '').strip()
+                  ).strip(':')
+
+                  extracted = ''
+                  if not msg and details:
+                    for line in details.splitlines():
+                      line = line.strip()
+                      if line.startswith('CI demo:'):
+                        extracted = line
+                        break
+                    if not extracted:
+                      extracted = details.splitlines()[0].strip()
+
+                  # Dedupe key: prefer explicit message; otherwise use extracted details + testcase id.
+                  key_parts = [etype]
+                  if msg:
+                    key_parts.append(msg)
+                  elif extracted:
+                    key_parts.append(extracted)
+                  if testcase_id:
+                    key_parts.append(testcase_id)
+                  key = "\n".join([p for p in key_parts if p]).strip() or (combined.splitlines()[0] if combined else 'unknown')
+                  add_entry(grouped, key, version, combined)
+
+          # Fallback: scan logs for fatals if XML missing.
+          fatal_re = re.compile(r'^(PHP\s+Fatal\s+error:.*|Fatal\s+error:.*)$', re.MULTILINE)
+          for log_path in sorted(glob.glob(os.path.join(artifacts_dir, '**', '*.log'), recursive=True)):
+            version = version_from_path(log_path)
+            versions_seen.add(version)
+            try:
+              log = open(log_path, 'r', encoding='utf-8', errors='replace').read()
+            except Exception:
+              continue
+            m = fatal_re.search(log)
+            if m:
+              msg = m.group(1).strip()
+              key = 'Fatal error\n' + msg
+              add_entry(grouped, key, version, msg)
+
+          versions = sorted(v for v in versions_seen if v != 'unknown')
+
+          def versions_label(affected):
+            affected = sorted(v for v in affected if v != 'unknown')
+            if versions and affected == versions:
+              return 'all'
+            return ', '.join(affected) if affected else 'unknown'
+
+          items = sorted(grouped.items(), key=lambda kv: (-len(kv[1]['versions']), kv[0]))
+          blocks = []
+          for idx, (key, info) in enumerate(items):
+            affected = versions_label(info['versions'])
+            message = info['message']
+            block = (
+              "-----\n"
+              f"Affected PHP version: `{affected}`\n"
+              "```php\n"
+              f"{message}\n"
+              "```"
+            )
+            if idx == len(items) - 1:
+              block += "\n-----"
+            blocks.append(block)
+
+          if blocks:
+            details = "\n\n".join(blocks)
+          else:
+            details = "No PHPUnit error details could be parsed from artifacts."
+
+          md = "\n".join([
+            "<details>",
+            "<summary>See all PHPUnit errors (click to expand)</summary>",
+            "",
+            details,
+            "",
+            "</details>",
+            "",
+          ])
+
+          with open('phpunit-errors.md', 'w', encoding='utf-8') as f:
+            f.write(md)
+          PY
+
+      - name: Post PR comment on failure
+        if: github.event_name == 'pull_request' && needs.phpunit.result == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- phpunit-result-comment -->';
+
+            const fs = require('fs');
+            let details = '';
+            try {
+              details = fs.readFileSync('phpunit-errors.md', 'utf8').trim();
+            } catch (e) {
+              details = '';
+            }
+
+            const body = [
+              marker,
+              '## PHPUnit Test Failure',
+              '',
+              `One or more PHP version targets failed in [this workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`,
+              '',
+              details || '_No parsed error details found._',
+              '',
+              'Please review the failing jobs and fix the issues before merging.',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.filter(c => typeof c.body === 'string' && c.body.startsWith(marker));
+
+            for (const comment of existing) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+              });
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Check overall status
+        if: needs.phpunit.result != 'success'
+        run: exit 1
+

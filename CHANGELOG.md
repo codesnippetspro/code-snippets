@@ -1,47 +1,71 @@
 # Changelog
 
-## [3.9.6] (2026-04-28)
+## [3.10.0] (UPCOMING)
+
+### Added
+* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
+* Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud.
+* Snippet preview modal for viewing snippet code from the snippets table without opening the editor.
+* Automatic hiding of unrelated admin notices from other plugins on Code Snippets screens.
+* Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from the WordPress admin bar.
+* Snippet locking to help prevent accidental edits or deletion of important snippets. Props to https://github.com/mgiannopoulos24.
+* Improved screen options on the main snippets table, including controls for visible columns and truncating long snippet names or descriptions.
+* Bulk actions and bulk code download support in the redesigned snippets table.
+* Featured snippets and improved browsing in Community Cloud.
+* WordPress modern theme admin styling compatibility.
+* Clearer accessibility labels, headings, tab markup, table checkboxes, sort buttons, copy buttons, and drag-and-drop upload controls.
 
 ### Changed
-* tweak: improve snippets rest api
-
-### Removed
-* remove redundant comments
+* Redesigned the main snippets table with improved search, filtering, sorting, pagination, row actions, and bulk selection.
+* Improved the snippet import and migration experience, including clearer file upload handling and third-party plugin migration flows.
+* Improved snippet error handling so activation failures, validation errors, and stack traces are easier to understand.
+* Improved Community Cloud search and filtering, including server-side filters, better result loading, and clearer empty states.
+* Updated the welcome screen, toolbar, import screen, and cloud screens to match the new admin experience.
+* Updated internal plugin architecture to a cleaner PSR-4 structure for better long-term maintainability.
+* Improved accessibility across the snippets table, import screen, migration flow, Community Cloud, welcome screen, toolbar, dialogs, tooltips, and code editor.
+* Improved colour contrast and reduced-motion support across admin screens.
 
 ### Fixed
-* site admin cannot toggle shared network snippets status
+* Fixed REST API server error responses on missing snippets.
+* Fixed redundant frontend logic, improving overall performance.
+* Fixed Community Cloud search results and pagination to respect WordPress screen options.
+* Fixed snippet saving and activation feedback to improve validation and runtime error display.
+* Fixed downloaded Community Cloud snippets appearing as not downloaded after a page reload.
+* Fixed network snippet lookups using the wrong database table on multisite.
+* Fixed the inactive snippets count including trashed snippets.
+* Fixed featured Community Cloud snippets failing to load with some cloud API responses.
+
+## [3.9.6] (2026-04-28)
+
+### Fixed
+* Improved permissions handling with snippets REST API.
+* Site admin cannot toggle shared network snippets status.
 
 ## [3.9.5] (2026-02-05)
 
-### Added
-* Confirmed WordPress 6.9 compatability
-
 ### Fixed
-* Improved nonce handling for cloud snippet download and update actions to for enhanced security
+* Improved security when handling actions for downloading and updating cloud snippets.
 
 ## [3.9.4] (2026-01-14)
 
 ### Added
-* New import functionality to migrate snippets from file uploads with drag-and-drop interface
-* Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet)
-* Enhanced file based execution support with improved multisite mode compatibility
-
-### Changed
-* Updated links to more recent documentation pages 
+* New import functionality to migrate snippets from file uploads with drag-and-drop interface.
+* Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet).
+* Enhanced file based execution support with improved multisite mode compatibility.
 
 ### Fixed
-* Fixed multisite capability checks in Plugin class
-* Fixed snippet execution logic for multisite support by centralizing trashed snippet handling
-* Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets
+* Fixed multisite capability checks in Plugin class.
+* Fixed snippet execution logic for multisite support by centralizing trashed snippet handling.
+* Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets.
 
 ## [3.9.3] (2025-12-03)
 
 ### Added
-* end-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability
+* End-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability.
 
 ### Fixed
-* Fix missing import of common/direction in src/css/manage.scss to restore correct styling and direction-aware layout
-* Fix toggle activation check to ensure the correct transformation value is used when detecting active/inactive state
+* Restored missing styles styling and direction-aware layout from Manage menu.
+* Ensure correct transformation value is used when detecting state of activation toggle.
 
 ## [3.9.2] (2025-11-17)
 
@@ -226,10 +250,10 @@
 
 ### Changed
 * Updated CSS to use latest Sass features.
-* Moved theme selector to just above editor preview on settings page (thanks to [brandonjp]). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206)) 
+* Moved theme selector to just above editor preview on settings page (thanks to [brandonjp]). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206))
 * `[code_snippet]` shortcodes can now be nested within each other. ([#198](https://github.com/codesnippetspro/code-snippets/issues/198))
 
-### Fixed 
+### Fixed
 * Save buttons above editor did not follow usual validation process in Pro. (PRO) ([#197](https://github.com/codesnippetspro/code-snippets/issues/197))
 * Minor inconsistencies in consistent UI elements between Core and Pro.
 * Tags input not allowing input. ([#211](https://github.com/codesnippetspro/code-snippets/issues/211))
@@ -253,13 +277,13 @@
 * Action hook `code_snippets/admin/manage` now includes the currently viewed type.
 
 ### Fixed
-* Memory issue from checking aggregate posts while loading front-end syntax highlighter. 
+* Memory issue from checking aggregate posts while loading front-end syntax highlighter.
 * Translation functions being called too early on upgrade, resulting in localisation loading errors.
 * Bug preventing the 'share on network' status of network snippets from correctly updating.
 * Incorrect logic controlling when to display 'Save Changes' or 'Save Changes and Activate' buttons.
 * Old notices persisting when switching between editing and creating snippets.
 
-## 3.6.5.1 (2024-05-24)
+## [3.6.5.1] (2024-05-24)
 
 * Redeployment of [v3.6.5](#365-2024-05-24) to overcome issue with initial build.
 
@@ -387,11 +411,11 @@
 
 ### Changed
 * Better compatibility with modern versions of PHP (7.0+).
-* Converted Edit/Add New Snippet page to use React.
-  * Converted action buttons to asynchronously use REST API endpoints through AJAX.
-  * Load page components dynamically through React.
-  * Added action notice queue system.
-  * Replaced native alert dialog with proper React modal.
+* Converted Edit/Add New Snippet page to use React:
+  - Converted action buttons to asynchronously use REST API endpoints through AJAX.
+  - Load page components dynamically through React.
+  - Added action notice queue system
+  - Replaced native alert dialog with proper React modal.
 * Catch snippet execution errors to prevent site from crashing.
 * Display recent snippet errors in admin dashboard instead.
 * Updated editor block to use new REST API endpoints. (PRO)
@@ -575,9 +599,9 @@
 
 ### Added
 * Added translations:
-  * Spanish by [Ibidem Group](https://www.ibidemgroup.com)
-  * Urdu by [Samuel Badree](https://mobilemall.pk/)
-  * Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
+  - Spanish by [Ibidem Group](https://www.ibidemgroup.com)
+  - Urdu by [Samuel Badree](https://mobilemall.pk/)
+  - Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
 * Support for `:class` syntax to the code validator.
 * PHP8 support to the code linter.
 * Color picker feature to the code editor.
@@ -1318,12 +1342,12 @@
 
 ### Changed
 * Updated CodeMirror to version 2.33.
-* Updated the 'Manage Snippets' page to use the WP_List_Table class.
-  * Added 'Screen Options' tab to 'Manage Snippets' page.
-  * Added search capability to 'Manage Snippets' page.
-  * Added views to easily filter activated, deactivated and recently activated snippets.
-  * Added ID column to 'Manage Snippets' page.
-  * Added sortable name and ID column on 'Manage Snippets' page ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-sort-by-snippet-name))
+* Updated the 'Manage Snippets' page to use the WP_List_Table class:
+  - Added 'Screen Options' tab to 'Manage Snippets' page.
+  - Added search capability to 'Manage Snippets' page.
+  - Added views to easily filter activated, deactivated and recently activated snippets.
+  - Added ID column to 'Manage Snippets' page.
+  - Added sortable name and ID column on 'Manage Snippets' page ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-sort-by-snippet-name))
 * Improved API.
 * Lengthened snippet name field to 64 characters. ([#](https://wordpress.org/support/topic/plugin-code-snippets-snippet-title-limited-to-36-characters))
 

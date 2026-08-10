@@ -1,0 +1,157 @@
+import { __, sprintf } from '@wordpress/i18n'
+import React, { useState } from 'react'
+import { getSnippetType , isCloudSnippetDownloadable } from '../../../utils/snippets/snippets'
+import { stripTags, truncateChars } from '../../../utils/text'
+import { Badge } from '../../common/Badge'
+import { Button } from '../../common/Button'
+import { CloudSnippetDownloadButton } from '../../common/cloud/CloudSnippetDownloadButton'
+import { CloudStatusBadge } from '../../common/cloud/CloudStatusBadge'
+import { CloudSnippetPreviewModal } from '../../common/SnippetPreviewModal'
+import { useCloudSearch } from './WithCloudSearchContext'
+import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
+import type { Dispatch, SetStateAction } from 'react'
+
+type CloudSnippetId = CloudSnippetSchema['id']
+type SetSelected = Dispatch<SetStateAction<Set<CloudSnippetId>>>
+
+const updateSelection = (setSelected: SetSelected, ids: CloudSnippetId[], isSelected: boolean) => {
+	setSelected(previous => {
+		const updated = new Set(previous)
+		ids.forEach(id => isSelected ? updated.add(id) : updated.delete(id))
+		return updated
+	})
+}
+
+interface CloudSnippetRowProps {
+	snippet: CloudSnippetSchema
+	selected?: Set<CloudSnippetId>
+	setSelected?: SetSelected
+}
+
+interface CloudSnippetActionsProps extends Pick<CloudSnippetRowProps, 'snippet'> {
+	isPreviewOpen: boolean
+	setIsPreviewOpen: (isOpen: boolean) => void
+}
+
+const CloudSnippetActions: React.FC<CloudSnippetActionsProps> = ({
+	snippet,
+	isPreviewOpen,
+	setIsPreviewOpen
+}) => {
+	const { doSearch } = useCloudSearch()
+
+	return (
+		<>
+			<div className="cloud-snippet-action-buttons">
+				<Button secondary onClick={() => setIsPreviewOpen(true)}>
+					{__('Preview', 'code-snippets')}
+				</Button>
+
+				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={doSearch} />
+			</div>
+
+			{isPreviewOpen && (
+				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={doSearch} />)}
+		</>
+	)
+}
+
+const CloudSnippetRow: React.FC<CloudSnippetRowProps> = ({ snippet, selected, setSelected }) => {
+	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+
+	return (
+		<tr>
+			{selected && setSelected
+				? <th scope="row" className="check-column">
+					{isCloudSnippetDownloadable(snippet) && <input
+						id={`cb-select-${snippet.id}`}
+						type="checkbox"
+						name="checked[]"
+						checked={selected.has(snippet.id)}
+						aria-label={sprintf(
+							// translators: %s: snippet name.
+							__('Select %s', 'code-snippets'),
+							snippet.name
+						)}
+						onChange={event => updateSelection(setSelected, [snippet.id], event.target.checked)}
+					/>}
+				</th>
+				: null}
+
+			<td className="column-name column-primary">
+				<strong>
+					<button
+						type="button"
+						className="cloud-table-name-button"
+						title={__('Preview this snippet', 'code-snippets')}
+						onClick={() => setIsPreviewOpen(true)}
+					>
+						{snippet.name}
+					</button>
+				</strong>
+			</td>
+
+			<td className="column-type"><Badge name={getSnippetType(snippet)} /></td>
+
+			<td className="column-status"><CloudStatusBadge status={snippet.status} /></td>
+
+			<td className="column-desc">
+				<div className="cloud-table-description">{truncateChars(stripTags(snippet.description))}</div>
+			</td>
+
+			<td className="column-actions">
+				<CloudSnippetActions {...{ snippet, isPreviewOpen, setIsPreviewOpen }} />
+			</td>
+		</tr>
+	)
+}
+
+export interface CloudSnippetsTableProps {
+	snippets: CloudSnippetSchema[]
+	selected?: Set<CloudSnippetId>
+	setSelected?: SetSelected
+}
+
+/**
+ * Table view for lists of cloud snippets (community search results and
+ * bundle contents), mirroring the card actions. Descriptions are clamped
+ * so all rows stay the same height. Selection is only offered when the
+ * containing view provides selection state, as bundle contents have no
+ * bulk actions.
+ */
+export const CloudSnippetsTable: React.FC<CloudSnippetsTableProps> = ({
+	snippets,
+	selected,
+	setSelected
+}) => {
+	const downloadable = snippets.filter(snippet => isCloudSnippetDownloadable(snippet))
+
+	return <table className="wp-list-table widefat fixed striped cloud-snippets-table">
+		<thead>
+			<tr>
+				{selected && setSelected && (
+					<td className="column-cb check-column">
+						<input
+							id="cb-select-all-cloud-snippets"
+							type="checkbox"
+							checked={0 < downloadable.length && downloadable.every(snippet => selected.has(snippet.id))}
+							aria-label={__('Select all snippets', 'code-snippets')}
+							onChange={event =>
+								updateSelection(setSelected, downloadable.map(snippet => snippet.id), event.target.checked)}
+						/>
+					</td>)}
+				<th scope="col" className="column-name column-primary">{__('Name', 'code-snippets')}</th>
+				<th scope="col" className="column-type">{__('Type', 'code-snippets')}</th>
+				<th scope="col" className="column-status">{__('Status', 'code-snippets')}</th>
+				<th scope="col" className="column-desc">{__('Description', 'code-snippets')}</th>
+				<th scope="col" className="column-actions">
+					<span className="screen-reader-text">{__('Actions', 'code-snippets')}</span>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{snippets.map(snippet =>
+				<CloudSnippetRow key={snippet.id} {...{ snippet, selected, setSelected }} />)}
+		</tbody>
+	</table>
+}

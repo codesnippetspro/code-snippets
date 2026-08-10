@@ -59,9 +59,9 @@
 }
 
 .snippet-editor-help {
-	position: absolute;
 	inset-inline-end: 5px;
 	inset-block-start: 5px;
+	position: absolute;
 
 	td {
 		&:first-child {
@@ -72,18 +72,27 @@
 			white-space: nowrap;
 		}
 	}
+}
 
-	.mac-key {
-		display: none;
+.mac-keyboard-shortcut {
+	text-align: end;
+
+	kbd {
+		font-family: inherit;
+		padding: 0;
+		margin: 0;
 	}
+}
 
-	.platform-mac {
-		.mac-key {
-			display: inline;
-		}
+.pc-keyboard-shortcut {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
 
-		.pc-key {
-			display: none;
-		}
+	kbd {
+		font-family: inherit;
+		margin: 0;
+		padding-block: 0;
+		padding-inline: 2px;
 	}
 }

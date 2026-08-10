@@ -1,3 +1,4 @@
+
 #adminmenu {
 	.toplevel_page_snippets div.wp-menu-image::before {
 		content: '';
@@ -11,6 +12,16 @@
 		color: #fff;
 		background-color: #d46f4d;
 		border: none;
+
+		// WP 7.0 restyles `.button`/`.button-primary` with wider padding, a 2px radius and a
+		// 40px min-height; pin these (independent of the plugin control tokens, which are
+		// sized for page content rather than the admin menu) so the pill keeps its compact
+		// dimensions and stays aligned with the surrounding submenu items across WP versions.
+		border-radius: 3px;
+		padding-block: 0;
+		padding-inline: 10px;
+		min-block-size: 30px;
+		block-size: auto;
 		text-align: center;
 		font-weight: bold;
 		transition: background-color .1s linear;
@@ -20,12 +31,23 @@
 		justify-content: center;
 		align-items: center;
 
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
+		}
+
 		&:hover {
-			background-color: #08c5d1;
+			background-color: #0ca0a9;
 		}
 
 		.dashicons {
 			vertical-align: text-bottom;
+			color: inherit;
+			font-size: 16px;
+			padding-block-start: 2px;
+
+			// WP 7.0's taller button line-height (≈38px) leaks onto the icon and pushes it out
+			// of alignment; reset it so the glyph stays centred within the flex pill.
+			line-height: 1;
 		}
 	}
 

@@ -1,0 +1,18 @@
+.wrap > h2:first-of-type {
+	font-size: 32px;
+	font-weight: 510;
+	line-height: 1.25;
+	color: #2c3337;
+	margin-block: 24px 16px;
+	padding: 0;
+}
+
+.import-snippets-section {
+	padding-block-start: 0;
+	display: none;
+	max-inline-size: 800px;
+
+	&.active-section {
+		display: block;
+	}
+}

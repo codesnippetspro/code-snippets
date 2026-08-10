@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { createContextHook } from '../utils/hooks'
+import { createContextHook } from '../utils/bootstrap'
 import { isNetworkAdmin } from '../utils/screen'
-import { useRestAPI } from './useRestAPI'
+import { parseSnippetObject } from '../utils/snippets/objects'
+import { useSnippetsAPI } from './useSnippetsAPI'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../types/Snippet'
 
@@ -10,11 +11,13 @@ export interface SnippetsListContext {
 	refreshSnippetsList: () => Promise<void>
 }
 
-const [SnippetsListContext, useSnippetsList] = createContextHook<SnippetsListContext>('SnippetsList')
+const [Context, useSnippetsList] = createContextHook<SnippetsListContext>('useSnippetsList')
 
 export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children }) => {
-	const { snippetsAPI: { fetchAll } } = useRestAPI()
-	const [snippetsList, setSnippetsList] = useState<Snippet[]>()
+	const { fetchAll } = useSnippetsAPI()
+	const [snippetsList, setSnippetsList] = useState<Snippet[] | undefined>(
+		() => window.CODE_SNIPPETS_MANAGE?.snippetsList?.map(parseSnippetObject)
+	)
 
 	const refreshSnippetsList = useCallback(async (): Promise<void> => {
 		try {
@@ -36,7 +39,7 @@ export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children 
 		refreshSnippetsList
 	}
 
-	return <SnippetsListContext.Provider value={value}>{children}</SnippetsListContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
 
 export { useSnippetsList }

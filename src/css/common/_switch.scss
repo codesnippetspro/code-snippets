@@ -1,7 +1,5 @@
 @use 'theme';
 
-$off-color: #789;
-
 .snippet-execution-button,
 .snippet-activation-switch,
 input[type='checkbox'].switch {
@@ -9,17 +7,19 @@ input[type='checkbox'].switch {
 	position: relative;
 }
 
+// Activation switch: an accent-coloured 36x19 pill shared by the list-table
+// activate column, snippet cards and settings toggles.
 .snippet-activation-switch,
 input[type='checkbox'].switch {
 	appearance: none;
 	outline: 0;
 	cursor: pointer;
 	margin: 0;
-	inline-size: 32px;
+	inline-size: 36px;
 	block-size: 19px;
 	border-radius: 34px;
 	text-align: start;
-	border: 1px solid $off-color;
+	border: 1px solid theme.$accent;
 	box-sizing: border-box;
 
 	&::before {
@@ -28,19 +28,24 @@ input[type='checkbox'].switch {
 		block-size: 13px;
 		inline-size: 13px;
 		display: inline-block;
-		background-color: $off-color;
+		background-color: theme.$accent;
 		border-radius: 50%;
 		margin: 2px;
+
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
+		}
 	}
 }
 
 .active-snippet .snippet-activation-switch,
 input[type='checkbox'].switch:checked {
-	background-color: #0073aa;
+	background-color: theme.$accent;
 
+	// Travel distance: pill width minus the knob, its margins and the borders.
 	&::before {
 		background-color: white;
-		transform: translateX(calc(100% * var(--cs-direction-multiplier)));
+		transform: translateX(calc((100% + 4px) * var(--cs-direction-multiplier)));
 	}
 }
 
@@ -50,7 +55,7 @@ input[type='checkbox'].switch:checked {
 	text-align: center;
 	font-weight: bold;
 	line-height: 1;
-	color: #bbb;
+	color: #1d2327;
 }
 
 a.snippet-condition-count {
@@ -98,5 +103,18 @@ a.snippet-condition-count {
 			border-color: theme.$accent;
 			transition: border-color 0.6s;
 		}
+
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
+
+			&::before {
+				transition-duration: 0.01s;
+			}
+		}
 	}
+}
+
+.code-snippets-card .snippet-execution-button {
+	margin-block-start: 0;
+	margin-inline-end: 9px;
 }

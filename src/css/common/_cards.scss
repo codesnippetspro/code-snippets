@@ -1,0 +1,99 @@
+@use 'checkbox';
+@use 'theme';
+
+.code-snippets-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+	gap: 20px;
+	margin: 0;
+}
+
+.code-snippets-card {
+	background: #fff;
+	border: 1px solid theme.$control-border;
+	border-radius: 5px;
+	margin: 0;
+	display: flex;
+	flex-flow: column;
+	box-sizing: border-box;
+
+	a {
+		text-decoration: none;
+		color: theme.$accent;
+	}
+
+	.card-inner {
+		padding: 24px;
+	}
+
+	footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		background: #f7f7f8;
+		margin-block-start: auto;
+		border-block-start: 1px solid theme.$control-border;
+		padding-inline: 24px;
+		padding-block: 12px;
+		border-end-start-radius: 5px;
+		border-end-end-radius: 5px;
+	}
+
+	// The status label shrinks and clips away under pressure rather than
+	// pushing the action buttons onto a second line.
+	.snippet-card-footer-status {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: 0 1 auto;
+		min-inline-size: 0;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.snippet-card-footer-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: nowrap;
+		gap: 8px;
+		flex: 0 0 auto;
+
+		.button:not(.kebab-menu-trigger) {
+			min-inline-size: 103px;
+			text-align: center;
+			justify-content: center;
+		}
+	}
+
+	&.is-selectable {
+		position: relative;
+	}
+
+	.snippet-card-corner {
+		position: absolute;
+		inset-block-start: 20px;
+		inset-inline-end: 24px;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+
+		.snippet-card-select {
+			margin: 0;
+		}
+	}
+
+	input[type='checkbox'].snippet-card-select {
+		@include checkbox.canonical;
+	}
+
+	&.is-selectable .card-inner > h3 {
+		margin-inline-end: 48px;
+	}
+
+	&.is-selected {
+		border-color: theme.$accent;
+		box-shadow: 0 0 0 1px theme.$accent;
+	}
+}

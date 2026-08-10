@@ -1,0 +1,38 @@
+---
+description: Use typed parameter objects for functions with 3 or more parameters
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: false
+---
+
+# Method Parameter Typing
+
+## Functions with 3+ Parameters
+
+When a function or method has 3 or more parameters, use a type for better maintainability and type safety.
+
+**Avoid:**
+
+```typescript
+function processData(param1: string, param2: number, param3: boolean, param4: string) {
+  // implementation
+}
+```
+
+**Prefer:**
+
+```typescript
+type ProcessDataArgs = {
+  param1: string;
+  param2: number;
+  param3: boolean;
+  param4: string;
+};
+
+function processData(args: ProcessDataArgs) {
+  // implementation
+}
+```
+
+## Auto-Suggestion Rule
+
+When you see a function with 3 or more parameters, suggest refactoring to use a type for the parameters.

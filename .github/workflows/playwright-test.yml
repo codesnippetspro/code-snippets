@@ -45,13 +45,20 @@ jobs:
           WORDPRESS_DEBUG: 1
           WORDPRESS_CONFIG_EXTRA: |
             define( 'FS_METHOD', 'direct' );
+            define( 'WP_DEBUG', true );
             define( 'WP_DEBUG_LOG', true );
-            define( 'WP_DEBUG_DISPLAY', false );
+            define( 'WP_DEBUG_DISPLAY', true );
+            define( 'WP_DISABLE_FATAL_ERROR_HANDLER', true );
             define( 'SCRIPT_DEBUG', true );
             define( 'WP_ENVIRONMENT_TYPE', 'local' );
+            @ini_set( 'display_errors', '1' );
+            @ini_set( 'display_startup_errors', '1' );
+            @ini_set( 'log_errors', '1' );
+            @ini_set( 'error_reporting', (string) E_ALL );
         ports:
           - 8888:80
     steps:
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
@@ -88,25 +95,29 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: |
-            node_modules
             src/vendor
-          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-${{ github.run_id }}-${{ github.job }}
+            node_modules
+          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
           restore-keys: |
             ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-
+            ${{ runner.os }}-${{ inputs.test-mode }}-deps-
 
       - name: Install workflow dependencies
-        if: steps.deps-cache.outputs.cache-matched-key == ''
-        run: npm run prepare-environment:ci && npm run bundle
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        run: npm run prepare-environment:ci
+
+      - name: Build plugin assets
+        run: npm run bundle
 
       - name: Save vendor and node_modules cache
-        if: steps.deps-cache.outputs.cache-matched-key == ''
+        if: steps.deps-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: |
             src/vendor
             node_modules
-          key: ${{ steps.deps-cache.outputs.cache-primary-key }}
-          
+          key: ${{ steps.deps-cache.outputs.cache-primary-key }}-${{ github.run_id }}-${{ github.job }}
+
       - name: Wait for WordPress to be reachable
         run: |
           for i in $(seq 1 60); do
@@ -114,7 +125,7 @@ jobs:
               echo "WordPress is reachable."
               exit 0
             fi
-            echo "Waiting for WordPress... ($i/60)"
+            echo "Waiting for WordPress… ($i/60)"
             sleep 2
           done
 
@@ -229,8 +240,32 @@ jobs:
           WP_E2E_WPCLI_URL: http://localhost:8888
           WP_E2E_WP_CONTAINER: ${{ job.services.wordpress.id }}
           WP_E2E_MULTISITE_MODE: ${{ inputs.multisite }}
-        run: npm run test:playwright -- --project=${{ inputs.project-name }}
-        
+        run: |
+          set -euo pipefail
+          mkdir -p test-results/ci
+          suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
+          : > "test-results/ci/playwright-${suffix}.log"
+          npm run test:playwright -- --project=${{ inputs.project-name }} 2>&1 | tee -a "test-results/ci/playwright-${suffix}.log"
+
+      - name: Normalize Playwright report filenames
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p test-results/ci
+          suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
+
+          if [ -f test-results/results.xml ]; then
+            mv test-results/results.xml "test-results/ci/results-${suffix}.xml"
+          elif [ -f tests/playwright/test-results/results.xml ]; then
+            mv tests/playwright/test-results/results.xml "test-results/ci/results-${suffix}.xml"
+          fi
+
+          if [ -f test-results/results.json ]; then
+            mv test-results/results.json "test-results/ci/results-${suffix}.json"
+          elif [ -f tests/playwright/test-results/results.json ]; then
+            mv tests/playwright/test-results/results.json "test-results/ci/results-${suffix}.json"
+          fi
+
       - name: Print WordPress logs on failure
         if: failure()
         run: |
@@ -241,7 +276,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results-${{ inputs.test-mode }}
+          name: playwright-test-results-${{ inputs.test-mode }}-${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}
           path: test-results/
           if-no-files-found: ignore
           retention-days: 2

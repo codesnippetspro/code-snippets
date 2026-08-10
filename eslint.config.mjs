@@ -6,7 +6,9 @@ import eslintTs from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
 import reactHooks from 'eslint-plugin-react-hooks'
 import importPlugin from 'eslint-plugin-import'
+import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
 import reactPlugin from 'eslint-plugin-react'
+import svgPlugin from 'eslint-plugin-svg-jsx'
 import { FlatCompat } from '@eslint/eslintrc'
 
 const compat = new FlatCompat({
@@ -21,12 +23,17 @@ export default eslintTs.config(
 	...compat.extends('plugin:react-hooks/recommended'),
 	reactPlugin.configs.flat.recommended,
 	importPlugin.flatConfigs.recommended,
+	jsxA11yPlugin.flatConfigs.recommended,
 	{
 		plugins: { 'react-hooks': reactHooks },
 		rules: reactHooks.configs.recommended.rules,
 	},
 	{
-		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', '*.config.mjs', '*.config.js']
+		ignores: [
+			'bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*',
+			'*.config.mjs', '*.config.js',
+			'.*/*', 'tmp/*', 'playwright-report/*'
+		]
 	},
 	{
 		languageOptions: {
@@ -41,18 +48,8 @@ export default eslintTs.config(
 		},
 		plugins: {
 			'@stylistic': stylistic,
-			'react': reactPlugin
-		},
-		settings: {
-			'react': {
-				version: 'detect'
-			},
-			'import/resolver': {
-				typescript: {
-					alwaysTryTypes: true,
-					project: './tsconfig.json',
-				}
-			}
+			'react': reactPlugin,
+			'svg-jsx': svgPlugin
 		},
 		rules: {
 			'@stylistic/array-bracket-newline': ['error', 'consistent'],
@@ -63,9 +60,9 @@ export default eslintTs.config(
 			'@stylistic/indent': ['error', 'tab', { SwitchCase: 1 }],
 			'@stylistic/jsx-quotes': ['error', 'prefer-double'],
 			'@stylistic/linebreak-style': ['error', 'unix'],
-			'@stylistic/max-len': ['warn', 140, { ignorePattern: 'd="(.*?)"|_[_xn]\\(|import .+ from .+' }],
+			'@stylistic/max-len': ['error', 140, { ignorePattern: 'd="(.*?)"|_[_xn]\\(|import .+ from .+' }],
 			'@stylistic/multiline-ternary': 'off',
-			'@stylistic/no-extra-parens': ['error', 'all'],
+			'@stylistic/no-extra-parens': ['error', 'all', { ignoreJSX: 'all', returnAssign: true }],
 			'@stylistic/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
 			'@stylistic/no-tabs': ['error', { allowIndentationTabs: true }],
 			'@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
@@ -81,11 +78,11 @@ export default eslintTs.config(
 				objectLiteralTypeAssertions: 'never'
 			}],
 			'@typescript-eslint/consistent-type-imports': 'error',
-			'@typescript-eslint/consistent-type-exports': 'error',
 			'@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
 			'@typescript-eslint/no-for-in-array': 'error',
 			'@typescript-eslint/no-import-type-side-effects': 'error',
 			'@typescript-eslint/no-inferrable-types': ['error', { ignoreProperties: true, ignoreParameters: false }],
+			'@typescript-eslint/no-magic-numbers': ['error', { ignore: [-1, 0, 1], ignoreEnums: true }],
 			'@typescript-eslint/no-unused-vars': ['error', {
 				argsIgnorePattern: '^_',
 				varsIgnorePattern: '^_',
@@ -117,14 +114,50 @@ export default eslintTs.config(
 			}],
 			'max-lines-per-function': ['warn', { skipBlankLines: true, skipComments: true }],
 			'no-invalid-this': 'error',
-			'no-magic-numbers': ['error', { ignore: [-1, 0, 1] }],
 			'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
 			'no-ternary': 'off',
 			'one-var': ['error', 'never'],
 			'prefer-named-capture-group': 'error',
 			'prefer-template': 'error',
 			'sort-imports': ['error', { ignoreDeclarationSort: true }],
-			'yoda': ['error', 'always']
+			'yoda': ['error', 'always'],
+			// Accessibility rules.
+			'jsx-a11y/alt-text': 'error',
+			'jsx-a11y/anchor-has-content': 'error',
+			'jsx-a11y/anchor-is-valid': 'error',
+			'jsx-a11y/aria-props': 'error',
+			'jsx-a11y/aria-proptypes': 'error',
+			'jsx-a11y/aria-role': 'error',
+			'jsx-a11y/aria-unsupported-elements': 'error',
+			'jsx-a11y/click-events-have-key-events': 'error',
+			'jsx-a11y/control-has-associated-label': ['warn', { ignoreElements: ['th', 'td'] }],
+			'jsx-a11y/heading-has-content': 'error',
+			'jsx-a11y/iframe-has-title': 'error',
+			'jsx-a11y/img-redundant-alt': 'error',
+			'jsx-a11y/interactive-supports-focus': 'error',
+			'jsx-a11y/label-has-associated-control': 'error',
+			'jsx-a11y/no-autofocus': 'error',
+			'jsx-a11y/no-noninteractive-element-interactions': 'error',
+			'jsx-a11y/no-noninteractive-tabindex': 'error',
+			'jsx-a11y/no-redundant-roles': 'error',
+			'jsx-a11y/no-static-element-interactions': 'error',
+			'jsx-a11y/role-has-required-aria-props': 'error',
+			'jsx-a11y/role-supports-aria-props': 'error',
+			'jsx-a11y/tabindex-no-positive': 'error',
+			'svg-jsx/camel-case-dash': 'error',
+			'svg-jsx/camel-case-colon': 'error',
+			'svg-jsx/no-style-string': 'error',
+		},
+		settings: {
+			'react': {
+				version: 'detect'
+			},
+			'import/resolver': {
+				typescript: {
+					alwaysTryTypes: true,
+					project: './tsconfig.json',
+				}
+			}
 		}
 	},
 	{
@@ -137,8 +170,9 @@ export default eslintTs.config(
 		}
 	},
 	{
-		files: ['test/**', '**/*.test.*', '**/*.spec.*'],
+		files: ['tests/**', '**/*.test.*', '**/*.spec.*'],
 		rules: {
+			'@typescript-eslint/no-magic-numbers': 'off',
 			'max-lines-per-function': 'off'
 		}
 	}

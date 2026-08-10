@@ -1,38 +1,29 @@
-$bg-color: hsl(0deg 0% 20% / 90%);
-
-.help-tooltip {
-	display: inline-flex;
-	flex-direction: column;
-	justify-content: center;
-	border-block-end: 1px dotted;
-	position: relative;
-	vertical-align: middle;
-}
-
-.help-tooltip-anchor {
-	cursor: help;
-	padding-block: 0.3em 0;
-	padding-inline: 0.3em;
-	display: inline-block;
-	font-size: 10px;
-	background: transparent !important;
-}
+$bg-color: rgb(19 18 18 / 90%);
 
 .tooltip {
-	cursor: help !important;
 	position: relative;
 	display: inline-block;
+}
 
-	.dashicons {
-		color: lightslategrey;
+.tooltip-trigger {
+	display: inline-flex;
+	align-items: center;
+	background: transparent;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	border-radius: 50%;
+	color: inherit;
+	font: inherit;
+
+	&:hover,
+	&:focus {
+		box-shadow: none;
 	}
 
-	&.badge {
-		display: inline-flex;
-
-		.dashicons {
-			color: inherit;
-		}
+	&:focus-visible {
+		outline: 2px solid #2271b1;
+		outline-offset: 2px;
 	}
 }
 
@@ -46,6 +37,10 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 		transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
 	transform: translate3d(0, 0, 0);
 	pointer-events: none;
+
+	@media (prefers-reduced-motion: reduce) {
+		transition-duration: 0.01s;
+	}
 }
 
 .tooltip::before {
@@ -62,14 +57,15 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 .tooltip-content {
 	z-index: 1000;
 	padding: 8px;
-	background-color: $bg-color;
+	background-color: rgb(19 18 18 / 90%);
 	color: #fff;
 	border-radius: 6px;
 	position: absolute;
-	font-size: small;
+	font-size: 12px;
 	font-weight: normal;
 	text-transform: none;
-	min-inline-size: 200px;
+	inline-size: max-content;
+	max-inline-size: 200px;
 	backdrop-filter: blur(3px);
 
 	.tooltip-block & {
@@ -148,7 +144,8 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 }
 
 .tooltip:hover,
-.tooltip:focus {
+.tooltip:focus,
+.tooltip:focus-within {
 	&::before, .tooltip-content {
 		visibility: visible;
 		opacity: 1;
@@ -156,29 +153,54 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 }
 
 .tooltip-block.tooltip-start:hover,
-.tooltip-block.tooltip-start:focus {
+.tooltip-block.tooltip-start:focus,
+.tooltip-block.tooltip-start:focus-within {
 	&::before, .tooltip-content {
 		transform: translateY(-10px);
 	}
 }
 
 .tooltip-block.tooltip-end:hover,
-.tooltip-block.tooltip-end:focus {
+.tooltip-block.tooltip-end:focus,
+.tooltip-block.tooltip-end:focus-within {
 	&::before, .tooltip-content {
 		transform: translateY(10px);
 	}
 }
 
 .tooltip-inline.tooltip-end:hover,
-.tooltip-inline.tooltip-end:focus {
+.tooltip-inline.tooltip-end:focus,
+.tooltip-inline.tooltip-end:focus-within {
 	&::before, .tooltip-content {
 		transform: translateX(calc(10px * var(--cs-direction-multiplier)));
 	}
 }
 
 .tooltip-inline.tooltip-start:hover,
-.tooltip-inline.tooltip-start:focus {
+.tooltip-inline.tooltip-start:focus,
+.tooltip-inline.tooltip-start:focus-within {
 	&::before, .tooltip-content {
 		transform: translateX(calc(-10px * var(--cs-direction-multiplier)));
+	}
+}
+
+
+.help-tooltip {
+	cursor: help !important;
+
+	.tooltip-trigger {
+		cursor: help;
+	}
+
+	.dashicons {
+		color: lightslategrey;
+	}
+
+	&.badge {
+		display: inline-flex;
+
+		.dashicons {
+			color: inherit;
+		}
 	}
 }

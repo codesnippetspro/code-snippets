@@ -1,10 +1,42 @@
+@use 'common/checkbox';
 @use 'common/codemirror';
+@use 'common/subnav';
+@use 'common/theme';
+@use 'common/toolbar';
+@use 'common/wp-admin';
+@use 'common/page-header';
 
 $sections: general, editor, debug, version-switch;
 
+.wrap.code-snippets-settings {
+	margin-block-start: 0;
+}
+
+.settings-section input[type='checkbox']:not(.switch) {
+	@include checkbox.canonical;
+
+	margin-inline-end: 8px;
+}
+
+.snippets-page-header h1 {
+	color: #2c3337;
+}
+
 p.submit {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-start;
+	gap: 14px;
+
+	.button-secondary {
+		background: transparent;
+	}
+}
+
+.settings-section .form-table th {
+	inline-size: 261px;
+	font-size: 14px;
+	font-weight: 700;
+	color: #2c3337;
 }
 
 .settings-section,
@@ -16,7 +48,7 @@ p.submit {
 	margin-block-end: 1em;
 }
 
-input[type="number"] {
+input[type='number'] {
 	inline-size: 4em;
 }
 
@@ -73,7 +105,7 @@ body.js {
 	display: inline-block;
 	padding-inline-end: 2em;
 	line-height: 2;
-	color: #aaa;
+	color: #646970;
 }
 
 .license-status-valid {
@@ -84,7 +116,7 @@ body.js {
 	color: #dc3232;
 }
 
-.wrap[data-active-tab="license"] .submit {
+.wrap[data-active-tab='license'] .submit {
 	display: none;
 }
 
@@ -120,8 +152,8 @@ body.js {
 }
 
 .refresh-success {
-	background: #2271b1;
-	color: #ffeb3b;
+	background: #2e7d4f;
+	color: #fff;
 }
 
 .cloud-settings tbody tr:nth-child(n+5) {
@@ -138,7 +170,7 @@ body.js {
 		background: #f0f6fc;
 		padding: 2px 8px;
 		border-radius: 3px;
-		border: 1px solid #c3c4c7;
+		border: 1px solid theme.$control-border;
 	}
 
 	#target_version {
@@ -155,7 +187,7 @@ body.js {
 			border-color: #dcdcde !important;
 		}
 	}
-	
+
 	// Warning box styling
 	#version-switch-warning {
 		margin-block-start: 20px !important;
@@ -163,11 +195,11 @@ body.js {
 		border-inline-start: 4px solid #dba617;
 		background: #fff8e5;
 		border-radius: 4px;
-		
+
 		p {
 			margin: 0;
 			color: #8f6914;
-			
+
 			strong {
 				color: #8f6914;
 			}
@@ -176,7 +208,7 @@ body.js {
 
 	#version-switch-result {
 		margin-block-start: 12px;
-		
+
 		&.notice {
 			padding: 8px 12px;
 			border-radius: 4px;
@@ -208,6 +240,80 @@ body.js {
 	.form-table {
 		th {
 			inline-size: 180px;
+		}
+	}
+}
+
+#settings-sections-tabs {
+	margin: 0;
+	padding: 0;
+
+	ul {
+		display: flex;
+		align-items: stretch;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.snippet-type-link {
+		display: flex;
+		align-items: center;
+		min-block-size: 52px;
+		margin: 0;
+		padding-inline: 24px;
+		color: #646970;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.5;
+		border: 0;
+		border-inline-end: 1px solid #e2e2e4;
+		background: transparent;
+
+		&:hover,
+		&:focus {
+			color: #2c3337;
+			background: #f6f7f7;
+		}
+
+		&.active-type,
+		&.active-type:hover,
+		&.active-type:focus {
+			position: relative;
+			z-index: 1;
+			margin-block-end: -1px;
+			color: theme.$accent;
+			background: #f0f0f1;
+			border-color: #f0f0f1;
+		}
+	}
+}
+
+@media (width <= 782px) {
+	body.js {
+		.settings-type-nav-wrapper {
+			display: none;
+		}
+
+		.settings-section-title {
+			position: static;
+			inline-size: auto;
+			block-size: auto;
+			margin: 0 0 16px;
+			overflow: visible;
+			clip: auto;
+			clip-path: none;
+			font-size: 20px;
+			line-height: 1.3;
+		}
+
+		.settings-section {
+			display: block !important;
+			margin-block-end: 40px;
+		}
+
+		.wrap[data-active-tab='license'] .submit {
+			display: flex;
 		}
 	}
 }

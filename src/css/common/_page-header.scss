@@ -1,0 +1,52 @@
+@use 'theme';
+
+// Contextual page header row shared by the plugin admin screens: the page
+// title on the inline-start side and the primary page action, if any,
+// aligned to the inline-end side of the same row.
+.snippets-page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px 24px;
+	margin-block: 8px 16px;
+
+	h1,
+	h2 {
+		margin: 0;
+		padding: 0;
+		font-size: 26px;
+		font-weight: 510;
+		line-height: 1.25;
+	}
+
+	h1 {
+		color: #1d2327;
+	}
+
+	h2 {
+		color: theme.$control-text;
+	}
+}
+
+.wrap .snippets-page-header .button.button-primary {
+	padding: 12px;
+	min-block-size: 0;
+	border-radius: 5px;
+	line-height: 1;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+// One-line supporting description shown directly beneath the page title.
+.snippets-page-description {
+	margin-block: 0 16px;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #646970;
+
+	a {
+		color: theme.$accent;
+		text-decoration: underline;
+	}
+}

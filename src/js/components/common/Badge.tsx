@@ -22,6 +22,7 @@ export interface BadgeProps {
 export const Badge: React.FC<BadgeProps> = ({ name, small, inverted, children }) =>
 	<span className={classnames('badge', `${name}-badge`, { 'small-badge': small, 'inverted-badge': inverted })}>
 		{badgeIcons[name]
-			? <span className={`dashicons dashicons-${badgeIcons[name]}`} />
-			: children ?? name}
+			? <span className={`dashicons dashicons-${badgeIcons[name]}`} aria-hidden="true" />
+			: children ?? name
+		}
 	</span>

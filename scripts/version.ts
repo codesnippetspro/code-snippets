@@ -1,12 +1,5 @@
-import { readFileSync, writeFileSync } from 'fs'
 import plugin from '../package.json'
-import { resolve } from './utils/files'
-
-const replaceInFile = (filename: string, transform: (contents: string) => string) => {
-	const file = resolve(filename)
-	const contents = readFileSync(file, 'utf8')
-	writeFileSync(file, transform(contents), 'utf8')
-}
+import { replaceInFile } from './utils/files'
 
 replaceInFile(
 	'src/code-snippets.php',

@@ -1,0 +1,124 @@
+name: PHPUnit Test Runner
+
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        required: false
+        type: string
+        default: '8.2'
+        description: 'PHP version to test against'
+
+jobs:
+  phpunit-test:
+    name: PHPUnit tests (PHP ${{ inputs.php-version }})
+    runs-on: ubuntu-22.04
+    env:
+      WP_CORE_DIR: /tmp/wordpress
+      WP_TESTS_DIR: /tmp/wordpress-tests-lib
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: codesnippetspro/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+
+      - name: Compute dependency hash
+        id: deps-hash
+        run: |
+          set -euo pipefail
+          tmpfile=$(mktemp)
+          if [ -f "src/composer.lock" ]; then
+            cat "src/composer.lock" >> "$tmpfile"
+          fi
+          if [ -f "src/composer.json" ]; then
+            cat "src/composer.json" >> "$tmpfile"
+          fi
+          if [ -s "$tmpfile" ]; then
+            deps_hash=$(shasum -a 1 "$tmpfile" | awk '{print $1}' | cut -c1-8)
+          else
+            deps_hash=$(echo "${GITHUB_SHA:-unknown}" | cut -c1-8)
+          fi
+          echo "deps_hash=$deps_hash" >> "$GITHUB_OUTPUT"
+
+      - name: Get Composer cache
+        id: composer-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: src/vendor
+          key: ${{ runner.os }}-php-${{ inputs.php-version }}-composer-${{ steps.deps-hash.outputs.deps_hash }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ inputs.php-version }}-composer-
+
+      - name: Install Composer dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: composer install -d src --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Save Composer cache
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: src/vendor
+          key: ${{ runner.os }}-php-${{ inputs.php-version }}-composer-${{ steps.deps-hash.outputs.deps_hash }}
+
+      - name: Resolve WordPress version metadata
+        id: wp-meta
+        run: |
+          set -euo pipefail
+          wp_version=$(curl -s http://api.wordpress.org/core/version-check/1.7/ | grep -o '"version":"[^"]*' | head -1 | sed 's/"version":"//')
+          if [ -z "$wp_version" ]; then
+            wp_version="latest-unknown"
+          fi
+          echo "wp_version=$wp_version" >> "$GITHUB_OUTPUT"
+
+      - name: Get WordPress test suite cache
+        id: wp-tests-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ env.WP_CORE_DIR }}
+            ${{ env.WP_TESTS_DIR }}
+          key: ${{ runner.os }}-php-${{ inputs.php-version }}-wp-tests-${{ hashFiles('tests/install-wp-tests.sh') }}-wp-${{ steps.wp-meta.outputs.wp_version }}
+
+      - name: Install WordPress test suite
+        run: |
+          bash scripts/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 latest true
+
+      - name: Save WordPress test suite cache
+        if: steps.wp-tests-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ env.WP_CORE_DIR }}
+            ${{ env.WP_TESTS_DIR }}
+          key: ${{ steps.wp-tests-cache.outputs.cache-primary-key }}
+
+      - name: Run PHPUnit tests
+        run: |
+          set -euo pipefail
+          mkdir -p test-results/phpunit
+          cd src
+          vendor/bin/phpunit -c ../phpunit.xml --testdox --log-junit ../test-results/phpunit/phpunit-${{ inputs.php-version }}.xml 2>&1 | tee ../test-results/phpunit/phpunit-${{ inputs.php-version }}.log
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phpunit-test-results-php-${{ inputs.php-version }}
+          path: |
+            src/.phpunit.result.cache
+            test-results/phpunit/
+          if-no-files-found: ignore
+          retention-days: 2

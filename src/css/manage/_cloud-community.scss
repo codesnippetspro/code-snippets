@@ -1,0 +1,180 @@
+@use '../common/banners';
+@use '../common/checkbox';
+@use '../common/theme';
+
+.cloud-snippet-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	color: #646970;
+	font-size: 12px;
+	font-weight: 500;
+	white-space: nowrap;
+
+	&::before {
+		content: '';
+		block-size: 10px;
+		inline-size: 10px;
+		border-radius: 50%;
+		display: inline-block;
+	}
+}
+
+$status-colors: (
+	public #64baba,
+	private #cc96fb,
+	unverified #ea835e,
+	ai-verified #1cabcf,
+	pro-verified #41a269,
+);
+
+@each $status, $color in $status-colors {
+	.cloud-snippet-status-#{$status}::before {
+		background: $color;
+	}
+}
+
+.bundle-share-code-form,
+.cloud-search-form {
+	display: flex;
+	gap: 8px;
+	margin-block: 0 47px;
+	block-size: 54px;
+
+	> select {
+		flex: 0 0 250px;
+	}
+
+	.button {
+		flex: 0 0 165px;
+	}
+
+	.cloud-search-query {
+		flex: 1;
+		position: relative;
+
+		input {
+			inline-size: 100%;
+			block-size: 100%;
+		}
+
+		> .components-spinner {
+			position: absolute;
+			inset-inline-end: 1.5em;
+			inset-block-start: 25%;
+		}
+	}
+
+	button[type='submit'] {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		.components-spinner {
+			margin: 0;
+		}
+	}
+}
+
+.cloud-search {
+	@include banners.banners;
+
+	padding-block-start: 10px;
+
+	.banner {
+		justify-content: center;
+	}
+
+	.cloud-search-filters select {
+		inline-size: 245px;
+	}
+}
+
+.bundle-share-code-form {
+	max-inline-size: 60%;
+}
+
+.cloud-snippet-action-buttons {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
+
+	// Keep the Download / Edit / Pro Only button a consistent width so
+	// rows line up regardless of which state the snippet is in.
+	.button-primary,
+	.cloud-pro-button,
+	.button:not(.button-primary) {
+		inline-size: 103px;
+		min-inline-size: 103px;
+		text-align: center;
+		justify-content: center;
+	}
+}
+
+.cloud-snippets-table {
+	// Body rows inherit the shared table-cell padding so descriptions can grow
+	// naturally instead of being constrained to a fixed row height.
+	tbody td {
+		vertical-align: middle;
+	}
+
+	.check-column {
+		vertical-align: middle;
+
+		input[type='checkbox'] {
+			@include checkbox.canonical;
+		}
+	}
+
+	.column-name {
+		inline-size: 22%;
+	}
+
+	.column-type {
+		inline-size: 90px;
+	}
+
+	.column-status {
+		inline-size: 120px;
+	}
+
+	.column-actions {
+		inline-size: 234px;
+	}
+
+	.cloud-table-name-button {
+		background: none;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		font-size: inherit;
+		font-weight: 600;
+		color: theme.$accent;
+		text-decoration: none;
+		cursor: pointer;
+		text-align: start;
+
+		&:hover,
+		&:focus-visible {
+			color: #135e96;
+			text-decoration: underline;
+		}
+	}
+
+	// Clamp descriptions so every row stays the same height.
+	.cloud-table-description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
+	}
+}
+
+// Community bundles tab shares the same top padding as .cloud-search so the
+// two tabs' descriptions and inputs align (scoped so the My Library bundles
+// tab is unaffected).
+.community-bundles {
+	padding-block-start: 10px;
+}

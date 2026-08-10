@@ -1,0 +1,185 @@
+@use 'checkbox';
+@use 'theme';
+
+// Match the active subnavigation tile so it blends into the admin canvas.
+body.wp-admin {
+	background: #f0f0f1;
+}
+
+// Remove the WordPress core 10px top margin on the manage snippets container
+// so the subnav band sits flush against the toolbar.
+#manage-snippets-container.wrap {
+	margin-block-start: 0;
+}
+
+/**
+ * Native form control styling.
+ *
+ * WordPress core ships different control metrics between versions (30/32px classic,
+ * 40px with a 2px radius in the WP 7.0 "modern" redesign) and recolours secondary
+ * buttons with the modern accent (#3858E9). These rules apply the plugin's own control
+ * tokens — 38px height, 5px radius, theme control borders and the brand accent —
+ * to native elements inside our admin pages so the layout renders consistently across
+ * WP versions. They deliberately leave the admin menu, admin bar and
+ * `@wordpress/components` React widgets untouched — only native inputs/buttons
+ * rendered inside our own markup are normalised.
+ */
+
+// Scope to our admin page content. We intentionally keep this to a single `.wrap` class so
+// the rules sit just above WordPress core defaults (which we must override) but below the
+// plugin's own more-specific per-control rules, which are emitted later in each bundle and so
+// win on equal specificity. This lets bespoke controls (conditions button, row-action links,
+// priority input, etc.) keep their intended styling without per-element exclusions here.
+.wrap,
+// Modals render through a portal on `document.body`, outside the page wrapper, so
+// the plugin's own dialogs are listed here to pick up the same control tokens.
+.code-snippets-preview-modal,
+.code-snippets-modal {
+	// Native single-line text controls and selects: token height + border.
+	// `@wordpress/components` inputs/selects (`.components-*`) keep their own design — they
+	// are excluded so React widgets such as the tags token field are left untouched.
+	// `.snippet-priority` (the borderless list-table priority field) is excluded so it keeps
+	// its plain transparent styling rather than gaining a bordered box.
+	input[type='text']:not([class*='components-'], [id^='react-select-']),
+	input[type='search']:not([class*='components-']),
+	input[type='number']:not([class*='components-'], .snippet-priority),
+	input[type='email']:not([class*='components-']),
+	input[type='url']:not([class*='components-']),
+	input[type='password']:not([class*='components-']),
+	input[type='tel']:not([class*='components-']) {
+		// `min-block-size` (not a fixed `block-size`) so controls floor at the token height but
+		// can still flex-stretch where the layout calls for it (e.g. the 54px cloud search bar).
+		min-block-size: var(--cs-control-height);
+		padding-block: 0;
+		padding-inline: 8px;
+		border: 1px solid var(--cs-color-border);
+		border-radius: var(--cs-control-radius);
+		line-height: 2;
+		color: var(--cs-color-text);
+		font-size: 14px;
+
+		&:focus {
+			border-color: var(--cs-color-accent);
+			box-shadow: 0 0 0 1px var(--cs-color-accent);
+			outline: 2px solid transparent;
+		}
+	}
+
+	// Selects: same metrics, but preserve room for the WP dropdown chevron on the inline-end
+	// side. WP 7.0 keeps the chevron as a background image; clamping both paddings to 8px (as
+	// for text inputs) would let the arrow overlap the text, so the inline-end padding is wider.
+	select:not([class*='components-']) {
+		min-block-size: var(--cs-control-height);
+		padding-block: 0;
+		padding-inline: 8px 24px;
+		border: 1px solid var(--cs-color-border);
+		border-radius: var(--cs-control-radius);
+
+		// WP 7.0 leaves a tall (≈38px) line-height on selects, pushing the value off-centre.
+		// Pin it so the text stays vertically centred within the token height.
+		line-height: 2;
+		color: var(--cs-color-text);
+		font-size: 14px;
+
+		&:focus {
+			border-color: var(--cs-color-accent);
+			box-shadow: 0 0 0 1px var(--cs-color-accent);
+			outline: 2px solid transparent;
+		}
+	}
+
+	// Secondary buttons: token geometry, the grey fill and the brand accent border/text in
+	// place of WP 7.0's transparent + modern-blue treatment. `.button-primary` is excluded
+	// so its solid fill below is not overwritten. The line-height centres text vertically
+	// in anchor-based buttons, which lack a button element's automatic centring.
+	.button:not(.button-primary, .button-link),
+	.button-secondary,
+	.page-title-action {
+		min-block-size: var(--cs-control-height);
+		padding-block: 0;
+		padding-inline: 12px;
+		border-radius: var(--cs-control-radius);
+		line-height: 2.5715;
+		font-size: 14px;
+		font-weight: 400;
+		background: #f6f7f7;
+		border-color: var(--cs-color-accent);
+		color: var(--cs-color-accent);
+
+		&:hover:not(:disabled) {
+			background: #f0f0f1;
+			border-color: var(--cs-color-accent-hover);
+			color: var(--cs-color-accent-hover);
+		}
+
+		&:focus:not(:disabled) {
+			border-color: #3582c4;
+			box-shadow: 0 0 0 1px #3582c4;
+			outline: 2px solid transparent;
+		}
+	}
+
+	// Primary buttons: WP 7.0 recolours these with the modern accent and drops the solid
+	// fill. Restore the classic solid brand-accent fill with white text. The `:not`
+	// matches the secondary rule's specificity so a `.button-small.button-primary`
+	// keeps the token height instead of collapsing to the 26px small size.
+	.button-primary:not(.button-link) {
+		min-block-size: var(--cs-control-height);
+		padding-block: 0;
+		padding-inline: 12px;
+		border-radius: var(--cs-control-radius);
+		line-height: 2.5715;
+		font-size: 14px;
+		font-weight: 700;
+		background: var(--cs-color-accent);
+		border-color: var(--cs-color-accent);
+		color: #fff;
+
+		&:hover:not(:disabled) {
+			background: var(--cs-color-accent-hover);
+			border-color: var(--cs-color-accent-hover);
+			color: #fff;
+		}
+
+		&:focus:not(:disabled) {
+			background: var(--cs-color-accent-hover);
+			border-color: var(--cs-color-accent-hover);
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px var(--cs-color-accent);
+			outline: 2px solid transparent;
+		}
+	}
+
+	// Small buttons stay compact rather than inheriting the 40px control height.
+	.button-small {
+		min-block-size: 26px;
+		line-height: 2.1818;
+		font-size: 11px;
+	}
+}
+
+.wp-core-ui .wrap .button .dashicons {
+	color: inherit;
+
+	// WP 7.0's taller button line-height leaks onto dashicon glyphs inside buttons (e.g. the
+	// conditions badge icon), pushing them out of vertical alignment. Reset it so icons stay
+	// centred — mirrors the existing `.button svg` rule for SVG icons.
+	line-height: 1;
+}
+
+// The Screen Options panel sits outside the page wrapper, in WordPress' own
+// screen meta region. These stylesheets are only loaded on the plugin's screens,
+// so its checkboxes are styled to match the ones in the page below it.
+#adv-settings {
+	input[type='checkbox'] {
+		@include checkbox.canonical;
+	}
+
+	// The canonical checkbox drops the margin WordPress relies on here, and the
+	// gap otherwise comes from whitespace in the markup, which differs between
+	// the fieldsets this plugin prints and the ones WordPress prints.
+	label {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+	}
+}

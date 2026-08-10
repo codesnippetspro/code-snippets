@@ -9,30 +9,61 @@ $brand-facebook: #3b5998;
 $cloud: #00bcd4;
 $cloud-update: #ff9800;
 
+// Plugin admin control tokens, applied to native form controls on all plugin
+// screens regardless of WordPress version (see common/_wp-admin.scss).
+$accent-hover: #0a4b78;
+$control-border: #c3c4c7;
+$control-text: #2c3337;
+$control-height: 38px;
+$control-radius: 5px;
+
+// Runtime design tokens. Sass variables keep compile-time helpers available;
+// custom properties expose the approved system to every rendered component.
+:root {
+	--cs-color-accent: #2271b1;
+	--cs-color-accent-hover: #0a4b78;
+	--cs-color-text: #2c3337;
+	--cs-color-text-muted: #646970;
+	--cs-color-surface: #fff;
+	--cs-color-surface-subtle: #f6f7f7;
+	--cs-color-border: #c3c4c7;
+	--cs-color-border-subtle: #dcdcde;
+	--cs-control-height: 38px;
+	--cs-control-radius: 5px;
+	--cs-font-size-body: 14px;
+	--cs-line-height-body: 1.5;
+}
+
 /* format: background-color [color] */
 $badges: (
-	php: #1d97c6,
-	html: #ef6a36,
+	// php/html/cond darkened for WCAG AA — at least 4.5:1 against white 12px
+	// bold text; php reuses $accent, html/cond keep hue at reduced lightness.
+	php: $accent,
+	html: #cd4510,
 	css: #9b59b6,
-	js: #ffeb3b #1c1f20,
-	cond: #2eae95,
-	core: #61c5cb,
+	js: #f7d67a #1c1f20,
+	cond: #22826f,
+	core: #4fa1a6,
 	pro: #f7e8e3 #df9279,
-	cloud: $cloud,
+	cloud: #009fb4,
 	bundles: #50575e,
-	cloud_search: #ff9800,
-	private: #f7e6be #ca961b,
+	cloud_search: #d27c00,
+	private: #f7e6be #a27813,
 	public: #dbebf7 $accent,
 	success: #d3e8d1 #447340,
 	failure: #fad7c1 #a24b16,
 	info: #d2e6f4 #2b71a3,
-	neutral: #e2e5e5 #6c7e7e,
+	neutral: #f6f7f7 #646970,
+	neutralDark: #e2e5e5 #6c7e7e,
 	special: #dfc5ef #6e249c
 );
 $notices: (
 	success: #d3e9d3 #377a37,
 	warning: #f2ebc3 #b0730a,
 	error: #f8d7da #721c24,
+	info: #d2e6f4 #2b71a3,
+	neutral: #e2e5e5 #6c7e7e,
+	special: #dfc5ef #6e249c
 );
 
 @function contrasting-text-color($bg-color) {

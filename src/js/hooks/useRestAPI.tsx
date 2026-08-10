@@ -1,21 +1,19 @@
 import React, { useMemo } from 'react'
 import axios from 'axios'
-import { createContextHook } from '../utils/hooks'
+import { createContextHook } from '../utils/bootstrap'
 import { REST_API_AXIOS_CONFIG } from '../utils/restAPI'
-import { buildSnippetsAPI } from '../utils/snippets/api'
-import type { SnippetsAPI } from '../utils/snippets/api'
 import type { PropsWithChildren } from 'react'
-import type { AxiosInstance, AxiosResponse } from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export interface RestAPIContext {
 	api: RestAPI
-	snippetsAPI: SnippetsAPI
 	axiosInstance: AxiosInstance
 }
 
 export interface RestAPI {
 	get: <T>(url: string) => Promise<T>
-	post: <T>(url: string, data?: object) => Promise<T>
+	getResponse: <T>(url: string) => Promise<AxiosResponse<T>>
+	post: <T, D = never>(url: string, data?: D, config?: AxiosRequestConfig<D>) => Promise<T>
 	put: <T>(url: string, data?: object) => Promise<T>
 	del: <T>(url: string) => Promise<T>
 }
@@ -25,36 +23,47 @@ const debugRequest = async <T, D = never>(
 	url: string,
 	doRequest: Promise<AxiosResponse<T, D>>,
 	data?: D
-): Promise<T> => {
-	console.debug(`${method} ${url}`, ...data ? [data] : [])
-	const response = await doRequest
-	console.debug('Response', response)
-	return response.data
+): Promise<AxiosResponse<T>> => {
+	if (window.CODE_SNIPPETS?.debug) {
+		console.debug(`${method} ${url}`, ...data ? [data] : [])
+		const response = await doRequest
+		console.debug('Response', response)
+		return response
+	} else {
+		return await doRequest
+	}
 }
 
 const buildRestAPI = (axiosInstance: AxiosInstance): RestAPI => ({
-	get: <T, >(url: string): Promise<T> =>
+	getResponse: <T, >(url: string): Promise<AxiosResponse<T>> =>
 		debugRequest('GET', url, axiosInstance.get<T, AxiosResponse<T, never>, never>(url)),
 
-	post: <T, >(url: string, data?: object): Promise<T> =>
-		debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T, typeof data>, typeof data>(url, data), data),
+	get: <T, >(url: string): Promise<T> =>
+		debugRequest('GET', url, axiosInstance.get<T, AxiosResponse<T, never>, never>(url))
+			.then(response => response.data),
+
+	post: <T, D = never>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<T> =>
+		debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T>>(url, data, config), data)
+			.then(response => response.data),
 
 	del: <T, >(url: string): Promise<T> =>
-		debugRequest('DELETE', url, axiosInstance.delete<T, AxiosResponse<T, never>, never>(url)),
+		debugRequest('DELETE', url, axiosInstance.delete<T, AxiosResponse<T, never>, never>(url))
+			.then(response => response.data),
 
 	put: <T, >(url: string, data?: object): Promise<T> =>
-		debugRequest('PUT', url, axiosInstance.put<T, AxiosResponse<T, typeof data>, typeof data>(url, data), data)
+		debugRequest('PUT', url, axiosInstance.put<T, AxiosResponse<T>>(url, data), data)
+			.then(response => response.data),
 })
 
-export const [RestAPIContext, useRestAPI] = createContextHook<RestAPIContext>('RestAPI')
+const [Context, useRestAPI] = createContextHook<RestAPIContext>('useRestAPI')
 
 export const WithRestAPIContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const axiosInstance = useMemo(() => axios.create(REST_API_AXIOS_CONFIG), [])
 
 	const api = useMemo(() => buildRestAPI(axiosInstance), [axiosInstance])
-	const snippetsAPI = useMemo(() => buildSnippetsAPI(api), [api])
+	const value: RestAPIContext = { api, axiosInstance }
 
-	const value: RestAPIContext = { api, snippetsAPI, axiosInstance }
-
-	return <RestAPIContext.Provider value={value}>{children}</RestAPIContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+export { useRestAPI }

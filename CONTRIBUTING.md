@@ -69,6 +69,44 @@ command:
 npm run watch
 ```
 
+## Pre-commit hooks (automatic linting & autofix) 🔧
+
+We use a native Git hook and lint-staged to run linters only on the files being committed. The hook will:
+
+- Run the appropriate autofix for the changed files (PHP, JS/TS, CSS/SCSS).
+- Automatically stage any files that were fixed so the fixes are included in the same commit.
+- Block the commit only if non-fixable linter errors remain.
+
+Files → actions (configured in this repository):
+
+- `*.php` → `npm run lint:php:fix` (phpcbf)
+- `*.{js,ts,jsx,tsx}` → `npm run lint:js:fix` (ESLint --fix)
+- `*.{css,scss}` → `npm run lint:styles:fix` (Stylelint --fix)
+
+Setup
+
+1. Install node deps. The `prepare` script configures Git to use this repository's hooks:
+
+```shell
+npm install
+```
+
+2. If you already have the repo checked out, activate the Git hooks (run once):
+
+```shell
+npm run prepare
+```
+
+Usage notes
+
+- To bypass hooks in an emergency: `git commit --no-verify` (not recommended).
+- To run the same checks locally on staged files: `npx lint-staged`.
+- If fixes were applied by the hook they will be included automatically in the commit; the commit is only blocked when
+  a non-autofixable problem remains.
+
+If you need to change which linters run for a filetype, see `package.json` -> `lint-staged`.
+
+
 ## Managing Composer dependencies
 
 Code Snippets uses the [Imposter plugin](https://github.com/TypistTech/imposter) to namespace-prefix all vendor

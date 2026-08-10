@@ -1,4 +1,4 @@
-import '../../editor'
+import '../../entries/editor'
 
 const parseSelect = (select: HTMLSelectElement) => select.options[select.selectedIndex].value
 const parseCheckbox = (checkbox: HTMLInputElement) => checkbox.checked
@@ -8,7 +8,7 @@ const initialiseCodeMirror = () => {
 	const { codeEditor } = window.wp
 	const textarea = document.getElementById('code_snippets_editor_preview')
 
-	if (textarea) {
+	if (textarea && codeEditor) {
 		window.code_snippets_editor_preview = codeEditor.initialize(textarea)
 		return window.code_snippets_editor_preview.codemirror
 	}

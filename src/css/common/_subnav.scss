@@ -1,0 +1,275 @@
+@use 'theme';
+
+// Snippet-type navigation: a boxed segmented control on a white band, with
+// each tab separated by a vertical rule and the active tab shown as a
+// filled tile.
+.snippet-type-nav-wrapper {
+	position: relative;
+
+	// Bleed across the full admin content width, flush against the plugin toolbar.
+	box-sizing: border-box;
+	min-block-size: 53px;
+	margin-block-start: -1px;
+	margin-inline-start: -22px;
+	inline-size: calc(100% + 42px);
+	overflow: hidden;
+	background: #fff;
+
+	&::before,
+	&::after {
+		position: absolute;
+		inset-block: 0;
+		z-index: 1;
+		inline-size: 32px;
+		content: '';
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 150ms ease;
+	}
+
+	&::before {
+		inset-inline-start: 0;
+		background: linear-gradient(to right, #fff, transparent);
+	}
+
+	&::after {
+		inset-inline-end: 0;
+		background: linear-gradient(to left, #fff, transparent);
+	}
+
+	&.has-scroll-start::before,
+	&.has-scroll-end::after {
+		opacity: 1;
+	}
+
+	@media (width <= 782px) {
+		margin-inline-start: -10px;
+		inline-size: calc(100% + 22px);
+	}
+}
+
+.snippet-type-nav {
+	// The tab band scrolls sideways instead of wrapping at any width.
+	overflow-x: auto;
+	scrollbar-width: thin;
+
+	// The row line is painted on the scrollport so it remains fixed while tabs scroll.
+	background: linear-gradient(to top, #e2e2e4 1px, #fff 1px);
+
+	@media (width <= 960px) {
+		li {
+			flex: 1 1 0;
+		}
+
+		.snippet-type-link {
+			inline-size: 100%;
+			min-inline-size: 100px;
+			padding-inline: 4px;
+		}
+	}
+
+	@media (width <= 782px) {
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+
+	ul {
+		display: flex;
+		align-items: stretch;
+		flex-wrap: nowrap;
+		min-block-size: 53px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	li {
+		display: flex;
+		flex: 0 0 auto;
+		margin: 0;
+	}
+
+	button.snippet-type-link {
+		background: none;
+		border-block: none;
+		border-inline-start: none;
+		font-family: inherit;
+	}
+
+	.snippet-type-icon {
+		font-size: 22px;
+		inline-size: 24px;
+		block-size: 24px;
+	}
+
+	.snippet-type-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		min-inline-size: 100px;
+		padding-block: 0;
+		padding-inline: 24px;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.5;
+		white-space: nowrap;
+		color: #646970;
+		text-decoration: none;
+		box-sizing: border-box;
+		border-inline-end: 1px solid #e2e2e4;
+
+		// The text-only "All Snippets" tab uses a slightly wider gap between
+		// its label and count than tabs that lead with a badge or icon.
+		&.all-type-link {
+			gap: 12px;
+		}
+
+		svg {
+			display: block;
+			inline-size: 24px;
+			block-size: 24px;
+		}
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: #2c3337;
+		}
+
+		&.active-type {
+			background: #f0f0f1;
+			color: theme.$accent;
+		}
+
+		// Suppress the persistent focus ring left behind after a mouse click;
+		// keyboard navigation still gets a visible outline via :focus-visible.
+		&:focus-visible {
+			outline: 2px solid theme.$accent;
+			outline-offset: -2px;
+			box-shadow: none;
+		}
+
+		&:focus:not(:focus-visible) {
+			outline: none;
+			box-shadow: none;
+		}
+
+		&.pro-locked-type {
+			color: #646970;
+		}
+	}
+
+}
+
+// Card/table view toggle: a two-icon segmented pair of square tiles with
+// the active view filled in the accent colour.
+.snippet-view-toggle {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	.snippet-view-toggle-option {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: 38px;
+		block-size: 38px;
+		box-sizing: border-box;
+		padding: 0;
+		margin: 0;
+		background: #f0f0f1;
+		color: #646970;
+		border: none;
+		border-radius: 4.5px;
+		cursor: pointer;
+
+		svg {
+			display: block;
+		}
+
+		&:hover,
+		&:focus {
+			color: #2c3337;
+		}
+
+		&.active-view {
+			background: theme.$accent;
+			color: #fff;
+
+			&:hover,
+			&:focus {
+				color: #fff;
+			}
+		}
+	}
+}
+
+// Slot that adopts the WordPress Screen Options / Help tabs so they appear
+// directly below the snippet-type nav instead of above the page content.
+.snippets-screen-meta-slot {
+	#screen-meta-links {
+		float: none;
+		display: flex;
+		justify-content: flex-end;
+		margin: 0;
+		border-color: #e2e2e4;
+
+		.show-settings {
+			border-color: #e2e2e4;
+		}
+	}
+
+	#screen-meta {
+		margin: 0;
+	}
+}
+
+// Item count shown after a subnav tab's label, using the label colour at reduced opacity.
+.snippet-type-nav .subnav-count {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+	color: currentcolor;
+	opacity: 0.65;
+}
+
+// Keep the active count tied to its active label rather than assigning a separate colour.
+.snippet-type-nav .snippet-type-link.active-type .subnav-count {
+	color: currentcolor;
+}
+
+// The short "All" form of the all-snippets label only replaces "All Snippets"
+// once the bar collapses; the full form is shown at every wider width.
+.snippet-type-name-short {
+	display: none;
+}
+
+// Collapse at mid-width and below (through mobile): drop the type names so each
+// tab shows just its badge and count, and shorten "All Snippets" to "All". Only
+// the badged manage nav owns a .snippet-type-name; the text-only import/settings
+// subnav tabs are untouched. Below 782px the bar still scrolls sideways (above),
+// now with the compact collapsed tabs.
+@media (width <= 1210px) {
+	.snippet-type-nav .snippet-type-link:not(.all-type-link) .snippet-type-name {
+		display: none;
+	}
+
+	.snippet-type-nav .all-type-link .snippet-type-name-full {
+		display: none;
+	}
+
+	.snippet-type-nav .all-type-link .snippet-type-name-short {
+		display: inline;
+	}
+}
+
+// When an admin notice pushes the page content down, restore the top border
+// above the subnav bar (no extra margin — the wrapper sits flush).
+.notice + .wrap .snippet-type-nav-wrapper {
+	border-block-start: 1px solid #e2e2e4;
+}

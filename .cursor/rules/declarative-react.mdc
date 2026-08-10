@@ -1,0 +1,158 @@
+---
+description: Enforces declarative React coding patterns, avoiding imperative DOM manipulation and useEffect chains in favor of derived state and direct updates
+globs: ["**/*.tsx", "**/*.jsx", "**/*.ts", "**/*.js"]
+alwaysApply: false
+---
+
+# Declarative React
+
+Always write React code in a declarative style.
+
+## Core Principles
+
+1. Prefer **functional components** with JSX and hooks over class components.
+2. **Never** manipulate the DOM directly (e.g., `document.querySelector`, `innerHTML`). Instead, let React's render cycle handle UI updates via **state** and **props**.
+3. Use hooks (`useState`, `useReducer`, `useEffect`, `useMemo`, `useCallback`) responsibly:
+   - Avoid running imperative logic in `useEffect` that can be expressed through declarative data-flow.
+   - Derive data instead of duplicating state.
+4. Separate components when doing so clarifies responsibility or enables reuse. Prefer conditional rendering (`{condition && <Component />}`) and array mapping to create lists. Reserve `condition ? <Component /> : null` for numeric or string conditions that would otherwise render.
+5. Keep side-effects isolated; only place effectful code inside `useEffect`, `useLayoutEffect`, or custom hooks.
+6. Use **refs** sparingly and only for non-DOM data persistence, not for styling or visibility toggling.
+7. Prefer **controlled components** for forms. Keep input values in React state.
+8. Pass data downward via props; avoid event emitters or global variables for child-parent communication, unless using a proper state management solution.
+9. Use unique `key` props for list items to maintain element identity.
+10. Favor pure functions and immutable data patterns to make render output predictable.
+11. **Avoid cascading state updates**: Never create chains where updating one state triggers a `useEffect` that updates another state. Instead, derive values using `useMemo` or calculate them during render.
+12. **Prefer direct state updates over useEffect chains**: When you need to update multiple related state values, do it directly in the event handler rather than creating cascading useEffect dependencies.
+13. **Keep hooks non-visual**: Custom hooks return state and actions, not rendered elements.
+14. **Avoid trivial memoization**: Calculate inexpensive derived values during render instead of wrapping them in `useMemo` or `useCallback`.
+
+## Anti-Patterns to Avoid
+
+- Direct DOM manipulation (`document.getElementById`, `jQuery`, etc.)
+- Calling imperative animations or style changes outside React's lifecycle
+- Mutating state directly (e.g., `state.value = 1`). Always use the state setter returned by `useState` or a reducer action
+- Fetching or performing expensive computations during render
+- Using refs to bypass React for UI updates instead of relying on state
+
+## Derived State vs Cascading Updates
+
+**Avoid:**
+
+```jsx
+const [users, setUsers] = useState([]);
+const [filteredUsers, setFilteredUsers] = useState([]);
+const [searchTerm, setSearchTerm] = useState('');
+
+useEffect(() => {
+  const filtered = users.filter(user => 
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  setFilteredUsers(filtered);
+}, [users, searchTerm]);
+```
+
+**Prefer:**
+
+```jsx
+const [users, setUsers] = useState([]);
+const [searchTerm, setSearchTerm] = useState('');
+
+const filteredUsers = useMemo(() => 
+  users.filter(user => 
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ), [users, searchTerm]
+);
+```
+
+## Complex State Derivation
+
+For complex state transformations, declare what you want step by step:
+
+```jsx
+function UserDashboard() {
+  const [users, setUsers] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortOrder, setSortOrder] = useState('asc');
+
+  const categoryFiltered = useMemo(() => 
+    selectedCategory === 'all' 
+      ? users 
+      : users.filter(user => user.category === selectedCategory)
+  , [users, selectedCategory]);
+
+  const sortedAndFiltered = useMemo(() => 
+    [...categoryFiltered].sort((a, b) => 
+      sortOrder === 'asc' 
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name)
+    )
+  , [categoryFiltered, sortOrder]);
+
+  const groupedUsers = useMemo(() => 
+    sortedAndFiltered.reduce((groups, user) => {
+      const key = user.department;
+      groups[key] = groups[key] || [];
+      groups[key].push(user);
+      return groups;
+    }, {})
+  , [sortedAndFiltered]);
+
+  return (
+    <div>
+      {/* Render UI based on derived state */}
+    </div>
+  );
+}
+```
+
+## Imperative vs Declarative Examples
+
+**Avoid:**
+
+```js
+componentDidMount() {
+  document.getElementById('sidebar').style.display = 'none';
+}
+```
+
+**Prefer:**
+
+```jsx
+function Sidebar({ isOpen }) {
+  if (!isOpen) return null;
+  return <aside>…</aside>;
+}
+```
+
+## Direct State Updates vs useEffect Chains
+
+**Avoid:**
+
+```jsx
+function handleSubmit() {
+  setLoading(true);
+}
+
+useEffect(() => {
+  if (loading) {
+    setError(null);
+  }
+}, [loading]);
+
+useEffect(() => {
+  if (loading && !error) {
+    setSubmitted(false);
+  }
+}, [loading, error]);
+```
+
+**Prefer:**
+
+```jsx
+function handleSubmit() {
+  setLoading(true);
+  setError(null);
+  setSubmitted(false);
+}
+```

@@ -1,0 +1,119 @@
+#wpadminbar {
+	#wp-admin-bar-code-snippets > .ab-item {
+		.code-snippets-admin-bar-icon {
+			inline-size: 16px;
+			block-size: 16px;
+			inset-block-start: 5px;
+
+			&::before {
+				content: '';
+				display: block;
+				inline-size: 16px;
+				block-size: 16px;
+				mask-image: url('../assets/menu-icon.svg');
+				mask-repeat: no-repeat;
+				mask-position: center;
+				mask-size: contain;
+				background-color: rgb(240 245 250 / 60%);
+			}
+		}
+	}
+
+	.code-snippets-pagination-node > .ab-item {
+		padding: 0;
+		margin-block-end: 6px;
+	}
+
+	.code-snippets-safe-mode-active {
+		> .ab-item,
+		&.ab-item {
+			background: #b32d2e;
+			color: #fff;
+		}
+	}
+
+	.code-snippets-disabled > .ab-item {
+		opacity: 0.6;
+	}
+
+	.code-snippets-pagination-controls {
+		display: flex;
+		align-items: stretch;
+		inline-size: 100%;
+		white-space: nowrap;
+
+		.code-snippets-pagination-button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex: 1 1 0;
+			min-block-size: 32px;
+			padding: 0 10px;
+			background: rgb(240 245 250 / 8%);
+			color: inherit;
+			text-decoration: none;
+			line-height: 1.2;
+			box-sizing: border-box;
+
+			& + .code-snippets-pagination-button {
+				border-inline-start: 1px solid rgb(240 245 250 / 15%);
+			}
+
+			&[aria-disabled='true'] {
+				opacity: 0.4;
+				pointer-events: none;
+			}
+		}
+
+		a.code-snippets-pagination-button:hover {
+			background: rgb(240 245 250 / 16%);
+		}
+
+		a[data-action='first'],
+		a[data-action='last'] {
+			flex: 0 0 36px;
+			padding: 0;
+		}
+
+		.code-snippets-pagination-page {
+			flex: 0 0 auto;
+			cursor: default;
+			opacity: 0.85;
+		}
+	}
+
+	.code-snippets-safe-mode-active:hover > .ab-item,
+	.code-snippets-safe-mode-active.hover > .ab-item {
+		background: #d63638;
+		color: #fff;
+	}
+
+	.code-snippets-disabled:hover > .ab-item,
+	.code-snippets-disabled.hover > .ab-item {
+		opacity: 1;
+	}
+
+	.code-snippets-safe-mode.code-snippets-safe-mode-active > .ab-item,
+	.code-snippets-safe-mode.code-snippets-safe-mode-active.ab-item {
+		font-weight: 600;
+	}
+
+	.code-snippets-safe-mode .code-snippets-external-icon {
+		font-family: dashicons;
+		display: inline-block;
+		position: relative;
+		line-height: 1;
+		opacity: .8;
+		inset-block-start: 6px;
+	}
+
+	.code-snippets-safe-mode:hover .code-snippets-external-icon,
+	.code-snippets-safe-mode.hover .code-snippets-external-icon {
+		opacity: 1;
+	}
+
+	#wp-admin-bar-code-snippets-active-snippets > .ab-sub-wrapper > .ab-submenu,
+	#wp-admin-bar-code-snippets-inactive-snippets > .ab-sub-wrapper > .ab-submenu {
+		padding-block-start: 0;
+	}
+}

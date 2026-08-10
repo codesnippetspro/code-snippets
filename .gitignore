@@ -12,6 +12,12 @@ node_modules/
 npm-debug.log
 .sass-cache/
 
+# PHPUnit
+.phpunit.result.cache
+.wp-core
+.wp-tests-lib
+/coverage/
+
 # Playwright
 playwright-report/
 test-results/
@@ -19,9 +25,18 @@ tests/e2e/.auth/
 auth.json
 
 # Local files (ideally, should be in a global .gitignore)
+/.env
 .idea/
 Thumbs.db
 .DS_Store
 
 # storyman
 .story
+.tmp
+tmp
+.continue
+.codex
+# Local environment overrides (license keys, secrets)
+/.env
+.superpowers/
+docs/superpowers/

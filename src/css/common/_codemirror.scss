@@ -1,4 +1,4 @@
-.CodeMirror {
+.CodeMirror, .snippet-condition-editor-container {
 	border: 1px solid #dfdfdf;
 	border-radius: 3px;
 	block-size: auto !important;
@@ -100,6 +100,10 @@
 
 .CodeMirror .CodeMirror-linenumber {
 	color: #666;
+}
+
+.CodeMirror .codemirror-colorview {
+	border: 0;
 }
 
 .CodeMirror-foldmarker {

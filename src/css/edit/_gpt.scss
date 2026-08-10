@@ -12,7 +12,7 @@
 		box-shadow: none;
 	}
 
-	.notice {
+	.banner {
 		margin-inline: 0;
 	}
 }
@@ -29,6 +29,14 @@
 	.snippet-tags-container &,
 	.snippet-description-container & {
 		float: inline-end;
+	}
+}
+
+.snippet-tags-container {
+	label {
+		font-size: 1.16em;
+		font-weight: 600;
+		text-transform: unset;
 	}
 }
 

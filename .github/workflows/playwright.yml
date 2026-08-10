@@ -7,6 +7,8 @@ on:
     branches:
       - 'core'
       - 'pro'
+      - 'core-beta'
+      - 'pro-beta'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -15,8 +17,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
   actions: read
 
 concurrency:
@@ -45,11 +47,288 @@ jobs:
     if: always() && (needs.playwright-default.result != 'skipped' || needs.playwright-file-based-execution.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results Summary
+    permissions:
+      pull-requests: write
+      issues: write
     steps:
       - name: Test status summary
         run: |
           echo "Default Mode: ${{ needs.playwright-default.result }}"
           echo "File-based Execution: ${{ needs.playwright-file-based-execution.result }}"
+
+      - name: Delete previous PR failure comment on success
+        if: github.event_name == 'pull_request' && needs.playwright-default.result == 'success' && needs.playwright-file-based-execution.result == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- playwright-result-comment -->';
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.filter(c => typeof c.body === 'string' && c.body.startsWith(marker));
+
+            for (const comment of existing) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+              });
+            }
+
+      - name: Download Playwright artifacts
+        if: github.event_name == 'pull_request' && (needs.playwright-default.result == 'failure' || needs.playwright-file-based-execution.result == 'failure')
+        uses: actions/download-artifact@v5
+        with:
+          pattern: playwright-test-results-*
+          path: playwright-artifacts
+          merge-multiple: true
+
+      - name: Build distinct error summary
+        if: github.event_name == 'pull_request' && (needs.playwright-default.result == 'failure' || needs.playwright-file-based-execution.result == 'failure')
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import glob
+          import json
+          import os
+          import re
+          import xml.etree.ElementTree as ET
+          from collections import defaultdict
+
+          artifacts_dir = 'playwright-artifacts'
+
+          def target_from_path(path: str) -> str:
+            base = os.path.basename(path)
+            m = re.search(r'(?:results|playwright)-(.+)\.(?:xml|json|log)$', base)
+            if m:
+              return m.group(1)
+            return 'unknown'
+
+          def add_entry(grouped, key, target, message):
+            if not message.strip():
+              return
+            grouped[key]['targets'].add(target)
+            if not grouped[key]['message']:
+              grouped[key]['message'] = message.strip()
+
+          grouped = defaultdict(lambda: {'targets': set(), 'message': ''})
+          targets_seen = set()
+
+          def safe_str(val) -> str:
+            if val is None:
+              return ''
+            if isinstance(val, str):
+              return val
+            try:
+              return str(val)
+            except Exception:
+              return ''
+
+          def walk_suite(suite, title_path):
+            # Playwright JSON reporter structure: suites -> suites/specs.
+            for child in suite.get('suites', []) or []:
+              walk_suite(child, title_path + [safe_str(child.get('title'))])
+
+            for spec in suite.get('specs', []) or []:
+              spec_title = safe_str(spec.get('title'))
+              for test in spec.get('tests', []) or []:
+                test_title = safe_str(test.get('title'))
+                for result in test.get('results', []) or []:
+                  status = safe_str(result.get('status'))
+                  err = result.get('error') or {}
+                  err_msg = safe_str(err.get('message'))
+                  err_stack = safe_str(err.get('stack'))
+
+                  if status != 'failed' and not err_msg and not err_stack:
+                    continue
+
+                  name = ' > '.join([p for p in (title_path + [spec_title, test_title]) if p])
+                  combined = name
+                  if err_msg:
+                    combined += "\n" + err_msg
+                  if err_stack:
+                    combined += "\n" + err_stack
+                  yield combined.strip()
+
+          # 1) Parse JSON reporter output (most reliable for Playwright failures).
+          for json_path in sorted(glob.glob(os.path.join(artifacts_dir, '**', '*.json'), recursive=True)):
+            target = target_from_path(json_path)
+            targets_seen.add(target)
+            try:
+              data = json.loads(open(json_path, 'r', encoding='utf-8', errors='replace').read())
+            except Exception:
+              continue
+
+            suites = data.get('suites', []) if isinstance(data, dict) else []
+            if not suites:
+              continue
+
+            for suite in suites:
+              for combined in walk_suite(suite, [safe_str(suite.get('title'))]):
+                # Dedupe key: first line of error message + test name line.
+                first = combined.splitlines()[0].strip() if combined else 'unknown'
+                key = first
+                add_entry(grouped, key, target, combined)
+
+          # 2) Parse JUnit XML (secondary; may be missing on some runner failures).
+          for xml_path in sorted(glob.glob(os.path.join(artifacts_dir, '**', '*.xml'), recursive=True)):
+            target = target_from_path(xml_path)
+            targets_seen.add(target)
+            try:
+              root = ET.parse(xml_path).getroot()
+            except Exception:
+              continue
+
+            for testcase in root.iter('testcase'):
+              for tag in ('error', 'failure'):
+                for node in testcase.findall(tag):
+                  etype = (node.attrib.get('type') or tag).strip()
+                  msg = (node.attrib.get('message') or '').strip()
+                  details = (node.text or '').strip()
+
+                  combined = f"{etype}: {msg}".strip(': ')
+                  if details:
+                    combined = combined + "\n" + details
+
+                  testcase_id = (
+                    (testcase.attrib.get('classname') or '').strip() +
+                    '::' +
+                    (testcase.attrib.get('name') or '').strip()
+                  ).strip(':')
+
+                  extracted = ''
+                  if not msg and details:
+                    extracted = details.splitlines()[0].strip()
+
+                  key_parts = [etype]
+                  if msg:
+                    key_parts.append(msg)
+                  elif extracted:
+                    key_parts.append(extracted)
+                  if testcase_id:
+                    key_parts.append(testcase_id)
+                  key = "\n".join([p for p in key_parts if p]).strip() or (combined.splitlines()[0] if combined else 'unknown')
+
+                  add_entry(grouped, key, target, combined)
+
+          # 3) Fallback: scan logs if JSON/XML were not usable.
+          if not grouped:
+            # Try to extract something meaningful from Playwright logs.
+            error_line_re = re.compile(r'^(Error:.*|\s+at\s+.*|expect\(.*\).*)$', re.MULTILINE)
+            for log_path in sorted(glob.glob(os.path.join(artifacts_dir, '**', '*.log'), recursive=True)):
+              target = target_from_path(log_path)
+              targets_seen.add(target)
+              try:
+                text = open(log_path, 'r', encoding='utf-8', errors='replace').read()
+              except Exception:
+                continue
+
+              # Prefer a compact tail if we can't find explicit error lines.
+              lines = [ln.rstrip() for ln in text.splitlines()]
+              tail = "\n".join(lines[-80:])
+
+              matches = error_line_re.findall(text)
+              extracted = "\n".join(matches[:80]).strip() if matches else tail.strip()
+              if extracted:
+                key = extracted.splitlines()[0][:200]
+                add_entry(grouped, key, target, extracted)
+
+          targets = sorted(t for t in targets_seen if t != 'unknown')
+
+          def targets_label(affected):
+            affected = sorted(t for t in affected if t != 'unknown')
+            if targets and affected == targets:
+              return 'all'
+            return ', '.join(affected) if affected else 'unknown'
+
+          items = sorted(grouped.items(), key=lambda kv: (-len(kv[1]['targets']), kv[0]))
+          blocks = []
+          for idx, (key, info) in enumerate(items):
+            affected = targets_label(info['targets'])
+            message = info['message']
+            block = (
+              "-----\n"
+              f"Affected Playwright test: `{affected}`\n"
+              "```text\n"
+              f"{message}\n"
+              "```"
+            )
+            if idx == len(items) - 1:
+              block += "\n-----"
+            blocks.append(block)
+
+          if blocks:
+            details_md = "\n\n".join(blocks)
+          else:
+            details_md = "No Playwright error details could be parsed from artifacts."
+
+          md = "\n".join([
+            "<details>",
+            "<summary>See all Playwright errors (click to expand)</summary>",
+            "",
+            details_md,
+            "",
+            "</details>",
+            "",
+          ])
+
+          with open('playwright-errors.md', 'w', encoding='utf-8') as f:
+            f.write(md)
+          PY
+
+      - name: Post PR comment on failure
+        if: github.event_name == 'pull_request' && (needs.playwright-default.result == 'failure' || needs.playwright-file-based-execution.result == 'failure')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- playwright-result-comment -->';
+
+            const fs = require('fs');
+            let details = '';
+            try {
+              details = fs.readFileSync('playwright-errors.md', 'utf8').trim();
+            } catch (e) {
+              details = '';
+            }
+
+            const body = [
+              marker,
+              '## Playwright Test Failure',
+              '',
+              `One or more Playwright targets failed in [this workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`,
+              '',
+              details || '_No parsed error details found._',
+              '',
+              'Please review the failing jobs and fix the issues before merging.',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.filter(c => typeof c.body === 'string' && c.body.startsWith(marker));
+            for (const comment of existing) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+              });
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
 
       - name: Check overall status
         if: ${{ (needs.playwright-default.result != 'success' && needs.playwright-default.result != 'skipped') || (needs.playwright-file-based-execution.result != 'success' && needs.playwright-file-based-execution.result != 'skipped') }}
