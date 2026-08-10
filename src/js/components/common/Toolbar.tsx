@@ -1,100 +1,71 @@
 import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
-import { buildUrl, fetchQueryParam } from '../../utils/urls'
+import { buildUrl } from '../../utils/urls'
 import { BlueprintIcon } from './icons/BlueprintIcon'
 import { CommunityIcon } from './icons/CommunityIcon'
 import { LibraryIcon } from './icons/LibraryIcon'
 import { SettingsIcon } from './icons/SettingsIcon'
 import { SnippetsIcon } from './icons/SnippetsIcon'
 import { UpsellDialog } from './UpsellDialog'
-import type { ReactNode } from 'react'
+import type { SVGProps } from 'react'
 
 export const SUBPAGES = ['snippets', 'blueprints', 'cloud-community', 'cloud-library'] as const
 
-interface UpperNavLink {
+const searchParams = new URLSearchParams(window.location.search)
+
+interface UpperNavItemProps {
 	name: string
-	label: string
 	url: string
-	pageSlug?: string
-}
-
-const UPPER_NAV_LINKS: readonly UpperNavLink[] = [
-	{
-		name: 'docs',
-		url: 'https://codesnippets.pro/docs',
-		label: __('Docs', 'code-snippets')
-	},
-	{
-		name: 'cloud',
-		url: 'https://codesnippets.cloud/',
-		label: __('Cloud Dashboard', 'code-snippets')
-	},
-	window.CODE_SNIPPETS?.urls.welcome && {
-		name: 'welcome',
-		url: window.CODE_SNIPPETS.urls.welcome,
-		label: __("What's New", 'code-snippets'),
-		pageSlug: 'code-snippets-welcome'
-	},
-	window.CODE_SNIPPETS?.urls.import && {
-		name: 'import-snippets',
-		url: window.CODE_SNIPPETS.urls.import,
-		label: _x('Import', 'snippets', 'code-snippets'),
-		pageSlug: 'import-code-snippets'
-	}
-].filter(function <T>(value: T | undefined | null | ''): value is T {
-	return !!value
-})
-
-interface SubpageLink {
-	subpage: typeof SUBPAGES[number]
 	label: string
-	icon: ReactNode
-	pro?: boolean
 }
 
-const SUBPAGE_LINKS: readonly SubpageLink[] = [
-	{
-		subpage: 'snippets',
-		label: __('Snippets', 'code-snippets'),
-		icon: <SnippetsIcon aria-hidden="true" />
-	},
-	{
-		subpage: 'cloud-community',
-		label: __('Community Cloud', 'code-snippets'),
-		icon: <CommunityIcon aria-hidden="true" />
-	},
-	{
-		subpage: 'cloud-library',
-		label: __('My Library', 'code-snippets'),
-		icon: <LibraryIcon aria-hidden="true" />,
-		pro: true
-	},
-	{
-		subpage: 'blueprints',
-		label: __('Blueprints', 'code-snippets'),
-		icon: <BlueprintIcon />,
-		pro: true
-	}
-]
+const UpperNavItem = ({ name, url, label }: UpperNavItemProps) => {
+	const pageSlug = useMemo(() => new URL(url).searchParams.get('page'), [url])
 
-interface UpperNavProps {
-	setIsUpsellDialogOpen: (isOpen: boolean) => void
+	const isActive = !searchParams.get('subpage') && searchParams.get('page') === pageSlug
+
+	return (
+		<li>
+			<a
+				href={url}
+				className={classnames(`${name}-link`, { 'active-link': isActive })}
+				{...!pageSlug && { target: '_blank', rel: 'noopener noreferrer' }}
+			>
+				{label}
+			</a>
+		</li>
+	)
 }
-
 const UpperNavItems = () =>
 	<>
-		{UPPER_NAV_LINKS.map(link =>
-			<li key={link.name}>
-				<a
-					href={link.url}
-					className={classnames(`${link.name}-link`, { 'active-link': isActiveLink(link) })}
-					{...!link.pageSlug && { target: '_blank', rel: 'noopener noreferrer' }}
-				>
-					{link.label}
-				</a>
-			</li>)}
+		<UpperNavItem
+			name="docs"
+			url="https://codesnippets.pro/docs"
+			label={__('Docs', 'code-snippets')}
+		/>
+
+		<UpperNavItem
+			name="cloud"
+			url="https://codesnippets.cloud/"
+			label={__('Cloud Dashboard', 'code-snippets')}
+		/>
+
+		{window.CODE_SNIPPETS?.urls.welcome && (
+			<UpperNavItem
+				name="welcome"
+				url={window.CODE_SNIPPETS.urls.welcome}
+				label={__("What's New", 'code-snippets')}
+			/>)}
+
+		{window.CODE_SNIPPETS?.urls.import && (
+			<UpperNavItem
+				name="import-snippets"
+				url={window.CODE_SNIPPETS.urls.import}
+				label={_x('Import', 'snippets', 'code-snippets')}
+			/>)}
+
 	</>
 
 const MoreNav = () =>
@@ -110,71 +81,104 @@ const MoreNav = () =>
 		</details>
 	</li>
 
-const UpperNav: React.FC<UpperNavProps> = ({ setIsUpsellDialogOpen }) =>
-	<div className="code-snippets-toolbar-upper">
-		<div className="logo">
-			<img
-				src={`${window.CODE_SNIPPETS?.urls.plugin}/assets/icon.svg`}
-				alt={__('Code Snippets logo', 'code-snippets')}
-				aria-hidden="true"
-			/>
+const UpperNav: React.FC = () => {
+	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
 
-			<div>{__('Code Snippets', 'code-snippets')}</div>
+	return (
+		<div className="code-snippets-toolbar-upper">
+			<div className="logo">
+				<img
+					src={`${window.CODE_SNIPPETS?.urls.plugin}/assets/icon.svg`}
+					alt={__('Code Snippets logo', 'code-snippets')}
+					aria-hidden="true"
+				/>
+
+				<div>{__('Code Snippets', 'code-snippets')}</div>
+			</div>
+
+			<nav aria-label={__('Main links', 'code-snippets')}>
+				<ul>
+					<UpperNavItems />
+					<MoreNav />
+
+					{shouldShowUpsell() && (
+						<li className="toolbar-upgrade-item">
+							<a
+								className="button button-large button-secondary"
+								href="https://codesnippets.pro/pricing/"
+								target="_blank" rel="noopener noreferrer"
+								onClick={event => {
+									event.preventDefault()
+									setIsUpsellDialogOpen(true)
+								}}
+							>
+								{__('Upgrade to Pro', 'code-snippets')}
+							</a>
+						</li>)}
+				</ul>
+			</nav>
+
+			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
 		</div>
-
-		<nav aria-label={__('Main links', 'code-snippets')}>
-			<ul>
-				<UpperNavItems />
-				<MoreNav />
-
-				{shouldShowUpsell() && (
-					<li className="toolbar-upgrade-item">
-						<a
-							className="button button-large button-secondary"
-							href="https://codesnippets.pro/pricing/"
-							target="_blank" rel="noopener noreferrer"
-							onClick={event => {
-								event.preventDefault()
-								setIsUpsellDialogOpen(true)
-							}}
-						>
-							{__('Upgrade to Pro', 'code-snippets')}
-						</a>
-					</li>)}
-			</ul>
-		</nav>
-	</div>
-
-const currentPage = fetchQueryParam('page')
-const currentSubpage = fetchQueryParam('subpage')
-
-const isActiveLink = (link: UpperNavLink | SubpageLink): boolean => {
-	if ('subpage' in link) {
-		return currentSubpage === link.subpage
-	}
-
-	if ('pageSlug' in link) {
-		return !currentSubpage && currentPage === link.pageSlug
-	}
-
-	return false
+	)
 }
+
+interface SubpageItemProps {
+	subpage: typeof SUBPAGES[number]
+	label: string
+	Icon: React.FC<SVGProps<SVGSVGElement>>
+	isPro?: boolean
+}
+
+const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro }) =>
+	<li>
+		<a
+			href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: subpage })}
+			className={classnames(`${subpage}-link`, { 'active-link': subpage === searchParams.get('subpage') })}
+		>
+			<Icon aria-hidden="true" />
+			<span className="toolbar-nav-label">{label}</span>
+			{isPro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+		</a>
+	</li>
 
 const LowerNav = () =>
 	<div className="code-snippets-toolbar-lower">
 		<nav aria-label={__('Main features', 'code-snippets')}>
 			<ul>
-				{SUBPAGE_LINKS.map(link =>
-					<li key={link.subpage}>
-						<a
-							href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: link.subpage })}
-							className={classnames(`${link.subpage}-link`, { 'active-link': isActiveLink(link) })}
-						>
-							{link.icon}
-							<span className="toolbar-nav-label">{link.label}</span>
-							{link.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
-						</a>
-					</li>)}
+				<SubpageItem
+					subpage="snippets"
+					label={__('Snippets', 'code-snippets')}
+					Icon={SnippetsIcon}
+				/>
+
+				{isLicensed() && (
+					<SubpageItem
+						subpage="blueprints"
+						label={__('Blueprints', 'code-snippets')}
+						Icon={BlueprintIcon}
+					/>)}
+
+				<SubpageItem
+					subpage="cloud-community"
+					label={__('Cloud Community', 'code-snippets')}
+					Icon={CommunityIcon}
+				/>
+
+				<SubpageItem
+					subpage="cloud-library"
+					label={__('Cloud Library', 'code-snippets')}
+					Icon={LibraryIcon}
+					isPro
+				/>
+
+				{!isLicensed() && (
+					<SubpageItem
+						subpage="blueprints"
+						label={__('Blueprints', 'code-snippets')}
+						Icon={BlueprintIcon}
+						isPro
+					/>)}
 
 				{window.CODE_SNIPPETS?.urls.settings && (
 					<li className="toolbar-end-item">
@@ -187,14 +191,8 @@ const LowerNav = () =>
 		</nav>
 	</div>
 
-export const Toolbar = () => {
-	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
-
-	return (
-		<div className="code-snippets-toolbar">
-			<UpperNav setIsUpsellDialogOpen={setIsUpsellDialogOpen} />
-			<LowerNav />
-			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
-		</div>
-	)
-}
+export const Toolbar = () =>
+	<div className="code-snippets-toolbar">
+		<UpperNav />
+		<LowerNav />
+	</div>
