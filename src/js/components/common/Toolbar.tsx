@@ -80,14 +80,18 @@ const LOWER_NAV_LINKS: readonly NavLink[] = [
 		pro: true,
 		subpage: 'blueprints'
 	},
-	{
-		name: 'settings',
-		url: window.CODE_SNIPPETS?.urls.settings,
-		label: __('Settings', 'code-snippets'),
-		icon: <SettingsIcon aria-hidden="true" />,
-		pageSlug: 'snippets-settings',
-		end: true
-	}
+	...window.CODE_SNIPPETS?.urls.settings
+		? [
+			{
+				name: 'settings',
+				url: window.CODE_SNIPPETS?.urls.settings,
+				label: __('Settings', 'code-snippets'),
+				icon: <SettingsIcon aria-hidden="true" />,
+				pageSlug: 'snippets-settings',
+				end: true
+			}
+		]
+		: []
 ]
 
 interface UpperNavProps {

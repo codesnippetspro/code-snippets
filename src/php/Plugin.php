@@ -20,6 +20,7 @@ use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Preferences_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
+use function Code_Snippets\Settings\are_settings_unified;
 
 /**
  * The main plugin class
@@ -241,12 +242,19 @@ class Plugin {
 			$url = 'admin.php?page=' . $slug;
 		}
 
-		if ( 'network' === $context ) {
+		if ( 'snippets-settings' === $slug && are_settings_unified() ) {
 			return network_admin_url( $url );
-		} elseif ( 'admin' === $context ) {
-			return admin_url( $url );
-		} else {
-			return self_admin_url( $url );
+		}
+
+		switch ( $context ) {
+			case 'network':
+				return network_admin_url( $url );
+
+			case 'admin':
+				return admin_url( $url );
+
+			default:
+				return self_admin_url( $url );
 		}
 	}
 
@@ -369,8 +377,10 @@ class Plugin {
 					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
 					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
 					'import'   => esc_url_raw( $this->get_menu_url( 'import' ) ),
-					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
 					'cloud'    => esc_url_raw( $this->cloud_connection->get_base_url() ),
+					'settings' => ! are_settings_unified() || is_super_admin()
+						? esc_url_raw( $this->get_menu_url( 'settings' ) )
+						: null,
 				],
 			]
 		);
