@@ -129,10 +129,15 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		const activeControls = activeNode.locator('.code-snippets-pagination-controls[data-status="active"]')
 		await expect(activeControls).toBeVisible()
 
+		await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: 999 })
+		await helper.navigateToSnippetsAdmin()
+		await page.locator('#wp-admin-bar-code-snippets').hover()
+		await page.locator('#wp-admin-bar-code-snippets-active-snippets').hover()
+
 		const activeItems = activeNode.locator('li.code-snippets-snippet-item a')
 		await expect(activeItems.filter({ hasText: activeA })).toBeVisible()
 		await expect(activeItems.filter({ hasText: activeB })).toBeVisible()
-		await expect(activeItems.filter({ hasText: activeC })).not.toBeVisible()
+		await expect(activeItems.filter({ hasText: activeC })).toBeVisible()
 
 		await expectSnippetVisibleInListingPages(page, { status: 'active', queryArg: 'code_snippets_ab_active_page', snippetName: activeC })
 

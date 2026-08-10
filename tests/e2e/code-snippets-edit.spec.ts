@@ -142,6 +142,7 @@ test.describe('Code Snippets Admin', () => {
 		await expect(traceDetails.locator('summary')).toContainText('View stack trace')
 
 		await helper.navigateToSnippetsAdmin()
+		await helper.filterSnippetsByName(snippetName)
 
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
