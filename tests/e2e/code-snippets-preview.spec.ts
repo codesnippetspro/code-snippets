@@ -34,7 +34,8 @@ test.describe('Code Snippets Preview Modal', () => {
 		await helper.filterSnippetsByName(snippetName)
 
 		const row = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
@@ -92,9 +93,8 @@ test.describe('Code Snippets Preview Modal', () => {
 			await helper.filterSnippetsByName(snippetName)
 
 			const row = page
-				.locator(
-					`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`
-				)
+				.locator(SELECTORS.SNIPPET_ROW)
+				.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 				.first()
 			await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 

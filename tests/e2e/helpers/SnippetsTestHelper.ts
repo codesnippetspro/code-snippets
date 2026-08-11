@@ -246,6 +246,18 @@ export class SnippetsTestHelper {
 	}
 
 	/**
+	 * Optimized helper to find a snippet row by name.
+	 * Filters the locator to avoid expensive :has-text() selector chains.
+	 * This is significantly faster than: `locator(\`.wp-list-table tbody tr:has(a.snippet-name:has-text("${name}"))\`)`
+	 */
+	private getSnippetRowByName(snippetName: string) {
+		return this.page
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: this.page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
+			.first()
+	}
+
+	/**
    * Filter the snippets table to a specific snippet name.
    */
 	async filterSnippetsByName(snippetName: string): Promise<void> {
@@ -371,7 +383,7 @@ export class SnippetsTestHelper {
 		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
 		await this.filterSnippetsByName(snippetName)
 
-		const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+		const row = this.getSnippetRowByName(snippetName)
 		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
 		await row.locator(SELECTORS.SNIPPET_NAME_LINK).click()
@@ -405,15 +417,13 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Delete a snippet by name from the snippets list page.
-   */
+	 * Delete a snippet by name from the snippets list page.
+	 */
 	async deleteSnippetFromList(snippetName: string): Promise<void> {
 		await this.navigateToSnippetsAdmin()
 		await this.filterSnippetsByName(snippetName)
 
-		const row = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const row = this.getSnippetRowByName(snippetName)
 
 		const rowVisible = await row
 			.waitFor({ state: 'visible', timeout: TIMEOUTS.SHORT })
@@ -440,9 +450,7 @@ export class SnippetsTestHelper {
 		await trashedLink.click()
 		await expect(this.page).toHaveURL(/status=trashed/, { timeout: TIMEOUTS.DEFAULT })
 
-		const trashedRow = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const trashedRow = this.getSnippetRowByName(snippetName)
 
 		const trashedVisible = await trashedRow
 			.waitFor({ state: 'visible', timeout: TIMEOUTS.SHORT })
@@ -574,9 +582,7 @@ export class SnippetsTestHelper {
 		// Ensure activation is actually persisted by toggling from the list screen.
 		await this.navigateToSnippetsAdmin()
 		await this.filterSnippetsByName(options.name)
-		const row = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${options.name}"))`)
-			.first()
+		const row = this.getSnippetRowByName(options.name)
 		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
 		const toggleCell = row.locator('td').first()

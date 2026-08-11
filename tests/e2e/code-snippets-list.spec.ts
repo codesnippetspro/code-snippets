@@ -86,7 +86,8 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can toggle snippet activation from list page', async ({ page }) => {
 		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 
 		const toggleCell = snippetRow.locator('td').first()
@@ -123,7 +124,8 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can access edit from list page', async ({ page }) => {
 		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 
 		await snippetRow.locator(SELECTORS.SNIPPET_NAME_LINK).first().click()
@@ -134,7 +136,8 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can clone snippet from list page', async ({ page }) => {
 		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 
 		await snippetRow.locator(SELECTORS.CLONE_ACTION).click()
@@ -144,7 +147,8 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		// Verify that a cloned snippet exists in the table (use table-scoped check to avoid admin bar matches)
 		const clonedRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName} [CLONE]"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: `${snippetName} [CLONE]` }) })
 			.first()
 		await expect(clonedRow).toBeVisible()
 
@@ -177,7 +181,8 @@ test.describe('Code Snippets List Page Actions', () => {
 		await page.route(/\/index\.php\?rest_route=/, trackCreateRequest)
 
 		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 		await snippetRow.getByRole('button', { name: 'Preview' }).click()
 
@@ -194,7 +199,8 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can trash a snippet from the preview modal', async ({ page }) => {
 		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 		await snippetRow.getByRole('button', { name: 'Preview' }).click()
 
@@ -212,7 +218,8 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can delete snippet from list page', async ({ page }) => {
 		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 
 		// Click "Trash" in row actions — in the new React UI, this moves to trash immediately (no dialog)
@@ -249,7 +256,8 @@ test.describe('Code Snippets List Page Actions', () => {
 	test('Can export snippet from list page', async ({ page }) => {
 		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
 		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 
 		const download = await Promise.all([
@@ -271,10 +279,12 @@ test.describe('Code Snippets List Page Actions', () => {
 		await helper.navigateToSnippetsAdmin()
 
 		const firstRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 		const secondRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${secondSnippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: secondSnippetName }) })
 			.first()
 
 		await firstRow.locator('input[name="checked[]"]').check({ force: true })
@@ -295,7 +305,8 @@ test.describe('Code Snippets List Page Actions', () => {
 		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
 		await helper.filterSnippetsByName(snippetName)
 		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 
 		await snippetRow.locator('input[name="checked[]"]').check({ force: true })
@@ -321,10 +332,12 @@ test.describe('Code Snippets List Page Actions', () => {
 		await helper.navigateToSnippetsAdmin()
 
 		const firstRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
 			.first()
 		const secondRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${secondSnippetName}"))`)
+			.locator(SELECTORS.SNIPPET_ROW)
+			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: secondSnippetName }) })
 			.first()
 
 		await firstRow.locator('input[name="checked[]"]').check({ force: true })
