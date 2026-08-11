@@ -17,7 +17,7 @@ interface RowActionsProps {
 	snippet: Snippet
 }
 
-const PreviewLink: React.FC<RowActionsProps> = ({ snippet }) => {
+const PreviewButton: React.FC<RowActionsProps> = ({ snippet }) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	return (
@@ -120,15 +120,15 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
-	const Preview = !snippet.trashed ? <PreviewLink snippet={snippet} /> : null
+	const previewButton = !snippet.trashed ? <PreviewButton snippet={snippet} /> : null
 
-	const Edit = !snippet.trashed
+	const editLink = !snippet.trashed
 		? <a href={getSnippetEditUrl(snippet)}>
 			{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
 		</a>
 		: null
 
-	const Clone = !snippet.trashed
+	const cloneButton = !snippet.trashed
 		? <SnippetActionButton
 			label={__('Clone', 'code-snippets')}
 			workingLabel={__('Cloning…', 'code-snippets')}
@@ -136,7 +136,7 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 		/>
 		: null
 
-	const Export = !snippet.trashed
+	const exportButton = !snippet.trashed
 		? <SnippetActionButton
 			label={__('Export', 'code-snippets')}
 			workingLabel={__('Exporting…', 'code-snippets')}
@@ -146,7 +146,7 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 		/>
 		: null
 
-	const Restore = snippet.trashed
+	const restoreButton = snippet.trashed
 		? <SnippetActionButton
 			label={__('Restore', 'code-snippets')}
 			workingLabel={__('Restoring…', 'code-snippets')}
@@ -154,17 +154,17 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 		/>
 		: null
 
-	const Delete = !snippet.locked || snippet.trashed
+	const deleteButton = !snippet.locked || snippet.trashed
 		? <DeleteActionLink snippet={snippet} />
 		: null
 
 	return (
 		<>
-			{[Preview, Edit, Clone, Restore, Export, Delete]
-				.filter(Action => Action)
+			{[previewButton, editLink, cloneButton, restoreButton, exportButton, deleteButton]
+				.filter(action => action)
 				.reduce<ReactNode>(
-					(Actions, Action) =>
-						null === Actions ? <>{Action}</> : <>{Actions} | {Action}</>,
+					(actions, action) =>
+						null === actions ? <>{action}</> : <>{actions} | {action}</>,
 					null)}
 		</>
 	)
