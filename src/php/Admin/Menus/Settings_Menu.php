@@ -62,14 +62,14 @@ class Settings_Menu extends Admin_Menu {
 		wp_enqueue_style(
 			$handle,
 			plugins_url( 'dist/settings.css', PLUGIN_FILE ),
-			self::$style_deps + [ 'code-editor' ],
+			array_merge( self::$style_deps, [ 'code-editor' ] ),
 			PLUGIN_VERSION
 		);
 
 		wp_enqueue_script(
 			$handle,
 			plugins_url( 'dist/settings.js', PLUGIN_FILE ),
-			self::$script_deps + [ 'code-snippets-code-editor' ],
+			array_merge( self::$script_deps, [ 'code-snippets-code-editor' ] ),
 			PLUGIN_VERSION,
 			true
 		);

@@ -22,6 +22,9 @@ const EDITOR_MODES: Record<string, string> = {
 	html: 'application/x-httpd-php'
 }
 
+const getClipboard = (): Clipboard | undefined =>
+	window.isSecureContext ? navigator.clipboard as Clipboard | undefined : undefined
+
 const getPreviewEditorSettings = (type: string): EditorConfiguration => ({
 	extraKeys: {
 		'Tab': false,
@@ -56,9 +59,9 @@ const CopyCodeButton: React.FC<{ code: string }> = ({ code }) => {
 	const [copyStatus, setCopyStatus] = useState(CopyStatus.Ready)
 
 	const handleCopy = () => {
-		const clipboard = navigator.clipboard as Clipboard | undefined
+		const clipboard = getClipboard()
 
-		if (!window.isSecureContext || !clipboard) {
+		if (!clipboard) {
 			setCopyStatus(CopyStatus.Failed)
 			return
 		}
@@ -162,7 +165,7 @@ export const CloudSnippetPreviewModal: React.FC<SnippetCodePreviewModalProps> = 
 			<div className="code-snippets-preview-modal__footer">
 				<div className="code-snippets-preview-modal__buttons">
 					<CloudSnippetDownloadButton snippet={snippet} onDownloaded={onDownloaded} />
-					<CopyCodeButton code={snippet.code} />
+					{getClipboard() && <CopyCodeButton code={snippet.code} />}
 				</div>
 			</div>
 		</PreviewModal>

@@ -305,15 +305,9 @@ class File_Import_REST_Controller extends REST_Controller {
 		$data = json_decode( $raw_data, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			return new WP_Error(
-				'invalid_json',
-				sprintf(
-				/* translators: %1$s: file name, %2$s: error message */
-					__( 'Invalid JSON in file %1$s: %2$s', 'code-snippets' ),
-					$file_name,
-					json_last_error_msg()
-				)
-			);
+			/* translators: %1$s: file name, %2$s: error message */
+			$message = sprintf( __( 'Invalid JSON in file %1$s: %2$s', 'code-snippets' ), $file_name, json_last_error_msg() );
+			return new WP_Error( 'invalid_json', $message );
 		}
 
 		if ( ! isset( $data['snippets'] ) || ! is_array( $data['snippets'] ) ) {
@@ -322,23 +316,24 @@ class File_Import_REST_Controller extends REST_Controller {
 			return new WP_Error( 'no_snippets_in_file', sprintf( $message, $file_name ) );
 		}
 
-		$snippets = [];
-		foreach ( $data['snippets'] as $snippet_data ) {
-			$snippet_data['source_file'] = $file_name;
-
-			$snippet_data['table_data'] = [
-				'id'          => $snippet_data['id'] ?? uniqid(),
-				'title'       => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
-				'scope'       => $snippet_data['scope'] ?? 'global',
-				'tags'        => is_array( $snippet_data['tags'] ) ? implode( ', ', $snippet_data['tags'] ) : '',
-				'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
-				'type'        => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
-			];
-
-			$snippets[] = $snippet_data;
-		}
-
-		return $snippets;
+		return array_map(
+			function ( $snippet_data ) use ( $file_name ) {
+				return [
+					'source_file' => $file_name,
+					'table_data'  => [
+						'id'          => $snippet_data['id'] ?? uniqid(),
+						'title'       => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
+						'scope'       => $snippet_data['scope'] ?? 'global',
+						'tags'        => is_array( $snippet_data['tags'] ?? null )
+							? implode( ', ', $snippet_data['tags'] )
+							: '',
+						'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
+						'type'        => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
+					],
+				];
+			},
+			$data['snippets']
+		);
 	}
 
 	/**
