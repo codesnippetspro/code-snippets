@@ -3,7 +3,7 @@ import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { useDeleteSnippet } from '../../../hooks/useDeleteSnippet'
+import { ConfirmDeleteDialog, useDeleteSnippet } from '../../common/snippets/ConfirmDeleteDialog'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
@@ -11,9 +11,9 @@ import { downloadSnippetExportFile } from '../../../utils/files'
 import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isNetworkOnlySnippet, isSnippetActive } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
 import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../common/KebabMenu'
-import { SnippetCard } from '../../common/SnippetCard'
-import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
-import { SnippetPriorityInput } from '../../common/SnippetPriorityInput'
+import { SnippetCard } from '../../common/snippets/SnippetCard'
+import { SnippetPreviewModal } from '../../common/snippets/SnippetPreviewModal'
+import { SnippetPriorityInput } from '../../common/snippets/SnippetPriorityInput'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { ActivateColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
 import type { Snippet } from '../../../types/Snippet'
@@ -104,7 +104,7 @@ const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
 const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
 	const canModify = canModifySnippet(snippet)
-	const { requestDelete, ConfirmDeleteDialog } = useDeleteSnippet({
+	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
 		snippet,
 		onSuccess: refreshSnippetsList,
 		onError: handleUnknownError
@@ -130,7 +130,7 @@ const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 					<RestoreDeleteMenuItems snippet={snippet} requestDelete={() => void requestDelete()} />)}
 			</KebabMenu>
 
-			<ConfirmDeleteDialog />
+			<ConfirmDeleteDialog {...deleteDialogProps} />
 		</>
 	)
 }

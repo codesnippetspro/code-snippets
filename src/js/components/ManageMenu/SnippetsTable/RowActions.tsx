@@ -8,8 +8,8 @@ import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { cloneSnippetObject, getSnippetEditUrl } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
-import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
-import { useDeleteSnippet } from '../../../hooks/useDeleteSnippet'
+import { SnippetPreviewModal } from '../../common/snippets/SnippetPreviewModal'
+import { ConfirmDeleteDialog, useDeleteSnippet } from '../../common/snippets/ConfirmDeleteDialog'
 import type { ReactNode } from 'react'
 import type { Snippet } from '../../../types/Snippet'
 
@@ -44,28 +44,6 @@ enum SnippetActionStatus { Ready, Working, Errored }
 const SnippetActionButton: React.FC<SnippetActionButtonProps> = ({ action, label, workingLabel, failedLabel, className }) => {
 	const [status, setStatus] = useState(SnippetActionStatus.Ready)
 
-	const ButtonContent = () => {
-		switch (status) {
-			case SnippetActionStatus.Working:
-				return (
-					<span className="snippet-row-action-feedback">
-						<Spinner /> {workingLabel ?? __('Loading…', 'code-snippets')}
-					</span>
-				)
-
-			case SnippetActionStatus.Errored:
-				return (
-					<span className="snippet-row-action-error">
-						<span className="dashicons dashicons-warning"></span>
-						{failedLabel ?? __('Failed', 'code-snippets')}
-					</span>
-				)
-
-			default:
-				return label
-		}
-	}
-
 	return (
 		<Button
 			link
@@ -94,14 +72,34 @@ const SnippetActionButton: React.FC<SnippetActionButtonProps> = ({ action, label
 				}
 			}}
 		>
-			<ButtonContent />
+			{(() => {
+				switch (status) {
+					case SnippetActionStatus.Working:
+						return (
+							<span className="snippet-row-action-feedback">
+								<Spinner /> {workingLabel ?? __('Loading…', 'code-snippets')}
+							</span>
+						)
+
+					case SnippetActionStatus.Errored:
+						return (
+							<span className="snippet-row-action-error">
+								<span className="dashicons dashicons-warning"></span>
+								{failedLabel ?? __('Failed', 'code-snippets')}
+							</span>
+						)
+
+					default:
+						return label
+				}
+			})()}
 		</Button>
 	)
 }
 
 const DeleteActionLink: React.FC<RowActionsProps> = ({ snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
-	const { requestDelete, ConfirmDeleteDialog } = useDeleteSnippet({ snippet, onSuccess: refreshSnippetsList })
+	const { requestDelete, deleteDialogProps } = useDeleteSnippet({ snippet, onSuccess: refreshSnippetsList })
 
 	return (
 		<>
@@ -113,7 +111,7 @@ const DeleteActionLink: React.FC<RowActionsProps> = ({ snippet }) => {
 				failedLabel={__('Failed to delete', 'code-snippets')}
 			/>
 
-			<ConfirmDeleteDialog />
+			<ConfirmDeleteDialog {...deleteDialogProps} />
 		</>
 	)
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
-import { useDeleteSnippet } from '../../../hooks/useDeleteSnippet'
+import { ConfirmDeleteDialog, useDeleteSnippet } from '../../common/snippets/ConfirmDeleteDialog'
 import { buildUrl } from '../../../utils/urls'
 import { Button } from '../../common/Button'
 import { useSnippetForm } from '../SnippetForm/WithSnippetFormContext'
@@ -27,7 +27,7 @@ export interface EditorSidebarProps {
 export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialogOpen }) => {
 	const { snippet, isWorking, setIsWorking, handleRequestError } = useSnippetForm()
 
-	const { requestDelete, ConfirmDeleteDialog } = useDeleteSnippet({
+	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
 		snippet,
 		setIsWorking,
 		onSuccess: () => {
@@ -70,7 +70,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 			</p>
 
 			<Notices placement="sidebar" />
-			<ConfirmDeleteDialog />
+			<ConfirmDeleteDialog {...deleteDialogProps} />
 		</div>
 	)
 }

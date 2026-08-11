@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
-import { useSnippetsList } from '../../hooks/useSnippetsList'
-import { handleUnknownError } from '../../utils/errors'
-import type { Snippet } from '../../types/Snippet'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
+import { useSnippetsList } from '../../../hooks/useSnippetsList'
+import { handleUnknownError } from '../../../utils/errors'
+import type { Snippet } from '../../../types/Snippet'
 
 export interface SnippetPriorityInputProps {
 	snippet: Snippet
