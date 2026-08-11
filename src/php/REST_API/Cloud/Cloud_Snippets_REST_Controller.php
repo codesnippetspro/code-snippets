@@ -144,20 +144,6 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/codevault',
-			[
-				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_codevault_items' ],
-					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => [ 'page' => $collection_args['page'] ],
-					'schema'              => [ $this, 'get_item_schema' ],
-				],
-			]
-		);
-
-		register_rest_route(
-			$this->namespace,
 			$this->rest_base . '/featured',
 			[
 				[

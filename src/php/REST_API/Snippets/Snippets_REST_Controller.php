@@ -638,7 +638,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 *
 	 * @return Snippet|WP_Error
 	 */
-	private function get_requested_snippet( WP_REST_Request $request ): Snippet {
+	private function get_requested_snippet( WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 
 		$snippet = $id && is_numeric( $id )
