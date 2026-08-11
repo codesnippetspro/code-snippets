@@ -9,7 +9,7 @@ import { WithCloudSnippetDownloadsContext } from '../../common/cloud/WithCloudSn
 import { UpsellPage } from '../../common/UpsellDialog'
 import { WithCloudSearchContext, useCloudSearch } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
-import type { SubnavTab} from '../../common/SubnavTabs'
+import type { SubnavTab } from '../../common/SubnavTabs'
 
 const TAB_QUERY_PARAM = 'tab'
 
@@ -59,9 +59,8 @@ const CommunityCloudInner = () => {
 
 			<ScreenMetaSlot hidden={'bundles' === currentTab.name} />
 
-			{'bundles' === currentTab.name
-				? null
-				: <>
+			{'bundles' !== currentTab.name && (
+				<>
 					<div className="snippets-page-header">
 						<h1>{
 							// translators: %s: label of the currently selected community cloud tab.
@@ -73,7 +72,7 @@ const CommunityCloudInner = () => {
 					<p className="snippets-page-description">
 						{__('Search the community cloud and download user-shared snippets directly to your site.', 'code-snippets')}
 					</p>
-				</>}
+				</>)}
 
 			<TabContent />
 		</>

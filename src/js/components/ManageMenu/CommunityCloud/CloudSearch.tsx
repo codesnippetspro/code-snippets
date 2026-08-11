@@ -20,10 +20,11 @@ import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 const SearchBox = () => {
 	const { searchParams, updateSearchParams, isSearching, doSearch } = useCloudSearch()
 	const searchMethodId = useId()
+	const [query, setQuery] = useState(searchParams.query)
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
-		doSearch()
+		doSearch({ query })
 	}
 
 	return (
@@ -45,15 +46,15 @@ const SearchBox = () => {
 				<input
 					id="cloud-search-query"
 					type="search"
-					value={searchParams.query}
+					value={query}
 					aria-label={__('Search query', 'code-snippets')}
-					onChange={event => updateSearchParams({ query: event.target.value })}
+					onChange={event => setQuery(event.target.value)}
 					placeholder={__('e.g. Remove unused JavaScript…', 'code-snippets')}
 				/>
-				<span role="status" aria-live="polite">
-					{isSearching &&
-			  <span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>}
-				</span>
+				{isSearching && (
+					<span role="status" aria-live="polite">
+						<span className="screen-reader-text">{__('Searching…', 'code-snippets')}</span>
+					</span>)}
 			</div>
 
 			<button
@@ -232,7 +233,7 @@ const SearchStatus = () => {
 			errorMessage={isErrored
 				? __('An error occurred while fetching search results. Please try again.', 'code-snippets')
 				: undefined}
-			loadingNotice={__('Loading community snippets…', 'code-snippets')}
+			loadingNotice={__('Loading snippets from cloud…', 'code-snippets')}
 			noticeLabel={__('Community snippets status', 'code-snippets')}
 		/>
 		: null
