@@ -9,6 +9,7 @@ import React, {
 	useRef,
 	useState
 } from 'react'
+import { KebabIcon } from './icons/KebabIcon'
 import type { Dispatch, PropsWithChildren, ReactNode, RefObject, SetStateAction } from 'react'
 
 const FOCUSABLE_SELECTOR = [
@@ -80,24 +81,10 @@ export const KebabMenuRow: React.FC<PropsWithChildren<KebabMenuRowProps>> = ({
 		{children}
 	</li>
 
-const KebabIcon: React.FC = () =>
-	<svg
-		width="18"
-		height="18"
-		viewBox="0 0 18 18"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		aria-hidden="true"
-	>
-		<circle cx="9" cy="3.5" r="1.6" fill="currentColor" />
-		<circle cx="9" cy="9" r="1.6" fill="currentColor" />
-		<circle cx="9" cy="14.5" r="1.6" fill="currentColor" />
-	</svg>
-
 interface PopoverBehaviourOptions {
 	isOpen: boolean
 	setIsOpen: Dispatch<SetStateAction<boolean>>
-	closeMenu: () => void
+	closeMenu: VoidFunction
 	containerRef: RefObject<HTMLDivElement>
 	triggerRef: RefObject<HTMLButtonElement>
 	popoverRef: RefObject<HTMLUListElement>

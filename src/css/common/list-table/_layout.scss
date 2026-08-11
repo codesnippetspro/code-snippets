@@ -49,11 +49,29 @@
 		@include checkbox.canonical;
 	}
 
+	// Shared cell rhythm for snippet and Cloud tables. Padding, rather than a
+	// fixed row height, keeps multi-line values comfortable and uncropped.
+	td,
+	th {
+		padding-block: 16px;
+		padding-inline: 8px;
+	}
+
+	th:first-child,
+	td:first-child {
+		padding-inline-start: 16px;
+	}
+
+	th:last-child,
+	td:last-child {
+		padding-inline-end: 16px;
+	}
+
 	// Shared horizontal rhythm for every snippet table, so the cloud table lines
 	// up with the snippets table rather than keeping the wider WordPress default.
 	th:not(.check-column),
 	td:not(.check-column) {
-		padding-inline: 9px;
+		padding-inline: 8px;
 	}
 
 	td.column-id {
@@ -203,8 +221,8 @@
 	tfoot td.check-column,
 	tbody th.check-column,
 	tbody td.check-column {
-		padding-block: 0;
-		padding-inline-start: 9px;
+		padding-block: 16px;
+		padding-inline-start: 8px;
 		vertical-align: middle;
 	}
 
@@ -223,7 +241,6 @@
 
 	.active-snippet, .inactive-snippet {
 		td, th {
-			padding: 10px 9px;
 			box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
 			vertical-align: middle;
 		}

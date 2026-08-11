@@ -6,10 +6,10 @@ import { stripTags, truncateChars } from '../../../utils/text'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { CloudSnippetDownloadButton } from '../../common/cloud/CloudSnippetDownloadButton'
-import { CloudSnippetPreviewModal } from '../../common/cloud/CloudSnippetPreviewModal'
 import { CloudStatusIndicator } from '../../common/cloud/CloudStatusBadge'
-import { CloudUpdateIcon } from '../../common/icons/CloudIcons'
+import { CloudUpdateIcon } from '../../common/icons/CloudUpdateIcon'
 import { SnippetCard } from '../../common/SnippetCard'
+import { CloudSnippetPreviewModal } from '../../common/SnippetPreviewModal'
 import { useCloudSearch } from './WithCloudSearchContext'
 import type { ReactNode } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
@@ -135,12 +135,8 @@ export const SearchResult: React.FC<SearchResultProps> = ({
 		>
 			<CloudSnippetDetails snippet={snippet} author={author} setIsPreviewOpen={setIsPreviewOpen} />
 
-			<CloudSnippetPreviewModal
-				snippet={snippet}
-				isOpen={isPreviewOpen}
-				setIsOpen={setIsPreviewOpen}
-				onDownloaded={doSearch}
-			/>
+			{isPreviewOpen && (
+				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={doSearch} />)}
 		</SnippetCard>
 	)
 }

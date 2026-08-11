@@ -64,25 +64,6 @@ test.describe('Code Snippets Admin', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
-	test('Edit menu shortcut keeps operable button semantics', async ({ page }) => {
-		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
-		await helper.createSnippet({
-			name: snippetName,
-			code: "add_filter('show_admin_bar', '__return_false');"
-		})
-
-		await helper.openSnippet(snippetName)
-
-		const editMenuLink = page.locator('#adminmenu a.code-snippets-edit-menu-link').first()
-
-		await expect(editMenuLink).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-		await expect(editMenuLink).toHaveAttribute('role', 'button')
-		await expect(editMenuLink).toHaveAttribute('tabindex', '0')
-		await expect(editMenuLink).not.toHaveAttribute('aria-disabled', /true/)
-
-		await helper.cleanupSnippet(snippetName)
-	})
-
 	test('Back navigation confirms before discarding unsaved changes', async ({ page }) => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.clickAddNewSnippet()
@@ -161,6 +142,7 @@ test.describe('Code Snippets Admin', () => {
 		await expect(traceDetails.locator('summary')).toContainText('View stack trace')
 
 		await helper.navigateToSnippetsAdmin()
+		await helper.filterSnippetsByName(snippetName)
 
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)

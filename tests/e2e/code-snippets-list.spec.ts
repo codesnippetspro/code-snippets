@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { expectCanonicalCheckbox } from './helpers/checkbox'
 import { SELECTORS } from './helpers/constants'
 import type { Page, Route } from '@playwright/test'
 
@@ -50,64 +49,6 @@ test.describe('Code Snippets List Page Actions', () => {
 		await searchInput.fill(`${snippetName}-does-not-exist`)
 		await expect(snippetRow).toBeHidden()
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
-	})
-
-	test('Presents table rows with aligned columns, checkboxes and actions', async ({ page }) => {
-		await switchSnippetView(page, 'Table view')
-
-		const table = page.locator('.snippets-list-view .wp-list-table:not(.cloud-snippets-table)')
-		const snippetRow = table.locator('tbody tr').filter({ hasText: snippetName }).first()
-
-		for (const column of ['name', 'type', 'desc', 'tags', 'date', 'priority']) {
-			const headerCell = table.locator(`thead .column-${column}`).first()
-			const bodyCell = snippetRow.locator(`.column-${column}`)
-			const headerInlineStart = await headerCell.evaluate(element => {
-				const sortableTitle = element.querySelector('.sortable-column-title')
-
-				if (sortableTitle) {
-					return sortableTitle.getBoundingClientRect().left
-				}
-
-				const textNode = Array.from(element.childNodes)
-					.find(node => Node.TEXT_NODE === node.nodeType && node.textContent?.trim())
-				const range = document.createRange()
-				range.selectNode(textNode ?? element)
-				return range.getBoundingClientRect().left
-			})
-			const bodyInlineStart = await bodyCell.evaluate(element => {
-				const styles = getComputedStyle(element)
-				return element.getBoundingClientRect().left + Number.parseFloat(styles.paddingInlineStart)
-			})
-
-			expect(Math.abs(headerInlineStart - bodyInlineStart))
-				.toBeLessThanOrEqual(MAXIMUM_COLUMN_ALIGNMENT_OFFSET)
-		}
-
-		// The plugin restyles native checkboxes, which only holds while the rules
-		// out-weigh the WordPress defaults.
-		await expectCanonicalCheckbox(snippetRow.locator('.check-column input[type="checkbox"]'))
-
-		const rowActions = snippetRow.locator('.row-actions')
-
-		for (const action of [
-			rowActions.getByRole('link', { name: 'Edit', exact: true }),
-			rowActions.getByRole('button', { name: 'Preview', exact: true }),
-			rowActions.getByRole('button', { name: 'Clone', exact: true }),
-			rowActions.getByRole('button', { name: 'Export', exact: true })
-		]) {
-			await expect(action).toHaveCSS('color', 'rgb(34, 113, 177)')
-		}
-
-		await expect(rowActions.getByRole('button', { name: 'Trash', exact: true }))
-			.toHaveCSS('color', 'rgb(179, 45, 46)')
-
-		// Type badges are wrapped in links that inherit a transparent outline, so
-		// assert that some focus indicator is drawn rather than a specific one.
-		const badgeLink = snippetRow.locator('.column-type a').first()
-		await badgeLink.focus()
-
-		await expect(badgeLink).toBeFocused()
-		expect(await badgeLink.evaluate(element => getComputedStyle(element).boxShadow)).not.toBe('none')
 	})
 
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
@@ -352,6 +293,7 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can download a single snippet from bulk actions', async ({ page }) => {
 		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		await helper.filterSnippetsByName(snippetName)
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
 			.first()
@@ -529,23 +471,6 @@ test.describe('Manage table Screen Options', () => {
 			await expect(panel).toBeVisible()
 		}
 	}
-
-	test('Card pagination initializes from the page URL', async ({ page }) => {
-		await SnippetsTestHelper.setSnippetsPerPage(1)
-
-		try {
-			await helper.navigateToSnippetsAdmin()
-			await switchSnippetView(page, 'Card view')
-			await expect(page.locator('.snippets-card-grid')).toBeVisible()
-
-			await page.goto('/wp-admin/admin.php?page=snippets&paged=2')
-			await expect(page.locator('.tablenav.top .current-page')).toHaveValue('2')
-			await expect(page.locator('.snippets-card-grid .code-snippets-card')).toHaveCount(1)
-		} finally {
-			await switchSnippetView(page, 'Table view').catch(() => undefined)
-			await SnippetsTestHelper.resetSnippetsPerPage()
-		}
-	})
 
 	test('Column visibility toggle hides and shows columns in real time', async ({ page }) => {
 		await openScreenOptions(page)

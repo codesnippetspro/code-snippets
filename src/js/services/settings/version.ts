@@ -7,7 +7,6 @@ interface VersionConfig {
 	ajaxurl?: string
 	nonce_switch?: string
 	nonce_refresh?: string
-
 }
 
 interface AjaxResponse {
@@ -42,6 +41,8 @@ const bindDropdown = (
 	button: HTMLButtonElement | null,
 	currentVersion: string
 ): void => {
+	const warningNotice = document.getElementById('version-switch-warning')
+
 	dropdown.addEventListener('change', () => {
 		const selectedVersion = dropdown.value
 		if (!button) {
@@ -50,10 +51,10 @@ const bindDropdown = (
 
 		if (!selectedVersion || selectedVersion === currentVersion) {
 			button.disabled = true
-			document.getElementById('version-switch-warning')?.setAttribute('style', 'display: none;')
+			warningNotice?.classList.add('hidden')
 		} else {
 			button.disabled = false
-			document.getElementById('version-switch-warning')?.setAttribute('style', '')
+			warningNotice?.classList.remove('hidden')
 		}
 	})
 }

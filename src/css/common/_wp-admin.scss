@@ -1,6 +1,17 @@
 @use 'checkbox';
 @use 'theme';
 
+// Match the active subnavigation tile so it blends into the admin canvas.
+body.wp-admin {
+	background: #f0f0f1;
+}
+
+// Remove the WordPress core 10px top margin on the manage snippets container
+// so the subnav band sits flush against the toolbar.
+#manage-snippets-container.wrap {
+	margin-block-start: 0;
+}
+
 /**
  * Native form control styling.
  *
@@ -38,18 +49,18 @@
 	input[type='tel']:not([class*='components-']) {
 		// `min-block-size` (not a fixed `block-size`) so controls floor at the token height but
 		// can still flex-stretch where the layout calls for it (e.g. the 54px cloud search bar).
-		min-block-size: theme.$control-height;
+		min-block-size: var(--cs-control-height);
 		padding-block: 0;
 		padding-inline: 8px;
-		border: 1px solid theme.$control-border;
-		border-radius: theme.$control-radius;
+		border: 1px solid var(--cs-color-border);
+		border-radius: var(--cs-control-radius);
 		line-height: 2;
-		color: theme.$control-text;
+		color: var(--cs-color-text);
 		font-size: 14px;
 
 		&:focus {
-			border-color: theme.$accent;
-			box-shadow: 0 0 0 1px theme.$accent;
+			border-color: var(--cs-color-accent);
+			box-shadow: 0 0 0 1px var(--cs-color-accent);
 			outline: 2px solid transparent;
 		}
 	}
@@ -58,21 +69,21 @@
 	// side. WP 7.0 keeps the chevron as a background image; clamping both paddings to 8px (as
 	// for text inputs) would let the arrow overlap the text, so the inline-end padding is wider.
 	select:not([class*='components-']) {
-		min-block-size: theme.$control-height;
+		min-block-size: var(--cs-control-height);
 		padding-block: 0;
 		padding-inline: 8px 24px;
-		border: 1px solid theme.$control-border;
-		border-radius: theme.$control-radius;
+		border: 1px solid var(--cs-color-border);
+		border-radius: var(--cs-control-radius);
 
 		// WP 7.0 leaves a tall (≈38px) line-height on selects, pushing the value off-centre.
 		// Pin it so the text stays vertically centred within the token height.
 		line-height: 2;
-		color: theme.$control-text;
+		color: var(--cs-color-text);
 		font-size: 14px;
 
 		&:focus {
-			border-color: theme.$accent;
-			box-shadow: 0 0 0 1px theme.$accent;
+			border-color: var(--cs-color-accent);
+			box-shadow: 0 0 0 1px var(--cs-color-accent);
 			outline: 2px solid transparent;
 		}
 	}
@@ -84,21 +95,21 @@
 	.button:not(.button-primary, .button-link),
 	.button-secondary,
 	.page-title-action {
-		min-block-size: theme.$control-height;
+		min-block-size: var(--cs-control-height);
 		padding-block: 0;
 		padding-inline: 12px;
-		border-radius: theme.$control-radius;
+		border-radius: var(--cs-control-radius);
 		line-height: 2.5715;
 		font-size: 14px;
 		font-weight: 400;
 		background: #f6f7f7;
-		border-color: theme.$accent;
-		color: theme.$accent;
+		border-color: var(--cs-color-accent);
+		color: var(--cs-color-accent);
 
 		&:hover:not(:disabled) {
 			background: #f0f0f1;
-			border-color: theme.$accent-hover;
-			color: theme.$accent-hover;
+			border-color: var(--cs-color-accent-hover);
+			color: var(--cs-color-accent-hover);
 		}
 
 		&:focus:not(:disabled) {
@@ -113,27 +124,27 @@
 	// matches the secondary rule's specificity so a `.button-small.button-primary`
 	// keeps the token height instead of collapsing to the 26px small size.
 	.button-primary:not(.button-link) {
-		min-block-size: theme.$control-height;
+		min-block-size: var(--cs-control-height);
 		padding-block: 0;
 		padding-inline: 12px;
-		border-radius: theme.$control-radius;
+		border-radius: var(--cs-control-radius);
 		line-height: 2.5715;
 		font-size: 14px;
 		font-weight: 700;
-		background: theme.$accent;
-		border-color: theme.$accent;
+		background: var(--cs-color-accent);
+		border-color: var(--cs-color-accent);
 		color: #fff;
 
 		&:hover:not(:disabled) {
-			background: theme.$accent-hover;
-			border-color: theme.$accent-hover;
+			background: var(--cs-color-accent-hover);
+			border-color: var(--cs-color-accent-hover);
 			color: #fff;
 		}
 
 		&:focus:not(:disabled) {
-			background: theme.$accent-hover;
-			border-color: theme.$accent-hover;
-			box-shadow: 0 0 0 1px #fff, 0 0 0 3px theme.$accent;
+			background: var(--cs-color-accent-hover);
+			border-color: var(--cs-color-accent-hover);
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px var(--cs-color-accent);
 			outline: 2px solid transparent;
 		}
 	}

@@ -49,7 +49,7 @@ declare global {
 				insights: string
 				welcome: string
 				import: string
-				settings: string
+				settings: string | null
 				cloud: string
 			}
 			banner: {

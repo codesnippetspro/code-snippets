@@ -1,4 +1,3 @@
-@use 'sass:color';
 @use '../common/theme';
 @use '../common/cards';
 
@@ -62,6 +61,7 @@
 		flex-wrap: wrap;
 		gap: 16px;
 		font-size: 14px;
+		line-height: 1.5;
 
 		.cloud-snippet-tags {
 			color: theme.$accent;
@@ -81,6 +81,7 @@
 		overflow: hidden;
 		margin: 0;
 		font-size: 14px;
+		line-height: 1.5;
 		color: #646970;
 		border-block-start: 1px solid #dcdcde;
 		padding-block-start: 16px;
@@ -112,7 +113,7 @@
 		}
 
 		.button:not(.button-primary, .cloud-pro-button) {
-			background: #fff;
+			background: transparent;
 		}
 	}
 }
@@ -121,18 +122,17 @@
 	margin: 0;
 }
 
-// Anchored to the card container so this keeps its brand-orange fill above the WP-admin
-// compatibility layer's secondary-button styling (equal specificity, resolved by source order).
-.cloud-search-result .cloud-pro-button.button {
-	background-color: theme.$secondary;
-	border-color: theme.$secondary;
-	color: #fff;
+// Pro-only actions use the same quiet outline treatment in card and table views.
+.cloud-pro-button.button {
+	background-color: transparent;
+	border-color: theme.$accent;
+	color: theme.$accent;
 
 	&:hover,
 	&:focus {
-		background-color: color.adjust(theme.$secondary, $lightness: -10%);
-		border-color: color.adjust(theme.$secondary, $lightness: -10%);
-		color: #fff;
+		background-color: #eff5f9;
+		border-color: theme.$accent;
+		color: theme.$accent;
 	}
 }
 

@@ -7,8 +7,14 @@ export const SearchArea = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
 
 	return (
-		<div className="snippets-search-area">
-			<search className="search-box" aria-label={__('Search Snippets', 'code-snippets')}>
+		<search className="snippets-search-area">
+			<form
+				className="search-box"
+				aria-label={__('Search Snippets', 'code-snippets')}
+				onSubmit={event => {
+					event.preventDefault()
+				}}
+			>
 				<input
 					type="search"
 					id="snippets_search"
@@ -18,8 +24,8 @@ export const SearchArea = () => {
 					onChange={event => setSearchQuery(event.target.value)}
 					placeholder={__('Search snippets', 'code-snippets')}
 				/>
-			</search>
-		</div>
+			</form>
+		</search>
 	)
 }
 

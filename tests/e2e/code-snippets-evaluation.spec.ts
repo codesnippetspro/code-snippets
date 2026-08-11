@@ -71,6 +71,7 @@ const createHtmlSnippetForEditor = async (
 
 	// `createAndActivateSnippet` ends on the list screen; pull the ID from the edit link.
 	await helper.navigateToSnippetsAdmin()
+	await helper.filterSnippetsByName(snippetName)
 	const row = page
 		.locator(`${SELECTORS.SNIPPET_ROW}:has(${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
 		.first()

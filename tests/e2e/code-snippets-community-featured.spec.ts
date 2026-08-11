@@ -142,7 +142,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 	})
 
 	test('Announces loading and error states while featured snippets resolve', async ({ page }) => {
-		let releaseRequest: () => void = () => undefined
+		let releaseRequest: VoidFunction = () => undefined
 		const requestPending = new Promise<void>(resolve => {
 			releaseRequest = () => resolve()
 		})
@@ -170,7 +170,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 	})
 
 	test('Shares download state between the card and its preview', async ({ page }) => {
-		let releaseDownload: () => void = () => undefined
+		let releaseDownload: VoidFunction = () => undefined
 		const downloadPending = new Promise<void>(resolve => {
 			releaseDownload = () => resolve()
 		})
