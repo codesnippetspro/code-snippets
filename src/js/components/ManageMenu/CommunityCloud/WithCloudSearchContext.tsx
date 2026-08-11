@@ -238,8 +238,8 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 
 	useEffect(() => {
 		if (!madeInitialRequest) {
-			makeSearchRequest(searchParams)
 			setMadeInitialRequest(true)
+			makeSearchRequest(searchParams)
 		}
 	}, [makeSearchRequest, searchParams, madeInitialRequest])
 
