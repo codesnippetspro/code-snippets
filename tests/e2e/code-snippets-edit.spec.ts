@@ -55,8 +55,7 @@ test.describe('Code Snippets Admin', () => {
 		await helper.navigateToSnippetsAdmin()
 
 		const snippetRow = page
-			.locator(SELECTORS.SNIPPET_ROW)
-			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
 			.first()
 
 		await expect(snippetRow).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
@@ -146,8 +145,7 @@ test.describe('Code Snippets Admin', () => {
 		await helper.filterSnippetsByName(snippetName)
 
 		const snippetRow = page
-			.locator(SELECTORS.SNIPPET_ROW)
-			.filter({ has: page.locator(SELECTORS.SNIPPET_NAME_LINK).filter({ hasText: snippetName }) })
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
 			.first()
 
 		await expect(snippetRow).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
@@ -166,9 +164,6 @@ test.describe('Code Snippets Admin', () => {
 		await helper.openSnippet(snippetName)
 		await helper.deleteSnippet()
 		await helper.deleteSnippetFromList(snippetName)
-		await helper.expectElementCount(
-			`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:contains("${snippetName}"))`,
-			0
-		)
+		await helper.expectElementCount(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`, 0)
 	})
 })
