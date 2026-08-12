@@ -8,8 +8,8 @@ import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { cloneSnippetObject, getSnippetEditUrl } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
-import { SnippetPreviewModal } from '../../common/SnippetPreviewModal'
-import { useDeleteSnippet } from '../../../hooks/useDeleteSnippet'
+import { SnippetPreviewModal } from '../../common/snippets/SnippetPreviewModal'
+import { ConfirmDeleteDialog, useDeleteSnippet } from '../../common/snippets/ConfirmDeleteDialog'
 import type { ReactNode } from 'react'
 import type { Snippet } from '../../../types/Snippet'
 
@@ -17,7 +17,7 @@ interface RowActionsProps {
 	snippet: Snippet
 }
 
-const PreviewLink: React.FC<RowActionsProps> = ({ snippet }) => {
+const PreviewButton: React.FC<RowActionsProps> = ({ snippet }) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	return (
@@ -43,28 +43,6 @@ enum SnippetActionStatus { Ready, Working, Errored }
 
 const SnippetActionButton: React.FC<SnippetActionButtonProps> = ({ action, label, workingLabel, failedLabel, className }) => {
 	const [status, setStatus] = useState(SnippetActionStatus.Ready)
-
-	const ButtonContent = () => {
-		switch (status) {
-			case SnippetActionStatus.Working:
-				return (
-					<span className="snippet-row-action-feedback">
-						<Spinner /> {workingLabel ?? __('Loading…', 'code-snippets')}
-					</span>
-				)
-
-			case SnippetActionStatus.Errored:
-				return (
-					<span className="snippet-row-action-error">
-						<span className="dashicons dashicons-warning"></span>
-						{failedLabel ?? __('Failed', 'code-snippets')}
-					</span>
-				)
-
-			default:
-				return label
-		}
-	}
 
 	return (
 		<Button
@@ -94,14 +72,34 @@ const SnippetActionButton: React.FC<SnippetActionButtonProps> = ({ action, label
 				}
 			}}
 		>
-			<ButtonContent />
+			{(() => {
+				switch (status) {
+					case SnippetActionStatus.Working:
+						return (
+							<span className="snippet-row-action-feedback">
+								<Spinner /> {workingLabel ?? __('Loading…', 'code-snippets')}
+							</span>
+						)
+
+					case SnippetActionStatus.Errored:
+						return (
+							<span className="snippet-row-action-error">
+								<span className="dashicons dashicons-warning"></span>
+								{failedLabel ?? __('Failed', 'code-snippets')}
+							</span>
+						)
+
+					default:
+						return label
+				}
+			})()}
 		</Button>
 	)
 }
 
 const DeleteActionLink: React.FC<RowActionsProps> = ({ snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
-	const { requestDelete, ConfirmDeleteDialog } = useDeleteSnippet({ snippet, onSuccess: refreshSnippetsList })
+	const { requestDelete, deleteDialogProps } = useDeleteSnippet({ snippet, onSuccess: refreshSnippetsList })
 
 	return (
 		<>
@@ -113,7 +111,7 @@ const DeleteActionLink: React.FC<RowActionsProps> = ({ snippet }) => {
 				failedLabel={__('Failed to delete', 'code-snippets')}
 			/>
 
-			<ConfirmDeleteDialog />
+			<ConfirmDeleteDialog {...deleteDialogProps} />
 		</>
 	)
 }
@@ -122,15 +120,15 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
-	const Preview = !snippet.trashed ? <PreviewLink snippet={snippet} /> : null
+	const previewButton = !snippet.trashed ? <PreviewButton snippet={snippet} /> : null
 
-	const Edit = !snippet.trashed
+	const editLink = !snippet.trashed
 		? <a href={getSnippetEditUrl(snippet)}>
 			{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
 		</a>
 		: null
 
-	const Clone = !snippet.trashed
+	const cloneButton = !snippet.trashed
 		? <SnippetActionButton
 			label={__('Clone', 'code-snippets')}
 			workingLabel={__('Cloning…', 'code-snippets')}
@@ -138,7 +136,7 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 		/>
 		: null
 
-	const Export = !snippet.trashed
+	const exportButton = !snippet.trashed
 		? <SnippetActionButton
 			label={__('Export', 'code-snippets')}
 			workingLabel={__('Exporting…', 'code-snippets')}
@@ -148,7 +146,7 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 		/>
 		: null
 
-	const Restore = snippet.trashed
+	const restoreButton = snippet.trashed
 		? <SnippetActionButton
 			label={__('Restore', 'code-snippets')}
 			workingLabel={__('Restoring…', 'code-snippets')}
@@ -156,17 +154,17 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 		/>
 		: null
 
-	const Delete = !snippet.locked || snippet.trashed
+	const deleteButton = !snippet.locked || snippet.trashed
 		? <DeleteActionLink snippet={snippet} />
 		: null
 
 	return (
 		<>
-			{[Preview, Edit, Clone, Restore, Export, Delete]
-				.filter(Action => Action)
+			{[previewButton, editLink, cloneButton, restoreButton, exportButton, deleteButton]
+				.filter(action => action)
 				.reduce<ReactNode>(
-					(Actions, Action) =>
-						null === Actions ? <>{Action}</> : <>{Actions} | {Action}</>,
+					(actions, action) =>
+						null === actions ? <>{action}</> : <>{actions} | {action}</>,
 					null)}
 		</>
 	)

@@ -41,51 +41,58 @@ const ReturnLink: React.FC<ReturnLinkProps> = ({ onCancel, clearSelection }) =>
 		</Button>
 	</div>
 
+interface SelectAllButtonProps {
+	selectAll: VoidFunction
+	isAllSelected: boolean
+}
+
+const SelectAllButton: React.FC<SelectAllButtonProps> = ({ selectAll, isAllSelected }) =>
+	<Button onClick={selectAll}>
+		{isAllSelected
+			? __('Deselect All', 'code-snippets')
+			: __('Select All', 'code-snippets')}
+	</Button>
+
+interface SubmitButtonProps {
+	isImporting: boolean
+	selectedCount: number
+}
+
+const SubmitButton: React.FC<SubmitButtonProps> = ({ isImporting, selectedCount }) =>
+	<Button type="submit" primary disabled={0 === selectedCount || isImporting}>
+		{isImporting
+			? __('Importing…', 'code-snippets')
+			// translators: %d: number of selected snippets.
+			: sprintf(__('Import Selected (%d)', 'code-snippets'), selectedCount)}
+	</Button>
+
 interface SelectSnippetsFormProps {
 	isImporting: boolean
 	availableSnippets: ImportableSnippetSchema[]
 	snippetSelection: UseSelection<ImportableSnippetSchema, ImportableSnippetSchema['table_data']['id']>
 }
 
-const SelectSnippetsForm: React.FC<SelectSnippetsFormProps> = ({ availableSnippets, snippetSelection, isImporting }) => {
-	const SelectAllButton = () =>
-		<Button onClick={snippetSelection.selectAll}>
-			{snippetSelection.isAllSelected
-				? __('Deselect All', 'code-snippets')
-				: __('Select All', 'code-snippets')}
-		</Button>
-
-	const SubmitButton = () =>
-		<Button type="submit" primary disabled={0 === snippetSelection.selectedItems.size || isImporting}>
-			{isImporting
-				? __('Importing…', 'code-snippets')
-				// translators: %d: number of selected snippets.
-				: sprintf(__('Import Selected (%d)', 'code-snippets'), snippetSelection.selectedItems.size)}
-		</Button>
-
-	return (
-		<>
-			<div className="tablenav top">
-				<div>
-					<h2>{// translators: %d: number of available snippets.
-						sprintf(__('Available snippets (%d)', 'code-snippets'), availableSnippets.length)}</h2>
-					<p>{__('Select the snippets you would like to import.', 'code-snippets')}</p>
-				</div>
-				<div className="table-actions">
-					<SelectAllButton />
-					<SubmitButton />
-				</div>
+const SelectSnippetsForm: React.FC<SelectSnippetsFormProps> = ({ availableSnippets, snippetSelection, isImporting }) =>
+	<>
+		<div className="tablenav top">
+			<div>
+				<h2>{// translators: %d: number of available snippets.
+					sprintf(__('Available snippets (%d)', 'code-snippets'), availableSnippets.length)}</h2>
+				<p>{__('Select the snippets you would like to import.', 'code-snippets')}</p>
 			</div>
-
-			<SnippetSelectionTable snippets={availableSnippets} selection={snippetSelection} />
-
-			<div className="tablenav bottom">
-				<SelectAllButton />
-				<SubmitButton />
+			<div className="table-actions">
+				<SelectAllButton selectAll={snippetSelection.selectAll} isAllSelected={snippetSelection.isAllSelected} />
+				<SubmitButton isImporting={isImporting} selectedCount={snippetSelection.selectedItems.size} />
 			</div>
-		</>
-	)
-}
+		</div>
+
+		<SnippetSelectionTable snippets={availableSnippets} selection={snippetSelection} />
+
+		<div className="tablenav bottom">
+			<SelectAllButton selectAll={snippetSelection.selectAll} isAllSelected={snippetSelection.isAllSelected} />
+			<SubmitButton isImporting={isImporting} selectedCount={snippetSelection.selectedItems.size} />
+		</div>
+	</>
 
 interface SubmitFormProps {
 	children: ReactNode

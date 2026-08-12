@@ -1,19 +1,19 @@
 import { Modal } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useRef, useState } from 'react'
-import { useDeleteSnippet } from '../../hooks/useDeleteSnippet'
-import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
-import { useSnippetsList } from '../../hooks/useSnippetsList'
-import { handleUnknownError } from '../../utils/errors'
-import { downloadSnippetExportFile } from '../../utils/files'
-import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../utils/snippets/snippets'
-import { Badge } from './Badge'
-import { Button } from './Button'
-import { CloudSnippetDownloadButton } from './cloud/CloudSnippetDownloadButton'
-import type { CloudSnippetSchema } from '../../types/schema/CloudSnippetSchema'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
+import { useSnippetsList } from '../../../hooks/useSnippetsList'
+import { handleUnknownError } from '../../../utils/errors'
+import { downloadSnippetExportFile } from '../../../utils/files'
+import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { Badge } from '../Badge'
+import { Button } from '../Button'
+import { CloudSnippetDownloadButton } from '../cloud/CloudSnippetDownloadButton'
+import { ConfirmDeleteDialog, useDeleteSnippet } from './ConfirmDeleteDialog'
+import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
 import type { ReactNode } from 'react'
-import type { Snippet, SnippetType } from '../../types/Snippet'
+import type { Snippet, SnippetType } from '../../../types/Snippet'
 
 const EDITOR_MODES: Record<string, string> = {
 	css: 'text/css',
@@ -71,20 +71,18 @@ const CopyCodeButton: React.FC<{ code: string }> = ({ code }) => {
 			.catch(() => setCopyStatus(CopyStatus.Failed))
 	}
 
-	const Label = () => {
-		switch (copyStatus) {
-			case CopyStatus.Copied:
-				return __('Copied', 'code-snippets')
-			case CopyStatus.Failed:
-				return __('Copy unavailable', 'code-snippets')
-			case CopyStatus.Ready:
-				return __('Copy code', 'code-snippets')
-		}
-	}
-
 	return (
 		<Button secondary onClick={handleCopy}>
-			<Label />
+			{(() => {
+				switch (copyStatus) {
+					case CopyStatus.Copied:
+						return __('Copied', 'code-snippets')
+					case CopyStatus.Failed:
+						return __('Copy unavailable', 'code-snippets')
+					case CopyStatus.Ready:
+						return __('Copy code', 'code-snippets')
+				}
+			})()}
 		</Button>
 	)
 }
@@ -235,7 +233,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 	const { refreshSnippetsList } = useSnippetsList()
 	const { isWorking, setIsWorking } = useWorkingState()
 
-	const { requestDelete, ConfirmDeleteDialog } = useDeleteSnippet({
+	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
 		snippet,
 		setIsWorking,
 		onSuccess: () => {
@@ -283,7 +281,7 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 					<span className="code-snippets-preview-modal__priority-value">{snippet.priority}</span>
 				</div>
 
-				<ConfirmDeleteDialog />
+				<ConfirmDeleteDialog {...deleteDialogProps} />
 			</div>
 		</PreviewModal>
 	)

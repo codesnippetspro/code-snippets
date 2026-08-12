@@ -12,7 +12,7 @@ import type { ReactNode } from 'react'
 
 const TAB_QUERY_PARAM = 'tab'
 
-interface ImportMenuTab extends SubnavTab {
+interface ImportMenuTab extends SubnavTab<'upload' | 'migrate'> {
 	content: ReactNode
 }
 

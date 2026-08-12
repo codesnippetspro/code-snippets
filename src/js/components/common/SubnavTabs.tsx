@@ -5,13 +5,13 @@ import { isLicensed } from '../../utils/screen'
 import { useHorizontalScrollOverflow } from '../../hooks/useHorizontalScrollOverflow'
 import { fetchQueryParam, updateQueryParams } from '../../utils/urls'
 
-export interface SubnavTab {
-	name: string
+export interface SubnavTab<T extends string> {
+	name: T
 	label: string
 	pro?: boolean
 }
 
-export const getTabFromQuery = <Tab extends SubnavTab>(
+export const getTabFromQuery = <Tab extends SubnavTab<string>>(
 	tabs: Tab[],
 	queryParamName: string
 ): Tab => {
@@ -26,7 +26,7 @@ export const getTabFromQuery = <Tab extends SubnavTab>(
 	return tabs[0]
 }
 
-export interface SubnavTabsProps<Tab extends SubnavTab> {
+export interface SubnavTabsProps<Tab extends SubnavTab<string>> {
 	tabs: readonly Tab[]
 	ariaLabel: string
 	className?: string
@@ -36,7 +36,7 @@ export interface SubnavTabsProps<Tab extends SubnavTab> {
 	queryParamName?: string
 }
 
-export const SubnavTabs = <Tab extends SubnavTab>({
+export const SubnavTabs = <Tab extends SubnavTab<string>>({
 	tabs,
 	ariaLabel,
 	className,

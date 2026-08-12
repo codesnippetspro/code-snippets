@@ -316,24 +316,29 @@ class File_Import_REST_Controller extends REST_Controller {
 			return new WP_Error( 'no_snippets_in_file', sprintf( $message, $file_name ) );
 		}
 
-		return array_map(
-			function ( $snippet_data ) use ( $file_name ) {
-				return [
-					'source_file' => $file_name,
-					'table_data'  => [
-						'id'          => $snippet_data['id'] ?? uniqid(),
-						'title'       => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
-						'scope'       => $snippet_data['scope'] ?? 'global',
-						'tags'        => is_array( $snippet_data['tags'] ?? null )
-							? implode( ', ', $snippet_data['tags'] )
-							: '',
-						'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
-						'type'        => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
-					],
-				];
-			},
-			$data['snippets']
-		);
+		$results = [];
+
+		foreach ( $data['snippets'] as $snippet_data ) {
+			if ( ! is_array( $snippet_data ) ) {
+				continue;
+			}
+
+			$snippet_data['source_file'] = $file_name;
+			$snippet_data['table_data'] = [
+				'id'          => $snippet_data['id'] ?? uniqid(),
+				'title'       => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
+				'scope'       => $snippet_data['scope'] ?? 'global',
+				'tags'        => is_array( $snippet_data['tags'] ?? null )
+					? implode( ', ', $snippet_data['tags'] )
+					: '',
+				'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
+				'type'        => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
+			];
+
+			$results[] = $snippet_data;
+		}
+
+		return $results;
 	}
 
 	/**
