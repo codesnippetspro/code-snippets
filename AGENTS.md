@@ -9,15 +9,11 @@ Tool-specific configuration lives in dedicated locations:
 - **Cursor:** `.cursor/rules/*.mdc`
 - **Claude:** `claude.md`
 
----
-
 ## Project Overview
 
 **Code Snippets** is a WordPress plugin that lets site owners manage and execute PHP, HTML, CSS, and JavaScript code
 snippets through a graphical interface — replacing the need to edit `functions.php` or maintain multiple single-purpose
 plugins.
-
----
 
 ## Repository Structure
 
@@ -50,14 +46,12 @@ plugins.
 │   ├── dist/               # Webpack output (built assets, not committed)
 │   ├── vendor/             # Composer dependencies
 │   └── composer.json       # PHP dependency management
+├── .github/                # CI workflows, issue templates, Copilot instructions
+├── assets/                 # WordPress.org screenshots, icons, and banners
 ├── config/                 # Webpack and PostCSS configuration
 ├── scripts/                # Release, versioning, and linter scripts
-├── tests/                  # PHPUnit suites, Playwright E2E specs
-├── assets/                 # WordPress.org screenshots, icons, and banners
-└── .github/                # CI workflows, issue templates, Copilot instructions
+└── tests/                  # PHPUnit suites, Playwright E2E specs
 ```
-
----
 
 ## Tech Stack
 
@@ -73,10 +67,8 @@ plugins.
 | PHP tests     | PHPUnit (`npm run test:php`)                                   |
 | E2E tests     | Playwright (`npm run test:playwright`)                         |
 | WP dev env    | `@wordpress/env` / `wp-env` (`npm run wp-env:start`)           |
-| Pre-commit    | Husky + lint-staged (auto-fix on commit)                       |
+| Pre-commit    | lint-staged (auto-fix on commit)                               |
 | PHP deps      | Composer with Imposter (namespace-prefixing)                   |
-
----
 
 ## Coding Standards
 
@@ -156,8 +148,6 @@ plugins.
 - Maintain a direct mapping between source classes and their test files; split source classes and tests only when doing
   so creates a meaningful separation or clearer testing boundary.
 
----
-
 ## Architecture Patterns
 
 - **PSR-4 autoloading via Composer** — class files are discovered automatically; do not `require` them manually.
@@ -171,8 +161,6 @@ plugins.
   before changing any default behaviour that may be preference-driven.
 - **Safe mode** — `src/php/Core/load.php` boots a recovery path when safe mode is active; any change to snippet
   execution must preserve this path.
-
----
 
 ## Branching & Git Workflow
 
@@ -208,13 +196,11 @@ plugins.
 - On the public repository, do not disclose premium (Pro) decisions, features, or roadmap, and avoid
   unnecessary references to private repositories, issues, or cross-edition work.
 
----
-
 ## Development Commands
 
 ```bash
 # Install dependencies
-npm install                  # Node deps + Husky hooks
+npm install                  # Node deps
 cd src && composer install   # PHP deps (or: npm run bundle)
 
 # WordPress environment
@@ -254,8 +240,6 @@ npm run version-rc           # Pre-release release candidate
 npm run version              # Final release
 ```
 
----
-
 ## Security Checklist
 
 Apply to every change:
@@ -269,8 +253,6 @@ Apply to every change:
 - Use `$wpdb->prepare()` for every dynamic SQL value.
 - Any feature fetching remote content must document its trust model.
 
----
-
 ## Testing Requirements
 
 - **Unit tests** (PHPUnit) — required for all PHP logic changes.
@@ -278,8 +260,6 @@ Apply to every change:
 - **E2E tests** (Playwright) — required for changes affecting snippet create/edit/execute flows.
 - **Minimum requirements** - Tests must be compatible with the minimum supported PHP 7.4 and WordPress 5.5.
 - **Build** - Generated build artifacts (`src/dist/`, Composer autoload maps) must be regenerated when source changes.
-
----
 
 ## Do Not
 
