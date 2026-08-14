@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { useSnippetView } from '../../../hooks/useSnippetView'
+import { isLicensed } from '../../../utils/screen'
 import { updateQueryParams } from '../../../utils/urls'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { SubnavTabs, getTabFromQuery } from '../../common/SubnavTabs'
@@ -9,11 +10,11 @@ import { WithCloudSnippetDownloadsContext } from '../../common/cloud/WithCloudSn
 import { UpsellPage } from '../../common/UpsellDialog'
 import { WithCloudSearchContext, useCloudSearch } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
-import type { SubnavTab} from '../../common/SubnavTabs'
+import type { SubnavTab } from '../../common/SubnavTabs'
 
 const TAB_QUERY_PARAM = 'tab'
 
-const TABS: SubnavTab[] = [
+const TABS: SubnavTab<'snippets' | 'bundles'>[] = [
 	{
 		name: 'snippets',
 		label: __('Snippets', 'code-snippets')
@@ -29,19 +30,6 @@ const CommunityCloudInner = () => {
 	const [currentTab, setCurrentTab] = useState(() => getTabFromQuery(TABS, TAB_QUERY_PARAM))
 	const { snippetView, setSnippetView } = useSnippetView()
 	const { searchResults } = useCloudSearch()
-
-	const TabContent = () => {
-		switch (currentTab.name) {
-			case 'snippets':
-				return <CloudSearch snippetView={snippetView} setSnippetView={setSnippetView} />
-
-			case 'bundles':
-				return <UpsellPage />
-
-			default:
-				return null
-		}
-	}
 
 	return (
 		<>
@@ -59,9 +47,8 @@ const CommunityCloudInner = () => {
 
 			<ScreenMetaSlot hidden={'bundles' === currentTab.name} />
 
-			{'bundles' === currentTab.name
-				? null
-				: <>
+			{(!currentTab.pro || isLicensed()) && (
+				<>
 					<div className="snippets-page-header">
 						<h1>{
 							// translators: %s: label of the currently selected community cloud tab.
@@ -73,9 +60,17 @@ const CommunityCloudInner = () => {
 					<p className="snippets-page-description">
 						{__('Search the community cloud and download user-shared snippets directly to your site.', 'code-snippets')}
 					</p>
-				</>}
+				</>)}
 
-			<TabContent />
+			{(() => {
+				switch (currentTab.name) {
+					case 'snippets':
+						return <CloudSearch snippetView={snippetView} setSnippetView={setSnippetView} />
+
+					case 'bundles':
+						return <UpsellPage />
+				}
+			})()}
 		</>
 	)
 }

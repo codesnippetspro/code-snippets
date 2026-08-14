@@ -465,7 +465,8 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 
 	// Update the recently active list.
 	$snippet = get_snippet( $id );
-	$recently_active = [ $id => time() ] + get_self_option( $network, 'recently_active_snippets', [] );
+	$recently_active = get_self_option( $network, 'recently_active_snippets', [] );
+	$recently_active[ $id ] = time();
 	update_self_option( $network, 'recently_active_snippets', $recently_active );
 
 	update_shared_network_snippets( [ $snippet ] );
@@ -711,7 +712,8 @@ function save_snippet( $snippet ): ?Snippet {
 		do_action( 'code_snippets/update_snippet', $updated, $table, $existing, $snippet );
 
 		if ( ! $updated->active && $existing->active ) {
-			$recently_active = [ $updated->id => time() ] + get_self_option( $updated->network, 'recently_active_snippets', [] );
+			$recently_active = get_self_option( $updated->network, 'recently_active_snippets', [] );
+			$recently_active[ $updated->id ] = time();
 			update_self_option( $updated->network, 'recently_active_snippets', $recently_active );
 		} elseif ( ! $updated->active ) {
 			$recently_active = get_self_option( $updated->network, 'recently_active_snippets', [] );

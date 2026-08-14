@@ -6,7 +6,7 @@ License: GPL-2.0-or-later
 License URI: license.txt
 Stable tag: 3.9.6
 Requires at least: 5.5
-Tested up to: 7.0
+Tested up to: 7.0.3
 Requires PHP: 7.4
 
 An easy, clean, and simple way to enhance your site with code snippets.

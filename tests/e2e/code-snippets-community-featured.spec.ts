@@ -159,7 +159,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 		const loadingNotice = page.getByRole('status', { name: 'Community snippets status' })
 		await expect(loadingNotice).toHaveClass(/code-snippets-notice/)
-		await expect(loadingNotice).toContainText('Loading community snippets…')
+		await expect(loadingNotice).toContainText('Loading snippets from cloud…')
 
 		releaseRequest()
 

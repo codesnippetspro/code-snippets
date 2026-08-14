@@ -205,7 +205,7 @@ class Edit_Menu extends Admin_Menu {
 		wp_enqueue_script(
 			self::JS_HANDLE,
 			plugins_url( 'dist/edit.js', PLUGIN_FILE ),
-			[ 'code-snippets-code-editor' ] + self::$script_deps,
+			array_merge( [ 'code-snippets-code-editor' ], self::$script_deps ),
 			PLUGIN_VERSION,
 			[ 'in_footer' => true ]
 		);

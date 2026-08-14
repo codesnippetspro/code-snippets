@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
-import { ConfirmDialog } from '../components/common/ConfirmDialog'
-import { useSnippetsAPI } from './useSnippetsAPI'
-import type { Snippet } from '../types/Snippet'
+import { ConfirmDialog } from '../ConfirmDialog'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
+import type { Snippet } from '../../../types/Snippet'
 
 const TrashActiveConfirmMessage = () =>
 	<>
@@ -29,6 +29,30 @@ const PermanentDeleteConfirmMessage = () =>
 		<p>{__('This action cannot be undone.', 'code-snippets')}</p>
 	</>
 
+export interface ConfirmDeleteDialogProps {
+	snippet: Snippet
+	isDialogOpen: boolean
+	setIsDialogOpen: (isOpen: boolean) => void
+	makeDeleteRequest: () => Promise<void>
+}
+
+export const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({ snippet, isDialogOpen, setIsDialogOpen, makeDeleteRequest }) =>
+	<ConfirmDialog
+		open={isDialogOpen}
+		title={__('Are you sure?', 'code-snippets')}
+		confirmLabel={snippet.trashed ? __('Delete', 'code-snippets') : __('Trash', 'code-snippets')}
+		confirmButtonClassName="is-destructive"
+		onCancel={() => setIsDialogOpen(false)}
+		onConfirm={() => {
+			setIsDialogOpen(false)
+			void makeDeleteRequest()
+		}}
+	>
+		{snippet.trashed
+			? <PermanentDeleteConfirmMessage />
+			: <TrashActiveConfirmMessage />}
+	</ConfirmDialog>
+
 export interface UseDeleteSnippetProps {
 	snippet: Snippet
 	setIsWorking?: (isWorking: boolean) => void
@@ -36,9 +60,9 @@ export interface UseDeleteSnippetProps {
 	onError?: (error: unknown) => void
 }
 
-export interface UseDeleteSnippet {
+export interface ConfirmDeleteDialog {
 	requestDelete: () => Promise<void>
-	ConfirmDeleteDialog: React.FC
+	deleteDialogProps: ConfirmDeleteDialogProps
 }
 
 export const useDeleteSnippet = ({
@@ -46,7 +70,7 @@ export const useDeleteSnippet = ({
 	setIsWorking,
 	onSuccess,
 	onError
-}: UseDeleteSnippetProps): UseDeleteSnippet => {
+}: UseDeleteSnippetProps): ConfirmDeleteDialog => {
 	const snippetsAPI = useSnippetsAPI()
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -71,22 +95,5 @@ export const useDeleteSnippet = ({
 		}
 	}
 
-	const ConfirmDeleteDialog = () =>
-		<ConfirmDialog
-			open={isDialogOpen}
-			title={__('Are you sure?', 'code-snippets')}
-			confirmLabel={snippet.trashed ? __('Delete', 'code-snippets') : __('Trash', 'code-snippets')}
-			confirmButtonClassName="is-destructive"
-			onCancel={() => setIsDialogOpen(false)}
-			onConfirm={() => {
-				setIsDialogOpen(false)
-				void makeDeleteRequest()
-			}}
-		>
-			{snippet.trashed
-				? <PermanentDeleteConfirmMessage />
-				: <TrashActiveConfirmMessage />}
-		</ConfirmDialog>
-
-	return { requestDelete, ConfirmDeleteDialog }
+	return { requestDelete, deleteDialogProps: { snippet, isDialogOpen, setIsDialogOpen, makeDeleteRequest } }
 }
