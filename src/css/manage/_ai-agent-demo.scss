@@ -1,0 +1,182 @@
+$primary: #2271b1;
+$muted: #50575e;
+
+.ai-agent-demo-chip {
+	display: inline-block;
+	margin-inline-start: 10px;
+	padding-block: 2px;
+	padding-inline: 8px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: $muted;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	vertical-align: middle;
+}
+
+.ai-agent-demo-controls {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+	margin-inline-start: auto;
+}
+
+/* Prompt box */
+
+.ai-agent-demo-prompt__text {
+	display: block;
+	white-space: pre-wrap;
+	word-break: break-word;
+	color: #1d2327;
+	line-height: 1.6;
+}
+
+.ai-agent-demo-prompt__placeholder {
+	color: #8c8f94;
+}
+
+.ai-agent-demo-prompt.is-typing {
+	border-color: $primary;
+	box-shadow: 0 0 0 1px $primary;
+}
+
+.ai-agent-demo-prompt__caret {
+	display: inline-block;
+	inline-size: 2px;
+	block-size: 1.1em;
+	margin-inline-start: 1px;
+	background: $primary;
+	vertical-align: text-bottom;
+	animation: ai-agent-demo-caret 1s step-end infinite;
+}
+
+@keyframes ai-agent-demo-caret {
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0;
+	}
+}
+
+/* Simulated button presses */
+
+.ai-agent-demo-send.is-pressed,
+.ai-agent-demo-accept.is-pressed {
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px $primary;
+	transform: translateY(1px);
+}
+
+/* Cloud round trip */
+
+.ai-agent-demo-transit {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-block: 10px;
+	padding-inline: 14px;
+	border: 1px dashed #c3c4c7;
+	border-radius: 8px;
+	background: #f6f7f7;
+	color: $muted;
+	font-size: 13px;
+	animation: ai-agent-fade-in 0.25s ease;
+}
+
+.ai-agent-demo-transit__endpoint {
+	white-space: nowrap;
+}
+
+.ai-agent-demo-transit__track {
+	position: relative;
+	flex: 1;
+	block-size: 2px;
+	min-inline-size: 60px;
+	border-radius: 2px;
+	background: #dcdcde;
+	overflow: hidden;
+}
+
+.ai-agent-demo-transit__pulse {
+	position: absolute;
+	inset-block: 0;
+	inline-size: 40%;
+	border-radius: 2px;
+	background: $primary;
+	animation: ai-agent-demo-transit 1.4s ease-in-out infinite;
+}
+
+@keyframes ai-agent-demo-transit {
+	from {
+		inset-inline-start: -40%;
+	}
+
+	to {
+		inset-inline-start: 100%;
+	}
+}
+
+/* Sidebar additions */
+
+.ai-agent-demo-capabilities {
+	margin-block-start: 20px;
+}
+
+.ai-agent-demo-capabilities__list {
+	margin-block: 0;
+	padding-inline-start: 18px;
+	color: $muted;
+	font-size: 13px;
+
+	li {
+		margin-block-end: 8px;
+	}
+}
+
+/* Closing upsell */
+
+.ai-agent-demo-upsell {
+	border: 1px solid #c5d9ed;
+	border-radius: 8px;
+	background: #f0f6fc;
+	padding: 20px;
+	animation: ai-agent-fade-in 0.35s ease;
+
+	p {
+		margin-block: 0 12px;
+		color: #1d2327;
+	}
+}
+
+.ai-agent-demo-upsell__title {
+	margin-block: 0 10px;
+	font-size: 16px;
+}
+
+.ai-agent-demo-upsell__actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ai-agent-demo-prompt__caret,
+	.ai-agent-demo-transit__pulse,
+	.ai-agent-typing__dots i {
+		animation: none;
+	}
+
+	.ai-agent-plan,
+	.ai-agent-result,
+	.ai-agent-typing,
+	.ai-agent-demo-transit,
+	.ai-agent-demo-upsell {
+		animation: none;
+	}
+}
