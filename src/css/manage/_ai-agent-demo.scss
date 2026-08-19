@@ -16,12 +16,22 @@ $muted: #50575e;
 	vertical-align: middle;
 }
 
+.ai-agent-demo-title {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 20px;
+
+	h1 {
+		margin-block: 0;
+	}
+}
+
 .ai-agent-demo-controls {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	flex-shrink: 0;
-	margin-inline-start: auto;
 }
 
 /* Prompt box */
