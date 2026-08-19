@@ -5,10 +5,6 @@ export const BLUEPRINT_TITLE = __('Create a Shortcode', 'code-snippets')
 
 export const BLUEPRINT_DESCRIPTION = __('Create a custom shortcode to display dynamic content using a simple tag.', 'code-snippets')
 
-export const BLUEPRINT_INTRO = __('Create a custom shortcode to add dynamic content anywhere on your site using a simple tag like [my_shortcode].', 'code-snippets')
-
-export const BLUEPRINT_DOCS_URL = 'https://codesnippets.pro/doc/blueprint-create-a-shortcode/'
-
 const SHORTCODE_OUTPUT = `// Build the card markup from the shortcode attributes.
 return sprintf(
 	'<div class="staff-profile"><h3>%s</h3><p>%s</p></div>',

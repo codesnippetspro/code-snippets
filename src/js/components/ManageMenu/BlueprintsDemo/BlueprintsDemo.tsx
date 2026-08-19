@@ -6,13 +6,7 @@ import { BlueprintFormPanel } from './BlueprintFormPanel'
 import { BlueprintSidebar } from './BlueprintSidebar'
 import { GeneratedNotice } from './GeneratedNotice'
 import { StepCallout } from './StepCallout'
-import {
-	BLUEPRINT_DESCRIPTION,
-	BLUEPRINT_DOCS_URL,
-	BLUEPRINT_INTRO,
-	BLUEPRINT_TITLE,
-	getSection
-} from './demoBlueprint'
+import { BLUEPRINT_DESCRIPTION, BLUEPRINT_TITLE, getSection } from './demoBlueprint'
 import { useBlueprintsDemo } from './useBlueprintsDemo'
 import { hasReached } from './types'
 import type { DemoStage } from './types'
@@ -32,17 +26,7 @@ const BlueprintHeader: React.FC = () =>
 			<div>
 				<h3>{BLUEPRINT_TITLE}</h3>
 				<p>{BLUEPRINT_DESCRIPTION}</p>
-				<p className="blueprint-detail__intro">{BLUEPRINT_INTRO}</p>
 			</div>
-
-			<a
-				href={BLUEPRINT_DOCS_URL}
-				target="_blank"
-				rel="noopener noreferrer"
-				className="button button-secondary docs-link"
-			>
-				{__('Read Documentation', 'code-snippets')}
-			</a>
 		</div>
 	</header>
 
