@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
 import { Notice } from '../../common/Notice'
+import { DemoCallout } from '../../common/demo/DemoCallout'
 import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
+import { useMarkDemoSeen } from '../../common/demo/useDemoSeen'
+import { getCallout } from './callouts'
 import { DemoPlanCard } from './DemoPlanCard'
 import { DemoPromptBox } from './DemoPromptBox'
 import { DemoResultCard } from './DemoResultCard'
@@ -44,15 +47,34 @@ const AiAgentDemoPage: React.FC = () => {
 		saveError,
 		hasStarted,
 		isFinished,
+		reducedMotion,
 		play,
 		skip,
 		replay
 	} = useAiAgentDemo()
 
+	const markSeen = useMarkDemoSeen('ai-agent')
+	const upsellRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		if (!isFinished) {
+			return
+		}
+
+		markSeen()
+
+		// Settle on the foot of the page so the closing panel and the snippets
+		// it refers to are in view together.
+		window.scrollTo({
+			top: document.body.scrollHeight,
+			behavior: reducedMotion ? 'auto' : 'smooth'
+		})
+	}, [isFinished, markSeen, reducedMotion])
+
 	const showPromptBox = !hasReached(stage, 'prompt-sent')
 
 	return (
-		<div className="ai-agent ai-agent-demo">
+		<div className="ai-agent ai-agent-demo demo-with-callout">
 			<DemoPageHeader
 				title={__('AI Agent', 'code-snippets')}
 				description={__('A guided walkthrough of the Pro AI Agent. Press play and watch it plan, build, and refine a snippet on your site.', 'code-snippets')}
@@ -64,6 +86,8 @@ const AiAgentDemoPage: React.FC = () => {
 			/>
 
 			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
+
+			<DemoCallout key={stage} callout={getCallout(stage)} />
 
 			<div className="ai-agent-layout">
 				<div className="ai-agent-layout__main">
@@ -98,7 +122,9 @@ const AiAgentDemoPage: React.FC = () => {
 
 						{hasReached(stage, 'saved') && <DemoMessage speaker="assistant">{DEMO_REFINEMENT_REPLY}</DemoMessage>}
 
-						{isFinished && <AiAgentDemoUpsell snippets={snippets} onReplay={replay} />}
+						{isFinished && <div ref={upsellRef}>
+							<AiAgentDemoUpsell snippets={snippets} onReplay={replay} />
+						</div>}
 					</div>
 
 					{showPromptBox && <DemoPromptBox
