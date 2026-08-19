@@ -7,17 +7,7 @@ $primary: #2271b1;
 // shorter tabs simply leave space beneath their fields.
 $panel-block-size: 420px;
 
-// Width reserved down the side of the page so the floating commentary never
-// covers the form it is describing.
-$callout-inline-size: 260px;
-$callout-gutter: 312px;
-$callout-breakpoint: 1400px;
-
 .blueprints-demo {
-	@media (width > $callout-breakpoint) {
-		padding-inline-end: $callout-gutter;
-	}
-
 	// Read-only controls keep their ordinary appearance: the walkthrough
 	// supplies the values, and greying every field out would misread as a
 	// broken form.
@@ -83,67 +73,6 @@ $callout-breakpoint: 1400px;
 	transform: translateY(1px);
 }
 
-/* Floating step commentary */
-
-.blueprints-demo-callout {
-	position: fixed;
-	inset-inline-end: 28px;
-	inset-block-start: 50%;
-	z-index: 100;
-	inline-size: $callout-inline-size;
-	box-sizing: border-box;
-	padding: 16px 18px;
-	border: 1px solid #b9d4ea;
-	border-inline-start: 4px solid theme.$accent;
-	border-radius: 10px;
-	background: #f4f9fd;
-	box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
-	transform: translateY(-50%);
-	animation: blueprints-demo-callout-in 300ms ease both;
-
-	// Below this there is no gutter to sit in, so the panel is dropped rather
-	// than allowed to obscure the thing it describes.
-	@media (width <= $callout-breakpoint) {
-		display: none;
-	}
-}
-
-.blueprints-demo-callout__step {
-	display: block;
-	margin-block-end: 6px;
-	color: theme.$accent;
-	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-}
-
-.blueprints-demo-callout__title {
-	margin-block: 0 6px;
-	font-size: 15px;
-	font-weight: 600;
-	color: #1d2327;
-}
-
-.blueprints-demo-callout__body {
-	margin: 0;
-	font-size: 13px;
-	line-height: 1.5;
-	color: #50575e;
-}
-
-@keyframes blueprints-demo-callout-in {
-	from {
-		opacity: 0;
-		transform: translate(12px, -50%);
-	}
-
-	to {
-		opacity: 1;
-		transform: translate(0, -50%);
-	}
-}
-
 /* Generated confirmation */
 
 .blueprints-demo-generated {
@@ -167,7 +96,6 @@ $callout-breakpoint: 1400px;
 
 @media (prefers-reduced-motion: reduce) {
 	.blueprints-demo .blueprint-form-content,
-	.blueprints-demo-callout,
 	.blueprints-demo-generated {
 		transition: none;
 		animation: none;

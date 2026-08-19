@@ -3,6 +3,12 @@
 // Shared chrome for the feature walkthroughs. Each demo styles its own stage
 // content; everything here is the frame around it.
 
+// Width reserved down the side of a demo page so the floating commentary never
+// covers the walkthrough it is describing.
+$callout-inline-size: 260px;
+$callout-gutter: 312px;
+$callout-breakpoint: 1400px;
+
 @keyframes demo-fade-in {
 	from {
 		opacity: 0;
@@ -53,6 +59,72 @@
 	flex-shrink: 0;
 }
 
+// Applied to a demo page root to hold open the callout's gutter.
+.demo-with-callout {
+	@media (width > $callout-breakpoint) {
+		padding-inline-end: $callout-gutter;
+	}
+}
+
+.demo-callout {
+	position: fixed;
+	inset-inline-end: 28px;
+	inset-block-start: 50%;
+	z-index: 100;
+	inline-size: $callout-inline-size;
+	box-sizing: border-box;
+	padding: 16px 18px;
+	border: 1px solid #b9d4ea;
+	border-inline-start: 4px solid theme.$accent;
+	border-radius: 10px;
+	background: #f4f9fd;
+	box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
+	transform: translateY(-50%);
+	animation: demo-callout-in 300ms ease both;
+
+	// Below this there is no gutter to sit in, so the panel is dropped rather
+	// than allowed to obscure the thing it describes.
+	@media (width <= $callout-breakpoint) {
+		display: none;
+	}
+}
+
+.demo-callout__step {
+	display: block;
+	margin-block-end: 6px;
+	color: theme.$accent;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.demo-callout__title {
+	margin-block: 0 6px;
+	font-size: 15px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.demo-callout__body {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #50575e;
+}
+
+@keyframes demo-callout-in {
+	from {
+		opacity: 0;
+		transform: translate(12px, -50%);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(0, -50%);
+	}
+}
+
 .demo-upsell {
 	border: 1px solid #c5d9ed;
 	border-radius: 8px;
@@ -79,7 +151,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.demo-upsell {
+	.demo-upsell,
+	.demo-callout {
 		animation: none;
 	}
 }

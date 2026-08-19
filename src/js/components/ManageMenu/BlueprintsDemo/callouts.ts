@@ -1,12 +1,6 @@
-import React from 'react'
 import { __ } from '@wordpress/i18n'
+import type { CalloutContent } from '../../common/demo/DemoCallout'
 import type { DemoStage } from './types'
-
-interface CalloutContent {
-	step: string
-	title: string
-	body: string
-}
 
 /**
  * What the walkthrough is doing at each stage, shown alongside the form so the
@@ -40,18 +34,5 @@ const CALLOUTS: Partial<Record<DemoStage, CalloutContent>> = {
 	}
 }
 
-export const StepCallout: React.FC<{ stage: DemoStage }> = ({ stage }) => {
-	const callout = CALLOUTS[stage]
-
-	if (!callout) {
-		return null
-	}
-
-	return (
-		<aside className="blueprints-demo-callout" aria-hidden="true">
-			<span className="blueprints-demo-callout__step">{callout.step}</span>
-			<h3 className="blueprints-demo-callout__title">{callout.title}</h3>
-			<p className="blueprints-demo-callout__body">{callout.body}</p>
-		</aside>
-	)
-}
+export const getCallout = (stage: DemoStage): CalloutContent | undefined =>
+	CALLOUTS[stage]

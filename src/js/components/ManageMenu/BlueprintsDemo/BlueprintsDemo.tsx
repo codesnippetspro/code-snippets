@@ -1,11 +1,14 @@
 import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
+import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
+import { DemoCallout } from '../../common/demo/DemoCallout'
 import { DemoUpsell } from '../../common/demo/DemoUpsell'
+import { useMarkDemoSeen } from '../../common/demo/useDemoSeen'
 import { BlueprintFormPanel } from './BlueprintFormPanel'
 import { BlueprintSidebar } from './BlueprintSidebar'
 import { GeneratedNotice } from './GeneratedNotice'
-import { StepCallout } from './StepCallout'
+import { getCallout } from './callouts'
 import { BLUEPRINT_DESCRIPTION, BLUEPRINT_TITLE, getSection } from './demoBlueprint'
 import { useBlueprintsDemo } from './useBlueprintsDemo'
 import { hasReached } from './types'
@@ -31,7 +34,7 @@ const BlueprintHeader: React.FC = () =>
 	</header>
 
 // eslint-disable-next-line max-lines-per-function -- the page reads as one sequence.
-export const BlueprintsDemo: React.FC = () => {
+const BlueprintsDemoPage: React.FC = () => {
 	const {
 		stage,
 		activeSection,
@@ -48,6 +51,13 @@ export const BlueprintsDemo: React.FC = () => {
 
 	const generatedRef = useRef<HTMLDivElement>(null)
 	const showGenerated = hasReached(stage, 'generated')
+	const markSeen = useMarkDemoSeen('blueprints')
+
+	useEffect(() => {
+		if (isFinished) {
+			markSeen()
+		}
+	}, [isFinished, markSeen])
 
 	useEffect(() => {
 		const behavior = reducedMotion ? 'auto' : 'smooth'
@@ -64,7 +74,7 @@ export const BlueprintsDemo: React.FC = () => {
 	}, [reducedMotion, stage])
 
 	return (
-		<div className="blueprints-demo">
+		<div className="blueprints-demo demo-with-callout">
 			<DemoPageHeader
 				title={__('Blueprints', 'code-snippets')}
 				description={__('A guided walkthrough of Pro Blueprints. Press play and watch a shortcode blueprint fill itself in and generate a snippet.', 'code-snippets')}
@@ -77,7 +87,7 @@ export const BlueprintsDemo: React.FC = () => {
 
 			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
-			<StepCallout key={stage} stage={stage} />
+			<DemoCallout key={stage} callout={getCallout(stage)} />
 
 			<div className="blueprint-detail">
 				<BlueprintHeader />
@@ -106,3 +116,8 @@ export const BlueprintsDemo: React.FC = () => {
 		</div>
 	)
 }
+
+export const BlueprintsDemo: React.FC = () =>
+	<WithRestAPIContext>
+		<BlueprintsDemoPage />
+	</WithRestAPIContext>
