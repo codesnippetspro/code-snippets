@@ -1,5 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
+import classnames from 'classnames'
 import type { DemoField, DemoRepeater, DemoSection } from './types'
 
 /**
@@ -73,8 +74,13 @@ const FieldRepeater: React.FC<{ repeater: DemoRepeater }> = ({ repeater }) =>
 		</div>
 	</div>
 
-export const BlueprintFormPanel: React.FC<{ section: DemoSection }> = ({ section }) =>
-	<div className="blueprint-form-content">
+interface BlueprintFormPanelProps {
+	section: DemoSection
+	isFading: boolean
+}
+
+export const BlueprintFormPanel: React.FC<BlueprintFormPanelProps> = ({ section, isFading }) =>
+	<div className={classnames('blueprint-form-content', { 'is-fading': isFading })}>
 		<h4>{section.title}</h4>
 
 		{section.description && <p className="blueprint-form-section-description">{section.description}</p>}

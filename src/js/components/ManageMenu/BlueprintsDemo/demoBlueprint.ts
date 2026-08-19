@@ -86,15 +86,13 @@ export const DEMO_SECTIONS: DemoSection[] = [
 					name: 'name',
 					label: __('Attribute name', 'code-snippets'),
 					type: 'text',
-					value: '',
-					description: __('Lowercase, no spaces (e.g. title, count, show_date).', 'code-snippets')
+					value: ''
 				},
 				{
 					name: 'default',
 					label: __('Default value', 'code-snippets'),
 					type: 'text',
-					value: '',
-					description: __('Used when the attribute is not provided.', 'code-snippets')
+					value: ''
 				},
 				{
 					name: 'type',

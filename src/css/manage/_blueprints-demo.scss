@@ -1,9 +1,34 @@
+@use '../common/theme';
+
 $primary: #2271b1;
 
-// Read-only controls keep their ordinary appearance: the walkthrough supplies
-// the values, and greying every field out would misread as a broken form.
+// Every section is held to one height so stepping between them never resizes
+// the card. The value fits the tallest tab (Output, with its code textarea);
+// shorter tabs simply leave space beneath their fields.
+$panel-block-size: 420px;
+
+// Width reserved down the side of the page so the floating commentary never
+// covers the form it is describing.
+$callout-inline-size: 260px;
+$callout-gutter: 312px;
+$callout-breakpoint: 1400px;
+
 .blueprints-demo {
+	@media (width > $callout-breakpoint) {
+		padding-inline-end: $callout-gutter;
+	}
+
+	// Read-only controls keep their ordinary appearance: the walkthrough
+	// supplies the values, and greying every field out would misread as a
+	// broken form.
 	.blueprint-form-content {
+		min-block-size: $panel-block-size;
+		transition: opacity 220ms ease;
+
+		&.is-fading {
+			opacity: 0;
+		}
+
 		input[type='text'],
 		textarea,
 		select {
@@ -27,12 +52,99 @@ $primary: #2271b1;
 	.blueprint-form-repeater__actions .button:disabled {
 		cursor: default;
 	}
+
+	// The fields grid is two columns, but the attributes repeater is the only
+	// thing on its tab, so it takes the full width rather than half of it.
+	.blueprint-form-fields > .blueprint-form-repeater {
+		grid-column: 1 / -1;
+	}
+
+	// One attribute per row, its three cells sharing the width evenly, so the
+	// Attributes tab stays within the shared height.
+	.blueprint-form-repeater__row {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+		align-items: end;
+		gap: 8px 14px;
+
+		.blueprint-form-repeater__cell {
+			flex: none;
+			min-inline-size: 0;
+		}
+
+		.blueprint-form-repeater__actions {
+			flex-basis: auto;
+		}
+	}
 }
 
 .blueprint-form-sidebar__generate.is-pressed {
 	box-shadow: 0 0 0 2px #fff, 0 0 0 4px $primary;
 	transform: translateY(1px);
 }
+
+/* Floating step commentary */
+
+.blueprints-demo-callout {
+	position: fixed;
+	inset-inline-end: 28px;
+	inset-block-start: 50%;
+	z-index: 100;
+	inline-size: $callout-inline-size;
+	box-sizing: border-box;
+	padding: 16px 18px;
+	border: 1px solid #b9d4ea;
+	border-inline-start: 4px solid theme.$accent;
+	border-radius: 10px;
+	background: #f4f9fd;
+	box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
+	transform: translateY(-50%);
+	animation: blueprints-demo-callout-in 300ms ease both;
+
+	// Below this there is no gutter to sit in, so the panel is dropped rather
+	// than allowed to obscure the thing it describes.
+	@media (width <= $callout-breakpoint) {
+		display: none;
+	}
+}
+
+.blueprints-demo-callout__step {
+	display: block;
+	margin-block-end: 6px;
+	color: theme.$accent;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.blueprints-demo-callout__title {
+	margin-block: 0 6px;
+	font-size: 15px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.blueprints-demo-callout__body {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #50575e;
+}
+
+@keyframes blueprints-demo-callout-in {
+	from {
+		opacity: 0;
+		transform: translate(12px, -50%);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(0, -50%);
+	}
+}
+
+/* Generated confirmation */
 
 .blueprints-demo-generated {
 	display: flex;
@@ -54,7 +166,10 @@ $primary: #2271b1;
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.blueprints-demo .blueprint-form-content,
+	.blueprints-demo-callout,
 	.blueprints-demo-generated {
+		transition: none;
 		animation: none;
 	}
 }

@@ -5,6 +5,7 @@ import { DemoUpsell } from '../../common/demo/DemoUpsell'
 import { BlueprintFormPanel } from './BlueprintFormPanel'
 import { BlueprintSidebar } from './BlueprintSidebar'
 import { GeneratedNotice } from './GeneratedNotice'
+import { StepCallout } from './StepCallout'
 import {
 	BLUEPRINT_DESCRIPTION,
 	BLUEPRINT_DOCS_URL,
@@ -50,6 +51,7 @@ export const BlueprintsDemo: React.FC = () => {
 	const {
 		stage,
 		activeSection,
+		isFading,
 		sectionsBrowsable,
 		hasStarted,
 		isFinished,
@@ -64,11 +66,16 @@ export const BlueprintsDemo: React.FC = () => {
 	const showGenerated = hasReached(stage, 'generated')
 
 	useEffect(() => {
+		const behavior = reducedMotion ? 'auto' : 'smooth'
+
 		if ('generated' === stage) {
-			generatedRef.current?.scrollIntoView({
-				behavior: reducedMotion ? 'auto' : 'smooth',
-				block: 'center'
-			})
+			generatedRef.current?.scrollIntoView({ behavior, block: 'center' })
+		}
+
+		// Once the closing panel is in place, settle on the foot of the page so
+		// both it and the generated notice are in view together.
+		if ('finished' === stage) {
+			window.scrollTo({ top: document.body.scrollHeight, behavior })
 		}
 	}, [reducedMotion, stage])
 
@@ -86,6 +93,8 @@ export const BlueprintsDemo: React.FC = () => {
 
 			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
+			<StepCallout key={stage} stage={stage} />
+
 			<div className="blueprint-detail">
 				<BlueprintHeader />
 
@@ -97,7 +106,7 @@ export const BlueprintsDemo: React.FC = () => {
 						onSelect={selectSection}
 					/>
 
-					<BlueprintFormPanel section={getSection(activeSection)} />
+					<BlueprintFormPanel section={getSection(activeSection)} isFading={isFading} />
 				</div>
 			</div>
 
