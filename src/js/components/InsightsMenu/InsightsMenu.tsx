@@ -9,11 +9,12 @@ export const InsightsMenu: React.FC = () => {
 	return (
 		<>
 			<Toolbar />
-			{summary && <div className="code-snippets-insights">
-				<WithRestAPIContext>
-					<InsightsDashboard summary={summary} />
-				</WithRestAPIContext>
-			</div>}
+			{summary && (
+				<div className="code-snippets-insights">
+					<WithRestAPIContext>
+						<InsightsDashboard summary={summary} />
+					</WithRestAPIContext>
+				</div>)}
 		</>
 	)
 }

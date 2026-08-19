@@ -1,75 +1,23 @@
 import classnames from 'classnames'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { InsightsChartViewToggle } from './InsightsChartViewToggle'
 import type { InsightsChartEntry, InsightsChartKey, InsightsChartView } from '../../types/Insights'
-import type { SnippetCodeScope, SnippetType } from '../../types/Snippet'
 
 const PERCENTAGE_MAX = 100
 
-export const INSIGHTS_TYPE_COLORS: Readonly<Record<SnippetType, string>> = {
-	php: '#2271b1',
-	html: '#cd4510',
-	css: '#9b59b6',
-	js: '#f7d67a',
-	cond: '#22826f'
-}
-
-export const INSIGHTS_ACTIVATION_COLORS: Readonly<Record<string, string>> = {
-	active: '#118822',
-	inactive: '#cd4510'
-}
-
-export const INSIGHTS_LOCATION_COLORS: Readonly<Record<SnippetCodeScope, string>> = {
-	'global': '#ff9800',
-	'admin': '#03c7d2',
-	'front-end': '#d46f4d',
-	'single-use': '#00bcd4',
-	'content': '#2271b1',
-	'head-content': '#5865f2',
-	'body-content': '#3b5998',
-	'footer-content': '#9b59b6',
-	'admin-css': '#22826f',
-	'site-css': '#cd4510',
-	'site-head-js': '#f7d67a',
-	'site-footer-js': '#2b71a3'
-}
-
-interface InsightsChartProps {
-	chart: InsightsChartKey
-	entries: Readonly<Record<string, InsightsChartEntry>>
-	title: string
-	view: InsightsChartView
-	setView?: (view: InsightsChartView) => void
-	colors: Readonly<Record<string, string>>
-	total?: InsightsChartEntry
-}
-
-const getCount = (entry: InsightsChartEntry): number => Number(entry.count)
-
-const getLargestCount = (entries: Readonly<Record<string, InsightsChartEntry>>): number =>
-	Math.max(1, ...Object.values(entries).map(getCount))
-
-const getColor = (colors: Readonly<Record<string, string>>, key: string): string =>
-	colors[key] ?? '#646970'
-
-const getTotalCount = (entries: Readonly<Record<string, InsightsChartEntry>>): number =>
-	Object.values(entries).reduce((count, entry) => count + getCount(entry), 0)
+const DEFAULT_COLOR = '#646970'
 
 const getPieBackground = (
 	entries: Readonly<Record<string, InsightsChartEntry>>,
-	colors: Readonly<Record<string, string>>,
+	colors: Readonly<Record<string, string>> | undefined,
 	totalCount: number
 ): string => {
-	if (0 === totalCount) {
-		return '#e2e5e5'
-	}
-
 	let start = 0
 	const segments = Object.entries(entries)
-		.filter(([, entry]) => 0 < getCount(entry))
+		.filter(([, entry]) => 0 < Number(entry.count))
 		.map(([key, entry]) => {
-			const end = start + getCount(entry) / totalCount * PERCENTAGE_MAX
-			const segment = `${getColor(colors, key)} ${start}% ${end}%`
+			const end = start + Number(entry.count) / totalCount * PERCENTAGE_MAX
+			const segment = `${colors?.[key] ?? DEFAULT_COLOR} ${start}% ${end}%`
 
 			start = end
 			return segment
@@ -78,50 +26,72 @@ const getPieBackground = (
 	return `conic-gradient(${segments.join(', ')})`
 }
 
-interface BarChartProps extends Pick<InsightsChartProps, 'colors' | 'entries'> {
-	largestCount: number
+interface ChartProps {
+	entries: Readonly<Record<string, InsightsChartEntry>>
+	colors?: Readonly<Record<string, string>>
 }
 
-const BarChart: React.FC<BarChartProps> = ({ colors, entries, largestCount }) =>
-	<ul className="insights-bar-chart">
-		{Object.entries(entries).map(([key, entry]) =>
-			<li key={key}>
-				<span>{entry.label}</span>
-				<div className="insights-bar-track" aria-hidden="true">
-					<div
-						className="insights-bar-fill"
-						style={{
-							backgroundColor: getColor(colors, key),
-							inlineSize: `${getCount(entry) / largestCount * PERCENTAGE_MAX}%`
-						}}
-					/>
-				</div>
-				<strong>{entry.count}</strong>
-			</li>)}
-	</ul>
+const BarChart: React.FC<ChartProps> = ({ colors, entries }) => {
+	const entryCounts = useMemo(() =>
+		Object.values(entries)
+			.map(entry => Number(entry.count)),
+	[entries])
 
-interface PieChartProps extends Pick<InsightsChartProps, 'colors' | 'entries'> {
-	totalCount: number
-}
-
-const PieChart: React.FC<PieChartProps> = ({ colors, entries, totalCount }) =>
-	<div className="insights-pie-chart-content">
-		<div
-			className={classnames('insights-pie-chart', { 'is-empty': 0 === totalCount })}
-			aria-hidden="true"
-			style={0 === totalCount ? undefined : { background: getPieBackground(entries, colors, totalCount) }}
-		/>
-		<ul className="insights-pie-chart-legend">
+	return (
+		<ul className="insights-bar-chart">
 			{Object.entries(entries).map(([key, entry]) =>
 				<li key={key}>
-					<span>
-						<i aria-hidden="true" style={{ backgroundColor: getColor(colors, key) }} />
-						{entry.label}
-					</span>
+					<span>{entry.label}</span>
+					<div className="insights-bar-track" aria-hidden="true">
+						<div
+							className="insights-bar-fill"
+							style={{
+								backgroundColor: colors?.[key] ?? DEFAULT_COLOR,
+								inlineSize: `${Number(entry.count) / Math.max(1, ...entryCounts) * PERCENTAGE_MAX}%`
+							}}
+						/>
+					</div>
 					<strong>{entry.count}</strong>
 				</li>)}
 		</ul>
-	</div>
+	)
+}
+
+const PieChart: React.FC<ChartProps> = ({ colors, entries }) => {
+	const totalCount = useMemo(() =>
+		Object.values(entries).reduce((count, entry) =>
+			count + Number(entry.count), 0),
+	[entries])
+
+	return (
+		<div className="insights-pie-chart-content">
+			<div
+				className={classnames('insights-pie-chart', { 'is-empty': 0 === totalCount })}
+				aria-hidden="true"
+				style={0 === totalCount ? undefined : { background: getPieBackground(entries, colors, totalCount) }}
+			/>
+			<ul className="insights-pie-chart-legend">
+				{Object.entries(entries).map(([key, entry]) =>
+					<li key={key}>
+						<span>
+							<i aria-hidden="true" style={{ backgroundColor: colors?.[key] ?? DEFAULT_COLOR }} />
+							{entry.label}
+						</span>
+						<strong>{entry.count}</strong>
+					</li>)}
+			</ul>
+		</div>
+	)
+}
+
+export interface InsightsChartProps {
+	chart: InsightsChartKey
+	entries: Readonly<Record<string, InsightsChartEntry>>
+	title: string
+	view: InsightsChartView
+	setView?: (view: InsightsChartView) => void
+	colors?: Readonly<Record<string, string>>
+}
 
 export const InsightsChart: React.FC<InsightsChartProps> = ({
 	chart,
@@ -129,26 +99,26 @@ export const InsightsChart: React.FC<InsightsChartProps> = ({
 	entries,
 	setView,
 	title,
-	total,
 	view
-}) => {
-	const largestCount = getLargestCount(entries)
-	const totalCount = getTotalCount(entries)
-
-	return <section className="insights-chart-card" data-insights-chart={chart} data-view={total ? undefined : view}>
-		{total
-			? <div className="insights-number-chart">
-				<strong className="insights-number-chart-value">{total.count}</strong>
-				<span className="insights-number-chart-label">{total.label}</span>
-			</div>
-			: <>
-				<div className="insights-chart-card-header">
-					<h2>{title}</h2>
-					{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} />}
-				</div>
-				{'bar' === view
-					? <BarChart colors={colors} entries={entries} largestCount={largestCount} />
-					: <PieChart colors={colors} entries={entries} totalCount={totalCount} />}
-			</>}
+}) =>
+	<section className="insights-chart-card" data-insights-chart={chart} data-view={view}>
+		<div className="insights-chart-card-header">
+			<h2>{title}</h2>
+			{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} />}
+		</div>
+		{'bar' === view
+			? <BarChart colors={colors} entries={entries} />
+			: <PieChart colors={colors} entries={entries} />}
 	</section>
+
+export interface TotalsInsightsChartProps extends InsightsChartEntry {
+	chart: InsightsChartKey
 }
+
+export const TotalsInsightsChart: React.FC<TotalsInsightsChartProps> = ({ chart, count, label }) =>
+	<section className="insights-chart-card" data-insights-chart={chart}>
+		<div className="insights-number-chart">
+			<strong className="insights-number-chart-value">{count}</strong>
+			<span className="insights-number-chart-label">{label}</span>
+		</div>
+	</section>

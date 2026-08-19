@@ -3,6 +3,23 @@ import classnames from 'classnames'
 import React from 'react'
 import type { InsightsChartView } from '../../types/Insights'
 
+interface ViewToggleButtonProps extends InsightsChartViewToggleProps {
+	label: string
+	currentView: InsightsChartView
+}
+
+const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ title, label, view, setView, currentView }) =>
+	<button
+		type="button"
+		className={classnames('insights-chart-view-toggle-option', { 'active-view': currentView === view })}
+		aria-pressed={currentView === view}
+		title={title}
+		onClick={() => setView(view)}
+	>
+		<span className={`dashicons dashicons-chart-${view}`} aria-hidden="true" />
+		<span className="screen-reader-text">{label}</span>
+	</button>
+
 export interface InsightsChartViewToggleProps {
 	title: string
 	view: InsightsChartView
@@ -15,25 +32,19 @@ export const InsightsChartViewToggle: React.FC<InsightsChartViewToggleProps> = (
 		role="group"
 		aria-label={sprintf(__('%s chart view', 'code-snippets'), title)}
 	>
-		<button
-			type="button"
-			className={classnames('insights-chart-view-toggle-option', { 'active-view': 'pie' === view })}
-			aria-pressed={'pie' === view}
+		<ViewToggleButton
+			view="pie"
+			label={__('Pie chart view', 'code-snippets')}
 			title={__('Switch to pie chart view', 'code-snippets')}
-			onClick={() => setView('pie')}
-		>
-			<span className="dashicons dashicons-chart-pie" aria-hidden="true" />
-			<span className="screen-reader-text">{__('Pie chart view', 'code-snippets')}</span>
-		</button>
+			setView={setView}
+			currentView={view}
+		/>
 
-		<button
-			type="button"
-			className={classnames('insights-chart-view-toggle-option', { 'active-view': 'bar' === view })}
-			aria-pressed={'bar' === view}
+		<ViewToggleButton
+			view="bar"
+			label={__('Bar chart view', 'code-snippets')}
 			title={__('Switch to bar chart view', 'code-snippets')}
-			onClick={() => setView('bar')}
-		>
-			<span className="dashicons dashicons-chart-bar" aria-hidden="true" />
-			<span className="screen-reader-text">{__('Bar chart view', 'code-snippets')}</span>
-		</button>
+			setView={setView}
+			currentView={view}
+		/>
 	</div>
