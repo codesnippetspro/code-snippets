@@ -7,7 +7,7 @@ import { DEMO_PLAN } from './demoScript'
 import { languageToSnippetType } from './types'
 
 interface DemoPlanCardProps {
-	/** Whether the "Accept & create" button should render in its pressed state. */
+	/** Whether the walkthrough is clicking "Accept & create" right now. */
 	accepted: boolean
 }
 
@@ -42,7 +42,7 @@ export const DemoPlanCard: React.FC<DemoPlanCardProps> = ({ accepted }) => {
 				<Button
 					primary
 					type="button"
-					className={classnames('ai-agent-demo-accept', { 'is-pressed': accepted })}
+					className={classnames('ai-agent-demo-accept', { 'demo-click': accepted })}
 					aria-hidden="true"
 					tabIndex={-1}
 				>

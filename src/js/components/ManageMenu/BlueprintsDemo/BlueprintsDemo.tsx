@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
+import { DemoSpotlight } from '../../common/demo/DemoSpotlight'
 import { DemoCallout } from '../../common/demo/DemoCallout'
 import { DemoUpsell } from '../../common/demo/DemoUpsell'
 import { useMarkDemoSeen } from '../../common/demo/useDemoSeen'
@@ -13,6 +14,16 @@ import { BLUEPRINT_DESCRIPTION, BLUEPRINT_TITLE, getSection } from './demoBluepr
 import { useBlueprintsDemo } from './useBlueprintsDemo'
 import { hasReached } from './types'
 import type { DemoStage } from './types'
+
+/**
+ * Only the steps that point at one particular control are spotlit. Filling in
+ * the three sections needs no dimming: the active tab and the panel crossfade
+ * already say where to look.
+ */
+const STAGE_SPOTLIGHTS: Partial<Record<DemoStage, { target: string, padding?: number }>> = {
+	generating: { target: '.blueprint-form-sidebar__generate', padding: 8 },
+	generated: { target: '.blueprints-demo-generated', padding: 6 }
+}
 
 const STAGE_ANNOUNCEMENTS: Partial<Record<DemoStage, string>> = {
 	general: __('Filling in the general settings.', 'code-snippets'),
@@ -89,6 +100,8 @@ const BlueprintsDemoPage: React.FC = () => {
 
 			<DemoCallout callout={getCallout(stage)} />
 
+			<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
+
 			<div className="blueprint-detail">
 				<BlueprintHeader />
 
@@ -96,7 +109,7 @@ const BlueprintsDemoPage: React.FC = () => {
 					<BlueprintSidebar
 						activeSection={activeSection}
 						browsable={sectionsBrowsable}
-						generating={hasReached(stage, 'generating')}
+						generating={'generating' === stage}
 						onSelect={selectSection}
 					/>
 

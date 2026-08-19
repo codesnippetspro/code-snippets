@@ -9,7 +9,7 @@ interface DemoPromptBoxProps {
 	placeholder: string
 	/** Whether the caret should blink at the end of the text. */
 	typing: boolean
-	/** Whether the send button should render in its pressed state. */
+	/** Whether the walkthrough is clicking the send button right now. */
 	pressed?: boolean
 }
 
@@ -40,7 +40,7 @@ export const DemoPromptBox: React.FC<DemoPromptBoxProps> = ({
 			<Button
 				primary
 				type="button"
-				className={classnames('ai-agent-demo-send', { 'is-pressed': pressed })}
+				className={classnames('ai-agent-demo-send', { 'demo-click': pressed })}
 				aria-hidden="true"
 				tabIndex={-1}
 			>

@@ -41,14 +41,6 @@ $muted: #50575e;
 	}
 }
 
-/* Simulated button presses */
-
-.ai-agent-demo-send.is-pressed,
-.ai-agent-demo-accept.is-pressed {
-	box-shadow: 0 0 0 2px #fff, 0 0 0 4px $primary;
-	transform: translateY(1px);
-}
-
 /* Cloud round trip */
 
 .ai-agent-demo-transit {

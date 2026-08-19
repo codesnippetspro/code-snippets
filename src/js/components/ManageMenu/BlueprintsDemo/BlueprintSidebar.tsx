@@ -6,7 +6,7 @@ import { DEMO_SECTIONS } from './demoBlueprint'
 interface BlueprintSidebarProps {
 	activeSection: string
 	browsable: boolean
-	/** Whether the generate button should render in its pressed state. */
+	/** Whether the walkthrough is clicking the generate button right now. */
 	generating: boolean
 	onSelect: (id: string) => void
 }
@@ -41,7 +41,7 @@ export const BlueprintSidebar: React.FC<BlueprintSidebarProps> = ({
 		<div className="blueprint-form-sidebar__generate-wrap">
 			<button
 				type="button"
-				className={classnames('blueprint-form-sidebar__generate', { 'is-pressed': generating })}
+				className={classnames('blueprint-form-sidebar__generate', { 'demo-click': generating })}
 				aria-hidden="true"
 				tabIndex={-1}
 			>

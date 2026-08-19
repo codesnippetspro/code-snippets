@@ -5,6 +5,7 @@ import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
 import { Notice } from '../../common/Notice'
 import { DemoCallout } from '../../common/demo/DemoCallout'
 import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
+import { DemoSpotlight } from '../../common/demo/DemoSpotlight'
 import { useMarkDemoSeen } from '../../common/demo/useDemoSeen'
 import { getCallout } from './callouts'
 import { DemoPlanCard } from './DemoPlanCard'
@@ -17,6 +18,17 @@ import { DEMO_PROMPT, DEMO_REFINEMENT_REPLY } from './demoScript'
 import { useAiAgentDemo } from './useAiAgentDemo'
 import { hasReached } from './types'
 import type { DemoStage } from './types'
+
+/**
+ * Only the steps that point at one particular thing are spotlit. Typing,
+ * planning and building animate in place and need no dimming to be followed.
+ */
+const STAGE_SPOTLIGHTS: Partial<Record<DemoStage, { target: string, padding?: number }>> = {
+	'plan-ready': { target: '.ai-agent-plan', padding: 6 },
+	'plan-accepted': { target: '.ai-agent-plan', padding: 6 },
+	'result-ready': { target: '.ai-agent-result__rows', padding: 8 },
+	'applying': { target: '.ai-agent-result__edit', padding: 6 }
+}
 
 /**
  * Text announced to assistive technology as each stage begins, so the
@@ -89,6 +101,8 @@ const AiAgentDemoPage: React.FC = () => {
 
 			<DemoCallout callout={getCallout(stage)} />
 
+			<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
+
 			<div className="ai-agent-layout">
 				<div className="ai-agent-layout__main">
 					{saveError && <Notice type="error">
@@ -105,7 +119,7 @@ const AiAgentDemoPage: React.FC = () => {
 						</>}
 
 						{hasReached(stage, 'plan-ready') && !hasReached(stage, 'building') &&
-							<DemoPlanCard accepted={hasReached(stage, 'plan-accepted')} />}
+							<DemoPlanCard accepted={'plan-accepted' === stage} />}
 
 						{'building' === stage && <>
 							<DemoTransit label={__('Building the snippets in Code Snippets Cloud.', 'code-snippets')} />

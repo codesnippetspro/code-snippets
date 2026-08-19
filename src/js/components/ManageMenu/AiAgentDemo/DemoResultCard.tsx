@@ -53,7 +53,7 @@ const RefineSection: React.FC<{ stage: DemoStage, typedRefinement: string }> = (
 			<DemoPromptBox
 				value={typedRefinement}
 				typing={'typing-refinement' === stage}
-				pressed={hasReached(stage, 'applying')}
+				pressed={'applying' === stage}
 				submitLabel={__('Apply changes', 'code-snippets')}
 				placeholder={__('Describe the changes to the selected snippets…', 'code-snippets')}
 			/>
