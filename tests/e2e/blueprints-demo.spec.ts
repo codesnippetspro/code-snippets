@@ -71,6 +71,29 @@ test.describe('Blueprints demo', () => {
 		await expect(page.locator('.blueprint-form-repeater__row')).toHaveCount(2)
 	})
 
+	test('every section is the same height', async ({ page }) => {
+		await page.setViewportSize({ width: 1600, height: 950 })
+		await page.goto(DEMO_URL)
+
+		await page.locator('.demo-play').click()
+		await page.getByRole('button', { name: 'Skip animation' }).click()
+		await expect(page.locator('.demo-upsell')).toBeVisible()
+
+		const heights: number[] = []
+
+		for (const section of SECTIONS) {
+			await page.locator('.blueprint-form-sidebar__item', { hasText: section }).click()
+			await expect(activeTab(page)).toHaveText(section)
+
+			const box = await page.locator('.blueprint-form-layout').boundingBox()
+			heights.push(Math.round(box?.height ?? 0))
+		}
+
+		// Stepping between sections must never resize the card.
+		expect(new Set(heights).size).toBe(1)
+		expect(heights[0]).toBeGreaterThan(0)
+	})
+
 	test('replaying restarts from the first section', async ({ page }) => {
 		await page.goto(DEMO_URL)
 		await page.locator('.demo-play').click()
