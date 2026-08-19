@@ -29,6 +29,8 @@ const getBannerCode = (): Promise<string> =>
 		echo (string) $wpdb->get_var( "SELECT code FROM {$wpdb->prefix}snippets WHERE name = 'Welcome banner'" );
 	`])
 
+const forgetDemos = () => wpCli(['option', 'delete', 'code_snippets_demos_seen'])
+
 const deleteDemoSnippets = () =>
 	wpCli(['eval', `
 		global $wpdb;
@@ -36,8 +38,15 @@ const deleteDemoSnippets = () =>
 	`])
 
 test.describe('AI Agent demo', () => {
-	test.beforeEach(deleteDemoSnippets)
-	test.afterAll(deleteDemoSnippets)
+	test.beforeEach(async () => {
+		await deleteDemoSnippets()
+		await forgetDemos()
+	})
+
+	test.afterAll(async () => {
+		await deleteDemoSnippets()
+		await forgetDemos()
+	})
 
 	test('the tab is reachable from the toolbar and highlighted as new', async ({ page }) => {
 		await page.goto('/wp-admin/admin.php?page=snippets')
@@ -74,6 +83,22 @@ test.describe('AI Agent demo', () => {
 
 		const siteName = (await wpCli(['option', 'get', 'blogname'])).trim()
 		expect(await getBannerCode()).toContain(`Welcome to ${siteName}`)
+	})
+
+	test('the toolbar badge softens to Demo once the walkthrough has been watched', async ({ page }) => {
+		await page.goto(DEMO_URL)
+		await page.locator('.demo-play').click()
+		await page.getByRole('button', { name: 'Skip animation' }).click()
+		await expect(page.locator('.demo-upsell')).toBeVisible()
+
+		await expect.poll(async () =>
+			(await wpCli(['option', 'get', 'code_snippets_demos_seen'])).includes('ai-agent')).toBe(true)
+
+		await page.goto(DEMO_URL)
+
+		const link = page.locator('.code-snippets-toolbar-lower a.ai-agent-link')
+		await expect(link.locator('.demo-chip')).toHaveText('Demo')
+		await expect(link.locator('.new-chip')).toHaveCount(0)
 	})
 
 	test('skipping jumps to the end and replaying does not duplicate snippets', async ({ page }) => {

@@ -1,14 +1,20 @@
 import { expect, test } from '@playwright/test'
 import { TIMEOUTS } from './helpers/constants'
+import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
 const DEMO_URL = '/wp-admin/admin.php?page=snippets&subpage=blueprints'
 const SECTIONS = ['General', 'Attributes', 'Output']
 
+const forgetDemos = () => wpCli(['option', 'delete', 'code_snippets_demos_seen'])
+
 const activeTab = (page: Page) =>
 	page.locator('.blueprint-form-sidebar__item.is-active')
 
 test.describe('Blueprints demo', () => {
+	test.beforeEach(forgetDemos)
+	test.afterAll(forgetDemos)
+
 	test('the tab is reachable from the toolbar and highlighted as new', async ({ page }) => {
 		await page.goto('/wp-admin/admin.php?page=snippets')
 
@@ -92,6 +98,25 @@ test.describe('Blueprints demo', () => {
 		// Stepping between sections must never resize the card.
 		expect(new Set(heights).size).toBe(1)
 		expect(heights[0]).toBeGreaterThan(0)
+	})
+
+	test('the toolbar badge softens to Demo once the walkthrough has been watched', async ({ page }) => {
+		await page.goto(DEMO_URL)
+		await expect(page.locator('.code-snippets-toolbar-lower a.blueprints-link .new-chip')).toBeVisible()
+
+		await page.locator('.demo-play').click()
+		await page.getByRole('button', { name: 'Skip animation' }).click()
+		await expect(page.locator('.demo-upsell')).toBeVisible()
+
+		// The badge only changes on a fresh load, once the visit is recorded.
+		await expect.poll(async () =>
+			(await wpCli(['option', 'get', 'code_snippets_demos_seen'])).includes('blueprints')).toBe(true)
+
+		await page.goto(DEMO_URL)
+
+		const link = page.locator('.code-snippets-toolbar-lower a.blueprints-link')
+		await expect(link.locator('.demo-chip')).toHaveText('Demo')
+		await expect(link.locator('.new-chip')).toHaveCount(0)
 	})
 
 	test('replaying restarts from the first section', async ({ page }) => {
