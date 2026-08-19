@@ -12,11 +12,16 @@
 @use 'common/wp-admin';
 @use 'common/page-header';
 @use 'common/kebab-menu';
+@use 'common/demo';
 @use 'manage/snippets-table';
 @use 'manage/cloud-community';
 @use 'manage/cloud-community-cards';
 @use 'manage/ai-agent';
 @use 'manage/ai-agent-demo';
+@use 'manage/blueprints/detail';
+@use 'manage/blueprints/form-layout';
+@use 'manage/blueprints/form-fields';
+@use 'manage/blueprints-demo';
 
 .tablenav .tablenav-pages {
 	margin-block-end: 0;
