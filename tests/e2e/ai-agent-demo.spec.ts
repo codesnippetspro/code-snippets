@@ -14,39 +14,11 @@ const countDemoSnippets = async (): Promise<number> => {
 	return Number.parseInt(output.trim(), 10)
 }
 
-const countActiveDemoSnippets = async (): Promise<number> => {
-	const output = await wpCli(['eval', `
-		global $wpdb;
-		echo (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}snippets WHERE active = 1 AND name IN (${DEMO_NAMES})" );
-	`])
-
-	return Number.parseInt(output.trim(), 10)
-}
-
-const getBannerCode = (): Promise<string> =>
-	wpCli(['eval', `
-		global $wpdb;
-		echo (string) $wpdb->get_var( "SELECT code FROM {$wpdb->prefix}snippets WHERE name = 'Welcome banner'" );
-	`])
-
 const forgetDemos = () => wpCli(['option', 'delete', 'code_snippets_demos_seen'])
 
-const deleteDemoSnippets = () =>
-	wpCli(['eval', `
-		global $wpdb;
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}snippets WHERE name IN (${DEMO_NAMES})" );
-	`])
-
 test.describe('AI Agent demo', () => {
-	test.beforeEach(async () => {
-		await deleteDemoSnippets()
-		await forgetDemos()
-	})
-
-	test.afterAll(async () => {
-		await deleteDemoSnippets()
-		await forgetDemos()
-	})
+	test.beforeEach(forgetDemos)
+	test.afterAll(forgetDemos)
 
 	test('the tab is reachable from the toolbar and highlighted as new', async ({ page }) => {
 		await page.goto('/wp-admin/admin.php?page=snippets')
@@ -62,7 +34,7 @@ test.describe('AI Agent demo', () => {
 		await expect(page.locator('.demo-play')).toBeVisible()
 	})
 
-	test('playing the walkthrough saves two inactive snippets naming the site', async ({ page }) => {
+	test('playing the walkthrough plans, builds and refines without touching the site', async ({ page }) => {
 		await page.goto(DEMO_URL)
 		expect(await countDemoSnippets()).toBe(0)
 
@@ -76,49 +48,58 @@ test.describe('AI Agent demo', () => {
 
 		await expect(page.locator('.demo-upsell')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 		await expect(page.locator('.ai-agent-result__row')).toHaveCount(2)
-		await expect(page.locator('.ai-agent-result__link')).toHaveCount(2)
 
-		expect(await countDemoSnippets()).toBe(2)
-		expect(await countActiveDemoSnippets()).toBe(0)
-
+		// The refined code names the site, so the walkthrough reads as personal.
 		const siteName = (await wpCli(['option', 'get', 'blogname'])).trim()
-		expect(await getBannerCode()).toContain(`Welcome to ${siteName}`)
+		await page.locator('.ai-agent-result__row').first().getByRole('button', { name: 'Preview code' }).click()
+		await expect(page.locator('.code-snippets-preview-modal')).toContainText(`Welcome to ${siteName}`)
 	})
 
-	test('the toolbar badge softens to Demo once the walkthrough has been watched', async ({ page }) => {
-		await page.goto(DEMO_URL)
-		await page.locator('.demo-play').click()
-		await page.getByRole('button', { name: 'Skip animation' }).click()
-		await expect(page.locator('.demo-upsell')).toBeVisible()
-
-		await expect.poll(async () =>
-			(await wpCli(['option', 'get', 'code_snippets_demos_seen'])).includes('ai-agent')).toBe(true)
-
-		await page.goto(DEMO_URL)
-
-		const link = page.locator('.code-snippets-toolbar-lower a.ai-agent-link')
-		await expect(link.locator('.demo-chip')).toHaveText('Demo')
-		await expect(link.locator('.new-chip')).toHaveCount(0)
-	})
-
-	test('skipping jumps to the end and replaying does not duplicate snippets', async ({ page }) => {
+	test('the walkthrough never writes a snippet, however many times it runs', async ({ page }) => {
 		await page.goto(DEMO_URL)
 
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
-
 		await expect(page.locator('.demo-upsell')).toBeVisible()
-		await expect(page.locator('.ai-agent-result__link')).toHaveCount(2, { timeout: TIMEOUTS.DEFAULT })
-		expect(await countDemoSnippets()).toBe(2)
 
 		await page.locator('.demo-upsell').getByRole('button', { name: 'Run demo again' }).click()
 		await expect(page.locator('.demo-upsell')).toBeHidden()
 
 		await page.getByRole('button', { name: 'Skip animation' }).click()
 		await expect(page.locator('.demo-upsell')).toBeVisible()
-		await expect(page.locator('.ai-agent-result__link')).toHaveCount(2, { timeout: TIMEOUTS.DEFAULT })
 
-		// The replay updates the snippets it created rather than adding more.
-		expect(await countDemoSnippets()).toBe(2)
+		// Replaying leaves nothing behind, so a visitor's library stays theirs.
+		expect(await countDemoSnippets()).toBe(0)
+	})
+
+	test('the walkthrough holds each step long enough to be read', async ({ page }) => {
+		await page.goto(DEMO_URL)
+		await page.locator('.demo-play').click()
+
+		const callout = page.locator('.demo-callout__title')
+		const seen: { title: string, at: number }[] = []
+
+		// Sample the commentary until the walkthrough finishes, recording when
+		// each step first appears.
+		const started = Date.now()
+
+		while (0 === await page.locator('.demo-upsell').count()) {
+			const title = await callout.textContent().catch(() => null)
+
+			if (title && seen.at(-1)?.title !== title) {
+				seen.push({ title, at: Date.now() - started })
+			}
+
+			await page.waitForTimeout(150)
+		}
+
+		expect(seen.length).toBeGreaterThanOrEqual(5)
+
+		// Every step but the last is measured by when the next one replaced it.
+		for (let index = 0; index < seen.length - 1; index++) {
+			const shownFor = seen[index + 1].at - seen[index].at
+			expect(shownFor, `step "${seen[index].title}" was only shown for ${shownFor}ms`)
+				.toBeGreaterThan(3000)
+		}
 	})
 })
