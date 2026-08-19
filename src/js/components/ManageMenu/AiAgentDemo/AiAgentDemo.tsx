@@ -53,32 +53,30 @@ const AiAgentDemoPage: React.FC = () => {
 
 	return (
 		<div className="ai-agent ai-agent-demo">
-			<div className="ai-agent-heading">
-				<div className="ai-agent-heading__text">
-					<div className="ai-agent-demo-title">
-						<h1>
-							{__('AI Agent', 'code-snippets')}
-							<span className="ai-agent-demo-chip">{__('Demo', 'code-snippets')}</span>
-						</h1>
+			<div className="snippets-page-header ai-agent-demo-header">
+				<h1>
+					{__('AI Agent', 'code-snippets')}
+					<span className="ai-agent-demo-chip">{__('Demo', 'code-snippets')}</span>
+				</h1>
 
-						<div className="ai-agent-demo-controls">
-							{!hasStarted && <Button primary large type="button" className="ai-agent-demo-play" onClick={play}>
-								{__('Play demo', 'code-snippets')}
-							</Button>}
+				<div className="ai-agent-demo-controls">
+					{!hasStarted && <Button primary large type="button" className="ai-agent-demo-play" onClick={play}>
+						{__('Play demo', 'code-snippets')}
+					</Button>}
 
-							{hasStarted && !isFinished && <Button secondary type="button" onClick={skip}>
-								{__('Skip animation', 'code-snippets')}
-							</Button>}
+					{hasStarted && !isFinished && <Button secondary type="button" onClick={skip}>
+						{__('Skip animation', 'code-snippets')}
+					</Button>}
 
-							{isFinished && <Button primary type="button" onClick={replay}>
-								{__('Run demo again', 'code-snippets')}
-							</Button>}
-						</div>
-					</div>
-
-					<p>{__('A guided walkthrough of the Pro AI Agent. Press play and watch it plan, build, and refine a snippet on your site.', 'code-snippets')}</p>
+					{isFinished && <Button primary type="button" onClick={replay}>
+						{__('Run demo again', 'code-snippets')}
+					</Button>}
 				</div>
 			</div>
+
+			<p className="snippets-page-description">
+				{__('A guided walkthrough of the Pro AI Agent. Press play and watch it plan, build, and refine a snippet on your site.', 'code-snippets')}
+			</p>
 
 			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 

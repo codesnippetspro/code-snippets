@@ -1,30 +1,38 @@
+@use '../common/theme';
+
 $primary: #2271b1;
 $muted: #50575e;
 
-.ai-agent-demo-chip {
-	display: inline-block;
-	margin-inline-start: 10px;
-	padding-block: 2px;
-	padding-inline: 8px;
-	border-radius: 999px;
-	background: #f0f0f1;
-	color: $muted;
-	font-size: 12px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	vertical-align: middle;
-}
-
-.ai-agent-demo-title {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 20px;
+// The page header keeps the shared title styling, but the playback controls sit
+// beside the title rather than being pushed to the far end of the row.
+.ai-agent-demo-header {
+	justify-content: flex-start;
+	margin-block-end: 24px;
 
 	h1 {
-		margin-block: 0;
+		display: flex;
+		align-items: center;
+		gap: 12px;
 	}
+}
+
+// Matches the toolbar's "New" badge, so the two read as one signal for the
+// same feature.
+.ai-agent-demo-chip {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 5px 10px;
+	border: 1px solid rgb(0 0 0 / 5%);
+	border-radius: 999px;
+	background: linear-gradient(135deg, theme.$secondary 0%, #e2953f 100%);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	text-transform: uppercase;
 }
 
 .ai-agent-demo-controls {
