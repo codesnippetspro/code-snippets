@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { TIMEOUTS } from './helpers/constants'
+import { measureCalloutSteps } from './helpers/demoPacing'
 
 const DEMO_URL = '/wp-admin/admin.php?page=snippets&subpage=cloud-library'
 const FEATURED_ROW = '.cloud-library-snippets tbody tr:first-child'
@@ -102,5 +103,20 @@ test.describe('Cloud Library demo', () => {
 
 		await expect(page.locator('.demo-upsell')).toBeHidden()
 		await expect(page.locator(`${FEATURED_ROW} .cloud-snippet-action-buttons`)).toContainText('Download')
+	})
+
+	test('the walkthrough holds each step long enough to be read', async ({ page }) => {
+		await page.goto(DEMO_URL)
+		await page.locator('.demo-play').click()
+
+		const steps = await measureCalloutSteps(page)
+		expect(steps.length).toBeGreaterThanOrEqual(4)
+
+		// The closing step is measured against the upsell appearing, so it is
+		// checked separately from the steps that were replaced by the next one.
+		for (const step of steps.slice(0, -1)) {
+			expect(step.shownFor, `step "${step.title}" was only shown for ${step.shownFor}ms`)
+				.toBeGreaterThan(3000)
+		}
 	})
 })

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { TIMEOUTS } from './helpers/constants'
+import { measureCalloutSteps } from './helpers/demoPacing'
 import { wpCli } from './helpers/wpCli'
 
 const DEMO_URL = '/wp-admin/admin.php?page=snippets&subpage=ai-agent'
@@ -76,29 +77,13 @@ test.describe('AI Agent demo', () => {
 		await page.goto(DEMO_URL)
 		await page.locator('.demo-play').click()
 
-		const callout = page.locator('.demo-callout__title')
-		const seen: { title: string, at: number }[] = []
+		const steps = await measureCalloutSteps(page)
+		expect(steps.length).toBeGreaterThanOrEqual(5)
 
-		// Sample the commentary until the walkthrough finishes, recording when
-		// each step first appears.
-		const started = Date.now()
-
-		while (0 === await page.locator('.demo-upsell').count()) {
-			const title = await callout.textContent().catch(() => null)
-
-			if (title && seen.at(-1)?.title !== title) {
-				seen.push({ title, at: Date.now() - started })
-			}
-
-			await page.waitForTimeout(150)
-		}
-
-		expect(seen.length).toBeGreaterThanOrEqual(5)
-
-		// Every step but the last is measured by when the next one replaced it.
-		for (let index = 0; index < seen.length - 1; index++) {
-			const shownFor = seen[index + 1].at - seen[index].at
-			expect(shownFor, `step "${seen[index].title}" was only shown for ${shownFor}ms`)
+		// The closing step is measured against the upsell appearing, so it is
+		// checked separately from the steps that were replaced by the next one.
+		for (const step of steps.slice(0, -1)) {
+			expect(step.shownFor, `step "${step.title}" was only shown for ${step.shownFor}ms`)
 				.toBeGreaterThan(3000)
 		}
 	})
