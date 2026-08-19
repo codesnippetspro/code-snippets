@@ -6,6 +6,7 @@
 * New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
 * Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud.
 * AI Agent demo: a guided, scripted walkthrough of the Pro AI Agent that plans, builds, and refines a welcome banner snippet named after your site, saving the result as an inactive snippet. Runs entirely inside the plugin — no data leaves your site.
+* Blueprints demo: a guided, scripted walkthrough of Pro Blueprints that steps through the "Create a Shortcode" blueprint and confirms the snippet it would generate. Runs entirely inside the plugin — no code is generated and nothing is saved.
 * Snippet preview modal for viewing snippet code from the snippets table without opening the editor.
 * Automatic hiding of unrelated admin notices from other plugins on Code Snippets screens.
 * Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from the WordPress admin bar.
