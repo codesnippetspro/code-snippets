@@ -1,0 +1,85 @@
+import { expect, test } from '@playwright/test'
+import { TIMEOUTS } from './helpers/constants'
+import type { Page } from '@playwright/test'
+
+const DEMO_URL = '/wp-admin/admin.php?page=snippets&subpage=blueprints'
+const SECTIONS = ['General', 'Attributes', 'Output']
+
+const activeTab = (page: Page) =>
+	page.locator('.blueprint-form-sidebar__item.is-active')
+
+test.describe('Blueprints demo', () => {
+	test('the tab is reachable from the toolbar and highlighted as new', async ({ page }) => {
+		await page.goto('/wp-admin/admin.php?page=snippets')
+
+		const link = page.locator('.code-snippets-toolbar-lower a.blueprints-link')
+		await expect(link).toBeVisible()
+		await expect(link).toContainText('Blueprints')
+		await expect(link.locator('.new-chip')).toHaveText('New')
+		await expect(link.locator('.pro-chip')).toHaveCount(0)
+
+		await link.click()
+		await expect(page.locator('.blueprints-demo h1')).toContainText('Blueprints')
+		await expect(page.locator('.demo-play')).toBeVisible()
+	})
+
+	test('the blueprint is shown prepopulated before play', async ({ page }) => {
+		await page.goto(DEMO_URL)
+
+		await expect(page.locator('.blueprint-detail__header h3')).toHaveText('Create a Shortcode')
+		await expect(page.locator('.blueprint-form-sidebar__item')).toHaveCount(SECTIONS.length)
+		await expect(activeTab(page)).toHaveText('General')
+
+		await expect(page.locator('#shortcodeTag')).toHaveValue('staff_profile')
+		await expect(page.locator('#functionName')).toHaveValue('render_staff_profile')
+		await expect(page.locator('#functionName')).toHaveAttribute('readonly', '')
+	})
+
+	test('playing steps through every section and confirms a generated snippet', async ({ page }) => {
+		await page.goto(DEMO_URL)
+		await page.locator('.demo-play').click()
+
+		for (const section of SECTIONS) {
+			await expect(activeTab(page)).toHaveText(section, { timeout: TIMEOUTS.DEFAULT })
+		}
+
+		// The attributes repeater carries both scripted rows.
+		await expect(page.locator('.demo-upsell')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+
+		const generated = page.locator('.blueprints-demo-generated')
+		await expect(generated).toBeVisible()
+		await expect(generated).toContainText('Snippet “Create a Shortcode” has been generated.')
+		await expect(generated.locator('.badge.php-badge')).toBeVisible()
+
+		// Nothing is written to the site by this walkthrough.
+		await expect(page.locator('.blueprint-form-sidebar__generate')).toHaveClass(/is-pressed/)
+	})
+
+	test('sections become browsable once the walkthrough finishes', async ({ page }) => {
+		await page.goto(DEMO_URL)
+
+		await expect(page.locator('.blueprint-form-sidebar__item').first()).toBeDisabled()
+
+		await page.locator('.demo-play').click()
+		await page.getByRole('button', { name: 'Skip animation' }).click()
+
+		await expect(page.locator('.demo-upsell')).toBeVisible()
+		await expect(activeTab(page)).toHaveText('Output')
+
+		await page.locator('.blueprint-form-sidebar__item', { hasText: 'Attributes' }).click()
+		await expect(activeTab(page)).toHaveText('Attributes')
+		await expect(page.locator('.blueprint-form-repeater__row')).toHaveCount(2)
+	})
+
+	test('replaying restarts from the first section', async ({ page }) => {
+		await page.goto(DEMO_URL)
+		await page.locator('.demo-play').click()
+		await page.getByRole('button', { name: 'Skip animation' }).click()
+
+		await page.locator('.demo-upsell').getByRole('button', { name: 'Run demo again' }).click()
+
+		await expect(page.locator('.demo-upsell')).toBeHidden()
+		await expect(page.locator('.blueprints-demo-generated')).toBeHidden()
+		await expect(activeTab(page)).toHaveText('General', { timeout: TIMEOUTS.DEFAULT })
+	})
+})
