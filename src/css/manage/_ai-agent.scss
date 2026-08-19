@@ -434,6 +434,7 @@ $warning: #b32d2e;
 /* Prompt box */
 
 .ai-agent-prompt {
+	box-sizing: border-box;
 	border: 1px solid #8c8f94;
 	border-radius: 8px;
 	background: #fff;
