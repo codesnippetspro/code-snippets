@@ -175,13 +175,6 @@ const LowerNav = () =>
 					isPro
 				/>
 
-				<SubpageItem
-					subpage="ai-agent"
-					label={__('AI Agent', 'code-snippets')}
-					Icon={AiAgentIcon}
-					isNew
-				/>
-
 				{!isLicensed() && (
 					<SubpageItem
 						subpage="blueprints"
@@ -189,6 +182,13 @@ const LowerNav = () =>
 						Icon={BlueprintIcon}
 						isPro
 					/>)}
+
+				<SubpageItem
+					subpage="ai-agent"
+					label={__('AI Agent', 'code-snippets')}
+					Icon={AiAgentIcon}
+					isNew
+				/>
 
 				{window.CODE_SNIPPETS?.urls.settings && (
 					<li className="toolbar-end-item">
