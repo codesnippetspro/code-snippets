@@ -1,48 +1,5 @@
-@use '../common/theme';
-
 $primary: #2271b1;
 $muted: #50575e;
-
-// The page header keeps the shared title styling, but the playback controls sit
-// beside the title rather than being pushed to the far end of the row.
-// Unlike the other manage screens, this page has no subnav band between the
-// toolbar and the title, so the header carries that separation itself.
-.ai-agent-demo-header {
-	justify-content: flex-start;
-	margin-block: 32px 24px;
-
-	h1 {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-}
-
-// Matches the toolbar's "New" badge, so the two read as one signal for the
-// same feature.
-.ai-agent-demo-chip {
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	box-sizing: border-box;
-	padding: 5px 10px;
-	border: 1px solid rgb(0 0 0 / 5%);
-	border-radius: 999px;
-	background: linear-gradient(135deg, theme.$secondary 0%, #e2953f 100%);
-	color: #fff;
-	font-size: 12px;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	line-height: 1;
-	text-transform: uppercase;
-}
-
-.ai-agent-demo-controls {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex-shrink: 0;
-}
 
 /* Prompt box */
 
@@ -158,33 +115,6 @@ $muted: #50575e;
 	}
 }
 
-/* Closing upsell */
-
-.ai-agent-demo-upsell {
-	border: 1px solid #c5d9ed;
-	border-radius: 8px;
-	background: #f0f6fc;
-	padding: 20px;
-	animation: ai-agent-fade-in 0.35s ease;
-
-	p {
-		margin-block: 0 12px;
-		color: #1d2327;
-	}
-}
-
-.ai-agent-demo-upsell__title {
-	margin-block: 0 10px;
-	font-size: 16px;
-}
-
-.ai-agent-demo-upsell__actions {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 10px;
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.ai-agent-demo-prompt__caret,
 	.ai-agent-demo-transit__pulse,
@@ -195,8 +125,7 @@ $muted: #50575e;
 	.ai-agent-plan,
 	.ai-agent-result,
 	.ai-agent-typing,
-	.ai-agent-demo-transit,
-	.ai-agent-demo-upsell {
+	.ai-agent-demo-transit {
 		animation: none;
 	}
 }

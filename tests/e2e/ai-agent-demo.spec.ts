@@ -50,14 +50,14 @@ test.describe('AI Agent demo', () => {
 
 		await link.click()
 		await expect(page.locator('.ai-agent-demo h1')).toContainText('AI Agent')
-		await expect(page.locator('.ai-agent-demo-play')).toBeVisible()
+		await expect(page.locator('.demo-play')).toBeVisible()
 	})
 
 	test('playing the walkthrough saves two inactive snippets naming the site', async ({ page }) => {
 		await page.goto(DEMO_URL)
 		expect(await countDemoSnippets()).toBe(0)
 
-		await page.locator('.ai-agent-demo-play').click()
+		await page.locator('.demo-play').click()
 
 		// The plan is scripted to arrive before anything is built.
 		await expect(page.locator('.ai-agent-plan__title')).toHaveText(
@@ -65,7 +65,7 @@ test.describe('AI Agent demo', () => {
 			{ timeout: TIMEOUTS.DEFAULT }
 		)
 
-		await expect(page.locator('.ai-agent-demo-upsell')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(page.locator('.demo-upsell')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 		await expect(page.locator('.ai-agent-result__row')).toHaveCount(2)
 		await expect(page.locator('.ai-agent-result__link')).toHaveCount(2)
 
@@ -79,18 +79,18 @@ test.describe('AI Agent demo', () => {
 	test('skipping jumps to the end and replaying does not duplicate snippets', async ({ page }) => {
 		await page.goto(DEMO_URL)
 
-		await page.locator('.ai-agent-demo-play').click()
+		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
 
-		await expect(page.locator('.ai-agent-demo-upsell')).toBeVisible()
+		await expect(page.locator('.demo-upsell')).toBeVisible()
 		await expect(page.locator('.ai-agent-result__link')).toHaveCount(2, { timeout: TIMEOUTS.DEFAULT })
 		expect(await countDemoSnippets()).toBe(2)
 
-		await page.locator('.ai-agent-demo-upsell').getByRole('button', { name: 'Run demo again' }).click()
-		await expect(page.locator('.ai-agent-demo-upsell')).toBeHidden()
+		await page.locator('.demo-upsell').getByRole('button', { name: 'Run demo again' }).click()
+		await expect(page.locator('.demo-upsell')).toBeHidden()
 
 		await page.getByRole('button', { name: 'Skip animation' }).click()
-		await expect(page.locator('.ai-agent-demo-upsell')).toBeVisible()
+		await expect(page.locator('.demo-upsell')).toBeVisible()
 		await expect(page.locator('.ai-agent-result__link')).toHaveCount(2, { timeout: TIMEOUTS.DEFAULT })
 
 		// The replay updates the snippets it created rather than adding more.

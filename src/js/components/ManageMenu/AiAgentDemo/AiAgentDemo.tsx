@@ -2,14 +2,14 @@ import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
-import { Button } from '../../common/Button'
 import { Notice } from '../../common/Notice'
+import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
 import { DemoPlanCard } from './DemoPlanCard'
 import { DemoPromptBox } from './DemoPromptBox'
 import { DemoResultCard } from './DemoResultCard'
 import { DemoSidebar } from './DemoSidebar'
 import { DemoMessage, DemoTransit, DemoTyping } from './DemoThread'
-import { DemoUpsell } from './DemoUpsell'
+import { AiAgentDemoUpsell } from './DemoUpsell'
 import { DEMO_PROMPT, DEMO_REFINEMENT_REPLY } from './demoScript'
 import { useAiAgentDemo } from './useAiAgentDemo'
 import { hasReached } from './types'
@@ -53,30 +53,15 @@ const AiAgentDemoPage: React.FC = () => {
 
 	return (
 		<div className="ai-agent ai-agent-demo">
-			<div className="snippets-page-header ai-agent-demo-header">
-				<h1>
-					{__('AI Agent', 'code-snippets')}
-					<span className="ai-agent-demo-chip">{__('Demo', 'code-snippets')}</span>
-				</h1>
-
-				<div className="ai-agent-demo-controls">
-					{!hasStarted && <Button primary large type="button" className="ai-agent-demo-play" onClick={play}>
-						{__('Play demo', 'code-snippets')}
-					</Button>}
-
-					{hasStarted && !isFinished && <Button secondary type="button" onClick={skip}>
-						{__('Skip animation', 'code-snippets')}
-					</Button>}
-
-					{isFinished && <Button primary type="button" onClick={replay}>
-						{__('Run demo again', 'code-snippets')}
-					</Button>}
-				</div>
-			</div>
-
-			<p className="snippets-page-description">
-				{__('A guided walkthrough of the Pro AI Agent. Press play and watch it plan, build, and refine a snippet on your site.', 'code-snippets')}
-			</p>
+			<DemoPageHeader
+				title={__('AI Agent', 'code-snippets')}
+				description={__('A guided walkthrough of the Pro AI Agent. Press play and watch it plan, build, and refine a snippet on your site.', 'code-snippets')}
+				hasStarted={hasStarted}
+				isFinished={isFinished}
+				onPlay={play}
+				onSkip={skip}
+				onReplay={replay}
+			/>
 
 			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
@@ -113,7 +98,7 @@ const AiAgentDemoPage: React.FC = () => {
 
 						{hasReached(stage, 'saved') && <DemoMessage speaker="assistant">{DEMO_REFINEMENT_REPLY}</DemoMessage>}
 
-						{isFinished && <DemoUpsell snippets={snippets} onReplay={replay} />}
+						{isFinished && <AiAgentDemoUpsell snippets={snippets} onReplay={replay} />}
 					</div>
 
 					{showPromptBox && <DemoPromptBox
