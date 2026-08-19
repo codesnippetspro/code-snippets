@@ -39,13 +39,14 @@ test.describe('AI Agent demo', () => {
 	test.beforeEach(deleteDemoSnippets)
 	test.afterAll(deleteDemoSnippets)
 
-	test('the tab is reachable from the toolbar and marked as Pro', async ({ page }) => {
+	test('the tab is reachable from the toolbar and highlighted as new', async ({ page }) => {
 		await page.goto('/wp-admin/admin.php?page=snippets')
 
 		const link = page.locator('.code-snippets-toolbar-lower a.ai-agent-link')
 		await expect(link).toBeVisible()
 		await expect(link).toContainText('AI Agent')
-		await expect(link.locator('.pro-chip')).toHaveText('Pro')
+		await expect(link.locator('.new-chip')).toHaveText('New')
+		await expect(link.locator('.pro-chip')).toHaveCount(0)
 
 		await link.click()
 		await expect(page.locator('.ai-agent-demo h1')).toContainText('AI Agent')

@@ -129,9 +129,10 @@ interface SubpageItemProps {
 	label: string
 	Icon: React.FC<SVGProps<SVGSVGElement>>
 	isPro?: boolean
+	isNew?: boolean
 }
 
-const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro }) =>
+const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, isNew }) =>
 	<li>
 		<a
 			href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: subpage })}
@@ -139,6 +140,7 @@ const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro }
 		>
 			<Icon aria-hidden="true" />
 			<span className="toolbar-nav-label">{label}</span>
+			{isNew && <span className="new-chip">{__('New', 'code-snippets')}</span>}
 			{isPro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 		</a>
 	</li>
@@ -177,7 +179,7 @@ const LowerNav = () =>
 					subpage="ai-agent"
 					label={__('AI Agent', 'code-snippets')}
 					Icon={AiAgentIcon}
-					isPro
+					isNew
 				/>
 
 				{!isLicensed() && (
