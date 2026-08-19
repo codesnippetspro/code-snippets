@@ -2,16 +2,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DEMO_SECTIONS } from './demoBlueprint'
 import type { DemoStage } from './types'
 
-/** How long each stage holds before the driver advances. */
+/**
+ * How long each stage holds before the driver advances. Each stage carries one
+ * step of commentary, so it is given long enough to read the callout and take
+ * in the section that changed.
+ */
 const STAGE_DURATIONS: Partial<Record<DemoStage, number>> = {
-	general: 1800,
-	attributes: 1800,
-	output: 2000,
-	generating: 1200,
-	generated: 600
+	general: 4500,
+	attributes: 4500,
+	output: 4800,
+	generating: 3600,
+	generated: 3000
 }
 
-const DEFAULT_DURATION = 1200
+const DEFAULT_DURATION = 3000
 
 /** Uniform pause between stages when the visitor has asked for reduced motion. */
 const REDUCED_MOTION_DURATION = 250
