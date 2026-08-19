@@ -42,6 +42,16 @@ final class Preferences_REST_Controller extends REST_Controller {
 	public const DEFAULT_SNIPPET_VIEW = 'table';
 
 	/**
+	 * The name of the option recording which feature demos have been watched.
+	 */
+	public const DEMOS_SEEN_OPTION = 'code_snippets_demos_seen';
+
+	/**
+	 * Feature demos whose completion is recorded.
+	 */
+	public const DEMOS = [ 'ai-agent', 'blueprints' ];
+
+	/**
 	 * Retrieve the current snippet view preference, falling back to the
 	 * default when the stored value is missing or invalid.
 	 *
@@ -53,6 +63,17 @@ final class Preferences_REST_Controller extends REST_Controller {
 		return in_array( $view, self::SNIPPET_VIEWS, true )
 			? $view
 			: self::DEFAULT_SNIPPET_VIEW;
+	}
+
+	/**
+	 * Retrieve the feature demos that have been watched through to the end.
+	 *
+	 * @return string[]
+	 */
+	public static function get_demos_seen(): array {
+		$seen = get_option( self::DEMOS_SEEN_OPTION, [] );
+
+		return is_array( $seen ) ? array_values( array_intersect( self::DEMOS, $seen ) ) : [];
 	}
 
 	/**
@@ -77,6 +98,31 @@ final class Preferences_REST_Controller extends REST_Controller {
 							'description' => esc_html__( 'Whether snippet lists display as a grid of cards or a table.', 'code-snippets' ),
 							'type'        => 'string',
 							'enum'        => self::SNIPPET_VIEWS,
+							'required'    => true,
+						],
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			self::BASE_ROUTE . '/demos-seen',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_demos_seen_callback' ],
+					'permission_callback' => [ $this, 'permission_callback' ],
+				],
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'update_demos_seen_callback' ],
+					'permission_callback' => [ $this, 'permission_callback' ],
+					'args'                => [
+						'demo' => [
+							'description' => esc_html__( 'Identifier of the feature demo that has been watched.', 'code-snippets' ),
+							'type'        => 'string',
+							'enum'        => self::DEMOS,
 							'required'    => true,
 						],
 					],
@@ -120,5 +166,33 @@ final class Preferences_REST_Controller extends REST_Controller {
 		update_option( self::SNIPPET_VIEW_OPTION, $view );
 
 		return new WP_REST_Response( [ 'view' => $view ] );
+	}
+
+	/**
+	 * Retrieve the feature demos that have been watched.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_demos_seen_callback( WP_REST_Request $request ): WP_REST_Response {
+		return new WP_REST_Response( [ 'demos' => self::get_demos_seen() ] );
+	}
+
+	/**
+	 * Record that a feature demo has been watched through to the end.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function update_demos_seen_callback( WP_REST_Request $request ): WP_REST_Response {
+		$demos = self::get_demos_seen();
+		$demos[] = $request->get_param( 'demo' );
+
+		$demos = array_values( array_intersect( self::DEMOS, array_unique( $demos ) ) );
+		update_option( self::DEMOS_SEEN_OPTION, $demos );
+
+		return new WP_REST_Response( [ 'demos' => $demos ] );
 	}
 }

@@ -155,7 +155,8 @@ $wpcontent-inline-start-indent: 20px;
 			text-align: center;
 
 			.pro-chip,
-			.new-chip {
+			.new-chip,
+			.demo-chip {
 				position: absolute;
 				inset-block-start: 7px;
 				inset-inline-end: 4px;
@@ -200,6 +201,7 @@ $wpcontent-inline-start-indent: 20px;
 }
 
 .code-snippets-toolbar-lower .pro-chip,
+.code-snippets-toolbar-lower .demo-chip,
 .nav-tab .pro-chip,
 .snippet-type-link .pro-chip {
 	color: theme.$accent;
@@ -217,7 +219,8 @@ $wpcontent-inline-start-indent: 20px;
 }
 
 
-.code-snippets-toolbar-lower .pro-chip {
+.code-snippets-toolbar-lower .pro-chip,
+.code-snippets-toolbar-lower .demo-chip {
 	font-size: 12px;
 }
 

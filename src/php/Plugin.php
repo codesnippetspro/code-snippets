@@ -357,6 +357,7 @@ class Plugin {
 				'isCloudConnected' => $this->cloud_connection->is_authenticated(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'snippetView'      => Preferences_REST_Controller::get_snippet_view(),
+				'demosSeen'        => Preferences_REST_Controller::get_demos_seen(),
 				'restAPI'          => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),

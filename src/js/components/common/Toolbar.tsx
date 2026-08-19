@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import React, { useMemo, useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { buildUrl } from '../../utils/urls'
+import { hasSeenDemo } from './demo/useDemoSeen'
 import { AiAgentIcon } from './icons/AiAgentIcon'
 import { BlueprintIcon } from './icons/BlueprintIcon'
 import { CommunityIcon } from './icons/CommunityIcon'
@@ -10,6 +11,7 @@ import { LibraryIcon } from './icons/LibraryIcon'
 import { SettingsIcon } from './icons/SettingsIcon'
 import { SnippetsIcon } from './icons/SnippetsIcon'
 import { UpsellDialog } from './UpsellDialog'
+import type { DemoName } from './demo/useDemoSeen'
 import type { SVGProps } from 'react'
 
 export const SUBPAGES = ['snippets', 'blueprints', 'cloud-community', 'cloud-library', 'ai-agent'] as const
@@ -129,21 +131,29 @@ interface SubpageItemProps {
 	label: string
 	Icon: React.FC<SVGProps<SVGSVGElement>>
 	isPro?: boolean
-	isNew?: boolean
+	/** Marks a walkthrough tab, which advertises itself until it has been watched. */
+	isDemo?: boolean
 }
 
-const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, isNew }) =>
-	<li>
-		<a
-			href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: subpage })}
-			className={classnames(`${subpage}-link`, { 'active-link': subpage === searchParams.get('subpage') })}
-		>
-			<Icon aria-hidden="true" />
-			<span className="toolbar-nav-label">{label}</span>
-			{isNew && <span className="new-chip">{__('New', 'code-snippets')}</span>}
-			{isPro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
-		</a>
-	</li>
+const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, isDemo }) => {
+	const seen = isDemo && hasSeenDemo(subpage as DemoName)
+
+	return (
+		<li>
+			<a
+				href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: subpage })}
+				className={classnames(`${subpage}-link`, { 'active-link': subpage === searchParams.get('subpage') })}
+			>
+				<Icon aria-hidden="true" />
+				<span className="toolbar-nav-label">{label}</span>
+				{isDemo && (seen
+					? <span className="demo-chip">{__('Demo', 'code-snippets')}</span>
+					: <span className="new-chip">{__('New', 'code-snippets')}</span>)}
+				{isPro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+			</a>
+		</li>
+	)
+}
 
 const LowerNav = () =>
 	<div className="code-snippets-toolbar-lower">
@@ -180,14 +190,14 @@ const LowerNav = () =>
 						subpage="blueprints"
 						label={__('Blueprints', 'code-snippets')}
 						Icon={BlueprintIcon}
-						isNew
+						isDemo
 					/>)}
 
 				<SubpageItem
 					subpage="ai-agent"
 					label={__('AI Agent', 'code-snippets')}
 					Icon={AiAgentIcon}
-					isNew
+					isDemo
 				/>
 
 				{window.CODE_SNIPPETS?.urls.settings && (
