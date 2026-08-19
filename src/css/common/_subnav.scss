@@ -7,8 +7,11 @@
 	position: relative;
 
 	// Bleed across the full admin content width, flush against the plugin toolbar.
+	// The -1px pull lands this border exactly over the toolbar's own bottom
+	// border, so the two render as the single rule dividing nav from subnav.
 	box-sizing: border-box;
 	min-block-size: 53px;
+	border-block-start: 1px solid #e2e2e4;
 	margin-block-start: -1px;
 	margin-inline-start: -22px;
 	inline-size: calc(100% + 42px);
@@ -266,10 +269,4 @@
 	.snippet-type-nav .all-type-link .snippet-type-name-short {
 		display: inline;
 	}
-}
-
-// When an admin notice pushes the page content down, restore the top border
-// above the subnav bar (no extra margin — the wrapper sits flush).
-.notice + .wrap .snippet-type-nav-wrapper {
-	border-block-start: 1px solid #e2e2e4;
 }
