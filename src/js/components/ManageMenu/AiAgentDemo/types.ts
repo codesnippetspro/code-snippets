@@ -47,15 +47,6 @@ export interface DemoSnippet {
 }
 
 /**
- * A snippet after it has been written to the site, pairing the scripted
- * content with the id the REST API assigned it.
- */
-export interface SavedDemoSnippet extends DemoSnippet {
-	id?: number
-	error?: string
-}
-
-/**
  * Ordered stages of the scripted walkthrough. The driver only ever moves
  * forwards through this list, so a stage index doubles as a progress marker
  * for deciding which parts of the page have appeared yet.

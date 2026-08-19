@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
-import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
-import { Notice } from '../../common/Notice'
 import { DemoCallout } from '../../common/demo/DemoCallout'
 import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
 import { DemoSpotlight } from '../../common/demo/DemoSpotlight'
@@ -56,7 +54,6 @@ const AiAgentDemoPage: React.FC = () => {
 		typedPrompt,
 		typedRefinement,
 		snippets,
-		saveError,
 		hasStarted,
 		isFinished,
 		reducedMotion,
@@ -105,11 +102,6 @@ const AiAgentDemoPage: React.FC = () => {
 
 			<div className="ai-agent-layout">
 				<div className="ai-agent-layout__main">
-					{saveError && <Notice type="error">
-						<p>{__('The demo could not save its snippets to your site.', 'code-snippets')}</p>
-						<p>{saveError}</p>
-					</Notice>}
-
 					<div className="ai-agent-thread">
 						{hasReached(stage, 'prompt-sent') && <DemoMessage speaker="user">{DEMO_PROMPT}</DemoMessage>}
 
@@ -137,7 +129,7 @@ const AiAgentDemoPage: React.FC = () => {
 						{hasReached(stage, 'saved') && <DemoMessage speaker="assistant">{DEMO_REFINEMENT_REPLY}</DemoMessage>}
 
 						{isFinished && <div ref={upsellRef}>
-							<AiAgentDemoUpsell snippets={snippets} onReplay={replay} />
+							<AiAgentDemoUpsell onReplay={replay} />
 						</div>}
 					</div>
 
@@ -159,7 +151,5 @@ const AiAgentDemoPage: React.FC = () => {
 
 export const AiAgentDemo: React.FC = () =>
 	<WithRestAPIContext>
-		<WithSnippetsAPIContext>
-			<AiAgentDemoPage />
-		</WithSnippetsAPIContext>
+		<AiAgentDemoPage />
 	</WithRestAPIContext>

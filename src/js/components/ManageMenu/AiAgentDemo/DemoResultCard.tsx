@@ -1,47 +1,41 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { getSnippetEditUrl } from '../../../utils/snippets/snippets'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { PreviewModal } from '../../common/snippets/SnippetPreviewModal'
 import { DemoPromptBox } from './DemoPromptBox'
 import { hasReached, languageToSnippetType } from './types'
-import type { DemoStage, SavedDemoSnippet } from './types'
+import type { DemoSnippet, DemoStage } from './types'
 
 interface DemoResultCardProps {
 	stage: DemoStage
-	snippets: SavedDemoSnippet[]
+	snippets: DemoSnippet[]
 	typedRefinement: string
 }
 
 interface RowProps {
-	snippet: SavedDemoSnippet
+	snippet: DemoSnippet
 	stage: DemoStage
 	onPreview: VoidFunction
 }
 
-const ResultRow: React.FC<RowProps> = ({ snippet, stage, onPreview }) => {
-	const editUrl = getSnippetEditUrl({ id: snippet.id ?? 0 })
-	const showEdit = snippet.id && editUrl && 'applying' !== stage
+const ResultRow: React.FC<RowProps> = ({ snippet, stage, onPreview }) =>
+	<li className="ai-agent-result__row">
+		{hasReached(stage, 'refine-open') &&
+			<input type="checkbox" checked readOnly aria-label={snippet.name} />}
 
-	return (
-		<li className="ai-agent-result__row">
-			{hasReached(stage, 'refine-open') &&
-				<input type="checkbox" checked readOnly aria-label={snippet.name} />}
+		<Badge name={languageToSnippetType(snippet.language)} small />
+		<span className="ai-agent-result__name">{snippet.name}</span>
 
-			<Badge name={languageToSnippetType(snippet.language)} small />
-			<span className="ai-agent-result__name">{snippet.name}</span>
+		<Button link type="button" onClick={onPreview}>
+			{__('Preview code', 'code-snippets')}
+		</Button>
 
-			<Button link type="button" onClick={onPreview}>
-				{__('Preview code', 'code-snippets')}
-			</Button>
-
-			{snippet.error && <span className="ai-agent-result__status is-error">{snippet.error}</span>}
-
-			{showEdit && <a className="ai-agent-result__link" href={editUrl}>{__('Edit', 'code-snippets')}</a>}
-		</li>
-	)
-}
+		{'applying' !== stage &&
+			<Button link type="button" className="ai-agent-result__link" aria-hidden="true" tabIndex={-1}>
+				{__('Edit', 'code-snippets')}
+			</Button>}
+	</li>
 
 const RefineSection: React.FC<{ stage: DemoStage, typedRefinement: string }> = ({ stage, typedRefinement }) =>
 	hasReached(stage, 'refine-open')
@@ -63,7 +57,7 @@ const RefineSection: React.FC<{ stage: DemoStage, typedRefinement: string }> = (
 		</Button>
 
 export const DemoResultCard: React.FC<DemoResultCardProps> = ({ stage, snippets, typedRefinement }) => {
-	const [preview, setPreview] = useState<SavedDemoSnippet>()
+	const [preview, setPreview] = useState<DemoSnippet>()
 
 	return (
 		<div className="ai-agent-result">
@@ -75,7 +69,7 @@ export const DemoResultCard: React.FC<DemoResultCardProps> = ({ stage, snippets,
 			</div>
 
 			<p className="ai-agent-result__lead">
-				{__('These snippets were created and added to your site (inactive). Preview the code, or make changes below.', 'code-snippets')}
+				{__('In Pro these snippets would now be on your site, inactive. Preview the code, or make changes below.', 'code-snippets')}
 			</p>
 
 			<ul className="ai-agent-result__rows">

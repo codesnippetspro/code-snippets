@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
-import { unpackErrorResponse } from '../../../utils/errors'
 import {
 	DEMO_PROMPT,
 	getDraftSnippets,
@@ -8,37 +6,39 @@ import {
 	getRefinementPrompt,
 	getSiteName
 } from './demoScript'
-import { scopeForLanguage } from './types'
-import type { DemoSnippet, DemoStage, SavedDemoSnippet } from './types'
-import type { Snippet } from '../../../types/Snippet'
+import type { DemoSnippet, DemoStage } from './types'
 
 /** Milliseconds between characters while a prompt types itself in. */
-const CHAR_INTERVAL = 32
+const CHAR_INTERVAL = 45
 
 /**
  * How long each stage holds before the driver advances. Stages that type text
  * derive their own duration from the length of that text instead.
+ *
+ * Several stages share one step of commentary, so these are paced against the
+ * step rather than the stage: every step is given long enough to read its
+ * callout and take in what changed on screen.
  */
 const STAGE_DURATIONS: Partial<Record<DemoStage, number>> = {
-	'prompt-sent': 700,
-	'planning': 2400,
-	'plan-ready': 2200,
-	'plan-accepted': 700,
-	'building': 2600,
-	'result-ready': 1800,
-	'refine-open': 900,
-	'applying': 2200,
-	'saved': 1000
+	'prompt-sent': 1200,
+	'planning': 3600,
+	'plan-ready': 3800,
+	'plan-accepted': 1200,
+	'building': 3600,
+	'result-ready': 3000,
+	'refine-open': 1500,
+	'applying': 2800,
+	'saved': 2600
 }
 
 /** Uniform pause between stages when the visitor has asked for reduced motion. */
 const REDUCED_MOTION_DURATION = 250
 
 /** Pause after a prompt finishes typing, before it is sent. */
-const TYPING_TAIL = 500
+const TYPING_TAIL = 1600
 
 /** Fallback hold for any stage without an explicit duration. */
-const DEFAULT_DURATION = 800
+const DEFAULT_DURATION = 1600
 
 const prefersReducedMotion = (): boolean =>
 	window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -47,8 +47,7 @@ export interface AiAgentDemoState {
 	stage: DemoStage
 	typedPrompt: string
 	typedRefinement: string
-	snippets: SavedDemoSnippet[]
-	saveError?: string
+	snippets: DemoSnippet[]
 	hasStarted: boolean
 	isFinished: boolean
 	reducedMotion: boolean
@@ -61,8 +60,6 @@ export interface AiAgentDemoState {
 
 // eslint-disable-next-line max-lines-per-function -- the timeline driver and its teardown belong together.
 export const useAiAgentDemo = (): AiAgentDemoState => {
-	const snippetsAPI = useSnippetsAPI()
-
 	const reducedMotion = useMemo(prefersReducedMotion, [])
 	const siteName = useMemo(getSiteName, [])
 	const refinementPrompt = useMemo(() => getRefinementPrompt(siteName), [siteName])
@@ -70,74 +67,18 @@ export const useAiAgentDemo = (): AiAgentDemoState => {
 	const [stage, setStage] = useState<DemoStage>('idle')
 	const [typedPrompt, setTypedPrompt] = useState('')
 	const [typedRefinement, setTypedRefinement] = useState('')
-	const [snippets, setSnippets] = useState<SavedDemoSnippet[]>([])
-	const [saveError, setSaveError] = useState<string>()
+	const [snippets, setSnippets] = useState<DemoSnippet[]>([])
 
-	// Ids assigned by the REST API on the first run, so replaying updates the
-	// same two snippets instead of leaving a fresh pair behind every time.
-	const savedIds = useRef<Record<string, number>>({})
 	const timers = useRef<number[]>([])
-	const mounted = useRef(true)
-
-	// Writes are chained rather than fired in parallel: skipping the animation
-	// can queue the refined snippets while the drafts are still being created,
-	// and the refinement must not overtake — or duplicate — the create.
-	const writes = useRef<Promise<unknown>>(Promise.resolve())
 
 	const clearTimers = useCallback(() => {
 		timers.current.forEach(window.clearTimeout)
 		timers.current = []
 	}, [])
 
-	useEffect(() => {
-		mounted.current = true
-
-		return () => {
-			mounted.current = false
-			timers.current.forEach(window.clearTimeout)
-		}
+	useEffect(() => () => {
+		timers.current.forEach(window.clearTimeout)
 	}, [])
-
-	const persist = useCallback((drafts: DemoSnippet[]) => {
-		const write = (draft: DemoSnippet): Promise<SavedDemoSnippet> => {
-			const fields: Partial<Snippet> = {
-				name: draft.name,
-				desc: draft.desc,
-				code: draft.code,
-				scope: scopeForLanguage(draft.language),
-				active: false
-			}
-
-			const existingId = savedIds.current[draft.key]
-
-			const request = existingId
-				? snippetsAPI.update({ id: existingId, network: false, ...fields })
-				: snippetsAPI.create(fields)
-
-			return request
-				.then(saved => {
-					savedIds.current[draft.key] = saved.id
-					return { ...draft, id: saved.id }
-				})
-				.catch((error: unknown) => ({ ...draft, error: unpackErrorResponse(error) }))
-		}
-
-		return Promise.all(drafts.map(write))
-			.then(results => {
-				if (!mounted.current) {
-					return
-				}
-
-				setSnippets(results)
-
-				const failure = results.find(result => result.error)?.error
-				setSaveError(failure)
-			})
-	}, [snippetsAPI])
-
-	const queueWrite = useCallback((drafts: DemoSnippet[]) => {
-		writes.current = writes.current.then(() => persist(drafts))
-	}, [persist])
 
 	const finishImmediately = useCallback(() => {
 		clearTimers()
@@ -145,29 +86,21 @@ export const useAiAgentDemo = (): AiAgentDemoState => {
 		setTypedRefinement(refinementPrompt)
 		setSnippets(getRefinedSnippets(siteName))
 		setStage('finished')
-		queueWrite(getRefinedSnippets(siteName))
-	}, [clearTimers, queueWrite, refinementPrompt, siteName])
+	}, [clearTimers, refinementPrompt, siteName])
 
+	// Nothing is written to the site: the walkthrough shows what the agent
+	// would produce, and the snippets it names exist only on screen.
 	const enter = useCallback((next: DemoStage) => {
 		setStage(next)
 
-		switch (next) {
-			// The card claims the snippets are already on the site, so they are.
-			case 'result-ready':
-				setSnippets(getDraftSnippets())
-				queueWrite(getDraftSnippets())
-				break
-
-			// The write runs alongside the "updating" animation so the refined
-			// card usually has real snippet ids by the time it is revealed.
-			case 'applying':
-				queueWrite(getRefinedSnippets(siteName))
-				break
-
-			default:
-				break
+		if ('result-ready' === next) {
+			setSnippets(getDraftSnippets())
 		}
-	}, [queueWrite, siteName])
+
+		if ('saved' === next) {
+			setSnippets(getRefinedSnippets(siteName))
+		}
+	}, [siteName])
 
 	const schedule = useCallback((next: DemoStage, delay: number, run: (stage: DemoStage) => void) => {
 		timers.current.push(window.setTimeout(() => run(next), reducedMotion ? REDUCED_MOTION_DURATION : delay))
@@ -213,7 +146,6 @@ export const useAiAgentDemo = (): AiAgentDemoState => {
 		setTypedPrompt('')
 		setTypedRefinement('')
 		setSnippets([])
-		setSaveError(undefined)
 		setStage('idle')
 	}, [clearTimers])
 
@@ -262,7 +194,6 @@ export const useAiAgentDemo = (): AiAgentDemoState => {
 		typedPrompt,
 		typedRefinement,
 		snippets,
-		saveError,
 		hasStarted: 'idle' !== stage,
 		isFinished: 'finished' === stage,
 		reducedMotion,
