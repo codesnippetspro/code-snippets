@@ -1,0 +1,115 @@
+import React, { useEffect, useRef } from 'react'
+import { __ } from '@wordpress/i18n'
+import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
+import { DemoUpsell } from '../../common/demo/DemoUpsell'
+import { BlueprintFormPanel } from './BlueprintFormPanel'
+import { BlueprintSidebar } from './BlueprintSidebar'
+import { GeneratedNotice } from './GeneratedNotice'
+import {
+	BLUEPRINT_DESCRIPTION,
+	BLUEPRINT_DOCS_URL,
+	BLUEPRINT_INTRO,
+	BLUEPRINT_TITLE,
+	getSection
+} from './demoBlueprint'
+import { useBlueprintsDemo } from './useBlueprintsDemo'
+import { hasReached } from './types'
+import type { DemoStage } from './types'
+
+const STAGE_ANNOUNCEMENTS: Partial<Record<DemoStage, string>> = {
+	general: __('Filling in the general settings.', 'code-snippets'),
+	attributes: __('Adding the shortcode attributes.', 'code-snippets'),
+	output: __('Setting the shortcode output.', 'code-snippets'),
+	generating: __('Generating the code.', 'code-snippets'),
+	generated: __('The snippet has been generated.', 'code-snippets'),
+	finished: __('Demo complete.', 'code-snippets')
+}
+
+const BlueprintHeader: React.FC = () =>
+	<header className="blueprint-detail__header">
+		<div className="blueprint-detail__header-content">
+			<div>
+				<h3>{BLUEPRINT_TITLE}</h3>
+				<p>{BLUEPRINT_DESCRIPTION}</p>
+				<p className="blueprint-detail__intro">{BLUEPRINT_INTRO}</p>
+			</div>
+
+			<a
+				href={BLUEPRINT_DOCS_URL}
+				target="_blank"
+				rel="noopener noreferrer"
+				className="button button-secondary docs-link"
+			>
+				{__('Read Documentation', 'code-snippets')}
+			</a>
+		</div>
+	</header>
+
+// eslint-disable-next-line max-lines-per-function -- the page reads as one sequence.
+export const BlueprintsDemo: React.FC = () => {
+	const {
+		stage,
+		activeSection,
+		sectionsBrowsable,
+		hasStarted,
+		isFinished,
+		reducedMotion,
+		selectSection,
+		play,
+		skip,
+		replay
+	} = useBlueprintsDemo()
+
+	const generatedRef = useRef<HTMLDivElement>(null)
+	const showGenerated = hasReached(stage, 'generated')
+
+	useEffect(() => {
+		if ('generated' === stage) {
+			generatedRef.current?.scrollIntoView({
+				behavior: reducedMotion ? 'auto' : 'smooth',
+				block: 'center'
+			})
+		}
+	}, [reducedMotion, stage])
+
+	return (
+		<div className="blueprints-demo">
+			<DemoPageHeader
+				title={__('Blueprints', 'code-snippets')}
+				description={__('A guided walkthrough of Pro Blueprints. Press play and watch a shortcode blueprint fill itself in and generate a snippet.', 'code-snippets')}
+				hasStarted={hasStarted}
+				isFinished={isFinished}
+				onPlay={play}
+				onSkip={skip}
+				onReplay={replay}
+			/>
+
+			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
+
+			<div className="blueprint-detail">
+				<BlueprintHeader />
+
+				<div className="blueprint-form-layout">
+					<BlueprintSidebar
+						activeSection={activeSection}
+						browsable={sectionsBrowsable}
+						generating={hasReached(stage, 'generating')}
+						onSelect={selectSection}
+					/>
+
+					<BlueprintFormPanel section={getSection(activeSection)} />
+				</div>
+			</div>
+
+			{showGenerated && <GeneratedNotice ref={generatedRef} />}
+
+			{isFinished && <DemoUpsell
+				title={__('That was a demo — Blueprints build the code for you', 'code-snippets')}
+				onReplay={replay}
+			>
+				<p>{__('The whole walkthrough was scripted and ran inside this plugin. No code was generated and nothing was saved.', 'code-snippets')}</p>
+				<p>{__('Code Snippets Pro ships blueprints for shortcodes, post types, taxonomies, settings pages, and more — fill in the form and it writes the snippet for you.', 'code-snippets')}</p>
+			</DemoUpsell>}
+		</div>
+	)
+}
