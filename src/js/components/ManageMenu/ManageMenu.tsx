@@ -5,6 +5,7 @@ import { fetchConstQueryParam, fetchQueryParam, updateQueryParams } from '../../
 import { DismissibleNotice } from '../common/Notice'
 import { SUBPAGES, Toolbar } from '../common/Toolbar'
 import { UpsellPage } from '../common/UpsellDialog'
+import { AiAgentDemo } from './AiAgentDemo/AiAgentDemo'
 import { CommunityCloud } from './CommunityCloud/CommunityCloud'
 import { SnippetsTable } from './SnippetsTable'
 
@@ -64,6 +65,9 @@ const PageContent: React.FC<PageContentParams> = ({ subpage }) => {
 
 		case 'cloud-community':
 			return <CommunityCloud />
+
+		case 'ai-agent':
+			return <AiAgentDemo />
 
 		case 'blueprints':
 		case 'cloud-library':

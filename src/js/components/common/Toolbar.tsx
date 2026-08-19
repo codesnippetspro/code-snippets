@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import React, { useMemo, useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { buildUrl } from '../../utils/urls'
+import { AiAgentIcon } from './icons/AiAgentIcon'
 import { BlueprintIcon } from './icons/BlueprintIcon'
 import { CommunityIcon } from './icons/CommunityIcon'
 import { LibraryIcon } from './icons/LibraryIcon'
@@ -11,7 +12,7 @@ import { SnippetsIcon } from './icons/SnippetsIcon'
 import { UpsellDialog } from './UpsellDialog'
 import type { SVGProps } from 'react'
 
-export const SUBPAGES = ['snippets', 'blueprints', 'cloud-community', 'cloud-library'] as const
+export const SUBPAGES = ['snippets', 'blueprints', 'cloud-community', 'cloud-library', 'ai-agent'] as const
 
 const searchParams = new URLSearchParams(window.location.search)
 
@@ -169,6 +170,13 @@ const LowerNav = () =>
 					subpage="cloud-library"
 					label={__('Cloud Library', 'code-snippets')}
 					Icon={LibraryIcon}
+					isPro
+				/>
+
+				<SubpageItem
+					subpage="ai-agent"
+					label={__('AI Agent', 'code-snippets')}
+					Icon={AiAgentIcon}
 					isPro
 				/>
 
