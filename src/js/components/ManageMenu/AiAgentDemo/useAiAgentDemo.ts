@@ -78,7 +78,11 @@ export const useAiAgentDemo = (): AiAgentDemoState => {
 	const savedIds = useRef<Record<string, number>>({})
 	const timers = useRef<number[]>([])
 	const mounted = useRef(true)
-	const saveStarted = useRef(false)
+
+	// Writes are chained rather than fired in parallel: skipping the animation
+	// can queue the refined snippets while the drafts are still being created,
+	// and the refinement must not overtake — or duplicate — the create.
+	const writes = useRef<Promise<unknown>>(Promise.resolve())
 
 	const clearTimers = useCallback(() => {
 		timers.current.forEach(window.clearTimeout)
@@ -131,38 +135,39 @@ export const useAiAgentDemo = (): AiAgentDemoState => {
 			})
 	}, [snippetsAPI])
 
+	const queueWrite = useCallback((drafts: DemoSnippet[]) => {
+		writes.current = writes.current.then(() => persist(drafts))
+	}, [persist])
+
 	const finishImmediately = useCallback(() => {
 		clearTimers()
 		setTypedPrompt(DEMO_PROMPT)
 		setTypedRefinement(refinementPrompt)
 		setSnippets(getRefinedSnippets(siteName))
 		setStage('finished')
-
-		if (!saveStarted.current) {
-			saveStarted.current = true
-			void persist(getRefinedSnippets(siteName))
-		}
-	}, [clearTimers, persist, refinementPrompt, siteName])
+		queueWrite(getRefinedSnippets(siteName))
+	}, [clearTimers, queueWrite, refinementPrompt, siteName])
 
 	const enter = useCallback((next: DemoStage) => {
 		setStage(next)
 
 		switch (next) {
+			// The card claims the snippets are already on the site, so they are.
 			case 'result-ready':
 				setSnippets(getDraftSnippets())
+				queueWrite(getDraftSnippets())
 				break
 
 			// The write runs alongside the "updating" animation so the refined
 			// card usually has real snippet ids by the time it is revealed.
 			case 'applying':
-				saveStarted.current = true
-				void persist(getRefinedSnippets(siteName))
+				queueWrite(getRefinedSnippets(siteName))
 				break
 
 			default:
 				break
 		}
-	}, [persist, siteName])
+	}, [queueWrite, siteName])
 
 	const schedule = useCallback((next: DemoStage, delay: number, run: (stage: DemoStage) => void) => {
 		timers.current.push(window.setTimeout(() => run(next), reducedMotion ? REDUCED_MOTION_DURATION : delay))
@@ -205,7 +210,6 @@ export const useAiAgentDemo = (): AiAgentDemoState => {
 
 	const reset = useCallback(() => {
 		clearTimers()
-		saveStarted.current = false
 		setTypedPrompt('')
 		setTypedRefinement('')
 		setSnippets([])
