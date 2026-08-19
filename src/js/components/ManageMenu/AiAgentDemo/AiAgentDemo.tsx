@@ -87,7 +87,7 @@ const AiAgentDemoPage: React.FC = () => {
 
 			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
-			<DemoCallout key={stage} callout={getCallout(stage)} />
+			<DemoCallout callout={getCallout(stage)} />
 
 			<div className="ai-agent-layout">
 				<div className="ai-agent-layout__main">
