@@ -131,12 +131,16 @@ interface SubpageItemProps {
 	label: string
 	Icon: React.FC<SVGProps<SVGSVGElement>>
 	isPro?: boolean
-	/** Marks a walkthrough tab, which advertises itself until it has been watched. */
-	isDemo?: boolean
+	/**
+	 * Marks a walkthrough tab. New features announce themselves until the
+	 * walkthrough has been watched; existing ones are only ever labelled as a
+	 * demo.
+	 */
+	demo?: 'announce' | 'quiet'
 }
 
-const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, isDemo }) => {
-	const seen = isDemo && hasSeenDemo(subpage as DemoName)
+const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, demo }) => {
+	const isNew = 'announce' === demo && !hasSeenDemo(subpage as DemoName)
 
 	return (
 		<li>
@@ -146,9 +150,9 @@ const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, 
 			>
 				<Icon aria-hidden="true" />
 				<span className="toolbar-nav-label">{label}</span>
-				{isDemo && (seen
-					? <span className="demo-chip">{__('Demo', 'code-snippets')}</span>
-					: <span className="new-chip">{__('New', 'code-snippets')}</span>)}
+				{demo && (isNew
+					? <span className="new-chip">{__('New', 'code-snippets')}</span>
+					: <span className="demo-chip">{__('Demo', 'code-snippets')}</span>)}
 				{isPro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>
@@ -182,7 +186,7 @@ const LowerNav = () =>
 					subpage="cloud-library"
 					label={__('Cloud Library', 'code-snippets')}
 					Icon={LibraryIcon}
-					isPro
+					demo="quiet"
 				/>
 
 				{!isLicensed() && (
@@ -190,14 +194,14 @@ const LowerNav = () =>
 						subpage="blueprints"
 						label={__('Blueprints', 'code-snippets')}
 						Icon={BlueprintIcon}
-						isDemo
+						demo="announce"
 					/>)}
 
 				<SubpageItem
 					subpage="ai-agent"
 					label={__('AI Agent', 'code-snippets')}
 					Icon={AiAgentIcon}
-					isDemo
+					demo="announce"
 				/>
 
 				{window.CODE_SNIPPETS?.urls.settings && (
