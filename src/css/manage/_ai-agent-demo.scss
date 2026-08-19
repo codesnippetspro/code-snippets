@@ -5,9 +5,11 @@ $muted: #50575e;
 
 // The page header keeps the shared title styling, but the playback controls sit
 // beside the title rather than being pushed to the far end of the row.
+// Unlike the other manage screens, this page has no subnav band between the
+// toolbar and the title, so the header carries that separation itself.
 .ai-agent-demo-header {
 	justify-content: flex-start;
-	margin-block-end: 24px;
+	margin-block: 32px 24px;
 
 	h1 {
 		display: flex;
