@@ -49,16 +49,17 @@ test.describe('Blueprints demo', () => {
 			await expect(activeTab(page)).toHaveText(section, { timeout: TIMEOUTS.DEFAULT })
 		}
 
-		// The attributes repeater carries both scripted rows.
+		// The generate button is marked as clicked, then released again.
+		const generateButton = page.locator('.blueprint-form-sidebar__generate')
+		await expect(generateButton).toHaveClass(/demo-click/, { timeout: TIMEOUTS.DEFAULT })
+
 		await expect(page.locator('.demo-upsell')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(generateButton).not.toHaveClass(/demo-click/)
 
 		const generated = page.locator('.blueprints-demo-generated')
 		await expect(generated).toBeVisible()
 		await expect(generated).toContainText('Snippet “Create a Shortcode” has been generated.')
 		await expect(generated.locator('.badge.php-badge')).toBeVisible()
-
-		// Nothing is written to the site by this walkthrough.
-		await expect(page.locator('.blueprint-form-sidebar__generate')).toHaveClass(/is-pressed/)
 	})
 
 	test('sections become browsable once the walkthrough finishes', async ({ page }) => {
@@ -117,6 +118,31 @@ test.describe('Blueprints demo', () => {
 		const link = page.locator('.code-snippets-toolbar-lower a.blueprints-link')
 		await expect(link.locator('.demo-chip')).toHaveText('Demo')
 		await expect(link.locator('.new-chip')).toHaveCount(0)
+	})
+
+	test('the demo-reset URL puts the badge back to New', async ({ page }) => {
+		await page.goto(DEMO_URL)
+		await page.locator('.demo-play').click()
+		await page.getByRole('button', { name: 'Skip animation' }).click()
+		await expect(page.locator('.demo-upsell')).toBeVisible()
+
+		await expect.poll(async () =>
+			(await wpCli(['option', 'get', 'code_snippets_demos_seen'])).includes('blueprints')).toBe(true)
+
+		const link = page.locator('.code-snippets-toolbar-lower a.blueprints-link')
+		await page.goto(DEMO_URL)
+		await expect(link.locator('.demo-chip')).toBeVisible()
+
+		await page.goto('/wp-admin/admin.php?page=snippets&demo-reset=true')
+
+		// The reset redirects to a clean address rather than leaving the
+		// parameter in place for a refresh to repeat.
+		await expect(page).toHaveURL(/page=snippets/)
+		await expect(page).not.toHaveURL(/demo-reset/)
+
+		await page.goto(DEMO_URL)
+		await expect(link.locator('.new-chip')).toHaveText('New')
+		await expect(link.locator('.demo-chip')).toHaveCount(0)
 	})
 
 	test('replaying restarts from the first section', async ({ page }) => {

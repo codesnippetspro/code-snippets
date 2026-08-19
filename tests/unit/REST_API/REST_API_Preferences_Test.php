@@ -188,6 +188,19 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Watched demos can be forgotten, putting their badges back to "New".
+	 */
+	public function test_demos_seen_can_be_reset() {
+		$this->dispatch( 'POST', [ 'demo' => 'ai-agent' ], $this->demos_endpoint );
+		$this->assertSame( [ 'ai-agent' ], Preferences_REST_Controller::get_demos_seen() );
+
+		Preferences_REST_Controller::reset_demos_seen();
+
+		$this->assertSame( [], Preferences_REST_Controller::get_demos_seen() );
+		$this->assertFalse( get_option( Preferences_REST_Controller::DEMOS_SEEN_OPTION ) );
+	}
+
+	/**
 	 * Users without snippet capabilities cannot read or write the preference.
 	 */
 	public function test_editor_is_blocked() {
