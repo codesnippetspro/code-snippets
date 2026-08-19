@@ -77,6 +77,16 @@ final class Preferences_REST_Controller extends REST_Controller {
 	}
 
 	/**
+	 * Forget which feature demos have been watched, so their toolbar tabs
+	 * announce themselves as new again.
+	 *
+	 * @return void
+	 */
+	public static function reset_demos_seen(): void {
+		delete_option( self::DEMOS_SEEN_OPTION );
+	}
+
+	/**
 	 * Register REST routes.
 	 */
 	public function register_routes() {

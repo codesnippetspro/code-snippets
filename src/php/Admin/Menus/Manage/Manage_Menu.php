@@ -5,6 +5,7 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
+use Code_Snippets\REST_API\Snippets\Preferences_REST_Controller;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\get_setting;
 use const Code_Snippets\PLUGIN_FILE;
@@ -178,9 +179,41 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Query parameter that clears the record of which demos have been watched.
+	 */
+	public const DEMO_RESET_PARAM = 'demo-reset';
+
+	/**
+	 * Clear the watched-demo record when asked to through the query string.
+	 *
+	 * This is deliberately not exposed in the settings screen: it exists to put
+	 * the walkthrough tabs back to their "New" state for a screenshot or a
+	 * walkthrough of the walkthroughs. The request carries no nonce so that the
+	 * URL can simply be typed, which is acceptable because the capability check
+	 * stands and the only thing at stake is which badge a tab displays.
+	 *
+	 * @return void
+	 */
+	private function maybe_reset_demos(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Cosmetic reset, guarded by capability.
+		if ( ! isset( $_GET[ self::DEMO_RESET_PARAM ] ) || ! code_snippets()->current_user_can() ) {
+			return;
+		}
+
+		Preferences_REST_Controller::reset_demos_seen();
+
+		// Redirect so a refresh does not repeat the reset, and the address bar
+		// is left clean.
+		wp_safe_redirect( remove_query_arg( self::DEMO_RESET_PARAM ) );
+		exit;
+	}
+
+	/**
 	 * Executed when the admin page is loaded.
 	 */
 	public function load() {
+		$this->maybe_reset_demos();
+
 		parent::load();
 
 		$this->screen_options->load();
