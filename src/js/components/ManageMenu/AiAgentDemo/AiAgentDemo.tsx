@@ -74,7 +74,7 @@ const AiAgentDemoPage: React.FC = () => {
 	const showPromptBox = !hasReached(stage, 'prompt-sent')
 
 	return (
-		<div className="ai-agent ai-agent-demo demo-with-callout">
+		<div className="ai-agent ai-agent-demo">
 			<DemoPageHeader
 				title={__('AI Agent', 'code-snippets')}
 				description={__('A guided walkthrough of the Pro AI Agent. Press play and watch it plan, build, and refine a snippet on your site.', 'code-snippets')}

@@ -3,10 +3,7 @@
 // Shared chrome for the feature walkthroughs. Each demo styles its own stage
 // content; everything here is the frame around it.
 
-// Width reserved down the side of a demo page so the floating commentary never
-// covers the walkthrough it is describing.
 $callout-inline-size: 260px;
-$callout-gutter: 312px;
 $callout-breakpoint: 1400px;
 
 @keyframes demo-fade-in {
@@ -59,17 +56,13 @@ $callout-breakpoint: 1400px;
 	flex-shrink: 0;
 }
 
-// Applied to a demo page root to hold open the callout's gutter.
-.demo-with-callout {
-	@media (width > $callout-breakpoint) {
-		padding-inline-end: $callout-gutter;
-	}
-}
-
 .demo-callout {
+	// Anchored to the foot of the viewport rather than its middle: the demo
+	// pages fill their width, so a centred panel lands on the fields the
+	// commentary is describing.
 	position: fixed;
 	inset-inline-end: 28px;
-	inset-block-start: 50%;
+	inset-block-end: 28px;
 	z-index: 100;
 	inline-size: $callout-inline-size;
 	box-sizing: border-box;
@@ -78,12 +71,11 @@ $callout-breakpoint: 1400px;
 	border-inline-start: 4px solid theme.$accent;
 	border-radius: 10px;
 	background: #f4f9fd;
-	box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
-	transform: translateY(-50%);
+	box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
 	animation: demo-callout-in 300ms ease both;
 
-	// Below this there is no gutter to sit in, so the panel is dropped rather
-	// than allowed to obscure the thing it describes.
+	// Narrow screens have no room beside the walkthrough, so the panel is
+	// dropped rather than allowed to obscure the thing it describes.
 	@media (width <= $callout-breakpoint) {
 		display: none;
 	}
@@ -116,12 +108,12 @@ $callout-breakpoint: 1400px;
 @keyframes demo-callout-in {
 	from {
 		opacity: 0;
-		transform: translate(12px, -50%);
+		transform: translateY(12px);
 	}
 
 	to {
 		opacity: 1;
-		transform: translate(0, -50%);
+		transform: translateY(0);
 	}
 }
 

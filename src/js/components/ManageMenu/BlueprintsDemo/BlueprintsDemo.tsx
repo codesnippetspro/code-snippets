@@ -74,7 +74,7 @@ const BlueprintsDemoPage: React.FC = () => {
 	}, [reducedMotion, stage])
 
 	return (
-		<div className="blueprints-demo demo-with-callout">
+		<div className="blueprints-demo">
 			<DemoPageHeader
 				title={__('Blueprints', 'code-snippets')}
 				description={__('A guided walkthrough of Pro Blueprints. Press play and watch a shortcode blueprint fill itself in and generate a snippet.', 'code-snippets')}
