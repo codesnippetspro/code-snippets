@@ -180,7 +180,7 @@ const LowerNav = () =>
 						subpage="blueprints"
 						label={__('Blueprints', 'code-snippets')}
 						Icon={BlueprintIcon}
-						isPro
+						isNew
 					/>)}
 
 				<SubpageItem
