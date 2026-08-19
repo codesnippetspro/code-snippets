@@ -87,15 +87,15 @@ const CopyCodeButton: React.FC<{ code: string }> = ({ code }) => {
 	)
 }
 
-interface PreviewModalProps {
+export interface PreviewModalProps {
 	onRequestClose: VoidFunction
 	title: string
 	type: SnippetType
 	code: string
-	children: ReactNode
+	children?: ReactNode
 }
 
-const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, title, type, code, children }) => {
+export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, title, type, code, children }) => {
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {

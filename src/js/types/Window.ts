@@ -73,6 +73,9 @@ declare global {
 			bulkDownloadNonce: string
 			supportsZipDownloads: boolean
 			editorTheme: string
+			aiDemo?: {
+				siteName: string
+			}
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: SnippetSchema
