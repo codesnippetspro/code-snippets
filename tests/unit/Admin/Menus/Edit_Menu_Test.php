@@ -3,8 +3,6 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\AdminUnitTestCase;
-use Code_Snippets\UnitTestCase;
-use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 
 /**

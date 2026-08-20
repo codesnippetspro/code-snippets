@@ -4,6 +4,7 @@ namespace Code_Snippets\Admin;
 
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Admin\Menus\Edit_Menu;
+use Code_Snippets\Admin\Menus\Insights\Insights_Menu;
 use Code_Snippets\Admin\Menus\Import_Menu;
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Admin\Menus\Settings_Menu;
@@ -65,6 +66,7 @@ class Bootstrap_Admin {
 	public function load_classes() {
 		$this->menus['manage'] = new Manage_Menu();
 		$this->menus['edit'] = new Edit_Menu();
+		$this->menus['insights'] = new Insights_Menu();
 		$this->menus['import'] = new Import_Menu();
 
 		if ( is_network_admin() === are_settings_unified() ) {

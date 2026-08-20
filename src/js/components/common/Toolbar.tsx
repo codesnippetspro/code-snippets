@@ -55,6 +55,13 @@ const UpperNavItems = () =>
 			label={__('Cloud Dashboard', 'code-snippets')}
 		/>
 
+		{window.CODE_SNIPPETS?.urls.insights && (
+			<UpperNavItem
+				name="insights"
+				url={window.CODE_SNIPPETS.urls.insights}
+				label={__('Insights', 'code-snippets')}
+			/>)}
+
 		{window.CODE_SNIPPETS?.urls.welcome && (
 			<UpperNavItem
 				name="welcome"

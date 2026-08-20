@@ -25,7 +25,7 @@ export const useMarkDemoSeen = (demo: DemoName): VoidFunction => {
 		}
 
 		recorded.current = true
-		api.post<{ demos: DemoName[] }, { demo: DemoName }>(`${REST_BASES.preferences}/demos-seen`, { demo })
+		api.post<{ demos: DemoName[] }, { demo: DemoName }>(REST_BASES.preferences.demosSeen, { demo })
 			.catch(handleUnknownError)
 	}, [api, demo])
 }

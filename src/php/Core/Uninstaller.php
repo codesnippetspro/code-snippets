@@ -70,6 +70,7 @@ class Uninstaller {
 		delete_option( 'recently_active_snippets' );
 		delete_option( 'recently_activated_snippets' );
 		delete_option( 'code_snippets_settings' );
+		delete_option( 'code_snippets_insights_preferences' );
 
 		delete_option( 'code_snippets_cloud_settings' );
 		delete_transient( 'code_snippets_cloud_links' );

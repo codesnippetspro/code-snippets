@@ -5,7 +5,7 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
-use Code_Snippets\REST_API\Snippets\Preferences_REST_Controller;
+use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\get_setting;
 use const Code_Snippets\PLUGIN_FILE;
@@ -160,6 +160,7 @@ class Manage_Menu extends Admin_Menu {
 			'snippets'             => 'manage',
 			'add-snippet'          => 'edit',
 			'edit-snippet'         => 'edit',
+			'code-snippets-insights' => 'insights',
 			'import-code-snippets' => 'import',
 			'snippets-settings'    => 'settings',
 		];
@@ -200,7 +201,7 @@ class Manage_Menu extends Admin_Menu {
 			return;
 		}
 
-		Preferences_REST_Controller::reset_demos_seen();
+		Demos_Seen_REST_Controller::reset_demos_seen();
 
 		// Redirect so a refresh does not repeat the reset, and the address bar
 		// is left clean.
