@@ -11,6 +11,8 @@ interface DemoPromptBoxProps {
 	typing: boolean
 	/** Whether the walkthrough is clicking the send button right now. */
 	pressed?: boolean
+	/** Whether the agent is busy, as it is whenever the script is mid-step. */
+	disabled?: boolean
 }
 
 /**
@@ -22,7 +24,8 @@ export const DemoPromptBox: React.FC<DemoPromptBoxProps> = ({
 	submitLabel,
 	placeholder,
 	typing,
-	pressed = false
+	pressed = false,
+	disabled = false
 }) =>
 	<div className={classnames('ai-agent-prompt', 'ai-agent-demo-prompt', { 'is-typing': typing })}>
 		<div className="ai-agent-prompt__input ai-agent-demo-prompt__text" aria-live="polite">
@@ -40,6 +43,7 @@ export const DemoPromptBox: React.FC<DemoPromptBoxProps> = ({
 			<Button
 				primary
 				type="button"
+				disabled={disabled}
 				className={classnames('ai-agent-demo-send', { 'demo-click': pressed })}
 				aria-hidden="true"
 				tabIndex={-1}

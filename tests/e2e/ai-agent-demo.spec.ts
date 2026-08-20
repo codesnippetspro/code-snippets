@@ -35,6 +35,20 @@ test.describe('AI Agent demo', () => {
 		await expect(page.locator('.demo-play')).toBeVisible()
 	})
 
+	test('the page opens on the agent\u2019s own layout, with its starter prompts and sidebar', async ({ page }) => {
+		await page.goto(DEMO_URL)
+
+		await expect(page.locator('.ai-agent-empty__chip')).toHaveCount(5)
+		await expect(page.locator('.ai-agent-layout__main > .ai-agent-prompt')).toBeVisible()
+
+		await page.getByRole('tab', { name: 'Past Conversations' }).click()
+		await expect(page.locator('.ai-agent-history__item')).toHaveCount(2)
+
+		await page.getByRole('tab', { name: 'Prompt Actions' }).click()
+		await expect(page.locator('.ai-agent-examples__chip')).toHaveCount(5)
+		await expect(page.locator('.ai-agent-quota__row')).toHaveCount(2)
+	})
+
 	test('playing the walkthrough plans, builds and refines without touching the site', async ({ page }) => {
 		await page.goto(DEMO_URL)
 		expect(await countDemoSnippets()).toBe(0)
@@ -49,6 +63,10 @@ test.describe('AI Agent demo', () => {
 
 		await expect(page.locator('.demo-upsell')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 		await expect(page.locator('.ai-agent-result__row')).toHaveCount(2)
+
+		// The composer stays on the page throughout, as it does in the real agent.
+		await expect(page.locator('.ai-agent-layout__main > .ai-agent-prompt')).toBeVisible()
+		await expect(page.locator('.ai-agent-empty')).toHaveCount(0)
 
 		// The refined code names the site, so the walkthrough reads as personal.
 		const siteName = (await wpCli(['option', 'get', 'blogname'])).trim()
@@ -71,6 +89,19 @@ test.describe('AI Agent demo', () => {
 
 		// Replaying leaves nothing behind, so a visitor's library stays theirs.
 		expect(await countDemoSnippets()).toBe(0)
+	})
+
+	test('the walkthrough ends with the closing panel below the agent, scrolled into view', async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 800 })
+		await page.goto(DEMO_URL)
+
+		await page.locator('.demo-play').click()
+		await page.getByRole('button', { name: 'Skip animation' }).click()
+
+		const closing = page.locator('.ai-agent-demo > .ai-agent-demo__closing .demo-upsell')
+		await expect(closing).toBeVisible()
+		await expect(page.locator('.ai-agent-thread .demo-upsell')).toHaveCount(0)
+		await expect(closing).toBeInViewport()
 	})
 
 	test('the walkthrough holds each step long enough to be read', async ({ page }) => {

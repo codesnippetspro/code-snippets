@@ -42,6 +42,16 @@ const RefineSection: React.FC<{ stage: DemoStage, typedRefinement: string }> = (
 		? <>
 			<div className="ai-agent-result__edit-head">
 				<span>{__('Select the snippets to change, then describe the change.', 'code-snippets')}</span>
+
+				<div className="ai-agent-result__edit-actions">
+					<Button link type="button" aria-hidden="true" tabIndex={-1}>
+						{__('Deselect all', 'code-snippets')}
+					</Button>
+
+					<Button link type="button" aria-hidden="true" tabIndex={-1}>
+						{__('Cancel', 'code-snippets')}
+					</Button>
+				</div>
 			</div>
 
 			<DemoPromptBox
@@ -49,10 +59,10 @@ const RefineSection: React.FC<{ stage: DemoStage, typedRefinement: string }> = (
 				typing={'typing-refinement' === stage}
 				pressed={'applying' === stage}
 				submitLabel={__('Apply changes', 'code-snippets')}
-				placeholder={__('Describe the changes to the selected snippets…', 'code-snippets')}
+				placeholder={__('Describe the changes to the selected snippet(s)…', 'code-snippets')}
 			/>
 		</>
-		: <Button link type="button" className="ai-agent-result__make-changes" aria-hidden="true" tabIndex={-1}>
+		: <Button secondary type="button" className="ai-agent-result__make-changes" aria-hidden="true" tabIndex={-1}>
 			{__('Make changes', 'code-snippets')}
 		</Button>
 

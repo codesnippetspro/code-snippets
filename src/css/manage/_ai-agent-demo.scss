@@ -51,7 +51,7 @@ $muted: #50575e;
 	padding-inline: 14px;
 	border: 1px dashed #c3c4c7;
 	border-radius: 8px;
-	background: #f6f7f7;
+	background: #fff;
 	color: $muted;
 	font-size: 13px;
 	animation: ai-agent-fade-in 0.25s ease;
@@ -90,20 +90,29 @@ $muted: #50575e;
 	}
 }
 
-/* Sidebar additions */
+/* Closing panel */
 
-.ai-agent-demo-capabilities {
-	margin-block-start: 20px;
+// Sits below the agent rather than inside its thread, so it reads as the end
+// of the walkthrough rather than as another message.
+.ai-agent-demo__closing {
+	margin-block-start: 24px;
 }
 
-.ai-agent-demo-capabilities__list {
-	margin-block: 0;
-	padding-inline-start: 18px;
-	color: $muted;
-	font-size: 13px;
+/* Inert controls */
 
-	li {
-		margin-block-end: 8px;
+// The walkthrough drives the page, so the agent's own controls are disabled
+// rather than removed. They are drawn at full strength so the demo shows the
+// screen as it really looks.
+.ai-agent-demo {
+	.ai-agent-examples__chip:disabled,
+	.ai-agent-empty__chip:disabled {
+		opacity: 1;
+		cursor: default;
+		color: var(--cs-color-text, #2c3337);
+	}
+
+	.ai-agent-history__open {
+		cursor: default;
 	}
 }
 

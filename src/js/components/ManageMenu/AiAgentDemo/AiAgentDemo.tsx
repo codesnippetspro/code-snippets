@@ -12,7 +12,7 @@ import { DemoResultCard } from './DemoResultCard'
 import { DemoSidebar } from './DemoSidebar'
 import { DemoMessage, DemoTransit, DemoTyping } from './DemoThread'
 import { AiAgentDemoUpsell } from './DemoUpsell'
-import { DEMO_PROMPT, DEMO_REFINEMENT_REPLY } from './demoScript'
+import { DEMO_EXAMPLES, DEMO_PROMPT, DEMO_REFINEMENT_REPLY } from './demoScript'
 import { useAiAgentDemo } from './useAiAgentDemo'
 import { hasReached } from './types'
 import type { DemoStage } from './types'
@@ -72,15 +72,15 @@ const AiAgentDemoPage: React.FC = () => {
 
 		markSeen()
 
-		// Settle on the foot of the page so the closing panel and the snippets
-		// it refers to are in view together.
-		window.scrollTo({
-			top: document.body.scrollHeight,
-			behavior: reducedMotion ? 'auto' : 'smooth'
+		// The closing panel sits below the agent, so bring it into view rather
+		// than leaving the walkthrough to end off screen.
+		upsellRef.current?.scrollIntoView({
+			behavior: reducedMotion ? 'auto' : 'smooth',
+			block: 'end'
 		})
 	}, [isFinished, markSeen, reducedMotion])
 
-	const showPromptBox = !hasReached(stage, 'prompt-sent')
+	const promptSent = hasReached(stage, 'prompt-sent')
 
 	return (
 		<div className="ai-agent ai-agent-demo">
@@ -102,6 +102,17 @@ const AiAgentDemoPage: React.FC = () => {
 
 			<div className="ai-agent-layout">
 				<div className="ai-agent-layout__main">
+					{!promptSent && <div className="ai-agent-empty">
+						<p className="ai-agent-empty__eyebrow">{__('Start with these prompts', 'code-snippets')}</p>
+
+						<div className="ai-agent-empty__chips">
+							{DEMO_EXAMPLES.map(example =>
+								<button key={example} type="button" className="ai-agent-empty__chip" disabled>
+									{example}
+								</button>)}
+						</div>
+					</div>}
+
 					<div className="ai-agent-thread">
 						{hasReached(stage, 'prompt-sent') && <DemoMessage speaker="user">{DEMO_PROMPT}</DemoMessage>}
 
@@ -127,24 +138,26 @@ const AiAgentDemoPage: React.FC = () => {
 						{'applying' === stage && <DemoTyping label={__('Applying your changes…', 'code-snippets')} />}
 
 						{hasReached(stage, 'saved') && <DemoMessage speaker="assistant">{DEMO_REFINEMENT_REPLY}</DemoMessage>}
-
-						{isFinished && <div ref={upsellRef}>
-							<AiAgentDemoUpsell onReplay={replay} />
-						</div>}
 					</div>
 
-					{showPromptBox && <DemoPromptBox
-						value={typedPrompt}
+					<DemoPromptBox
+						value={hasReached(stage, 'planning') ? '' : typedPrompt}
 						typing={'typing-prompt' === stage}
+						pressed={'prompt-sent' === stage}
+						disabled={promptSent}
 						submitLabel={__('Send', 'code-snippets')}
 						placeholder={__('Describe what you want to build…', 'code-snippets')}
-					/>}
+					/>
 				</div>
 
 				<div className="ai-agent-layout__sidebar">
-					<DemoSidebar />
+					<DemoSidebar stage={stage} />
 				</div>
 			</div>
+
+			{isFinished && <div ref={upsellRef} className="ai-agent-demo__closing">
+				<AiAgentDemoUpsell onReplay={replay} />
+			</div>}
 		</div>
 	)
 }

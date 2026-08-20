@@ -1,6 +1,18 @@
 import { __, sprintf } from '@wordpress/i18n'
 import type { DemoPlan, DemoSnippet } from './types'
 
+/**
+ * The starter prompts the real agent offers, by their chip labels. The demo
+ * never sends one — they are here so the page reads as the agent's own.
+ */
+export const DEMO_EXAMPLES: readonly string[] = [
+	__('Replace a plugin with snippets', 'code-snippets'),
+	__('Speed up my site', 'code-snippets'),
+	__('Add a feature', 'code-snippets'),
+	__('Fix a problem', 'code-snippets'),
+	__('Customize appearance', 'code-snippets')
+]
+
 export const DEMO_PROMPT = __('Add a dismissible welcome banner to the top of my site.', 'code-snippets')
 
 export const DEMO_PLAN_REPLY = __('Here is what I would build. Two snippets keep the markup and the styling separate, so you can restyle the banner later without touching the PHP.', 'code-snippets')
