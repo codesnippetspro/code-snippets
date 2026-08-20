@@ -8,7 +8,6 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Core\DB;
-use Code_Snippets\Flat_Files\Snippet_Files;
 use Exception;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Validator;

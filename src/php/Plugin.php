@@ -17,7 +17,8 @@ use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
-use Code_Snippets\REST_API\Snippets\Preferences_REST_Controller;
+use Code_Snippets\REST_API\Preferences\Insights_View_Rest_Controller;
+use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
 use function Code_Snippets\Settings\are_settings_unified;
@@ -152,7 +153,10 @@ class Plugin {
 
 		new Snippets_REST_Controller();
 		new Recently_Active_REST_Controller();
-		new Preferences_REST_Controller();
+
+		new Snippet_View_REST_Controller();
+		new Insights_View_Rest_Controller();
+
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
 
@@ -201,6 +205,7 @@ class Plugin {
 		$import = [ 'import', 'import-snippets', 'import-code-snippets' ];
 		$settings = [ 'settings', 'snippets-settings' ];
 		$cloud = [ 'cloud', 'cloud-snippets' ];
+		$insights = [ 'insights', 'code-snippets-insights' ];
 		$welcome = [ 'welcome', 'getting-started', 'code-snippets' ];
 
 		if ( in_array( $menu, $edit, true ) ) {
@@ -213,6 +218,8 @@ class Plugin {
 			return 'snippets-settings';
 		} elseif ( in_array( $menu, $cloud, true ) ) {
 			return 'snippets&subpage=cloud-community';
+		} elseif ( in_array( $menu, $insights, true ) ) {
+			return 'code-snippets-insights';
 		} elseif ( in_array( $menu, $welcome, true ) ) {
 			return 'code-snippets-welcome';
 		} else {
@@ -356,12 +363,13 @@ class Plugin {
 				'isLicensed'       => $this->licensing->is_licensed(),
 				'isCloudConnected' => $this->cloud_connection->is_authenticated(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
-				'snippetView'      => Preferences_REST_Controller::get_snippet_view(),
+				'snippetView'      => Snippet_View_REST_Controller::get_snippet_view(),
+				'insightsChartViews' => Insights_View_Rest_Controller::get_insights_chart_views(),
 				'restAPI'          => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
-					'preferences'    => esc_url_raw( rest_url( Preferences_REST_Controller::get_base_route() ) ),
+					'preferences'    => esc_url_raw( rest_url( Snippet_View_REST_Controller::get_base_route() ) ),
 					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
 					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),
@@ -375,6 +383,7 @@ class Plugin {
 					'manage'   => esc_url_raw( $this->get_menu_url() ),
 					'edit'     => esc_url_raw( $this->get_menu_url( 'edit' ) ),
 					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
+					'insights' => esc_url_raw( $this->get_menu_url( 'insights' ) ),
 					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
 					'import'   => esc_url_raw( $this->get_menu_url( 'import' ) ),
 					'cloud'    => esc_url_raw( $this->cloud_connection->get_base_url() ),

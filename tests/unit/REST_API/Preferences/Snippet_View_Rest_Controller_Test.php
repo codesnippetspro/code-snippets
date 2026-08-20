@@ -1,9 +1,8 @@
 <?php
 
-namespace Code_Snippets\REST_API;
+namespace Code_Snippets\REST_API\Preferences;
 
-use Code_Snippets\REST_API\Snippets\Preferences_REST_Controller;
-use Code_Snippets\UnitTestCase;
+use Code_Snippets\AdminUnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_UnitTest_Factory;
@@ -17,7 +16,7 @@ use WP_UnitTest_Factory;
  *
  * @group rest-api
  */
-class REST_API_Preferences_Test extends UnitTestCase {
+class Snippet_View_Rest_Controller_Test extends AdminUnitTestCase {
 
 	/**
 	 * REST API endpoint for the snippet view preference.
@@ -25,13 +24,6 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	 * @var string
 	 */
 	protected string $endpoint = '/code-snippets/v1/preferences/snippet-view';
-
-	/**
-	 * Administrator user ID.
-	 *
-	 * @var int
-	 */
-	protected static int $admin_id;
 
 	/**
 	 * Editor user ID (no snippet capabilities).
@@ -46,11 +38,11 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	 * @param WP_UnitTest_Factory $factory Factory object.
 	 */
 	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
-		self::$admin_id = $factory->user->create( [ 'role' => 'administrator' ] );
+		parent::wpSetUpBeforeClass( $factory );
 		self::$editor_id = $factory->user->create( [ 'role' => 'editor' ] );
 
 		if ( is_multisite() ) {
-			grant_super_admin( self::$admin_id );
+			grant_super_admin( self::get_user_id() );
 		}
 	}
 
@@ -60,8 +52,7 @@ class REST_API_Preferences_Test extends UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
-		wp_set_current_user( self::$admin_id );
-		delete_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION );
+		delete_option( Snippet_View_REST_Controller::OPTION_NAME );
 	}
 
 	/**
@@ -100,12 +91,12 @@ class REST_API_Preferences_Test extends UnitTestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( [ 'view' => 'card' ], $response->get_data() );
-		$this->assertSame( 'card', get_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION ) );
+		$this->assertSame( 'card', get_option( Snippet_View_REST_Controller::OPTION_NAME ) );
 
 		$response = $this->dispatch( 'GET' );
 		$this->assertSame( [ 'view' => 'card' ], $response->get_data() );
 
-		$this->assertSame( 'card', Preferences_REST_Controller::get_snippet_view() );
+		$this->assertSame( 'card', Snippet_View_REST_Controller::get_snippet_view() );
 	}
 
 	/**
@@ -115,16 +106,16 @@ class REST_API_Preferences_Test extends UnitTestCase {
 		$response = $this->dispatch( 'POST', [ 'view' => 'sideways' ] );
 
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertFalse( get_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION ) );
+		$this->assertFalse( get_option( Snippet_View_REST_Controller::OPTION_NAME ) );
 	}
 
 	/**
 	 * An invalid stored option value falls back to the default view.
 	 */
 	public function test_invalid_stored_option_falls_back_to_default() {
-		update_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION, 'nonsense' );
+		update_option( Snippet_View_REST_Controller::OPTION_NAME, 'nonsense' );
 
-		$this->assertSame( 'table', Preferences_REST_Controller::get_snippet_view() );
+		$this->assertSame( 'table', Snippet_View_REST_Controller::get_snippet_view() );
 	}
 
 	/**
@@ -138,6 +129,6 @@ class REST_API_Preferences_Test extends UnitTestCase {
 
 		$response = $this->dispatch( 'POST', [ 'view' => 'table' ] );
 		$this->assertContains( $response->get_status(), [ 401, 403 ] );
-		$this->assertFalse( get_option( Preferences_REST_Controller::SNIPPET_VIEW_OPTION ) );
+		$this->assertFalse( get_option( Snippet_View_REST_Controller::OPTION_NAME ) );
 	}
 }

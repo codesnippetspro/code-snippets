@@ -12,6 +12,7 @@ import { CloudSnippetsTable } from './CloudSnippetsTable'
 import { CloudSnippetAuthor, SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
+import type { TableNavProps } from '../../common/ListTable/TableNavigation'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { SnippetView } from '../../../types/SnippetView'
 import type { ListTableAction } from '../../common/ListTable'
@@ -140,29 +141,42 @@ const useSearchResultsSelection = () => {
 	return { doAction, doSearch, isSearching, searchResults, selected, setSelected }
 }
 
-const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
-	const { doAction, doSearch, isSearching, searchResults, selected, setSelected } =
-		useSearchResultsSelection()
+interface SearchResultsTableNavProps extends Partial<TableNavProps<number, CloudSearchAction>> {
+	which: 'top' | 'bottom'
+}
+
+const SearchResultsTableNav: React.FC<SearchResultsTableNavProps> = ({ which, ...props }) => {
+	const { doSearch, isSearching, searchResults, selected, setSelected } = useSearchResultsSelection()
 
 	if (!searchResults) {
 		return null
 	}
 
-	const { totalItems, totalPages, page } = searchResults
+	return (
+		<TableNav
+			which={which}
+			disabled={isSearching}
+			selected={selected}
+			setSelected={setSelected}
+			totalItems={searchResults.totalItems}
+			totalPages={searchResults.totalPages}
+			currentPage={searchResults.page}
+			setCurrentPage={page => doSearch({ page })}
+			{...props}
+		/>
+	)
+}
 
-	const navProps = {
-		totalItems,
-		totalPages,
-		selected,
-		setSelected,
-		disabled: isSearching,
-		currentPage: page,
-		setCurrentPage: (newPage: number) => doSearch({ page: newPage })
+const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
+	const { doAction, searchResults, selected, setSelected } = useSearchResultsSelection()
+
+	if (!searchResults) {
+		return null
 	}
 
 	return (
 		<div className="snippets-list-view">
-			<TableNav
+			<SearchResultsTableNav
 				which="top"
 				actions={CLOUD_BULK_ACTIONS}
 				doAction={doAction}
@@ -176,7 +190,6 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 					'top' === which
 						? <SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
 						: null}
-				{...navProps}
 			/>
 
 			{'card' === snippetView
@@ -191,7 +204,7 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 					setSelected={setSelected}
 				/>}
 
-			<TableNav which="bottom" {...navProps} />
+			<SearchResultsTableNav which="bottom" />
 		</div>
 	)
 }

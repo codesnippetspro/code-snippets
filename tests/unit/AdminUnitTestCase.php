@@ -21,7 +21,7 @@ class AdminUnitTestCase extends UnitTestCase {
 	 *
 	 * @return int
 	 */
-	protected function get_user_id(): int {
+	protected static function get_user_id(): int {
 		return self::$admin_user_id;
 	}
 

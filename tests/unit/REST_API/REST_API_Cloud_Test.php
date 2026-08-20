@@ -4,12 +4,11 @@ namespace Code_Snippets\REST_API;
 
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\AdminUnitTestCase;
+use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Snippet;
-use Code_Snippets\UnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use WP_UnitTest_Factory;
 use function Code_Snippets\save_snippet;
 
 /**
@@ -146,32 +145,23 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 	 */
 	private function make_request( array $params, string $route = '' ): WP_REST_Response {
 		global $wp_rest_server;
+		static $connection;
+
+		if ( ! isset( $connection ) ) {
+			$connection = new Basic_Cloud_Connection();
+		}
 
 		$wp_rest_server = null;
 		rest_get_server();
 
 		$request = new WP_REST_Request( 'GET', $this->endpoint . $route );
-		$request->add_header( 'Access-Control', $this->get_connection_token() );
+		$request->add_header( 'Access-Control', $connection->get_local_token() );
 
 		foreach ( $params as $key => $value ) {
 			$request->set_param( $key, $value );
 		}
 
 		return rest_do_request( $request );
-	}
-
-	/**
-	 * Read the active cloud connection's local token.
-	 *
-	 * @return string
-	 */
-	private function get_connection_token(): string {
-		$plugin = \Code_Snippets\code_snippets();
-
-		$property = new \ReflectionProperty( $plugin, 'cloud_connection' );
-		$property->setAccessible( true );
-
-		return $property->getValue( $plugin )->get_local_token();
 	}
 
 	/**

@@ -4,7 +4,7 @@ import { buildUrl } from '../urls'
 import { parseSnippetObject } from './objects'
 import type { CloudSnippetSchema } from '../../types/schema/CloudSnippetSchema'
 import type { SnippetSchema } from '../../types/schema/SnippetSchema'
-import type { Snippet, SnippetScope, SnippetType } from '../../types/Snippet'
+import type { Snippet, SnippetCodeScope, SnippetScope, SnippetType } from '../../types/Snippet'
 
 const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
@@ -14,6 +14,36 @@ export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
 	css: __('Styles', 'code-snippets'),
 	js: __('Scripts', 'code-snippets'),
 	cond: __('Conditions', 'code-snippets')
+}
+
+export const SNIPPET_SCOPE_ICONS: Record<SnippetCodeScope, string> = {
+	'global': 'admin-site',
+	'admin': 'admin-tools',
+	'front-end': 'admin-appearance',
+	'single-use': 'clock',
+	'content': 'shortcode',
+	'head-content': 'editor-code',
+	'body-content': 'editor-code',
+	'footer-content': 'editor-code',
+	'admin-css': 'dashboard',
+	'site-css': 'admin-customizer',
+	'site-head-js': 'media-code',
+	'site-footer-js': 'media-code'
+}
+
+export const SNIPPET_SCOPE_DESCRIPTIONS: Record<SnippetCodeScope, string> = {
+	'global': __('Run everywhere', 'code-snippets'),
+	'admin': __('Only run in administration area', 'code-snippets'),
+	'front-end': __('Only run on site front-end', 'code-snippets'),
+	'single-use': __('Only run once', 'code-snippets'),
+	'content': __('Where inserted in editor', 'code-snippets'),
+	'head-content': __('In site header (<head> section)', 'code-snippets'),
+	'body-content': __('In site content (start of <body>)', 'code-snippets'),
+	'footer-content': __('In site footer (end of <body>)', 'code-snippets'),
+	'site-css': __('Site front-end', 'code-snippets'),
+	'admin-css': __('Administration area', 'code-snippets'),
+	'site-head-js': __('In site header (<head> section)', 'code-snippets'),
+	'site-footer-js': __('In site footer (end of <body>)', 'code-snippets')
 }
 
 export const createSnippetObject = (fields?: Partial<Snippet> | Partial<SnippetSchema>): Snippet =>
