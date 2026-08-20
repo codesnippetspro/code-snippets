@@ -56,6 +56,39 @@ test.describe('Cloud Library demo', () => {
 		await expect(page.locator('.demo-upsell')).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 	})
 
+	test('the preview step keeps its callout in place, over the modal overlay', async ({ page }) => {
+		await page.setViewportSize({ width: 1600, height: 900 })
+		await page.goto(DEMO_URL)
+		await page.locator('.demo-play').click()
+
+		const modal = page.locator('.code-snippets-preview-modal')
+		await expect(modal).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+
+		const callout = page.locator('.demo-callout')
+		await expect(callout).toBeVisible()
+
+		// Above the modal's own overlay, so the commentary is not dimmed with
+		// the rest of the page.
+		const zIndexes = await page.evaluate(() => {
+			const zIndexOf = (selector: string) => {
+				const element = document.querySelector(selector)
+				return element ? Number.parseInt(window.getComputedStyle(element).zIndex, 10) : 0
+			}
+
+			return {
+				callout: zIndexOf('.demo-callout'),
+				overlay: zIndexOf('.components-modal__screen-overlay')
+			}
+		})
+
+		expect(zIndexes.callout).toBeGreaterThan(zIndexes.overlay)
+
+		// And clear of the modal itself, rather than covering what it describes.
+		const calloutBox = await callout.boundingBox()
+		const modalBox = await modal.boundingBox()
+		expect(calloutBox?.x ?? 0).toBeGreaterThanOrEqual((modalBox?.x ?? 0) + (modalBox?.width ?? 0))
+	})
+
 	test('each step marks the click and spotlights what it describes', async ({ page }) => {
 		await page.goto(DEMO_URL)
 		await page.locator('.demo-play').click()

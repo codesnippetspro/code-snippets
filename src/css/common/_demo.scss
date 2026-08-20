@@ -7,6 +7,14 @@ $callout-inline-size: 320px;
 $click-colour: #d63638;
 $callout-breakpoint: 1400px;
 
+// One step above the WordPress modal overlay (100000), so the commentary is
+// not dimmed by a modal the walkthrough opened.
+$above-modal-overlay: 100001;
+
+// Space kept between the callout and both the modal and the viewport edge.
+$modal-gutter-inset: 40px;
+
+
 @keyframes demo-fade-in {
 	from {
 		opacity: 0;
@@ -116,6 +124,16 @@ $callout-breakpoint: 1400px;
 		opacity: 1;
 		transform: translateY(0);
 	}
+}
+
+// A modal draws its own overlay across the whole viewport, which would dim the
+// commentary along with the page behind it. The callout keeps its corner and
+// rises above the overlay instead, narrowing to the gutter beside the modal so
+// it never covers what it is describing.
+body.modal-open .demo-callout {
+	z-index: $above-modal-overlay;
+	inline-size: calc((100vw - var(--cs-preview-modal-inline-size)) / 2 - #{$modal-gutter-inset});
+	max-inline-size: $callout-inline-size;
 }
 
 // Marks the button the walkthrough is "clicking", so a simulated press reads

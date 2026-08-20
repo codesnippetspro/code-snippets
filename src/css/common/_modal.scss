@@ -55,7 +55,7 @@
 .components-modal__frame.code-snippets-preview-modal {
 	min-inline-size: 520px;
 	min-block-size: 240px;
-	inline-size: min(900px, 90vw);
+	inline-size: var(--cs-preview-modal-inline-size);
 	max-block-size: 85vh;
 
 	@media (width <= 600px) {
