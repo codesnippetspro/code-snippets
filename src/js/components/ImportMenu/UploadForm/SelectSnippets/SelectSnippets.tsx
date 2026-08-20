@@ -129,7 +129,7 @@ const SubmitForm: React.FC<SubmitFormProps> = ({ children, duplicateAction, setI
 			setImportResult(undefined)
 
 			api
-				.post<SnippetImportResponse, SnippetImportRequest>(`${REST_BASES.importFiles}/import`, request)
+				.post<SnippetImportResponse, SnippetImportRequest>(`${REST_BASES.import.files}/import`, request)
 				.then(({ message, imported }) => {
 					setImportResult({ step: 'select', success: true, message, imported })
 				})

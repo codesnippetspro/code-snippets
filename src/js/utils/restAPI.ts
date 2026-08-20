@@ -7,9 +7,14 @@ const normalizeUrl = (url: string | undefined) =>
 export const REST_BASES = {
 	snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippets),
 	recentlyActive: normalizeUrl(window.CODE_SNIPPETS?.restAPI.recentlyActive),
-	preferences: normalizeUrl(window.CODE_SNIPPETS?.restAPI.preferences),
-	importPlugins: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importPlugins),
-	importFiles: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importFiles),
+	import: {
+		plugins: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importPlugins),
+		files: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importFiles),
+	},
+	preferences: {
+		snippetView: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippetView),
+		insights: normalizeUrl(window.CODE_SNIPPETS?.restAPI.insightsView),
+	},
 	cloud: {
 		snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloud.snippets),
 	}

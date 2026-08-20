@@ -32,7 +32,8 @@ declare global {
 				base: string
 				snippets: string
 				recentlyActive: string
-				preferences: string
+				snippetView: string
+				insightsView: string
 				importPlugins: string
 				importFiles: string
 				nonce: string

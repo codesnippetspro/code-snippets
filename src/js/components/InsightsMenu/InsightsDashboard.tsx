@@ -7,8 +7,6 @@ import { InsightsChart, TotalsInsightsChart } from './InsightsCharts'
 import type { InsightChartPreferencesSchema, InsightsChartEntry, InsightsChartView, InsightsChartViews, InsightsConfigurableChartKey, InsightsSummary } from '../../types/Insights'
 import type { SnippetCodeScope, SnippetType } from '../../types/Snippet'
 
-const CHART_PREFERENCES_URL = `${REST_BASES.preferences}/insights-chart-views`
-
 export const DEFAULT_INSIGHTS_CHART_VIEWS: InsightsChartViews = window.CODE_SNIPPETS?.insightsChartViews ?? {
 	type: 'bar',
 	activation: 'pie',
@@ -114,7 +112,7 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 
 		setChartViews(views)
 
-		api.post<InsightChartPreferencesSchema, InsightChartPreferencesSchema>(CHART_PREFERENCES_URL, { views })
+		api.post<InsightChartPreferencesSchema, InsightChartPreferencesSchema>(REST_BASES.preferences.insights, { views })
 			.catch((error: unknown) => {
 				setChartViews(currentViews => currentViews === views ? chartViews : currentViews)
 				console.error(error)
