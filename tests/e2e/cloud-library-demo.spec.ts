@@ -120,9 +120,11 @@ test.describe('Cloud Library demo', () => {
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
 
-		await expect(page.locator('.demo-upsell')).toBeVisible()
-		await expect.poll(async () => page.evaluate(() =>
-			40 > Math.abs(window.scrollY + window.innerHeight - document.body.scrollHeight))).toBe(true)
+		// The panel is brought to the bottom of the viewport, not the bottom of
+		// the document: the admin footer still sits below it.
+		const closing = page.locator('.demo-upsell')
+		await expect(closing).toBeVisible()
+		await expect(closing).toBeInViewport({ ratio: 1 })
 	})
 
 	test('replaying returns the snippet to its undownloaded state', async ({ page }) => {
