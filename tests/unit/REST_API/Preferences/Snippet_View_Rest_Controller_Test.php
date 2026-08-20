@@ -125,8 +125,6 @@ class Snippet_View_Rest_Controller_Test extends AdminUnitTestCase {
 		wp_set_current_user( self::$editor_id );
 
 		$response = $this->dispatch( 'GET' );
-		echo $response->get_status();
-
 		$this->assertContains( $response->get_status(), [ 401, 403 ] );
 
 		$response = $this->dispatch( 'POST', [ 'view' => 'table' ] );

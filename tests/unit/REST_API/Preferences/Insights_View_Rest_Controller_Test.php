@@ -36,7 +36,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 	 *
 	 * @param WP_UnitTest_Factory $factory Factory object.
 	 */
-	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory )  {
+	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
 		parent::wpSetUpBeforeClass( $factory );
 		self::$editor_id = $factory->user->create( [ 'role' => 'editor' ] );
 

@@ -147,7 +147,7 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 		global $wp_rest_server;
 		static $connection;
 
-		if ( ! isset( $connection ) ){
+		if ( ! isset( $connection ) ) {
 			$connection = new Basic_Cloud_Connection();
 		}
 

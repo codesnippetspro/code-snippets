@@ -35,17 +35,7 @@ const assertSimpleString = (text: string, name: string) => {
 	}
 }
 
-const main = () => {
-	const envFile = resolve(process.cwd(), '.env')
-
-	if (existsSync(envFile)) {
-		loadEnvFile(envFile)
-	}
-
-	const wpVersion = process.env.WP_PHPUNIT_WP_VERSION ?? 'latest'
-
-	const useDbSocket = (process.env.WP_PHPUNIT_DB_USE_SOCKET ?? 'false').toLowerCase() === 'true'
-
+const initialiseDatabase = (): DatabaseOptions => {
 	const db: DatabaseOptions = {
 		binary: process.env.WP_PHPUNIT_DB_BINARY ?? 'mysql',
 		schema: process.env.WP_PHPUNIT_DB_NAME ?? 'code_snippets_phpunit',
@@ -59,30 +49,17 @@ const main = () => {
 	assertSimpleString(db.host, 'WP_PHPUNIT_DB_HOST')
 	assertSimpleString(db.password, 'WP_PHPUNIT_DB_PASS')
 
-	const wpTestsDir = resolve(process.cwd(), '.wp-tests-lib')
-	const wpCoreDir = resolve(process.cwd(), '.wp-core')
-	const wpTestsConfig = resolve(wpTestsDir, 'wp-tests-config.php')
-	const installScript = resolve(process.cwd(), 'scripts', 'install-wp-tests.sh')
-
-	// Create a new user if it doesn't exist, and we can connect using the socket.
-	if (useDbSocket && db.user !== 'root') {
-		run(db.binary, ['-e', `CREATE USER IF NOT EXISTS '${db.user}'@'${db.host}' IDENTIFIED BY '${db.password}';`])
-		run(db.binary, ['-e', `GRANT ALL PRIVILEGES ON \`${db.schema}\`.* TO '${db.user}'@'${db.host}';`])
-		run(db.binary, ['-e', 'FLUSH PRIVILEGES;'])
-	}
+	const useDbSocket = 'true' === (process.env.WP_PHPUNIT_DB_USE_SOCKET ?? 'false').toLowerCase()
 
 	// Create the database if needed (avoid install-wp-tests.sh prompt / destructive behavior).
 	const mysqlArgs = useDbSocket ? [] : buildMysqlArgs(db)
 	run(db.binary, [...mysqlArgs, '-e', `CREATE DATABASE IF NOT EXISTS \`${db.schema}\`;`])
 
-	// Ensure config is regenerated with current DB settings.
-	run('rm', ['-f', wpTestsConfig, `${wpTestsConfig}.bak`])
-
-	run(
-		'bash',
-		[installScript, db.schema, db.user, db.password, db.host, wpVersion, 'true'],
-		{ env: { WP_TESTS_DIR: wpTestsDir, WP_CORE_DIR: wpCoreDir } }
-	)
+	if (useDbSocket && 'root' !== db.user) {
+		run(db.binary, ['-e', `CREATE USER IF NOT EXISTS '${db.user}'@'${db.host}' IDENTIFIED BY '${db.password}';`])
+		run(db.binary, ['-e', `GRANT ALL PRIVILEGES ON \`${db.schema}\`.* TO '${db.user}'@'${db.host}';`])
+		run(db.binary, ['-e', 'FLUSH PRIVILEGES;'])
+	}
 
 	// Ensure a clean test schema before WordPress bootstraps installation.
 	run(db.binary, [
@@ -100,6 +77,33 @@ const main = () => {
 			'SET FOREIGN_KEY_CHECKS = 1'
 		].join('; ')
 	])
+
+	return db
+}
+
+const main = () => {
+	const envFile = resolve(process.cwd(), '.env')
+
+	if (existsSync(envFile)) {
+		loadEnvFile(envFile)
+	}
+
+	const wpVersion = process.env.WP_PHPUNIT_WP_VERSION ?? 'latest'
+	const db = initialiseDatabase()
+
+	const wpTestsDir = resolve(process.cwd(), '.wp-tests-lib')
+	const wpCoreDir = resolve(process.cwd(), '.wp-core')
+	const wpTestsConfig = resolve(wpTestsDir, 'wp-tests-config.php')
+	const installScript = resolve(process.cwd(), 'scripts', 'install-wp-tests.sh')
+
+	// Ensure config is regenerated with current DB settings.
+	run('rm', ['-f', wpTestsConfig, `${wpTestsConfig}.bak`])
+
+	run(
+		'bash',
+		[installScript, db.schema, db.user, db.password, db.host, wpVersion, 'true'],
+		{ env: { WP_TESTS_DIR: wpTestsDir, WP_CORE_DIR: wpCoreDir } }
+	)
 
 	// Initialize WordPress test tables so `npm run test:php` works on a fresh DB.
 	run('php', [resolve(wpTestsDir, 'includes', 'install.php'), wpTestsConfig])
