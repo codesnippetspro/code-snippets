@@ -508,14 +508,6 @@ export class SnippetsTestHelper {
 	async expectTextVisible(text: string): Promise<void> {
 		await expect(this.page.locator(`text=${text}`)).toBeVisible()
 	}
-
-	/**
-	 * Expect text to not be visible on the page
-	 */
-	async expectTextNotVisible(text: string): Promise<void> {
-		await expect(this.page.locator('body')).not.toContainText(text)
-	}
-
 	async expectTextBeforeElement(text: string, selector: string): Promise<void> {
 		const precedes = await this.page.evaluate(
 			({ text, selector }) => {
@@ -604,74 +596,5 @@ export class SnippetsTestHelper {
 		await this.fillSnippetForm(options)
 		await this.saveSnippet('save')
 		await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
-	}
-
-	// CSS Testing Helpers
-
-	/**
-	 * Create a test DOM element for CSS testing
-	 */
-	async createTestElement(className: string, textContent = 'Test Element'): Promise<void> {
-		await this.page.evaluate(({ className, textContent }: { className: string; textContent: string }) => {
-			const testElement = document.createElement('div')
-			testElement.className = className
-			testElement.textContent = textContent
-			document.body.appendChild(testElement)
-		}, { className, textContent })
-	}
-
-	/**
-	 * Get computed CSS style property from an element
-	 */
-	async getComputedStyle(selector: string, property: keyof CSSStyleDeclaration) {
-		return await this.page.locator(selector).evaluate(
-			(element, prop) => window.getComputedStyle(element)[prop],
-			property
-		)
-	}
-
-	/**
-	 * Verify that CSS styles are applied to an element
-	 */
-	async verifyStylesApplied(selector: string, expectedStyles: Partial<CSSStyleDeclaration>): Promise<void> {
-		for (const [property, expectedValue] of Object.entries(expectedStyles)) {
-			const actualValue = await this.getComputedStyle(selector, <keyof CSSStyleDeclaration> property)
-			expect(actualValue).toBe(expectedValue)
-		}
-	}
-
-	/**
-	 * Verify that CSS styles are NOT applied to an element
-	 */
-	async verifyStylesNotApplied(selector: string, unexpectedStyles: Partial<CSSStyleDeclaration>): Promise<void> {
-		for (const [property, unexpectedValue] of Object.entries(unexpectedStyles)) {
-			const actualValue = await this.getComputedStyle(selector, <keyof CSSStyleDeclaration> property)
-			expect(actualValue).not.toBe(unexpectedValue)
-		}
-	}
-
-	// JavaScript Testing Helpers
-
-	/**
-	 * Verify that a global variable has the expected value
-	 */
-	async verifyGlobalVariable(variableName: keyof Window, expectedValue: unknown): Promise<void> {
-		const actualValue = await this.page.evaluate<typeof expectedValue, keyof Window>(
-			varName => window[varName],
-			variableName
-		)
-		expect(actualValue).toBe(expectedValue)
-	}
-
-	/**
-	 * Verify that a global function returns the expected result
-	 */
-	async verifyGlobalFunction(functionName: keyof Window, expectedResult: unknown): Promise<void> {
-		const result = await this.page.evaluate<typeof expectedResult, keyof Window>(
-			funcName => (<(() => unknown) | undefined> window[funcName])?.(),
-			functionName
-		)
-
-		expect(result).toBe(expectedResult)
 	}
 }

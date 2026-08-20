@@ -107,7 +107,6 @@ class Snippet_Files {
 	 * Register WordPress hooks used by file-based execution.
 	 *
 	 * @return void
-	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
 	public function register_hooks(): void {
 		if ( ! $this->fs->is_writable( WP_CONTENT_DIR ) ) {

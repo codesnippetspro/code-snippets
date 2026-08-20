@@ -5,8 +5,6 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;
-use Code_Snippets\UnitTestCase;
-use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
@@ -72,12 +70,12 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 
 		$this->enqueue_assets();
 
-		$this->assertTrue( wp_script_is( 'code-editor', 'enqueued' ) );
-		$this->assertTrue( wp_style_is( 'code-editor', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'htmlhint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'csslint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'jshint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'code-snippets-code-editor', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( 'code-editor' ) );
+		$this->assertTrue( wp_style_is( 'code-editor' ) );
+		$this->assertFalse( wp_script_is( 'htmlhint' ) );
+		$this->assertFalse( wp_script_is( 'csslint' ) );
+		$this->assertFalse( wp_script_is( 'jshint' ) );
+		$this->assertFalse( wp_script_is( 'code-snippets-code-editor' ) );
 	}
 
 	/**
@@ -248,11 +246,11 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 
 		$this->enqueue_assets();
 
-		$this->assertTrue( wp_script_is( 'code-editor', 'enqueued' ) );
-		$this->assertTrue( wp_style_is( 'code-editor', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'htmlhint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'csslint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'jshint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'code-snippets-code-editor', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( 'code-editor' ) );
+		$this->assertTrue( wp_style_is( 'code-editor' ) );
+		$this->assertFalse( wp_script_is( 'htmlhint' ) );
+		$this->assertFalse( wp_script_is( 'csslint' ) );
+		$this->assertFalse( wp_script_is( 'jshint' ) );
+		$this->assertFalse( wp_script_is( 'code-snippets-code-editor' ) );
 	}
 }

@@ -114,7 +114,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test that we can retrieve all snippets without pagination.
 	 */
 	public function test_get_all_snippets_without_pagination() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 		$response = $this->make_request( $endpoint, [ 'network' => false ] );
 
 		$this->assertIsArray( $response );
@@ -129,7 +129,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test pagination with per_page parameter only (first page).
 	 */
 	public function test_get_snippets_with_per_page() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 
 		$response = $this->make_request(
 			$endpoint,
@@ -150,7 +150,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test pagination with per_page and page parameters.
 	 */
 	public function test_get_snippets_with_per_page_and_page() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 
 		$response = $this->make_request(
 			$endpoint,
@@ -172,7 +172,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test pagination with page parameter only (should use default per_page).
 	 */
 	public function test_get_snippets_with_page_only() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 
 		$page_1_response = $this->make_request(
 			$endpoint,
@@ -201,7 +201,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test that headers contain correct pagination metadata.
 	 */
 	public function test_pagination_headers() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 		$request = new WP_REST_Request( 'GET', $endpoint );
 		$request->set_param( 'network', false );
 		$request->set_param( 'per_page', 5 );
@@ -218,7 +218,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test that last page returns correct number of snippets.
 	 */
 	public function test_last_page_with_partial_results() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 
 		$response = $this->make_request(
 			$endpoint,
@@ -237,7 +237,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test that requesting a page beyond available pages returns empty array.
 	 */
 	public function test_page_beyond_available_returns_empty() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 
 		$response = $this->make_request(
 			$endpoint,
@@ -256,7 +256,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test per_page with value of 1.
 	 */
 	public function test_per_page_one() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 
 		$response = $this->make_request(
 			$endpoint,
@@ -276,7 +276,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test that per_page larger than total returns all snippets.
 	 */
 	public function test_per_page_larger_than_total() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 
 		$response = $this->make_request(
 			$endpoint,
@@ -295,7 +295,7 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	 * Test that snippet data structure is correct.
 	 */
 	public function test_snippet_data_structure() {
-		$endpoint = "/{$this->namespace}/{$this->base_route}";
+		$endpoint = "/$this->namespace/$this->base_route";
 
 		$response = $this->make_request(
 			$endpoint,

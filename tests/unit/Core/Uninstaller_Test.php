@@ -2,7 +2,8 @@
 
 namespace Code_Snippets\Core;
 
-use Code_Snippets\REST_API\Snippets\Preferences_REST_Controller;
+use Code_Snippets\REST_API\Preferences\Insights_View_Rest_Controller;
+use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
 use Code_Snippets\UnitTestCase;
 use function Code_Snippets\code_snippets;
 
@@ -18,7 +19,8 @@ class Uninstaller_Test extends UnitTestCase {
 	 */
 	public function tear_down() {
 		code_snippets()->db->create_or_upgrade_tables();
-		delete_option( Preferences_REST_Controller::INSIGHTS_CHART_VIEWS_OPTION );
+		delete_option( Snippet_View_REST_Controller::OPTION_NAME );
+		delete_option( Insights_View_Rest_Controller::OPTION_NAME );
 		delete_option( 'code_snippets_settings' );
 
 		parent::tear_down();
@@ -36,8 +38,9 @@ class Uninstaller_Test extends UnitTestCase {
 				'general' => [ 'complete_uninstall' => true ],
 			]
 		);
+
 		update_option(
-			Preferences_REST_Controller::INSIGHTS_CHART_VIEWS_OPTION,
+			Insights_View_Rest_Controller::OPTION_NAME,
 			[
 				'type'       => 'pie',
 				'activation' => 'bar',
@@ -47,6 +50,6 @@ class Uninstaller_Test extends UnitTestCase {
 
 		( new Uninstaller() )->uninstall_plugin();
 
-		$this->assertFalse( get_option( Preferences_REST_Controller::INSIGHTS_CHART_VIEWS_OPTION ) );
+		$this->assertFalse( get_option( Insights_View_Rest_Controller::OPTION_NAME ) );
 	}
 }

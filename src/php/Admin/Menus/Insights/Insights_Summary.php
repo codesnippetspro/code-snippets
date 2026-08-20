@@ -109,7 +109,7 @@ final class Insights_Summary {
 				++$active;
 			}
 
-			foreach ( array_unique( $snippet->tags, SORT_STRING ) as $tag ) {
+			foreach ( array_unique( $snippet->tags ) as $tag ) {
 				if ( '' !== $tag ) {
 					$tag_counts[ $tag ] = ( $tag_counts[ $tag ] ?? 0 ) + 1;
 				}
