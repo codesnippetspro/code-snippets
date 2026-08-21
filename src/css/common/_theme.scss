@@ -1,5 +1,6 @@
 @use 'sass:color';
 
+// TODO: delete when we verify Pro doesn't use theme variables anymore.
 $accent: #2271b1;
 $primary: #03c7d2;
 $secondary: #d46f4d;
@@ -8,9 +9,6 @@ $brand-discord: #5865f2;
 $brand-facebook: #3b5998;
 $cloud: #00bcd4;
 $cloud-update: #ff9800;
-
-// Plugin admin control tokens, applied to native form controls on all plugin
-// screens regardless of WordPress version (see common/_wp-admin.scss).
 $accent-hover: #0a4b78;
 $control-border: #c3c4c7;
 $control-text: #2c3337;
@@ -22,6 +20,13 @@ $control-radius: 5px;
 :root {
 	--cs-color-accent: #2271b1;
 	--cs-color-accent-hover: #0a4b78;
+	--cs-color-primary: #03c7d2;
+	--cs-color-secondary: #d46f4d;
+	--cs-color-outline: #9e9e9e;
+	--cs-color-brand-discord: #5865f2;
+	--cs-color-brand-facebook: #3b5998;
+	--cs-color-cloud: #00bcd4;
+	--cs-color-cloud-update: #ff9800;
 	--cs-color-text: #2c3337;
 	--cs-color-text-muted: #646970;
 	--cs-color-surface: #fff;
@@ -37,8 +42,8 @@ $control-radius: 5px;
 /* format: background-color [color] */
 $badges: (
 	// php/html/cond darkened for WCAG AA — at least 4.5:1 against white 12px
-	// bold text; php reuses $accent, html/cond keep hue at reduced lightness.
-	php: $accent,
+	// bold text; php reuses the accent token, html/cond keep hue at reduced lightness.
+	php: #2271b1,
 	html: #cd4510,
 	css: #9b59b6,
 	js: #f7d67a #1c1f20,
@@ -49,7 +54,7 @@ $badges: (
 	bundles: #50575e,
 	cloud_search: #d27c00,
 	private: #f7e6be #a27813,
-	public: #dbebf7 $accent,
+	public: #dbebf7 #2271b1,
 	success: #d3e8d1 #447340,
 	failure: #fad7c1 #a24b16,
 	info: #d2e6f4 #2b71a3,

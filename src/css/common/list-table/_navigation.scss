@@ -16,11 +16,11 @@
    row-action links) so links keep their original colour; inactive rows are handled by the muted link-colors mixin,
    and the trash button keeps its dark red from the `.delete` rules. */
 .wp-list-table .active-snippet a {
-	color: theme.$accent;
+	color: var(--cs-color-accent);
 
 	&:hover,
 	&:focus {
-		color: theme.$accent-hover;
+		color: var(--cs-color-accent-hover);
 	}
 }
 
@@ -33,11 +33,11 @@
 }
 
 .subsubsub a:not(.current) {
-	color: theme.$accent;
+	color: var(--cs-color-accent);
 
 	&:hover,
 	&:focus {
-		color: theme.$accent-hover;
+		color: var(--cs-color-accent-hover);
 	}
 }
 
