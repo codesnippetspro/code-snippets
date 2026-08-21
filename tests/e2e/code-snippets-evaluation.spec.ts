@@ -4,8 +4,6 @@ import { SELECTORS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
-const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-
 const BODY_CLASS_TEST_CODE = `
 	add_filter('admin_body_class', function($classes) {
 		return $classes . ' custom-admin-class';
@@ -72,12 +70,10 @@ const createHtmlSnippetForEditor = async (
 	// `createAndActivateSnippet` ends on the list screen; pull the ID from the edit link.
 	await helper.navigateToSnippetsAdmin()
 	await helper.filterSnippetsByName(snippetName)
-	const row = page
-		.locator(`${SELECTORS.SNIPPET_ROW}:has(${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-		.first()
+	const row = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
 	await expect(row).toBeVisible()
 
-	const nameLink = row.getByRole('link', { name: new RegExp(escapeRegExp(snippetName)) }).first()
+	const nameLink = row.locator(SELECTORS.SNIPPET_NAME_LINK).first()
 	const editHref = await nameLink.evaluate(el => el.getAttribute('href') ?? '')
 
 	const urlMatch = /[?&]id=(?<id>\d+)/.exec(editHref)
@@ -89,11 +85,14 @@ test.describe('Code Snippets Evaluation', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
 
+	test.beforeAll(async () => {
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
+	})
+
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 
-		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 		await helper.navigateToSnippetsAdmin()
 	})
 

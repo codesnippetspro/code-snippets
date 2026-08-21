@@ -66,16 +66,6 @@ $notices: (
 	special: #dfc5ef #6e249c
 );
 
-@function contrasting-text-color($bg-color) {
-	$sum: 0;
-
-	@each $color, $multiplier in (red 0.299, green 0.587, blue 0.114) {
-		$sum: $sum + color.channel($bg-color, $color, $space: rgb) * $multiplier;
-	}
-
-	@return if ($sum > 186, #1c1f20, #fff)
-}
-
 @mixin link-colors($color, $lightness: 15%) {
 	a {
 		color: $color;
