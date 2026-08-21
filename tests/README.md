@@ -136,14 +136,14 @@ npx playwright install
 Start the WordPress environment:
 
 ```bash
-npm run wp-env:start
+npx wp-env start
 ```
 
 Optional (recommended when switching branches / after failures): reset the WP env:
 
 ```bash
-npm run wp-env:clean
-npm run wp-env:start
+npx wp-env clean all
+npx wp-env start
 ```
 
 Prepare the environment for E2E (cleans stale flat-file artifacts, ensures plugin active, etc.):

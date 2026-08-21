@@ -66,8 +66,8 @@ plugins.
 | CSS linting   | Stylelint (`npm run lint:styles`)                              |
 | PHP tests     | PHPUnit (`npm run test:php`)                                   |
 | E2E tests     | Playwright (`npm run test:playwright`)                         |
-| WP dev env    | `@wordpress/env` / `wp-env` (`npm run wp-env:start`)           |
-| Pre-commit    | lint-staged (auto-fix on commit)                               |
+| WP dev env    | `@wordpress/env` / `wp-env` (`npx wp-env start`)               |
+| Pre-commit    | Husky + lint-staged (auto-fix on commit)                       |
 | PHP deps      | Composer with Imposter (namespace-prefixing)                   |
 
 ## Coding Standards
@@ -201,12 +201,12 @@ plugins.
 ```bash
 # Install dependencies
 npm install                  # Node deps
-cd src && composer install   # PHP deps (or: npm run bundle)
+composer -d src install      # PHP deps (or: npm run bundle)
 
 # WordPress environment
-npm run wp-env:start         # Start local WP instance
-npm run wp-env:stop
-npm run wp-env:clean         # Reset all data
+npx wp-env start             # Start local WP instance
+npx wp-env stop
+npx wp-env clean all         # Reset all data
 
 # Build
 npm run build                # Webpack build (JS + CSS → src/dist/)
