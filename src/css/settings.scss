@@ -271,20 +271,16 @@ body.js {
 		background: transparent;
 
 		&:hover,
-		&:focus {
-			color: #2c3337;
-			background: #f6f7f7;
+		&:focus,
+		&:active {
+			color: theme.$accent;
 		}
 
 		&.active-type,
 		&.active-type:hover,
 		&.active-type:focus {
-			position: relative;
-			z-index: 1;
-			margin-block-end: -1px;
 			color: theme.$accent;
 			background: #f0f0f1;
-			border-color: #f0f0f1;
 		}
 	}
 }
