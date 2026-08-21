@@ -137,7 +137,7 @@
 		&:hover,
 		&:focus,
 		&:active {
-			color: #2c3337;
+			color: theme.$accent;
 		}
 
 		&.active-type {
