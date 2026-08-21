@@ -16,6 +16,18 @@ const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') =
 
 const MAXIMUM_COLUMN_ALIGNMENT_OFFSET = 0.5
 
+const snippetRowByName = (page: Page, snippetName: string) =>
+	page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+
+const clickRowAction = async (row: ReturnType<typeof snippetRowByName>, selector: string) => {
+	await expect(row).toBeVisible()
+	await row.hover()
+
+	const action = row.locator(selector).first()
+	await expect(action).toBeVisible()
+	await action.click()
+}
+
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
@@ -85,9 +97,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can toggle snippet activation from list page', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
 
 		const toggleCell = snippetRow.locator('td').first()
 		const toggleSwitch = toggleCell.getByRole('switch').first()
@@ -122,10 +132,9 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can access edit from list page', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
 
+		await expect(snippetRow).toBeVisible()
 		await snippetRow.locator(SELECTORS.SNIPPET_NAME_LINK).first().click()
 
 		await expect(page).toHaveURL(/page=edit-snippet/)
@@ -133,23 +142,19 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can clone snippet from list page', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
 
-		await snippetRow.locator(SELECTORS.CLONE_ACTION).click()
+		await clickRowAction(snippetRow, SELECTORS.CLONE_ACTION)
 
 		await expect(page).toHaveURL(/page=snippets/)
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
 		// Verify that a cloned snippet exists in the table (use table-scoped check to avoid admin bar matches)
-		const clonedRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName} [CLONE]"))`)
-			.first()
+		const clonedRow = snippetRowByName(page, `${snippetName} [CLONE]`)
 		await expect(clonedRow).toBeVisible()
 
 		// Clean up the clone by trashing it
-		await clonedRow.locator(SELECTORS.DELETE_ACTION).click()
+		await clickRowAction(clonedRow, SELECTORS.DELETE_ACTION)
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 	})
 
@@ -176,10 +181,8 @@ test.describe('Code Snippets List Page Actions', () => {
 		await page.route('**/wp-json/code-snippets/v1/snippets*', trackCreateRequest)
 		await page.route(/\/index\.php\?rest_route=/, trackCreateRequest)
 
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
-		await snippetRow.getByRole('button', { name: 'Preview' }).click()
+		const snippetRow = snippetRowByName(page, snippetName)
+		await clickRowAction(snippetRow, SELECTORS.PREVIEW_ACTION)
 
 		const previewModal = page.getByRole('dialog', { name: snippetName })
 		const cloneButton = previewModal.getByRole('button', { name: 'Clone' })
@@ -193,10 +196,8 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can trash a snippet from the preview modal', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
-		await snippetRow.getByRole('button', { name: 'Preview' }).click()
+		const snippetRow = snippetRowByName(page, snippetName)
+		await clickRowAction(snippetRow, SELECTORS.PREVIEW_ACTION)
 
 		const previewModal = page.getByRole('dialog', { name: snippetName })
 		await previewModal.getByRole('button', { name: 'Trash' }).click()
@@ -211,12 +212,10 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can delete snippet from list page', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
 
 		// Click "Trash" in row actions — in the new React UI, this moves to trash immediately (no dialog)
-		await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
+		await clickRowAction(snippetRow, SELECTORS.DELETE_ACTION)
 
 		// Some implementations show a confirmation modal that must be dismissed.
 		const confirmDialog = page.locator('[role="dialog"]').filter({ hasText: /Are you sure\\?/i })
@@ -248,13 +247,14 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can export snippet from list page', async ({ page }) => {
 		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
+		await expect(snippetRow).toBeVisible()
+		await snippetRow.hover()
+		await expect(snippetRow.locator(SELECTORS.EXPORT_ACTION).first()).toBeVisible()
 
 		const download = await Promise.all([
 			page.waitForEvent('download'),
-			snippetRow.locator(SELECTORS.EXPORT_ACTION).click()
+			snippetRow.locator(SELECTORS.EXPORT_ACTION).first().click()
 		]).then(([downloadEvent]) => downloadEvent)
 
 		expect(download.suggestedFilename()).toMatch(/\.json$/)
@@ -270,12 +270,11 @@ test.describe('Code Snippets List Page Actions', () => {
 		})
 		await helper.navigateToSnippetsAdmin()
 
-		const firstRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
-		const secondRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${secondSnippetName}"))`)
-			.first()
+		const firstRow = snippetRowByName(page, snippetName)
+		const secondRow = snippetRowByName(page, secondSnippetName)
+
+		await expect(firstRow).toBeVisible()
+		await expect(secondRow).toBeVisible()
 
 		await firstRow.locator('input[name="checked[]"]').check({ force: true })
 		await secondRow.locator('input[name="checked[]"]').check({ force: true })
@@ -294,9 +293,8 @@ test.describe('Code Snippets List Page Actions', () => {
 	test('Can download a single snippet from bulk actions', async ({ page }) => {
 		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
 		await helper.filterSnippetsByName(snippetName)
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
+		await expect(snippetRow).toBeVisible()
 
 		await snippetRow.locator('input[name="checked[]"]').check({ force: true })
 		await page.locator('select[name="action"]').first().selectOption({ label: 'Download' })
@@ -320,12 +318,11 @@ test.describe('Code Snippets List Page Actions', () => {
 		})
 		await helper.navigateToSnippetsAdmin()
 
-		const firstRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
-		const secondRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${secondSnippetName}"))`)
-			.first()
+		const firstRow = snippetRowByName(page, snippetName)
+		const secondRow = snippetRowByName(page, secondSnippetName)
+
+		await expect(firstRow).toBeVisible()
+		await expect(secondRow).toBeVisible()
 
 		await firstRow.locator('input[name="checked[]"]').check({ force: true })
 		await secondRow.locator('input[name="checked[]"]').check({ force: true })
