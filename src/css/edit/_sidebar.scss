@@ -57,7 +57,7 @@
 
 	.box {
 		background-color: #fff;
-		border: 1px solid theme.$control-border;
+		border: 1px solid var(--cs-color-border);
 		border-radius: 4px;
 		padding: 1.5em;
 		display: flex;
@@ -103,7 +103,7 @@
 		// the wp-admin layer at equal specificity, so it wins. Export/Download inherit the accent.
 		.button {
 			block-size: auto;
-			min-block-size: theme.$control-height;
+			min-block-size: var(--cs-control-height);
 			padding-block: 0;
 			padding-inline: 8px;
 			font-weight: 400;
@@ -172,7 +172,7 @@
 	}
 
 	.beta-badge {
-		color: theme.$accent;
+		color: var(--cs-color-accent);
 		border: 1px solid currentcolor;
 		margin-inline-start: auto;
 	}

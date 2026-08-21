@@ -1,6 +1,5 @@
 @use 'sass:map';
 @use 'sass:list';
-@use 'sass:color';
 @use 'theme';
 
 // Badges are wrapped in links that filter by type. The white ring separates the
@@ -14,7 +13,7 @@
 	&:focus,
 	&:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px #fff, 0 0 0 4px theme.$accent;
+		box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--cs-color-accent);
 	}
 }
 
@@ -50,7 +49,7 @@
 }
 
 .network-shared {
-	color: theme.$accent;
+	color: var(--cs-color-accent);
 	font-size: 22px;
 	inline-size: 100%;
 	cursor: help;
@@ -100,7 +99,7 @@
 	a.badge.#{$name}-badge:hover,
 	button.badge.#{$name}-badge:hover {
 		color: $text-color;
-		background-color: color.adjust($background-color, $lightness: -5%);
+		background-color: color-mix(in srgb, $background-color 95%, #000 5%);
 	}
 }
 
@@ -158,7 +157,7 @@
 .badge.pro-badge,
 .inverted-badges .badge.pro-badge,
 .nav-tab-inactive .badge.pro-badge {
-	color: theme.$accent;
+	color: var(--cs-color-accent);
 	background-color: #eff5f9;
 	border: 1px solid rgb(34 113 177 / 10%) !important;
 	border-radius: 999px;

@@ -1,4 +1,3 @@
-@use 'sass:color';
 @use 'common/theme';
 @use 'common/badges';
 @use 'common/toolbar';
@@ -137,7 +136,7 @@ $breakpoint: 1060px;
 
 	.item-category {
 		color: white;
-		background: color.adjust(theme.$secondary, $lightness: -15%);
+		background: color-mix(in srgb, var(--cs-color-secondary) 85%, #000 15%);
 		display: block;
 		font-size: 12px;
 		letter-spacing: 1px;
@@ -212,7 +211,7 @@ $breakpoint: 1060px;
 	inline-size: 0;
 	padding: 15px;
 	border: 6px solid #e7c0b3;
-	border-inline-end-color: theme.$secondary;
+	border-inline-end-color: var(--cs-color-secondary);
 	border-radius: 22px;
 	animation: loading-rotate 1s infinite linear;
 	position: absolute;
