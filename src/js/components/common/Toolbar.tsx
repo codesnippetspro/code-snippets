@@ -40,6 +40,27 @@ const UpperNavItem = ({ name, url, label }: UpperNavItemProps) => {
 }
 const UpperNavItems = () =>
 	<>
+		{window.CODE_SNIPPETS?.urls.insights && (
+			<UpperNavItem
+				name="insights"
+				url={window.CODE_SNIPPETS.urls.insights}
+				label={__('Insights', 'code-snippets')}
+			/>)}
+
+		{window.CODE_SNIPPETS?.urls.import && (
+			<UpperNavItem
+				name="import-snippets"
+				url={window.CODE_SNIPPETS.urls.import}
+				label={_x('Import', 'snippets', 'code-snippets')}
+			/>)}
+
+		{window.CODE_SNIPPETS?.urls.welcome && (
+			<UpperNavItem
+				name="welcome"
+				url={window.CODE_SNIPPETS.urls.welcome}
+				label={__("What's New", 'code-snippets')}
+			/>)}
+
 		<UpperNavItem
 			name="docs"
 			url="https://codesnippets.pro/docs"
@@ -51,27 +72,6 @@ const UpperNavItems = () =>
 			url="https://codesnippets.cloud/"
 			label={__('Cloud Dashboard', 'code-snippets')}
 		/>
-
-		{window.CODE_SNIPPETS?.urls.insights && (
-			<UpperNavItem
-				name="insights"
-				url={window.CODE_SNIPPETS.urls.insights}
-				label={__('Insights', 'code-snippets')}
-			/>)}
-
-		{window.CODE_SNIPPETS?.urls.welcome && (
-			<UpperNavItem
-				name="welcome"
-				url={window.CODE_SNIPPETS.urls.welcome}
-				label={__("What's New", 'code-snippets')}
-			/>)}
-
-		{window.CODE_SNIPPETS?.urls.import && (
-			<UpperNavItem
-				name="import-snippets"
-				url={window.CODE_SNIPPETS.urls.import}
-				label={_x('Import', 'snippets', 'code-snippets')}
-			/>)}
 
 	</>
 
