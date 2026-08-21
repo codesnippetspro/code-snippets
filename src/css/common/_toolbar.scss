@@ -19,6 +19,7 @@ $wpcontent-inline-start-indent: 20px;
 	inset-block-start: 0;
 	display: flex;
 	flex-direction: column;
+	z-index: 1;
 
 	ul, li {
 		margin: 0;
