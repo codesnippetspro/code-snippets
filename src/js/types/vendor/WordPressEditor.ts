@@ -1,7 +1,7 @@
-import type tinymce from 'tinymce'
+import type { Editor, Settings } from 'tinymce'
 
 export interface VisualEditorSettings {
-	tinymce: boolean | tinymce.Settings & {
+	tinymce: boolean | Settings & {
 		toolbar1?: string | string[]
 		toolbar2?: string | string[]
 		toolbar3?: string | string[]
@@ -17,6 +17,6 @@ export interface WordPressEditor {
 	getContent: (id: string) => string
 }
 
-export interface LocalisedEditor extends tinymce.Editor {
+export interface LocalisedEditor extends Editor {
 	getLang: (s: string) => string | Record<string, string>
 }

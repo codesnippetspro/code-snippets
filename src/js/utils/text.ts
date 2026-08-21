@@ -35,5 +35,5 @@ export const stripTags = (text: string): string => {
 		.querySelectorAll(blockSelector)
 		.forEach(element => element.after(document.createTextNode(' ')))
 
-	return (document.body.textContent ?? '').replace(/\s+/g, ' ').trim()
+	return document.body.textContent.replace(/\s+/g, ' ').trim()
 }

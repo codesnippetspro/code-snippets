@@ -97,7 +97,7 @@ export const cssWebpackConfig: Configuration = {
 		new RemoveEmptyScriptsPlugin(),
 		new MiniCssExtractPlugin({
 			filename: ({ chunk }) =>
-				chunk?.name
+				chunk.name
 					? `${chunk.name}.css`
 						.replace(/^codemirror-theme-/, 'editor-themes/')
 						.replace(/-css\.css$/, '.css')

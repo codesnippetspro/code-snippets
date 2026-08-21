@@ -163,7 +163,7 @@ const useRequestIds = () => {
 
 export interface CloudSearchContext {
 	isErrored: boolean
-	doSearch: (paramsDelta?: Partial<CloudSearchParams>) => void
+	doSearch: (paramsDelta?: Partial<CloudSearchParams>) => Promise<void>
 	isLoading: boolean
 	isSearching: boolean
 	searchParams: CloudSearchParams
@@ -180,7 +180,7 @@ const useSearchApi = () => {
 	const [searchResults, setSearchResults] = useState<CloudSearchResults | false | undefined>()
 	const [availableFilters, setAvailableFilters] = useState<AvailableCloudFilters>({})
 
-	const makeSearchRequest = useCallback((params: CloudSearchParams) => {
+	const makeSearchRequest = useCallback(async (params: CloudSearchParams): Promise<void> => {
 		const requestId = nextRequestId()
 		const isFeaturedSearch = '' === params.query.trim()
 
@@ -188,24 +188,22 @@ const useSearchApi = () => {
 		setCurrentSearch(!isFeaturedSearch)
 		const baseUrl = isFeaturedSearch ? SEARCH_URLS.FEATURED : SEARCH_URLS.SEARCH_QUERY
 
-		api.getResponse<CloudSnippetsSchema>(buildSearchUrl(baseUrl, params))
-			.then(response => {
-				if (isCurrentRequest(requestId)) {
-					setSearchResults(unpackSearchResponse(response, baseUrl))
-					setAvailableFilters(previous => unpackFiltersFromResponse(response) ?? previous)
-				}
-			})
-			.catch(() => {
-				if (isCurrentRequest(requestId)) {
-					setSearchResults(false)
-				}
-			})
-			.finally(() => {
-				if (isCurrentRequest(requestId)) {
-					setCurrentSearch(false)
-					setIsLoading(false)
-				}
-			})
+		try {
+			const response = await api.getResponse<CloudSnippetsSchema>(buildSearchUrl(baseUrl, params))
+			if (isCurrentRequest(requestId)) {
+				setSearchResults(unpackSearchResponse(response, baseUrl))
+				setAvailableFilters(previous => unpackFiltersFromResponse(response) ?? previous)
+			}
+		} catch {
+			if (isCurrentRequest(requestId)) {
+				setSearchResults(false)
+			}
+		} finally {
+			if (isCurrentRequest(requestId)) {
+				setCurrentSearch(false)
+				setIsLoading(false)
+			}
+		}
 	}, [api, nextRequestId, isCurrentRequest])
 
 	return {
@@ -222,26 +220,22 @@ const [Context, useCloudSearch] = createContextHook<CloudSearchContext>('useClou
 export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { isLoading, isSearching, makeSearchRequest, availableFilters, searchResults } = useSearchApi()
 	const [searchParams, setSearchParams] = useState<CloudSearchParams>(fetchSearchQueryParams)
-	const [madeInitialRequest, setMadeInitialRequest] = useState(false)
 
 	const updateSearchParams = useCallback(
 		(delta: Partial<CloudSearchParams>) => setSearchParams(previous => ({ ...previous, ...delta })),
 		[])
 
-	const doSearch = useCallback((paramsDelta?: Partial<CloudSearchParams>) => {
+	const doSearch = useCallback((paramsDelta?: Partial<CloudSearchParams>): Promise<void> => {
 		// An empty query is the featured view: makeSearchRequest routes it to the featured endpoint.
 		const params = processSearchParams({ ...searchParams, ...paramsDelta }, searchParams)
 		updateSearchQueryParams(params)
 		setSearchParams(params)
-		makeSearchRequest(params)
+		return makeSearchRequest(params)
 	}, [makeSearchRequest, searchParams])
 
 	useEffect(() => {
-		if (!madeInitialRequest) {
-			setMadeInitialRequest(true)
-			makeSearchRequest(searchParams)
-		}
-	}, [makeSearchRequest, searchParams, madeInitialRequest])
+		void makeSearchRequest(fetchSearchQueryParams())
+	}, [makeSearchRequest])
 
 	const value: CloudSearchContext = {
 		doSearch,

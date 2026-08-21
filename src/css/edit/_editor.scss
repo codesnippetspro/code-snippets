@@ -19,37 +19,37 @@
 		padding-block-end: 0 !important;
 
 		&::before {
-			content: '<?php';
+			content: '\3c?php';
 		}
 	}
 
 	.snippet-form.css-snippet & {
 		&::before {
-			content: '<style>';
+			content: '\3c style\3e';
 		}
 
 		&::after {
-			content: '</style>';
+			content: '\3c/style\3e';
 		}
 	}
 
 	.snippet-form.js-snippet & {
 		&::before {
-			content: '<script>';
+			content: '\3c script\3e';
 		}
 
 		&::after {
-			content: '</script>';
+			content: '\3c/script\3e';
 		}
 	}
 
 	.snippet-form.html-snippet & {
 		&::before {
-			content: '<!-- begin content -->';
+			content: '\3c!-- begin content --\3e';
 		}
 
 		&::after {
-			content: '<!-- end content -->';
+			content: '\3c!-- end content --\3e';
 		}
 	}
 }

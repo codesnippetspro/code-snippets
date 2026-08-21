@@ -47,11 +47,11 @@ const CloudSnippetActions: React.FC<CloudSnippetActionsProps> = ({
 					{__('Preview', 'code-snippets')}
 				</Button>
 
-				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={doSearch} />
+				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={() => void doSearch()} />
 			</div>
 
 			{isPreviewOpen && (
-				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={doSearch} />)}
+				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={() => void doSearch()} />)}
 		</>
 	)
 }

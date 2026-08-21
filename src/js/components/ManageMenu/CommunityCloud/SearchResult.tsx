@@ -130,13 +130,13 @@ export const SearchResult: React.FC<SearchResultProps> = ({
 					{__('Preview', 'code-snippets')}
 				</Button>
 
-				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={doSearch} />
+				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={() => void doSearch()} />
 			</>}
 		>
 			<CloudSnippetDetails snippet={snippet} author={author} setIsPreviewOpen={setIsPreviewOpen} />
 
 			{isPreviewOpen && (
-				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={doSearch} />)}
+				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={() => void doSearch()} />)}
 		</SnippetCard>
 	)
 }

@@ -2,7 +2,7 @@ import { spawn } from 'child_process'
 import { createWriteStream } from 'fs'
 import process from 'node:process'
 import { webpack as webpackAsync } from 'webpack'
-import archiver from 'archiver'
+import { ZipArchive } from 'archiver'
 import plugin from '../package.json'
 import webpackConfig from '../webpack.config'
 import { cleanup, copy, resolve } from './utils/files'
@@ -44,9 +44,7 @@ export const createArchive = (): Promise<void> => {
 	console.info(`creating '${filename}\n`)
 
 	const output = createWriteStream(resolve(filename), 'utf8')
-	const archive = archiver('zip', {
-		zlib: { level: 9 }
-	})
+	const archive = new ZipArchive({ zlib: { level: 9 } })
 
 	archive.pipe(output)
 	archive.directory(resolve(DEST_DIR), plugin.name)

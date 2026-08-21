@@ -190,7 +190,7 @@ const updatePaginationControls = (controls: HTMLElement, page: number, totalPage
 
 	const pageLabel = controls.querySelector<HTMLElement>('.code-snippets-pagination-page')
 	if (pageLabel) {
-		pageLabel.textContent = pageLabel.textContent?.replace(/\(\d+\/\d+\)/, `(${page}/${totalPages})`) ?? pageLabel.textContent
+		pageLabel.textContent = pageLabel.textContent.replace(/\(\d+\/\d+\)/, `(${page}/${totalPages})`)
 	}
 
 	const disableFirstPrev = 1 >= page

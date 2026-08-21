@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n'
-import React, { useEffect, useId, useState } from 'react'
+import React, { useId, useState } from 'react'
 import classnames from 'classnames'
 import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
@@ -25,7 +25,7 @@ const SearchBox = () => {
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
-		doSearch({ query })
+		void doSearch({ query })
 	}
 
 	return (
@@ -121,10 +121,6 @@ const useSearchResultsSelection = () => {
 	const { searchResults, isSearching, doSearch } = useCloudSearch()
 	const [selected, setSelected] = useState<Set<CloudSnippetSchema['id']>>(new Set())
 
-	useEffect(() => {
-		setSelected(new Set())
-	}, [searchResults?.snippets])
-
 	const doAction = async (
 		action: CloudSearchAction | undefined,
 		selectedIds: Set<CloudSnippetSchema['id']>
@@ -134,7 +130,8 @@ const useSearchResultsSelection = () => {
 				.filter(snippet => selectedIds.has(snippet.id) && isCloudSnippetDownloadable(snippet))
 				.map(({ id }) => api.post(`${REST_BASES.cloud.snippets}/${id}/download`)))
 
-			doSearch()
+			await doSearch()
+			setSelected(new Set())
 		}
 	}
 
@@ -161,7 +158,7 @@ const SearchResultsTableNav: React.FC<SearchResultsTableNavProps> = ({ which, ..
 			totalItems={searchResults.totalItems}
 			totalPages={searchResults.totalPages}
 			currentPage={searchResults.page}
-			setCurrentPage={page => doSearch({ page })}
+			setCurrentPage={page => void doSearch({ page })}
 			{...props}
 		/>
 	)

@@ -97,7 +97,7 @@ const bindSwitch = (
 			}
 
 			button.disabled = true
-			const originalText = button.textContent ?? ''
+			const originalText = button.textContent
 			button.textContent = i18n?.switching ?? ''
 
 			result.className = 'notice notice-info'
@@ -140,7 +140,7 @@ const bindRefresh = (
 ): void => {
 	btn.addEventListener('click', (): void => {
 		void (async (): Promise<void> => {
-			const original = btn.textContent ?? ''
+			const original = btn.textContent
 			btn.disabled = true
 			btn.textContent = i18n?.error ?? ''
 
