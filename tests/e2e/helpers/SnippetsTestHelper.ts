@@ -13,6 +13,7 @@ const RANDOM_SLICE_END = 7
 const CLICK_RETRIES = 3
 const SAVE_CONFIRM_RETRIES = 3
 const AT_LEAST_ONE = 1
+const SAVE_SETTLE_TIMEOUT_MS = 10000
 
 const getErrorMessage = (error: unknown): string => {
 	if (error instanceof Error) {
@@ -141,8 +142,6 @@ export class SnippetsTestHelper {
 	}
 
 	private async clickButton(name: RegExp, options: { force?: boolean } = {}): Promise<void> {
-		const force = options.force ?? true
-
 		for (let attempt = 0; CLICK_RETRIES > attempt; attempt++) {
 			try {
 				const buttons = this.page.getByRole('button', { name })
@@ -154,12 +153,12 @@ export class SnippetsTestHelper {
 					if (!visible && 0 !== count) {
 						continue
 					}
-					await candidate.click({ timeout: TIMEOUTS.DEFAULT, force })
+					await candidate.click({ timeout: TIMEOUTS.SHORT, force: options.force })
 					return
 				}
 
 				// Fallback: attempt to click the first match even if not considered "visible".
-				await buttons.first().click({ timeout: TIMEOUTS.DEFAULT, force })
+				await buttons.first().click({ timeout: TIMEOUTS.SHORT, force: options.force })
 				return
 			} catch (error: unknown) {
 				const message = getErrorMessage(error)
@@ -173,6 +172,8 @@ export class SnippetsTestHelper {
 	}
 
 	private async setCodeMirrorValue(value: string): Promise<void> {
+		await this.page.locator('.CodeMirror').first().waitFor({ state: 'visible', timeout: TIMEOUTS.DEFAULT })
+
 		const didSetViaApi = await this.page
 			.evaluate(newValue => {
 				const wrapper = document.querySelector<HTMLElement>('.CodeMirror')
@@ -338,7 +339,7 @@ export class SnippetsTestHelper {
 			await this.clickButton(name)
 
 			const settled = await this.page.locator(SELECTORS.SAVE_SETTLED_NOTICE).first()
-				.waitFor({ state: 'visible', timeout: TIMEOUTS.DEFAULT })
+				.waitFor({ state: 'visible', timeout: SAVE_SETTLE_TIMEOUT_MS })
 				.then(() => true)
 				.catch(() => false)
 
@@ -411,9 +412,7 @@ export class SnippetsTestHelper {
 		await this.navigateToSnippetsAdmin()
 		await this.filterSnippetsByName(snippetName)
 
-		const row = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
 
 		const rowVisible = await row
 			.waitFor({ state: 'visible', timeout: TIMEOUTS.SHORT })
@@ -440,9 +439,7 @@ export class SnippetsTestHelper {
 		await trashedLink.click()
 		await expect(this.page).toHaveURL(/status=trashed/, { timeout: TIMEOUTS.DEFAULT })
 
-		const trashedRow = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const trashedRow = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
 
 		const trashedVisible = await trashedRow
 			.waitFor({ state: 'visible', timeout: TIMEOUTS.SHORT })
@@ -515,13 +512,9 @@ export class SnippetsTestHelper {
 	async expectTextBeforeElement(text: string, selector: string): Promise<void> {
 		const precedes = await this.page.evaluate(
 			({ text, selector }) => {
-				const node = document.evaluate(
-					`//p[contains(text(),"${text}")]`,
-					document,
-					null,
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
-				).singleNodeValue
+				const node = Array.from(document.querySelectorAll('p')).find(
+					paragraph => paragraph.textContent?.includes(text)
+				)
 
 				const reference = document.querySelector(selector)
 
@@ -540,13 +533,9 @@ export class SnippetsTestHelper {
 	async expectTextAfterElement(text: string, selector: string): Promise<void> {
 		const follows = await this.page.evaluate(
 			({ text, selector }) => {
-				const node = document.evaluate(
-					`//p[contains(text(),"${text}")]`,
-					document,
-					null,
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
-				).singleNodeValue
+				const node = Array.from(document.querySelectorAll('p')).find(
+					paragraph => paragraph.textContent?.includes(text)
+				)
 
 				const reference = document.querySelector(selector)
 
@@ -574,9 +563,7 @@ export class SnippetsTestHelper {
 		// Ensure activation is actually persisted by toggling from the list screen.
 		await this.navigateToSnippetsAdmin()
 		await this.filterSnippetsByName(options.name)
-		const row = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${options.name}"))`)
-			.first()
+		const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: options.name }).first()
 		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
 		const toggleCell = row.locator('td').first()
