@@ -170,7 +170,7 @@ body.js {
 		background: #f0f6fc;
 		padding: 2px 8px;
 		border-radius: 3px;
-		border: 1px solid theme.$control-border;
+		border: 1px solid var(--cs-color-border);
 	}
 
 	#target_version {
@@ -273,13 +273,13 @@ body.js {
 		&:hover,
 		&:focus,
 		&:active {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 		}
 
 		&.active-type,
 		&.active-type:hover,
 		&.active-type:focus {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			background: #f0f0f1;
 		}
 	}

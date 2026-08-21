@@ -19,7 +19,7 @@
 	}
 
 	.button-primary {
-		background-color: theme.$secondary;
+		background-color: var(--cs-color-secondary);
 		border: 0;
 		font-weight: bold;
 		margin-inline-start: auto;

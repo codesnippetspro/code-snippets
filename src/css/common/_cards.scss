@@ -10,7 +10,7 @@
 
 .code-snippets-card {
 	background: #fff;
-	border: 1px solid theme.$control-border;
+	border: 1px solid var(--cs-color-border);
 	border-radius: 5px;
 	margin: 0;
 	display: flex;
@@ -19,7 +19,7 @@
 
 	a {
 		text-decoration: none;
-		color: theme.$accent;
+		color: var(--cs-color-accent);
 	}
 
 	.card-inner {
@@ -33,7 +33,7 @@
 		gap: 8px;
 		background: #f7f7f8;
 		margin-block-start: auto;
-		border-block-start: 1px solid theme.$control-border;
+		border-block-start: 1px solid var(--cs-color-border);
 		padding-inline: 24px;
 		padding-block: 12px;
 		border-end-start-radius: 5px;
@@ -93,7 +93,7 @@
 	}
 
 	&.is-selected {
-		border-color: theme.$accent;
-		box-shadow: 0 0 0 1px theme.$accent;
+		border-color: var(--cs-color-accent);
+		box-shadow: 0 0 0 1px var(--cs-color-accent);
 	}
 }

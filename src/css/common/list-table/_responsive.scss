@@ -90,7 +90,7 @@
 		}
 
 		a.button {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 		}
 
 		.paging-input {

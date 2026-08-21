@@ -4,7 +4,7 @@ $sidebar-width: 321px;
 $sidebar-gap: 30px;
 
 .snippet-form #titlediv #title {
-	border-color: theme.$control-border;
+	border-color: var(--cs-color-border);
 	block-size: 45px
 }
 
@@ -17,7 +17,7 @@ $sidebar-gap: 30px;
 	// Target the control box only (:first-of-type). The open menu is a later
 	// sibling div; matching it here would clamp and flex-row the option list.
 	> div:first-of-type {
-		border-color: theme.$control-border;
+		border-color: var(--cs-color-border);
 		min-block-size: 45px;
 		block-size: 45px;
 		max-block-size: 45px;
@@ -69,7 +69,7 @@ $sidebar-gap: 30px;
 		align-items: center;
 		gap: 8px;
 		inline-size: 100%;
-		border-color: theme.$control-border;
+		border-color: var(--cs-color-border);
 		background: transparent;
 		padding: 6px 12px;
 
@@ -87,8 +87,8 @@ $sidebar-gap: 30px;
 
 	&.no-condition:hover :not([disabled]) .cond-badge {
 		color: #fff;
-		background: theme.$accent;
-		border-color: theme.$accent;
+		background: var(--cs-color-accent);
+		border-color: var(--cs-color-accent);
 	}
 }
 

@@ -93,7 +93,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid theme.$accent;
+			outline: 2px solid var(--cs-color-accent);
 			outline-offset: -2px;
 		}
 
@@ -102,7 +102,7 @@
 		}
 
 		&.active-view {
-			background: theme.$accent;
+			background: var(--cs-color-accent);
 			color: #fff;
 
 			&:hover,
