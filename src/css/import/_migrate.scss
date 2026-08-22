@@ -1,3 +1,4 @@
+@use '../common/theme';
 
 .importer-selector-card {
 	h2 {
@@ -13,7 +14,7 @@
 
 	p {
 		margin: 10px 0 0;
-		color: #666;
+		color: var(--cs-color-text-muted);
 		font-size: 14px;
 	}
 }
@@ -30,7 +31,7 @@
 		cursor: pointer;
 
 		.description {
-			color: #666;
+			color: var(--cs-color-text-muted);
 			font-size: 0.9em;
 		}
 	}
@@ -92,11 +93,11 @@
 
 	p {
 		margin: 0;
-		color: #666;
+		color: var(--cs-color-text-muted);
 	}
 
 	a {
-		color: #2271b1;
+		color: var(--cs-color-accent);
 		text-decoration: none;
 	}
 }
@@ -105,7 +106,7 @@
 	.card-inner {
 		text-align: center;
 		padding: 40px 20px;
-		color: #666;
+		color: var(--cs-color-text-muted);
 
 		p {
 			margin: 0;

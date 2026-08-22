@@ -13,7 +13,7 @@
 	&:focus,
 	&:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--cs-color-accent);
+		box-shadow: 0 0 0 2px var(--cs-color-surface), 0 0 0 4px var(--cs-color-accent);
 	}
 }
 
@@ -67,8 +67,8 @@
 	margin-inline-start: 0.5em;
 	float: inline-end;
 	color: #a7aaad;
-	background: #f6f7f7;
-	border-color: #f6f7f7;
+	background: var(--cs-color-surface-subtle);
+	border-color: var(--cs-color-surface-subtle);
 	align-self: center;
 	display: flex;
 	justify-content: center;

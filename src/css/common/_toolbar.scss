@@ -6,8 +6,8 @@
 }
 
 .code-snippets-toolbar {
-	color: #2c3337;
-	background: #fff;
+	color: var(--cs-color-text);
+	background: var(--cs-color-surface);
 	font-family: 'SF Pro', sans-serif;
 	margin-inline-start: calc(-1 * var(--cs-wpcontent-inline-start-indent) - 2px);
 	position: absolute;
@@ -84,7 +84,7 @@
 }
 
 .code-snippets-toolbar-lower {
-	border-block-end: 1px solid #e2e2e4;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
 	block-size: 60px;
 	box-sizing: border-box;
 
@@ -110,7 +110,7 @@
 		block-size: 100%;
 		padding-block: 0;
 		padding-inline: 24px;
-		color: #2c3337;
+		color: var(--cs-color-text);
 		gap: 12px;
 		align-items: center;
 		font-size: 16px;
@@ -257,7 +257,7 @@
 	block-size: auto;
 	margin: 0;
 	padding: 8px;
-	background: #fff;
+	background: var(--cs-color-surface);
 	border: 1px solid var(--cs-color-border);
 	box-shadow: 0 3px 8px rgb(0 0 0 / 15%);
 }
@@ -277,7 +277,7 @@
 
 .code-snippets-toolbar-upper .toolbar-more-menu a:hover,
 .code-snippets-toolbar-upper .toolbar-more-menu a:focus {
-	background: #f6f7f7;
+	background: var(--cs-color-surface-subtle);
 }
 
 @media (width <= 960px) {

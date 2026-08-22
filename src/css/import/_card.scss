@@ -1,3 +1,4 @@
+@use '../common/theme';
 
 .snippets-table-card {
 	.wp-list-table {
@@ -21,10 +22,10 @@
 }
 
 .import-snippets-card {
-	background-color: #fff;
+	background-color: var(--cs-color-surface);
 	padding: 25px;
 	border-radius: 5px;
-	border: 1px solid #e0e0e0;
+	border: 1px solid var(--cs-color-border-subtle);
 	margin-block-end: 10px;
 	inline-size: 100%;
 	box-sizing: border-box;

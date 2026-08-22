@@ -56,7 +56,7 @@
 	}
 
 	.box {
-		background-color: #fff;
+		background-color: var(--cs-color-surface);
 		border: 1px solid var(--cs-color-border);
 		border-radius: 4px;
 		padding: 1.5em;
@@ -195,7 +195,7 @@ p.submit {
 }
 
 .shortcode-tag-wrapper {
-	background: #fff;
+	background: var(--cs-color-surface);
 	min-block-size: 54px;
 	display: flex;
 	align-items: center;

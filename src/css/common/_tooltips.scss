@@ -1,3 +1,5 @@
+@use 'theme';
+
 .tooltip {
 	position: relative;
 	display: inline-block;
@@ -20,7 +22,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid #2271b1;
+		outline: 2px solid var(--cs-color-accent);
 		outline-offset: 2px;
 	}
 }

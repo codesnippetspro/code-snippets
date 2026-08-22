@@ -82,15 +82,15 @@
 		margin: 0;
 		font-size: 14px;
 		line-height: 1.5;
-		color: #646970;
-		border-block-start: 1px solid #dcdcde;
+		color: var(--cs-color-text-muted);
+		border-block-start: 1px solid var(--cs-color-border-subtle);
 		padding-block-start: 16px;
 	}
 
 	.cloud-snippet-author {
 		margin: 0;
 		font-size: 14px;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 
 		a {
 			color: var(--cs-color-accent);

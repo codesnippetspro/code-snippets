@@ -19,7 +19,7 @@ $sections: general, editor, debug, version-switch;
 }
 
 .snippets-page-header h1 {
-	color: #2c3337;
+	color: var(--cs-color-text);
 }
 
 p.submit {
@@ -36,7 +36,7 @@ p.submit {
 	inline-size: 261px;
 	font-size: 14px;
 	font-weight: 700;
-	color: #2c3337;
+	color: var(--cs-color-text);
 }
 
 .settings-section,
@@ -105,7 +105,7 @@ body.js {
 	display: inline-block;
 	padding-inline-end: 2em;
 	line-height: 2;
-	color: #646970;
+	color: var(--cs-color-text-muted);
 }
 
 .license-status-valid {
@@ -184,7 +184,7 @@ body.js {
 			cursor: not-allowed;
 			background-color: #f0f0f1 !important;
 			color: #a7aaad !important;
-			border-color: #dcdcde !important;
+			border-color: var(--cs-color-border-subtle) !important;
 		}
 	}
 
@@ -262,12 +262,12 @@ body.js {
 		min-block-size: 52px;
 		margin: 0;
 		padding-inline: 24px;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 1.5;
 		border: 0;
-		border-inline-end: 1px solid #e2e2e4;
+		border-inline-end: 1px solid var(--cs-color-border-subtle);
 		background: transparent;
 
 		&:hover,

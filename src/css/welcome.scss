@@ -8,7 +8,7 @@
 		font-size: 32px;
 		font-weight: 510;
 		line-height: 1.25;
-		color: #2c3337;
+		color: var(--cs-color-text);
 		padding: 0;
 		margin-block: 50px 1rem;
 	}
@@ -20,7 +20,8 @@
 	gap: 20px;
 
 	> * {
-		background: #fff;
+		background: var(--cs-color-surface);
+		border: 1px solid var(--cs-color-border-subtle);
 		border-radius: 8px;
 		padding: 32px;
 	}
@@ -30,7 +31,7 @@
 		flex-flow: row;
 		justify-content: space-between;
 		align-items: center;
-		border-block-end: 1px solid #e2e2e4;
+		border-block-end: 1px solid var(--cs-color-border-subtle);
 		margin-block-end: 20px;
 		padding-block-end: 20px;
 	}
@@ -44,6 +45,7 @@
 .code-snippets-hero {
 	display: flex;
 	flex-flow: column;
+	border: 1px solid var(--cs-color-border-subtle);
 
 	figure {
 		margin: 1em 0 0;
@@ -86,12 +88,13 @@
 
 .code-snippets-card {
 	flex: 1;
-	background: #fff;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border-subtle);
 	border-radius: 8px;
 	display: flex;
 	margin: 0;
 	flex-flow: column;
-	color: #2c3337;
+	color: var(--cs-color-text);
 
 	figure img {
 		border-start-start-radius: 8px;
@@ -152,7 +155,7 @@
 	line-height: 1.5;
 	overflow-y: scroll;
 	max-block-size: 500px;
-	color: #2c3337;
+	color: var(--cs-color-text);
 	padding-inline-end: 1em;
 
 	h3 {

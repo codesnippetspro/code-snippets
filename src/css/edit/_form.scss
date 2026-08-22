@@ -2,7 +2,8 @@
 
 .snippet-form #titlediv #title {
 	border-color: var(--cs-color-border);
-	block-size: 45px
+	block-size: 45px;
+	margin: 0;
 }
 
 // The type selector is a react-select control that sizes to its content; pin
@@ -72,7 +73,7 @@
 
 		&:hover:not(:disabled),
 		&:focus:not(:disabled) {
-			background: #f6f7f7;
+			background: var(--cs-color-surface-subtle);
 		}
 	}
 

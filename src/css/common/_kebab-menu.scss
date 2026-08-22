@@ -16,7 +16,7 @@
 	block-size: 38px;
 	box-sizing: border-box;
 	padding: 0;
-	background: #fff;
+	background: var(--cs-color-surface);
 	color: var(--cs-color-accent);
 	border: 1px solid var(--cs-color-accent);
 	border-radius: 5px;
@@ -42,8 +42,8 @@
 	margin: 0;
 	padding: 6px 0;
 	list-style: none;
-	background: #fff;
-	border: 1px solid #e2e2e4;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border-subtle);
 	border-radius: 5px;
 	overflow: hidden;
 	box-shadow: 0 3px 16px rgb(0 0 0 / 15%);
@@ -68,7 +68,7 @@
 	font-family: inherit;
 	font-size: 14px;
 	line-height: 1.4;
-	color: #2c3337;
+	color: var(--cs-color-text);
 	text-align: start;
 	cursor: pointer;
 
@@ -90,7 +90,7 @@
 
 .kebab-menu-divider {
 	margin-block: 6px;
-	border-block-start: 1px solid #e2e2e4;
+	border-block-start: 1px solid var(--cs-color-border-subtle);
 }
 
 .kebab-menu-row {
@@ -102,5 +102,5 @@
 	padding-inline: 14px;
 	font-size: 14px;
 	line-height: 1.4;
-	color: #2c3337;
+	color: var(--cs-color-text);
 }

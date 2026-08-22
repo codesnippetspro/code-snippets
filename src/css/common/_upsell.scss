@@ -6,8 +6,8 @@
 	align-items: center;
 	padding: 12px;
 	gap: 10px;
-	background: #fff;
-	border: 1px solid #ccc;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border);
 	border-radius: 5px;
 
 	p {
@@ -33,7 +33,7 @@
 		text-decoration: none;
 		font-weight: normal;
 		padding: 0;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		line-height: 1;
 		border: none;
 	}
@@ -46,7 +46,7 @@
 		margin: 0;
 
 		span {
-			color: #d46f4d;
+			color: var(--cs-color-secondary);
 		}
 	}
 
@@ -89,7 +89,7 @@
 	}
 
 	.button.button-large {
-		background-color: #d46f4d;
+		background-color: var(--cs-color-secondary);
 		padding-block: 15px;
 		padding-inline: 20px;
 		font-size: 16px;

@@ -104,18 +104,18 @@
 			box-sizing: border-box;
 			margin: 0;
 			text-align: center;
-			color: #2c3337;
+			color: var(--cs-color-text);
 		}
 
 		.tablenav-paging-text {
 			font-size: 14px;
-			color: #646970;
+			color: var(--cs-color-text-muted);
 		}
 	}
 
 	.tablenav-pages .displaying-num {
 		font-size: 14px;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		white-space: nowrap;
 	}
 

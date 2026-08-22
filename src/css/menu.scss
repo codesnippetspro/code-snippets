@@ -1,3 +1,4 @@
+@use 'common/theme';
 
 #adminmenu {
 	.toplevel_page_snippets div.wp-menu-image::before {
@@ -10,7 +11,7 @@
 
 	.code-snippets-upgrade-button {
 		color: #fff;
-		background-color: #d46f4d;
+		background-color: var(--cs-color-secondary);
 		border: none;
 
 		// WP 7.0 restyles `.button`/`.button-primary` with wider padding, a 2px radius and a

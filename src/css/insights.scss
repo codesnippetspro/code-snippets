@@ -5,7 +5,7 @@
 .code-snippets-insights {
 	margin-block: 50px;
 	margin-inline: auto;
-	color: #2c3337;
+	color: var(--cs-color-text);
 
 	h1 {
 		padding: 0;
@@ -25,9 +25,9 @@
 
 .insights-chart-card {
 	box-sizing: border-box;
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--cs-color-border-subtle);
 	border-radius: 8px;
-	background: #fff;
+	background: var(--cs-color-surface);
 	padding: 24px;
 
 	.insights-chart-card-header {
@@ -59,7 +59,7 @@
 }
 
 .insights-number-chart-label {
-	color: #646970;
+	color: var(--cs-color-text-muted);
 	font-size: 13px;
 }
 
@@ -78,9 +78,9 @@
 		padding: 0;
 		margin: 0;
 		background: #f0f0f1;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		border: none;
-		border-radius: 4.5px;
+		border-radius: 4px;
 		cursor: pointer;
 
 		> .dashicons {
@@ -89,7 +89,7 @@
 
 		&:hover,
 		&:focus {
-			color: #2c3337;
+			color: var(--cs-color-text);
 		}
 
 		&:focus-visible {
@@ -168,7 +168,7 @@
 		position: absolute;
 		inset: 25px;
 		border-radius: 50%;
-		background: #fff;
+		background: var(--cs-color-surface);
 		content: '';
 	}
 }
