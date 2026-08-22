@@ -35,7 +35,15 @@
 }
 
 .inactive-snippet {
-	@include theme.link-colors(#579);
+	a {
+		color: #579;
+
+		&:hover,
+		&:active,
+		&:focus {
+			color: #819db9;
+		}
+	}
 }
 
 .paging-input {

@@ -70,13 +70,3 @@ $notices: (
 	neutral: #e2e5e5 #6c7e7e,
 	special: #dfc5ef #6e249c
 );
-
-@mixin link-colors($color, $lightness: 15%) {
-	a {
-		color: $color;
-
-		&:hover, &:active, &:focus {
-			color: color.adjust($color, $lightness: $lightness);
-		}
-	}
-}
