@@ -18,19 +18,25 @@
 		border-radius: 50%;
 		display: inline-block;
 	}
-}
 
-$status-colors: (
-	public #64baba,
-	private #cc96fb,
-	unverified #ea835e,
-	ai-verified #1cabcf,
-	pro-verified #41a269,
-);
+	&-public::before {
+		background: var(--cs-cloud-status-public-color);
+	}
 
-@each $status, $color in $status-colors {
-	.cloud-snippet-status-#{$status}::before {
-		background: $color;
+	&-private::before {
+		background: var(--cs-cloud-status-private-color);
+	}
+
+	&-unverified::before {
+		background: var(--cs-cloud-status-unverified-color);
+	}
+
+	&-ai-verified::before {
+		background: var(--cs-cloud-status-ai-verified-color);
+	}
+
+	&-pro-verified::before {
+		background: var(--cs-cloud-status-pro-verified-color);
 	}
 }
 
