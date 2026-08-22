@@ -1,8 +1,5 @@
 @use '../common/theme';
 
-$sidebar-width: 321px;
-$sidebar-gap: 30px;
-
 .snippet-form #titlediv #title {
 	border-color: var(--cs-color-border);
 	block-size: 45px
@@ -95,8 +92,8 @@ $sidebar-gap: 30px;
 .snippet-form {
 	margin-block-start: 10px;
 	display: grid;
-	gap: $sidebar-gap;
-	grid-template-columns: 1fr $sidebar-width;
+	gap: var(--cs-sidebar-gap);
+	grid-template-columns: 1fr var(--cs-sidebar-width);
 	grid-template-areas: 'upper sidebar' 'lower sidebar';
 	transition: all 700ms;
 
@@ -125,7 +122,7 @@ $sidebar-gap: 30px;
 
 	.snippet-editor-sidebar {
 		grid-area: span 3 / sidebar;
-		max-inline-size: $sidebar-width;
+		max-inline-size: var(--cs-sidebar-width);
 		position: sticky;
 
 		// Keep the sidebar clear of the fixed WordPress admin bar and leave a
