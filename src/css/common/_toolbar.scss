@@ -1,21 +1,18 @@
 @use 'theme';
 @use 'upsell';
 
-$toolbar-block-size: 136px;
-$wpcontent-inline-start-indent: 20px;
-
 #wpbody {
-	padding-block-start: $toolbar-block-size;
+	padding-block-start: var(--cs-toolbar-block-size);
 }
 
 .code-snippets-toolbar {
 	color: #2c3337;
 	background: #fff;
 	font-family: 'SF Pro', sans-serif;
-	margin-inline-start: -$wpcontent-inline-start-indent - 2;
+	margin-inline-start: calc(-1 * var(--cs-wpcontent-inline-start-indent) - 2px);
 	position: absolute;
-	inline-size: calc(100% + $wpcontent-inline-start-indent);
-	block-size: $toolbar-block-size;
+	inline-size: calc(100% + var(--cs-wpcontent-inline-start-indent));
+	block-size: var(--cs-toolbar-block-size);
 	inset-block-start: 0;
 	display: flex;
 	flex-direction: column;
