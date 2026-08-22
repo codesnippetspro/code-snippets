@@ -36,7 +36,7 @@
 			border: none;
 			background: none;
 			font: inherit;
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			cursor: pointer;
 			text-align: start;
 			overflow: hidden;
@@ -48,7 +48,7 @@
 			}
 
 			&:focus-visible {
-				outline: 2px solid theme.$accent;
+				outline: 2px solid var(--cs-color-accent);
 				outline-offset: 2px;
 				border-radius: 2px;
 			}
@@ -64,7 +64,7 @@
 		line-height: 1.5;
 
 		.cloud-snippet-tags {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 		}
 
 		.snippet-card-modified {
@@ -93,7 +93,7 @@
 		color: #646970;
 
 		a {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 		}
 	}
 
@@ -125,14 +125,14 @@
 // Pro-only actions use the same quiet outline treatment in card and table views.
 .cloud-pro-button.button {
 	background-color: transparent;
-	border-color: theme.$accent;
-	color: theme.$accent;
+	border-color: var(--cs-color-accent);
+	color: var(--cs-color-accent);
 
 	&:hover,
 	&:focus {
 		background-color: #eff5f9;
-		border-color: theme.$accent;
-		color: theme.$accent;
+		border-color: var(--cs-color-accent);
+		color: var(--cs-color-accent);
 	}
 }
 

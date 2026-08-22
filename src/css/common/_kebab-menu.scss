@@ -17,8 +17,8 @@
 	box-sizing: border-box;
 	padding: 0;
 	background: #fff;
-	color: theme.$accent;
-	border: 1px solid theme.$accent;
+	color: var(--cs-color-accent);
+	border: 1px solid var(--cs-color-accent);
 	border-radius: 5px;
 	cursor: pointer;
 

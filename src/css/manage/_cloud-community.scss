@@ -150,7 +150,7 @@ $status-colors: (
 		margin: 0;
 		font-size: inherit;
 		font-weight: 600;
-		color: theme.$accent;
+		color: var(--cs-color-accent);
 		text-decoration: none;
 		cursor: pointer;
 		text-align: start;

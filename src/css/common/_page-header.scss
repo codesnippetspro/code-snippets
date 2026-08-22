@@ -25,7 +25,7 @@
 	}
 
 	h2 {
-		color: theme.$control-text;
+		color: var(--cs-color-text);
 	}
 }
 
@@ -46,7 +46,7 @@
 	color: #646970;
 
 	a {
-		color: theme.$accent;
+		color: var(--cs-color-accent);
 		text-decoration: underline;
 	}
 }
