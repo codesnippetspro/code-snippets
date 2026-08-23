@@ -22,7 +22,7 @@
 	> * {
 		background: var(--cs-color-surface);
 		border: 1px solid var(--cs-color-border-subtle);
-		border-radius: 8px;
+		border-radius: 6px;
 		padding: 32px;
 	}
 
@@ -50,7 +50,7 @@
 	figure {
 		margin: 1em 0 0;
 		overflow: hidden;
-		border-radius: 0.5rem;
+		border-radius: 6px;
 		position: relative;
 		block-size: auto;
 		background: #efefef;
@@ -90,15 +90,15 @@
 	flex: 1;
 	background: var(--cs-color-surface);
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 8px;
+	border-radius: 6px;
 	display: flex;
 	margin: 0;
 	flex-flow: column;
 	color: var(--cs-color-text);
 
 	figure img {
-		border-start-start-radius: 8px;
-		border-start-end-radius: 8px;
+		border-start-start-radius: 6px;
+		border-start-end-radius: 6px;
 	}
 }
 
@@ -213,7 +213,7 @@
 	padding: 15px;
 	border: 6px solid #e7c0b3;
 	border-inline-end-color: var(--cs-color-secondary);
-	border-radius: 22px;
+	border-radius: 50%;
 	animation: loading-rotate 1s infinite linear;
 	position: absolute;
 	inset-inline-start: 47%;
