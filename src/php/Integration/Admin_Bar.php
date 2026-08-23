@@ -287,6 +287,15 @@ class Admin_Bar {
 
 		$wp_admin_bar->add_node(
 			[
+				'id'     => self::ROOT_NODE_ID . '-insights',
+				'title'  => esc_html_x( 'Insights', 'snippets', 'code-snippets' ),
+				'href'   => $plugin->get_menu_url( 'insights' ),
+				'parent' => self::ROOT_NODE_ID,
+			]
+		);
+
+		$wp_admin_bar->add_node(
+			[
 				'id'     => self::ROOT_NODE_ID . '-import',
 				'title'  => esc_html_x( 'Import', 'snippets', 'code-snippets' ),
 				'href'   => $plugin->get_menu_url( 'import' ),
