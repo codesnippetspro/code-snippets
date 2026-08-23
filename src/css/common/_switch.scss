@@ -69,7 +69,7 @@ a.snippet-condition-count {
 	box-sizing: border-box;
 
 	.inactive-snippet & {
-		color: #ccc;
+		color: var(--cs-color-border);
 	}
 
 	.active-snippet & {
@@ -84,14 +84,14 @@ a.snippet-condition-count {
 	inline-size: 0;
 	block-size: 0;
 	border-block: 9px solid transparent;
-	border-inline-start: 10px solid #ccc;
+	border-inline-start: 10px solid var(--cs-color-border);
 
 	&::before {
 		content: '';
 		position: absolute;
 		inset: -14px -8px -14px -21px;
 		border-radius: 50%;
-		border: 1.8px solid #ccc;
+		border: 1.8px solid var(--cs-color-border);
 		z-index: 2;
 	}
 
