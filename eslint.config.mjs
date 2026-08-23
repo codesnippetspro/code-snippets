@@ -10,6 +10,7 @@ import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
 import reactPlugin from 'eslint-plugin-react'
 import svgPlugin from 'eslint-plugin-svg-jsx'
 import { FlatCompat } from '@eslint/eslintrc'
+import pkg from './package.json' with { type: "json" }
 
 const compat = new FlatCompat({
 	baseDirectory: import.meta.dirname,
@@ -150,7 +151,7 @@ export default eslintTs.config(
 		},
 		settings: {
 			'react': {
-				version: 'detect'
+				version: pkg.dependencies.react
 			},
 			'import/resolver': {
 				typescript: {

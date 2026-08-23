@@ -23,14 +23,8 @@ const StackTraceDetails: React.FC<{ trace: string }> = ({ trace }) => {
 	const [showHint, setShowHint] = useState(false)
 
 	useEffect(() => {
-		if (!isOpen) {
-			setShowHint(false)
-			return
-		}
-
 		const updateHintVisibility = () => {
-			const pre = preRef.current
-			setShowHint(Boolean(pre && pre.scrollWidth > pre.clientWidth))
+			setShowHint(Boolean(preRef.current && preRef.current.scrollWidth > preRef.current.clientWidth))
 		}
 
 		updateHintVisibility()
@@ -39,13 +33,13 @@ const StackTraceDetails: React.FC<{ trace: string }> = ({ trace }) => {
 		return () => {
 			window.removeEventListener('resize', updateHintVisibility)
 		}
-	}, [isOpen, trace])
+	}, [])
 
 	return (
 		<details onToggle={event => setIsOpen(event.currentTarget.open)}>
 			<summary>{__('View stack trace', 'code-snippets')}</summary>
 			<pre ref={preRef}>{trace}</pre>
-			{showHint
+			{!isOpen && showHint
 				? <p className="stack-trace-hint">
 					<em>{__('Scroll horizontally if the trace is cut off.', 'code-snippets')}</em>
 				</p>

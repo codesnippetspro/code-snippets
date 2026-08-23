@@ -19,20 +19,18 @@ export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children 
 		() => window.CODE_SNIPPETS_MANAGE?.snippetsList?.map(parseSnippetObject)
 	)
 
-	const refreshSnippetsList = useCallback(async (): Promise<void> => {
-		try {
-			console.info('Fetching snippets list')
-			const response = await fetchAll(isNetworkAdmin())
-			setSnippetsList(response)
-		} catch (error: unknown) {
-			console.error('Error fetching snippets list', error)
-		}
+	const refreshSnippetsList = useCallback((): Promise<void> => {
+		console.info('Fetching snippets list')
+		return fetchAll(isNetworkAdmin())
+			.then(setSnippetsList)
+			.catch((error: unknown) => console.error('Error fetching snippets list', error))
 	}, [fetchAll])
 
 	useEffect(() => {
-		refreshSnippetsList()
-			.catch(() => undefined)
-	}, [refreshSnippetsList])
+		fetchAll(isNetworkAdmin())
+			.then(setSnippetsList)
+			.catch((error: unknown) => console.error('Error fetching snippets list', error))
+	}, [fetchAll])
 
 	const value: SnippetsListContext = {
 		snippetsList,

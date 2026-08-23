@@ -75,7 +75,6 @@ body.no-js {
 body.js {
 	.settings-section-title {
 		border: 0;
-		clip: rect(1px, 1px, 1px, 1px);
 		clip-path: inset(50%);
 		block-size: 1px;
 		margin: -1px;
@@ -83,7 +82,7 @@ body.js {
 		padding: 0;
 		position: absolute;
 		inline-size: 1px;
-		word-wrap: normal !important;
+		overflow-wrap: normal !important;
 	}
 
 	.nav-tab:not(.nav-tab-active) {
@@ -297,7 +296,6 @@ body.js {
 			block-size: auto;
 			margin: 0 0 16px;
 			overflow: visible;
-			clip: auto;
 			clip-path: none;
 			font-size: 20px;
 			line-height: 1.3;

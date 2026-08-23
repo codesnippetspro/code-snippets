@@ -64,7 +64,7 @@ export const SearchFilters = () => {
 						className="cloud-search-category-filter"
 						value={searchParams[paramName]}
 						onChange={event =>
-							doSearch({ [paramName]: normaliseFilterValue(paramName, searchParams, event.target.value) })}
+							void doSearch({ [paramName]: normaliseFilterValue(paramName, searchParams, event.target.value) })}
 					>
 						<option value="">{allOptionLabel}</option>
 						{availableFilters[filterName]?.map(filterOption =>

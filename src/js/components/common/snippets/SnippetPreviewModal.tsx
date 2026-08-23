@@ -23,7 +23,7 @@ const EDITOR_MODES: Record<string, string> = {
 }
 
 const getClipboard = (): Clipboard | undefined =>
-	window.isSecureContext ? navigator.clipboard as Clipboard | undefined : undefined
+	window.isSecureContext ? navigator.clipboard : undefined
 
 const getPreviewEditorSettings = (type: string): EditorConfiguration => ({
 	extraKeys: {

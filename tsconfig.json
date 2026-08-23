@@ -1,9 +1,16 @@
 {
-    "extends": "@tsconfig/node18/tsconfig.json",
+    "extends": "@tsconfig/node24/tsconfig.json",
     "compilerOptions": {
+        "lib": [
+            "es2024",
+            "dom"
+        ],
+        "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
+        "isolatedModules": true,
         "downlevelIteration": true,
         "forceConsistentCasingInFileNames": true,
+        "rewriteRelativeImportExtensions": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitOverride": true,
@@ -25,6 +32,9 @@
         "files": true,
         "require": [
             "tsconfig-paths/register"
-        ]
+        ],
+        "compilerOptions": {
+            "erasableSyntaxOnly": true
+        }
     }
 }
