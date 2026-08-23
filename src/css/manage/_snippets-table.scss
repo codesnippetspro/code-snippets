@@ -122,7 +122,14 @@
 		padding-inline-end: 32px;
 
 		> a {
-			@include badges.badge-link;
+			display: inline-flex;
+			border-radius: 3px;
+
+			&:focus,
+			&:focus-visible {
+				outline: none;
+				box-shadow: 0 0 0 2px var(--cs-color-surface), 0 0 0 4px var(--cs-color-accent);
+			}
 		}
 
 		h3 {

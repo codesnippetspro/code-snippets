@@ -2,21 +2,6 @@
 @use 'sass:list';
 @use 'theme';
 
-// Badges are wrapped in links that filter by type. The white ring separates the
-// focus indicator from the badge, matching the activation switch. `:focus` is
-// included because a click otherwise leaves the WordPress ring, which hugs the
-// badge.
-@mixin badge-link {
-	display: inline-flex;
-	border-radius: 3px;
-
-	&:focus,
-	&:focus-visible {
-		outline: none;
-		box-shadow: 0 0 0 2px var(--cs-color-surface), 0 0 0 4px var(--cs-color-accent);
-	}
-}
-
 .badge {
 	font-size: 12px;
 	font-weight: 700;
