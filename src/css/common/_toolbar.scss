@@ -288,6 +288,10 @@
 		padding-inline: 16px;
 	}
 
+	.code-snippets-toolbar-upper ul {
+		gap: 0;
+	}
+
 	.code-snippets-toolbar-upper .logo {
 		flex: 0 1 auto;
 		min-inline-size: 0;
