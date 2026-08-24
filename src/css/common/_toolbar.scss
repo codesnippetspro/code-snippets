@@ -100,6 +100,10 @@
 
 	li {
 		display: flex;
+
+		&:last-of-type {
+			margin-inline-start: auto;
+		}
 	}
 
 	// Items fill the 60px band; the active tab is indicated by accent colour on
@@ -133,10 +137,6 @@
 		}
 	}
 
-	li:not(.toolbar-end-item) + li.toolbar-end-item {
-		margin-inline-start: auto;
-	}
-
 	// Narrow widths: centre each item's label directly beneath its icon and
 	// shrink the type so the nav still fits on one row. The pro chip becomes a
 	// small badge pinned to the item's top corner, out of the flow so it never
@@ -165,23 +165,7 @@
 		}
 	}
 
-	// On narrow screens Settings remains available through the WordPress submenu.
-	// The remaining primary destinations fill the toolbar evenly rather than
-	// becoming a second horizontally-scrolling navigation row.
 	@media (width <= 782px) {
-		li.toolbar-end-item {
-			display: none;
-		}
-
-		li:not(.toolbar-end-item) {
-			flex: 1 1 0;
-			min-inline-size: 0;
-		}
-
-		li:not(.toolbar-end-item) + li.toolbar-end-item {
-			margin-inline-start: 0;
-		}
-
 		li a {
 			inline-size: 100%;
 			padding-inline: 8px;

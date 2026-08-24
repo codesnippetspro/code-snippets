@@ -188,7 +188,7 @@ const LowerNav = () =>
 					/>)}
 
 				{window.CODE_SNIPPETS?.urls.settings && (
-					<li className="toolbar-end-item">
+					<li>
 						<a href={window.CODE_SNIPPETS.urls.settings} className="settings-link">
 							<SettingsIcon aria-hidden="true" />
 							<span className="toolbar-nav-label">{__('Settings', 'code-snippets')}</span>
