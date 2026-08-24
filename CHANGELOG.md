@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.10.0] (UPCOMING)
+## [3.10.0] (2026-08-24)
 
 ### Added
 * New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
@@ -1405,6 +1405,22 @@
 [brandonjp]: https://github.com/brandonjp
 
 [unreleased]: https://github.com/codesnippetspro/code-snippets/tree/core
+[3.10.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.10.0
+[3.9.6]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.6
+[3.9.5]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.5
+[3.9.4]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.4
+[3.9.3]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.3
+[3.9.2]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.2
+[3.9.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.1
+[3.9.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.0
+[3.9.0-beta.2]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.0-beta.2
+[3.9.0-beta.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.0-beta.1
+[3.8.2]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.8.2
+[3.8.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.8.1
+[3.8.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.8.0
+[3.7.1-beta.3]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.1-beta.3
+[3.7.1-beta.2]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.1-beta.2
+[3.7.1-beta.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.1-beta.1
 [3.7.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.0
 [3.6.7]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.7
 [3.6.6.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.6.1
