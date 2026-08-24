@@ -15,8 +15,8 @@
 }
 
 .code-snippets-updates {
-	display: grid;
-	grid-template-columns: 2fr 1fr;
+	display: flex;
+	flex-direction: row;
 	gap: 20px;
 
 	> * {
@@ -39,6 +39,10 @@
 	h2 {
 		font-size: 18px;
 		margin: 0;
+	}
+
+	@media (width <= 960px) {
+		flex-direction: column;
 	}
 }
 
