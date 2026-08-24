@@ -119,6 +119,7 @@
 		text-decoration: none;
 		box-sizing: border-box;
 		cursor: pointer;
+		border-block-end: 3px solid transparent;
 
 		svg {
 			inline-size: 26px;
@@ -127,6 +128,7 @@
 
 		&.active-link, &:hover, &:focus, &:active {
 			color: var(--cs-color-accent);
+			border-color: var(--cs-color-accent);
 			z-index: 1;
 		}
 	}
