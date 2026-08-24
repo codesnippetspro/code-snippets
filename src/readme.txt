@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.9.6
+Stable tag: 3.10.0
 Requires at least: 5.5
 Tested up to: 7.0.3
 Requires PHP: 7.4
