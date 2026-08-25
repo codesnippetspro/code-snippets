@@ -201,5 +201,11 @@ class Contextual_Help {
 			/* translators: %s: URL to Manage Snippets admin menu */
 			sprintf( __( 'You can save your snippets to a code snippets export file using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $manage_url )
 		);
+
+		$this->add_help_tab(
+			'migrating',
+			__( 'Migrating', 'code-snippets' ),
+			__( 'If you are using another snippets plugin, you can import those existing snippets to your Code Snippets library.', 'code-snippets' )
+		);
 	}
 }

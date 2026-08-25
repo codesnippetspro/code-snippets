@@ -91,8 +91,6 @@ const MigrateFormInner: React.FC = () => {
 
 	return (
 		<>
-			<p>{__('If you are using another snippets plugin, you can import those existing snippets to your Code Snippets library.', 'code-snippets')}</p>
-
 			<ImporterSelector
 				value={selectedImporter}
 				options={importers}
