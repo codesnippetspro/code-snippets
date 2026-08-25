@@ -62,6 +62,7 @@
 	.components-form-token-field__input-container {
 		background: var(--cs-color-surface);
 		border-color: var(--cs-color-border);
+		border-radius: 5px;
 
 		> .components-flex {
 			padding: 12px;

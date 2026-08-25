@@ -26,7 +26,7 @@
 .insights-chart-card {
 	box-sizing: border-box;
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 6px;
+	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface);
 	padding: 24px;
 
@@ -80,7 +80,7 @@
 		background: #f0f0f1;
 		color: var(--cs-color-text-muted);
 		border: none;
-		border-radius: 4px;
+		border-radius: 5px;
 		cursor: pointer;
 
 		> .dashicons {

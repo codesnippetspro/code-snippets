@@ -169,7 +169,7 @@ body.js {
 		color: #0073aa;
 		background: #f0f6fc;
 		padding: 2px 8px;
-		border-radius: 3px;
+		border-radius: 5px;
 		border: 1px solid var(--cs-color-border);
 	}
 
@@ -194,7 +194,6 @@ body.js {
 		padding: 12px 16px;
 		border-inline-start: 4px solid #dba617;
 		background: #fff8e5;
-		border-radius: 4px;
 
 		p {
 			margin: 0;
@@ -211,7 +210,6 @@ body.js {
 
 		&.notice {
 			padding: 8px 12px;
-			border-radius: 4px;
 		}
 	}
 

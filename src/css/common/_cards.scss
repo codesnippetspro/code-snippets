@@ -11,7 +11,7 @@
 .code-snippets-card {
 	background: var(--cs-color-surface);
 	border: 1px solid var(--cs-color-border);
-	border-radius: 5px;
+	border-radius: var(--cs-card-radius);
 	margin: 0;
 	display: flex;
 	flex-flow: column;
@@ -36,8 +36,8 @@
 		border-block-start: 1px solid var(--cs-color-border);
 		padding-inline: 24px;
 		padding-block: 12px;
-		border-end-start-radius: 5px;
-		border-end-end-radius: 5px;
+		border-end-start-radius: var(--cs-card-radius);
+		border-end-end-radius: var(--cs-card-radius);
 	}
 
 	// The status label shrinks and clips away under pressure rather than

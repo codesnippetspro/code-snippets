@@ -22,7 +22,7 @@
 	> * {
 		background: var(--cs-color-surface);
 		border: 1px solid var(--cs-color-border-subtle);
-		border-radius: 6px;
+		border-radius: var(--cs-card-radius);
 		padding: 32px;
 	}
 
@@ -54,7 +54,7 @@
 	figure {
 		margin: 1em 0 0;
 		overflow: hidden;
-		border-radius: 6px;
+		border-radius: var(--cs-card-radius);
 		position: relative;
 		block-size: auto;
 		background: #efefef;
@@ -94,15 +94,15 @@
 	flex: 1;
 	background: var(--cs-color-surface);
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 6px;
+	border-radius: var(--cs-card-radius);
 	display: flex;
 	margin: 0;
 	flex-flow: column;
 	color: var(--cs-color-text);
 
 	figure img {
-		border-start-start-radius: 6px;
-		border-start-end-radius: 6px;
+		border-start-start-radius: var(--cs-card-radius);
+		border-start-end-radius: var(--cs-card-radius);
 	}
 }
 
@@ -149,7 +149,7 @@
 		text-transform: uppercase;
 		inline-size: fit-content;
 		padding: 3px 10px;
-		border-radius: 3px;
+		border-radius: 5px;
 		font-weight: bold;
 	}
 }

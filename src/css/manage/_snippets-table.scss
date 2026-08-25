@@ -48,7 +48,7 @@
 	&:hover, &:focus, &:active {
 		color: var(--cs-color-text);
 		background-color: rgb(0 0 0 / 10%);
-		border-radius: 6px;
+		border-radius: 5px;
 		appearance: unset;
 
 		&:disabled {
@@ -123,7 +123,7 @@
 
 		> a {
 			display: inline-flex;
-			border-radius: 3px;
+			border-radius: 5px;
 
 			&:focus,
 			&:focus-visible {
@@ -238,7 +238,7 @@
 			padding-block: 0;
 			padding-inline: 4px;
 			border: 1px solid var(--cs-color-border-subtle);
-			border-radius: 4px;
+			border-radius: 5px;
 			text-align: center;
 			color: var(--cs-color-text);
 		}

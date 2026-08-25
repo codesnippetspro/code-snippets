@@ -125,7 +125,7 @@
 	th.sorted .list-table-sort-button:focus-visible {
 		outline: 2px solid var(--cs-color-accent);
 		outline-offset: 2px;
-		border-radius: 2px;
+		border-radius: 5px;
 	}
 
 	// The type badge is wrapped in an unclassed link that lays out as an inline
@@ -133,7 +133,7 @@
 	// focus ring: the inherited one resolves to a transparent outline.
 	.column-type a {
 		display: inline-flex;
-		border-radius: 3px;
+		border-radius: 5px;
 
 		&:focus,
 		&:focus-visible {
