@@ -464,6 +464,24 @@ class Snippet extends Model {
 	}
 
 	/**
+	 * Retrieve the modification date as an ISO 8601 string, including the UTC
+	 * offset.
+	 *
+	 * `$modified` is stored as 'Y-m-d H:i:s' in UTC, which carries no offset, so
+	 * anything parsing it — a browser, in particular — is free to read it as
+	 * local time and land the snippet hours away from when it was really saved.
+	 * This is the form to hand to clients.
+	 *
+	 * @return string|null ISO 8601 date, or null if no modification date is set.
+	 * @noinspection PhpUnused
+	 */
+	protected function get_modified_iso(): ?string {
+		$timestamp = $this->get_modified_timestamp();
+
+		return $timestamp ? gmdate( 'c', $timestamp ) : null;
+	}
+
+	/**
 	 * Retrieve the modification time in the local timezone.
 	 *
 	 * @return DateTime
