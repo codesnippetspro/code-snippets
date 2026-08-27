@@ -122,6 +122,7 @@ $wpcontent-inline-start-indent: 20px;
 		text-decoration: none;
 		box-sizing: border-box;
 		cursor: pointer;
+		border-block-end: 3px solid transparent;
 
 		svg {
 			inline-size: 26px;
@@ -131,6 +132,7 @@ $wpcontent-inline-start-indent: 20px;
 		&.active-link, &:hover, &:focus, &:active {
 			color: theme.$accent;
 			z-index: 1;
+			border-color: theme.$accent;
 		}
 	}
 
