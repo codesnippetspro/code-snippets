@@ -127,6 +127,7 @@ $sidebar-gap: 30px;
 		grid-area: span 3 / sidebar;
 		max-inline-size: $sidebar-width;
 		position: sticky;
+		overflow: clip;
 
 		// Keep the sidebar clear of the fixed WordPress admin bar and leave a
 		// usable visual gap beneath it while the editor scrolls.
