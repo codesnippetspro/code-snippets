@@ -13,7 +13,7 @@ declare global {
 			readonly editor?: WordPressEditor
 			readonly codeEditor?: WordPressCodeEditor
 		}
-		readonly pagenow: string
+		readonly pagenow?: string
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
 		readonly wpActiveEditor?: string
