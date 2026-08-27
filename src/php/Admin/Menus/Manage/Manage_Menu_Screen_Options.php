@@ -13,12 +13,6 @@ class Manage_Menu_Screen_Options {
 	 * Register hooks this class.
 	 */
 	public function __construct() {
-		// Deliberately `wp_loaded`, not `admin_init`. Core handles the Screen
-		// Options form in `set_screen_options()` at wp-admin/admin.php:116, which
-		// ends in `wp_safe_redirect()` and `exit` — before `admin_init` fires at
-		// line 180. A handler on `admin_init` never runs for the request that
-		// carries the form, so the preference is silently discarded. `wp_loaded`
-		// fires from wp-load.php before any of that.
 		add_action( 'wp_loaded', [ $this, 'save_truncation_preference' ] );
 		add_filter( 'set-screen-option', [ $this, 'save_per_page_option' ], 10, 3 );
 	}
