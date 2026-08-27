@@ -509,4 +509,23 @@ test.describe('Manage table Screen Options', () => {
 		await truncationToggle.check()
 		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeVisible()
 	})
+
+	test('Truncation preference survives Apply and a page reload', async ({ page }) => {
+		await openScreenOptions(page)
+		await page.locator('#snippets-table-truncate-row-values').uncheck()
+
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+
+		await helper.navigateToSnippetsAdmin()
+		await openScreenOptions(page)
+
+		await expect(page.locator('#snippets-table-truncate-row-values')).not.toBeChecked()
+		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeHidden()
+
+		// Restore the default so later tests and the dev site are unaffected.
+		await page.locator('#snippets-table-truncate-row-values').check()
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+	})
 })
