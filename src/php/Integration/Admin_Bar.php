@@ -91,7 +91,7 @@ class Admin_Bar {
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
 			plugins_url( 'dist/admin-bar.js', PLUGIN_FILE ),
-			[],
+			[ 'wp-i18n', 'wp-url' ],
 			PLUGIN_VERSION,
 			[ 'in_footer' => true ]
 		);
