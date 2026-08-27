@@ -147,11 +147,21 @@ class Manage_Menu_Screen_Options {
 	/**
 	 * Render the manage table controls.
 	 *
-	 * @param string $screen_settings Existing screen settings HTML.
+	 * Anything may filter `screen_settings` before this runs, and a callback
+	 * that forgets to return its value hands the next one null. Declaring the
+	 * parameter as a string turned that into a fatal error, and because it is
+	 * raised while the screen meta is being rendered, the page dies after the
+	 * admin chrome but before any content: the snippets screen appears blank
+	 * while the rest of the admin looks fine.
+	 *
+	 * @param mixed $screen_settings Existing screen settings HTML, from an
+	 *                               unknown number of earlier callbacks.
 	 *
 	 * @return string
 	 */
-	public function render( string $screen_settings ): string {
+	public function render( $screen_settings ): string {
+		$screen_settings = is_string( $screen_settings ) ? $screen_settings : '';
+
 		if ( $this->is_cloud_community_view() ) {
 			return $screen_settings;
 		}
