@@ -1,5 +1,7 @@
+// `pagenow` is only defined inside wp-admin. This module is also reached from
+// the admin bar bundle, which loads on the front end, so read it defensively.
 export const isNetworkAdmin = (): boolean =>
-	window.pagenow.endsWith('-network')
+	true === window.pagenow?.endsWith('-network')
 
 export const isMacOS = (): boolean =>
 	null !== /mac/i.exec(window.navigator.userAgent)
