@@ -506,6 +506,28 @@ test.describe('Manage table Screen Options', () => {
 		await truncationToggle.check()
 		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeVisible()
 	})
+
+	test('Truncation preference survives Apply and a page reload', async ({ page }) => {
+		await openScreenOptions(page)
+		await page.locator('#snippets-table-truncate-row-values').uncheck()
+
+		// Core handles this form before `admin_init`, so a preference saved on that
+		// hook is silently dropped. Applying and reloading is the only way to tell
+		// a real save from the client-side class toggle above.
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+
+		await helper.navigateToSnippetsAdmin()
+		await openScreenOptions(page)
+
+		await expect(page.locator('#snippets-table-truncate-row-values')).not.toBeChecked()
+		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeHidden()
+
+		// Restore the default so later tests and the dev site are unaffected.
+		await page.locator('#snippets-table-truncate-row-values').check()
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+	})
 })
 
 test.describe('Snippets list order setting', () => {
