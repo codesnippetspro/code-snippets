@@ -103,6 +103,7 @@ class Manage_Menu_Assets {
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
 			'editorTheme'          => get_setting( 'editor', 'theme' ),
 			'typeCounts'           => $this->get_snippet_type_counts(),
+			'listOrder'            => get_setting( 'general', 'list_order' ),
 		];
 
 		if ( $this->screen_options->is_manage_table_view() ) {
