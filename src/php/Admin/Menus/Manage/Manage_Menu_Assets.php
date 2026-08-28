@@ -103,6 +103,7 @@ class Manage_Menu_Assets {
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
 			'editorTheme'          => get_setting( 'editor', 'theme' ),
 			'typeCounts'           => $this->get_snippet_type_counts(),
+			'listOrder'            => get_setting( 'general', 'list_order' ),
 		];
 
 		if ( $this->screen_options->is_manage_table_view() ) {
@@ -111,6 +112,9 @@ class Manage_Menu_Assets {
 				function ( Snippet $snippet ) {
 					$fields = $snippet->get_fields();
 					$fields['code'] = '';
+					// Match the REST response: a UTC value with no offset is read
+					// as local time by the browser.
+					$fields['modified'] = $snippet->modified_iso;
 					return $fields;
 				},
 				get_snippets()

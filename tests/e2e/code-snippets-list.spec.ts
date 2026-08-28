@@ -509,4 +509,62 @@ test.describe('Manage table Screen Options', () => {
 		await truncationToggle.check()
 		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeVisible()
 	})
+
+	test('Truncation preference survives Apply and a page reload', async ({ page }) => {
+		await openScreenOptions(page)
+		await page.locator('#snippets-table-truncate-row-values').uncheck()
+
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+
+		await helper.navigateToSnippetsAdmin()
+		await openScreenOptions(page)
+
+		await expect(page.locator('#snippets-table-truncate-row-values')).not.toBeChecked()
+		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeHidden()
+
+		// Restore the default so later tests and the dev site are unaffected.
+		await page.locator('#snippets-table-truncate-row-values').check()
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+	})
+})
+
+test.describe('Snippets list order setting', () => {
+	const PREFIX = 'E2E Order Test'
+	const names = ['E2E Order Test Alpha', 'E2E Order Test Zulu']
+
+	test.beforeAll(async () => {
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(PREFIX)
+		for (const name of names) {
+			await SnippetsTestHelper.createSnippetViaCli({ name, active: false, type: 'php' })
+		}
+	})
+
+	test.afterAll(async () => {
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(PREFIX)
+		await SnippetsTestHelper.setListOrder('priority-asc')
+	})
+
+	const firstMatchingName = async (page: Page): Promise<string> => {
+		const rows = page.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK})`)
+		await rows.first().waitFor()
+		const all = await rows.locator(`a${SELECTORS.SNIPPET_NAME_LINK}`).allInnerTexts()
+		return all.find(name => name.startsWith(PREFIX)) ?? ''
+	}
+
+	// The setting describes itself as the default order for this screen, so it
+	// decides how the table opens. Sorting moved to the column headings during
+	// the admin rewrite and the setting was left reading nothing at all.
+	test('Snippets List Order decides the order the table opens in', async ({ page }) => {
+		const helper = new SnippetsTestHelper(page)
+
+		await SnippetsTestHelper.setListOrder('name-asc')
+		await helper.navigateToSnippetsAdmin()
+		expect(await firstMatchingName(page)).toBe('E2E Order Test Alpha')
+
+		await SnippetsTestHelper.setListOrder('name-desc')
+		await helper.navigateToSnippetsAdmin()
+		expect(await firstMatchingName(page)).toBe('E2E Order Test Zulu')
+	})
 })

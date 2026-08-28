@@ -826,6 +826,10 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			$response[ $property ] = $item->$property;
 		}
 
+		// The schema declares this as a date-time, so send one: the stored value
+		// is UTC without an offset, which clients read as local time.
+		$response['modified'] = $item->modified_iso;
+
 		return rest_ensure_response( $response );
 	}
 

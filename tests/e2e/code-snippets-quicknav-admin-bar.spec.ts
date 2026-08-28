@@ -84,6 +84,20 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		await expect(activeControls).toBeVisible()
 	})
 
+	test('QuickNav loads on the front end without JavaScript errors', async ({ page }) => {
+		const errors: string[] = []
+		page.on('pageerror', error => errors.push(error.message))
+
+		await page.goto('/')
+
+		// The admin bar bundle is enqueued on the front end as well as in wp-admin,
+		// but `wp.i18n`, `wp.url` and `pagenow` are only present in wp-admin unless
+		// the script declares them. Loading it here proves those are satisfied.
+		await expect(page.locator('#wpadminbar')).toBeVisible()
+		await expect(page.locator('#wp-admin-bar-code-snippets')).toHaveCount(1)
+		expect(errors).toEqual([])
+	})
+
 	test('Manage submenu contains status quick links', async ({ page }) => {
 		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
 

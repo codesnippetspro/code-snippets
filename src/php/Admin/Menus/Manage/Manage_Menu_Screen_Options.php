@@ -13,7 +13,7 @@ class Manage_Menu_Screen_Options {
 	 * Register hooks this class.
 	 */
 	public function __construct() {
-		add_action( 'admin_init', [ $this, 'save_truncation_preference' ] );
+		add_action( 'wp_loaded', [ $this, 'save_truncation_preference' ] );
 		add_filter( 'set-screen-option', [ $this, 'save_per_page_option' ], 10, 3 );
 	}
 
