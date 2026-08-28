@@ -123,6 +123,12 @@ function flush_versioned_cache_groups( string $previous_version ): void {
 		flush_cache_group( CACHE_GROUP_BASE . '_' . $previous_version );
 	}
 
+	// Versions before the group was scoped wrote to the unscoped group, and no
+	// version that scopes it ever writes there again. Clearing it means a site
+	// upgrading from 3.10.0 or 3.10.1 sheds the objects that would otherwise
+	// still be waiting to break its next rollback.
+	flush_cache_group( CACHE_GROUP_BASE );
+
 	flush_cache_group( CACHE_GROUP );
 }
 

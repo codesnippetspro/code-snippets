@@ -76,6 +76,27 @@ class Versioned_Cache_Test extends UnitTestCase {
 	}
 
 	/**
+	 * The legacy unscoped group is cleared on the first upgrade.
+	 *
+	 * Sites coming from 3.10.0 or 3.10.1 have Snippet objects sitting in the
+	 * old unscoped group. Those are what break the next rollback, so upgrading
+	 * to a version that scopes the group has to shed them.
+	 *
+	 * @return void
+	 */
+	public function test_legacy_unscoped_group_is_cleared_on_upgrade(): void {
+		if ( ! function_exists( 'wp_cache_supports' ) || ! wp_cache_supports( 'flush_group' ) ) {
+			$this->markTestSkipped( 'Object cache does not support group flushing.' );
+		}
+
+		wp_cache_set( 'all_snippets_wp_snippets', 'objects from 3.10.1', CACHE_GROUP_BASE );
+
+		flush_versioned_cache_groups( '' );
+
+		$this->assertFalse( wp_cache_get( 'all_snippets_wp_snippets', CACHE_GROUP_BASE ) );
+	}
+
+	/**
 	 * An empty previous version is tolerated, as on a fresh install.
 	 *
 	 * @return void
