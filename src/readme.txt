@@ -106,6 +106,20 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+= 3.10.1 (2026-08-28) =
+
+__Changed__
+
+* Enhanced active-link visibility in the toolbar with border-based styling
+* Standardized sidebar label font sizing for consistency
+
+__Fixed__
+
+* Fixed admin bar script loading on core to work correctly on front-end
+* Fixed snippet modification dates to send with proper UTC offset
+* Fixed row truncation screen option to persist correctly across sessions
+* Fixed sticky sidebar from displaying unwanted horizontal scrollbar
+
 = 3.10.0 (2026-08-24) =
 
 __Added__
