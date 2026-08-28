@@ -53,6 +53,10 @@ export class SnippetsTestHelper {
 		await wpCli(['eval', php])
 	}
 
+	static async setListOrder(order: string): Promise<void> {
+		await wpCli(['eval', `\\Code_Snippets\\Settings\\update_setting('general', 'list_order', '${order}');`])
+	}
+
 	static async setSnippetsPerPage(perPage: number): Promise<void> {
 		const php = `
 			$user = get_user_by('login', 'admin');
