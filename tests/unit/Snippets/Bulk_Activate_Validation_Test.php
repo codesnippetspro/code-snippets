@@ -137,4 +137,39 @@ class Bulk_Activate_Validation_Test extends UnitTestCase {
 		$this->assertTrue( $this->is_active( $good->id ) );
 		$this->assertFalse( $this->is_active( $bad->id ) );
 	}
+
+	/**
+	 * The rejected names come from whatever is declared, not a fixed list.
+	 *
+	 * `check_duplicate_identifier()` builds its list from
+	 * `get_defined_functions()`, covering PHP internals and every function
+	 * declared by WordPress, the active plugins and the theme. So the set of
+	 * JavaScript names that used to be refused was specific to each site and
+	 * grew as plugins were added, which is why the behaviour looked arbitrary
+	 * and was hard to reproduce.
+	 *
+	 * Deriving the name here rather than hard-coding one keeps this honest
+	 * whatever is loaded in the test environment.
+	 *
+	 * @return void
+	 */
+	public function test_a_name_declared_on_this_install_no_longer_blocks_javascript(): void {
+		$defined = get_defined_functions();
+		$candidates = array_intersect(
+			[ 'next', 'reset', 'count', 'sort', 'log', 'min', 'max', 'trim' ],
+			array_map( 'strtolower', array_merge( $defined['internal'], $defined['user'] ) )
+		);
+
+		$this->assertNotEmpty( $candidates, 'Expected at least one common name to be declared.' );
+
+		$name = (string) reset( $candidates );
+		$snippet = $this->make_snippet( 'site-footer-js', "function $name() { return 1; }" );
+
+		activate_snippets( [ $snippet->id ] );
+
+		$this->assertTrue(
+			$this->is_active( $snippet->id ),
+			"A script declaring $name should still activate."
+		);
+	}
 }
