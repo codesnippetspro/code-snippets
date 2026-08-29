@@ -3,8 +3,8 @@ import { RawHTML } from '@wordpress/element'
 import { __ } from '@wordpress/i18n'
 import React, { Fragment } from 'react'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
+import { useActionFeedback } from '../../../hooks/useActionFeedback'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
-import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
@@ -35,6 +35,7 @@ const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
 const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
 	const { activate, deactivate } = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
+	const { reportFailure } = useActionFeedback()
 
 	const actionText = snippet.network && !snippet.shared_network
 		? snippet.active ? __('Network Deactivate', 'code-snippets') : __('Network Activate', 'code-snippets')
@@ -53,7 +54,12 @@ const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
 			onChange={() => {
 				(snippet.active ? deactivate(snippet) : activate(snippet))
 					.then(refreshSnippetsList)
-					.catch(handleUnknownError)
+					.catch((error: unknown) => reportFailure(
+						snippet.active
+							? __('deactivate this snippet', 'code-snippets')
+							: __('activate this snippet', 'code-snippets'),
+						error
+					))
 			}}
 		/>
 	)

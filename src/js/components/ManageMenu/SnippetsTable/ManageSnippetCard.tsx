@@ -4,9 +4,9 @@ import { RawHTML } from '@wordpress/element'
 import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { ConfirmDeleteDialog, useDeleteSnippet } from '../../common/snippets/ConfirmDeleteDialog'
+import { useActionFeedback } from '../../../hooks/useActionFeedback'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
-import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isNetworkOnlySnippet, isSnippetActive } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
@@ -39,6 +39,7 @@ const CardPreviewButton: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 const CloneExportMenuItems: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
+	const { reportFailure } = useActionFeedback()
 
 	return (
 		<>
@@ -46,7 +47,7 @@ const CloneExportMenuItems: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 				onSelect={() => {
 					api.create(cloneSnippetObject(snippet))
 						.then(refreshSnippetsList)
-						.catch(handleUnknownError)
+						.catch((error: unknown) => reportFailure(__('clone this snippet', 'code-snippets'), error))
 				}}
 			>
 				{__('Clone', 'code-snippets')}
@@ -56,7 +57,7 @@ const CloneExportMenuItems: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 				onSelect={() => {
 					api.export(snippet)
 						.then(response => downloadSnippetExportFile(response, snippet))
-						.catch(handleUnknownError)
+						.catch((error: unknown) => reportFailure(__('export this snippet', 'code-snippets'), error))
 				}}
 			>
 				{__('Export', 'code-snippets')}
@@ -77,6 +78,7 @@ const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
 }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
+	const { reportFailure } = useActionFeedback()
 
 	return (
 		<>
@@ -87,7 +89,7 @@ const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
 					onSelect={() => {
 						api.restore(snippet)
 							.then(refreshSnippetsList)
-							.catch(handleUnknownError)
+							.catch((error: unknown) => reportFailure(__('restore this snippet', 'code-snippets'), error))
 					}}
 				>
 					{__('Restore', 'code-snippets')}
@@ -103,11 +105,17 @@ const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
 
 const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
+	const { reportFailure } = useActionFeedback()
 	const canModify = canModifySnippet(snippet)
 	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
 		snippet,
 		onSuccess: refreshSnippetsList,
-		onError: handleUnknownError
+		onError: (error: unknown) => reportFailure(
+			snippet.trashed
+				? __('delete this snippet', 'code-snippets')
+				: __('move this snippet to the trash', 'code-snippets'),
+			error
+		)
 	})
 
 	return (
