@@ -448,8 +448,14 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 	$valid_snippets = [];
 
 	foreach ( $snippets as $snippet ) {
-		$validator = new Validator( $snippet->code );
-		$code_error = $validator->validate();
+		// Only PHP is validated. The validator looks for redeclarations of
+		// existing PHP functions and classes, which says nothing useful about
+		// CSS or JavaScript: a script defining `next()` or `reset()` was read
+		// as redeclaring the PHP built-ins of those names and silently refused
+		// activation, while the same snippet activated fine on its own.
+		$code_error = 'php' === $snippet->type
+			? ( new Validator( $snippet->code ) )->validate()
+			: null;
 
 		if ( ! $code_error ) {
 			$valid_ids[] = $snippet->id;
