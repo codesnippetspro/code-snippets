@@ -1,14 +1,18 @@
 import React, { useEffect, useId, useRef } from 'react'
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import { useSubmitSnippet } from '../../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../../utils/errors'
 import { isMacOS } from '../../../../utils/screen'
+import { getSnippetType } from '../../../../utils/snippets/snippets'
+import { stripWrapperTags } from '../../../../utils/snippets/tags'
 import { useSnippetForm } from '../WithSnippetFormContext'
 import { Button } from '../../../common/Button'
 import { ExpandIcon } from '../../../common/icons/ExpandIcon'
 import { MinimiseIcon } from '../../../common/icons/MinimiseIcon'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 import type { Dispatch, RefObject, SetStateAction } from 'react'
+import type { ScreenNotice } from '../../../../types/ScreenNotice'
+import type { Snippet } from '../../../../types/Snippet'
 
 interface EditorTextareaProps {
 	textareaRef: RefObject<HTMLTextAreaElement>
@@ -51,8 +55,46 @@ export interface CodeEditorProps {
 	setIsExpanded: Dispatch<SetStateAction<boolean>>
 }
 
+/**
+ * Keep the editor's contents in step with the snippet being edited.
+ *
+ * Code pasted from a chat window or a file usually arrives wrapped in the tags
+ * for its language. Those are removed here rather than silently on save, so the
+ * editor shows what will actually be stored and does not flag an error for
+ * markup we were going to strip anyway.
+ */
+const handleEditorChanges = (
+	instance: CodeMirror.Editor,
+	changes: readonly CodeMirror.EditorChange[],
+	setSnippet: Dispatch<SetStateAction<Snippet>>,
+	setCurrentNotice: Dispatch<SetStateAction<ScreenNotice | undefined>>
+) => {
+	const pasted = changes.some(change => 'paste' === change.origin)
+
+	setSnippet(previous => {
+		const value = instance.getValue()
+
+		if (!pasted) {
+			return { ...previous, code: value }
+		}
+
+		const { code, removed } = stripWrapperTags(value, getSnippetType(previous))
+
+		if (removed) {
+			instance.setValue(code)
+			setCurrentNotice(['updated', sprintf(
+				/* translators: %s: markup that was removed, such as "opening PHP tag". */
+				__('Removed the %s from the pasted code. Snippets do not need them.', 'code-snippets'),
+				removed
+			)])
+		}
+
+		return { ...previous, code }
+	})
+}
+
 export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpanded }) => {
-	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance } = useSnippetForm()
+	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance, setCurrentNotice } = useSnippetForm()
 	const { submitSnippet } = useSubmitSnippet()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 	const snippetCodeId = useId()
@@ -62,14 +104,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 			if (textareaRef.current && !editorInstance && window.wp.codeEditor) {
 				editorInstance = window.wp.codeEditor.initialize(textareaRef.current)
 
-				editorInstance.codemirror.on('changes', instance => {
-					setSnippet(previous => ({ ...previous, code: instance.getValue() }))
-				})
+				editorInstance.codemirror.on('changes', (instance, changes) =>
+					handleEditorChanges(instance, changes, setSnippet, setCurrentNotice))
 			}
 
 			return editorInstance
 		})
-	}, [setCodeEditorInstance, textareaRef, setSnippet])
+	}, [setCodeEditorInstance, textareaRef, setSnippet, setCurrentNotice])
 
 	useEffect(() => {
 		if (codeEditorInstance) {
