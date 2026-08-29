@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.10.1] (2026-08-28)
+
+### Changed
+* Enhanced active-link visibility in the toolbar with border-based styling
+* Standardized sidebar label font sizing for consistency
+
+### Fixed
+* Fixed admin bar script loading on core to work correctly on front-end
+* Fixed snippet modification dates to send with proper UTC offset
+* Fixed row truncation screen option to persist correctly across sessions
+* Fixed sticky sidebar from displaying unwanted horizontal scrollbar
+
 ## [3.10.0] (2026-08-24)
 
 ### Added
