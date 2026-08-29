@@ -35,6 +35,26 @@ const editorValue = (page: Page): Promise<string> =>
 	page.evaluate(() =>
 		(<CodeMirrorHost><unknown>document.querySelector('.CodeMirror')).CodeMirror.getValue())
 
+/**
+ * Whether this install offers the licensed snippet types.
+ *
+ * Styles and Scripts appear in the type list either way, but are locked
+ * without a licence, so their presence in the menu says nothing about whether
+ * they can be selected.
+ */
+const isLicensed = (page: Page): Promise<boolean> =>
+	page.evaluate(() => Boolean(window.CODE_SNIPPETS?.isLicensed))
+
+/**
+ * Switch the snippet type using the control the form helper drives.
+ */
+const selectType = async (page: Page, label: string): Promise<void> => {
+	await page.locator('.snippet-type-container .code-snippets-select').click()
+	await page.getByRole('listbox').getByRole('option', { name: new RegExp(label, 'i') }).click()
+	await page.locator('.CodeMirror').first().waitFor({ state: 'visible' })
+}
+
+
 test.describe('Wrapper tags in pasted code', () => {
 	let helper: SnippetsTestHelper
 
@@ -77,6 +97,35 @@ test.describe('Wrapper tags in pasted code', () => {
 		await enterCode(page, '<?php\nreturn 1;', '+input')
 
 		expect(await editorValue(page)).toContain('<?php')
+		await expect(page.locator('.code-snippets-notice')).toHaveCount(0)
+	})
+
+	test('removes style tags from a Styles snippet', async ({ page }) => {
+		test.skip(!await isLicensed(page), 'Styles is a licensed snippet type.')
+
+		await selectType(page, 'Styles')
+		await enterCode(page, '<style>\n.a { color: red; }\n</style>', 'paste')
+
+		expect(await editorValue(page)).toBe('.a { color: red; }\n')
+		await expect(page.locator('.code-snippets-notice')).toContainText('<style>')
+	})
+
+	test('removes script tags from a Scripts snippet', async ({ page }) => {
+		test.skip(!await isLicensed(page), 'Scripts is a licensed snippet type.')
+
+		await selectType(page, 'Scripts')
+		await enterCode(page, '<script>\nconsole.log( 1 );\n</script>', 'paste')
+
+		expect(await editorValue(page)).toBe('console.log( 1 );\n')
+		await expect(page.locator('.code-snippets-notice')).toContainText('<script>')
+	})
+
+	test('leaves a style tag inside Content markup alone', async ({ page }) => {
+		await selectType(page, 'Content')
+		const markup = '<style>\n.a { color: red; }\n</style>'
+		await enterCode(page, markup, 'paste')
+
+		expect(await editorValue(page)).toBe(markup)
 		await expect(page.locator('.code-snippets-notice')).toHaveCount(0)
 	})
 })
