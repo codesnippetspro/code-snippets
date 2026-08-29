@@ -5,6 +5,7 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
+use function Code_Snippets\activate_snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\get_setting;
 use const Code_Snippets\PLUGIN_FILE;
@@ -46,6 +47,7 @@ class Manage_Menu extends Admin_Menu {
 		new Manage_Menu_Bulk_Download();
 
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
+		add_action( 'admin_notices', [ $this, 'render_run_once_notice' ] );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_menu_css' ) );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
 	}
@@ -178,11 +180,95 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Nonce action guarding the run-once request.
+	 */
+	public const RUN_ONCE_NONCE = 'code_snippets_run_once';
+
+	/**
+	 * Run a single-use snippet, when asked to by the snippets list.
+	 *
+	 * Activating the snippet is all that is required: single-use snippets are
+	 * executed and then deactivated again on the next page load, so redirecting
+	 * afterwards both runs the code and returns the snippet to its resting
+	 * state. This mirrors what the list table did before the snippets list
+	 * moved to the REST API, at which point the button was left pointing at a
+	 * URL that nothing handled.
+	 *
+	 * @return void
+	 */
+	private function handle_run_once(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified immediately below.
+		$action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
+
+		if ( 'run-once' !== $action ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified immediately below.
+		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, self::RUN_ONCE_NONCE ) || ! code_snippets()->current_user_can() ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified above.
+		$snippet_id = isset( $_REQUEST['snippet'] ) ? absint( wp_unslash( $_REQUEST['snippet'] ) ) : 0;
+
+		if ( ! $snippet_id ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified above.
+		$network = isset( $_REQUEST['network'] ) ? rest_sanitize_boolean( wp_unslash( $_REQUEST['network'] ) ) : null;
+
+		$result = activate_snippet( $snippet_id, $network );
+
+		wp_safe_redirect(
+			add_query_arg(
+				[ 'result' => is_string( $result ) ? 'run-once-failed' : 'executed' ],
+				remove_query_arg( [ 'action', 'snippet', 'network', '_wpnonce', 'result' ] )
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * Report the outcome of a run-once request.
+	 *
+	 * @return void
+	 */
+	public function render_run_once_notice(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display of an outcome.
+		$result = isset( $_GET['result'] ) ? sanitize_key( wp_unslash( $_GET['result'] ) ) : '';
+
+		if ( 'executed' === $result ) {
+			wp_admin_notice(
+				__( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
+				[
+					'type'               => 'success',
+					'dismissible'        => true,
+					'additional_classes' => [ 'code-snippets-run-once-notice' ],
+				]
+			);
+		} elseif ( 'run-once-failed' === $result ) {
+			wp_admin_notice(
+				__( 'The snippet could not be run. Check that its code is valid and try again.', 'code-snippets' ),
+				[
+					'type'               => 'error',
+					'dismissible'        => true,
+					'additional_classes' => [ 'code-snippets-run-once-notice' ],
+				]
+			);
+		}
+	}
+
+	/**
 	 * Executed when the admin page is loaded.
 	 */
 	public function load() {
 		parent::load();
 
+		$this->handle_run_once();
 		$this->screen_options->load();
 
 		if ( $this->screen_options->is_upsell_view() ) {
