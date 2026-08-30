@@ -12,10 +12,12 @@ import { isLicensed } from '../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetAddNewUrl, getSnippetType, isProType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
+import { WithActionFeedbackContext } from '../../../hooks/useActionFeedback'
 import { Notice } from '../../common/Notice'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { UpsellPage } from '../../common/UpsellDialog'
 import { WithSnippetsTableFilters, useSnippetsFilters } from './WithSnippetsTableFilters'
+import { ActionFeedback } from './ActionFeedback'
 import { WithFilteredSnippetsContext } from './WithFilteredSnippetsContext'
 import { SnippetsListTable } from './SnippetsListTable'
 import type { SnippetType } from '../../../types/Snippet'
@@ -121,6 +123,8 @@ const SnippetsTableInner = () => {
 
 	return (
 		<>
+			<ActionFeedback />
+
 			<div
 				className={classnames('snippet-type-nav-wrapper', {
 					'has-scroll-start': !atStart,
@@ -169,9 +173,11 @@ export const SnippetsTable: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsAPIContext>
 			<WithSnippetsListContext>
-				<WithSnippetsTableFilters>
-					<SnippetsTableInner />
-				</WithSnippetsTableFilters>
+				<WithActionFeedbackContext>
+					<WithSnippetsTableFilters>
+						<SnippetsTableInner />
+					</WithSnippetsTableFilters>
+				</WithActionFeedbackContext>
 			</WithSnippetsListContext>
 		</WithSnippetsAPIContext>
 	</WithRestAPIContext>
