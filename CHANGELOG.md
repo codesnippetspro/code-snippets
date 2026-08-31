@@ -1,21 +1,16 @@
 # Changelog
 
 
+
 ## [3.10.2] (2026-08-31)
 
-### Added
-* Restored the Run Once action for single-use snippets and added a confirmation step before executing a snippet once.
-
-### Changed
-* Improved overall snippet stability by tightening validation and version-scoped cache handling, preventing errors during activation and after plugin downgrades.
-
 ### Fixed
-* Fixed a fatal error in safe mode when wp_get_current_user() was undefined.
-* Fixed bulk activation incorrectly validating PHP for all snippets instead of only the snippets being activated.
-* Fixed snippet saving failing after the session expired.
-* Fixed warnings caused by aliased field names when reading modified fields.
-* Fixed cached data not being scoped to the plugin version, preventing downgrade-related fatal errors.
-* Restored the Run Once action for single-use snippets and hardened the execution handler against invalid states.
+* Fixed a critical error when loading a site with Safe Mode active.
+* Fixed a fatal error after downgrading the plugin, caused by cached data saved by a newer version.
+* Fixed the Run Once action for single-use snippets, which had stopped running the snippet since 3.10.0, and restored its confirmation message.
+* Fixed activating several snippets at once when two of them declare the same function, which could take the site down.
+* Fixed snippet saving stopping after the WordPress login session expired.
+* Fixed a PHP warning when reading snippet fields referenced by an alias.
 
 ## [3.10.1] (2026-08-28)
 
