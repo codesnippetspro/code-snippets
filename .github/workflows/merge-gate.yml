@@ -83,7 +83,7 @@ jobs:
           echo "$PR_BODY" > "$pr_body_file"
 
           # Parse checkboxes using inline script (fence-aware)
-          # This replicates the parse_checkboxes logic
+          # Parse the Release verification checkboxes (fence-aware).
           in_section=0
           in_fence=0
           checked_count=0
@@ -110,10 +110,10 @@ jobs:
             # Process checkbox lines ONLY if in section and NOT in fence
             if [[ "$in_section" -eq 1 && "$in_fence" -eq 0 ]]; then
               if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[xX]\] ]]; then
-                ((checkbox_count++))
-                ((checked_count++))
+                checkbox_count=$((checkbox_count + 1))
+                checked_count=$((checked_count + 1))
               elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]]\] ]]; then
-                ((checkbox_count++))
+                checkbox_count=$((checkbox_count + 1))
               fi
             fi
           done < "$pr_body_file"
