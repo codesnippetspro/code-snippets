@@ -82,6 +82,7 @@ install_test_suite() {
 	# set up testing suite if it doesn't yet exist
 	if [ ! -d $WP_TESTS_DIR ]; then
 		local WP_TESTS_VERSION="${WP_TESTS_TAG#tags/}"
+		case "$WP_TESTS_VERSION" in *.*.*) ;; *.*) WP_TESTS_VERSION="$WP_TESTS_VERSION.0" ;; esac
 		mkdir -p $WP_TESTS_DIR
 		rm -rf $WP_TESTS_DIR/{includes,data}
 		download "https://github.com/WordPress/wordpress-develop/archive/refs/tags/${WP_TESTS_VERSION}.tar.gz" "$TMPDIR/wp-develop.tar.gz"
