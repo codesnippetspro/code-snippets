@@ -89,6 +89,50 @@ function clean_snippets_cache( string $table_name ) {
 }
 
 /**
+ * Flush an entire cache group, where the object cache supports it.
+ *
+ * Not all persistent cache drop-ins implement group flushing, and the function
+ * itself only exists from WordPress 6.1, so both are checked before use. A
+ * failure is not important: cache groups are scoped to the plugin version, so
+ * flushing is housekeeping rather than something correctness depends on, and
+ * anything left behind is evicted by the cache in its own time.
+ *
+ * @param string $group Cache group to flush.
+ *
+ * @return bool Whether the group was flushed.
+ */
+function flush_cache_group( string $group ): bool {
+	if ( ! function_exists( 'wp_cache_flush_group' ) ||
+	     ! function_exists( 'wp_cache_supports' ) ||
+	     ! wp_cache_supports( 'flush_group' ) ) {
+		return false;
+	}
+
+	return (bool) wp_cache_flush_group( $group );
+}
+
+/**
+ * Flush the cache groups belonging to other versions of the plugin.
+ *
+ * @param string $previous_version Version the site was running beforehand.
+ *
+ * @return void
+ */
+function flush_versioned_cache_groups( string $previous_version ): void {
+	if ( '' !== $previous_version && PLUGIN_VERSION !== $previous_version ) {
+		flush_cache_group( CACHE_GROUP_BASE . '_' . $previous_version );
+	}
+
+	// Versions before the group was scoped wrote to the unscoped group, and no
+	// version that scopes it ever writes there again. Clearing it means a site
+	// upgrading from 3.10.0 or 3.10.1 sheds the objects that would otherwise
+	// still be waiting to break its next rollback.
+	flush_cache_group( CACHE_GROUP_BASE );
+
+	flush_cache_group( CACHE_GROUP );
+}
+
+/**
  * Retrieve a list of snippets from the database.
  * Read operation.
  *

@@ -11,6 +11,7 @@ use Code_Snippets\Client\Welcome_Client;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use function add_action;
 use function Code_Snippets\clean_snippets_cache;
+use function Code_Snippets\flush_cache_group;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Utils\add_self_option;
 use function Code_Snippets\Utils\get_self_option;
@@ -311,6 +312,11 @@ function process_settings_actions( array $input ): ?array {
 		if ( is_multisite() ) {
 			clean_snippets_cache( code_snippets()->db->get_table_name( true ) );
 		}
+
+		// Deleting known keys cannot reach data written by a different version
+		// of the plugin, which is what needs clearing before a rollback, so the
+		// whole group goes too.
+		flush_cache_group( CACHE_GROUP );
 
 		add_settings_error(
 			OPTION_NAME,
