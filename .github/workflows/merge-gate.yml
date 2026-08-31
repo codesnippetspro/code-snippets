@@ -1,0 +1,170 @@
+name: Merge Gate
+
+on:
+  pull_request:
+    types: [opened, edited, labeled, unlabeled, synchronize]
+
+jobs:
+  merge-gate:
+    name: Release PR Gate
+    runs-on: ubuntu-latest
+    steps:
+      # Check if this is a release branch (release/v*/*).
+      # If not, pass silently (no-op for regular PRs).
+      - name: Check if release PR
+        id: check-release
+        run: |
+          head_ref="${{ github.head_ref }}"
+          if [[ "$head_ref" =~ ^release/v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?/ ]]; then
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # For non-release branches, pass immediately
+      - name: Pass (non-release PR)
+        if: steps.check-release.outputs.is_release == 'false'
+        run: echo "Non-release PR - merge gate not applicable"
+
+      # Everything below applies only to release/v*/* PRs
+      # Stop here if not a release PR
+      - name: Exit if not release PR
+        if: steps.check-release.outputs.is_release == 'false'
+        run: "exit 0"
+
+      # Check 1: Base branch must be one of {core, core-beta, pro, pro-beta}
+      - name: Verify base branch
+        if: steps.check-release.outputs.is_release == 'true'
+        run: |
+          base_ref="${{ github.base_ref }}"
+          if [[ "$base_ref" =~ ^(core|core-beta|pro|pro-beta)$ ]]; then
+            echo "Base branch '$base_ref' is valid"
+          else
+            echo "ERROR: Base branch '$base_ref' is not in {core, core-beta, pro, pro-beta}"
+            exit 1
+          fi
+
+      # Check 2: PR must have both 'changelog' and 'run-tests' labels
+      - name: Verify required labels
+        if: steps.check-release.outputs.is_release == 'true'
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ' ') }}
+        run: |
+          has_changelog=false
+          has_run_tests=false
+
+          for label in $PR_LABELS; do
+            if [[ "$label" == "changelog" ]]; then
+              has_changelog=true
+            fi
+            if [[ "$label" == "run-tests" ]]; then
+              has_run_tests=true
+            fi
+          done
+
+          if [[ "$has_changelog" != "true" ]]; then
+            echo "ERROR: Missing 'changelog' label"
+            exit 1
+          fi
+          if [[ "$has_run_tests" != "true" ]]; then
+            echo "ERROR: Missing 'run-tests' label"
+            exit 1
+          fi
+          echo "Both 'changelog' and 'run-tests' labels present"
+
+      # Check 3: Both release verification checkboxes must be checked
+      - name: Verify release verification checkboxes
+        if: steps.check-release.outputs.is_release == 'true'
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          # Create temporary file with PR body
+          pr_body_file=$(mktemp)
+          echo "$PR_BODY" > "$pr_body_file"
+
+          # Parse checkboxes using inline script (fence-aware)
+          # This replicates the parse_checkboxes logic
+          in_section=0
+          in_fence=0
+          checked_count=0
+          checkbox_count=0
+
+          while IFS= read -r line; do
+            # Track fence state: ``` toggles fence
+            if [[ "$line" =~ ^[[:space:]]*\`\`\` ]]; then
+              in_fence=$((1 - in_fence))
+              continue
+            fi
+
+            # Track when we enter the "### Release verification:" section
+            if [[ "$line" =~ ^###[[:space:]]+Release[[:space:]]+verification: ]]; then
+              in_section=1
+              continue
+            fi
+
+            # If we're in the section and see a new ### heading, we've left
+            if [[ "$in_section" -eq 1 && "$line" =~ ^### ]] && ! [[ "$line" =~ Release[[:space:]]+verification ]]; then
+              break
+            fi
+
+            # Process checkbox lines ONLY if in section and NOT in fence
+            if [[ "$in_section" -eq 1 && "$in_fence" -eq 0 ]]; then
+              if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[xX]\] ]]; then
+                ((checkbox_count++))
+                ((checked_count++))
+              elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]]\] ]]; then
+                ((checkbox_count++))
+              fi
+            fi
+          done < "$pr_body_file"
+
+          rm "$pr_body_file"
+
+          if [[ $checkbox_count -ne 2 ]]; then
+            echo "ERROR: Expected exactly 2 checkboxes, found $checkbox_count"
+            exit 1
+          fi
+          if [[ $checked_count -ne 2 ]]; then
+            echo "ERROR: Expected both checkboxes to be checked, but only $checked_count are checked"
+            exit 1
+          fi
+          echo "Both release verification checkboxes are checked"
+
+      # Check 4: lint, phpunit, playwright check-runs must all be success
+      - name: Verify CI check-runs
+        if: steps.check-release.outputs.is_release == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          repo="${{ github.repository }}"
+          sha="${{ github.event.pull_request.head.sha }}"
+
+          # Fetch check-runs for the PR head SHA and filter for required checks by their real names
+          # Real check-run names: "stylelint, eslint, phpcs", "PHPUnit - Test Results Summary", "Playwright - Test Results Summary"
+          lint_conclusion=$(gh api repos/"$repo"/commits/"$sha"/check-runs \
+            --jq '.check_runs[] | select(.name == "stylelint, eslint, phpcs") | .conclusion' \
+            2>/dev/null || echo "")
+
+          phpunit_conclusion=$(gh api repos/"$repo"/commits/"$sha"/check-runs \
+            --jq '.check_runs[] | select(.name == "PHPUnit - Test Results Summary") | .conclusion' \
+            2>/dev/null || echo "")
+
+          playwright_conclusion=$(gh api repos/"$repo"/commits/"$sha"/check-runs \
+            --jq '.check_runs[] | select(.name == "Playwright - Test Results Summary") | .conclusion' \
+            2>/dev/null || echo "")
+
+          echo "Check-run conclusions:"
+          echo "  stylelint, eslint, phpcs: ${lint_conclusion:-MISSING}"
+          echo "  PHPUnit - Test Results Summary: ${phpunit_conclusion:-MISSING}"
+          echo "  Playwright - Test Results Summary: ${playwright_conclusion:-MISSING}"
+
+          if [[ "$lint_conclusion" != "success" || "$phpunit_conclusion" != "success" || "$playwright_conclusion" != "success" ]]; then
+            echo "ERROR: Not all required CI checks are successful"
+            exit 1
+          fi
+
+          echo "All required CI checks passed"
+
+      - name: Merge gate passed
+        if: steps.check-release.outputs.is_release == 'true'
+        run: echo "Release PR merge gate - ALL CHECKS PASSED"
