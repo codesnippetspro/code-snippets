@@ -20,7 +20,7 @@ on:
 jobs:
   playwright-test:
     name: Playwright tests (${{ inputs.test-mode == 'default' && 'Default Mode' || 'File-based Execution' }})
-    runs-on: ubuntu-22.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     services:
       mysql:
         image: mysql:8.0
