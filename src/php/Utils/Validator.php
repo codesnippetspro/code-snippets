@@ -52,15 +52,43 @@ class Validator {
 	private array $exceptions = [];
 
 	/**
+	 * Identifiers already claimed by other snippets being validated alongside
+	 * this one.
+	 *
+	 * A snippet is validated against everything PHP has declared so far, which
+	 * does not include a snippet that is about to be activated in the same
+	 * batch. Two snippets declaring the same function therefore both passed and
+	 * both activated, and the site fataled on the next request.
+	 *
+	 * @var array<string, string[]>
+	 */
+	private array $claimed_identifiers = [];
+
+	/**
 	 * Class constructor.
 	 *
-	 * @param string $code Snippet code for parsing.
+	 * @param string                  $code                Snippet code for parsing.
+	 * @param array<string, string[]> $claimed_identifiers Identifiers already claimed by
+	 *                                                     snippets validated alongside this one.
 	 */
-	public function __construct( string $code ) {
+	public function __construct( string $code, array $claimed_identifiers = [] ) {
+		$this->claimed_identifiers = $claimed_identifiers;
 		$this->code = $code;
 		$this->tokens = token_get_all( "<?php\n" . $this->code );
 		$this->length = count( $this->tokens );
 		$this->current = 0;
+	}
+
+	/**
+	 * Retrieve the identifiers claimed so far, including this snippet's own.
+	 *
+	 * Pass the result to the next Validator in a batch so that two snippets
+	 * cannot both claim the same name.
+	 *
+	 * @return array<string, string[]>
+	 */
+	public function get_claimed_identifiers(): array {
+		return $this->claimed_identifiers;
 	}
 
 	/**
@@ -127,13 +155,19 @@ class Validator {
 			}
 		}
 
-		$duplicate_identifier = in_array( $identifier, $this->defined_identifiers[ $type ], true );
-		$duplicate_namespaced = in_array( $namespaced_identifier, $this->defined_identifiers[ $type ], true );
+		$known = array_merge(
+			$this->defined_identifiers[ $type ],
+			$this->claimed_identifiers[ $type ] ?? []
+		);
+
+		$duplicate_identifier = in_array( $identifier, $known, true );
+		$duplicate_namespaced = in_array( $namespaced_identifier, $known, true );
 		$exceptions = $this->exceptions[ $type ] ?? [];
 		$exception_identifier = in_array( $identifier, $exceptions, true );
 		$exception_namespaced = in_array( $namespaced_identifier, $exceptions, true );
 
 		array_unshift( $this->defined_identifiers[ $type ], $identifier );
+		$this->claimed_identifiers[ $type ][] = $identifier;
 
 		return ( $duplicate_identifier && ! $exception_identifier ) || ( $duplicate_namespaced && ! $exception_namespaced );
 	}
