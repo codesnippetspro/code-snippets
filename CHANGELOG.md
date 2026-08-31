@@ -3,14 +3,18 @@
 ## [3.10.1] (2026-08-28)
 
 ### Changed
-* Enhanced active-link visibility in the toolbar with border-based styling
-* Standardized sidebar label font sizing for consistency
+* Enhanced active-link visibility in the toolbar with border-based styling.
 
 ### Fixed
-* Fixed admin bar script loading on core to work correctly on front-end
-* Fixed snippet modification dates to send with proper UTC offset
-* Fixed row truncation screen option to persist correctly across sessions
-* Fixed sticky sidebar from displaying unwanted horizontal scrollbar
+* Fixed a fatal error affecting snippets that use a `namespace` or `declare` statement.
+* Fixed the snippets page rendering blank when another plugin's screen settings filter returned an invalid value.
+* Fixed snippet saving on hosts that block REST API `PUT` and `PATCH` requests, by sending writes as `POST` with a method override.
+* Fixed the Snippets List Order setting not being applied to the snippets list.
+* Fixed admin bar snippet scripts failing to load on the free version, including on the site front end.
+* Fixed snippet modified dates being sent without the correct UTC offset.
+* Fixed the row truncation screen option not persisting across sessions.
+* Fixed inconsistent sidebar label sizes.
+* Fixed the sticky editor sidebar showing an unwanted horizontal scrollbar.
 
 ## [3.10.0] (2026-08-24)
 
