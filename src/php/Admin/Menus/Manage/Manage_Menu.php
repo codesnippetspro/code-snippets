@@ -7,6 +7,7 @@ use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use function Code_Snippets\activate_snippet;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\get_snippet;
 use function Code_Snippets\Settings\get_setting;
 use const Code_Snippets\PLUGIN_FILE;
 use const Code_Snippets\PLUGIN_VERSION;
@@ -47,7 +48,6 @@ class Manage_Menu extends Admin_Menu {
 		new Manage_Menu_Bulk_Download();
 
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
-		add_action( 'admin_notices', [ $this, 'render_run_once_notice' ] );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_menu_css' ) );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
 	}
@@ -218,10 +218,20 @@ class Manage_Menu extends Admin_Menu {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified above.
-		$network = isset( $_REQUEST['network'] ) ? rest_sanitize_boolean( wp_unslash( $_REQUEST['network'] ) ) : null;
+		// The network context comes from the current screen, never the request,
+		// so a subsite administrator cannot target a network snippet.
+		$network = is_network_admin();
+		$snippet = get_snippet( $snippet_id, $network );
 
-		$result = activate_snippet( $snippet_id, $network );
+		// Only single-use snippets are run this way. Activating anything else
+		// would leave it permanently on while the notice claimed it ran once.
+		if ( ! $snippet || 0 === $snippet->id || 'single-use' !== $snippet->scope ) {
+			wp_safe_redirect( remove_query_arg( [ 'action', 'snippet', 'network', '_wpnonce', 'result' ] ) );
+			exit;
+		}
+
+		// An already-active snippet has effectively run, so treat it as success.
+		$result = $snippet->active ? $snippet : activate_snippet( $snippet_id, $network );
 
 		wp_safe_redirect(
 			add_query_arg(
@@ -230,36 +240,6 @@ class Manage_Menu extends Admin_Menu {
 			)
 		);
 		exit;
-	}
-
-	/**
-	 * Report the outcome of a run-once request.
-	 *
-	 * @return void
-	 */
-	public function render_run_once_notice(): void {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display of an outcome.
-		$result = isset( $_GET['result'] ) ? sanitize_key( wp_unslash( $_GET['result'] ) ) : '';
-
-		if ( 'executed' === $result ) {
-			wp_admin_notice(
-				__( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
-				[
-					'type'               => 'success',
-					'dismissible'        => true,
-					'additional_classes' => [ 'code-snippets-run-once-notice' ],
-				]
-			);
-		} elseif ( 'run-once-failed' === $result ) {
-			wp_admin_notice(
-				__( 'The snippet could not be run. Check that its code is valid and try again.', 'code-snippets' ),
-				[
-					'type'               => 'error',
-					'dismissible'        => true,
-					'additional_classes' => [ 'code-snippets-run-once-notice' ],
-				]
-			);
-		}
 	}
 
 	/**
