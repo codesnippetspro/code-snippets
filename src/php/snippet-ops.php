@@ -447,11 +447,26 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 	$valid_ids = [];
 	$valid_snippets = [];
 
+	// Names claimed by snippets already accepted into this batch. A snippet is
+	// otherwise validated only against what PHP has declared so far, which does
+	// not include the other snippets about to be activated alongside it.
+	$claimed_identifiers = [];
+
 	foreach ( $snippets as $snippet ) {
-		$validator = new Validator( $snippet->code );
+		// Only PHP is validated. The validator looks for redeclarations of
+		// existing PHP functions and classes, which says nothing meaningful
+		// about CSS or JavaScript.
+		if ( 'php' !== $snippet->type ) {
+			$valid_ids[] = $snippet->id;
+			$valid_snippets[] = $snippet;
+			continue;
+		}
+
+		$validator = new Validator( $snippet->code, $claimed_identifiers );
 		$code_error = $validator->validate();
 
 		if ( ! $code_error ) {
+			$claimed_identifiers = $validator->get_claimed_identifiers();
 			$valid_ids[] = $snippet->id;
 			$valid_snippets[] = $snippet;
 		}
