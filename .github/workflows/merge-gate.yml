@@ -1,4 +1,4 @@
-name: Merge Gate
+name: "(Pull Request): Merge Gate"
 
 on:
   pull_request:
