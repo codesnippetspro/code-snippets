@@ -19,7 +19,7 @@ WP_CORE_DIR=${WP_CORE_DIR-$TMPDIR/wordpress/}
 
 download() {
     if [ `which curl` ]; then
-        curl -s "$1" > "$2";
+        curl -fsSL "$1" -o "$2";
     elif [ `which wget` ]; then
         wget -nv -O "$2" "$1"
     fi
@@ -81,11 +81,15 @@ install_test_suite() {
 
 	# set up testing suite if it doesn't yet exist
 	if [ ! -d $WP_TESTS_DIR ]; then
-		# set up testing suite
+		local WP_TESTS_VERSION="${WP_TESTS_TAG#tags/}"
 		mkdir -p $WP_TESTS_DIR
 		rm -rf $WP_TESTS_DIR/{includes,data}
-		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
-		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
+		download "https://github.com/WordPress/wordpress-develop/archive/refs/tags/${WP_TESTS_VERSION}.tar.gz" "$TMPDIR/wp-develop.tar.gz"
+		rm -rf "$TMPDIR/wp-develop"
+		mkdir -p "$TMPDIR/wp-develop"
+		tar --strip-components=1 -zxmf "$TMPDIR/wp-develop.tar.gz" -C "$TMPDIR/wp-develop"
+		cp -r "$TMPDIR/wp-develop/tests/phpunit/includes" "$WP_TESTS_DIR/includes"
+		cp -r "$TMPDIR/wp-develop/tests/phpunit/data" "$WP_TESTS_DIR/data"
 	fi
 
 	if [ ! -f "$WP_TESTS_DIR/wp-tests-config.php" ]; then
