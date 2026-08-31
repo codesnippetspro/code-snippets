@@ -3,8 +3,6 @@ name: "(Pull Request): Merge Gate"
 on:
   pull_request:
     types: [opened, edited, labeled, unlabeled, synchronize]
-  push:
-    branches: [core, core-beta]
 
 jobs:
   merge-gate:
