@@ -9,26 +9,36 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to prepare the release for (e.g. 3.6.9) or `next`'
+        description: 'Release version'
         required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - custom
+        default: patch
+      custom_version:
+        description: 'Custom version (used when Release version = custom; leading v optional)'
+        required: false
         type: string
-        default: next
+        default: ''
       auto_changelog:
-        description: 'Auto-create changelog and readme entries with AI'
+        description: '(Copilot) auto-create changelog'
         required: false
         type: boolean
         default: false
 
 jobs:
   version:
-    if: github.event.inputs.version == 'next'
     uses: codesnippetspro/.github/.github/workflows/next_version.yml@main
     with:
       file_path: package.json
       ref_name: ${{ github.ref_name }}
+      bump: ${{ github.event.inputs.version }}
+      custom_version: ${{ github.event.inputs.custom_version }}
 
   changelog:
-    if: always()
     runs-on: ubuntu-latest
     needs: version
     steps:
@@ -69,7 +79,7 @@ jobs:
         run: |
           target_repo="${{ steps.validate.outputs.target_repo }}"
           workflow_file="${{ steps.validate.outputs.workflow_file }}"
-          version="${{ needs.version.outputs.version || github.event.inputs.version }}"
+          version="${{ needs.version.outputs.version }}"
           
           echo "::notice::Dispatching workflow '$workflow_file' to prepare the release pull request..."
           echo "   Calling repo: $target_repo"
