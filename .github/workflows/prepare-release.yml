@@ -36,8 +36,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  validate-inputs:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate custom version
+        env:
+          VERSION_TYPE: ${{ github.event.inputs.version }}
+          CUSTOM_VERSION: ${{ github.event.inputs.custom_version }}
+        run: |
+          if [ "$VERSION_TYPE" = "custom" ]; then
+            cv="$(printf '%s' "$CUSTOM_VERSION" | tr -d '[:space:]')"
+            cv="${cv#v}"; cv="${cv#V}"
+            if [ -z "$cv" ]; then
+              echo "::error::Release version is 'custom' but Custom version is empty."
+              exit 1
+            fi
+            if ! printf '%s' "$cv" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$'; then
+              echo "::error::Custom version '$CUSTOM_VERSION' is not valid (expected X.Y.Z or X.Y.Z-prerelease, leading v optional)."
+              exit 1
+            fi
+            echo "::notice::Custom version '$cv' is valid."
+          fi
+
   version:
     if: github.event_name == 'workflow_dispatch'
+    needs: validate-inputs
     uses: codesnippetspro/.github/.github/workflows/next_version.yml@main
     with:
       file_path: package.json
