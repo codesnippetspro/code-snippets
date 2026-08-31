@@ -72,6 +72,7 @@ declare global {
 			cloudSearchPerPage: number
 			isSafeModeActive: boolean
 			bulkDownloadNonce: string
+			runOnceNonce?: string
 			supportsZipDownloads: boolean
 			editorTheme: string
 		}
