@@ -38,6 +38,12 @@ const getNotice = (result: string): { text: string, type: NoticeType } | undefin
 				type: 'error'
 			}
 
+		case 'run-once-safe-mode':
+			return {
+				text: __('Safe mode is active, so the snippet was not run.', 'code-snippets'),
+				type: 'warning'
+			}
+
 		default:
 			return undefined
 	}

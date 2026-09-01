@@ -230,6 +230,18 @@ class Manage_Menu extends Admin_Menu {
 			exit;
 		}
 
+		// Safe mode skips execution, so activating here would leave the snippet on
+		// without ever running it, behind a false success notice. Report it instead.
+		if ( \Code_Snippets\Integration\Evaluate_Functions::is_safe_mode_active() ) {
+			wp_safe_redirect(
+				add_query_arg(
+					[ 'result' => 'run-once-safe-mode' ],
+					remove_query_arg( [ 'action', 'snippet', 'network', '_wpnonce', 'result' ] )
+				)
+			);
+			exit;
+		}
+
 		// An already-active snippet has effectively run, so treat it as success.
 		$result = $snippet->active ? $snippet : activate_snippet( $snippet_id, $network );
 
