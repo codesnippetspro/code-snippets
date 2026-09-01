@@ -1,12 +1,12 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, louiswol94, carolinaop
+Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, carolinaop, tallblokeuk
 Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.10.1
+Stable tag: 3.10.2
 Requires at least: 5.5
-Tested up to: 7.0.3
+Tested up to: 7.1
 Requires PHP: 7.4
 
 An easy, clean, and simple way to enhance your site with code snippets.
@@ -106,19 +106,35 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+
+= 3.10.2 (2026-08-31) =
+
+**Fixed**
+* Fixed a critical error when loading a site with Safe Mode active.
+* Fixed a fatal error after downgrading the plugin, caused by cached data saved by a newer version.
+* Fixed the Run Once action for single-use snippets, which had stopped running the snippet since 3.10.0, and restored its confirmation message.
+* Fixed activating several snippets at once when two of them declare the same function, which could take the site down.
+* Fixed snippet saving stopping after the WordPress login session expired.
+* Fixed a PHP warning when reading snippet fields referenced by an alias.
+
 = 3.10.1 (2026-08-28) =
 
 __Changed__
 
-* Enhanced active-link visibility in the toolbar with border-based styling
-* Standardized sidebar label font sizing for consistency
+* Enhanced active-link visibility in the toolbar with border-based styling.
 
 __Fixed__
 
-* Fixed admin bar script loading on core to work correctly on front-end
-* Fixed snippet modification dates to send with proper UTC offset
-* Fixed row truncation screen option to persist correctly across sessions
-* Fixed sticky sidebar from displaying unwanted horizontal scrollbar
+* Fixed a fatal error affecting snippets that use a `namespace` or `declare` statement.
+* Fixed the snippets page rendering blank when another plugin's screen settings filter returned an invalid value.
+* Fixed snippet saving on hosts that block REST API `PUT` and `PATCH` requests, by sending writes as `POST` with a method override.
+* Fixed the Snippets List Order setting not being applied to the snippets list.
+* Fixed admin bar snippet scripts failing to load on the free version, including on the site front end.
+* Fixed snippet modified dates being sent without the correct UTC offset.
+* Fixed the row truncation screen option not persisting across sessions.
+* Fixed inconsistent sidebar label sizes.
+* Fixed the sticky editor sidebar showing an unwanted horizontal scrollbar.
 
 = 3.10.0 (2026-08-24) =
 

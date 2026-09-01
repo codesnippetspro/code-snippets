@@ -12,6 +12,13 @@ declare global {
 		readonly wp: {
 			readonly editor?: WordPressEditor
 			readonly codeEditor?: WordPressCodeEditor
+			readonly hooks?: {
+				addAction: (
+					hookName: string,
+					namespace: string,
+					callback: (data: { rest_nonce?: string }) => void
+				) => void
+			}
 		}
 		readonly pagenow?: string
 		readonly ajaxurl: string
@@ -72,6 +79,7 @@ declare global {
 			cloudSearchPerPage: number
 			isSafeModeActive: boolean
 			bulkDownloadNonce: string
+			runOnceNonce?: string
 			supportsZipDownloads: boolean
 			editorTheme: string
 		}

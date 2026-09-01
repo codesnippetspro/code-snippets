@@ -35,30 +35,52 @@ class Evaluate_Functions {
 		add_action( 'plugins_loaded', [ $this, 'evaluate_early' ], 1 );
 		add_filter( 'code_snippets/execute_snippets', [ $this, 'disable_snippet_execution' ], 5 );
 
-		if ( $this->is_safe_mode_requested() ) {
+		// Only the query var is inspected here. This constructor runs while
+		// plugins are still being included, which is before WordPress loads
+		// pluggable.php, so a capability check at this point would call an
+		// undefined wp_get_current_user() and take the whole request down.
+		// The capability is checked in the callback instead, which never runs
+		// before URLs are being generated.
+		if ( $this->is_safe_mode_query_var_set() ) {
 			add_filter( 'home_url', [ $this, 'add_safe_mode_query_var' ] );
 			add_filter( 'admin_url', [ $this, 'add_safe_mode_query_var' ] );
 		}
 	}
 
 	/**
+	 * Check whether the safe mode query var is present on this request.
+	 *
+	 * Safe to call at any point, as it reads nothing but the request.
+	 *
+	 * @return bool
+	 */
+	public function is_safe_mode_query_var_set(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return ! empty( $_REQUEST['snippets-safe-mode'] );
+	}
+
+	/**
 	 * Check if safe mode has been requested via query var.
+	 *
+	 * Performs a capability check, so must not be called before pluggable
+	 * functions are available.
 	 *
 	 * @return bool
 	 */
 	public function is_safe_mode_requested(): bool {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return ! empty( $_REQUEST['snippets-safe-mode'] ) && code_snippets()->current_user_can();
+		return $this->is_safe_mode_query_var_set() && code_snippets()->current_user_can();
 	}
 
 	/**
 	 * Inject the safe mode query var into URLs
 	 *
-	 * @param string $url Original URL.
+	 * @param mixed $url Original URL, from an unknown earlier callback.
 	 *
 	 * @return string Modified URL.
 	 */
-	public function add_safe_mode_query_var( string $url ): string {
+	public function add_safe_mode_query_var( $url ): string {
+		$url = is_string( $url ) ? $url : '';
+
 		return $this->is_safe_mode_requested() ?
 			add_query_arg( 'snippets-safe-mode', true, $url ) :
 			$url;
@@ -109,12 +131,13 @@ class Evaluate_Functions {
 	/**
 	 * Disable snippet execution if the necessary query var is set.
 	 *
-	 * @param bool $execute_snippets Current filter value.
+	 * @param mixed $execute_snippets Current filter value, from an unknown
+	 *                                earlier callback.
 	 *
 	 * @return bool New filter value.
 	 */
-	public function disable_snippet_execution( bool $execute_snippets ): bool {
-		return $execute_snippets && ! self::is_safe_mode_requested();
+	public function disable_snippet_execution( $execute_snippets ): bool {
+		return (bool) $execute_snippets && ! $this->is_safe_mode_requested();
 	}
 
 	/**

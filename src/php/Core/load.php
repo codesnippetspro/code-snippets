@@ -32,11 +32,26 @@ const PLUGIN_VERSION = CODE_SNIPPETS_VERSION;
 const PLUGIN_FILE = CODE_SNIPPETS_FILE;
 
 /**
- * Name of the group used for caching data.
+ * Base name of the group used for caching data.
  *
  * @var string
  */
-const CACHE_GROUP = 'code_snippets';
+const CACHE_GROUP_BASE = 'code_snippets';
+
+/**
+ * Name of the group used for caching data.
+ *
+ * Scoped to the plugin version, so data cached by one version is never read by
+ * another. Snippet objects are cached here, and the Snippet class moved
+ * namespace in 3.10. A version that cannot resolve the stored class fatals on
+ * unserialize, which broke the admin for anyone downgrading on a site with a
+ * persistent object cache. Keeping the group distinct per version means the
+ * two never see each other's data, in either direction, without relying on the
+ * other version to clean up after itself.
+ *
+ * @var string
+ */
+const CACHE_GROUP = CACHE_GROUP_BASE . '_' . PLUGIN_VERSION;
 
 /**
  * Namespace used for REST API endpoints.
