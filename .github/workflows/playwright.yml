@@ -1,46 +1,34 @@
 name: "(Test): Playwright"
 
+# Reusable suite. Triggering is owned by ci.yml (the label dispatcher).
 on:
-  pull_request:
-    types: [labeled, synchronize, opened, reopened]
-  push:
-    branches:
-      - 'core'
-      - 'pro'
-      - 'core-beta'
-      - 'pro-beta'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.gitignore'
-      - 'docs/**'
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      multisite:
+        required: false
+        type: boolean
+        default: false
+        description: 'Run the multisite variant.'
 
 permissions:
   contents: read
   pull-requests: read
   actions: read
 
-concurrency:
-  group: playwright-${{ github.workflow }}-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}-${{ (github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))) && 'tests' || github.run_id }}
-  cancel-in-progress: ${{ github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite')) }}
-
 jobs:
   playwright-default:
-    if: github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'default'
       project-name: 'chromium-db-snippets'
-      multisite: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && contains(github.event.pull_request.labels.*.name, 'multisite') }}
+      multisite: ${{ inputs.multisite }}
 
   playwright-file-based-execution:
-    if: github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'file-based-execution'
       project-name: 'chromium-file-based-snippets'
-      multisite: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && contains(github.event.pull_request.labels.*.name, 'multisite') }}
+      multisite: ${{ inputs.multisite }}
 
   test-result:
     needs: [playwright-default, playwright-file-based-execution]
@@ -333,22 +321,3 @@ jobs:
       - name: Check overall status
         if: ${{ (needs.playwright-default.result != 'success' && needs.playwright-default.result != 'skipped') || (needs.playwright-file-based-execution.result != 'success' && needs.playwright-file-based-execution.result != 'skipped') }}
         run: exit 1
-
-  # Post the Release Checklist status once the Playwright summary has concluded.
-  # Runs for release PRs only; defers if other required suites are still running.
-  release-gate:
-    needs: [test-result]
-    if: always() && github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release/v')
-    runs-on: ubuntu-latest
-    permissions:
-      statuses: write
-    steps:
-      - name: Checkout gate action
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: .github/actions/release-gate
-
-      - name: Release Checklist
-        uses: ./.github/actions/release-gate
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
