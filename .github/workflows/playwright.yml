@@ -334,7 +334,7 @@ jobs:
         if: ${{ (needs.playwright-default.result != 'success' && needs.playwright-default.result != 'skipped') || (needs.playwright-file-based-execution.result != 'success' && needs.playwright-file-based-execution.result != 'skipped') }}
         run: exit 1
 
-  # Post the Release PR Gate status once the Playwright summary has concluded.
+  # Post the Release Checklist status once the Playwright summary has concluded.
   # Runs for release PRs only; defers if other required suites are still running.
   release-gate:
     needs: [test-result]
@@ -348,7 +348,7 @@ jobs:
         with:
           sparse-checkout: .github/actions/release-gate
 
-      - name: Release PR gate
+      - name: Release Checklist
         uses: ./.github/actions/release-gate
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
