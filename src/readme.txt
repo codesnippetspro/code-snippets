@@ -108,15 +108,23 @@ You can report security bugs found in the source code of this plugin through the
 
 
 
-= 3.10.2 (2026-08-31) =
+
+= 3.10.2 (2026-09-01) =
+
+**Added**
+* Added a confirmation flow for run-once snippet execution and hardened the handler to prevent failed or confusing actions.
+
+**Changed**
+* Snippet names now respect the row truncation Screen Option in the admin list for better readability.
+* Version switching AJAX requests now validate the correct nonce, improving reliability when updating snippet versions.
 
 **Fixed**
-* Fixed a critical error when loading a site with Safe Mode active.
-* Fixed a fatal error after downgrading the plugin, caused by cached data saved by a newer version.
-* Fixed the Run Once action for single-use snippets, which had stopped running the snippet since 3.10.0, and restored its confirmation message.
-* Fixed activating several snippets at once when two of them declare the same function, which could take the site down.
-* Fixed snippet saving stopping after the WordPress login session expired.
-* Fixed a PHP warning when reading snippet fields referenced by an alias.
+* Fixed safe mode fatal errors caused by an undefined wp_get_current_user() call.
+* Fixed PHP validation being triggered incorrectly when activating snippets in bulk.
+* Fixed saving issues after a user session expires.
+* Fixed warnings caused by aliased field names when reading modified snippet fields.
+* Fixed vendor autoloader issues by stripping unprefixed namespace references.
+* Resolved issues where snippet names and version switches could behave inconsistently in the admin UI.
 
 = 3.10.1 (2026-08-28) =
 
