@@ -54,7 +54,7 @@ runs:
             | "\(.status // "missing")|\(.conclusion // "")"'
         }
         pending=false; failed=false
-        for name in "stylelint, eslint, phpcs" "PHPUnit - Test Results Summary" "Playwright - Test Results Summary"; do
+        for name in "lint / stylelint, eslint, phpcs" "phpunit / PHPUnit - Test Results Summary" "playwright / Playwright - Test Results Summary"; do
           s="$(state_of "$name")"; status="${s%%|*}"; conclusion="${s#*|}"
           echo "check '$name' -> status=$status conclusion=$conclusion"
           [ "$status" != "completed" ] && pending=true
