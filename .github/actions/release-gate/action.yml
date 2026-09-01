@@ -39,7 +39,7 @@ runs:
         # there is nothing to gate on, so flag it rather than silently passing.
         if ! [[ " $PR_LABELS " == *" run-tests "* ]]; then
           post failure "Add the run-tests label so the test suites run."
-          exit 0
+          exit 1
         fi
 
         # Latest conclusion of each required summary check for the head commit.
@@ -65,13 +65,13 @@ runs:
 
         if [ "$failed" = true ]; then
           post failure "Required CI checks are not all passing."
-          exit 0
+          exit 1
         fi
 
         # All required checks are green. Validate the release PR itself.
         case "$BASE_REF" in
           core|core-beta|pro|pro-beta) ;;
-          *) post failure "Base branch '$BASE_REF' must be core, core-beta, pro or pro-beta."; exit 0 ;;
+          *) post failure "Base branch '$BASE_REF' must be core, core-beta, pro or pro-beta."; exit 1 ;;
         esac
 
         # Parse the two "Release verification" checkboxes, fence-aware so text
@@ -90,7 +90,7 @@ runs:
 
         if [ "$total" -ne 2 ] || [ "$checked" -ne 2 ]; then
           post failure "Tick both release-verification checkboxes ($checked/$total approved)."
-          exit 0
+          exit 1
         fi
 
         post success "Required checks green and release verification approved."
