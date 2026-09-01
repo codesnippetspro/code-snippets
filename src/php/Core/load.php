@@ -74,7 +74,9 @@ $autoloader = require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 if ( $autoloader instanceof ClassLoader ) {
 	$vendor_prefix = __NAMESPACE__ . '\\Vendor\\';
 
-	foreach ( $autoloader->getPrefixesPsr4() as $namespace => $paths ) {
+	$prefixes = $autoloader->getPrefixesPsr4();
+
+	foreach ( $prefixes as $namespace => $paths ) {
 		// Remove any non-Code_Snippets namespace that has a corresponding prefixed version.
 		if ( false === strpos( $namespace, $vendor_prefix ) ) {
 			if ( isset( $prefixes[ $vendor_prefix . $namespace ] ) ) {
