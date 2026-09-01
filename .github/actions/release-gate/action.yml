@@ -1,0 +1,96 @@
+name: 'Release PR Gate'
+description: 'Evaluate a release pull request and post the "Release PR Gate" commit status. Defers (posts nothing) while required checks are still running.'
+
+inputs:
+  token:
+    description: 'Token with statuses:write and pull-request read access.'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Evaluate and post Release PR Gate status
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REPO: ${{ github.repository }}
+        HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        BASE_REF: ${{ github.event.pull_request.base.ref }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ' ') }}
+        PR_BODY: ${{ github.event.pull_request.body }}
+        CONTEXT: 'Release PR Gate'
+      run: |
+        set -uo pipefail
+
+        # Only release/v*/* pull requests are gated. Everything else is left alone.
+        if ! [[ "$HEAD_REF" =~ ^release/v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?/ ]]; then
+          echo "::notice::$HEAD_REF is not a release branch; gate not applicable"
+          exit 0
+        fi
+
+        post() { # post <state> <description>
+          gh api -X POST "repos/$REPO/statuses/$HEAD_SHA" \
+            -f state="$1" -f context="$CONTEXT" -f description="$2" >/dev/null
+          echo "::notice::Release PR Gate -> $1: $2"
+        }
+
+        # The test suites only run when the run-tests label is present; without it
+        # there is nothing to gate on, so flag it rather than silently passing.
+        if ! [[ " $PR_LABELS " == *" run-tests "* ]]; then
+          post failure "Add the run-tests label so the test suites run."
+          exit 0
+        fi
+
+        # Latest conclusion of each required summary check for the head commit.
+        runs_json=$(gh api "repos/$REPO/commits/$HEAD_SHA/check-runs" --paginate 2>/dev/null || echo '{}')
+        state_of() {
+          printf '%s' "$runs_json" | jq -r --arg n "$1" \
+            '[.check_runs[] | select(.name == $n)] | last // {} | "\(.status // "missing")|\(.conclusion // "")"'
+        }
+        pending=false; failed=false
+        for name in "stylelint, eslint, phpcs" "PHPUnit - Test Results Summary" "Playwright - Test Results Summary"; do
+          s="$(state_of "$name")"; status="${s%%|*}"; conclusion="${s#*|}"
+          echo "check '$name' -> status=$status conclusion=$conclusion"
+          [ "$status" != "completed" ] && pending=true
+          [ "$status" = "completed" ] && [ "$conclusion" != "success" ] && failed=true
+        done
+
+        # Die early: a required suite is still running. Whichever suite finishes
+        # last will re-run this and post the verdict, so nothing is posted now.
+        if [ "$pending" = true ]; then
+          echo "::notice::Required checks still running; deferring without posting a status"
+          exit 0
+        fi
+
+        if [ "$failed" = true ]; then
+          post failure "Required CI checks are not all passing."
+          exit 0
+        fi
+
+        # All required checks are green. Validate the release PR itself.
+        case "$BASE_REF" in
+          core|core-beta|pro|pro-beta) ;;
+          *) post failure "Base branch '$BASE_REF' must be core, core-beta, pro or pro-beta."; exit 0 ;;
+        esac
+
+        # Parse the two "Release verification" checkboxes, fence-aware so text
+        # inside the changelog code block cannot spoof them.
+        body_file="$(mktemp)"; printf '%s' "$PR_BODY" > "$body_file"
+        in_section=0; in_fence=0; checked=0; total=0
+        while IFS= read -r line; do
+          if [[ "$line" =~ ^[[:space:]]*\`\`\` ]]; then in_fence=$((1 - in_fence)); continue; fi
+          if [[ "$line" =~ ^###[[:space:]]+Release[[:space:]]+verification: ]]; then in_section=1; continue; fi
+          if [[ "$in_section" -eq 1 && "$line" =~ ^### ]] && ! [[ "$line" =~ Release[[:space:]]+verification ]]; then break; fi
+          if [[ "$in_section" -eq 1 && "$in_fence" -eq 0 ]]; then
+            if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[xX]\] ]]; then total=$((total + 1)); checked=$((checked + 1));
+            elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]]\] ]]; then total=$((total + 1)); fi
+          fi
+        done < "$body_file"
+
+        if [ "$total" -ne 2 ] || [ "$checked" -ne 2 ]; then
+          post failure "Tick both release-verification checkboxes ($checked/$total approved)."
+          exit 0
+        fi
+
+        post success "Required checks green and release verification approved."
