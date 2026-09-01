@@ -273,3 +273,22 @@ jobs:
         if: needs.phpunit.result != 'success'
         run: exit 1
 
+  # Post the Release PR Gate status once the PHPUnit summary has concluded.
+  # Runs for release PRs only; defers if other required suites are still running.
+  release-gate:
+    needs: [test-result]
+    if: always() && github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release/v')
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Checkout gate action
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/actions/release-gate
+
+      - name: Release PR gate
+        uses: ./.github/actions/release-gate
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
