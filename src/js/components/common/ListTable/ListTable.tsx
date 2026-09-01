@@ -129,6 +129,9 @@ export interface ListTableProps<T, K extends Key, A extends string> extends List
 	items: T[]
 	beforeTable?: ReactNode
 	selectAllControl?: boolean
+
+	/** Column and direction to sort by before the reader touches a heading. */
+	initialSort?: { columnId: string, direction: ListTableSortDirection }
 }
 
 export const ListTable = <T, K extends Key, A extends string = never>({
@@ -136,13 +139,20 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 	getKey,
 	totalPages,
 	pageSearchParam = 'paged',
+	initialSort,
 	...tableProps
 }: ListTableProps<T, K, A>) => {
-	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
+	const [sortColumn, setSortColumn] = useState<ListTableColumn<T> | undefined>(
+		() => initialSort
+			? tableProps.columns.find(column => column.id === initialSort.columnId && column.sortedValue)
+			: undefined
+	)
 	const [currentPage, setCurrentPage] = useState(
 		() => pageSearchParam && Number(fetchQueryParam(pageSearchParam)) || 1
 	)
-	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>('asc')
+	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>(
+		() => initialSort?.direction ?? 'asc'
+	)
 
 	const visibleItems: T[] = useMemo(
 		() => pageItems(sortTableItems(items, sortColumn, sortDirection), { currentPage, totalPages }),

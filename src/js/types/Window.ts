@@ -69,6 +69,7 @@ declare global {
 			snippetsList?: Snippet[]
 			hasNetworkCap: boolean
 			hiddenColumns: string[]
+			listOrder?: string
 			truncateRowValues: number | string
 			snippetsPerPage: number
 			typeCounts?: Record<string, number>

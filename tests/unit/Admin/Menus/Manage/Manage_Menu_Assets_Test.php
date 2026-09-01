@@ -52,6 +52,7 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 				'supportsZipDownloads',
 				'editorTheme',
 				'typeCounts',
+				'listOrder',
 				'snippetsList',
 			],
 			array_keys( $localized )

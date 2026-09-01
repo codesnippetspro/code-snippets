@@ -132,8 +132,8 @@
 
 		&.active-link, &:hover, &:focus, &:active {
 			color: var(--cs-color-accent);
-			border-color: var(--cs-color-accent);
 			z-index: 1;
+			border-color: var(--cs-color-accent);
 		}
 	}
 

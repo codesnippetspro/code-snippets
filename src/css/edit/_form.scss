@@ -56,11 +56,6 @@
 		justify-content: flex-start;
 		gap: 8px;
 		margin-block-end: 8px;
-
-		strong {
-			font-size: 14px;
-			line-height: 20px;
-		}
 	}
 
 	.button.button-large {
@@ -126,6 +121,7 @@
 		grid-area: span 3 / sidebar;
 		max-inline-size: var(--cs-sidebar-width);
 		position: sticky;
+		overflow: clip;
 
 		// Keep the sidebar clear of the fixed WordPress admin bar and leave a
 		// usable visual gap beneath it while the editor scrolls.
