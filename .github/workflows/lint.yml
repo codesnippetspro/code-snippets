@@ -1,25 +1,11 @@
 name: "(Lint): CSS, JS, PHP"
 
+# Reusable suite. Triggering is owned by ci.yml (the label dispatcher).
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled]
-  push:
-    branches:
-      - 'core'
-      - 'pro'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.gitignore'
-      - 'docs/**'
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
-
-concurrency:
-  group: lint-${{ github.workflow }}-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   lint:
@@ -86,22 +72,3 @@ jobs:
 
       - name: Run PHP CS
         run: npm run lint:php
-
-  # Post the Release Checklist status once lint has concluded. Runs for release
-  # PRs only; defers if the other suites are still running (see the action).
-  release-gate:
-    needs: [lint]
-    if: always() && github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release/v')
-    runs-on: ubuntu-latest
-    permissions:
-      statuses: write
-    steps:
-      - name: Checkout gate action
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: .github/actions/release-gate
-
-      - name: Release Checklist
-        uses: ./.github/actions/release-gate
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
