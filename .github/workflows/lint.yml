@@ -86,3 +86,22 @@ jobs:
 
       - name: Run PHP CS
         run: npm run lint:php
+
+  # Post the Release PR Gate status once lint has concluded. Runs for release
+  # PRs only; defers if the other suites are still running (see the action).
+  release-gate:
+    needs: [lint]
+    if: always() && github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release/v')
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Checkout gate action
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/actions/release-gate
+
+      - name: Release PR gate
+        uses: ./.github/actions/release-gate
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
