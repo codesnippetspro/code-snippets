@@ -1,4 +1,4 @@
-name: CI
+name: "(Pull Request): CI"
 
 # Label dispatcher. This is the single place that decides which suites run.
 # The decision is empirical: it reads the actual event (github.event.action and
