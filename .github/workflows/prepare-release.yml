@@ -9,157 +9,113 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to prepare the release for (e.g. 3.6.9) or `next`'
+        description: 'Release version'
         required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - custom
+        default: patch
+      custom_version:
+        description: 'Custom version (used when Release version = custom; leading v optional)'
+        required: false
         type: string
-        default: next
+        default: ''
       auto_changelog:
-        description: 'Auto-create changelog and readme entries with AI'
+        description: '(Copilot) auto-create changelog'
         required: false
         type: boolean
         default: false
+  pull_request:
+    types: [labeled]
+
+concurrency:
+  group: prepare-release-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
 
 jobs:
+  validate-inputs:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate custom version
+        env:
+          VERSION_TYPE: ${{ github.event.inputs.version }}
+          CUSTOM_VERSION: ${{ github.event.inputs.custom_version }}
+        run: |
+          if [ "$VERSION_TYPE" = "custom" ]; then
+            cv="$(printf '%s' "$CUSTOM_VERSION" | tr -d '[:space:]')"
+            cv="${cv#v}"; cv="${cv#V}"
+            if [ -z "$cv" ]; then
+              echo "::error::Release version is 'custom' but Custom version is empty."
+              exit 1
+            fi
+            if ! printf '%s' "$cv" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$'; then
+              echo "::error::Custom version '$CUSTOM_VERSION' is not valid (expected X.Y.Z or X.Y.Z-prerelease, leading v optional)."
+              exit 1
+            fi
+            echo "::notice::Custom version '$cv' is valid."
+          fi
+
   version:
-    if: github.event.inputs.version == 'next'
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate-inputs
     uses: codesnippetspro/.github/.github/workflows/next_version.yml@main
     with:
       file_path: package.json
       ref_name: ${{ github.ref_name }}
+      bump: ${{ github.event.inputs.version }}
+      custom_version: ${{ github.event.inputs.custom_version }}
 
-  changelog:
-    if: always()
-    runs-on: ubuntu-latest
+  create:
+    if: github.event_name == 'workflow_dispatch'
     needs: version
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
     steps:
-      - name: Validate repository access
-        id: validate
-        env:
-          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+      - name: Dispatch RC branch and pull request creation
         run: |
-          target_repo="codesnippetspro/.github-private"
-          workflow_file="changelog.yml"
-          
-          echo "::notice::Validating access to $target_repo..."
-          
-          # Test repository access
-          if ! gh repo view "$target_repo" >/dev/null 2>&1; then
-            echo "::error::Cannot access repository $target_repo"
-            echo "::error::Please ensure CHANGELOG_PAT secret is configured with access to private repositories"
-            exit 1
-          fi
-          
-          echo "::notice::Repository access confirmed"
-          
-          # Verify workflow file exists
-          if ! gh workflow view "$workflow_file" --repo "$target_repo" >/dev/null 2>&1; then
-            echo "::error::Workflow file '$workflow_file' not found in $target_repo"
-            echo "::error::Expected: https://github.com/$target_repo/blob/main/.github/workflows/$workflow_file"
-            exit 1
-          fi
-          
-          echo "::notice::Workflow file '$workflow_file' found"
-          echo "target_repo=$target_repo" >> $GITHUB_OUTPUT
-          echo "workflow_file=$workflow_file" >> $GITHUB_OUTPUT
-
-      - name: Dispatch changelog workflow
-        id: dispatch
-        env:
-          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
-        run: |
-          target_repo="${{ steps.validate.outputs.target_repo }}"
-          workflow_file="${{ steps.validate.outputs.workflow_file }}"
-          version="${{ needs.version.outputs.version || github.event.inputs.version }}"
-          
-          echo "::notice::Dispatching workflow '$workflow_file' to prepare the release pull request..."
-          echo "   Calling repo: $target_repo"
-          echo "   Version: $version"
-          echo "   Changelog path: ${GITHUB_EVENT_INPUTS_CHANGELOG_PATH:-./CHANGELOG.md}"
-          echo "   Readme path: ${GITHUB_EVENT_INPUTS_README_PATH:-./src/readme.txt}"
-
-          # Dispatch the workflow with required parameters
-          if ! gh workflow run "$workflow_file" \
-            --repo "$target_repo" \
+          gh workflow run changelog.yml \
+            --repo codesnippetspro/.github-private \
             --ref main \
+            --field mode=create \
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
-            --field version="$version" \
+            --field version="${{ needs.version.outputs.version }}" \
             --field readme_path="./src/readme.txt" \
-            --field generate_changelog="${{ github.event.inputs.auto_changelog }}" ; then
-            echo "::error::Failed to dispatch workflow '$workflow_file' in $target_repo"
-            exit 1
-          fi
+            --field apply_changelog_label="${{ github.event.inputs.auto_changelog }}"
+          echo "::notice::Dispatched RC creation for v${{ needs.version.outputs.version }}"
 
-          # Runs are identified by their run-name so concurrent dispatches from
-          # the other repository are never mistaken for this one.
-          echo "expected_title=Prepare release v$version for ${{ github.repository }}" >> $GITHUB_OUTPUT
-          
-          echo "::notice::Successfully dispatched changelog generation"
-          
-          # Wait a moment for the run to be created
-          echo "Waiting for workflow run to be created..."
-          sleep 10
-
-          # Get the workflow run URL for monitoring
-          if run_url=$(gh run list --repo "$target_repo" --workflow "$workflow_file" --limit 15 \
-            --json url,displayTitle \
-            -q "[.[] | select(.displayTitle == \"Prepare release v$version for ${{ github.repository }}\")][0].url" 2>/dev/null); then
-            if [ -n "$run_url" ] && [ "$run_url" != "null" ]; then
-              echo "::notice::Workflow run: $run_url"
-              echo "run_url=$run_url" >> $GITHUB_OUTPUT
-            fi
-          fi
-
-      - name: Monitor workflow completion
-        env:
-          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+  generate:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.label.name == 'changelog'
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && startsWith(github.event.pull_request.head.ref, 'release/v')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+    steps:
+      - name: Authorize labeler
         run: |
-          target_repo="${{ steps.validate.outputs.target_repo }}"
-          workflow_file="${{ steps.validate.outputs.workflow_file }}"
-          expected_title="${{ steps.dispatch.outputs.expected_title }}"
-          max_attempts=30
-          attempt=0
+          actor='${{ github.event.sender.login }}'
+          perm=$(gh api "repos/${{ github.repository }}/collaborators/$actor/permission" --jq '.permission' 2>/dev/null || echo none)
+          echo "::notice::Labeler $actor has '$perm' permission"
+          case "$perm" in
+            admin|maintain|write) ;;
+            *) echo "::error::$actor lacks write permission; refusing changelog generation."; exit 1 ;;
+          esac
 
-          echo "::notice::Monitoring workflow completion..."
-
-          while [ $attempt -lt $max_attempts ]; do
-            attempt=$((attempt + 1))
-
-            # Get the status of this dispatch's run, matched by its run-name
-            run_data=$(gh run list \
-              --repo "$target_repo" \
-              --workflow "$workflow_file" \
-              --limit 15 \
-              --json status,conclusion,url,displayTitle \
-              -q "[.[] | select(.displayTitle == \"$expected_title\")][0] | [.status, .conclusion, .url] | @tsv" 2>/dev/null)
-            
-            if [ -n "$run_data" ]; then
-              status=$(echo "$run_data" | cut -f1)
-              conclusion=$(echo "$run_data" | cut -f2)
-              url=$(echo "$run_data" | cut -f3)
-              
-              if [ "$status" = "completed" ]; then
-                if [ "$conclusion" = "success" ]; then
-                  echo "::notice::Workflow completed successfully!"
-                  echo "::notice::Run details: $url"
-                  break
-                else
-                  echo "::error::Workflow failed with conclusion: $conclusion"
-                  echo "::error::Run details: $url"
-                  exit 1
-                fi
-              else
-                echo "Attempt $attempt/$max_attempts: Workflow status: $status"
-              fi
-            else
-              echo "Attempt $attempt/$max_attempts: Waiting for workflow run data..."
-            fi
-            
-            if [ $attempt -eq $max_attempts ]; then
-              echo "::warning::Timeout reached after $max_attempts attempts"
-              echo "::warning::Workflow may still be running. Check manually: ${{ steps.dispatch.outputs.run_url }}"
-              exit 0
-            fi
-            
-            sleep 10
-          done
+      - name: Dispatch changelog generation
+        run: |
+          gh workflow run changelog.yml \
+            --repo codesnippetspro/.github-private \
+            --ref main \
+            --field mode=generate \
+            --field repo="${{ github.repository }}" \
+            --field pr_number="${{ github.event.pull_request.number }}" \
+            --field readme_path="./src/readme.txt"
+          echo "::notice::Dispatched changelog generation for PR #${{ github.event.pull_request.number }}"
