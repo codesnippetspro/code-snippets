@@ -106,19 +106,19 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-
-
-
 = 3.10.2 (2026-09-01) =
 
-**Added**
+__Added__
+
 * Added a confirmation flow for run-once snippet execution and hardened the handler to prevent failed or confusing actions.
 
-**Changed**
+__Changed__
+
 * Snippet names now respect the row truncation Screen Option in the admin list for better readability.
 * Version switching AJAX requests now validate the correct nonce, improving reliability when updating snippet versions.
 
-**Fixed**
+__Fixed__
+
 * Fixed safe mode fatal errors caused by an undefined wp_get_current_user() call.
 * Fixed PHP validation being triggered incorrectly when activating snippets in bulk.
 * Fixed saving issues after a user session expires.
