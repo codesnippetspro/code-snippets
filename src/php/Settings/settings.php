@@ -11,7 +11,7 @@ use Code_Snippets\Client\Welcome_Client;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use function add_action;
 use function Code_Snippets\clean_snippets_cache;
-use function Code_Snippets\flush_cache_group;
+use function Code_Snippets\flush_versioned_cache_groups;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Utils\add_self_option;
 use function Code_Snippets\Utils\get_self_option;
@@ -315,8 +315,8 @@ function process_settings_actions( array $input ): ?array {
 
 		// Deleting known keys cannot reach data written by a different version
 		// of the plugin, which is what needs clearing before a rollback, so the
-		// whole group goes too.
-		flush_cache_group( CACHE_GROUP );
+		// versioned groups (current, previous and legacy) all go too.
+		flush_versioned_cache_groups( (string) get_option( 'code_snippets_cache_version', '' ) );
 
 		add_settings_error(
 			OPTION_NAME,
