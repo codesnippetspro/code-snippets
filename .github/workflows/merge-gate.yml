@@ -1,6 +1,6 @@
 name: "(Pull Request): Merge Gate"
 
-# Re-evaluates the Release PR Gate on pull-request events that change the gate's
+# Re-evaluates the Release Checklist on pull-request events that change the gate's
 # inputs (checkbox edits, label changes). The gate itself defers while the test
 # suites are still running, so this never races them; the after-tests verdict is
 # posted by the release-gate jobs in the test workflows.
@@ -26,7 +26,7 @@ jobs:
         with:
           sparse-checkout: .github/actions/release-gate
 
-      - name: Release PR gate
+      - name: Release Checklist
         uses: ./.github/actions/release-gate
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

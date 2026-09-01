@@ -1,5 +1,5 @@
-name: 'Release PR Gate'
-description: 'Evaluate a release pull request and post the "Release PR Gate" commit status. Defers (posts nothing) while required checks are still running.'
+name: 'Release Checklist'
+description: 'Evaluate a release pull request and post the "Release Checklist" commit status. Defers (posts nothing) while required checks are still running.'
 
 inputs:
   token:
@@ -9,7 +9,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Evaluate and post Release PR Gate status
+    - name: Evaluate and post Release Checklist status
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
@@ -19,7 +19,7 @@ runs:
         HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ' ') }}
         PR_BODY: ${{ github.event.pull_request.body }}
-        CONTEXT: 'Release PR Gate'
+        CONTEXT: 'Release Checklist'
       run: |
         set -uo pipefail
 
@@ -32,7 +32,7 @@ runs:
         post() { # post <state> <description>
           gh api -X POST "repos/$REPO/statuses/$HEAD_SHA" \
             -f state="$1" -f context="$CONTEXT" -f description="$2" >/dev/null
-          echo "::notice::Release PR Gate -> $1: $2"
+          echo "::notice::Release Checklist -> $1: $2"
         }
 
         # The test suites only run when the run-tests label is present; without it
