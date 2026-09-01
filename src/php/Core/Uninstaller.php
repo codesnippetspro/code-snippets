@@ -67,6 +67,10 @@ class Uninstaller {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" );
 
 		delete_option( 'code_snippets_version' );
+
+		// Shed cached snippet objects before dropping the recorded cache version,
+		// otherwise a same-version reinstall can read data this uninstall removed.
+		\Code_Snippets\flush_versioned_cache_groups( (string) get_option( 'code_snippets_cache_version', '' ) );
 		delete_option( 'code_snippets_cache_version' );
 		delete_option( 'recently_active_snippets' );
 		delete_option( 'recently_activated_snippets' );
