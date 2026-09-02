@@ -100,6 +100,8 @@ jobs:
       GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
     steps:
       - name: Authorize labeler
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           actor='${{ github.event.sender.login }}'
           perm=$(gh api "repos/${{ github.repository }}/collaborators/$actor/permission" --jq '.permission' 2>/dev/null || echo none)
@@ -110,12 +112,17 @@ jobs:
           esac
 
       - name: Dispatch changelog generation
+        env:
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           gh workflow run changelog.yml \
             --repo codesnippetspro/.github-private \
             --ref main \
             --field mode=generate \
-            --field repo="${{ github.repository }}" \
-            --field pr_number="${{ github.event.pull_request.number }}" \
+            --field repo="$REPO" \
+            --field branch="$BRANCH" \
+            --field pr_number="$PR_NUMBER" \
             --field readme_path="./src/readme.txt"
-          echo "::notice::Dispatched changelog generation for PR #${{ github.event.pull_request.number }}"
+          echo "::notice::Dispatched changelog generation for PR #$PR_NUMBER"

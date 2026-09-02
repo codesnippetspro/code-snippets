@@ -1,0 +1,125 @@
+name: "(Pull Request): CI"
+
+# Label dispatcher. This is the single place that decides which suites run.
+# The decision is empirical: it reads the actual event (github.event.action and
+# github.event.label.name), not the ambient label set. So toggling an unrelated
+# label (changelog, build) starts nothing and cancels nothing, and adding two
+# labels at once (two separate labeled events) fans out to only the owning suite.
+#
+# Ownership:
+#   run-tests -> phpunit + playwright
+#   multisite -> the playwright multisite variant
+#   (no label) -> lint runs on every code change
+#
+# The suites are reusable workflows (workflow_call) with no triggering logic of
+# their own, so the decision cannot drift across files.
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  push:
+    branches: [core, pro, core-beta, pro-beta]
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.gitignore'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+  statuses: write
+
+# A run that does real work shares the group and supersedes an older run. A stray
+# label event (an unowned label) gets a unique group, so it cancels nothing.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}-${{ (github.event_name != 'pull_request' || (github.event.action != 'labeled' && github.event.action != 'unlabeled') || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite') && 'active' || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  decide:
+    runs-on: ubuntu-latest
+    outputs:
+      lint: ${{ steps.d.outputs.lint }}
+      tests: ${{ steps.d.outputs.tests }}
+      multisite: ${{ steps.d.outputs.multisite }}
+    steps:
+      - id: d
+        env:
+          EVENT: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          LABEL: ${{ github.event.label.name }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          set -euo pipefail
+
+          is_label=false
+          if [ "$ACTION" = labeled ] || [ "$ACTION" = unlabeled ]; then is_label=true; fi
+          has() { case ",$LABELS," in *,"$1",*) return 0 ;; *) return 1 ;; esac; }
+
+          lint=false; tests=false; multisite=false
+
+          if [ "$EVENT" != pull_request ]; then
+            # push / workflow_dispatch: run the full suite.
+            lint=true; tests=true
+          elif [ "$is_label" = false ]; then
+            # PR opened / reopened / synchronize: lint always; tests if run-tests is present.
+            lint=true
+            has run-tests && tests=true
+          elif [ "$ACTION" = labeled ] && [ "$LABEL" = run-tests ]; then
+            # The exact event that adds run-tests.
+            tests=true
+          fi
+
+          if [ "$tests" = true ] && has multisite; then multisite=true; fi
+
+          {
+            echo "lint=$lint"
+            echo "tests=$tests"
+            echo "multisite=$multisite"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "event=$EVENT action=${ACTION:-none} label=${LABEL:-none} labels=[$LABELS]" >> "$GITHUB_STEP_SUMMARY"
+          echo "decision: lint=$lint tests=$tests multisite=$multisite" >> "$GITHUB_STEP_SUMMARY"
+
+  lint:
+    needs: decide
+    if: needs.decide.outputs.lint == 'true'
+    uses: ./.github/workflows/lint.yml
+    secrets: inherit
+
+  phpunit:
+    needs: decide
+    if: needs.decide.outputs.tests == 'true'
+    uses: ./.github/workflows/phpunit.yml
+    secrets: inherit
+
+  playwright:
+    needs: decide
+    if: needs.decide.outputs.tests == 'true'
+    uses: ./.github/workflows/playwright.yml
+    with:
+      multisite: ${{ needs.decide.outputs.multisite == 'true' }}
+    secrets: inherit
+
+  # Post the Release Checklist commit status after the suites settle. The action
+  # reads the summary check-runs itself and defers while any are still running, so
+  # it is safe to run with `always()` even when a suite skipped.
+  release-gate:
+    needs: [decide, lint, phpunit, playwright]
+    if: always() && github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release/v')
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Checkout gate action
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/actions/release-gate
+      - name: Release Checklist
+        uses: ./.github/actions/release-gate
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

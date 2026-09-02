@@ -100,6 +100,7 @@ class Manage_Menu_Assets {
 			'cloudSearchPerPage'   => Manage_Menu::get_cloud_search_per_page(),
 			'isSafeModeActive'     => Evaluate_Functions::is_safe_mode_active(),
 			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
+			'runOnceNonce'         => wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ),
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
 			'editorTheme'          => get_setting( 'editor', 'theme' ),
 			'typeCounts'           => $this->get_snippet_type_counts(),

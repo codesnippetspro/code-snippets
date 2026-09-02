@@ -76,7 +76,7 @@ plugins.
 
 - Follow the **WordPress Coding Standards** for PHP, JS, CSS, and HTML.
 - `strict_types=1` is not enforced project-wide — match the style of the file being edited.
-- Keep lines under 120 characters for PHP; 100 for JS/TS.
+- Keep lines readable; break long imports or expressions when it helps. Hard limits are the linters' job, not a fixed number here.
 - All user-visible strings must be wrapped in a WordPress i18n function with the text domain `code-snippets`.
 - Use `__()`, `_e()`, `esc_html__()`, `esc_attr__()`, `_x()`, `_n()` as appropriate — never echo raw translatable
   strings.

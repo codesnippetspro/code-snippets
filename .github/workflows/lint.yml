@@ -1,25 +1,11 @@
 name: "(Lint): CSS, JS, PHP"
 
+# Reusable suite. Triggering is owned by ci.yml (the label dispatcher).
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled]
-  push:
-    branches:
-      - 'core'
-      - 'pro'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.gitignore'
-      - 'docs/**'
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
-
-concurrency:
-  group: lint-${{ github.workflow }}-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   lint:

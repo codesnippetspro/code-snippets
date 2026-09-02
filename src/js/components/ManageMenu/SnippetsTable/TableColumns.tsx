@@ -26,7 +26,12 @@ const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
 	<a
 		className="snippet-execution-button"
 		title={__('Run Once', 'code-snippets')}
-		href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
+		href={buildUrl(window.location.href, {
+			action: 'run-once',
+			snippet: snippet.id,
+			network: snippet.network ? 'true' : 'false',
+			_wpnonce: window.CODE_SNIPPETS_MANAGE?.runOnceNonce ?? ''
+		})}
 	>
 		<span className="screen-reader-text">{__('Run Once', 'code-snippets')}</span>
 		<span aria-hidden="true">&nbsp;</span>
