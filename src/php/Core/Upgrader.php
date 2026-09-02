@@ -6,6 +6,7 @@ use Code_Snippets\Client\Welcome_Client;
 use Code_Snippets\Model\Snippet;
 use WP_User;
 use function Code_Snippets\clean_snippets_cache;
+use function Code_Snippets\flush_versioned_cache_groups;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
 
@@ -13,6 +14,11 @@ use function Code_Snippets\save_snippet;
  * Manages upgrade tasks such as deleting and updating options
  */
 class Upgrader {
+
+	/**
+	 * Option recording the plugin version that last wrote to the cache.
+	 */
+	private const CACHE_VERSION_OPTION = 'code_snippets_cache_version';
 
 	/**
 	 * Instance of database class
@@ -45,6 +51,7 @@ class Upgrader {
 	 * Run the upgrade functions
 	 */
 	public function run() {
+		$this->handle_version_change();
 
 		// Always run multisite upgrades, even if not on the main site, as sub-sites depend on the network snippet table.
 		if ( is_multisite() ) {
@@ -52,6 +59,33 @@ class Upgrader {
 		}
 
 		$this->do_site_upgrades();
+	}
+
+	/**
+	 * Discard cached data belonging to a different version of the plugin.
+	 *
+	 * The do_site_upgrades() method only acts when the version has gone up, so
+	 * it never fires on a rollback. Cached data has to be dealt with in both
+	 * directions, so it is tracked separately here.
+	 *
+	 * A dedicated option is used rather than the one that method maintains,
+	 * because that option is left untouched on a downgrade, which would leave
+	 * this flushing on every request for as long as the older version ran.
+	 *
+	 * @return void
+	 */
+	private function handle_version_change(): void {
+		$previous_version = (string) get_option( self::CACHE_VERSION_OPTION, '' );
+
+		if ( $previous_version === $this->current_version ) {
+			return;
+		}
+
+		// Recorded before flushing so that a cache backend which cannot flush
+		// groups does not leave this repeating on every request.
+		update_option( self::CACHE_VERSION_OPTION, $this->current_version, false );
+
+		flush_versioned_cache_groups( $previous_version );
 	}
 
 	/**

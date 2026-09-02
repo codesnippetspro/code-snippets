@@ -66,4 +66,29 @@ class Snippet_Test extends UnitTestCase {
 
 		$this->assertNull( $snippet->modified_iso );
 	}
+
+	/**
+	 * Reading modified fields from a snippet built with alias keys does not warn.
+	 *
+	 * The field list includes aliases such as 'description' and 'language', which
+	 * have no entry of their own in the defaults. Importing builds snippets from
+	 * exactly those keys, so every imported snippet raised a PHP warning. Warnings
+	 * are converted to exceptions for this suite, so a regression fails here.
+	 *
+	 * @return void
+	 */
+	public function test_get_modified_fields_handles_aliased_field_names(): void {
+		$snippet = new Snippet(
+			[
+				'name'        => 'Aliased fields',
+				'description' => 'set through the alias',
+				'language'    => 'php',
+			]
+		);
+
+		$modified = $snippet->get_modified_fields();
+
+		$this->assertArrayHasKey( 'desc', $modified );
+		$this->assertSame( 'set through the alias', $modified['desc'] );
+	}
 }

@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
 import React, { useCallback } from 'react'
+import { describeRequestError } from '../utils/errors'
 import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
 import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
 import { buildUrl } from '../utils/urls'
@@ -113,8 +114,8 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 					: api.update({ ...request, id }))
 
 				return response.id ? createSnippetObject(response) : undefined
-			} catch (error) {
-				return isAxiosError(error) ? error.message : undefined
+			} catch (error: unknown) {
+				return isAxiosError(error) ? describeRequestError(error) : undefined
 			} finally {
 				setIsWorking(false)
 			}

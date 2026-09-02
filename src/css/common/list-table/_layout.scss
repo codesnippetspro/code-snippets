@@ -278,9 +278,11 @@
 		text-align: start;
 	}
 
-	// Snippet names always stay on a single line, truncating gracefully;
-	// the full name is exposed through the title attribute.
-	td.column-name > .snippet-name {
+	// Names and descriptions are both governed by the "Truncate long snippet
+	// names and descriptions" Screen Option. When it is off, the full name is
+	// shown; when on, it stays on a single line and the full value remains
+	// available through the title attribute.
+	&.truncate-row-values td.column-name > .snippet-name {
 		display: block;
 		max-inline-size: min(15rem, 30vw);
 		white-space: nowrap;

@@ -51,6 +51,7 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 				'cloudSearchPerPage',
 				'isSafeModeActive',
 				'bulkDownloadNonce',
+				'runOnceNonce',
 				'supportsZipDownloads',
 				'editorTheme',
 				'typeCounts',
