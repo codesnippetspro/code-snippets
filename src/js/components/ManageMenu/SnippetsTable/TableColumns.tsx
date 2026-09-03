@@ -7,6 +7,7 @@ import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { getRunOnceNonce } from '../../../utils/restAPI'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { SnippetPriorityInput } from '../../common/snippets/SnippetPriorityInput'
@@ -22,16 +23,25 @@ interface ColumnProps {
 	snippet: Snippet
 }
 
+const runOnceUrl = (snippet: Snippet, nonce: string): string =>
+	buildUrl(window.location.href, {
+		action: 'run-once',
+		snippet: snippet.id,
+		network: snippet.network ? 'true' : 'false',
+		_wpnonce: nonce
+	})
+
+// The rendered link carries the nonce from page load; the click reads the one
+// the Heartbeat has refreshed since, so a page left open still works.
 const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
 	<a
 		className="snippet-execution-button"
 		title={__('Run Once', 'code-snippets')}
-		href={buildUrl(window.location.href, {
-			action: 'run-once',
-			snippet: snippet.id,
-			network: snippet.network ? 'true' : 'false',
-			_wpnonce: window.CODE_SNIPPETS_MANAGE?.runOnceNonce ?? ''
-		})}
+		href={runOnceUrl(snippet, window.CODE_SNIPPETS_MANAGE?.runOnceNonce ?? '')}
+		onClick={event => {
+			event.preventDefault()
+			window.location.assign(runOnceUrl(snippet, getRunOnceNonce()))
+		}}
 	>
 		<span className="screen-reader-text">{__('Run Once', 'code-snippets')}</span>
 		<span aria-hidden="true">&nbsp;</span>

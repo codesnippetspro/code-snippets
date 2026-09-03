@@ -48,6 +48,7 @@ class Manage_Menu extends Admin_Menu {
 		new Manage_Menu_Bulk_Download();
 
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
+		add_filter( 'heartbeat_received', [ $this, 'refresh_run_once_nonce' ] );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_menu_css' ) );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
 	}
@@ -253,6 +254,24 @@ class Manage_Menu extends Admin_Menu {
 			)
 		);
 		exit;
+	}
+
+	/**
+	 * Send a fresh Run Once nonce with each Heartbeat, so a page left open past
+	 * the nonce lifetime can still run a snippet.
+	 *
+	 * @param mixed $response Heartbeat response.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function refresh_run_once_nonce( $response ): array {
+		$response = is_array( $response ) ? $response : [];
+
+		if ( code_snippets()->current_user_can() ) {
+			$response['code_snippets_run_once_nonce'] = wp_create_nonce( self::RUN_ONCE_NONCE );
+		}
+
+		return $response;
 	}
 
 	/**

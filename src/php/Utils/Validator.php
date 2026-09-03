@@ -65,6 +65,13 @@ class Validator {
 	private array $claimed_identifiers = [];
 
 	/**
+	 * Namespace the code being read currently declares, lower-cased, or empty for the global namespace.
+	 *
+	 * @var string
+	 */
+	private string $namespace = '';
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param string                  $code                Snippet code for parsing.
@@ -130,15 +137,18 @@ class Validator {
 	 */
 	private function check_duplicate_identifier( string $type, string $identifier ): bool {
 		$identifier = strtolower( ltrim( $identifier, '\\' ) );
+
+		// PHP keeps declared names fully qualified, so that is the form compared
+		// and claimed: the same short name in two namespaces is two names.
+		$qualified = '' === $this->namespace ? $identifier : $this->namespace . '\\' . $identifier;
 		$namespaced_identifier = 'code_snippets\\' . $identifier;
 
 		if ( ! isset( $this->defined_identifiers[ $type ] ) ) {
 			switch ( $type ) {
 				case T_FUNCTION:
-					$defined_functions = get_defined_functions();
 					$this->defined_identifiers[ T_FUNCTION ] = array_map(
 						'strtolower',
-						array_merge( $defined_functions['internal'], $defined_functions['user'] )
+						array_merge( get_defined_functions()['internal'], get_defined_functions()['user'] )
 					);
 					break;
 
@@ -160,16 +170,65 @@ class Validator {
 			$this->claimed_identifiers[ $type ] ?? []
 		);
 
-		$duplicate_identifier = in_array( $identifier, $known, true );
-		$duplicate_namespaced = in_array( $namespaced_identifier, $known, true );
+		$duplicate_identifier = in_array( $qualified, $known, true );
+		$duplicate_namespaced = '' === $this->namespace && in_array( $namespaced_identifier, $known, true );
 		$exceptions = $this->exceptions[ $type ] ?? [];
-		$exception_identifier = in_array( $identifier, $exceptions, true );
-		$exception_namespaced = in_array( $namespaced_identifier, $exceptions, true );
+		$exception_identifier = in_array( $identifier, $exceptions, true ) || in_array( $qualified, $exceptions, true );
+		$exception_namespaced = in_array( $identifier, $exceptions, true ) || in_array( $namespaced_identifier, $exceptions, true );
 
-		array_unshift( $this->defined_identifiers[ $type ], $identifier );
-		$this->claimed_identifiers[ $type ][] = $identifier;
+		array_unshift( $this->defined_identifiers[ $type ], $qualified );
+		$this->claimed_identifiers[ $type ][] = $qualified;
 
 		return ( $duplicate_identifier && ! $exception_identifier ) || ( $duplicate_namespaced && ! $exception_namespaced );
+	}
+
+	/**
+	 * Read the name a namespace declaration introduces, leaving the cursor after it.
+	 *
+	 * A bare "namespace {" opens the global namespace; "namespace\\foo()" is a
+	 * relative name rather than a declaration and is left alone.
+	 *
+	 * @return string Lower-cased namespace, or empty for the global namespace.
+	 */
+	private function read_namespace_declaration(): string {
+		$name = '';
+
+		while ( ! $this->end() ) {
+			$token = $this->peek();
+
+			if ( is_array( $token ) ) {
+				if ( T_WHITESPACE === $token[0] || T_COMMENT === $token[0] || T_DOC_COMMENT === $token[0] ) {
+					$this->next();
+					continue;
+				}
+
+				if ( T_NS_SEPARATOR === $token[0] && '' === $name ) {
+					return $this->namespace;
+				}
+
+				if ( defined( 'T_NAME_RELATIVE' ) && T_NAME_RELATIVE === $token[0] ) {
+					return $this->namespace;
+				}
+
+				if ( T_STRING === $token[0] || T_NS_SEPARATOR === $token[0]
+					|| ( defined( 'T_NAME_QUALIFIED' ) && T_NAME_QUALIFIED === $token[0] ) ) {
+					$name .= $token[1];
+					$this->next();
+					continue;
+				}
+
+				return $this->namespace;
+			}
+
+			if ( ';' === $token || '{' === $token ) {
+				$this->next();
+				return strtolower( trim( $name, '\\' ) );
+			}
+
+			return $this->namespace;
+		}
+
+		return strtolower( trim( $name, '\\' ) );
 	}
 
 	/**
@@ -184,6 +243,11 @@ class Validator {
 			$this->next();
 
 			if ( ! is_array( $token ) ) {
+				continue;
+			}
+
+			if ( T_NAMESPACE === $token[0] ) {
+				$this->namespace = $this->read_namespace_declaration();
 				continue;
 			}
 

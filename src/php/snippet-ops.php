@@ -128,7 +128,27 @@ function flush_versioned_cache_groups( string $previous_version ): void {
 	// still be waiting to break its next rollback.
 	flush_cache_group( CACHE_GROUP_BASE );
 
-	flush_cache_group( CACHE_GROUP );
+	// Where the cache cannot flush a whole group, the keys this plugin writes
+	// are deleted one by one instead, so an uninstall followed by a reinstall
+	// of the same version cannot read snippets that no longer exist.
+	if ( ! flush_cache_group( CACHE_GROUP ) ) {
+		flush_known_cache_keys();
+	}
+}
+
+/**
+ * Delete every key this plugin is known to write in its current cache group.
+ *
+ * @return void
+ */
+function flush_known_cache_keys(): void {
+	clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
+
+	if ( is_multisite() ) {
+		clean_snippets_cache( code_snippets()->db->get_table_name( true ) );
+	}
+
+	wp_cache_delete( Settings\CACHE_KEY, CACHE_GROUP );
 }
 
 /**
