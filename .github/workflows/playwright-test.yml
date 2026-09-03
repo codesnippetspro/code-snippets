@@ -240,14 +240,18 @@ jobs:
           WP_E2E_WPCLI_URL: http://localhost:8888
           WP_E2E_WP_CONTAINER: ${{ job.services.wordpress.id }}
           WP_E2E_MULTISITE_MODE: ${{ inputs.multisite }}
+          PLAYWRIGHT_PROJECTS: ${{ inputs.project-name }}
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p test-results/ci
           suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
           : > "test-results/ci/playwright-${suffix}.log"
           # One --project flag per name, so several projects can be listed in the input.
+          # The names arrive through the environment rather than being pasted into
+          # the script, so no input value is ever interpreted as shell.
           project_args=()
-          for project in ${{ inputs.project-name }}; do
+          for project in $PLAYWRIGHT_PROJECTS; do
             project_args+=(--project "$project")
           done
           npm run test:playwright -- "${project_args[@]}" 2>&1 | tee -a "test-results/ci/playwright-${suffix}.log"
