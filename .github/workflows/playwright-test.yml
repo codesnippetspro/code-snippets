@@ -252,6 +252,7 @@ jobs:
           # The names arrive through the environment rather than being pasted into
           # the script, and are split into an array without pathname expansion, so
           # no input value is ever interpreted as shell or as a glob.
+          [[ -n "${PLAYWRIGHT_PROJECTS// /}" ]] || { echo "The project-name input is empty; nothing to run." >&2; exit 1; }
           read -ra projects <<< "$PLAYWRIGHT_PROJECTS"
           project_args=()
           for project in "${projects[@]}"; do
