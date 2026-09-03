@@ -99,22 +99,68 @@ function update_setting( string $section, string $field, $new_value ): bool {
 }
 
 /**
+ * Render the fields of a settings section, with group headings.
+ *
+ * Mirrors the core `do_settings_fields()`, adding a full-width heading row
+ * above any field carrying a `group_heading` argument. Tabs are long enough
+ * that unbroken rows are hard to scan.
+ *
+ * @param string $page    Settings page slug.
+ * @param string $section Settings section identifier.
+ *
+ * @return void
+ */
+function do_settings_fields_with_headings( string $page, string $section ): void {
+	global $wp_settings_fields;
+
+	if ( ! isset( $wp_settings_fields[ $page ][ $section ] ) ) {
+		return;
+	}
+
+	$seen_headings = [];
+
+	foreach ( (array) $wp_settings_fields[ $page ][ $section ] as $field ) {
+		$heading = $field['args']['group_heading'] ?? '';
+
+		// A heading is skipped if an identical one has already been drawn, so
+		// that a group whose first field is absent does not repeat it.
+		if ( $heading && ! in_array( $heading, $seen_headings, true ) ) {
+			$seen_headings[] = $heading;
+			printf(
+				'<tr class="settings-group-heading"><th colspan="2" scope="colgroup">%s</th></tr>',
+				esc_html( $heading )
+			);
+		}
+
+		$class = empty( $field['args']['class'] ) ? '' : ' class="' . esc_attr( $field['args']['class'] ) . '"';
+
+		echo '<tr' . $class . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
+
+		if ( ! empty( $field['args']['label_for'] ) ) {
+			printf(
+				'<th scope="row"><label for="%s">%s</label></th>',
+				esc_attr( $field['args']['label_for'] ),
+				esc_html( $field['title'] )
+			);
+		} else {
+			printf( '<th scope="row">%s</th>', esc_html( $field['title'] ) );
+		}
+
+		echo '<td>';
+		call_user_func( $field['callback'], $field['args'] );
+		echo '</td></tr>';
+	}
+}
+
+/**
  * Retrieve the settings sections
  *
  * @return array<string, string> Settings sections.
  */
 function get_settings_sections(): array {
-	$sections = array(
-		'general' => __( 'General', 'code-snippets' ),
-		'editor'  => __( 'Code Editor', 'code-snippets' ),
-		'debug'   => __( 'Debug', 'code-snippets' ),
-	);
-
-	// Only show the Version section when the debug setting to enable version changes is enabled.
-	$enable_version = get_setting( 'debug', 'enable_version_change' );
-	if ( $enable_version ) {
-		$sections['version-switch'] = __( 'Version', 'code-snippets' );
-	}
+	// Tabs are grouped by task rather than by storage section. Values still
+	// save into their original sections; see Settings_Layout.
+	$sections = Settings_Layout::get_available_tabs();
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
 }
@@ -141,20 +187,37 @@ function register_plugin_settings() {
 		add_settings_section( $section_id, $section_name, '__return_empty_string', 'code-snippets' );
 	}
 
-	// Register settings fields. Only register fields for sections that exist (some sections may be gated by settings).
-	$registered_sections = get_settings_sections();
-	foreach ( Settings_Fields::get_field_definitions() as $section_id => $fields ) {
-		if ( ! isset( $registered_sections[ $section_id ] ) ) {
-			continue;
-		}
+	// Register settings fields. The tab a field appears under comes from the
+	// layout, while the section it saves into stays exactly as it was.
+	$definitions = Settings_Fields::get_field_definitions();
+	$descriptions = Settings_Layout::get_descriptions();
+	$headings = Settings_Layout::get_group_headings();
 
-		foreach ( $fields as $field_id => $field ) {
-			if ( ! should_render_setting_field( $field, $current_settings ) ) {
-				continue;
+	foreach ( get_settings_sections() as $tab_id => $tab_name ) {
+		foreach ( Settings_Layout::get_visible_fields( $tab_id, $current_settings ) as $entry ) {
+			list( $section_id, $field_id ) = $entry;
+			$field = $definitions[ $section_id ][ $field_id ];
+
+			// Reword the settings whose description names the control without
+			// saying what it buys you.
+			if ( isset( $descriptions[ $field_id ] ) ) {
+				$field['desc'] = $descriptions[ $field_id ];
 			}
 
 			$field_object = new Setting_Field( $section_id, $field_id, $field );
-			add_settings_field( $field_id, $field['name'], [ $field_object, 'render' ], 'code-snippets', $section_id );
+
+			$field_args = isset( $headings[ $tab_id ][ $field_id ] )
+				? [ 'group_heading' => $headings[ $tab_id ][ $field_id ] ]
+				: [];
+
+			add_settings_field(
+				$field_id,
+				$field['name'],
+				[ $field_object, 'render' ],
+				'code-snippets',
+				$tab_id,
+				$field_args
+			);
 		}
 	}
 
@@ -166,7 +229,7 @@ function register_plugin_settings() {
 		__( 'Editor Preview', 'code-snippets' ),
 		[ $editor_preview, 'render' ],
 		'code-snippets',
-		'editor'
+		'editing'
 	);
 
 	Version_Switch::init();

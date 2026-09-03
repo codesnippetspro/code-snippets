@@ -6,7 +6,8 @@
 @use 'common/wp-admin';
 @use 'common/page-header';
 
-$sections: general, editor, debug, version-switch;
+$sections: general, editor, debug, version-switch,
+	editing, running, insights, library, interface, advanced;
 
 .wrap.code-snippets-settings {
 	margin-block-start: 0;
@@ -306,4 +307,19 @@ body.js {
 			display: flex;
 		}
 	}
+}
+
+// Group headings inside a settings tab. Tabs are long enough that unbroken
+// rows are hard to scan, so related fields sit under a label.
+.settings-section .form-table .settings-group-heading th {
+	inline-size: auto;
+	padding-block: 26px 8px;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--cs-color-text);
+}
+
+.settings-section .form-table .settings-group-heading:first-child th {
+	padding-block-start: 4px;
 }
