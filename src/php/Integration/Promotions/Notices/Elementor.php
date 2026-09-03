@@ -2,6 +2,8 @@
 
 namespace Code_Snippets\Integration\Promotions\Notices;
 
+use Code_Snippets\REST_API\Import\Plugins\Elementor_Custom_Code_Plugin_Importer;
+
 /**
  * Promotion class for Elementor Custom Code.
  *
@@ -61,5 +63,16 @@ class Elementor extends Promotion_Base {
 	 */
 	public function get_promotion_message(): string {
 		return __( 'Move your custom logic into a dedicated dashboard built for professionals. Experience a cleaner workflow with advanced security and global organization.', 'code-snippets' );
+	}
+
+	/**
+	 * Check if the user should see the migration button.
+	 *
+	 * @return bool Whether the user should see the migration button.
+	 */
+	public function show_migration_button(): bool {
+		$importer = new Elementor_Custom_Code_Plugin_Importer();
+		$data = $importer->get_data();
+		return ! empty( $data );
 	}
 }
