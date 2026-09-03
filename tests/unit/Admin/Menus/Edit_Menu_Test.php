@@ -21,7 +21,8 @@ class Edit_Menu_Test extends AdminUnitTestCase {
 		parent::set_up();
 
 		set_current_screen( 'toplevel_page_' . code_snippets()->get_menu_slug() );
-		unset( $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] );
+		// The hidden page's registration must be proven by each test, not inherited.
+		unset( $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ], $GLOBALS['submenu'][''] );
 		unset( $_GET['id'] );
 	}
 
@@ -112,5 +113,21 @@ class Edit_Menu_Test extends AdminUnitTestCase {
 
 		$this->assertFalse( has_action( 'admin_print_footer_scripts', [ $menu, 'disable_menu_link' ] ) );
 		$this->assertFalse( has_action( 'network_admin_print_footer_scripts', [ $menu, 'disable_menu_link' ] ) );
+	}
+
+	/**
+	 * The hookname the menu reports is the one WordPress registered for the parentless page.
+	 *
+	 * @return void
+	 */
+	public function test_hookname_matches_the_registered_page(): void {
+		$menu = new Edit_Menu();
+		$menu->register();
+
+		$registered = get_plugin_page_hookname( code_snippets()->get_menu_slug( 'edit' ), '' );
+
+		$this->assertSame( $registered, $menu->get_hookname() );
+		$this->assertContains( $registered, $menu->get_hooknames() );
+		$this->assertNotFalse( has_action( 'load-' . $registered, [ $menu, 'load' ] ), 'the load hook is bound to the same name' );
 	}
 }

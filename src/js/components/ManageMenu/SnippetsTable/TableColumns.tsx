@@ -31,13 +31,18 @@ const runOnceUrl = (snippet: Snippet, nonce: string): string =>
 		_wpnonce: nonce
 	})
 
-// The rendered link carries the nonce from page load; the click reads the one
-// the Heartbeat has refreshed since, so a page left open still works.
+// The rendered link carries the nonce from page load. Before any navigation
+// starts, whether a click, a middle-click or "open in new tab", the href is
+// rebuilt from the nonce the Heartbeat has refreshed since, so a page left open
+// still works.
 const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
 	<a
 		className="snippet-execution-button"
 		title={__('Run Once', 'code-snippets')}
 		href={runOnceUrl(snippet, window.CODE_SNIPPETS_MANAGE?.runOnceNonce ?? '')}
+		onMouseDown={event => {
+			event.currentTarget.href = runOnceUrl(snippet, getRunOnceNonce())
+		}}
 		onClick={event => {
 			event.preventDefault()
 			window.location.assign(runOnceUrl(snippet, getRunOnceNonce()))

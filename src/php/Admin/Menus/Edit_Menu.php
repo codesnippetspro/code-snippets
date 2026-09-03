@@ -149,6 +149,19 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Retrieve the hookname of the edit page.
+	 *
+	 * The page is registered without a parent, so WordPress files it under
+	 * "admin_page_" rather than under the Snippets menu; deriving it from the
+	 * menu slug would name a screen that does not exist.
+	 *
+	 * @return string
+	 */
+	public function get_hookname(): string {
+		return get_plugin_page_hookname( $this->slug, '' );
+	}
+
+	/**
 	 * Retrieve every hookname registered by this menu, including the separate
 	 * "Add New" page, so screen-based checks recognise both editor views.
 	 *
@@ -182,9 +195,8 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	protected function ensure_correct_page() {
-		$screen = get_current_screen();
-		$edit_hook = get_plugin_page_hookname( $this->slug, $this->base_slug );
-		$edit_hook .= $screen->in_admin( 'network' ) ? '-network' : '';
+		$screen    = get_current_screen();
+		$edit_hook = $this->get_hookname() . ( $screen->in_admin( 'network' ) ? '-network' : '' );
 
 		// Disallow visiting the edit snippet page without a valid ID.
 		if (

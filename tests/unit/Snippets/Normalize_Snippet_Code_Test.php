@@ -78,6 +78,8 @@ class Normalize_Snippet_Code_Test extends UnitTestCase {
 			'script tag inside php'    => [ 'php', "echo '<script>x()</script>';" ],
 			'style tag mid-css'        => [ 'css', ".a { content: '<style>'; }" ],
 			'backticks inside code'    => [ 'js', 'const sql = `SELECT 1`;' ],
+			'orphan closing fence'     => [ 'html', "<p>Example</p>\n```" ],
+			'closing fence in css'     => [ 'css', ".a {}\n```" ],
 			'html type is left alone'  => [ 'html', "<style>\n.a {}\n</style>" ],
 		];
 	}

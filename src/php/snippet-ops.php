@@ -101,6 +101,22 @@ function clean_snippets_cache( string $table_name ) {
  * @return bool Whether the group was flushed.
  */
 function flush_cache_group( string $group ): bool {
+	/**
+	 * Short-circuits flushing a cache group.
+	 *
+	 * Returning a boolean skips the object cache entirely: false makes the
+	 * caller fall back to deleting the known keys one by one, for a cache
+	 * that reports group support it does not really have.
+	 *
+	 * @param bool|null $flushed Whether the group was flushed, or null to let the cache try.
+	 * @param string    $group   Cache group.
+	 */
+	$flushed = apply_filters( 'code_snippets/pre_flush_cache_group', null, $group );
+
+	if ( null !== $flushed ) {
+		return (bool) $flushed;
+	}
+
 	if ( ! function_exists( 'wp_cache_flush_group' ) ||
 	     ! function_exists( 'wp_cache_supports' ) ||
 	     ! wp_cache_supports( 'flush_group' ) ) {
@@ -142,10 +158,12 @@ function flush_versioned_cache_groups( string $previous_version ): void {
  * @return void
  */
 function flush_known_cache_keys(): void {
-	clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
+	// Both tables' keys go, whether or not this is a network: deleting a key
+	// that was never written costs nothing, and it keeps one path to test.
+	$tables = [ code_snippets()->db->get_table_name( false ), code_snippets()->db->get_table_name( true ) ];
 
-	if ( is_multisite() ) {
-		clean_snippets_cache( code_snippets()->db->get_table_name( true ) );
+	foreach ( array_unique( $tables ) as $table ) {
+		clean_snippets_cache( $table );
 	}
 
 	wp_cache_delete( Settings\CACHE_KEY, CACHE_GROUP );
@@ -914,8 +932,13 @@ function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?
  */
 function normalize_snippet_code( string $code, string $type ): string {
 	// A markdown fence around the whole snippet, as copied from a chat window.
-	$code = preg_replace( '/\A\s*```[a-z]*[ \t]*\R/i', '', $code );
-	$code = preg_replace( '/\R\s*```\s*\z/', '', $code );
+	// The closing fence only goes when an opening one was there: on its own it
+	// is the author's content, as in an HTML snippet ending in backticks.
+	$code = preg_replace( '/\A\s*```[a-z]*[ \t]*\R/i', '', $code, 1, $fenced );
+
+	if ( $fenced ) {
+		$code = preg_replace( '/\R\s*```\s*\z/', '', $code );
+	}
 
 	switch ( $type ) {
 		case 'php':
