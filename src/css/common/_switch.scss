@@ -89,7 +89,8 @@ a.snippet-condition-count {
 	&::before {
 		content: '';
 		position: absolute;
-		inset: -14px -8px -14px -21px;
+		inset-block: -14px;
+		inset-inline: -21px -8px;
 		border-radius: 50%;
 		border: 1.8px solid var(--cs-color-border);
 		z-index: 2;
