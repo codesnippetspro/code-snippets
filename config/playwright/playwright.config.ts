@@ -15,6 +15,7 @@ const MILLISECONDS_IN_SECOND = 1000
 const baseTestsDir = join(__dirname, '..', '..', 'tests')
 const storageState =  join(baseTestsDir, 'e2e/.auth/user.json')
 const rtlSpecs = /rtl-layout\.spec\.ts/
+const rtlStorageState = join(baseTestsDir, 'e2e/.auth/rtl-user.json')
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -80,16 +81,13 @@ export default defineConfig({
 			testIgnore: [/.*\.setup\.ts/, /.*\.teardown\.ts/, rtlSpecs]
 		},
 
-		// The RTL specs run with the test user on a right-to-left locale. The
-		// setup installs the language pack and switches the user; the teardown
-		// switches back, so the other projects never see the site mirrored.
+		// The RTL specs sign in as a user of their own on a right-to-left locale
+		// and keep that session apart, so the other projects never see the site
+		// mirrored whatever order Playwright runs them in.
 		{
 			name: 'rtl-setup',
 			testMatch: /rtl\.setup\.ts/,
-			use: {
-				...devices['Desktop Chrome'],
-				storageState
-			},
+			use: { ...devices['Desktop Chrome'] },
 			dependencies: ['setup']
 		},
 		{
@@ -101,9 +99,9 @@ export default defineConfig({
 			testMatch: rtlSpecs,
 			use: {
 				...devices['Desktop Chrome'],
-				storageState
+				storageState: rtlStorageState
 			},
-			dependencies: ['setup', 'rtl-setup'],
+			dependencies: ['rtl-setup'],
 			teardown: 'rtl-teardown'
 		}
 	],
