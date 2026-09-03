@@ -22,4 +22,10 @@
 	--cs-card-radius: 8px;
 	--cs-control-height: 38px;
 	--cs-control-radius: 5px;
+	--cs-direction-multiplier: 1; // LTR = 1, RTL = -1
+}
+
+html[dir="rtl"],
+body.rtl {
+	--cs-direction-multiplier: -1;
 }
