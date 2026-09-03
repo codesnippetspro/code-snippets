@@ -114,6 +114,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       statuses: write
+      contents: read
+      checks: read
     steps:
       - name: Checkout gate action
         uses: actions/checkout@v4
