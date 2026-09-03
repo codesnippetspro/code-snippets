@@ -1,18 +1,19 @@
+import { existsSync, readFileSync, unlinkSync } from 'fs'
 import { test as teardown } from '@playwright/test'
 import { wpCli } from './helpers/wpCli'
+import { rtlCreatedMarker } from './rtl.setup'
 
-// Remove the right-to-left user the setup created, so the site is left as found.
-// Only a user that was never created is tolerated; a failed delete must fail here.
+// Remove the right-to-left user only if this run created it; an account that
+// already existed on the site is left alone. A failed delete fails the teardown.
 teardown('remove the right-to-left user', async () => {
-	let exists = true
-
-	try {
-		await wpCli(['user', 'get', 'rtl-admin', '--field=ID'])
-	} catch {
-		exists = false
+	if (!existsSync(rtlCreatedMarker)) {
+		return
 	}
 
-	if (exists) {
-		await wpCli(['user', 'delete', 'rtl-admin', '--yes'])
+	const created = 'created' === readFileSync(rtlCreatedMarker, 'utf8').trim()
+	unlinkSync(rtlCreatedMarker)
+
+	if (created) {
+		await wpCli(['user', 'delete', 'cs-e2e-rtl', '--yes'])
 	}
 })

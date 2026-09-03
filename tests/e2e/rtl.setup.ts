@@ -1,4 +1,5 @@
 import { join } from 'path'
+import { writeFileSync } from 'fs'
 import { expect, test as setup } from '@playwright/test'
 import { wpCli } from './helpers/wpCli'
 
@@ -8,10 +9,14 @@ import { wpCli } from './helpers/wpCli'
 // fetched from wordpress.org when missing; if that is impossible (offline),
 // the specs notice the page is still left-to-right and skip themselves.
 const RTL_LOCALE = 'he_IL'
-const RTL_USER = 'rtl-admin'
+const RTL_USER = 'cs-e2e-rtl'
 const SETUP_TIMEOUT_MS = 180000
 
 export const rtlAuthFile = join(__dirname, '.auth/rtl-user.json')
+
+// Records whether this run created the user, so the teardown only removes an
+// account it made and never one that already existed on the site.
+export const rtlCreatedMarker = join(__dirname, '.auth/rtl-user-created')
 
 setup('sign in as a right-to-left user', async ({ page }) => {
 	setup.setTimeout(SETUP_TIMEOUT_MS)
@@ -23,12 +28,16 @@ setup('sign in as a right-to-left user', async ({ page }) => {
 	}
 
 	// `user create` takes no locale flag, so the locale is set by a second command.
+	let created = false
+
 	try {
 		await wpCli(['user', 'get', RTL_USER, '--field=ID'])
 	} catch {
 		await wpCli(['user', 'create', RTL_USER, `${RTL_USER}@example.org`, '--role=administrator'])
+		created = true
 	}
 
+	writeFileSync(rtlCreatedMarker, created ? 'created' : 'existing')
 	await wpCli(['user', 'update', RTL_USER, '--user_pass=password', `--locale=${RTL_LOCALE}`])
 
 	await page.goto('/wp-login.php')
