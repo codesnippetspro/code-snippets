@@ -1,4 +1,4 @@
-@use '../common/banners';
+@use '../common/notices';
 @use '../common/checkbox';
 @use '../common/theme';
 
@@ -83,7 +83,7 @@
 }
 
 .cloud-search {
-	@include banners.banners;
+	@include notices.notices('banner');
 
 	padding-block-start: 10px;
 
