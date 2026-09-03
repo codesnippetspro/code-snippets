@@ -3,7 +3,9 @@
 namespace Code_Snippets\Core;
 
 use Code_Snippets\UnitTestCase;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\flush_cache_group;
+use function Code_Snippets\flush_known_cache_keys;
 use function Code_Snippets\flush_versioned_cache_groups;
 use const Code_Snippets\CACHE_GROUP;
 use const Code_Snippets\CACHE_GROUP_BASE;
@@ -105,5 +107,44 @@ class Versioned_Cache_Test extends UnitTestCase {
 		flush_versioned_cache_groups( '' );
 
 		$this->assertTrue( true );
+	}
+
+	/**
+	 * Every key the plugin writes is deleted individually, for caches that cannot flush a group.
+	 *
+	 * @return void
+	 */
+	public function test_known_keys_are_deleted_without_a_group_flush(): void {
+		$table = code_snippets()->db->get_table_name( false );
+		$keys  = [
+			"all_snippets_$table",
+			"all_snippet_tags_$table",
+			'active_snippets_global_single-use_front-end_' . $table,
+			\Code_Snippets\Settings\CACHE_KEY,
+		];
+
+		foreach ( $keys as $key ) {
+			wp_cache_set( $key, 'stale', CACHE_GROUP );
+		}
+
+		flush_known_cache_keys();
+
+		foreach ( $keys as $key ) {
+			$this->assertFalse( wp_cache_get( $key, CACHE_GROUP ), $key );
+		}
+	}
+
+	/**
+	 * Flushing the versioned groups leaves no snippet data behind, whichever path the cache supports.
+	 *
+	 * @return void
+	 */
+	public function test_versioned_flush_leaves_no_snippet_data(): void {
+		$table = code_snippets()->db->get_table_name( false );
+		wp_cache_set( "all_snippets_$table", 'stale', CACHE_GROUP );
+
+		flush_versioned_cache_groups( '' );
+
+		$this->assertFalse( wp_cache_get( "all_snippets_$table", CACHE_GROUP ) );
 	}
 }
