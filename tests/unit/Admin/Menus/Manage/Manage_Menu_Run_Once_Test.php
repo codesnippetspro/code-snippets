@@ -101,7 +101,10 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 		$snippet->code   = $code;
 		$snippet->active = false;
 
-		return save_snippet( $snippet );
+		$saved = save_snippet( $snippet );
+		$this->assertNotNull( $saved, 'the single-use snippet must save before the test can run it' );
+
+		return $saved;
 	}
 
 	/**
@@ -186,5 +189,21 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
 		$this->assertArrayNotHasKey( 'code_snippets_run_once_nonce', $menu->refresh_run_once_nonce( [] ) );
+	}
+
+	/**
+	 * A user without the capability is refused even with a nonce of their own.
+	 *
+	 * @return void
+	 */
+	public function test_capability_is_required_even_with_a_valid_nonce(): void {
+		$snippet = $this->single_use( 'update_option( "run_once_ran", "yes" );' );
+
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
+		$own_nonce = wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE );
+
+		$this->assertNull( $this->run_once_request( $snippet->id, $own_nonce ) );
+		$this->assertFalse( (bool) get_snippet( $snippet->id )->active );
+		$this->assertFalse( get_option( 'run_once_ran' ) );
 	}
 }
