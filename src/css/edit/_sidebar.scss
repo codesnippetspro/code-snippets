@@ -179,12 +179,6 @@
 
 	.components-form-token-field {
 		inline-size: 100%;
-
-		// The component's own grey is 4.05:1 on the sidebar surface; the muted
-		// text token clears the 4.5:1 floor.
-		.components-form-token-field__help {
-			color: var(--cs-color-text-muted);
-		}
 	}
 
 	.generate-button {

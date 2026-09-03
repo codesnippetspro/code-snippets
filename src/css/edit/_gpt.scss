@@ -109,3 +109,10 @@
 		justify-content: flex-end;
 	}
 }
+
+// The tags field sits in the lower form area, not the sidebar. Its help text
+// takes the component's own grey, 4.05:1 on this surface, from an injected
+// single-class rule; two classes outrank it and the muted token clears 4.5:1.
+.snippet-tags-container .components-form-token-field__help {
+	color: var(--cs-color-text-muted);
+}
