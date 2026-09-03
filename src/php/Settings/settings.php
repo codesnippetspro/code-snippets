@@ -136,6 +136,15 @@ function do_settings_fields_with_headings( string $page, string $section ): void
 
 		echo '<tr' . $class . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
 
+		// A field with no title, such as a notice rendered by a callback, spans
+		// the row rather than leaving an empty header cell for a screen reader.
+		if ( '' === (string) $field['title'] ) {
+			echo '<td colspan="2">';
+			call_user_func( $field['callback'], $field['args'] );
+			echo '</td></tr>';
+			continue;
+		}
+
 		if ( ! empty( $field['args']['label_for'] ) ) {
 			printf(
 				'<th scope="row"><label for="%s">%s</label></th>',

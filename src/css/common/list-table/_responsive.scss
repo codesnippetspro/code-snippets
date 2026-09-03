@@ -125,9 +125,12 @@
 		display: none;
 	}
 
+	// The pagination and view toggle cannot shrink, so the group must not be
+	// asked to: letting it shrink pushed the toggle out of the toolbar (and
+	// off the page edge in RTL) between the tablet collapse and about 1400px.
 	.tablenav-end-group {
-		flex: 0 1 auto;
-		min-inline-size: 0;
+		flex: 0 0 auto;
+		min-inline-size: fit-content;
 	}
 
 	// The item count is the first thing to give way when space runs short.
@@ -145,7 +148,7 @@
 // "Select all" at the start, the pagination + view-toggle group pinned to the
 // end. A forced full-width break keeps the split deterministic regardless of
 // content width.
-@media (782px < width <= 1210px) {
+@media (782px < width <= 1400px) {
 	.snippets-list-view .tablenav.top {
 		flex-wrap: wrap;
 		row-gap: 8px;

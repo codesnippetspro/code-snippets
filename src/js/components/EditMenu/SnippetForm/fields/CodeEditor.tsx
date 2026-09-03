@@ -104,6 +104,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 			if (textareaRef.current && !editorInstance && window.wp.codeEditor) {
 				editorInstance = window.wp.codeEditor.initialize(textareaRef.current)
 
+				// CodeMirror hides the labelled textarea and types into an unlabelled one
+				// of its own, so the name has to be put on that input directly.
+				editorInstance.codemirror.getInputField().setAttribute('aria-label', __('Snippet code', 'code-snippets'))
+
 				editorInstance.codemirror.on('changes', (instance, changes) =>
 					handleEditorChanges(instance, changes, setSnippet, setCurrentNotice))
 			}
