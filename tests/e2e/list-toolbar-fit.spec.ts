@@ -23,10 +23,12 @@ test.describe('Snippets toolbar fit', () => {
 				const t = toggle.getBoundingClientRect()
 				return {
 					pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-					toggleInsideNav: t.left >= n.left - 1 && t.right <= n.right + 1
+					toggleInsideNav: t.left >= n.left - 1 && t.right <= n.right + 1,
+					wraps: 'wrap' === getComputedStyle(nav).flexWrap
 				}
 			})
 
+			expect(fit.wraps, 'the row collapses onto two lines up to 1400px and not above').toBe(1400 >= width)
 			expect(fit.pageOverflow).toBeLessThanOrEqual(0)
 			expect(fit.toggleInsideNav).toBe(true)
 		})

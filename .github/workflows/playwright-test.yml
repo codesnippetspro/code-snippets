@@ -245,8 +245,12 @@ jobs:
           mkdir -p test-results/ci
           suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
           : > "test-results/ci/playwright-${suffix}.log"
-          # shellcheck disable=SC2086 -- project-name may hold several names.
-          npm run test:playwright -- --project ${{ inputs.project-name }} 2>&1 | tee -a "test-results/ci/playwright-${suffix}.log"
+          # One --project flag per name, so several projects can be listed in the input.
+          project_args=()
+          for project in ${{ inputs.project-name }}; do
+            project_args+=(--project "$project")
+          done
+          npm run test:playwright -- "${project_args[@]}" 2>&1 | tee -a "test-results/ci/playwright-${suffix}.log"
 
       - name: Normalize Playwright report filenames
         if: always()

@@ -1,5 +1,6 @@
-import { join } from 'path'
+import { writeFileSync } from 'fs'
 import { expect, test as setup } from '@playwright/test'
+import { RTL_LOCALE, RTL_USER, rtlAuthFile, rtlCreatedMarker } from './helpers/rtlUser'
 import { wpCli } from './helpers/wpCli'
 
 // The RTL specs sign in as a user of their own whose locale is right-to-left,
@@ -7,11 +8,7 @@ import { wpCli } from './helpers/wpCli'
 // site mirrored, whatever order the projects run in. The language pack is
 // fetched from wordpress.org when missing; if that is impossible (offline),
 // the specs notice the page is still left-to-right and skip themselves.
-const RTL_LOCALE = 'he_IL'
-const RTL_USER = 'rtl-admin'
 const SETUP_TIMEOUT_MS = 180000
-
-export const rtlAuthFile = join(__dirname, '.auth/rtl-user.json')
 
 setup('sign in as a right-to-left user', async ({ page }) => {
 	setup.setTimeout(SETUP_TIMEOUT_MS)
@@ -23,12 +20,16 @@ setup('sign in as a right-to-left user', async ({ page }) => {
 	}
 
 	// `user create` takes no locale flag, so the locale is set by a second command.
+	let created = false
+
 	try {
 		await wpCli(['user', 'get', RTL_USER, '--field=ID'])
 	} catch {
 		await wpCli(['user', 'create', RTL_USER, `${RTL_USER}@example.org`, '--role=administrator'])
+		created = true
 	}
 
+	writeFileSync(rtlCreatedMarker, created ? 'created' : 'existing')
 	await wpCli(['user', 'update', RTL_USER, '--user_pass=password', `--locale=${RTL_LOCALE}`])
 
 	await page.goto('/wp-login.php')
