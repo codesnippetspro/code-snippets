@@ -321,15 +321,15 @@
 			text-transform: uppercase;
 			border-radius: 5px;
 
-			@at-root .import-select-card .html-snippet & {
+			@at-root .import-select-card .html-snippet .column-type span {
 				background-color: #cd4510;
 			}
 
-			@at-root .import-select-card .js-snippet & {
+			@at-root .import-select-card .js-snippet .column-type span {
 				background-color: #f7d67a;
 			}
 
-			@at-root .import-select-card .css-snippet & {
+			@at-root .import-select-card .css-snippet .column-type span {
 				background-color: #9b59b6;
 			}
 		}
