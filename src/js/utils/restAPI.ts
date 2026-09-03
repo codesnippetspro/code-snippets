@@ -56,6 +56,10 @@ export const applyMethodOverride = (config: InternalAxiosRequestConfig): Interna
  * reloading the page, which loses whatever was being written.
  */
 let restNonce = window.CODE_SNIPPETS?.restAPI.nonce
+let runOnceNonce = window.CODE_SNIPPETS_MANAGE?.runOnceNonce
+
+/** The Run Once nonce as last refreshed by the Heartbeat, or the one rendered with the page. */
+export const getRunOnceNonce = (): string => runOnceNonce ?? ''
 
 /**
  * Keep the REST nonce current for as long as the page is open.
@@ -71,9 +75,13 @@ export const listenForNonceRefresh = () => {
 	window.wp.hooks?.addAction(
 		'heartbeat.tick',
 		'code-snippets/refresh-rest-nonce',
-		(data: { rest_nonce?: string }) => {
+		(data: { rest_nonce?: string, code_snippets_run_once_nonce?: string }) => {
 			if (data.rest_nonce) {
 				restNonce = data.rest_nonce
+			}
+
+			if (data.code_snippets_run_once_nonce) {
+				runOnceNonce = data.code_snippets_run_once_nonce
 			}
 		}
 	)
