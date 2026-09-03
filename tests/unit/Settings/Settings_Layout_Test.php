@@ -102,6 +102,7 @@ class Settings_Layout_Test extends UnitTestCase {
 			]
 		);
 		add_settings_field( 'third', 'Third', '__return_null', Settings_Menu::SETTINGS_PAGE, 'layout-test', [ 'group_heading' => 'Group two' ] );
+		add_settings_field( 'notice', '', static fn() => print( 'Notice text' ), Settings_Menu::SETTINGS_PAGE, 'layout-test' );
 
 		ob_start();
 		do_settings_fields_with_headings( Settings_Menu::SETTINGS_PAGE, 'layout-test' );
@@ -112,6 +113,8 @@ class Settings_Layout_Test extends UnitTestCase {
 		$this->assertStringContainsString( 'Group two', $html );
 		$this->assertStringContainsString( '<label for="field-second">Second</label>', $html );
 		$this->assertStringContainsString( '<th scope="row">First</th>', $html );
+		$this->assertStringContainsString( '<td colspan="2">Notice text</td>', $html, 'a field with no title spans the row' );
+		$this->assertStringNotContainsString( '<th scope="row"></th>', $html, 'no empty header cell is left behind' );
 	}
 
 	/**
