@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, unlinkSync } from 'fs'
 import { test as teardown } from '@playwright/test'
+import { RTL_USER, rtlCreatedMarker } from './helpers/rtlUser'
 import { wpCli } from './helpers/wpCli'
-import { rtlCreatedMarker } from './rtl.setup'
 
 // Remove the right-to-left user only if this run created it; an account that
 // already existed on the site is left alone. A failed delete fails the teardown.
@@ -14,6 +14,6 @@ teardown('remove the right-to-left user', async () => {
 	unlinkSync(rtlCreatedMarker)
 
 	if (created) {
-		await wpCli(['user', 'delete', 'cs-e2e-rtl', '--yes'])
+		await wpCli(['user', 'delete', RTL_USER, '--yes'])
 	}
 })
