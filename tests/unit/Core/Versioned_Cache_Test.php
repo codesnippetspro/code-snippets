@@ -115,11 +115,14 @@ class Versioned_Cache_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_known_keys_are_deleted_without_a_group_flush(): void {
-		$table = code_snippets()->db->get_table_name( false );
-		$keys  = [
+		$table   = code_snippets()->db->get_table_name( false );
+		$network = code_snippets()->db->get_table_name( true );
+		$keys    = [
 			"all_snippets_$table",
 			"all_snippet_tags_$table",
 			'active_snippets_global_single-use_front-end_' . $table,
+			"all_snippets_$network",
+			"all_snippet_tags_$network",
 			\Code_Snippets\Settings\CACHE_KEY,
 		];
 
@@ -146,5 +149,27 @@ class Versioned_Cache_Test extends UnitTestCase {
 		flush_versioned_cache_groups( '' );
 
 		$this->assertFalse( wp_cache_get( "all_snippets_$table", CACHE_GROUP ) );
+	}
+
+	/**
+	 * When the cache cannot flush a group, the full flush still removes every known key.
+	 *
+	 * @return void
+	 */
+	public function test_versioned_flush_falls_back_to_known_keys(): void {
+		$table = code_snippets()->db->get_table_name( false );
+		$keys  = [ "all_snippets_$table", "all_snippet_tags_$table", \Code_Snippets\Settings\CACHE_KEY ];
+
+		foreach ( $keys as $key ) {
+			wp_cache_set( $key, 'stale', CACHE_GROUP );
+		}
+
+		add_filter( 'code_snippets/pre_flush_cache_group', '__return_false' );
+		flush_versioned_cache_groups( '' );
+		remove_filter( 'code_snippets/pre_flush_cache_group', '__return_false' );
+
+		foreach ( $keys as $key ) {
+			$this->assertFalse( wp_cache_get( $key, CACHE_GROUP ), $key );
+		}
 	}
 }
