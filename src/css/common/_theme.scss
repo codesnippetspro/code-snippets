@@ -24,29 +24,6 @@
 	--cs-control-radius: 5px;
 }
 
-/* format: background-color [color] */
-$badges: (
-	// php/html/cond darkened for WCAG AA — at least 4.5:1 against white 12px
-	// bold text; php reuses the accent token, html/cond keep hue at reduced lightness.
-	php: #2271b1,
-	html: #cd4510,
-	css: #9b59b6,
-	js: #f7d67a #1c1f20,
-	cond: #22826f,
-	core: #4fa1a6,
-	pro: #f7e8e3 #df9279,
-	cloud: #009fb4,
-	bundles: #50575e,
-	cloud_search: #d27c00,
-	private: #f7e6be #a27813,
-	public: #dbebf7 #2271b1,
-	success: #d3e8d1 #447340,
-	failure: #fad7c1 #a24b16,
-	info: #d2e6f4 #2b71a3,
-	neutral: #f6f7f7 #646970,
-	neutralDark: #e2e5e5 #6c7e7e,
-	special: #dfc5ef #6e249c
-);
 $notices: (
 	success: #d3e9d3 #377a37,
 	warning: #f2ebc3 #b0730a,
