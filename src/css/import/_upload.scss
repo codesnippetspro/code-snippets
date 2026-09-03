@@ -1,11 +1,5 @@
 @use '../common/theme';
 
-$type-colors: (
-	css: #9b59b6,
-	js: #ffeb3b,
-	html: #ef6a36
-);
-
 .import-upload-card {
 	h2 {
 		margin: 0 0 1em;
@@ -327,10 +321,16 @@ $type-colors: (
 			text-transform: uppercase;
 			border-radius: 5px;
 
-			@each $type, $color in $type-colors {
-				@at-root .import-select-card .#{$type}-snippet & {
-					background-color: $color;
-				}
+			@at-root .import-select-card .html-snippet & {
+				background-color: #cd4510;
+			}
+
+			@at-root .import-select-card .js-snippet & {
+				background-color: #f7d67a;
+			}
+
+			@at-root .import-select-card .css-snippet & {
+				background-color: #9b59b6;
 			}
 		}
 	}
