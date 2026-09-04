@@ -172,6 +172,10 @@
 			font-weight: 400;
 			color: var(--cs-color-accent);
 
+			&:focus {
+				outline: 2px solid var(--cs-color-accent);
+			}
+
 			&:hover:not(:disabled),
 			&:focus:not(:disabled) {
 				background: none;
