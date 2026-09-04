@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
+use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
@@ -395,6 +396,7 @@ class Plugin {
 					'settings' => ! are_settings_unified() || is_super_admin()
 						? esc_url_raw( $this->get_menu_url( 'settings' ) )
 						: null,
+					'demoReset' => esc_url_raw( Manage_Menu::get_demo_reset_url() ),
 				],
 			]
 		);

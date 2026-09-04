@@ -134,7 +134,10 @@ test.describe('Blueprints demo', () => {
 		await page.goto(DEMO_URL)
 		await expect(link.locator('.demo-chip')).toBeVisible()
 
-		await page.goto('/wp-admin/admin.php?page=snippets&demo-reset=true')
+		// The reset is nonce-protected, so the signed address is taken from the
+		// page rather than typed.
+		const resetUrl = await page.evaluate(() => window.CODE_SNIPPETS?.urls.demoReset)
+		await page.goto(String(resetUrl))
 
 		// The reset redirects to a clean address rather than leaving the
 		// parameter in place for a refresh to repeat.

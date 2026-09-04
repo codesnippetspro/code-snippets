@@ -61,6 +61,7 @@ declare global {
 				import: string
 				settings: string | null
 				cloud: string
+				demoReset: string
 			}
 			banner: {
 				key: string
