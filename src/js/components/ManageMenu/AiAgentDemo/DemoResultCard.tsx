@@ -22,7 +22,7 @@ interface RowProps {
 const ResultRow: React.FC<RowProps> = ({ snippet, stage, onPreview }) =>
 	<li className="ai-agent-result__row">
 		{hasReached(stage, 'refine-open') &&
-			<input type="checkbox" checked readOnly aria-label={snippet.name} />}
+			<input type="checkbox" checked disabled aria-label={snippet.name} />}
 
 		<Badge name={languageToSnippetType(snippet.language)} small />
 		<span className="ai-agent-result__name">{snippet.name}</span>
