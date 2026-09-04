@@ -95,7 +95,6 @@ class Settings_Layout {
 				[ 'version-switch', 'version_switcher' ],
 				[ 'version-switch', 'refresh_versions' ],
 				[ 'version-switch', 'version_warning' ],
-				[ 'debug', 'enable_version_change' ],
 				[ 'debug', 'reset_caches' ],
 				[ 'debug', 'database_update' ],
 				[ 'general', 'complete_uninstall' ],

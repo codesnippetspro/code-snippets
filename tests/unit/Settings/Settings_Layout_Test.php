@@ -144,4 +144,18 @@ class Settings_Layout_Test extends UnitTestCase {
 		$_REQUEST['section'] = '<script>bogus</script>';
 		$this->assertSame( 'editing', $menu->get_current_section(), 'an invalid request value falls back to the first tab' );
 	}
+
+	/**
+	 * Version switching is offered on its own, with no setting standing in front of it.
+	 *
+	 * @return void
+	 */
+	public function test_version_switching_needs_no_setting_to_enable_it(): void {
+		$settings = Settings_Fields::get_default_values();
+		$fields = Settings_Layout::get_visible_fields( 'advanced', $settings );
+
+		$this->assertContains( [ 'version-switch', 'version_switcher' ], $fields );
+		$this->assertNotContains( [ 'debug', 'enable_version_change' ], $fields );
+		$this->assertArrayNotHasKey( 'enable_version_change', Settings_Fields::get_field_definitions()['debug'] );
+	}
 }

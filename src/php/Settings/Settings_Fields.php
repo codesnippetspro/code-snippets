@@ -113,9 +113,6 @@ class Settings_Fields {
 			'version-switch' => [
 				'selected_version' => '',
 			],
-			'debug'          => [
-				'enable_version_change' => false,
-			],
 		];
 
 		$this->defaults = apply_filters( 'code_snippets_settings_defaults', $this->defaults );
@@ -140,11 +137,6 @@ class Settings_Fields {
 				'name' => __( 'Reset Caches', 'code-snippets' ),
 				'type' => 'action',
 				'desc' => __( 'Use this button to manually clear snippets caches. Worth doing before switching to an older version of the plugin, if your site uses a persistent object cache.', 'code-snippets' ),
-			],
-			'enable_version_change' => [
-				'name'  => __( 'Version Change', 'code-snippets' ),
-				'type'  => 'checkbox',
-				'label' => __( 'Enable the ability to switch or rollback versions of the Code Snippets core plugin.', 'code-snippets' ),
 			],
 		];
 
