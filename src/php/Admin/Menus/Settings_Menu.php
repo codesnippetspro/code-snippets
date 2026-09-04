@@ -175,16 +175,22 @@ class Settings_Menu extends Admin_Menu {
 	 *
 	 * @return string
 	 */
-	public function get_current_section( string $default_section = 'general' ): string {
+	public function get_current_section( string $default_section = '' ): string {
 		$sections = $this->get_sections();
 
 		if ( ! $sections ) {
 			return $default_section;
 		}
 
+		// Fall back to the first registered tab. Naming a specific section here
+		// meant the page rendered empty whenever that section stopped existing.
+		$fallback = $default_section && isset( $sections[ $default_section ] )
+			? $default_section
+			: (string) array_key_first( $sections );
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is matched to registered sections.
-		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default_section;
-		return isset( $sections[ $active_tab ] ) ? $active_tab : $default_section;
+		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $fallback;
+		return isset( $sections[ $active_tab ] ) ? $active_tab : $fallback;
 	}
 
 	/**
@@ -304,7 +310,7 @@ class Settings_Menu extends Admin_Menu {
 
 			printf( '<div class="settings-section %s-settings"><table class="form-table">', esc_attr( $section['id'] ) );
 
-			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
+			\Code_Snippets\Settings\do_settings_fields_with_headings( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table></div>';
 		}
 	}

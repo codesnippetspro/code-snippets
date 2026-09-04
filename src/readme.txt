@@ -1,12 +1,12 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, louiswol94, carolinaop
+Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, carolinaop, tallblokeuk
 Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.9.6
+Stable tag: 3.10.2
 Requires at least: 5.5
-Tested up to: 7.0.3
+Tested up to: 7.1
 Requires PHP: 7.4
 
 An easy, clean, and simple way to enhance your site with code snippets.
@@ -110,12 +110,55 @@ You can report security bugs found in the source code of this plugin through the
 
 __Added__
 
-* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
-* Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud.
 * AI Agent demo: a guided, scripted walkthrough of the Pro AI Agent that plans, builds, and refines a welcome banner snippet named after your site. Runs entirely inside the plugin — no data leaves your site and no snippets are added to your library.
 * Blueprints demo: a guided, scripted walkthrough of Pro Blueprints that steps through the "Create a Shortcode" blueprint and confirms the snippet it would generate. Runs entirely inside the plugin — no code is generated and nothing is saved.
 * Cloud Library demo: a guided, scripted walkthrough of the Pro Cloud Library, showing how a cloud snippet is previewed, downloaded inactive, and then kept in sync. Runs entirely inside the plugin — the snippets shown are examples and nothing is downloaded.
 * "New" badges on the AI Agent, Blueprints, and Cloud Library toolbar tabs, which soften once each demo walkthrough has been watched.
+
+= 3.10.2 (2026-09-01) =
+
+__Added__
+
+* Added a confirmation flow for run-once snippet execution and hardened the handler to prevent failed or confusing actions.
+
+__Changed__
+
+* Snippet names now respect the row truncation Screen Option in the admin list for better readability.
+* Version switching AJAX requests now validate the correct nonce, improving reliability when updating snippet versions.
+
+__Fixed__
+
+* Fixed safe mode fatal errors caused by an undefined wp_get_current_user() call.
+* Fixed PHP validation being triggered incorrectly when activating snippets in bulk.
+* Fixed saving issues after a user session expires.
+* Fixed warnings caused by aliased field names when reading modified snippet fields.
+* Fixed vendor autoloader issues by stripping unprefixed namespace references.
+* Resolved issues where snippet names and version switches could behave inconsistently in the admin UI.
+
+= 3.10.1 (2026-08-28) =
+
+__Changed__
+
+* Enhanced active-link visibility in the toolbar with border-based styling.
+
+__Fixed__
+
+* Fixed a fatal error affecting snippets that use a `namespace` or `declare` statement.
+* Fixed the snippets page rendering blank when another plugin's screen settings filter returned an invalid value.
+* Fixed snippet saving on hosts that block REST API `PUT` and `PATCH` requests, by sending writes as `POST` with a method override.
+* Fixed the Snippets List Order setting not being applied to the snippets list.
+* Fixed admin bar snippet scripts failing to load on the free version, including on the site front end.
+* Fixed snippet modified dates being sent without the correct UTC offset.
+* Fixed the row truncation screen option not persisting across sessions.
+* Fixed inconsistent sidebar label sizes.
+* Fixed the sticky editor sidebar showing an unwanted horizontal scrollbar.
+
+= 3.10.0 (2026-08-24) =
+
+__Added__
+
+* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
+* Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud.
 * Snippet preview modal for viewing snippet code from the snippets table without opening the editor.
 * Automatic hiding of unrelated admin notices from other plugins on Code Snippets screens.
 * Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from the WordPress admin bar.

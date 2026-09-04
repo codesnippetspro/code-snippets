@@ -21,8 +21,8 @@
 // table rows) and vertically aligned with the rest of the row.
 .wp-list-table .priority-column input {
 	appearance: none;
-	background: #fff;
-	border: 1px solid theme.$control-border;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border);
 	border-radius: 5px;
 	box-shadow: none;
 	box-sizing: border-box;
@@ -38,7 +38,7 @@
 	margin-block: 0;
 	margin-inline: 1px;
 	line-height: 2;
-	color: #2c3337;
+	color: var(--cs-color-text);
 	text-align: center;
 
 	&:disabled {
@@ -46,9 +46,9 @@
 	}
 
 	&:hover, &:focus, &:active {
-		color: #000;
+		color: var(--cs-color-text);
 		background-color: rgb(0 0 0 / 10%);
-		border-radius: 6px;
+		border-radius: 5px;
 		appearance: unset;
 
 		&:disabled {
@@ -122,7 +122,14 @@
 		padding-inline-end: 32px;
 
 		> a {
-			@include badges.badge-link;
+			display: inline-flex;
+			border-radius: 5px;
+
+			&:focus,
+			&:focus-visible {
+				outline: none;
+				box-shadow: 0 0 0 2px var(--cs-color-surface), 0 0 0 4px var(--cs-color-accent);
+			}
 		}
 
 		h3 {
@@ -137,7 +144,7 @@
 
 			.snippet-name {
 				display: block;
-				color: theme.$accent;
+				color: var(--cs-color-accent);
 				text-decoration: none;
 				white-space: nowrap;
 				overflow: hidden;
@@ -165,11 +172,11 @@
 		line-height: 1.5;
 
 		.snippet-card-tags-label {
-			color: #646970;
+			color: var(--cs-color-text-muted);
 		}
 
 		.snippet-card-tags a {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			text-decoration: none;
 		}
 
@@ -190,8 +197,8 @@
 		overflow: hidden;
 		font-size: 14px;
 		line-height: 1.5;
-		color: #646970;
-		border-block-start: 1px solid #dcdcde;
+		color: var(--cs-color-text-muted);
+		border-block-start: 1px solid var(--cs-color-border-subtle);
 		padding-block-start: 16px;
 	}
 
@@ -230,10 +237,10 @@
 			margin: 0;
 			padding-block: 0;
 			padding-inline: 4px;
-			border: 1px solid #e2e2e4;
-			border-radius: 4px;
+			border: 1px solid var(--cs-color-border-subtle);
+			border-radius: 5px;
 			text-align: center;
-			color: #2c3337;
+			color: var(--cs-color-text);
 		}
 	}
 }
@@ -251,7 +258,7 @@
 	margin-block: 0 12px;
 	font-size: 14px;
 	font-style: italic;
-	color: #646970;
+	color: var(--cs-color-text-muted);
 	text-align: center;
 	display: flex;
 	align-items: center;

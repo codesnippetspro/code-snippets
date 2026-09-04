@@ -1,46 +1,36 @@
 name: "(Test): Playwright"
 
+# Reusable suite. Triggering is owned by ci.yml (the label dispatcher).
 on:
-  pull_request:
-    types: [labeled, synchronize, opened, reopened]
-  push:
-    branches:
-      - 'core'
-      - 'pro'
-      - 'core-beta'
-      - 'pro-beta'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.gitignore'
-      - 'docs/**'
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      multisite:
+        required: false
+        type: boolean
+        default: false
+        description: 'Run the multisite variant.'
 
 permissions:
   contents: read
   pull-requests: read
   actions: read
 
-concurrency:
-  group: playwright-${{ github.workflow }}-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}-${{ (github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))) && 'tests' || github.run_id }}
-  cancel-in-progress: ${{ github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite')) }}
-
 jobs:
   playwright-default:
-    if: github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'default'
-      project-name: 'chromium-db-snippets'
-      multisite: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && contains(github.event.pull_request.labels.*.name, 'multisite') }}
+      # The right-to-left project runs after the default one on the same site;
+      # its own setup switches the test user's locale and its teardown restores it.
+      project-name: 'chromium-db-snippets chromium-rtl'
+      multisite: ${{ inputs.multisite }}
 
   playwright-file-based-execution:
-    if: github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'file-based-execution'
       project-name: 'chromium-file-based-snippets'
-      multisite: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && contains(github.event.pull_request.labels.*.name, 'multisite') }}
+      multisite: ${{ inputs.multisite }}
 
   test-result:
     needs: [playwright-default, playwright-file-based-execution]

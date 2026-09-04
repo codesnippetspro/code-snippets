@@ -1,4 +1,4 @@
-$bg-color: rgb(19 18 18 / 90%);
+@use 'theme';
 
 .tooltip {
 	position: relative;
@@ -22,7 +22,7 @@ $bg-color: rgb(19 18 18 / 90%);
 	}
 
 	&:focus-visible {
-		outline: 2px solid #2271b1;
+		outline: 2px solid var(--cs-color-accent);
 		outline-offset: 2px;
 	}
 }
@@ -57,9 +57,9 @@ $bg-color: rgb(19 18 18 / 90%);
 .tooltip-content {
 	z-index: 1000;
 	padding: 8px;
-	background-color: rgb(19 18 18 / 90%);
+	background-color: var(--cs-tooltip-background-color);
 	color: #fff;
-	border-radius: 6px;
+	border-radius: 5px;
 	position: absolute;
 	font-size: 12px;
 	font-weight: normal;
@@ -86,7 +86,7 @@ $bg-color: rgb(19 18 18 / 90%);
 	&::before {
 		margin-inline-start: -6px;
 		margin-block-end: -12px;
-		border-block-start-color: $bg-color;
+		border-block-start-color: var(--cs-tooltip-background-color);
 	}
 
 	&::before, .tooltip-content {
@@ -99,7 +99,7 @@ $bg-color: rgb(19 18 18 / 90%);
 	&::before {
 		margin-block: -12px 0;
 		border-block-start-color: transparent;
-		border-block-end-color: $bg-color;
+		border-block-end-color: var(--cs-tooltip-background-color);
 	}
 
 	&::before, .tooltip-content {
@@ -118,7 +118,7 @@ $bg-color: rgb(19 18 18 / 90%);
 		margin-inline: 0 -12px;
 		margin-block-end: 0;
 		border-block-start-color: transparent;
-		border-inline-start-color: $bg-color;
+		border-inline-start-color: var(--cs-tooltip-background-color);
 	}
 
 	&::before, .tooltip-content {
@@ -131,7 +131,7 @@ $bg-color: rgb(19 18 18 / 90%);
 		margin-block-end: 0;
 		margin-inline-start: -12px;
 		border-block-start-color: transparent;
-		border-inline-end-color: $bg-color;
+		border-inline-end-color: var(--cs-tooltip-background-color);
 	}
 
 	&::before, .tooltip-content {

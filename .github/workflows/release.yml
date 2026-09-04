@@ -72,6 +72,28 @@ jobs:
 
           echo "::notice::Successfully dispatched core to pro sync"
 
+  sync-beta:
+    # Sync the stable release into its beta branch (core -> core-beta, pro -> pro-beta).
+    # Runs for both editions; pre-release tags are skipped by the downstream workflow.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch release-to-beta sync workflow
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT }}
+        run: |
+          echo "::notice::Dispatching release-to-beta sync for ${{ github.event.release.tag_name }}"
+
+          if ! gh workflow run "sync-release-to-beta.yml" \
+            --repo "codesnippetspro/.github-private" \
+            --ref main \
+            --field repo="${{ github.repository }}" \
+            --field tag="${{ github.event.release.tag_name }}"; then
+            echo "::error::Failed to dispatch sync-release-to-beta.yml"
+            exit 1
+          fi
+
+          echo "::notice::Successfully dispatched release-to-beta sync"
+
   deploy:
     needs: [build, upload]
     runs-on: ubuntu-latest

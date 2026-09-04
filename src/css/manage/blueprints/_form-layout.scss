@@ -1,6 +1,3 @@
-@use 'sass:color';
-@use '../../common/theme';
-
 $sidebar-width: 220px;
 $border-color: #c3c4c7;
 
@@ -53,14 +50,14 @@ $border-color: #c3c4c7;
 
 		&:hover,
 		&:focus-visible {
-			background: color.adjust(theme.$accent, $lightness: 46%);
-			color: theme.$accent;
+			background: var(--cs-color-accent-subtle);
+			color: var(--cs-color-accent);
 			outline: none;
 		}
 
 		&.is-active {
 			background: #fff;
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			border-inline-end: none;
 		}
 	}

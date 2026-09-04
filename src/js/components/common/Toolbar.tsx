@@ -43,6 +43,27 @@ const UpperNavItem = ({ name, url, label }: UpperNavItemProps) => {
 }
 const UpperNavItems = () =>
 	<>
+		{window.CODE_SNIPPETS?.urls.insights && (
+			<UpperNavItem
+				name="insights"
+				url={window.CODE_SNIPPETS.urls.insights}
+				label={__('Insights', 'code-snippets')}
+			/>)}
+
+		{window.CODE_SNIPPETS?.urls.import && (
+			<UpperNavItem
+				name="import-snippets"
+				url={window.CODE_SNIPPETS.urls.import}
+				label={_x('Import', 'snippets', 'code-snippets')}
+			/>)}
+
+		{window.CODE_SNIPPETS?.urls.welcome && (
+			<UpperNavItem
+				name="welcome"
+				url={window.CODE_SNIPPETS.urls.welcome}
+				label={__("What's New", 'code-snippets')}
+			/>)}
+
 		<UpperNavItem
 			name="docs"
 			url="https://codesnippets.pro/docs"
@@ -54,27 +75,6 @@ const UpperNavItems = () =>
 			url="https://codesnippets.cloud/"
 			label={__('Cloud Dashboard', 'code-snippets')}
 		/>
-
-		{window.CODE_SNIPPETS?.urls.insights && (
-			<UpperNavItem
-				name="insights"
-				url={window.CODE_SNIPPETS.urls.insights}
-				label={__('Insights', 'code-snippets')}
-			/>)}
-
-		{window.CODE_SNIPPETS?.urls.welcome && (
-			<UpperNavItem
-				name="welcome"
-				url={window.CODE_SNIPPETS.urls.welcome}
-				label={__("What's New", 'code-snippets')}
-			/>)}
-
-		{window.CODE_SNIPPETS?.urls.import && (
-			<UpperNavItem
-				name="import-snippets"
-				url={window.CODE_SNIPPETS.urls.import}
-				label={_x('Import', 'snippets', 'code-snippets')}
-			/>)}
 
 	</>
 
@@ -166,6 +166,21 @@ const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, 
 	)
 }
 
+const SettingsItem = () =>
+	window.CODE_SNIPPETS?.urls.settings
+		? <li>
+			<a
+				href={window.CODE_SNIPPETS.urls.settings}
+				className={classnames('settings-link', {
+					'active-link': 'snippets-settings' === searchParams.get('page')
+				})}
+			>
+				<SettingsIcon aria-hidden="true" />
+				<span className="toolbar-nav-label">{__('Settings', 'code-snippets')}</span>
+			</a>
+		</li>
+		: null
+
 const LowerNav = () =>
 	<div className="code-snippets-toolbar-lower">
 		<nav aria-label={__('Main features', 'code-snippets')}>
@@ -211,13 +226,7 @@ const LowerNav = () =>
 					demo="announce"
 				/>
 
-				{window.CODE_SNIPPETS?.urls.settings && (
-					<li className="toolbar-end-item">
-						<a href={window.CODE_SNIPPETS.urls.settings} className="settings-link">
-							<SettingsIcon aria-hidden="true" />
-							<span className="toolbar-nav-label">{__('Settings', 'code-snippets')}</span>
-						</a>
-					</li>)}
+				<SettingsItem />
 			</ul>
 		</nav>
 	</div>

@@ -1,9 +1,10 @@
 @use '../theme';
 
-// Toolbar squeeze: above the mobile breakpoint the row never wraps —
-// components shrink gracefully instead (flex-wrap would otherwise win
-// before flex-shrink ever engages). Wrapping remains the small-screen
-// fallback only.
+// Toolbar squeeze: above the tablet collapse (see below) the row never wraps;
+// components shrink instead (flex-wrap would otherwise win before flex-shrink
+// ever engages). Between 782px and 1400px the pagination and view toggle, which
+// cannot shrink, force the row onto two lines; below 782px wrapping is the
+// small-screen fallback.
 .snippets-list-view .tablenav {
 	flex-wrap: wrap;
 
@@ -86,11 +87,11 @@
 			box-sizing: border-box;
 			padding: 0;
 			margin: 0;
-			border-radius: 5.6px;
+			border-radius: 5px;
 		}
 
 		a.button {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 		}
 
 		.paging-input {
@@ -104,18 +105,18 @@
 			box-sizing: border-box;
 			margin: 0;
 			text-align: center;
-			color: #2c3337;
+			color: var(--cs-color-text);
 		}
 
 		.tablenav-paging-text {
 			font-size: 14px;
-			color: #646970;
+			color: var(--cs-color-text-muted);
 		}
 	}
 
 	.tablenav-pages .displaying-num {
 		font-size: 14px;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		white-space: nowrap;
 	}
 
@@ -125,9 +126,12 @@
 		display: none;
 	}
 
+	// The pagination and view toggle cannot shrink, so the group must not be
+	// asked to: letting it shrink pushed the toggle out of the toolbar (and
+	// off the page edge in RTL) between the tablet collapse and about 1400px.
 	.tablenav-end-group {
-		flex: 0 1 auto;
-		min-inline-size: 0;
+		flex: 0 0 auto;
+		min-inline-size: fit-content;
 	}
 
 	// The item count is the first thing to give way when space runs short.
@@ -145,7 +149,7 @@
 // "Select all" at the start, the pagination + view-toggle group pinned to the
 // end. A forced full-width break keeps the split deterministic regardless of
 // content width.
-@media (782px < width <= 1210px) {
+@media (782px < width <= 1400px) {
 	.snippets-list-view .tablenav.top {
 		flex-wrap: wrap;
 		row-gap: 8px;

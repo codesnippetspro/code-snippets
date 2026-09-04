@@ -1,5 +1,3 @@
-@use '../../common/theme';
-
 $surface-color: #fff;
 $border-color: #c3c4c7;
 
@@ -10,17 +8,17 @@ $border-color: #c3c4c7;
 		.button.button-secondary {
 			min-block-size: 36px;
 			padding-inline: 12px;
-			border-color: theme.$accent;
+			border-color: var(--cs-color-accent);
 			background: transparent;
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			font-size: 14px;
 			font-weight: 500;
 
 			&:hover,
 			&:focus-visible {
-				border-color: theme.$accent-hover;
+				border-color: var(--cs-color-accent-hover);
 				background: transparent;
-				color: theme.$accent-hover;
+				color: var(--cs-color-accent-hover);
 			}
 		}
 	}

@@ -16,11 +16,11 @@
    row-action links) so links keep their original colour; inactive rows are handled by the muted link-colors mixin,
    and the trash button keeps its dark red from the `.delete` rules. */
 .wp-list-table .active-snippet a {
-	color: theme.$accent;
+	color: var(--cs-color-accent);
 
 	&:hover,
 	&:focus {
-		color: theme.$accent-hover;
+		color: var(--cs-color-accent-hover);
 	}
 }
 
@@ -29,20 +29,20 @@
    in the body-text colour regardless of its link state. */
 /* stylelint-disable no-descending-specificity -- unrelated element; ordering is fine. */
 .subsubsub a.current {
-	color: #2c3337;
+	color: var(--cs-color-text);
 }
 
 .subsubsub a:not(.current) {
-	color: theme.$accent;
+	color: var(--cs-color-accent);
 
 	&:hover,
 	&:focus {
-		color: theme.$accent-hover;
+		color: var(--cs-color-accent-hover);
 	}
 }
 
 .snippets-table-toolbar .subsubsub a .count {
-	color: #2c3337;
+	color: var(--cs-color-text);
 }
 /* stylelint-enable no-descending-specificity */
 
@@ -51,7 +51,7 @@
 }
 
 .snippet-type-description {
-	border-block-end: 1px solid #ccc;
+	border-block-end: 1px solid var(--cs-color-border);
 	margin: 0;
 	padding-block: 1em;
 	padding-inline: 0;

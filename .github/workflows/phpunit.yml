@@ -1,33 +1,16 @@
 name: "(Test): PHPUnit"
 
+# Reusable suite. Triggering is owned by ci.yml (the label dispatcher).
 on:
-  pull_request:
-    types: [labeled, synchronize, opened, reopened]
-  push:
-    branches:
-      - 'core'
-      - 'pro'
-      - 'core-beta'
-      - 'pro-beta'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.gitignore'
-      - 'docs/**'
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
   pull-requests: read
   actions: read
 
-concurrency:
-  group: phpunit-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 jobs:
   phpunit:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     strategy:
       fail-fast: false
       matrix:

@@ -1,88 +1,35 @@
-@use 'sass:color';
-
-$accent: #2271b1;
-$primary: #03c7d2;
-$secondary: #d46f4d;
-$outline: #9e9e9e;
-$brand-discord: #5865f2;
-$brand-facebook: #3b5998;
-$cloud: #00bcd4;
-$cloud-update: #ff9800;
-
-// Plugin admin control tokens, applied to native form controls on all plugin
-// screens regardless of WordPress version (see common/_wp-admin.scss).
-$accent-hover: #0a4b78;
-$control-border: #c3c4c7;
-$control-text: #2c3337;
-$control-height: 38px;
-$control-radius: 5px;
-
-// Runtime design tokens. Sass variables keep compile-time helpers available;
-// custom properties expose the approved system to every rendered component.
 :root {
 	--cs-color-accent: #2271b1;
 	--cs-color-accent-hover: #0a4b78;
+	--cs-color-accent-subtle: #c9e1f5;
+	--cs-color-primary: #03c7d2;
+	--cs-color-secondary: #d46f4d;
 	--cs-color-text: #2c3337;
 	--cs-color-text-muted: #646970;
 	--cs-color-surface: #fff;
 	--cs-color-surface-subtle: #f6f7f7;
 	--cs-color-border: #c3c4c7;
 	--cs-color-border-subtle: #dcdcde;
+	--cs-cloud-status-public-color: #64baba;
+	--cs-cloud-status-private-color: #cc96fb;
+	--cs-cloud-status-unverified-color: #ea835e;
+	--cs-cloud-status-ai-verified-color: #1cabcf;
+	--cs-cloud-status-pro-verified-color: #41a269;
+	--cs-tooltip-background-color: rgb(19 18 18 / 90%);
+	--cs-toolbar-block-size: 136px;
+	--cs-wpcontent-inline-start-indent: 20px;
+	--cs-sidebar-width: 320px;
+	--cs-sidebar-gap: 30px;
+	--cs-card-radius: 8px;
 	--cs-control-height: 38px;
 	--cs-control-radius: 5px;
 	--cs-preview-modal-inline-size: min(900px, 90vw);
 	--cs-font-size-body: 14px;
 	--cs-line-height-body: 1.5;
+	--cs-direction-multiplier: 1; // LTR = 1, RTL = -1
 }
 
-/* format: background-color [color] */
-$badges: (
-	// php/html/cond darkened for WCAG AA — at least 4.5:1 against white 12px
-	// bold text; php reuses $accent, html/cond keep hue at reduced lightness.
-	php: $accent,
-	html: #cd4510,
-	css: #9b59b6,
-	js: #f7d67a #1c1f20,
-	cond: #22826f,
-	core: #4fa1a6,
-	pro: #f7e8e3 #df9279,
-	cloud: #009fb4,
-	bundles: #50575e,
-	cloud_search: #d27c00,
-	private: #f7e6be #a27813,
-	public: #dbebf7 $accent,
-	success: #d3e8d1 #447340,
-	failure: #fad7c1 #a24b16,
-	info: #d2e6f4 #2b71a3,
-	neutral: #f6f7f7 #646970,
-	neutralDark: #e2e5e5 #6c7e7e,
-	special: #dfc5ef #6e249c
-);
-$notices: (
-	success: #d3e9d3 #377a37,
-	warning: #f2ebc3 #b0730a,
-	error: #f8d7da #721c24,
-	info: #d2e6f4 #2b71a3,
-	neutral: #e2e5e5 #6c7e7e,
-	special: #dfc5ef #6e249c
-);
-
-@function contrasting-text-color($bg-color) {
-	$sum: 0;
-
-	@each $color, $multiplier in (red 0.299, green 0.587, blue 0.114) {
-		$sum: $sum + color.channel($bg-color, $color, $space: rgb) * $multiplier;
-	}
-
-	@return if ($sum > 186, #1c1f20, #fff)
-}
-
-@mixin link-colors($color, $lightness: 15%) {
-	a {
-		color: $color;
-
-		&:hover, &:active, &:focus {
-			color: color.adjust($color, $lightness: $lightness);
-		}
-	}
+html[dir="rtl"],
+body.rtl {
+	--cs-direction-multiplier: -1;
 }

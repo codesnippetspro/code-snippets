@@ -1,5 +1,4 @@
 @use '../common/notices';
-@use '../common/theme';
 
 .cloud-bundle-snippets-results h3 {
 	margin-block: 24px 16px;
@@ -9,7 +8,7 @@
 	color: #2c3337;
 
 	a {
-		color: theme.$accent;
+		color: var(--cs-color-accent);
 	}
 }
 
@@ -20,7 +19,7 @@
 		color: #2c3337;
 
 		a {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			text-decoration: underline;
 		}
 	}

@@ -423,7 +423,7 @@ class Version_Switch {
 	 * @return void
 	 */
 	public static function ajax_switch_version(): void {
-		check_ajax_referer( 'code_snippets_version_switch', sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) ) );
+		check_ajax_referer( 'code_snippets_version_switch', 'nonce' );
 
 		if ( ! current_user_can( 'update_plugins' ) ) {
 			wp_send_json_error( [ 'message' => __( 'You do not have permission to update plugins.', 'code-snippets' ) ] );
@@ -467,7 +467,7 @@ class Version_Switch {
 	 * @return void
 	 */
 	public static function ajax_refresh_versions(): void {
-		check_ajax_referer( 'code_snippets_refresh_versions', sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) ) );
+		check_ajax_referer( 'code_snippets_refresh_versions', 'nonce' );
 
 		if ( ! code_snippets()->current_user_can() ) {
 			wp_send_json_error( [ 'message' => __( 'You do not have permission to manage options.', 'code-snippets' ) ] );

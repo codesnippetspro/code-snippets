@@ -66,8 +66,8 @@ plugins.
 | CSS linting   | Stylelint (`npm run lint:styles`)                              |
 | PHP tests     | PHPUnit (`npm run test:php`)                                   |
 | E2E tests     | Playwright (`npm run test:playwright`)                         |
-| WP dev env    | `@wordpress/env` / `wp-env` (`npm run wp-env:start`)           |
-| Pre-commit    | lint-staged (auto-fix on commit)                               |
+| WP dev env    | `@wordpress/env` / `wp-env` (`npx wp-env start`)               |
+| Pre-commit    | Husky + lint-staged (auto-fix on commit)                       |
 | PHP deps      | Composer with Imposter (namespace-prefixing)                   |
 
 ## Coding Standards
@@ -76,7 +76,7 @@ plugins.
 
 - Follow the **WordPress Coding Standards** for PHP, JS, CSS, and HTML.
 - `strict_types=1` is not enforced project-wide — match the style of the file being edited.
-- Keep lines under 120 characters for PHP; 100 for JS/TS.
+- Keep lines readable; break long imports or expressions when it helps. Hard limits are the linters' job, not a fixed number here.
 - All user-visible strings must be wrapped in a WordPress i18n function with the text domain `code-snippets`.
 - Use `__()`, `_e()`, `esc_html__()`, `esc_attr__()`, `_x()`, `_n()` as appropriate — never echo raw translatable
   strings.
@@ -201,12 +201,12 @@ plugins.
 ```bash
 # Install dependencies
 npm install                  # Node deps
-cd src && composer install   # PHP deps (or: npm run bundle)
+composer -d src install      # PHP deps (or: npm run bundle)
 
 # WordPress environment
-npm run wp-env:start         # Start local WP instance
-npm run wp-env:stop
-npm run wp-env:clean         # Reset all data
+npx wp-env start             # Start local WP instance
+npx wp-env stop
+npx wp-env clean all         # Reset all data
 
 # Build
 npm run build                # Webpack build (JS + CSS → src/dist/)

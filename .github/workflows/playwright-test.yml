@@ -20,7 +20,7 @@ on:
 jobs:
   playwright-test:
     name: Playwright tests (${{ inputs.test-mode == 'default' && 'Default Mode' || 'File-based Execution' }})
-    runs-on: ubuntu-22.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     services:
       mysql:
         image: mysql:8.0
@@ -240,19 +240,35 @@ jobs:
           WP_E2E_WPCLI_URL: http://localhost:8888
           WP_E2E_WP_CONTAINER: ${{ job.services.wordpress.id }}
           WP_E2E_MULTISITE_MODE: ${{ inputs.multisite }}
+          PLAYWRIGHT_PROJECTS: ${{ inputs.project-name }}
+          PLAYWRIGHT_SUFFIX: ${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p test-results/ci
-          suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
+          suffix="$PLAYWRIGHT_SUFFIX"
           : > "test-results/ci/playwright-${suffix}.log"
-          npm run test:playwright -- --project=${{ inputs.project-name }} 2>&1 | tee -a "test-results/ci/playwright-${suffix}.log"
+          # One --project flag per name, so several projects can be listed in the input.
+          # The names arrive through the environment rather than being pasted into
+          # the script, and are split into an array without pathname expansion, so
+          # no input value is ever interpreted as shell or as a glob.
+          [[ -n "${PLAYWRIGHT_PROJECTS// /}" ]] || { echo "The project-name input is empty; nothing to run." >&2; exit 1; }
+          read -ra projects <<< "$PLAYWRIGHT_PROJECTS"
+          project_args=()
+          for project in "${projects[@]}"; do
+            project_args+=(--project "$project")
+          done
+          npm run test:playwright -- "${project_args[@]}" 2>&1 | tee -a "test-results/ci/playwright-${suffix}.log"
 
       - name: Normalize Playwright report filenames
         if: always()
+        env:
+          PLAYWRIGHT_SUFFIX: ${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p test-results/ci
-          suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
+          suffix="$PLAYWRIGHT_SUFFIX"
 
           if [ -f test-results/results.xml ]; then
             mv test-results/results.xml "test-results/ci/results-${suffix}.xml"

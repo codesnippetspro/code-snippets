@@ -3,12 +3,49 @@
 ## [4.0.0] (UPCOMING)
 
 ### Added
-* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
-* Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud.
 * AI Agent demo: a guided, scripted walkthrough of the Pro AI Agent that plans, builds, and refines a welcome banner snippet named after your site. Runs entirely inside the plugin — no data leaves your site and no snippets are added to your library.
 * Blueprints demo: a guided, scripted walkthrough of Pro Blueprints that steps through the "Create a Shortcode" blueprint and confirms the snippet it would generate. Runs entirely inside the plugin — no code is generated and nothing is saved.
 * Cloud Library demo: a guided, scripted walkthrough of the Pro Cloud Library, showing how a cloud snippet is previewed, downloaded inactive, and then kept in sync. Runs entirely inside the plugin — the snippets shown are examples and nothing is downloaded.
 * "New" badges on the AI Agent, Blueprints, and Cloud Library toolbar tabs, which soften once each demo walkthrough has been watched.
+
+## [3.10.2] (2026-09-01)
+
+### Added
+* Added a confirmation flow for run-once snippet execution and hardened the handler to prevent failed or confusing actions.
+
+### Changed
+* Snippet names now respect the row truncation Screen Option in the admin list for better readability.
+* Version switching AJAX requests now validate the correct nonce, improving reliability when updating snippet versions.
+
+### Fixed
+* Fixed safe mode fatal errors caused by an undefined wp_get_current_user() call.
+* Fixed PHP validation being triggered incorrectly when activating snippets in bulk.
+* Fixed saving issues after a user session expires.
+* Fixed warnings caused by aliased field names when reading modified snippet fields.
+* Fixed vendor autoloader issues by stripping unprefixed namespace references.
+* Resolved issues where snippet names and version switches could behave inconsistently in the admin UI.
+
+## [3.10.1] (2026-08-28)
+
+### Changed
+* Enhanced active-link visibility in the toolbar with border-based styling.
+
+### Fixed
+* Fixed a fatal error affecting snippets that use a `namespace` or `declare` statement.
+* Fixed the snippets page rendering blank when another plugin's screen settings filter returned an invalid value.
+* Fixed snippet saving on hosts that block REST API `PUT` and `PATCH` requests, by sending writes as `POST` with a method override.
+* Fixed the Snippets List Order setting not being applied to the snippets list.
+* Fixed admin bar snippet scripts failing to load on the free version, including on the site front end.
+* Fixed snippet modified dates being sent without the correct UTC offset.
+* Fixed the row truncation screen option not persisting across sessions.
+* Fixed inconsistent sidebar label sizes.
+* Fixed the sticky editor sidebar showing an unwanted horizontal scrollbar.
+
+## [3.10.0] (2026-08-24)
+
+### Added
+* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent experience across plugin screens.
+* Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud.
 * Snippet preview modal for viewing snippet code from the snippets table without opening the editor.
 * Automatic hiding of unrelated admin notices from other plugins on Code Snippets screens.
 * Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from the WordPress admin bar.
@@ -1409,6 +1446,22 @@
 [brandonjp]: https://github.com/brandonjp
 
 [unreleased]: https://github.com/codesnippetspro/code-snippets/tree/core
+[3.10.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.10.0
+[3.9.6]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.6
+[3.9.5]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.5
+[3.9.4]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.4
+[3.9.3]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.3
+[3.9.2]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.2
+[3.9.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.1
+[3.9.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.0
+[3.9.0-beta.2]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.0-beta.2
+[3.9.0-beta.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.9.0-beta.1
+[3.8.2]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.8.2
+[3.8.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.8.1
+[3.8.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.8.0
+[3.7.1-beta.3]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.1-beta.3
+[3.7.1-beta.2]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.1-beta.2
+[3.7.1-beta.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.1-beta.1
 [3.7.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.0
 [3.6.7]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.7
 [3.6.6.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.6.1

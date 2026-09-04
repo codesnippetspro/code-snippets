@@ -52,15 +52,50 @@ class Validator {
 	private array $exceptions = [];
 
 	/**
+	 * Identifiers already claimed by other snippets being validated alongside
+	 * this one.
+	 *
+	 * A snippet is validated against everything PHP has declared so far, which
+	 * does not include a snippet that is about to be activated in the same
+	 * batch. Two snippets declaring the same function therefore both passed and
+	 * both activated, and the site fataled on the next request.
+	 *
+	 * @var array<string, string[]>
+	 */
+	private array $claimed_identifiers = [];
+
+	/**
+	 * Namespace the code being read currently declares, lower-cased, or empty for the global namespace.
+	 *
+	 * @var string
+	 */
+	private string $namespace = '';
+
+	/**
 	 * Class constructor.
 	 *
-	 * @param string $code Snippet code for parsing.
+	 * @param string                  $code                Snippet code for parsing.
+	 * @param array<string, string[]> $claimed_identifiers Identifiers already claimed by
+	 *                                                     snippets validated alongside this one.
 	 */
-	public function __construct( string $code ) {
+	public function __construct( string $code, array $claimed_identifiers = [] ) {
+		$this->claimed_identifiers = $claimed_identifiers;
 		$this->code = $code;
 		$this->tokens = token_get_all( "<?php\n" . $this->code );
 		$this->length = count( $this->tokens );
 		$this->current = 0;
+	}
+
+	/**
+	 * Retrieve the identifiers claimed so far, including this snippet's own.
+	 *
+	 * Pass the result to the next Validator in a batch so that two snippets
+	 * cannot both claim the same name.
+	 *
+	 * @return array<string, string[]>
+	 */
+	public function get_claimed_identifiers(): array {
+		return $this->claimed_identifiers;
 	}
 
 	/**
@@ -102,15 +137,18 @@ class Validator {
 	 */
 	private function check_duplicate_identifier( string $type, string $identifier ): bool {
 		$identifier = strtolower( ltrim( $identifier, '\\' ) );
+
+		// PHP keeps declared names fully qualified, so that is the form compared
+		// and claimed: the same short name in two namespaces is two names.
+		$qualified = '' === $this->namespace ? $identifier : $this->namespace . '\\' . $identifier;
 		$namespaced_identifier = 'code_snippets\\' . $identifier;
 
 		if ( ! isset( $this->defined_identifiers[ $type ] ) ) {
 			switch ( $type ) {
 				case T_FUNCTION:
-					$defined_functions = get_defined_functions();
 					$this->defined_identifiers[ T_FUNCTION ] = array_map(
 						'strtolower',
-						array_merge( $defined_functions['internal'], $defined_functions['user'] )
+						array_merge( get_defined_functions()['internal'], get_defined_functions()['user'] )
 					);
 					break;
 
@@ -127,15 +165,70 @@ class Validator {
 			}
 		}
 
-		$duplicate_identifier = in_array( $identifier, $this->defined_identifiers[ $type ], true );
-		$duplicate_namespaced = in_array( $namespaced_identifier, $this->defined_identifiers[ $type ], true );
-		$exceptions = $this->exceptions[ $type ] ?? [];
-		$exception_identifier = in_array( $identifier, $exceptions, true );
-		$exception_namespaced = in_array( $namespaced_identifier, $exceptions, true );
+		$known = array_merge(
+			$this->defined_identifiers[ $type ],
+			$this->claimed_identifiers[ $type ] ?? []
+		);
 
-		array_unshift( $this->defined_identifiers[ $type ], $identifier );
+		$duplicate_identifier = in_array( $qualified, $known, true );
+		$duplicate_namespaced = '' === $this->namespace && in_array( $namespaced_identifier, $known, true );
+		$exceptions = $this->exceptions[ $type ] ?? [];
+		$exception_identifier = in_array( $identifier, $exceptions, true ) || in_array( $qualified, $exceptions, true );
+		$exception_namespaced = in_array( $identifier, $exceptions, true ) || in_array( $namespaced_identifier, $exceptions, true );
+
+		array_unshift( $this->defined_identifiers[ $type ], $qualified );
+		$this->claimed_identifiers[ $type ][] = $qualified;
 
 		return ( $duplicate_identifier && ! $exception_identifier ) || ( $duplicate_namespaced && ! $exception_namespaced );
+	}
+
+	/**
+	 * Read the name a namespace declaration introduces, leaving the cursor after it.
+	 *
+	 * A bare "namespace {" opens the global namespace; "namespace\\foo()" is a
+	 * relative name rather than a declaration and is left alone.
+	 *
+	 * @return string Lower-cased namespace, or empty for the global namespace.
+	 */
+	private function read_namespace_declaration(): string {
+		$name = '';
+
+		while ( ! $this->end() ) {
+			$token = $this->peek();
+
+			if ( is_array( $token ) ) {
+				if ( T_WHITESPACE === $token[0] || T_COMMENT === $token[0] || T_DOC_COMMENT === $token[0] ) {
+					$this->next();
+					continue;
+				}
+
+				if ( T_NS_SEPARATOR === $token[0] && '' === $name ) {
+					return $this->namespace;
+				}
+
+				if ( defined( 'T_NAME_RELATIVE' ) && T_NAME_RELATIVE === $token[0] ) {
+					return $this->namespace;
+				}
+
+				if ( T_STRING === $token[0] || T_NS_SEPARATOR === $token[0]
+					|| ( defined( 'T_NAME_QUALIFIED' ) && T_NAME_QUALIFIED === $token[0] ) ) {
+					$name .= $token[1];
+					$this->next();
+					continue;
+				}
+
+				return $this->namespace;
+			}
+
+			if ( ';' === $token || '{' === $token ) {
+				$this->next();
+				return strtolower( trim( $name, '\\' ) );
+			}
+
+			return $this->namespace;
+		}
+
+		return strtolower( trim( $name, '\\' ) );
 	}
 
 	/**
@@ -150,6 +243,11 @@ class Validator {
 			$this->next();
 
 			if ( ! is_array( $token ) ) {
+				continue;
+			}
+
+			if ( T_NAMESPACE === $token[0] ) {
+				$this->namespace = $this->read_namespace_declaration();
 				continue;
 			}
 

@@ -12,7 +12,7 @@ import { getTableColumns } from './TableColumns'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { BULK_ACTIONS, TRASHED_BULK_ACTIONS, useApplyBulkAction } from './useApplyBulkAction'
-import type { ListTableAction } from '../../common/ListTable'
+import type { ListTableAction, ListTableSortDirection } from '../../common/ListTable'
 import type { SnippetsTableAction } from './useApplyBulkAction'
 import type { Snippet } from '../../../types/Snippet'
 import type { SnippetView } from '../../../types/SnippetView'
@@ -141,6 +141,7 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 		: <ListTable
 			items={snippets}
 			getKey={snippet => snippet.id}
+			initialSort={getInitialSort()}
 			className={classnames({ 'truncate-row-values': truncateRowValues })}
 			columns={columns}
 			actions={actions}
@@ -154,6 +155,23 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			beforeTable={<SearchResultsIndicator />}
 		/>
 }
+
+/**
+ * The "Snippets List Order" setting names a default ordering for the table,
+ * which sorting is now expressed through columns. Map one to the other so the
+ * setting still decides how the list opens; clicking a heading overrides it for
+ * the rest of the visit, as it does for any other starting order.
+ */
+const LIST_ORDER_SORTS: Record<string, { columnId: string, direction: ListTableSortDirection }> = {
+	'priority-asc': { columnId: 'priority', direction: 'asc' },
+	'name-asc': { columnId: 'name', direction: 'asc' },
+	'name-desc': { columnId: 'name', direction: 'desc' },
+	'modified-desc': { columnId: 'date', direction: 'desc' },
+	'modified-asc': { columnId: 'date', direction: 'asc' }
+}
+
+const getInitialSort = () =>
+	LIST_ORDER_SORTS[window.CODE_SNIPPETS_MANAGE?.listOrder ?? ''] ?? undefined
 
 export interface SnippetsListTableProps {
 	snippetView: SnippetView

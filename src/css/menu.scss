@@ -1,3 +1,4 @@
+@use 'common/theme';
 
 #adminmenu {
 	.toplevel_page_snippets div.wp-menu-image::before {
@@ -10,14 +11,14 @@
 
 	.code-snippets-upgrade-button {
 		color: #fff;
-		background-color: #d46f4d;
+		background-color: var(--cs-color-secondary);
 		border: none;
 
 		// WP 7.0 restyles `.button`/`.button-primary` with wider padding, a 2px radius and a
 		// 40px min-height; pin these (independent of the plugin control tokens, which are
 		// sized for page content rather than the admin menu) so the pill keeps its compact
 		// dimensions and stays aligned with the surrounding submenu items across WP versions.
-		border-radius: 3px;
+		border-radius: 5px;
 		padding-block: 0;
 		padding-inline: 10px;
 		min-block-size: 30px;

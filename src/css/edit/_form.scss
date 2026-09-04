@@ -1,11 +1,10 @@
 @use '../common/theme';
 
-$sidebar-width: 321px;
-$sidebar-gap: 30px;
-
 .snippet-form #titlediv #title {
-	border-color: theme.$control-border;
-	block-size: 45px
+	border-color: var(--cs-color-border);
+	border-radius: 5px;
+	block-size: 45px;
+	margin: 0;
 }
 
 // The type selector is a react-select control that sizes to its content; pin
@@ -17,7 +16,7 @@ $sidebar-gap: 30px;
 	// Target the control box only (:first-of-type). The open menu is a later
 	// sibling div; matching it here would clamp and flex-row the option list.
 	> div:first-of-type {
-		border-color: theme.$control-border;
+		border-color: var(--cs-color-border);
 		min-block-size: 45px;
 		block-size: 45px;
 		max-block-size: 45px;
@@ -57,11 +56,6 @@ $sidebar-gap: 30px;
 		justify-content: flex-start;
 		gap: 8px;
 		margin-block-end: 8px;
-
-		strong {
-			font-size: 14px;
-			line-height: 20px;
-		}
 	}
 
 	.button.button-large {
@@ -69,13 +63,13 @@ $sidebar-gap: 30px;
 		align-items: center;
 		gap: 8px;
 		inline-size: 100%;
-		border-color: theme.$control-border;
+		border-color: var(--cs-color-border);
 		background: transparent;
 		padding: 6px 12px;
 
 		&:hover:not(:disabled),
 		&:focus:not(:disabled) {
-			background: #f6f7f7;
+			background: var(--cs-color-surface-subtle);
 		}
 	}
 
@@ -87,16 +81,16 @@ $sidebar-gap: 30px;
 
 	&.no-condition:hover :not([disabled]) .cond-badge {
 		color: #fff;
-		background: theme.$accent;
-		border-color: theme.$accent;
+		background: var(--cs-color-accent);
+		border-color: var(--cs-color-accent);
 	}
 }
 
 .snippet-form {
 	margin-block-start: 10px;
 	display: grid;
-	gap: $sidebar-gap;
-	grid-template-columns: 1fr $sidebar-width;
+	gap: var(--cs-sidebar-gap);
+	grid-template-columns: 1fr var(--cs-sidebar-width);
 	grid-template-areas: 'upper sidebar' 'lower sidebar';
 	transition: all 700ms;
 
@@ -125,8 +119,9 @@ $sidebar-gap: 30px;
 
 	.snippet-editor-sidebar {
 		grid-area: span 3 / sidebar;
-		max-inline-size: $sidebar-width;
+		max-inline-size: var(--cs-sidebar-width);
 		position: sticky;
+		overflow: clip;
 
 		// Keep the sidebar clear of the fixed WordPress admin bar and leave a
 		// usable visual gap beneath it while the editor scrolls.

@@ -37,7 +37,7 @@ test.describe('Insights screen', () => {
 
 	test('opens a zero-data dashboard from the upper toolbar', async ({ page }) => {
 		await page.goto(URLS.SNIPPETS_ADMIN)
-		await page.getByRole('link', { name: 'Insights', exact: true }).click()
+		await page.locator('.code-snippets-toolbar-upper').getByRole('link', { name: 'Insights', exact: true }).click()
 		const activationChart = page.locator('[data-insights-chart="activation"]')
 		const totalChart = page.locator('[data-insights-chart="total"]')
 

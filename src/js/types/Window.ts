@@ -13,8 +13,15 @@ declare global {
 		readonly wp: {
 			readonly editor?: WordPressEditor
 			readonly codeEditor?: WordPressCodeEditor
+			readonly hooks?: {
+				addAction: (
+					hookName: string,
+					namespace: string,
+					callback: (data: { rest_nonce?: string }) => void
+				) => void
+			}
 		}
-		readonly pagenow: string
+		readonly pagenow?: string
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
 		readonly wpActiveEditor?: string
@@ -71,12 +78,14 @@ declare global {
 			snippetsList?: Snippet[]
 			hasNetworkCap: boolean
 			hiddenColumns: string[]
+			listOrder?: string
 			truncateRowValues: number | string
 			snippetsPerPage: number
 			typeCounts?: Record<string, number>
 			cloudSearchPerPage: number
 			isSafeModeActive: boolean
 			bulkDownloadNonce: string
+			runOnceNonce?: string
 			supportsZipDownloads: boolean
 			editorTheme: string
 			aiDemo?: {

@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n'
-import React, { useEffect, useId, useState } from 'react'
+import React, { useId, useState } from 'react'
 import classnames from 'classnames'
 import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
@@ -12,6 +12,7 @@ import { CloudSnippetsTable } from './CloudSnippetsTable'
 import { CloudSnippetAuthor, SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
+import type { CloudSearchResults } from './WithCloudSearchContext'
 import type { TableNavProps } from '../../common/ListTable/TableNavigation'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { SnippetView } from '../../../types/SnippetView'
@@ -116,21 +117,58 @@ const CLOUD_BULK_ACTIONS: ListTableAction<CloudSearchAction>[] = [
 	{ key: 'download', label: __('Download', 'code-snippets') }
 ]
 
-const useSearchResultsSelection = () => {
+interface CloudSearchSnippetsProps {
+	snippetView: SnippetView
+	snippets: CloudSnippetSchema[]
+	selected: Set<CloudSnippetSchema['id']>
+	setSelected: Dispatch<SetStateAction<Set<CloudSnippetSchema['id']>>>
+}
+
+const CloudSearchSnippets: React.FC<CloudSearchSnippetsProps> = ({ snippetView, ...props }) =>
+	'card' === snippetView
+		? <SearchResultsGrid {...props} />
+		: <CloudSnippetsTable {...props} />
+
+interface SearchResultsTableNavProps extends Omit<TableNavProps<CloudSnippetSchema['id'], CloudSearchAction>,
+	'totalItems' | 'totalPages' | 'currentPage' | 'setCurrentPage'> {
+	which: 'top' | 'bottom'
+	doSearch: ReturnType<typeof useCloudSearch>['doSearch']
+	isSearching: boolean
+	searchResults: CloudSearchResults
+}
+
+const SearchResultsTableNav: React.FC<SearchResultsTableNavProps> = ({
+	which,
+	doSearch,
+	isSearching,
+	searchResults,
+	...props
+}) =>
+	<TableNav
+		which={which}
+		disabled={isSearching}
+		totalItems={searchResults.totalItems}
+		totalPages={searchResults.totalPages}
+		currentPage={searchResults.page}
+		setCurrentPage={page => doSearch({ page })}
+		{...props}
+	/>
+
+const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
 	const { api } = useRestAPI()
 	const { searchResults, isSearching, doSearch } = useCloudSearch()
 	const [selected, setSelected] = useState<Set<CloudSnippetSchema['id']>>(new Set())
 
-	useEffect(() => {
-		setSelected(new Set())
-	}, [searchResults?.snippets])
+	if (!searchResults) {
+		return null
+	}
 
 	const doAction = async (
 		action: CloudSearchAction | undefined,
 		selectedIds: Set<CloudSnippetSchema['id']>
 	): Promise<void> => {
 		if ('download' === action) {
-			await Promise.all((searchResults?.snippets ?? [])
+			await Promise.all(searchResults.snippets
 				.filter(snippet => selectedIds.has(snippet.id) && isCloudSnippetDownloadable(snippet))
 				.map(({ id }) => api.post(`${REST_BASES.cloud.snippets}/${id}/download`)))
 
@@ -138,46 +176,11 @@ const useSearchResultsSelection = () => {
 		}
 	}
 
-	return { doAction, doSearch, isSearching, searchResults, selected, setSelected }
-}
-
-interface SearchResultsTableNavProps extends Partial<TableNavProps<number, CloudSearchAction>> {
-	which: 'top' | 'bottom'
-}
-
-const SearchResultsTableNav: React.FC<SearchResultsTableNavProps> = ({ which, ...props }) => {
-	const { doSearch, isSearching, searchResults, selected, setSelected } = useSearchResultsSelection()
-
-	if (!searchResults) {
-		return null
-	}
-
-	return (
-		<TableNav
-			which={which}
-			disabled={isSearching}
-			selected={selected}
-			setSelected={setSelected}
-			totalItems={searchResults.totalItems}
-			totalPages={searchResults.totalPages}
-			currentPage={searchResults.page}
-			setCurrentPage={page => doSearch({ page })}
-			{...props}
-		/>
-	)
-}
-
-const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
-	const { doAction, searchResults, selected, setSelected } = useSearchResultsSelection()
-
-	if (!searchResults) {
-		return null
-	}
-
 	return (
 		<div className="snippets-list-view">
 			<SearchResultsTableNav
 				which="top"
+				{...{ isSearching, searchResults, selected, setSelected, doSearch }}
 				actions={CLOUD_BULK_ACTIONS}
 				doAction={doAction}
 				selectAllKeys={'card' === snippetView
@@ -192,19 +195,17 @@ const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, set
 						: null}
 			/>
 
-			{'card' === snippetView
-				? <SearchResultsGrid
-					snippets={searchResults.snippets}
-					selected={selected}
-					setSelected={setSelected}
-				/>
-				: <CloudSnippetsTable
-					snippets={searchResults.snippets}
-					selected={selected}
-					setSelected={setSelected}
-				/>}
+			<CloudSearchSnippets
+				snippets={searchResults.snippets}
+				snippetView={snippetView}
+				selected={selected}
+				setSelected={setSelected}
+			/>
 
-			<SearchResultsTableNav which="bottom" />
+			<SearchResultsTableNav
+				which="bottom"
+				{...{ isSearching, searchResults, selected, setSelected, doSearch }}
+			/>
 		</div>
 	)
 }

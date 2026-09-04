@@ -4,7 +4,10 @@ setup('enable flat files', async ({ page }) => {
 	const isMultisite = 'true' === process.env.WP_E2E_MULTISITE_MODE || '1' === process.env.WP_E2E_MULTISITE_MODE
 	const wpAdminbase = isMultisite ? '/wp-admin/network' : '/wp-admin'
   
-	await page.goto(`${wpAdminbase}/admin.php?page=snippets-settings`)
+	// The flat files switch lives on the Running tab; the other tabs are hidden.
+	const settingsUrl = `${wpAdminbase}/admin.php?page=snippets-settings&section=running`
+
+	await page.goto(settingsUrl)
 	await page.waitForSelector('#wpbody-content')
 
 	// Await page.waitForSelector('form')
@@ -29,7 +32,7 @@ setup('enable flat files', async ({ page }) => {
 	])
 
 
-	await page.reload()
+	await page.goto(settingsUrl)
 	await page.waitForSelector('input[name="code_snippets_settings[general][enable_flat_files]"]')
 	await expect(page.locator('input[name="code_snippets_settings[general][enable_flat_files]"]')).toBeChecked()
 })

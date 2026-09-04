@@ -88,6 +88,88 @@ function clean_snippets_cache( string $table_name ) {
 }
 
 /**
+ * Flush an entire cache group, where the object cache supports it.
+ *
+ * Not all persistent cache drop-ins implement group flushing, and the function
+ * itself only exists from WordPress 6.1, so both are checked before use. A
+ * failure is not important: cache groups are scoped to the plugin version, so
+ * flushing is housekeeping rather than something correctness depends on, and
+ * anything left behind is evicted by the cache in its own time.
+ *
+ * @param string $group Cache group to flush.
+ *
+ * @return bool Whether the group was flushed.
+ */
+function flush_cache_group( string $group ): bool {
+	/**
+	 * Short-circuits flushing a cache group.
+	 *
+	 * Returning a boolean skips the object cache entirely: false makes the
+	 * caller fall back to deleting the known keys one by one, for a cache
+	 * that reports group support it does not really have.
+	 *
+	 * @param bool|null $flushed Whether the group was flushed, or null to let the cache try.
+	 * @param string    $group   Cache group.
+	 */
+	$flushed = apply_filters( 'code_snippets/pre_flush_cache_group', null, $group );
+
+	if ( null !== $flushed ) {
+		return (bool) $flushed;
+	}
+
+	if ( ! function_exists( 'wp_cache_flush_group' ) ||
+	     ! function_exists( 'wp_cache_supports' ) ||
+	     ! wp_cache_supports( 'flush_group' ) ) {
+		return false;
+	}
+
+	return (bool) wp_cache_flush_group( $group );
+}
+
+/**
+ * Flush the cache groups belonging to other versions of the plugin.
+ *
+ * @param string $previous_version Version the site was running beforehand.
+ *
+ * @return void
+ */
+function flush_versioned_cache_groups( string $previous_version ): void {
+	if ( '' !== $previous_version && PLUGIN_VERSION !== $previous_version ) {
+		flush_cache_group( CACHE_GROUP_BASE . '_' . $previous_version );
+	}
+
+	// Versions before the group was scoped wrote to the unscoped group, and no
+	// version that scopes it ever writes there again. Clearing it means a site
+	// upgrading from 3.10.0 or 3.10.1 sheds the objects that would otherwise
+	// still be waiting to break its next rollback.
+	flush_cache_group( CACHE_GROUP_BASE );
+
+	// Where the cache cannot flush a whole group, the keys this plugin writes
+	// are deleted one by one instead, so an uninstall followed by a reinstall
+	// of the same version cannot read snippets that no longer exist.
+	if ( ! flush_cache_group( CACHE_GROUP ) ) {
+		flush_known_cache_keys();
+	}
+}
+
+/**
+ * Delete every key this plugin is known to write in its current cache group.
+ *
+ * @return void
+ */
+function flush_known_cache_keys(): void {
+	// Both tables' keys go, whether or not this is a network: deleting a key
+	// that was never written costs nothing, and it keeps one path to test.
+	$tables = [ code_snippets()->db->get_table_name( false ), code_snippets()->db->get_table_name( true ) ];
+
+	foreach ( array_unique( $tables ) as $table ) {
+		clean_snippets_cache( $table );
+	}
+
+	wp_cache_delete( Settings\CACHE_KEY, CACHE_GROUP );
+}
+
+/**
  * Retrieve a list of snippets from the database.
  * Read operation.
  *
@@ -402,11 +484,26 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 	$valid_ids = [];
 	$valid_snippets = [];
 
+	// Names claimed by snippets already accepted into this batch. A snippet is
+	// otherwise validated only against what PHP has declared so far, which does
+	// not include the other snippets about to be activated alongside it.
+	$claimed_identifiers = [];
+
 	foreach ( $snippets as $snippet ) {
-		$validator = new Validator( $snippet->code );
+		// Only PHP is validated. The validator looks for redeclarations of
+		// existing PHP functions and classes, which says nothing meaningful
+		// about CSS or JavaScript.
+		if ( 'php' !== $snippet->type ) {
+			$valid_ids[] = $snippet->id;
+			$valid_snippets[] = $snippet;
+			continue;
+		}
+
+		$validator = new Validator( $snippet->code, $claimed_identifiers );
 		$code_error = $validator->validate();
 
 		if ( ! $code_error ) {
+			$claimed_identifiers = $validator->get_claimed_identifiers();
 			$valid_ids[] = $snippet->id;
 			$valid_snippets[] = $snippet;
 		}
@@ -643,11 +740,10 @@ function save_snippet( $snippet ): ?Snippet {
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
 
-	if ( 'php' === $snippet->type ) {
-		// Remove tags from beginning and end of snippet.
-		$snippet->code = preg_replace( '|^\s*<\?(php)?|', '', $snippet->code );
-		$snippet->code = preg_replace( '|\?>\s*$|', '', $snippet->code );
+	// Strip any wrapper markup that came along with the pasted code.
+	$snippet->code = normalize_snippet_code( $snippet->code, $snippet->type );
 
+	if ( 'php' === $snippet->type ) {
 		// Deactivate snippet if code contains errors.
 		if ( $snippet->active && 'single-use' !== $snippet->scope ) {
 			test_snippet_code( $snippet );
@@ -810,6 +906,62 @@ function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?
 	}
 
 	return apply_filters( 'code_snippets/get_snippet_by_cloud_id', $snippet, $cloud_id, $multisite );
+}
+
+/**
+ * Remove the wrapper markup that a snippet's code does not need.
+ *
+ * Snippet code is stored bare: PHP is evaluated already inside PHP, and CSS and
+ * JavaScript are wrapped in their own tags when printed. People increasingly
+ * paste code generated by an AI assistant, which almost always arrives wrapped
+ * in the tags for its language and sometimes in a markdown code fence as well.
+ *
+ * Leaving that markup in place fails differently depending on the type, and all
+ * three ways are unhelpful. PHP raises a syntax error, so the snippet saves and
+ * is then quietly deactivated. CSS and JavaScript have no syntax check at all,
+ * so they save as active and emit doubled tags on the front end with nothing
+ * reported anywhere.
+ *
+ * Only a wrapper around the whole snippet is removed. Tags appearing partway
+ * through the code are left alone, since those are the author's own.
+ *
+ * @param string $code Snippet code as provided.
+ * @param string $type Snippet type: php, css, js or html.
+ *
+ * @return string Code with any surrounding wrapper markup removed.
+ */
+function normalize_snippet_code( string $code, string $type ): string {
+	// A markdown fence around the whole snippet, as copied from a chat window.
+	// The closing fence only goes when an opening one was there: on its own it
+	// is the author's content, as in an HTML snippet ending in backticks.
+	$code = preg_replace( '/\A\s*```[a-z]*[ \t]*\R/i', '', $code, 1, $fenced );
+
+	if ( $fenced ) {
+		$code = preg_replace( '/\R\s*```\s*\z/', '', $code );
+	}
+
+	switch ( $type ) {
+		case 'php':
+			// `php` is matched as a whole word so that `<?phpinfo()` is not
+			// mistaken for an opening tag followed by `info()`.
+			$code = preg_replace( '/\A\s*<\?(?:php\b)?/i', '', $code );
+			$code = preg_replace( '/\?>\s*\z/', '', $code );
+			break;
+
+		case 'css':
+			$code = preg_replace( '/\A\s*<style\b[^>]*>/i', '', $code );
+			$code = preg_replace( '/<\/style\s*>\s*\z/i', '', $code );
+			break;
+
+		case 'js':
+			$code = preg_replace( '/\A\s*<script\b[^>]*>/i', '', $code );
+			$code = preg_replace( '/<\/script\s*>\s*\z/i', '', $code );
+			break;
+	}
+
+	// Drop the single line break left behind by an opening tag on its own line,
+	// so the stored code does not gain a blank first line each time.
+	return preg_replace( '/\A\R/', '', $code );
 }
 
 /**

@@ -6,7 +6,8 @@
 @use 'common/wp-admin';
 @use 'common/page-header';
 
-$sections: general, editor, debug, version-switch;
+$sections: general, editor, debug, version-switch,
+	editing, running, insights, library, interface, advanced;
 
 .wrap.code-snippets-settings {
 	margin-block-start: 0;
@@ -19,7 +20,7 @@ $sections: general, editor, debug, version-switch;
 }
 
 .snippets-page-header h1 {
-	color: #2c3337;
+	color: var(--cs-color-text);
 }
 
 p.submit {
@@ -36,7 +37,7 @@ p.submit {
 	inline-size: 261px;
 	font-size: 14px;
 	font-weight: 700;
-	color: #2c3337;
+	color: var(--cs-color-text);
 }
 
 .settings-section,
@@ -105,7 +106,7 @@ body.js {
 	display: inline-block;
 	padding-inline-end: 2em;
 	line-height: 2;
-	color: #646970;
+	color: var(--cs-color-text-muted);
 }
 
 .license-status-valid {
@@ -121,8 +122,8 @@ body.js {
 }
 
 #code_snippets_remove_license {
-	color: #b32d2e;
-	border-color: #b32d2e;
+	color: #d63638;
+	border-color: #d63638;
 }
 
 #code_snippets_license_key {
@@ -169,8 +170,8 @@ body.js {
 		color: #0073aa;
 		background: #f0f6fc;
 		padding: 2px 8px;
-		border-radius: 3px;
-		border: 1px solid theme.$control-border;
+		border-radius: 5px;
+		border: 1px solid var(--cs-color-border);
 	}
 
 	#target_version {
@@ -184,7 +185,7 @@ body.js {
 			cursor: not-allowed;
 			background-color: #f0f0f1 !important;
 			color: #a7aaad !important;
-			border-color: #dcdcde !important;
+			border-color: var(--cs-color-border-subtle) !important;
 		}
 	}
 
@@ -194,7 +195,6 @@ body.js {
 		padding: 12px 16px;
 		border-inline-start: 4px solid #dba617;
 		background: #fff8e5;
-		border-radius: 4px;
 
 		p {
 			margin: 0;
@@ -211,7 +211,6 @@ body.js {
 
 		&.notice {
 			padding: 8px 12px;
-			border-radius: 4px;
 		}
 	}
 
@@ -262,39 +261,31 @@ body.js {
 		min-block-size: 52px;
 		margin: 0;
 		padding-inline: 24px;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 1.5;
 		border: 0;
-		border-inline-end: 1px solid #e2e2e4;
+		border-inline-end: 1px solid var(--cs-color-border-subtle);
 		background: transparent;
 
 		&:hover,
-		&:focus {
-			color: #2c3337;
-			background: #f6f7f7;
+		&:focus,
+		&:active {
+			color: var(--cs-color-accent);
 		}
 
 		&.active-type,
 		&.active-type:hover,
 		&.active-type:focus {
-			position: relative;
-			z-index: 1;
-			margin-block-end: -1px;
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			background: #f0f0f1;
-			border-color: #f0f0f1;
 		}
 	}
 }
 
 @media (width <= 782px) {
 	body.js {
-		.settings-type-nav-wrapper {
-			display: none;
-		}
-
 		.settings-section-title {
 			position: static;
 			inline-size: auto;
@@ -316,4 +307,19 @@ body.js {
 			display: flex;
 		}
 	}
+}
+
+// Group headings inside a settings tab. Tabs are long enough that unbroken
+// rows are hard to scan, so related fields sit under a label.
+.settings-section .form-table .settings-group-heading th {
+	inline-size: auto;
+	padding-block: 26px 8px;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--cs-color-text);
+}
+
+.settings-section .form-table .settings-group-heading:first-child th {
+	padding-block-start: 4px;
 }

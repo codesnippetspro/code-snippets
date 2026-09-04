@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import axios from 'axios'
 import { createContextHook } from '../utils/bootstrap'
-import { REST_API_AXIOS_CONFIG } from '../utils/restAPI'
+import { REST_API_AXIOS_CONFIG, applyMethodOverride, applyRestNonce, listenForNonceRefresh } from '../utils/restAPI'
 import type { PropsWithChildren } from 'react'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
@@ -58,7 +58,13 @@ const buildRestAPI = (axiosInstance: AxiosInstance): RestAPI => ({
 const [Context, useRestAPI] = createContextHook<RestAPIContext>('useRestAPI')
 
 export const WithRestAPIContext: React.FC<PropsWithChildren> = ({ children }) => {
-	const axiosInstance = useMemo(() => axios.create(REST_API_AXIOS_CONFIG), [])
+	const axiosInstance = useMemo(() => {
+		const instance = axios.create(REST_API_AXIOS_CONFIG)
+		instance.interceptors.request.use(applyRestNonce)
+		instance.interceptors.request.use(applyMethodOverride)
+		listenForNonceRefresh()
+		return instance
+	}, [])
 
 	const api = useMemo(() => buildRestAPI(axiosInstance), [axiosInstance])
 	const value: RestAPIContext = { api, axiosInstance }

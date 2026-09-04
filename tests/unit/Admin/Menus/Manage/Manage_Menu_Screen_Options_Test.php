@@ -104,6 +104,41 @@ class Manage_Menu_Screen_Options_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * An earlier `screen_settings` callback that returns null must not be fatal.
+	 *
+	 * A callback that forgets to return its value passes null down the chain.
+	 * That used to raise a TypeError while the screen meta was rendering, which
+	 * killed the page after the admin chrome but before the snippets table.
+	 *
+	 * @return void
+	 */
+	public function test_render_tolerates_a_null_value_from_an_earlier_callback(): void {
+		$options = new Manage_Menu_Screen_Options();
+
+		$output = $options->render( null );
+
+		$this->assertIsString( $output );
+		$this->assertStringContainsString( 'snippets-table-truncate-row-values', $output );
+	}
+
+	/**
+	 * The filter chain survives a callback that returns null.
+	 *
+	 * @return void
+	 */
+	public function test_screen_settings_filter_chain_survives_a_null_returning_callback(): void {
+		$options = new Manage_Menu_Screen_Options();
+		$options->load();
+
+		add_filter( 'screen_settings', '__return_null', 5 );
+		$output = apply_filters( 'screen_settings', '', get_current_screen() );
+		remove_filter( 'screen_settings', '__return_null', 5 );
+
+		$this->assertIsString( $output );
+		$this->assertStringContainsString( 'snippets-table-truncate-row-values', $output );
+	}
+
+	/**
 	 * The truncation preference is saved from the Screen Options form.
 	 *
 	 * @return void

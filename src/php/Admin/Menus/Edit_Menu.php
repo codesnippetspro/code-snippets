@@ -4,7 +4,6 @@ namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Model\Snippet;
-use WP_Screen;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_all_snippet_tags;
 use function Code_Snippets\get_snippet;
@@ -49,8 +48,6 @@ class Edit_Menu extends Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' )
 		);
 
-		add_action( 'current_screen', array( $this, 'maybe_hide_menu_item' ) );
-
 		$this->remove_debug_bar_codemirror();
 	}
 
@@ -60,7 +57,18 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function register() {
-		parent::register();
+		// The page itself is always registered outside the menu, so nothing that
+		// reads the menu during `admin_menu` — menu editors and role managers
+		// among them — ever sees it. Registering it in the menu and removing it
+		// afterwards is why a page that never renders in the menu could still end
+		// up in someone's saved menu.
+		$this->register_without_menu_item();
+
+		$snippet_id = $this->get_requested_snippet_id();
+
+		if ( $snippet_id ) {
+			$this->add_current_snippet_menu_item( $snippet_id );
+		}
 
 		// Create New Snippet menu.
 		$this->add_menu(
@@ -68,6 +76,89 @@ class Edit_Menu extends Admin_Menu {
 			_x( 'Add New', 'menu label', 'code-snippets' ),
 			__( 'Create New Snippet', 'code-snippets' )
 		);
+	}
+
+	/**
+	 * The snippet this request is editing, if any.
+	 *
+	 * Read from the request rather than the current screen, because this runs
+	 * during `admin_menu`, before the screen is known.
+	 *
+	 * @return int Snippet ID, or 0 when not editing a specific snippet.
+	 */
+	private function get_requested_snippet_id(): int {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( $page !== $this->slug ) {
+			return 0;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
+		return isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
+	}
+
+	/**
+	 * Register the edit page without placing it in the admin menu.
+	 *
+	 * @return void
+	 */
+	private function register_without_menu_item(): void {
+		$hook = add_submenu_page(
+			'',
+			$this->title,
+			$this->label,
+			code_snippets()->get_cap(),
+			$this->slug,
+			array( $this, 'render' )
+		);
+
+		if ( $hook ) {
+			add_action( 'load-' . $hook, array( $this, 'load' ) );
+		}
+	}
+
+	/**
+	 * Mark the snippet being edited in the menu.
+	 *
+	 * Added as a plain link rather than a second registration of the page: a
+	 * submenu slug doubles as the identifier WordPress checks permissions
+	 * against, so carrying the ID in the slug would make `page=edit-snippet`
+	 * match nothing and the screen would refuse to load.
+	 *
+	 * @param int $snippet_id Snippet being edited.
+	 *
+	 * @return void
+	 */
+	private function add_current_snippet_menu_item( int $snippet_id ): void {
+		add_submenu_page(
+			$this->base_slug,
+			$this->title,
+			$this->label,
+			code_snippets()->get_cap(),
+			add_query_arg(
+				[
+					'page' => $this->slug,
+					'id'   => $snippet_id,
+				],
+				'admin.php'
+			),
+			'',
+			1
+		);
+	}
+
+	/**
+	 * Retrieve the hookname of the edit page.
+	 *
+	 * The page is registered without a parent, so WordPress files it under
+	 * "admin_page_" rather than under the Snippets menu; deriving it from the
+	 * menu slug would name a screen that does not exist.
+	 *
+	 * @return string
+	 */
+	public function get_hookname(): string {
+		return get_plugin_page_hookname( $this->slug, '' );
 	}
 
 	/**
@@ -81,26 +172,6 @@ class Edit_Menu extends Admin_Menu {
 			$this->get_hookname(),
 			get_plugin_page_hookname( code_snippets()->get_menu_slug( 'add' ), $this->base_slug ),
 		];
-	}
-
-	/**
-	 * Hide the static Edit Snippet menu item unless a specific snippet is being edited.
-	 *
-	 * @param WP_Screen $screen Current admin screen.
-	 *
-	 * @return void
-	 */
-	public function maybe_hide_menu_item( WP_Screen $screen ) {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin menu context.
-		$current_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
-		$edit_hook  = get_plugin_page_hookname( $this->slug, $this->base_slug );
-		$edit_hook .= $screen->in_admin( 'network' ) ? '-network' : '';
-
-		if ( ( $screen->id === $edit_hook || $screen->base === $edit_hook ) && 0 < $current_id ) {
-			return;
-		}
-
-		remove_submenu_page( $this->base_slug, $this->slug );
 	}
 
 	/**
@@ -124,9 +195,8 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	protected function ensure_correct_page() {
-		$screen = get_current_screen();
-		$edit_hook = get_plugin_page_hookname( $this->slug, $this->base_slug );
-		$edit_hook .= $screen->in_admin( 'network' ) ? '-network' : '';
+		$screen    = get_current_screen();
+		$edit_hook = $this->get_hookname() . ( $screen->in_admin( 'network' ) ? '-network' : '' );
 
 		// Disallow visiting the edit snippet page without a valid ID.
 		if (

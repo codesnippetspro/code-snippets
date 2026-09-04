@@ -91,7 +91,7 @@ class Admin_Bar {
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
 			plugins_url( 'dist/admin-bar.js', PLUGIN_FILE ),
-			[],
+			[ 'wp-i18n', 'wp-url' ],
 			PLUGIN_VERSION,
 			[ 'in_footer' => true ]
 		);
@@ -284,6 +284,15 @@ class Admin_Bar {
 				]
 			);
 		}
+
+		$wp_admin_bar->add_node(
+			[
+				'id'     => self::ROOT_NODE_ID . '-insights',
+				'title'  => esc_html_x( 'Insights', 'snippets', 'code-snippets' ),
+				'href'   => $plugin->get_menu_url( 'insights' ),
+				'parent' => self::ROOT_NODE_ID,
+			]
+		);
 
 		$wp_admin_bar->add_node(
 			[

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
 import { fetchConstQueryParam, fetchQueryParam, updateQueryParams } from '../../utils/urls'
-import { DismissibleNotice } from '../common/Notice'
+import { DismissibleNotice, type NoticeType } from '../common/Notice'
 import { SUBPAGES, Toolbar } from '../common/Toolbar'
 import { AiAgentDemo } from './AiAgentDemo/AiAgentDemo'
 import { BlueprintsDemo } from './BlueprintsDemo/BlueprintsDemo'
@@ -26,10 +26,25 @@ const repositionTableOptionsSettings = () => {
 	}
 }
 
-const getNoticeText = (result: string) => {
+const getNotice = (result: string): { text: string, type: NoticeType } | undefined => {
 	switch (result) {
 		case 'deleted':
-			return __('Snippet <strong>deleted</strong>.', 'code-snippets')
+			return { text: __('Snippet <strong>deleted</strong>.', 'code-snippets'), type: 'success' }
+
+		case 'executed':
+			return { text: __('Snippet <strong>executed</strong>.', 'code-snippets'), type: 'success' }
+
+		case 'run-once-failed':
+			return {
+				text: __('The snippet could not be run. Check that its code is valid and try again.', 'code-snippets'),
+				type: 'error'
+			}
+
+		case 'run-once-safe-mode':
+			return {
+				text: __('Snippet execution is disabled on this site, so the snippet was not run.', 'code-snippets'),
+				type: 'warning'
+			}
 
 		default:
 			return undefined
@@ -37,20 +52,20 @@ const getNoticeText = (result: string) => {
 }
 
 const PageNotices = () => {
-	const [noticeText, setNoticeText] = useState(() => {
+	const [notice, setNotice] = useState(() => {
 		const result = fetchQueryParam('result')
 		updateQueryParams({ result: undefined })
-		return result && getNoticeText(result)
+		return result ? getNotice(result) : undefined
 	})
 
-	return noticeText
+	return notice
 		? <DismissibleNotice
 			className="code-snippets-notice"
 			onDismiss={() => {
-				setNoticeText(undefined)
+				setNotice(undefined)
 			}}
-			type="success">
-			<p>{createInterpolateElement(noticeText, { strong: <strong /> })}</p>
+			type={notice.type}>
+			<p>{createInterpolateElement(notice.text, { strong: <strong /> })}</p>
 		</DismissibleNotice>
 		: null
 }

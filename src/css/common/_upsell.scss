@@ -6,8 +6,8 @@
 	align-items: center;
 	padding: 12px;
 	gap: 10px;
-	background: #fff;
-	border: 1px solid #ccc;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border);
 	border-radius: 5px;
 
 	p {
@@ -19,7 +19,7 @@
 	}
 
 	.button-primary {
-		background-color: theme.$secondary;
+		background-color: var(--cs-color-secondary);
 		border: 0;
 		font-weight: bold;
 		margin-inline-start: auto;
@@ -33,7 +33,7 @@
 		text-decoration: none;
 		font-weight: normal;
 		padding: 0;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		line-height: 1;
 		border: none;
 	}
@@ -46,7 +46,7 @@
 		margin: 0;
 
 		span {
-			color: #d46f4d;
+			color: var(--cs-color-secondary);
 		}
 	}
 
@@ -89,7 +89,7 @@
 	}
 
 	.button.button-large {
-		background-color: #d46f4d;
+		background-color: var(--cs-color-secondary);
 		padding-block: 15px;
 		padding-inline: 20px;
 		font-size: 16px;
@@ -121,13 +121,13 @@
 	line-height: 1.5;
 	background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
 	box-shadow: 0 4px 80px rgb(0 0 0 / 10%);
-	border-radius: 8px;
+	border-radius: 5px;
 }
 
 // Bleed the upsell to the full width of the admin content area and fill the
 // remaining viewport height, so it reads as a full page rather than a small
 // boxed card floating in the subpage. 168px accounts for the WP admin bar
-// (32px) plus the plugin toolbar ($toolbar-block-size, 136px in _toolbar.scss).
+// (32px) plus the plugin toolbar (136px).
 .code-snippets-upsell-page {
 	box-sizing: border-box;
 	margin-inline-start: -22px;

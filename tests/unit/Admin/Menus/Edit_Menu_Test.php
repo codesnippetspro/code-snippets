@@ -21,69 +21,86 @@ class Edit_Menu_Test extends AdminUnitTestCase {
 		parent::set_up();
 
 		set_current_screen( 'toplevel_page_' . code_snippets()->get_menu_slug() );
-		unset( $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] );
+		// The hidden page's registration must be proven by each test, not inherited.
+		unset( $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ], $GLOBALS['submenu'][''] );
 		unset( $_GET['id'] );
 	}
 
 	/**
-	 * The edit submenu item remains registered so the page stays directly accessible.
+	 * Reset request state between tests.
 	 *
 	 * @return void
 	 */
-	public function test_register_keeps_edit_submenu_item(): void {
-		$menu = new Edit_Menu();
-		$menu->register();
-
-		$submenu = $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [];
-		$submenu_slugs = array_column( $submenu, 2 );
-
-		$this->assertContains( code_snippets()->get_menu_slug( 'edit' ), $submenu_slugs );
-		$this->assertContains( code_snippets()->get_menu_slug( 'add' ), $submenu_slugs );
+	public function tear_down() {
+		unset( $_GET['page'], $_GET['id'] );
+		parent::tear_down();
 	}
 
 	/**
-	 * Hide the edit submenu item outside the snippet edit screen.
+	 * Slugs currently listed under the Snippets menu.
 	 *
-	 * @return void
+	 * @return string[]
 	 */
-	public function test_maybe_hide_menu_item_removes_edit_submenu_outside_edit_screen(): void {
-		$menu = new Edit_Menu();
-		$menu->register();
-
-		$menu->maybe_hide_menu_item( get_current_screen() );
-
-		$submenu = $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [];
-		$submenu_slugs = array_column( $submenu, 2 );
-
-		$this->assertNotContains( code_snippets()->get_menu_slug( 'edit' ), $submenu_slugs );
-		$this->assertContains( code_snippets()->get_menu_slug( 'add' ), $submenu_slugs );
+	private function get_snippets_submenu_slugs(): array {
+		return array_column( $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [], 2 );
 	}
 
 	/**
-	 * Keep the edit submenu item visible while editing a specific snippet.
+	 * The edit page stays registered so it remains reachable by URL.
 	 *
 	 * @return void
 	 */
-	public function test_maybe_hide_menu_item_keeps_edit_submenu_on_edit_screen(): void {
+	public function test_register_keeps_edit_page_reachable(): void {
 		$menu = new Edit_Menu();
 		$menu->register();
 
-		$screen = get_current_screen();
-		$hook = get_plugin_page_hookname(
-			code_snippets()->get_menu_slug( 'edit' ),
-			code_snippets()->get_menu_slug()
-		);
+		$hidden_slugs = array_column( $GLOBALS['submenu'][''] ?? [], 2 );
 
-		$screen->id = $hook;
-		$screen->base = $hook;
+		$this->assertContains( code_snippets()->get_menu_slug( 'edit' ), $hidden_slugs );
+		$this->assertContains( code_snippets()->get_menu_slug( 'add' ), $this->get_snippets_submenu_slugs() );
+	}
+
+	/**
+	 * The edit item is absent from the menu when no snippet is being edited.
+	 *
+	 * Anything reading the menu during `admin_menu` — menu editors and role
+	 * managers among them — should never see it, so it must not be registered
+	 * there and removed afterwards.
+	 *
+	 * @return void
+	 */
+	public function test_edit_item_absent_from_menu_when_not_editing(): void {
+		$menu = new Edit_Menu();
+		$menu->register();
+
+		foreach ( $this->get_snippets_submenu_slugs() as $slug ) {
+			$this->assertStringNotContainsString(
+				code_snippets()->get_menu_slug( 'edit' ),
+				$slug,
+				'the edit page must not appear in the Snippets menu outside the edit screen'
+			);
+		}
+	}
+
+	/**
+	 * While editing, the item appears and carries the snippet being edited.
+	 *
+	 * @return void
+	 */
+	public function test_edit_item_links_to_the_snippet_being_edited(): void {
+		$_GET['page'] = code_snippets()->get_menu_slug( 'edit' );
 		$_GET['id'] = '11';
 
-		$menu->maybe_hide_menu_item( $screen );
+		$menu = new Edit_Menu();
+		$menu->register();
 
-		$submenu = $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [];
-		$submenu_slugs = array_column( $submenu, 2 );
+		$matching = array_filter(
+			$this->get_snippets_submenu_slugs(),
+			fn( $slug ) => false !== strpos( $slug, code_snippets()->get_menu_slug( 'edit' ) )
+		);
 
-		$this->assertContains( code_snippets()->get_menu_slug( 'edit' ), $submenu_slugs );
+		$this->assertCount( 1, $matching, 'the edit item should appear while editing a snippet' );
+		$this->assertStringContainsString( 'id=11', reset( $matching ) );
 	}
 
 	/**
@@ -99,13 +116,18 @@ class Edit_Menu_Test extends AdminUnitTestCase {
 	}
 
 	/**
-	 * The edit menu hides its submenu item using the current_screen hook.
+	 * The hookname the menu reports is the one WordPress registered for the parentless page.
 	 *
 	 * @return void
 	 */
-	public function test_edit_menu_uses_current_screen_to_hide_menu_item(): void {
+	public function test_hookname_matches_the_registered_page(): void {
 		$menu = new Edit_Menu();
+		$menu->register();
 
-		$this->assertNotFalse( has_action( 'current_screen', [ $menu, 'maybe_hide_menu_item' ] ) );
+		$registered = get_plugin_page_hookname( code_snippets()->get_menu_slug( 'edit' ), '' );
+
+		$this->assertSame( $registered, $menu->get_hookname() );
+		$this->assertContains( $registered, $menu->get_hooknames() );
+		$this->assertNotFalse( has_action( 'load-' . $registered, [ $menu, 'load' ] ), 'the load hook is bound to the same name' );
 	}
 }

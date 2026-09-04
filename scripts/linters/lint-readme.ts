@@ -28,8 +28,10 @@
  * Lists
  *   - Items start with "* " (not "- ")
  *   - No trailing whitespace
+ *   - No blank lines between consecutive list items
  *
  * Spacing
+ *   - No leading blank lines before the plugin header
  *   - Exactly 1 blank line before every == section (not the very first)
  *   - Exactly 1 blank line after every == section heading
  *   - Exactly 1 blank line before every = sub-section (not right after == heading)
@@ -94,6 +96,34 @@ const collapseBlankLines = (lines: string[]): string[] => {
 		}
 		out.push(l)
 		prevBlank = blank
+	}
+	return out
+}
+
+const stripLeadingBlanks = (lines: string[]): string[] => {
+	let i = 0
+	while (i < lines.length && '' === lines[i].trim()) {
+		i += 1
+	}
+	return lines.slice(i)
+}
+
+const removeBlanksBetweenListItems = (lines: string[]): string[] => {
+	const isItem = (l: string): boolean => /^\s*[*-] /.test(l)
+	const out: string[] = []
+	for (let i = 0; i < lines.length; i += 1) {
+		if ('' === lines[i].trim()) {
+			let j = i + 1
+			while (j < lines.length && '' === lines[j].trim()) {
+				j += 1
+			}
+			const prev = out[out.length - 1]
+			const next = j < lines.length ? lines[j] : ''
+			if (0 < out.length && isItem(prev) && isItem(next)) {
+				continue
+			}
+		}
+		out.push(lines[i])
 	}
 	return out
 }
@@ -345,6 +375,7 @@ export const lintReadme = (src: string): { fixed: string; errors: string[] } => 
 	const errors: string[] = []
 	let lines = src.split('\n')
 
+	lines = stripLeadingBlanks(lines)
 	lines = normalisePluginHeader(lines, errors)
 	lines = trimTrailing(lines)
 	lines = normaliseHeaderFieldSpacing(lines)
@@ -354,6 +385,7 @@ export const lintReadme = (src: string): { fixed: string; errors: string[] } => 
 	lines = normaliseChangelogChangeTypes(lines)
 	lines = normaliseListItems(lines)
 	lines = applySpacingRules(lines)
+	lines = removeBlanksBetweenListItems(lines)
 	lines = finaliseLines(lines)
 
 	return { fixed: lines.join('\n'), errors }

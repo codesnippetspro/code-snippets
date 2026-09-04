@@ -7,16 +7,12 @@
 	position: relative;
 
 	// Bleed across the full admin content width, flush against the plugin toolbar.
-	// The -1px pull lands this border exactly over the toolbar's own bottom
-	// border, so the two render as the single rule dividing nav from subnav.
 	box-sizing: border-box;
 	min-block-size: 53px;
-	border-block-start: 1px solid #e2e2e4;
-	margin-block-start: -1px;
 	margin-inline-start: -22px;
 	inline-size: calc(100% + 42px);
 	overflow: hidden;
-	background: #fff;
+	background: var(--cs-color-surface);
 
 	&::before,
 	&::after {
@@ -32,12 +28,12 @@
 
 	&::before {
 		inset-inline-start: 0;
-		background: linear-gradient(to right, #fff, transparent);
+		background: linear-gradient(to right, var(--cs-color-surface), transparent);
 	}
 
 	&::after {
 		inset-inline-end: 0;
-		background: linear-gradient(to left, #fff, transparent);
+		background: linear-gradient(to left, var(--cs-color-surface), transparent);
 	}
 
 	&.has-scroll-start::before,
@@ -57,7 +53,7 @@
 	scrollbar-width: thin;
 
 	// The row line is painted on the scrollport so it remains fixed while tabs scroll.
-	background: linear-gradient(to top, #e2e2e4 1px, #fff 1px);
+	background: linear-gradient(to top, var(--cs-color-border-subtle) 1px, var(--cs-color-surface) 1px);
 
 	@media (width <= 960px) {
 		li {
@@ -121,15 +117,19 @@
 		font-weight: 600;
 		line-height: 1.5;
 		white-space: nowrap;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		text-decoration: none;
 		box-sizing: border-box;
-		border-inline-end: 1px solid #e2e2e4;
+		border-inline-end: 1px solid var(--cs-color-border-subtle);
 
 		// The text-only "All Snippets" tab uses a slightly wider gap between
 		// its label and count than tabs that lead with a badge or icon.
 		&.all-type-link {
 			gap: 12px;
+		}
+
+		&.pro-locked-type {
+			color: var(--cs-color-text-muted);
 		}
 
 		svg {
@@ -141,18 +141,18 @@
 		&:hover,
 		&:focus,
 		&:active {
-			color: #2c3337;
+			color: var(--cs-color-accent);
 		}
 
 		&.active-type {
 			background: #f0f0f1;
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 		}
 
 		// Suppress the persistent focus ring left behind after a mouse click;
 		// keyboard navigation still gets a visible outline via :focus-visible.
 		&:focus-visible {
-			outline: 2px solid theme.$accent;
+			outline: 2px solid var(--cs-color-accent);
 			outline-offset: -2px;
 			box-shadow: none;
 		}
@@ -160,10 +160,6 @@
 		&:focus:not(:focus-visible) {
 			outline: none;
 			box-shadow: none;
-		}
-
-		&.pro-locked-type {
-			color: #646970;
 		}
 	}
 
@@ -186,9 +182,9 @@
 		padding: 0;
 		margin: 0;
 		background: #f0f0f1;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		border: none;
-		border-radius: 4.5px;
+		border-radius: 5px;
 		cursor: pointer;
 
 		svg {
@@ -197,11 +193,11 @@
 
 		&:hover,
 		&:focus {
-			color: #2c3337;
+			color: var(--cs-color-text);
 		}
 
 		&.active-view {
-			background: theme.$accent;
+			background: var(--cs-color-accent);
 			color: #fff;
 
 			&:hover,
@@ -220,10 +216,10 @@
 		display: flex;
 		justify-content: flex-end;
 		margin: 0;
-		border-color: #e2e2e4;
+		border-color: var(--cs-color-border-subtle);
 
 		.show-settings {
-			border-color: #e2e2e4;
+			border-color: var(--cs-color-border-subtle);
 		}
 	}
 
@@ -269,4 +265,10 @@
 	.snippet-type-nav .all-type-link .snippet-type-name-short {
 		display: inline;
 	}
+}
+
+// When an admin notice pushes the page content down, restore the top border
+// above the subnav bar (no extra margin — the wrapper sits flush).
+.notice + .wrap .snippet-type-nav-wrapper {
+	border-block-start: 1px solid var(--cs-color-border-subtle);
 }
