@@ -1,0 +1,767 @@
+$sidebar-width: 340px;
+$layout-gap: 24px;
+$primary: #2271b1;
+$warning: #b32d2e;
+
+.ai-agent-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	inline-size: 100%;
+	margin-block: 28px 16px;
+}
+
+.ai-agent-heading__text {
+	h1 {
+		margin-block: 0 4px;
+	}
+
+	p {
+		margin-block: 0;
+		color: #50575e;
+	}
+}
+
+.ai-agent-heading__new {
+	flex-shrink: 0;
+	margin-inline-start: auto;
+}
+
+.ai-agent-layout {
+	display: grid;
+	gap: $layout-gap;
+	grid-template-columns: minmax(0, 1fr) $sidebar-width;
+	grid-template-areas: 'main sidebar';
+	align-items: start;
+
+	@media screen and (width <= 782px) {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas: 'main' 'sidebar';
+	}
+}
+
+.ai-agent-layout__main {
+	grid-area: main;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	min-inline-size: 0;
+	min-block-size: 600px;
+	padding: 20px;
+	background: var(--cs-color-surface-subtle, #f6f7f7);
+	border: 1px solid var(--cs-color-border-subtle, #dcdcde);
+	border-radius: 8px;
+}
+
+.ai-agent-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding-block: 48px;
+	color: #50575e;
+}
+
+.ai-agent-layout__sidebar {
+	grid-area: sidebar;
+}
+
+/* History rail */
+
+.ai-agent-history {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-block-size: 0;
+	position: relative;
+}
+
+.ai-agent-history--loading {
+	flex-direction: row;
+	align-items: center;
+	gap: 6px;
+	color: #50575e;
+	font-size: 13px;
+}
+
+.ai-agent-history__empty {
+	color: #787c82;
+	font-style: italic;
+}
+
+.ai-agent-history__list {
+	margin: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	flex: 1 1 auto;
+	min-block-size: 0;
+	overflow-y: auto;
+	padding-block-end: 24px;
+	scrollbar-width: thin;
+}
+
+.ai-agent-history__item {
+	display: flex;
+	align-items: stretch;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+	margin: 0;
+
+	&.is-active {
+		border-color: $primary;
+		box-shadow: inset 3px 0 0 $primary;
+	}
+}
+
+.ai-agent-history__open {
+	flex: 1 1 0;
+	min-inline-size: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	align-items: flex-start;
+	padding-block: 8px;
+	padding-inline: 12px;
+	background: none;
+	border: 0;
+	cursor: pointer;
+	text-align: start;
+}
+
+.ai-agent-history__title {
+	display: block;
+	inline-size: 100%;
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ai-agent-history__status {
+	display: inline-block;
+	padding: 0 8px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 18px;
+	background: #f0f0f1;
+	color: #50575e;
+
+	&.is-plan {
+		background: #e5f0fb;
+		color: #2271b1;
+	}
+
+	&.is-done {
+		background: #edfaef;
+		color: #007017;
+	}
+
+	&.is-failed {
+		background: #fcf0f1;
+		color: #b32d2e;
+	}
+}
+
+.ai-agent-history__delete {
+	flex: 0 0 auto;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	color: #787c82;
+	font-size: 18px;
+	padding-inline: 10px;
+
+	&:hover {
+		color: $warning;
+	}
+}
+
+.ai-agent-history::after {
+	content: '';
+	position: absolute;
+	inset-inline: 0;
+	inset-block-end: 0;
+	block-size: 48px;
+	pointer-events: none;
+	background: linear-gradient(to bottom, rgb(255 255 255 / 0%), #fff 85%);
+}
+
+/* Conversation thread */
+
+.ai-agent-thread {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.ai-agent-message {
+	padding-block: 10px;
+	padding-inline: 14px;
+	border-radius: 8px;
+	max-inline-size: 90%;
+
+	&.is-user {
+		align-self: flex-end;
+		background: color-mix(in srgb, var(--cs-color-surface-subtle, #f6f7f7) 97%, #000 3%);
+	}
+
+	&.is-assistant {
+		align-self: flex-start;
+		background: #fff;
+	}
+}
+
+.ai-agent-message__role {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	color: #787c82;
+	margin-block-end: 4px;
+}
+
+.ai-agent-message__content {
+	white-space: pre-wrap;
+}
+
+.ai-agent-typing {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #50575e;
+	animation: ai-agent-fade-in 0.25s ease;
+}
+
+.ai-agent-plan,
+.ai-agent-result {
+	animation: ai-agent-fade-in 0.25s ease;
+	border-radius: 8px;
+	background: #fff;
+	padding: 16px;
+}
+
+@keyframes ai-agent-fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+.ai-agent-typing__dots {
+	display: inline-flex;
+	gap: 4px;
+
+	i {
+		inline-size: 6px;
+		block-size: 6px;
+		border-radius: 50%;
+		background: $primary;
+		animation: ai-agent-blink 1.4s infinite both;
+
+		&:nth-child(2) {
+			animation-delay: 0.2s;
+		}
+
+		&:nth-child(3) {
+			animation-delay: 0.4s;
+		}
+	}
+}
+
+@keyframes ai-agent-blink {
+	0%,
+	80%,
+	100% {
+		opacity: 0.2;
+	}
+
+	40% {
+		opacity: 1;
+	}
+}
+
+/* Plan card */
+
+.ai-agent-plan__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-block-end: 12px;
+}
+
+.ai-agent-plan__title {
+	margin: 0;
+	font-size: 15px;
+}
+
+.ai-agent-plan__badge {
+	font-size: 11px;
+	font-weight: 600;
+	padding-block: 2px;
+	padding-inline: 8px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #50575e;
+	white-space: nowrap;
+
+	&.is-bundle {
+		background: #e5f0fb;
+		color: $primary;
+	}
+
+	&.is-done {
+		background: #edfaef;
+		color: #007017;
+	}
+}
+
+.ai-agent-plan__overview {
+	margin-block: 0 16px;
+	color: #1d2327;
+	line-height: 1.6;
+	white-space: pre-wrap;
+}
+
+.ai-agent-plan__parts-heading {
+	margin-block: 0 8px;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	color: #50575e;
+}
+
+.ai-agent-plan__parts {
+	margin: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.ai-agent-plan__part {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 4px 10px;
+	align-items: center;
+	padding: 10px 12px;
+	margin: 0;
+	background: var(--cs-color-surface-subtle, #f6f7f7);
+	border: 0;
+	border-radius: var(--cs-control-radius, 5px);
+
+	.badge {
+		align-self: start;
+	}
+}
+
+.ai-agent-plan__part-name {
+	font-weight: 600;
+}
+
+.ai-agent-plan__part-desc {
+	grid-column: 2;
+	margin: 0;
+	color: var(--cs-color-text-muted, #646970);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.ai-agent-plan__actions {
+	display: flex;
+	gap: 8px;
+	margin-block-start: 16px;
+}
+
+/* Result card */
+
+.ai-agent-result__lead {
+	color: #50575e;
+	margin-block: 0 12px;
+}
+
+.ai-agent-result__rows {
+	margin: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.ai-agent-result__row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	margin: 0;
+	background: var(--cs-color-surface-subtle, #f6f7f7);
+	border-radius: var(--cs-control-radius, 5px);
+}
+
+.ai-agent-result__name {
+	font-weight: 600;
+	flex: 1;
+}
+
+.ai-agent-result__status.is-error {
+	color: $warning;
+	font-size: 12px;
+}
+
+.ai-agent-result__status.is-deleted {
+	color: $warning;
+	font-weight: 600;
+	text-decoration: underline;
+	text-decoration-color: $warning;
+}
+
+.ai-agent-result__status.is-checking {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: #787c82;
+	font-size: 12px;
+}
+
+.ai-agent-result__link {
+	white-space: nowrap;
+}
+
+.ai-agent-result__edit {
+	margin-block-start: 16px;
+	padding-block-start: 16px;
+	border-block-start: 1px solid #f0f0f1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.ai-agent-result__edit-head {
+	inline-size: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	font-size: 13px;
+	color: #50575e;
+}
+
+.ai-agent-result__edit-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+/* Borderless treatment for the inline preview / make-changes / select buttons. */
+.ai-agent-result .button-link {
+	border: 0;
+	box-shadow: none;
+	padding-inline: 2px;
+}
+
+/* Use plugin accent colour for preview/edit links. */
+.wp-core-ui .ai-agent-result .ai-agent-result__row .button-link,
+.ai-agent-result .ai-agent-result__link {
+	color: var(--cs-color-accent, #2271b1);
+
+	&:hover {
+		color: var(--cs-color-accent-hover, #0a4b78);
+	}
+}
+
+/* Error panel */
+
+// The agent asking to widen the context. Deliberately not styled as an error:
+// nothing has gone wrong, and the user is being asked to consent.
+.ai-agent-context-request {
+	border: 1px solid #c3d9ed;
+	border-radius: 8px;
+	padding: 16px;
+	background: #f0f6fc;
+
+	.ai-agent-context-request__detail {
+		margin-block: 0 12px;
+		font-size: 13px;
+		color: #50575e;
+	}
+
+	.ai-agent-context-request__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+}
+
+// Shown in place of the typing indicator once the user stops waiting on a
+// generation the cloud may still be running.
+.ai-agent-stopped {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	border: 1px solid var(--cs-color-border-subtle, #dcdcde);
+	border-radius: 8px;
+	padding: 12px 16px;
+	background: #f6f7f7;
+
+	p {
+		margin: 0;
+		font-size: 13px;
+		color: #50575e;
+	}
+}
+
+.ai-agent-error {
+	border: 1px solid #f0c33c;
+	border-radius: 8px;
+	padding: 16px;
+	background: #fcf9e8;
+
+	p {
+		margin-block: 0 12px;
+	}
+
+	// A refusal has no Retry button, so its message needs no trailing gap.
+	&.is-refusal p {
+		margin-block-end: 0;
+	}
+}
+
+
+/* Prompt box */
+
+.ai-agent-prompt {
+	border: 1px solid var(--cs-color-border-subtle, #dcdcde);
+	border-radius: 8px;
+	background: #fff;
+	padding: 8px;
+
+	&:focus-within {
+		border-color: $primary;
+		box-shadow: 0 0 0 1px $primary;
+	}
+}
+
+.ai-agent-prompt__input {
+	box-sizing: border-box;
+	inline-size: 100%;
+	max-inline-size: 100%;
+	border: 0;
+	resize: vertical;
+	min-block-size: 90px;
+	font-size: 14px;
+	padding: 6px;
+	background: #fff;
+	color: #2c3337;
+
+	&:focus {
+		outline: none;
+		box-shadow: none;
+	}
+
+	&:disabled {
+		background: #fff;
+		color: #2c3337;
+		opacity: 1;
+	}
+}
+
+.ai-agent-prompt__footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-block-start: 6px;
+}
+
+.ai-agent-prompt__hint {
+	font-size: 12px;
+	color: #646970;
+}
+
+.ai-agent-result__edit .ai-agent-prompt {
+	inline-size: 100%;
+}
+
+/* Push the composer to the bottom of the main column. */
+.ai-agent-layout__main > .ai-agent-prompt {
+	margin-block-start: auto;
+}
+
+/* Empty state — starter prompts in the blank area. */
+.ai-agent-empty {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	text-align: center;
+	padding: 24px;
+}
+
+.ai-agent-empty__eyebrow {
+	margin: 0;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--cs-color-text-muted, #646970);
+}
+
+.ai-agent-empty__chips {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+	max-inline-size: 560px;
+}
+
+.ai-agent-empty__chip {
+	padding: 8px 16px;
+	border: 1px solid var(--cs-color-border-subtle, #dcdcde);
+	border-radius: 999px;
+	background: var(--cs-color-surface, #fff);
+	color: var(--cs-color-text, #2c3337);
+	font-size: 14px;
+	line-height: 1.5;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--cs-color-accent, #2271b1);
+		color: var(--cs-color-accent, #2271b1);
+	}
+}
+
+/* Sidebar */
+
+.ai-agent-sidebar {
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	max-block-size: 634px;
+}
+
+.ai-agent-sidebar__tabs {
+	display: flex;
+	border-block-end: 1px solid #dcdcde;
+}
+
+.ai-agent-sidebar__tab {
+	flex: 1;
+	padding-block: 12px;
+	padding-inline: 8px;
+	border: 0;
+	background: #f6f7f7;
+	cursor: pointer;
+	font-weight: 600;
+	color: #50575e;
+	border-block-end: 2px solid transparent;
+
+	&:hover {
+		color: $primary;
+	}
+
+	&.is-active {
+		background: #fff;
+		color: $primary;
+		border-block-end-color: $primary;
+	}
+}
+
+.ai-agent-sidebar__panel {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 16px;
+	min-block-size: 0;
+	overflow: hidden;
+}
+
+.ai-agent-sidebar__panel[hidden] {
+	display: none;
+}
+
+.ai-agent-sidebar__heading {
+	margin-block: 0 8px;
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	color: #50575e;
+}
+
+.ai-agent-examples {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.ai-agent-examples__chip {
+	text-align: start;
+	padding-block: 8px;
+	padding-inline: 10px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #f6f7f7;
+	cursor: pointer;
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	&:hover:not(:disabled) {
+		border-color: $primary;
+		color: $primary;
+	}
+}
+
+.ai-agent-quota__row {
+	margin-block-end: 10px;
+}
+
+.ai-agent-quota__label {
+	display: flex;
+	justify-content: space-between;
+	font-size: 12px;
+	color: #50575e;
+	margin-block-end: 4px;
+}
+
+.ai-agent-quota__fill {
+	block-size: 100%;
+	background: $primary;
+}
+
+.ai-agent-quota__track {
+	block-size: 8px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	overflow: hidden;
+
+	&.is-warning .ai-agent-quota__fill {
+		background: $warning;
+	}
+}
+
+.ai-agent-message-limit__value {
+	margin: 0;
+	font-size: 13px;
+	color: #50575e;
+
+	&.is-warning {
+		color: $warning;
+	}
+}

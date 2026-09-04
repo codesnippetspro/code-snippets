@@ -1,0 +1,135 @@
+@use '../common/notices';
+
+.cloud-bundle-snippets-results h3 {
+	margin-block: 24px 16px;
+	font-size: 20px;
+	font-weight: 510;
+	line-height: 1.25;
+	color: #2c3337;
+
+	a {
+		color: var(--cs-color-accent);
+	}
+}
+
+.cloud-bundles {
+	> p {
+		font-size: 14px;
+		line-height: 1.5;
+		color: #2c3337;
+
+		a {
+			color: var(--cs-color-accent);
+			text-decoration: underline;
+		}
+	}
+
+	.code-snippets-cards {
+		grid-template-columns: repeat(auto-fill, minmax(385px, 1fr));
+	}
+
+	.cloud-bundle {
+		h3 {
+			margin-block-start: 0;
+		}
+
+		.bundle-meta {
+			display: flex;
+			gap: 4px;
+		}
+
+		footer {
+			display: flex;
+			align-items: stretch;
+
+			.button {
+				flex: 1;
+			}
+		}
+	}
+}
+
+.cloud-library-snippets {
+	.column-status .badge {
+		padding-inline: 5px;
+	}
+
+	// Constrain the name column and wrap long names onto a second line,
+	// clamping with an ellipsis beyond that, so the description column gets
+	// room to breathe.
+	.column-name {
+		inline-size: 18%;
+	}
+
+	td.column-name strong {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
+		overflow-wrap: anywhere;
+	}
+
+	.column-desc {
+		inline-size: 30%;
+		min-inline-size: 18rem;
+	}
+
+	.column-state {
+		inline-size: 40px;
+		text-align: center;
+		vertical-align: middle;
+
+		.cloud-sync-indicator {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			vertical-align: middle;
+		}
+
+		svg {
+			display: inline-block;
+			vertical-align: middle;
+		}
+	}
+
+	.column-type {
+		inline-size: 80px;
+	}
+
+	.column-status {
+		inline-size: 110px;
+	}
+
+	.column-tags {
+		inline-size: 12%;
+	}
+
+	.column-date {
+		inline-size: 110px;
+	}
+
+	.column-actions {
+		inline-size: 210px;
+	}
+
+	td {
+		box-sizing: border-box;
+		block-size: 60px;
+		vertical-align: middle;
+	}
+
+	.cloud-snippet-update svg {
+		display: block;
+	}
+
+	// Clamp descriptions to two lines so every row stays the same height.
+	.snippet-description-content {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
+		max-inline-size: min(25rem, 45vw);
+	}
+}

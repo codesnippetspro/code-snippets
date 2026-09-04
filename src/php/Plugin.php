@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
+use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
@@ -17,6 +18,7 @@ use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
+use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
 use Code_Snippets\REST_API\Preferences\Insights_View_Rest_Controller;
 use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
@@ -156,6 +158,7 @@ class Plugin {
 
 		new Snippet_View_REST_Controller();
 		new Insights_View_Rest_Controller();
+		new Demos_Seen_REST_Controller();
 
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
@@ -359,18 +362,20 @@ class Plugin {
 			$handle,
 			'CODE_SNIPPETS',
 			[
-				'debug'            => defined( 'WP_DEBUG' ) && WP_DEBUG,
-				'isLicensed'       => $this->licensing->is_licensed(),
-				'isCloudConnected' => $this->cloud_connection->is_authenticated(),
-				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
-				'snippetView'      => Snippet_View_REST_Controller::get_snippet_view(),
+				'debug'              => defined( 'WP_DEBUG' ) && WP_DEBUG,
+				'isLicensed'         => $this->licensing->is_licensed(),
+				'isCloudConnected'   => $this->cloud_connection->is_authenticated(),
+				'hideUpsell'         => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
+				'snippetView'        => Snippet_View_REST_Controller::get_snippet_view(),
 				'insightsChartViews' => Insights_View_Rest_Controller::get_insights_chart_views(),
-				'restAPI'          => [
+				'demosSeen'          => Demos_Seen_REST_Controller::get_demos_seen(),
+				'restAPI'            => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
 					'snippetView'    => esc_url_raw( rest_url( Snippet_View_REST_Controller::get_base_route() ) ),
 					'insightsView'   => esc_url_raw( rest_url( Insights_View_Rest_Controller::get_base_route() ) ),
+					'demosSeen'      => esc_url_raw( rest_url( Demos_Seen_REST_Controller::get_base_route() ) ),
 					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
 					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),
@@ -379,7 +384,7 @@ class Plugin {
 						'snippets' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
 					],
 				],
-				'urls'             => [
+				'urls'               => [
 					'plugin'   => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
 					'manage'   => esc_url_raw( $this->get_menu_url() ),
 					'edit'     => esc_url_raw( $this->get_menu_url( 'edit' ) ),
@@ -391,6 +396,7 @@ class Plugin {
 					'settings' => ! are_settings_unified() || is_super_admin()
 						? esc_url_raw( $this->get_menu_url( 'settings' ) )
 						: null,
+					'demoReset' => esc_url_raw( Manage_Menu::get_demo_reset_url() ),
 				],
 			]
 		);

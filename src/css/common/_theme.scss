@@ -1,6 +1,7 @@
 :root {
 	--cs-color-accent: #2271b1;
 	--cs-color-accent-hover: #0a4b78;
+	--cs-color-accent-subtle: #c9e1f5;
 	--cs-color-primary: #03c7d2;
 	--cs-color-secondary: #d46f4d;
 	--cs-color-text: #2c3337;
@@ -22,6 +23,9 @@
 	--cs-card-radius: 8px;
 	--cs-control-height: 38px;
 	--cs-control-radius: 5px;
+	--cs-preview-modal-inline-size: min(900px, 90vw);
+	--cs-font-size-body: 14px;
+	--cs-line-height-body: 1.5;
 	--cs-direction-multiplier: 1; // LTR = 1, RTL = -1
 }
 

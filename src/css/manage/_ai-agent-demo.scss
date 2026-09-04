@@ -1,0 +1,132 @@
+$primary: #2271b1;
+$muted: #50575e;
+
+/* Prompt box */
+
+.ai-agent-demo-prompt__text {
+	display: block;
+	white-space: pre-wrap;
+	word-break: break-word;
+	color: #1d2327;
+	line-height: 1.6;
+}
+
+.ai-agent-demo-prompt__placeholder {
+	color: #8c8f94;
+}
+
+.ai-agent-demo-prompt.is-typing {
+	border-color: $primary;
+	box-shadow: 0 0 0 1px $primary;
+}
+
+.ai-agent-demo-prompt__caret {
+	display: inline-block;
+	inline-size: 2px;
+	block-size: 1.1em;
+	margin-inline-start: 1px;
+	background: $primary;
+	vertical-align: text-bottom;
+	animation: ai-agent-demo-caret 1s step-end infinite;
+}
+
+@keyframes ai-agent-demo-caret {
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0;
+	}
+}
+
+/* Cloud round trip */
+
+.ai-agent-demo-transit {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-block: 10px;
+	padding-inline: 14px;
+	border: 1px dashed #c3c4c7;
+	border-radius: 8px;
+	background: #fff;
+	color: $muted;
+	font-size: 13px;
+	animation: ai-agent-fade-in 0.25s ease;
+}
+
+.ai-agent-demo-transit__endpoint {
+	white-space: nowrap;
+}
+
+.ai-agent-demo-transit__track {
+	position: relative;
+	flex: 1;
+	block-size: 2px;
+	min-inline-size: 60px;
+	border-radius: 2px;
+	background: #dcdcde;
+	overflow: hidden;
+}
+
+.ai-agent-demo-transit__pulse {
+	position: absolute;
+	inset-block: 0;
+	inline-size: 40%;
+	border-radius: 2px;
+	background: $primary;
+	animation: ai-agent-demo-transit 1.4s ease-in-out infinite;
+}
+
+@keyframes ai-agent-demo-transit {
+	from {
+		inset-inline-start: -40%;
+	}
+
+	to {
+		inset-inline-start: 100%;
+	}
+}
+
+/* Closing panel */
+
+// Sits below the agent rather than inside its thread, so it reads as the end
+// of the walkthrough rather than as another message.
+.ai-agent-demo__closing {
+	margin-block-start: 24px;
+}
+
+/* Inert controls */
+
+// The walkthrough drives the page, so the agent's own controls are disabled
+// rather than removed. They are drawn at full strength so the demo shows the
+// screen as it really looks.
+.ai-agent-demo {
+	.ai-agent-examples__chip:disabled,
+	.ai-agent-empty__chip:disabled {
+		opacity: 1;
+		cursor: default;
+		color: var(--cs-color-text, #2c3337);
+	}
+
+	.ai-agent-history__open {
+		cursor: default;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ai-agent-demo-prompt__caret,
+	.ai-agent-demo-transit__pulse,
+	.ai-agent-typing__dots i {
+		animation: none;
+	}
+
+	.ai-agent-plan,
+	.ai-agent-result,
+	.ai-agent-typing,
+	.ai-agent-demo-transit {
+		animation: none;
+	}
+}

@@ -1,0 +1,5 @@
+// The closing panel sits well clear of the table, so the scroll at the end of
+// the walkthrough lands on something that reads as a separate conclusion.
+.cloud-library-demo__closing {
+	margin-block-start: 48px;
+}

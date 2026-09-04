@@ -75,6 +75,35 @@ class Manage_Menu_Screen_Options_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * The AI Agent demo is detected as its own view, and keeps the upsell
+	 * treatment that strips Screen Options and Help tabs from the page.
+	 *
+	 * @return void
+	 */
+	public function test_ai_agent_demo_view_detection(): void {
+		$_REQUEST['subpage'] = 'ai-agent';
+		$options = new Manage_Menu_Screen_Options();
+
+		$this->assertTrue( $options->is_ai_agent_view() );
+		$this->assertTrue( $options->is_upsell_view() );
+		$this->assertFalse( $options->is_manage_table_view() );
+		$this->assertFalse( $options->is_cloud_community_view() );
+	}
+
+	/**
+	 * Other subpages are not mistaken for the AI Agent demo.
+	 *
+	 * @return void
+	 */
+	public function test_ai_agent_view_excludes_other_subpages(): void {
+		$options = new Manage_Menu_Screen_Options();
+		$this->assertFalse( $options->is_ai_agent_view() );
+
+		$_REQUEST['subpage'] = 'cloud-community';
+		$this->assertFalse( $options->is_ai_agent_view() );
+	}
+
+	/**
 	 * An earlier `screen_settings` callback that returns null must not be fatal.
 	 *
 	 * A callback that forgets to return its value passes null down the chain.

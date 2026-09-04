@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.0] (UPCOMING)
+
+### Added
+* AI Agent demo: a guided, scripted walkthrough of the Pro AI Agent that plans, builds, and refines a welcome banner snippet named after your site. Runs entirely inside the plugin — no data leaves your site and no snippets are added to your library.
+* Blueprints demo: a guided, scripted walkthrough of Pro Blueprints that steps through the "Create a Shortcode" blueprint and confirms the snippet it would generate. Runs entirely inside the plugin — no code is generated and nothing is saved.
+* Cloud Library demo: a guided, scripted walkthrough of the Pro Cloud Library, showing how a cloud snippet is previewed, downloaded inactive, and then kept in sync. Runs entirely inside the plugin — the snippets shown are examples and nothing is downloaded.
+* "New" badges on the AI Agent, Blueprints, and Cloud Library toolbar tabs, which soften once each demo walkthrough has been watched.
+
 ## [3.10.2] (2026-09-01)
 
 ### Added

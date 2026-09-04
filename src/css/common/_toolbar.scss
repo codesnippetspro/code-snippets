@@ -1,4 +1,3 @@
-@use 'theme';
 @use 'upsell';
 
 #wpbody {
@@ -153,7 +152,9 @@
 			font-size: 13px;
 			text-align: center;
 
-			.pro-chip {
+			.pro-chip,
+			.new-chip,
+			.demo-chip {
 				position: absolute;
 				inset-block-start: 7px;
 				inset-inline-end: 4px;
@@ -182,6 +183,7 @@
 }
 
 .code-snippets-toolbar-lower .pro-chip,
+.code-snippets-toolbar-lower .demo-chip,
 .nav-tab .pro-chip,
 .snippet-type-link .pro-chip {
 	color: var(--cs-color-accent);
@@ -199,8 +201,28 @@
 }
 
 
-.code-snippets-toolbar-lower .pro-chip {
+.code-snippets-toolbar-lower .pro-chip,
+.code-snippets-toolbar-lower .demo-chip {
 	font-size: 12px;
+}
+
+// Deliberately warm, so it reads as "new here" rather than as another locked
+// Pro destination alongside the blue pro chips.
+.code-snippets-toolbar-lower .new-chip {
+	color: #fff;
+	background: linear-gradient(135deg, var(--cs-color-secondary) 0%, #e2953f 100%);
+	border: 1px solid rgb(0 0 0 / 5%);
+	text-transform: uppercase;
+	border-radius: 999px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 5px 10px;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	line-height: 1;
 }
 
 .nav-tab .pro-chip,

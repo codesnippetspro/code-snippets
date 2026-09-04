@@ -35,12 +35,14 @@ declare global {
 			isCloudConnected: boolean
 			snippetView: SnippetView
 			insightsChartViews: InsightsChartViews
+			demosSeen?: string[]
 			restAPI: {
 				base: string
 				snippets: string
 				recentlyActive: string
 				snippetView: string
 				insightsView: string
+				demosSeen: string
 				importPlugins: string
 				importFiles: string
 				nonce: string
@@ -59,6 +61,7 @@ declare global {
 				import: string
 				settings: string | null
 				cloud: string
+				demoReset: string
 			}
 			banner: {
 				key: string
@@ -86,6 +89,9 @@ declare global {
 			runOnceNonce?: string
 			supportsZipDownloads: boolean
 			editorTheme: string
+			aiDemo?: {
+				siteName: string
+			}
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: SnippetSchema

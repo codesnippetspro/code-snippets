@@ -127,6 +127,12 @@ class Manage_Menu_Assets {
 			if ( $inline_limit > 0 ) {
 				$localized['snippetsList'] = array_slice( $snippets, 0, $inline_limit );
 			}
+		} elseif ( $this->screen_options->is_ai_agent_view() ) {
+			// The AI Agent demo writes the site name into the snippet it builds,
+			// so the walkthrough reads as though it were written for this site.
+			$localized['aiDemo'] = [
+				'siteName' => get_bloginfo( 'name' ),
+			];
 		}
 
 		wp_localize_script( self::JS_HANDLE, 'CODE_SNIPPETS_MANAGE', $localized );

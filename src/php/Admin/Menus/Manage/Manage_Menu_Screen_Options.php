@@ -111,6 +111,19 @@ class Manage_Menu_Screen_Options {
 	}
 
 	/**
+	 * Whether the current request renders the AI Agent demo.
+	 *
+	 * The demo has no screen options or help tabs of its own, so it remains an
+	 * upsell view for {@see load()}; this detection exists only so its runtime
+	 * data can be localized on the subpage that uses it.
+	 *
+	 * @return bool
+	 */
+	public function is_ai_agent_view(): bool {
+		return 'ai-agent' === $this->get_current_subpage();
+	}
+
+	/**
 	 * Whether the current request renders Community Cloud.
 	 *
 	 * The "Bundles" tab within Community Cloud is a Pro-only upsell rather than

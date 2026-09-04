@@ -1,0 +1,98 @@
+@use '../common/theme';
+
+$primary: #2271b1;
+
+// Every section is held to one height so stepping between them never resizes
+// the card. The value fits the tallest tab (Output, with its code textarea);
+// shorter tabs simply leave space beneath their fields.
+$panel-block-size: 420px;
+
+.blueprints-demo {
+	// Read-only controls keep their ordinary appearance: the walkthrough
+	// supplies the values, and greying every field out would misread as a
+	// broken form.
+	.blueprint-form-content {
+		min-block-size: $panel-block-size;
+		transition: opacity 220ms ease;
+
+		&.is-fading {
+			opacity: 0;
+		}
+
+		input[type='text'],
+		textarea,
+		select {
+			background: #fff;
+			color: #2c3337;
+			opacity: 1;
+		}
+
+		select:disabled {
+			appearance: none;
+			padding-inline-end: 8px;
+		}
+	}
+
+	.blueprint-form-sidebar__item:disabled {
+		cursor: default;
+		opacity: 1;
+	}
+
+	.blueprint-form-repeater__add:disabled,
+	.blueprint-form-repeater__actions .button:disabled {
+		cursor: default;
+	}
+
+	// The fields grid is two columns, but the attributes repeater is the only
+	// thing on its tab, so it takes the full width rather than half of it.
+	.blueprint-form-fields > .blueprint-form-repeater {
+		grid-column: 1 / -1;
+	}
+
+	// One attribute per row, its three cells sharing the width evenly, so the
+	// Attributes tab stays within the shared height.
+	.blueprint-form-repeater__row {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+		align-items: end;
+		gap: 8px 14px;
+
+		.blueprint-form-repeater__cell {
+			flex: none;
+			min-inline-size: 0;
+		}
+
+		.blueprint-form-repeater__actions {
+			flex-basis: auto;
+		}
+	}
+}
+
+/* Generated confirmation */
+
+.blueprints-demo-generated {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-block: 20px;
+	padding: 18px 20px;
+	border: 1px solid #c3c4c7;
+	border-radius: 8px;
+	background: #fff;
+	animation: demo-fade-in 0.35s ease;
+}
+
+.blueprints-demo-generated__text {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.blueprints-demo .blueprint-form-content,
+	.blueprints-demo-generated {
+		transition: none;
+		animation: none;
+	}
+}

@@ -1,0 +1,151 @@
+$sidebar-width: 220px;
+$border-color: #c3c4c7;
+
+.blueprint-form-layout {
+	display: grid;
+	grid-template-columns: $sidebar-width 1fr;
+	gap: 0;
+	border: 1px solid $border-color;
+	border-radius: 0 0 0 4px;
+	overflow: hidden;
+
+	@media (width <= 960px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.blueprint-form-sidebar {
+	display: flex;
+	flex-direction: column;
+	background: #f6f7f7;
+	padding: 0;
+
+	ul {
+		flex: 0 0 auto;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	li {
+		margin: 0;
+	}
+
+	&__item {
+		display: block;
+		inline-size: 100%;
+		padding: 12px 16px;
+		border: none;
+		border-block-end: 1px solid #e2e2e4;
+		border-inline-end: 1px solid #e2e2e4;
+		border-radius: 0;
+		background: #f6f7f7;
+		color: #2c3337;
+		cursor: pointer;
+		font-weight: 400;
+		text-align: start;
+		transition:
+			background 150ms ease,
+			color 150ms ease;
+
+		&:hover,
+		&:focus-visible {
+			background: var(--cs-color-accent-subtle);
+			color: var(--cs-color-accent);
+			outline: none;
+		}
+
+		&.is-active {
+			background: #fff;
+			color: var(--cs-color-accent);
+			border-inline-end: none;
+		}
+	}
+
+	&__generate-wrap {
+		flex: 1 1 auto;
+		min-block-size: 0;
+		border-inline-end: 1px solid #e2e2e4;
+		padding: 16px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__generate {
+		background-color: #2271b1;
+		border: none;
+		border-radius: 4px;
+		box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+		color: #fff;
+		cursor: pointer;
+		display: block;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 14px;
+		margin: 0;
+		padding: 12px;
+		text-align: center;
+		transition: box-shadow 0.15s ease;
+		margin-block-start: auto;
+		inline-size: 100%;
+
+		&:hover,
+		&:focus-visible {
+			box-shadow: 0 2px 6px rgb(0 0 0 / 16%);
+			outline: none;
+		}
+	}
+}
+
+.blueprint-form-content {
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 28px 32px;
+
+	h4 {
+		margin: 0;
+		font-size: 1.4rem;
+		color: #2c3337;
+	}
+
+	input[type='date'],
+	input[type='datetime-local'],
+	input[type='datetime'],
+	input[type='email'],
+	input[type='month'],
+	input[type='number'],
+	input[type='password'],
+	input[type='search'],
+	input[type='tel'],
+	input[type='text'],
+	input[type='time'],
+	input[type='url'],
+	input[type='week'] {
+		padding: 0 8px;
+		line-height: 3;
+		min-block-size: 30px;
+	}
+
+	select {
+		padding: 0 8px;
+		min-block-size: 30px;
+		line-height: 3;
+		max-inline-size: 100%;
+	}
+}
+
+.blueprint-form-section-description {
+	color: #646970;
+	font-size: 0.95rem;
+	line-height: 1.4;
+	margin: 0 0 24px;
+}
+
+.blueprint-form-content .blueprint-form-field label {
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #2c3337;
+}

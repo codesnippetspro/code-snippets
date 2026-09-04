@@ -1,0 +1,234 @@
+// Shared chrome for the feature walkthroughs. Each demo styles its own stage
+// content; everything here is the frame around it.
+
+$callout-inline-size: 320px;
+$click-colour: #d63638;
+$callout-breakpoint: 1400px;
+
+// One step above the WordPress modal overlay (100000), so the commentary is
+// not dimmed by a modal the walkthrough opened.
+$above-modal-overlay: 100001;
+
+// Space kept between the callout and both the modal and the viewport edge.
+$modal-gutter-inset: 40px;
+
+
+@keyframes demo-fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+// Demo screens have no subnav band between the toolbar and the title, so the
+// header carries that separation itself. The playback controls sit beside the
+// title rather than being pushed to the far end of the row.
+.demo-page-header {
+	justify-content: flex-start;
+	margin-block: 32px 24px;
+
+	h1 {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+}
+
+// Matches the toolbar's "New" badge, so the two read as one signal for the
+// same feature.
+.demo-chip {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 5px 10px;
+	border: 1px solid rgb(0 0 0 / 5%);
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--cs-color-secondary) 0%, #e2953f 100%);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	text-transform: uppercase;
+}
+
+.demo-controls {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.demo-callout {
+	// Anchored to the foot of the viewport rather than its middle: the demo
+	// pages fill their width, so a centred panel lands on the fields the
+	// commentary is describing.
+	position: fixed;
+	inset-inline-end: 28px;
+	inset-block-end: 28px;
+	z-index: 100;
+	inline-size: $callout-inline-size;
+	box-sizing: border-box;
+	padding: 16px 18px;
+	border: 1px solid #b9d4ea;
+	border-inline-start: 4px solid var(--cs-color-accent);
+	border-radius: 10px;
+	background: #f4f9fd;
+	box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
+	animation: demo-callout-in 300ms ease both;
+
+	// Narrow screens have no room beside the walkthrough, so the panel is
+	// dropped rather than allowed to obscure the thing it describes.
+	@media (width <= $callout-breakpoint) {
+		display: none;
+	}
+}
+
+.demo-callout__step {
+	display: block;
+	margin-block-end: 6px;
+	color: var(--cs-color-accent);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.demo-callout__title {
+	margin-block: 0 6px;
+	font-size: 15px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.demo-callout__body {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #50575e;
+}
+
+@keyframes demo-callout-in {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// A modal draws its own overlay across the whole viewport, which would dim the
+// commentary along with the page behind it. The callout keeps its corner and
+// rises above the overlay instead, narrowing to the gutter beside the modal so
+// it never covers what it is describing.
+body.modal-open .demo-callout {
+	z-index: $above-modal-overlay;
+	inline-size: calc((100vw - var(--cs-preview-modal-inline-size)) / 2 - #{$modal-gutter-inset});
+	max-inline-size: $callout-inline-size;
+}
+
+// Marks the button the walkthrough is "clicking", so a simulated press reads
+// as deliberate rather than as a stray focus ring.
+.demo-click {
+	position: relative;
+	outline: 2px solid $click-colour;
+	outline-offset: 2px;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 50%;
+		inline-size: 12px;
+		block-size: 12px;
+		margin-block-start: -6px;
+		margin-inline-start: -6px;
+		border-radius: 50%;
+		background: $click-colour;
+		box-shadow: 0 0 0 3px rgb(214 54 56 / 30%);
+		animation: demo-click-pulse 1.1s ease-out infinite;
+		pointer-events: none;
+	}
+}
+
+@keyframes demo-click-pulse {
+	0% {
+		box-shadow: 0 0 0 3px rgb(214 54 56 / 40%);
+	}
+
+	70% {
+		box-shadow: 0 0 0 12px rgb(214 54 56 / 0%);
+	}
+
+	100% {
+		box-shadow: 0 0 0 3px rgb(214 54 56 / 0%);
+	}
+}
+
+// Dims and blurs everything except the part of the page being described.
+.demo-spotlight {
+	position: fixed;
+	inset: 0;
+	z-index: 90;
+	pointer-events: none;
+}
+
+.demo-spotlight__panel {
+	position: fixed;
+	background: rgb(29 35 39 / 45%);
+	backdrop-filter: blur(3px);
+	transition: all 200ms ease;
+}
+
+.demo-spotlight__ring {
+	position: fixed;
+	border: 2px solid #fff;
+	border-radius: 6px;
+	box-shadow: 0 0 0 1px rgb(29 35 39 / 25%), 0 8px 24px rgb(0 0 0 / 25%);
+	transition: all 200ms ease;
+}
+
+.demo-upsell {
+	border: 1px solid #c5d9ed;
+	border-radius: 8px;
+	background: #f0f6fc;
+	padding: 20px;
+	animation: demo-fade-in 0.35s ease;
+
+	p {
+		margin-block: 0 12px;
+		color: #1d2327;
+	}
+}
+
+.demo-upsell__title {
+	margin-block: 0 10px;
+	font-size: 16px;
+}
+
+.demo-upsell__actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.demo-upsell,
+	.demo-callout,
+	.demo-click::after {
+		animation: none;
+	}
+
+	.demo-spotlight__panel,
+	.demo-spotlight__ring {
+		transition: none;
+	}
+}

@@ -61,6 +61,36 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * The AI Agent demo receives the site name it personalises its snippet with.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_localizes_ai_demo_site_name_on_ai_agent_view(): void {
+		$_REQUEST['subpage'] = 'ai-agent';
+
+		$this->enqueue_assets();
+		$localized = $this->get_localized_data();
+
+		$this->assertArrayHasKey( 'aiDemo', $localized );
+		$this->assertSame( get_bloginfo( 'name' ), $localized['aiDemo']['siteName'] );
+		$this->assertArrayNotHasKey( 'snippetsList', $localized );
+	}
+
+	/**
+	 * Other subpages do not carry the AI Agent demo payload.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_omits_ai_demo_data_on_other_views(): void {
+		$this->enqueue_assets();
+		$this->assertArrayNotHasKey( 'aiDemo', $this->get_localized_data() );
+
+		$_REQUEST['subpage'] = 'cloud-community';
+		$this->enqueue_assets();
+		$this->assertArrayNotHasKey( 'aiDemo', $this->get_localized_data() );
+	}
+
+	/**
 	 * Preview assets exclude the full editing dependencies.
 	 *
 	 * @return void

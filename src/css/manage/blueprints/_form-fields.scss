@@ -1,0 +1,143 @@
+@use 'sass:color';
+
+$surface-color: #fff;
+$border-color: #c3c4c7;
+$muted-text: #646970;
+
+.blueprint-form-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	align-items: stretch;
+
+	.description {
+		color: #646970;
+		font-size: 13px;
+		margin: 0;
+	}
+
+	&.has-error input,
+	&.has-error select,
+	&.has-error textarea {
+		border-color: #d63638;
+	}
+
+	&__error {
+		margin: 4px 0 0;
+		color: #d63638;
+		font-size: 0.9em;
+	}
+
+	&--repeater {
+		grid-column: 1 / -1;
+	}
+
+	&__repeater-empty {
+		margin: 0;
+		color: $muted-text;
+		font-size: 0.9rem;
+	}
+
+	&:has(> input[type='checkbox']) {
+		flex-flow: row wrap;
+		align-items: center;
+
+		.description {
+			flex-basis: 100%;
+		}
+	}
+}
+
+.blueprint-form-repeater {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-block-start: 8px;
+}
+
+.blueprint-form-repeater__row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 12px 20px;
+	padding: 12px 14px;
+	background: color.adjust($surface-color, $lightness: -2%);
+	border: 1px solid $border-color;
+	border-radius: 6px;
+
+	.blueprint-form-repeater__cell {
+		flex: 1 1 350px;
+		min-inline-size: min(350px, 100%);
+		min-block-size: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		align-items: stretch;
+	}
+
+	.blueprint-form-repeater__actions {
+		flex-basis: 100%;
+		margin-inline-start: auto;
+		text-align: end;
+	}
+}
+
+.blueprint-form-repeater__add {
+	margin-block-start: 4px;
+	align-self: flex-start;
+}
+
+.blueprint-form-fields {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 24px 32px;
+
+	&[data-section-id='supports'] {
+		grid-template-columns: 1fr;
+		max-inline-size: 320px;
+
+		.blueprint-form-field {
+			flex-direction: row;
+			align-items: center;
+			gap: 10px;
+
+			label {
+				font-weight: 500;
+			}
+
+			.description {
+				display: none;
+			}
+		}
+	}
+}
+
+.blueprint-validation-notice {
+	margin-block: 16px 0;
+}
+
+.blueprint-actions {
+	margin-block-start: 24px;
+	display: flex;
+	justify-content: flex-start;
+	gap: 12px;
+}
+
+@media (width <= 782px) {
+	.blueprint-form-content {
+		padding: 20px;
+	}
+
+	.blueprint-form-fields {
+		grid-template-columns: 1fr;
+	}
+
+	.generated-snippet {
+		padding: 20px;
+	}
+
+	.blueprint-detail__header-title-row {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
