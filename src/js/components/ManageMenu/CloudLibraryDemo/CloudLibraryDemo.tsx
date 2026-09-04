@@ -14,7 +14,7 @@ import { useCloudLibraryDemo } from './useCloudLibraryDemo'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { DemoStage } from './types'
 
-const FEATURED_ROW = '.cloud-library-snippets tbody tr:first-child'
+const FEATURED_ROW = '.cloud-library-snippets tbody tr.demo-featured-row'
 
 /** The part of the page each step is talking about. */
 const STAGE_SPOTLIGHTS: Partial<Record<DemoStage, { target: string, padding?: number }>> = {
@@ -83,6 +83,7 @@ export const CloudLibraryDemo: React.FC = () => {
 					items={snippets}
 					columns={cloudLibraryDemoColumns({ stage, onPreview: setPreview })}
 					getKey={snippet => snippet.id}
+					rowClassName={snippet => FEATURED_SNIPPET_ID === snippet.id ? 'demo-featured-row' : ''}
 				/>
 			</div>
 

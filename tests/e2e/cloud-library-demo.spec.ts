@@ -3,7 +3,7 @@ import { TIMEOUTS } from './helpers/constants'
 import { measureCalloutSteps } from './helpers/demoPacing'
 
 const DEMO_URL = '/wp-admin/admin.php?page=snippets&subpage=cloud-library'
-const FEATURED_ROW = '.cloud-library-snippets tbody tr:first-child'
+const FEATURED_ROW = '.cloud-library-snippets tbody tr.demo-featured-row'
 
 test.describe('Cloud Library demo', () => {
 	test('the tab carries a demo badge rather than announcing itself as new', async ({ page }) => {
