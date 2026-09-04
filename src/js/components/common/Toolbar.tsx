@@ -2,7 +2,8 @@ import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useMemo, useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
-import { buildUrl } from '../../utils/urls'
+import { buildUrl, fetchConstQueryParam } from '../../utils/urls'
+import { SUBPAGES, SUBPAGE_ENTRIES, type SubpageName } from '../ManageMenu/subpages'
 import { hasSeenDemo } from './demo/useDemoSeen'
 import { AiAgentIcon } from './icons/AiAgentIcon'
 import { BlueprintIcon } from './icons/BlueprintIcon'
@@ -11,12 +12,20 @@ import { LibraryIcon } from './icons/LibraryIcon'
 import { SettingsIcon } from './icons/SettingsIcon'
 import { SnippetsIcon } from './icons/SnippetsIcon'
 import { UpsellDialog } from './UpsellDialog'
-import type { DemoName } from './demo/useDemoSeen'
 import type { SVGProps } from 'react'
 
-export const SUBPAGES = ['snippets', 'blueprints', 'cloud-community', 'cloud-library', 'ai-agent'] as const
-
 const searchParams = new URLSearchParams(window.location.search)
+
+const managePageSlug = window.CODE_SNIPPETS?.urls.manage
+	? new URL(window.CODE_SNIPPETS.urls.manage).searchParams.get('page')
+	: null
+
+// The manage screen resolves an absent or unrecognised `subpage` to the first subpage, so
+// mirror that fallback here — comparing against the raw param would leave every lower-nav
+// tab inactive on the default Snippets view, which is where the page opens.
+const activeSubpage = searchParams.get('page') === managePageSlug
+	? fetchConstQueryParam('subpage', SUBPAGES) ?? SUBPAGES[0]
+	: null
 
 interface UpperNavItemProps {
 	name: string
@@ -133,31 +142,21 @@ const UpperNav: React.FC = () => {
 	)
 }
 
-interface SubpageItemBaseProps {
+interface SubpageItemProps {
+	subpage: SubpageName
 	label: string
 	Icon: React.FC<SVGProps<SVGSVGElement>>
-	isPro?: boolean
 }
 
-/**
- * Marks a walkthrough tab. New features announce themselves until the
- * walkthrough has been watched, which only a tab with a recorded demo can do;
- * existing ones are only ever labelled as a demo.
- */
-type SubpageItemDemoProps =
-	| { subpage: DemoName, demo: 'announce' }
-	| { subpage: typeof SUBPAGES[number], demo?: 'quiet' }
-
-export type SubpageItemProps = SubpageItemBaseProps & SubpageItemDemoProps
-
-const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, demo }) => {
+const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon }) => {
+	const { demo, isPro } = SUBPAGE_ENTRIES[subpage]
 	const isNew = 'announce' === demo && !hasSeenDemo(subpage)
 
 	return (
 		<li>
 			<a
 				href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: subpage })}
-				className={classnames(`${subpage}-link`, { 'active-link': subpage === searchParams.get('subpage') })}
+				className={classnames(`${subpage}-link`, { 'active-link': subpage === activeSubpage })}
 			>
 				<Icon aria-hidden="true" />
 				<span className="toolbar-nav-label">{label}</span>
@@ -212,7 +211,6 @@ const LowerNav = () =>
 					subpage="cloud-library"
 					label={__('Cloud Library', 'code-snippets')}
 					Icon={LibraryIcon}
-					demo="quiet"
 				/>
 
 				{!isLicensed() && (
@@ -220,14 +218,12 @@ const LowerNav = () =>
 						subpage="blueprints"
 						label={__('Blueprints', 'code-snippets')}
 						Icon={BlueprintIcon}
-						demo="announce"
 					/>)}
 
 				<SubpageItem
 					subpage="ai-agent"
 					label={__('AI Agent', 'code-snippets')}
 					Icon={AiAgentIcon}
-					demo="announce"
 				/>
 
 				<SettingsItem />
