@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n'
 import type { CalloutContent } from '../../common/demo/DemoCallout'
 import type { DemoStage } from './types'
 
-const STEPS: Record<string, CalloutContent> = {
+const STEPS: Partial<Record<DemoStage, CalloutContent>> = {
 	library: {
 		step: __('Step 1 of 4', 'code-snippets'),
 		title: __('Your whole cloud, in one place', 'code-snippets'),
@@ -25,14 +25,5 @@ const STEPS: Record<string, CalloutContent> = {
 	}
 }
 
-const STAGE_STEPS: Partial<Record<DemoStage, keyof typeof STEPS>> = {
-	library: 'library',
-	preview: 'preview',
-	download: 'download',
-	synced: 'synced'
-}
-
-export const getCallout = (stage: DemoStage): CalloutContent | undefined => {
-	const step = STAGE_STEPS[stage]
-	return step ? STEPS[step] : undefined
-}
+export const getCallout = (stage: DemoStage): CalloutContent | undefined =>
+	STEPS[stage]
