@@ -66,7 +66,7 @@
 .insights-chart-view-toggle {
 	display: flex;
 	align-items: center;
-	gap: 6px;
+	gap: 8px;
 
 	.insights-chart-view-toggle-option {
 		display: flex;
@@ -94,7 +94,7 @@
 
 		&:focus-visible {
 			outline: 2px solid var(--cs-color-accent);
-			outline-offset: -2px;
+			outline-offset: 2px;
 		}
 
 		&:focus:not(:focus-visible) {
