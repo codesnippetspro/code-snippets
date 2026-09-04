@@ -51,7 +51,10 @@ $border-color: #c3c4c7;
 		&:hover,
 		&:focus-visible {
 			background: var(--cs-color-accent-subtle);
-			color: var(--cs-color-accent);
+
+			// The lighter accent reaches only 3.8:1 on this background; the
+			// hover shade clears AA for normal text.
+			color: var(--cs-color-accent-hover);
 			outline: none;
 		}
 
