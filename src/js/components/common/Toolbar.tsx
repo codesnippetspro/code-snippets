@@ -133,21 +133,25 @@ const UpperNav: React.FC = () => {
 	)
 }
 
-interface SubpageItemProps {
-	subpage: typeof SUBPAGES[number]
+interface SubpageItemBaseProps {
 	label: string
 	Icon: React.FC<SVGProps<SVGSVGElement>>
 	isPro?: boolean
-	/**
-	 * Marks a walkthrough tab. New features announce themselves until the
-	 * walkthrough has been watched; existing ones are only ever labelled as a
-	 * demo.
-	 */
-	demo?: 'announce' | 'quiet'
 }
 
+/**
+ * Marks a walkthrough tab. New features announce themselves until the
+ * walkthrough has been watched, which only a tab with a recorded demo can do;
+ * existing ones are only ever labelled as a demo.
+ */
+type SubpageItemDemoProps =
+	| { subpage: DemoName, demo: 'announce' }
+	| { subpage: typeof SUBPAGES[number], demo?: 'quiet' }
+
+export type SubpageItemProps = SubpageItemBaseProps & SubpageItemDemoProps
+
 const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro, demo }) => {
-	const isNew = 'announce' === demo && !hasSeenDemo(subpage as DemoName)
+	const isNew = 'announce' === demo && !hasSeenDemo(subpage)
 
 	return (
 		<li>
