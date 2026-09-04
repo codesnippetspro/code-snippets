@@ -188,19 +188,46 @@ class Manage_Menu extends Admin_Menu {
 	public const DEMO_RESET_PARAM = 'demo-reset';
 
 	/**
+	 * Nonce action guarding the watched-demo reset.
+	 */
+	public const DEMO_RESET_NONCE = 'code_snippets_demo_reset';
+
+	/**
+	 * Build the address that puts the walkthrough tabs back to their "New" state.
+	 *
+	 * @return string
+	 */
+	public static function get_demo_reset_url(): string {
+		// Built raw rather than with wp_nonce_url(), which escapes the separator
+		// for markup: this address is meant to be pasted into the address bar.
+		return add_query_arg(
+			[
+				self::DEMO_RESET_PARAM => '1',
+				'_wpnonce'             => wp_create_nonce( self::DEMO_RESET_NONCE ),
+			],
+			code_snippets()->get_menu_url()
+		);
+	}
+
+	/**
 	 * Clear the watched-demo record when asked to through the query string.
 	 *
 	 * This is deliberately not exposed in the settings screen: it exists to put
 	 * the walkthrough tabs back to their "New" state for a screenshot or a
-	 * walkthrough of the walkthroughs. The request carries no nonce so that the
-	 * URL can simply be typed, which is acceptable because the capability check
-	 * stands and the only thing at stake is which badge a tab displays.
+	 * walkthrough of the walkthroughs. Build the address with
+	 * {@see self::get_demo_reset_url()}, which signs it.
 	 *
 	 * @return void
 	 */
 	private function maybe_reset_demos(): void {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Cosmetic reset, guarded by capability.
-		if ( ! isset( $_GET[ self::DEMO_RESET_PARAM ] ) || ! code_snippets()->current_user_can() ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified immediately below.
+		if ( ! isset( $_GET[ self::DEMO_RESET_PARAM ] ) ) {
+			return;
+		}
+
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, self::DEMO_RESET_NONCE ) || ! code_snippets()->current_user_can() ) {
 			return;
 		}
 
@@ -208,7 +235,7 @@ class Manage_Menu extends Admin_Menu {
 
 		// Redirect so a refresh does not repeat the reset, and the address bar
 		// is left clean.
-		wp_safe_redirect( remove_query_arg( self::DEMO_RESET_PARAM ) );
+		wp_safe_redirect( remove_query_arg( [ self::DEMO_RESET_PARAM, '_wpnonce' ] ) );
 		exit;
 	}
 
