@@ -89,7 +89,7 @@ export const cloudLibraryDemoColumns = (
 ): ListTableColumn<CloudSnippetSchema>[] => [
 	{
 		id: 'state',
-		title: <CloudAvailableIcon aria-labelledby={__('Sync Status', 'code-snippets')} />,
+		title: <CloudAvailableIcon role="img" aria-label={__('Sync Status', 'code-snippets')} />,
 		render: snippet => <StateColumn snippet={snippet} stage={stage} />
 	},
 	{
