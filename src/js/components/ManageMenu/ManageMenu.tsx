@@ -3,12 +3,8 @@ import { __ } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
 import { fetchConstQueryParam, fetchQueryParam, updateQueryParams } from '../../utils/urls'
 import { DismissibleNotice, type NoticeType } from '../common/Notice'
-import { SUBPAGES, Toolbar } from '../common/Toolbar'
-import { AiAgentDemo } from './AiAgentDemo/AiAgentDemo'
-import { BlueprintsDemo } from './BlueprintsDemo/BlueprintsDemo'
-import { CloudLibraryDemo } from './CloudLibraryDemo/CloudLibraryDemo'
-import { CommunityCloud } from './CommunityCloud/CommunityCloud'
-import { SnippetsTable } from './SnippetsTable'
+import { Toolbar } from '../common/Toolbar'
+import { SUBPAGES, SUBPAGE_ENTRIES, type SubpageName } from './subpages'
 
 const repositionTableOptionsSettings = () => {
 	const screenOptionsForm = document.getElementById('adv-settings')
@@ -71,26 +67,13 @@ const PageNotices = () => {
 }
 
 interface PageContentParams {
-	subpage: typeof SUBPAGES[number]
+	subpage: SubpageName
 }
 
 const PageContent: React.FC<PageContentParams> = ({ subpage }) => {
-	switch (subpage) {
-		case 'snippets':
-			return <SnippetsTable />
+	const { Component } = SUBPAGE_ENTRIES[subpage]
 
-		case 'cloud-community':
-			return <CommunityCloud />
-
-		case 'ai-agent':
-			return <AiAgentDemo />
-
-		case 'blueprints':
-			return <BlueprintsDemo />
-
-		case 'cloud-library':
-			return <CloudLibraryDemo />
-	}
+	return <Component />
 }
 
 export const ManageMenu = () => {
