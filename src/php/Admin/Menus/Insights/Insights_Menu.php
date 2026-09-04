@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Admin\Menus\Insights;
 
+use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use function Code_Snippets\code_snippets;
 use const Code_Snippets\PLUGIN_FILE;
@@ -35,6 +36,18 @@ class Insights_Menu extends Admin_Menu {
 	 */
 	public function render() {
 		echo '<div id="code-snippets-insights-container" class="wrap"></div>';
+	}
+
+	/**
+	 * Load the contextual help tabs.
+	 *
+	 * @return void
+	 */
+	public function load() {
+		parent::load();
+
+		$contextual_help = new Contextual_Help( 'insights' );
+		$contextual_help->load();
 	}
 
 	/**

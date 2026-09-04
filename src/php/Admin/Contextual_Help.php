@@ -54,8 +54,20 @@ class Contextual_Help {
 				$this->load_edit_help();
 				break;
 
+			case 'insights':
+				$this->load_insights_help();
+				break;
+
 			case 'import':
 				$this->load_import_help();
+				break;
+
+			case 'settings':
+				$this->load_settings_help();
+				break;
+
+			case 'welcome':
+				$this->load_welcome_help();
 				break;
 		}
 
@@ -133,8 +145,10 @@ class Contextual_Help {
 		$this->add_help_tab(
 			'overview',
 			__( 'Overview', 'code-snippets' ),
-			$this->get_intro_text() .
-			__( 'Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting.', 'code-snippets' )
+			[
+				$this->get_intro_text(),
+				__( 'Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting.', 'code-snippets' ),
+			]
 		);
 
 		$this->add_help_tab(
@@ -175,6 +189,26 @@ class Contextual_Help {
 	}
 
 	/**
+	 * Register and handle the help tabs for the Insights admin page.
+	 */
+	private function load_insights_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text() .
+				__( 'Here you can view snippets statistics, and get insights how the snippets are being used on this website.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'insights',
+			__( 'Insights', 'code-snippets' ),
+			__( 'Get detailed information about your snippets usage, including which snippets types are being most used, their activation status, where they are located, and more.', 'code-snippets' )
+		);
+	}
+
+	/**
 	 * Register and handle the help tabs for the import snippets admin page
 	 */
 	private function load_import_help() {
@@ -183,16 +217,20 @@ class Contextual_Help {
 		$this->add_help_tab(
 			'overview',
 			__( 'Overview', 'code-snippets' ),
-			$this->get_intro_text() .
-			__( 'Here you can load snippets from a code snippets export file into the database alongside existing snippets.', 'code-snippets' )
+			[
+				$this->get_intro_text() .
+				__( 'Here you can load snippets from a code snippets export file into the database alongside existing snippets.', 'code-snippets' ),
+			]
 		);
 
 		$this->add_help_tab(
 			'import',
 			__( 'Importing', 'code-snippets' ),
-			__( 'You can load your snippets from a code snippets export file using this page.', 'code-snippets' ) .
-			/* translators: %s: URL to Snippets admin menu */
-			sprintf( __( 'Imported snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $manage_url )
+			[
+				__( 'You can load your snippets from a code snippets export file using this page.', 'code-snippets' ) .
+				/* translators: %s: URL to Snippets admin menu */
+				sprintf( __( 'Imported snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $manage_url ),
+			]
 		);
 
 		$this->add_help_tab(
@@ -206,6 +244,73 @@ class Contextual_Help {
 			'migrating',
 			__( 'Migrating', 'code-snippets' ),
 			__( 'If you are using another snippets plugin, you can import those existing snippets to your Code Snippets library.', 'code-snippets' )
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the settings admin page.
+	 */
+	private function load_settings_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text() .
+				__( 'Here you can configure how Code Snippets works on your site, including snippet editing, execution and display preferences.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'editing',
+			__( 'Editing', 'code-snippets' ),
+			__( 'Configure snippet fields and the code editor, including its theme, indentation and display preferences.', 'code-snippets' ),
+		);
+
+		$this->add_help_tab(
+			'running',
+			__( 'Running', 'code-snippets' ),
+			__( 'Choose how snippets run and whether new snippets are activated when you save them.', 'code-snippets' ),
+		);
+
+		$this->add_help_tab(
+			'library',
+			__( 'Library', 'code-snippets' ),
+			__( 'Manage snippet revisions, deleted snippets and cloud library connections.', 'code-snippets' ),
+		);
+
+		$this->add_help_tab(
+			'interface',
+			__( 'Interface', 'code-snippets' ),
+			__( 'Configure the snippets list, code highlighting, the admin bar menu and upgrade notices.', 'code-snippets' ),
+		);
+
+		$this->add_help_tab(
+			'advanced',
+			__( 'Advanced', 'code-snippets' ),
+			__( 'Control access, maintenance actions, version changes and complete uninstallation.', 'code-snippets' ),
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the welcome admin page.
+	 */
+	private function load_welcome_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text() .
+				__( 'Here you can find the latest Code Snippets news and release updates, plus helpful articles and partner offers.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'whats-new',
+			__( "What's New", 'code-snippets' ),
+			[
+				__( 'The Latest Changes section summarizes new features, improvements, bug fixes, security updates and other changes in recent releases.', 'code-snippets' ),
+				__( 'Select View Changelog to read the complete release notes.', 'code-snippets' ),
+			]
 		);
 	}
 }
