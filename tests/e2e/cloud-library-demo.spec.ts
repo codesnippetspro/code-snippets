@@ -124,7 +124,10 @@ test.describe('Cloud Library demo', () => {
 		// the document: the admin footer still sits below it.
 		const closing = page.locator('.demo-upsell')
 		await expect(closing).toBeVisible()
-		await expect(closing).toBeInViewport({ ratio: 1 })
+
+		// The panel height lands on a fraction of a pixel, so the last sliver of
+		// its bottom border falls outside a viewport measured in whole pixels.
+		await expect(closing).toBeInViewport({ ratio: 0.99 })
 	})
 
 	test('replaying returns the snippet to its undownloaded state', async ({ page }) => {
