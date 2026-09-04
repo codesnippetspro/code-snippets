@@ -287,7 +287,7 @@ class Manage_Menu extends Admin_Menu {
 			return;
 		}
 
-		$contextual_help = new Contextual_Help( 'edit' );
+		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
 	}
 

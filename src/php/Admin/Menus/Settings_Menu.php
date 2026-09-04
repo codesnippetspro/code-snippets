@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Admin\Menus;
 
+use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Settings\Settings_Fields;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\are_settings_unified;
@@ -50,6 +51,9 @@ class Settings_Menu extends Admin_Menu {
 				exit;
 			}
 		}
+
+		$contextual_help = new Contextual_Help( 'settings' );
+		$contextual_help->load();
 	}
 
 	/**
