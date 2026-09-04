@@ -67,7 +67,7 @@ $muted-text: #646970;
 
 	.blueprint-form-repeater__cell {
 		flex: 1 1 350px;
-		min-inline-size: 350px;
+		min-inline-size: min(350px, 100%);
 		min-block-size: 0;
 		display: flex;
 		flex-direction: column;
