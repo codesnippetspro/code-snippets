@@ -262,7 +262,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 		const table = page.locator('.cloud-snippets-table')
 		await expect(table).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		const headerCheckbox = table.locator('thead').getByRole('checkbox', { name: 'Select all snippets' })
+		const headerCheckbox = table.locator('thead').getByRole('checkbox', { name: 'Select all downloadable snippets' })
 		const rowCheckbox = table.locator('tbody').getByRole('checkbox', { name: 'Select Mock Cloud Snippet' })
 
 		// The table owns the only select-all control; the toolbar checkbox is
