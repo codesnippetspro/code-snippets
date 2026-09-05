@@ -95,6 +95,7 @@ class Settings_Fields {
 				'enable_flat_files'       => false,
 				'enable_admin_bar'        => true,
 				'admin_bar_snippet_limit' => 20,
+				'enable_feedback_reporter' => false,
 			],
 			'editor'         => [
 				'indent_with_tabs'            => true,
@@ -233,6 +234,13 @@ class Settings_Fields {
 				'field'   => 'enable_admin_bar',
 				'value'   => true,
 			],
+		];
+
+		$this->fields['general']['enable_feedback_reporter'] = [
+			'name'  => __( 'Enable Feedback Reporter', 'code-snippets' ),
+			'type'  => 'checkbox',
+			'label' => __( 'Show a button on Code Snippets pages for reporting bugs, requesting features and sending feedback.', 'code-snippets' ),
+			'desc'  => __( 'Reports include your site address, contact details and a list of active plugins, so that the team can reproduce the problem.', 'code-snippets' ),
 		];
 
 		$this->fields['editor'] = [
