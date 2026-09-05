@@ -98,6 +98,7 @@ class Settings_Layout {
 				[ 'debug', 'reset_caches' ],
 				[ 'debug', 'database_update' ],
 				[ 'general', 'complete_uninstall' ],
+				[ 'general', 'enable_feedback_reporter' ],
 			],
 		];
 
