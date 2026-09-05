@@ -38,7 +38,7 @@
 
 		&:hover,
 		&:focus {
-			background-color: #0ca0a9;
+			background-color: var(--cs-color-primary-hover);
 		}
 
 		.dashicons {

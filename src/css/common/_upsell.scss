@@ -25,7 +25,7 @@
 		margin-inline-start: auto;
 
 		&:hover, &:focus {
-			background-color: #0ca0a9;
+			background-color: var(--cs-color-primary-hover);
 		}
 	}
 
@@ -82,7 +82,7 @@
 		inline-size: 24px;
 		block-size: 24px;
 		border-radius: 50%;
-		background-color: #0ca0a9;
+		background-color: var(--cs-color-primary-hover);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -102,8 +102,8 @@
 		// (.wrap .button-primary:not(.button-link):hover:not(:disabled)) so this
 		// upsell-specific hover styling isn't overridden by the shared button rule.
 		&:is(:hover, :focus):not(.button-link, :disabled) {
-			background-color: #0ca0a9;
-			border-color: #0ca0a9;
+			background-color: var(--cs-color-primary-hover);
+			border-color: var(--cs-color-primary-hover);
 		}
 	}
 }
