@@ -27,6 +27,7 @@ export const jsWebpackConfig: Configuration = {
 		'admin-bar': `${SOURCE_DIR}/admin-bar.ts`,
 		'edit': { import: `${SOURCE_DIR}/edit.ts`, dependOn: 'editor' },
 		'editor': `${SOURCE_DIR}/editor.ts`,
+		'feedback': `${SOURCE_DIR}/feedback.ts`,
 		'feedback-capture': `${SOURCE_DIR}/feedback-capture.ts`,
 		'import': `${SOURCE_DIR}/import.ts`,
 		'insights': `${SOURCE_DIR}/insights.ts`,

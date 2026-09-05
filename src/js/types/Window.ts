@@ -2,6 +2,7 @@ import type { SnippetSchema } from './schema/SnippetSchema'
 import type { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
+import type { FeedbackConfig } from './Feedback'
 import type { InsightsChartViews, InsightsSummary } from './Insights'
 import type { Snippet } from './Snippet'
 import type { SnippetView } from './SnippetView'
@@ -123,5 +124,6 @@ declare global {
 			partners: ImageLinkSchema[]
 		}
 		readonly CODE_SNIPPETS_INSIGHTS?: InsightsSummary
+		readonly CODE_SNIPPETS_FEEDBACK?: FeedbackConfig
 	}
 }

@@ -55,8 +55,11 @@ export const applyMethodOverride = (config: InternalAxiosRequestConfig): Interna
  * session, and the snippet editor is a screen people leave open for a long
  * time. Once it lapsed, every save failed with a 403 and the only cure was
  * reloading the page, which loses whatever was being written.
+ *
+ * The feedback reporter mounts on screens that do not enqueue the main
+ * `CODE_SNIPPETS` object, so it carries a nonce of its own to fall back on.
  */
-let restNonce = window.CODE_SNIPPETS?.restAPI.nonce
+let restNonce = window.CODE_SNIPPETS?.restAPI.nonce ?? window.CODE_SNIPPETS_FEEDBACK?.nonce
 let runOnceNonce = window.CODE_SNIPPETS_MANAGE?.runOnceNonce
 
 /** The Run Once nonce as last refreshed by the Heartbeat, or the one rendered with the page. */
