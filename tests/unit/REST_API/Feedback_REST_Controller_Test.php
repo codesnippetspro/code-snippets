@@ -388,6 +388,20 @@ class Feedback_REST_Controller_Test extends UnitTestCase {
 	}
 
 	/**
+	 * A blocked or failed request names its cause, since that is the only part anyone can
+	 * act on.
+	 *
+	 * @return void
+	 */
+	public function test_a_transport_failure_names_its_cause(): void {
+		$this->responses = [ new WP_Error( 'http_request_failed', 'cURL error 7: Failed to connect to codesnippets.cloud port 443' ) ];
+
+		$response = $this->post_report( $this->valid_report() );
+
+		$this->assertStringContainsString( 'cURL error 7', $response->get_data()['message'] );
+	}
+
+	/**
 	 * A title barely started is not worth searching for.
 	 *
 	 * @return void

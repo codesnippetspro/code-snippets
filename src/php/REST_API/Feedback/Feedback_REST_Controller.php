@@ -167,9 +167,15 @@ class Feedback_REST_Controller extends REST_Controller {
 		);
 
 		if ( is_wp_error( $response ) ) {
+			// The transport's own message names the cause — a blocked outbound request, a
+			// certificate problem, a timeout — which is the only way anyone can act on this.
 			return new WP_Error(
 				'code_snippets_feedback_transport',
-				__( 'Could not reach the reporting service. Check the connection and try again.', 'code-snippets' ),
+				sprintf(
+					/* translators: %s: error message describing why the request failed. */
+					__( 'Could not reach the reporting service: %s', 'code-snippets' ),
+					$response->get_error_message()
+				),
 				[ 'status' => 502 ]
 			);
 		}
