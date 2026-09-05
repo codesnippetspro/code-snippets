@@ -78,13 +78,13 @@
 	}
 
 	&:disabled {
-		color: #a7aaad;
+		color: var(--cs-color-text-disabled);
 		cursor: default;
 		background: none;
 	}
 
 	&.kebab-menu-item-destructive {
-		color: #d63638;
+		color: var(--cs-color-error);
 	}
 }
 

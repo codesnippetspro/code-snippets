@@ -86,7 +86,7 @@ $panel-block-size: 420px;
 	margin: 0;
 	font-size: 15px;
 	font-weight: 600;
-	color: #1d2327;
+	color: var(--cs-color-text);
 }
 
 @media (prefers-reduced-motion: reduce) {

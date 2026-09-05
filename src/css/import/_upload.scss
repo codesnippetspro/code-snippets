@@ -126,7 +126,7 @@
 	button {
 		background: none;
 		border: none;
-		color: #d63638;
+		color: var(--cs-color-error);
 		cursor: pointer;
 		font-size: 16px;
 		padding: 0 4px;
@@ -223,7 +223,7 @@
 		h3 {
 			margin: 0 0 8px;
 			font-size: 14px;
-			color: #d63638;
+			color: var(--cs-color-error);
 		}
 
 		ul {

@@ -122,8 +122,8 @@ body.js {
 }
 
 #code_snippets_remove_license {
-	color: #d63638;
-	border-color: #d63638;
+	color: var(--cs-color-error);
+	border-color: var(--cs-color-error);
 }
 
 #code_snippets_license_key {
@@ -184,7 +184,7 @@ body.js {
 			opacity: 0.6;
 			cursor: not-allowed;
 			background-color: var(--cs-color-surface-muted) !important;
-			color: #a7aaad !important;
+			color: var(--cs-color-text-disabled) !important;
 			border-color: var(--cs-color-border-subtle) !important;
 		}
 	}

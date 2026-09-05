@@ -18,12 +18,12 @@ $muted-text: #646970;
 	&.has-error input,
 	&.has-error select,
 	&.has-error textarea {
-		border-color: #d63638;
+		border-color: var(--cs-color-error);
 	}
 
 	&__error {
 		margin: 4px 0 0;
-		color: #d63638;
+		color: var(--cs-color-error);
 		font-size: 0.9em;
 	}
 

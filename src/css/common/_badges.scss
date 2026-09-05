@@ -51,7 +51,7 @@
 .wp-core-ui .button.nav-tab-button {
 	margin-inline-start: 0.5em;
 	float: inline-end;
-	color: #a7aaad;
+	color: var(--cs-color-text-disabled);
 	background: var(--cs-color-surface-subtle);
 	border-color: var(--cs-color-surface-subtle);
 	align-self: center;

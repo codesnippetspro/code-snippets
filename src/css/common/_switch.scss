@@ -55,7 +55,7 @@ input[type='checkbox'].switch:checked {
 	text-align: center;
 	font-weight: bold;
 	line-height: 1;
-	color: #1d2327;
+	color: var(--cs-color-text);
 }
 
 a.snippet-condition-count {
