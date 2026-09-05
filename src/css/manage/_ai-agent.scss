@@ -106,7 +106,7 @@ $warning: #b32d2e;
 .ai-agent-history__item {
 	display: flex;
 	align-items: stretch;
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--cs-color-border-subtle);
 	border-radius: 4px;
 	background: var(--cs-color-surface);
 	margin: 0;
@@ -645,7 +645,7 @@ $warning: #b32d2e;
 /* Sidebar */
 
 .ai-agent-sidebar {
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--cs-color-border-subtle);
 	border-radius: 8px;
 	background: var(--cs-color-surface);
 	overflow: hidden;
@@ -656,7 +656,7 @@ $warning: #b32d2e;
 
 .ai-agent-sidebar__tabs {
 	display: flex;
-	border-block-end: 1px solid #dcdcde;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
 }
 
 .ai-agent-sidebar__tab {
@@ -712,7 +712,7 @@ $warning: #b32d2e;
 	text-align: start;
 	padding-block: 8px;
 	padding-inline: 10px;
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--cs-color-border-subtle);
 	border-radius: 6px;
 	background: var(--cs-color-surface-subtle);
 	cursor: pointer;

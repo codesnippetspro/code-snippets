@@ -1,5 +1,4 @@
 $surface-color: #fff;
-$border-color: #c3c4c7;
 
 .blueprint-detail {
 	.blueprint-detail__back {
@@ -32,7 +31,7 @@ $border-color: #c3c4c7;
 
 	&__header {
 		background: $surface-color;
-		border: 1px solid $border-color;
+		border: 1px solid var(--cs-color-border);
 		border-block-end: none;
 		border-radius: 6px 6px 0 0;
 		padding: 36px 12px;

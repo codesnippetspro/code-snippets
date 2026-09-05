@@ -49,7 +49,7 @@ $muted: #50575e;
 	gap: 12px;
 	padding-block: 10px;
 	padding-inline: 14px;
-	border: 1px dashed #c3c4c7;
+	border: 1px dashed var(--cs-color-border);
 	border-radius: 8px;
 	background: var(--cs-color-surface);
 	color: $muted;

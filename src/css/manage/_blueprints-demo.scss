@@ -76,7 +76,7 @@ $panel-block-size: 420px;
 	gap: 12px;
 	margin-block: 20px;
 	padding: 18px 20px;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cs-color-border);
 	border-radius: 8px;
 	background: var(--cs-color-surface);
 	animation: demo-fade-in 0.35s ease;
