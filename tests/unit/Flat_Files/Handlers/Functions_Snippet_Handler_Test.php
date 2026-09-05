@@ -52,7 +52,7 @@ class Functions_Snippet_Handler_Test extends UnitTestCase {
 		$output = [];
 		$status = 0;
 		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec -- A subprocess is the only way to detect a compile error without killing the test run.
-		exec( escapeshellcmd( PHP_BINARY ) . ' -l ' . escapeshellarg( $file ) . ' 2>&1', $output, $status );
+		exec( escapeshellarg( PHP_BINARY ) . ' -l ' . escapeshellarg( $file ) . ' 2>&1', $output, $status );
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Removing a temp file created by this test.
 		unlink( $file );
 
