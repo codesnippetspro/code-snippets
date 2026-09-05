@@ -36,7 +36,8 @@
 			transition-duration: 0.01s;
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: #0ca0a9;
 		}
 
