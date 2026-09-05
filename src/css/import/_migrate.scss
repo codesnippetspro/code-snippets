@@ -71,18 +71,18 @@
 		margin-block-start: 2px;
 
 		span {
-			color: white;
+			color: #fff;
 			font-size: 14px;
 			font-weight: bold;
 		}
 	}
 
 	.success {
-		background-color: #00a32a;
+		background-color: var(--cs-color-success);
 	}
 
 	.error {
-		background-color: #d63638;
+		background-color: var(--cs-color-error);
 	}
 
 	h4 {

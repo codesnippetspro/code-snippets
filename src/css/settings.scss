@@ -110,11 +110,11 @@ body.js {
 }
 
 .license-status-valid {
-	color: #2ecc40;
+	color: var(--cs-color-success);
 }
 
 .license-status-expired {
-	color: #dc3232;
+	color: var(--cs-color-error);
 }
 
 .wrap[data-active-tab='license'] .submit {
@@ -143,12 +143,12 @@ body.js {
 }
 
 .cloud-error {
-	background: #e53935;
+	background: var(--cs-color-error);
 	color: #ffebee;
 }
 
 .cloud-success {
-	background: #43a047;
+	background: var(--cs-color-success);
 	color: #e8f5e9;
 }
 
@@ -193,8 +193,8 @@ body.js {
 	#version-switch-warning {
 		margin-block-start: 20px !important;
 		padding: 12px 16px;
-		border-inline-start: 4px solid #dba617;
-		background: #fff8e5;
+		border-inline-start: 4px solid var(--cs-color-warning);
+		background: var(--cs-color-surface-subtle);
 
 		p {
 			margin: 0;
@@ -217,19 +217,19 @@ body.js {
 	.notice {
 		&.notice {
 			&-success {
-				border-inline-start-color: #00a32a;
+				border-inline-start-color: var(--cs-color-success);
 			}
 
 			&-error {
-				border-inline-start-color: #d63638;
+				border-inline-start-color: var(--cs-color-error);
 			}
 
 			&-warning {
-				border-inline-start-color: #dba617;
+				border-inline-start-color: var(--cs-color-warning);
 			}
 
 			&-info {
-				border-inline-start-color: #72aee6;
+				border-inline-start-color: var(--cs-color-info);
 			}
 		}
 	}

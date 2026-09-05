@@ -167,7 +167,7 @@ $badges: (
 .inverted-badges .badge.pro-badge,
 .nav-tab-inactive .badge.pro-badge {
 	color: var(--cs-color-accent);
-	background-color: #eff5f9;
+	background-color: var(--cs-color-surface-info);
 	border: 1px solid rgb(34 113 177 / 10%) !important;
 	border-radius: 999px;
 	padding-block: 3px;

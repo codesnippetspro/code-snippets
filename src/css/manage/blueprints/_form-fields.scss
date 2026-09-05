@@ -1,7 +1,6 @@
 @use 'sass:color';
 
 $surface-color: #fff;
-$muted-text: #646970;
 
 .blueprint-form-field {
 	display: flex;
@@ -33,7 +32,7 @@ $muted-text: #646970;
 
 	&__repeater-empty {
 		margin: 0;
-		color: $muted-text;
+		color: var(--cs-color-text-muted);
 		font-size: 0.9rem;
 	}
 

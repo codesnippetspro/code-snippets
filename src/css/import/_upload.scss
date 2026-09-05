@@ -24,7 +24,7 @@
 	padding: 40px 20px;
 	text-align: center;
 	cursor: pointer;
-	background-color: #fafafa;
+	background-color: var(--cs-color-surface-subtle);
 	transition: all 0.3s ease;
 	opacity: 1;
 	display: block;
@@ -249,15 +249,15 @@
 	margin-block-start: 2px;
 
 	.import-result-success & {
-		background-color: #00a32a;
+		background-color: var(--cs-color-success);
 	}
 
 	.import-result-failure & {
-		background-color: #d63638;
+		background-color: var(--cs-color-error);
 	}
 
 	span {
-		color: white;
+		color: #fff;
 		font-size: 14px;
 		font-weight: bold;
 	}
@@ -315,7 +315,7 @@
 
 		span {
 			background-color: #1d97c6;
-			color: white;
+			color: #fff;
 			padding: 3px 6px;
 			font-size: 10px;
 			text-transform: uppercase;
