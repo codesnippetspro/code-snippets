@@ -55,7 +55,14 @@ $border-color: #c3c4c7;
 			// The lighter accent reaches only 3.8:1 on this background; the
 			// hover shade clears AA for normal text.
 			color: var(--cs-color-accent-hover);
-			outline: none;
+		}
+
+		// The fill alone separates the focused item from its neighbours by
+		// 1.26:1, so keyboard focus needs a border of its own. Drawn inside the
+		// item, which sits flush against the ones above and below it.
+		&:focus-visible {
+			outline: 2px solid var(--cs-color-accent-hover);
+			outline-offset: -2px;
 		}
 
 		&.is-active {
