@@ -51,7 +51,7 @@ $border-color: #c3c4c7;
 		}
 
 		p {
-			color: #646970;
+			color: var(--cs-color-text-muted);
 			font-size: 14px;
 			line-height: 1.5;
 			margin: 0;
@@ -67,7 +67,7 @@ $border-color: #c3c4c7;
 			background: none;
 			border: none;
 			box-shadow: none;
-			color: #2271b1;
+			color: var(--cs-color-accent);
 			flex-shrink: 0;
 			font-size: 14px;
 			padding: 0;

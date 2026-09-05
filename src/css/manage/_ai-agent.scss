@@ -153,7 +153,7 @@ $warning: #b32d2e;
 
 	&.is-plan {
 		background: #e5f0fb;
-		color: #2271b1;
+		color: var(--cs-color-accent);
 	}
 
 	&.is-done {
@@ -561,7 +561,7 @@ $warning: #b32d2e;
 	font-size: 14px;
 	padding: 6px;
 	background: var(--cs-color-surface);
-	color: #2c3337;
+	color: var(--cs-color-text);
 
 	&:focus {
 		outline: none;
@@ -570,7 +570,7 @@ $warning: #b32d2e;
 
 	&:disabled {
 		background: var(--cs-color-surface);
-		color: #2c3337;
+		color: var(--cs-color-text);
 		opacity: 1;
 	}
 }
@@ -585,7 +585,7 @@ $warning: #b32d2e;
 
 .ai-agent-prompt__hint {
 	font-size: 12px;
-	color: #646970;
+	color: var(--cs-color-text-muted);
 }
 
 .ai-agent-result__edit .ai-agent-prompt {

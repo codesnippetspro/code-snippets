@@ -40,7 +40,7 @@ $border-color: #c3c4c7;
 		border-inline-end: 1px solid #e2e2e4;
 		border-radius: 0;
 		background: var(--cs-color-surface-subtle);
-		color: #2c3337;
+		color: var(--cs-color-text);
 		cursor: pointer;
 		font-weight: 400;
 		text-align: start;
@@ -117,7 +117,7 @@ $border-color: #c3c4c7;
 	h4 {
 		margin: 0;
 		font-size: 1.4rem;
-		color: #2c3337;
+		color: var(--cs-color-text);
 	}
 
 	input[type='date'],
@@ -147,7 +147,7 @@ $border-color: #c3c4c7;
 }
 
 .blueprint-form-section-description {
-	color: #646970;
+	color: var(--cs-color-text-muted);
 	font-size: 0.95rem;
 	line-height: 1.4;
 	margin: 0 0 24px;
@@ -157,5 +157,5 @@ $border-color: #c3c4c7;
 	font-weight: 600;
 	font-size: 14px;
 	line-height: 1.5;
-	color: #2c3337;
+	color: var(--cs-color-text);
 }

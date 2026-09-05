@@ -11,7 +11,7 @@ $muted-text: #646970;
 	align-items: stretch;
 
 	.description {
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		font-size: 13px;
 		margin: 0;
 	}
