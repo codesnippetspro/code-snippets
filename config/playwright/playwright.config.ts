@@ -12,6 +12,13 @@ const ASSERT_TIMEOUT_SECONDS = 30
 
 const MILLISECONDS_IN_SECOND = 1000
 
+// Overridable so the suite can be pointed at a second environment, which wp-env gives a
+// different port when one is already running. An empty value is treated as unset: Playwright
+// resolves relative paths against baseURL, and an empty base cannot be resolved against.
+const DEFAULT_BASE_URL = 'http://localhost:8888'
+const configuredBaseUrl = process.env.WP_E2E_BASE_URL?.trim() ?? ''
+const baseURL = '' === configuredBaseUrl ? DEFAULT_BASE_URL : configuredBaseUrl
+
 const baseTestsDir = join(__dirname, '..', '..', 'tests')
 const storageState =  join(baseTestsDir, 'e2e/.auth/user.json')
 const rtlSpecs = /rtl-layout\.spec\.ts/
@@ -40,9 +47,7 @@ export default defineConfig({
 			['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
 		],
 	use: {
-		// Overridable so the suite can be pointed at a second environment, which wp-env
-		// gives a different port when one is already running.
-		baseURL: process.env.WP_E2E_BASE_URL ?? 'http://localhost:8888',
+		baseURL,
 		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
 		video: 'retain-on-failure'

@@ -7,6 +7,7 @@
 
 namespace Code_Snippets\Admin;
 
+use Code_Snippets\REST_API\Feedback\Feedback_REST_Controller;
 use Code_Snippets\UnitTestCase;
 use function Code_Snippets\Settings\update_setting;
 
@@ -190,6 +191,27 @@ class Feedback_Panel_Test extends UnitTestCase {
 
 		$this->assertSame( 1, $collected );
 		$this->assertIsArray( get_transient( Feedback_Panel::SUMMARY_TRANSIENT ) );
+	}
+
+	/**
+	 * The panel is handed a search URL built by WordPress. It cannot append the route
+	 * itself, because plain permalinks carry the route in a query parameter.
+	 *
+	 * @return void
+	 */
+	public function test_the_search_url_is_localised(): void {
+		update_setting( 'general', Feedback_Panel::SETTING_FIELD, true );
+		$this->log_in_as_administrator();
+		$this->visit_snippets_screen();
+
+		$this->panel->enqueue_assets();
+
+		$data = wp_scripts()->get_data( 'code-snippets-feedback', 'data' );
+
+		$this->assertStringContainsString(
+			sprintf( '"searchUrl":"%s"', rest_url( Feedback_REST_Controller::get_base_route() . '/search' ) ),
+			(string) $data
+		);
 	}
 
 	/**

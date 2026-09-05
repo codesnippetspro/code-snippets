@@ -54,6 +54,16 @@ class Feedback_REST_Controller extends REST_Controller {
 	private const MAX_JS_ERRORS = 10;
 
 	/**
+	 * Shortest title that summarises anything.
+	 */
+	private const MIN_TITLE_LENGTH = 8;
+
+	/**
+	 * Shortest free-text answer that describes anything.
+	 */
+	private const MIN_TEXT_LENGTH = 20;
+
+	/**
 	 * Client used to reach the cloud.
 	 *
 	 * @var Feedback_Client
@@ -129,7 +139,7 @@ class Feedback_REST_Controller extends REST_Controller {
 	public function search_reports( WP_REST_Request $request ): WP_REST_Response {
 		$query = trim( sanitize_text_field( (string) $request->get_param( 'q' ) ) );
 
-		$results = strlen( $query ) < self::MIN_SEARCH_LENGTH
+		$results = self::text_length( $query ) < self::MIN_SEARCH_LENGTH
 			? []
 			: $this->client->search_reports( $query );
 
@@ -197,6 +207,21 @@ class Feedback_REST_Controller extends REST_Controller {
 	}
 
 	/**
+	 * Count the characters in a value, as the panel counts them.
+	 *
+	 * The panel measures with JavaScript's string length, so counting bytes here would let
+	 * a report through that the panel refused, and would measure non-Latin scripts against
+	 * a limit several times longer than intended.
+	 *
+	 * @param string $value Value to measure.
+	 *
+	 * @return int
+	 */
+	private static function text_length( string $value ): int {
+		return (int) preg_match_all( '/./us', $value );
+	}
+
+	/**
 	 * Check a report says enough to be acted on.
 	 *
 	 * @param WP_REST_Request $request Incoming HTTP request.
@@ -214,7 +239,7 @@ class Feedback_REST_Controller extends REST_Controller {
 			);
 		}
 
-		if ( strlen( trim( sanitize_text_field( (string) $request->get_param( 'title' ) ) ) ) < 8 ) {
+		if ( self::text_length( trim( sanitize_text_field( (string) $request->get_param( 'title' ) ) ) ) < self::MIN_TITLE_LENGTH ) {
 			return new WP_Error(
 				'code_snippets_feedback_title',
 				__( 'Give the report a title of at least 8 characters.', 'code-snippets' ),
@@ -222,7 +247,7 @@ class Feedback_REST_Controller extends REST_Controller {
 			);
 		}
 
-		if ( strlen( trim( sanitize_textarea_field( (string) $request->get_param( 'description' ) ) ) ) < 20 ) {
+		if ( self::text_length( trim( sanitize_textarea_field( (string) $request->get_param( 'description' ) ) ) ) < self::MIN_TEXT_LENGTH ) {
 			return new WP_Error(
 				'code_snippets_feedback_description',
 				__( 'Describe the problem in a bit more detail.', 'code-snippets' ),
@@ -230,7 +255,7 @@ class Feedback_REST_Controller extends REST_Controller {
 			);
 		}
 
-		if ( 'bug' === $type && strlen( trim( sanitize_textarea_field( (string) $request->get_param( 'steps' ) ) ) ) < 20 ) {
+		if ( 'bug' === $type && self::text_length( trim( sanitize_textarea_field( (string) $request->get_param( 'steps' ) ) ) ) < self::MIN_TEXT_LENGTH ) {
 			return new WP_Error(
 				'code_snippets_feedback_steps',
 				__( 'List the steps that reproduce the bug.', 'code-snippets' ),

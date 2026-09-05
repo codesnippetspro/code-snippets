@@ -171,6 +171,8 @@ class Feedback_Client {
 	 * @return array<int, array<string, mixed>> Matching reports, empty when none or unavailable.
 	 */
 	public function search_reports( string $query ): array {
+		// `add_query_arg()` builds the query through `build_query()`, which does not encode
+		// values, so the term is encoded here.
 		$url = add_query_arg( [ 'q' => rawurlencode( $query ) ], $this->connection->get_endpoint_url( 'search' ) );
 		$response = $this->send_signed( $url, 'GET', $this->connection->get_request_headers(), '' );
 
@@ -210,19 +212,25 @@ class Feedback_Client {
 	 */
 	private function send_signed( string $url, string $method, array $headers, string $body, bool $retrying = false ) {
 		$credentials = $this->ensure_credentials();
-		$uri = Feedback_Connection::get_request_uri( $url );
 
-		$headers = array_diff_key(
-			$headers,
-			array_flip( [ 'X-CS-Site-Id', 'X-CS-Timestamp', 'X-CS-Signature' ] )
-		);
-
-		if ( $this->connection->is_valid_credentials( $credentials ) ) {
-			$headers = array_merge(
-				$headers,
-				$this->connection->get_signature_headers( $credentials, $method, $uri, $body )
+		// Without a credential the cloud cannot tell who is reporting, so the request would
+		// be refused anyway. Stopping here keeps the report off the wire.
+		if ( ! $this->connection->is_valid_credentials( $credentials ) ) {
+			return new WP_Error(
+				'code_snippets_feedback_unregistered',
+				__( 'This site is not enrolled with the reporting service.', 'code-snippets' )
 			);
 		}
+
+		$uri = Feedback_Connection::get_request_uri( $url );
+
+		$headers = array_merge(
+			array_diff_key(
+				$headers,
+				array_flip( [ 'X-CS-Site-Id', 'X-CS-Timestamp', 'X-CS-Signature' ] )
+			),
+			$this->connection->get_signature_headers( $credentials, $method, $uri, $body )
+		);
 
 		$args = [
 			'timeout'     => 'GET' === $method ? self::SEARCH_REQUEST_TIMEOUT : self::REPORT_REQUEST_TIMEOUT,

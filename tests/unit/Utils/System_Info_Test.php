@@ -83,10 +83,47 @@ class System_Info_Test extends UnitTestCase {
 	public function test_summary_lists_the_disclosed_values(): void {
 		$summary = System_Info::get_summary( System_Info::get_system_info() );
 
-		$this->assertCount( 6, $summary );
 		$this->assertNotEmpty( $summary[ __( 'Code Snippets', 'code-snippets' ) ] );
 		$this->assertNotEmpty( $summary[ __( 'WordPress', 'code-snippets' ) ] );
 		$this->assertSame( PHP_VERSION, $summary[ __( 'PHP', 'code-snippets' ) ] );
+	}
+
+	/**
+	 * The panel is where the reporter is told what they are about to send, so every value
+	 * the report carries has to appear in the summary.
+	 *
+	 * @return void
+	 */
+	public function test_summary_withholds_nothing_the_report_sends(): void {
+		$info = System_Info::get_system_info();
+		$disclosed = implode( ' | ', System_Info::get_summary( $info ) );
+
+		$undisclosed = [];
+
+		// The plugin list, the count and the booleans are disclosed in a readable form
+		// rather than verbatim, and the edition is shown by its name.
+		$rephrased = [ 'active_plugins', 'plugin_count', 'edition' ];
+
+		foreach ( $info as $key => $value ) {
+			if ( in_array( $key, $rephrased, true ) || is_bool( $value ) ) {
+				continue;
+			}
+
+			if ( '' !== (string) $value && false === strpos( $disclosed, (string) $value ) ) {
+				$undisclosed[] = $key;
+			}
+		}
+
+		$this->assertSame( [], $undisclosed, 'Values sent with a report but not shown to the reporter.' );
+
+		$this->assertStringContainsString(
+			'pro' === $info['edition'] ? __( 'Pro', 'code-snippets' ) : __( 'Free', 'code-snippets' ),
+			$disclosed
+		);
+
+		foreach ( $info['active_plugins'] as $plugin ) {
+			$this->assertStringContainsString( $plugin, $disclosed );
+		}
 	}
 
 	/**

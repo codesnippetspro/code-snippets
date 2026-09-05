@@ -12,7 +12,9 @@ export const FeedbackReporter: React.FC = () => {
 		return null
 	}
 
-	return <>
+	// The provider registers a heartbeat listener without cleanup, so it is mounted once
+	// for the page rather than on each open.
+	return <WithRestAPIContext>
 		<HeadingBadge label={config.badge} />
 
 		<button
@@ -25,9 +27,6 @@ export const FeedbackReporter: React.FC = () => {
 			{__('Send feedback', 'code-snippets')}
 		</button>
 
-		{isOpen &&
-			<WithRestAPIContext>
-				<FeedbackPanel config={config} onClose={() => setIsOpen(false)} />
-			</WithRestAPIContext>}
-	</>
+		{isOpen && <FeedbackPanel config={config} onClose={() => setIsOpen(false)} />}
+	</WithRestAPIContext>
 }

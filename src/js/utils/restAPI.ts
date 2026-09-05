@@ -110,6 +110,12 @@ export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
 	}
 }
 
+export interface QueryArg {
+	url: string
+	name: string
+	value: string
+}
+
 /**
  * Add a query parameter to a REST URL.
  *
@@ -117,7 +123,7 @@ export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
  * in a query string, so a second `?` would bury the parameter inside the route instead of
  * adding one.
  */
-export const addQueryArg = (url: string, name: string, value: string): string => {
+export const addQueryArg = ({ url, name, value }: QueryArg): string => {
 	const parsed = new URL(url, window.location.origin)
 	parsed.searchParams.set(name, value)
 	return parsed.toString()

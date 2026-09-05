@@ -63,10 +63,21 @@ test.describe('Feedback reporter', () => {
 		const subtitle = page.locator('.code-snippets-feedback-panel__subtitle')
 		const footer = page.locator('.code-snippets-feedback-panel__footer')
 
-		const headerBox = await header.boundingBox() ?? { y: 0, height: 0 }
-		const subtitleBox = await subtitle.boundingBox() ?? { y: 0 }
-		const footerBox = await footer.boundingBox() ?? { y: 0, height: 0 }
-		const viewport = page.viewportSize() ?? { height: 0 }
+		const headerBox = await header.boundingBox()
+		const subtitleBox = await subtitle.boundingBox()
+		const footerBox = await footer.boundingBox()
+		const viewport = page.viewportSize()
+
+		// A missing box would otherwise satisfy the comparisons below without measuring
+		// anything, so each one has to be present before it is read.
+		expect(headerBox).not.toBeNull()
+		expect(subtitleBox).not.toBeNull()
+		expect(footerBox).not.toBeNull()
+		expect(viewport).not.toBeNull()
+
+		if (!headerBox || !subtitleBox || !footerBox || !viewport) {
+			return
+		}
 
 		// The header floats above the content, so the content has to start below it.
 		expect(subtitleBox.y).toBeGreaterThanOrEqual(headerBox.y + headerBox.height)

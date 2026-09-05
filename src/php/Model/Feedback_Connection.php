@@ -62,14 +62,7 @@ class Feedback_Connection extends Basic_Cloud_Connection {
 	 * @return string
 	 */
 	public function get_key(): string {
-		$key = self::PROGRAMME_KEY;
-
-		if ( '' === trim( $key ) ) {
-			$env = getenv( 'BETA_PROGRAMME_KEY' );
-			$key = false === $env ? '' : (string) $env;
-		}
-
-		return apply_filters( 'code_snippets_feedback_key', trim( $key ) );
+		return apply_filters( 'code_snippets_feedback_key', self::PROGRAMME_KEY );
 	}
 
 	/**

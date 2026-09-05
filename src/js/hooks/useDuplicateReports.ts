@@ -26,13 +26,18 @@ export const useDuplicateReports = (searchUrl: string, title: string): Duplicate
 			return
 		}
 
+		let active = true
+
 		const timer = setTimeout(() => {
-			api.get<DuplicateSearchResponse>(addQueryArg(searchUrl, 'q', query))
-				.then(data => setDuplicates(data.results))
-				.catch(() => setDuplicates([]))
+			api.get<DuplicateSearchResponse>(addQueryArg({ url: searchUrl, name: 'q', value: query }))
+				.then(data => active && setDuplicates(data.results))
+				.catch(() => active && setDuplicates([]))
 		}, SEARCH_DEBOUNCE_MS)
 
-		return () => clearTimeout(timer)
+		return () => {
+			active = false
+			clearTimeout(timer)
+		}
 	}, [api, searchUrl, title])
 
 	return duplicates

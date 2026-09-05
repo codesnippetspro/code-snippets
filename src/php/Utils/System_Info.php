@@ -52,7 +52,10 @@ class System_Info {
 	}
 
 	/**
-	 * Reduce the collected details to the short list shown in the panel.
+	 * Describe the collected details in the form shown in the panel.
+	 *
+	 * Every value the report carries appears here. The panel is where the reporter is told
+	 * what they are about to send, so anything left out would go without disclosure.
 	 *
 	 * @param array<string, mixed> $info Collected system information.
 	 *
@@ -71,14 +74,28 @@ class System_Info {
 			? sprintf( '%s (%s)', $info['wordpress_version'], __( 'multisite', 'code-snippets' ) )
 			: $info['wordpress_version'];
 
+		$limits = sprintf(
+			/* translators: 1: WordPress memory limit, 2: PHP memory limit, 3: maximum execution time, in seconds. */
+			__( 'WordPress %1$s, PHP %2$s, %3$ss execution', 'code-snippets' ),
+			$info['wp_memory_limit'],
+			$info['php_memory_limit'],
+			$info['max_execution_time']
+		);
+
 		return [
 			__( 'Code Snippets', 'code-snippets' ) => $version,
 			__( 'WordPress', 'code-snippets' )     => $wordpress,
 			__( 'PHP', 'code-snippets' )           => $info['php_version'],
 			__( 'Database', 'code-snippets' )      => $info['database'],
 			__( 'Theme', 'code-snippets' )         => $info['active_theme'],
-			// translators: %d: number of active plugins.
-			__( 'Plugins', 'code-snippets' )       => sprintf( _n( '%d active', '%d active', $info['plugin_count'], 'code-snippets' ), $info['plugin_count'] ),
+			__( 'Server', 'code-snippets' )        => $info['server_software'],
+			__( 'Language', 'code-snippets' )      => $info['locale'],
+			__( 'Debug mode', 'code-snippets' )    => $info['wp_debug'] ? __( 'on', 'code-snippets' ) : __( 'off', 'code-snippets' ),
+			__( 'Limits', 'code-snippets' )        => $limits,
+			__( 'Site address', 'code-snippets' )  => $info['site_url'],
+			__( 'Plugins', 'code-snippets' )       => $info['active_plugins']
+				? implode( ', ', $info['active_plugins'] )
+				: __( 'none active', 'code-snippets' ),
 		];
 	}
 

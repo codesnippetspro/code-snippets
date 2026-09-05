@@ -336,6 +336,22 @@ class Feedback_Client_Test extends UnitTestCase {
 	}
 
 	/**
+	 * An unenrolled site does not put a report on the wire. The cloud could not tell who
+	 * sent it, so the contents would travel for nothing.
+	 *
+	 * @return void
+	 */
+	public function test_a_report_is_not_sent_without_a_credential(): void {
+		set_transient( Feedback_Client::REGISTRATION_FAILURE_TRANSIENT, 1, 90 );
+
+		$result = $this->client->send_report( [ 'report' => [ 'title' => 'A title' ] ], 'key-7' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'code_snippets_feedback_unregistered', $result->get_error_code() );
+		$this->assertCount( 0, $this->requests );
+	}
+
+	/**
 	 * The panel is offered a handful of similar reports, not the whole list.
 	 *
 	 * @return void
@@ -356,6 +372,22 @@ class Feedback_Client_Test extends UnitTestCase {
 
 		$this->assertCount( 5, $this->client->search_reports( 'highlighting' ) );
 		$this->assertStringContainsString( 'q=highlighting', $this->requests[0]['url'] );
+	}
+
+	/**
+	 * The search term is encoded once. Encoding it twice would send the escapes themselves
+	 * as the search text.
+	 *
+	 * @return void
+	 */
+	public function test_the_search_term_is_encoded_once(): void {
+		$this->connection->save_credentials( $this->credentials );
+		$this->responses = [ $this->response( 200, [ 'results' => [] ] ) ];
+
+		$this->client->search_reports( 'syntax highlighting' );
+
+		$this->assertStringContainsString( 'q=syntax%20highlighting', $this->requests[0]['url'] );
+		$this->assertStringNotContainsString( '%2520', $this->requests[0]['url'] );
 	}
 
 	/**

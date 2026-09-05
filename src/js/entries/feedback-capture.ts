@@ -8,8 +8,12 @@ const record = (entry: string): void => {
 	}
 }
 
+// Capture phase also delivers failed resource loads, as bare Events carrying none of the
+// detail below. Recording those would fill the buffer with entries naming nothing.
 window.addEventListener('error', event => {
-	record(`${event.message || 'Error'} — ${event.filename || 'unknown'}:${event.lineno}`)
+	if (event instanceof ErrorEvent) {
+		record(`${event.message || 'Error'} — ${event.filename || 'unknown'}:${event.lineno}`)
+	}
 }, true)
 
 window.addEventListener('unhandledrejection', event => {

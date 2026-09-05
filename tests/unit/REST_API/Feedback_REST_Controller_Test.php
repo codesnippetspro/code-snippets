@@ -289,6 +289,43 @@ class Feedback_REST_Controller_Test extends UnitTestCase {
 	}
 
 	/**
+	 * The environment is collected on the server, so a request cannot dictate what the
+	 * report says about the site it came from.
+	 *
+	 * @return void
+	 */
+	public function test_a_forged_environment_is_ignored(): void {
+		$this->post_report(
+			$this->valid_report(
+				[
+					'environment' => [
+						'php_version' => '0.0.0',
+						'site_url'    => 'https://example.invalid',
+					],
+				]
+			)
+		);
+
+		$sent = json_decode( end( $this->sent_bodies ), true );
+
+		$this->assertSame( PHP_VERSION, $sent['environment']['php_version'] );
+		$this->assertSame( site_url(), $sent['environment']['site_url'] );
+	}
+
+	/**
+	 * A title written in a non-Latin script is measured in characters, as the panel
+	 * measures it, rather than in bytes.
+	 *
+	 * @return void
+	 */
+	public function test_a_short_multibyte_title_is_rejected(): void {
+		$response = $this->post_report( $this->valid_report( [ 'title' => '短い題名' ] ) );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'code_snippets_feedback_title', $response->get_data()['code'] );
+	}
+
+	/**
 	 * The reporter's own details are used when they leave the fields alone.
 	 *
 	 * @return void
