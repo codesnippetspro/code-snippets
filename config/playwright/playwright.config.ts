@@ -40,7 +40,9 @@ export default defineConfig({
 			['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
 		],
 	use: {
-		baseURL: 'http://localhost:8888',
+		// Overridable so the suite can be pointed at a second environment, which wp-env
+		// gives a different port when one is already running.
+		baseURL: process.env.WP_E2E_BASE_URL ?? 'http://localhost:8888',
 		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
 		video: 'retain-on-failure'
