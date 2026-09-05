@@ -52,6 +52,30 @@ test.describe('Feedback reporter', () => {
 		await expect(page.locator(PANEL)).toHaveCount(0)
 	})
 
+	test('keeps the whole drawer usable when the form is long', async ({ page }) => {
+		await setReporterEnabled(true)
+		await openPanel(page)
+
+		// A bug report is the longest form, and the one most likely to overflow.
+		await page.getByLabel('What kind of feedback is this?').selectOption('bug')
+
+		const header = page.locator('.components-modal__header')
+		const subtitle = page.locator('.code-snippets-feedback-panel__subtitle')
+		const footer = page.locator('.code-snippets-feedback-panel__footer')
+
+		const headerBox = await header.boundingBox() ?? { y: 0, height: 0 }
+		const subtitleBox = await subtitle.boundingBox() ?? { y: 0 }
+		const footerBox = await footer.boundingBox() ?? { y: 0, height: 0 }
+		const viewport = page.viewportSize() ?? { height: 0 }
+
+		// The header floats above the content, so the content has to start below it.
+		expect(subtitleBox.y).toBeGreaterThanOrEqual(headerBox.y + headerBox.height)
+
+		// The buttons stay on screen however long the form gets.
+		expect(footerBox.y + footerBox.height).toBeLessThanOrEqual(viewport.height)
+		await expect(page.getByRole('button', { name: 'Send report' })).toBeInViewport()
+	})
+
 	test('asks for a longer title before sending anything', async ({ page }) => {
 		await setReporterEnabled(true)
 		await openPanel(page)

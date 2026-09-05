@@ -71,7 +71,31 @@ $feedback-success: #00a32a;
 	background: $feedback-danger;
 }
 
-.code-snippets-feedback-modal {
+// The drawer slides in from the inline end, so it reads as arriving from the edge of the
+// screen rather than appearing over the page. Modal animates its frame by name, so the
+// scale-and-fade it ships with has to be replaced rather than overridden a property at a
+// time. WordPress supplies the duration, and leaves it unset under reduced motion.
+@keyframes code-snippets-feedback-slide-in {
+	from {
+		transform: translateX(calc(100% * var(--cs-direction-multiplier)));
+	}
+
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes code-snippets-feedback-slide-out {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(calc(100% * var(--cs-direction-multiplier)));
+	}
+}
+
+.components-modal__frame.code-snippets-feedback-modal {
 	position: fixed;
 	inset-block: 0;
 	inset-inline-end: 0;
@@ -83,37 +107,58 @@ $feedback-success: #00a32a;
 	border-radius: 0;
 	border-inline-start: 1px solid var(--cs-color-border-subtle);
 	box-shadow: -8px 0 32px rgb(0 0 0 / 12%);
-	transform: none;
+	animation-name: code-snippets-feedback-slide-in;
 
 	.components-modal__header {
-		padding-block: 16px;
 		padding-inline: 24px;
 		border-block-end: 1px solid var(--cs-color-border-subtle);
 	}
 
+	// The header is positioned over the content, which keeps the offset WordPress gives it
+	// to clear it. Only the body scrolls, so the buttons stay reachable however long the
+	// form gets.
 	.components-modal__content {
 		display: flex;
-		flex-direction: column;
+		flex-flow: column;
+		min-block-size: 0;
 		padding: 0;
-		margin-block-start: 0;
+		overflow: hidden;
+	}
+
+	// Newer Modal versions wrap children in an unstyled focus container.
+	.components-modal__header + div {
+		display: flex;
+		flex-flow: column;
+		flex: 1;
+		min-block-size: 0;
+		overflow: hidden;
 	}
 }
 
+.components-modal__screen-overlay.is-animating-out .components-modal__frame.code-snippets-feedback-modal {
+	animation-name: code-snippets-feedback-slide-out;
+}
+
 .code-snippets-feedback-panel__subtitle {
-	margin-block: 4px 0;
+	flex-shrink: 0;
+	padding-block: 12px 0;
+	padding-inline: 24px;
+	margin: 0;
 	color: var(--cs-color-text-muted);
 	font-size: 12px;
 }
 
 .code-snippets-feedback-panel__body {
 	flex: 1;
+	min-block-size: 0;
 	overflow-y: auto;
-	padding-block: 20px;
+	padding-block: 16px 20px;
 	padding-inline: 24px;
 }
 
 .code-snippets-feedback-panel__footer {
 	display: flex;
+	flex-shrink: 0;
 	justify-content: flex-end;
 	gap: 10px;
 	padding-block: 16px;
@@ -141,6 +186,14 @@ $feedback-success: #00a32a;
 		margin-block-end: 8px;
 		font-size: 13px;
 		font-weight: 600;
+	}
+
+	.components-base-control {
+		margin-block-end: 10px;
+
+		&:last-child {
+			margin-block-end: 0;
+		}
 	}
 }
 
@@ -256,7 +309,7 @@ $feedback-success: #00a32a;
 }
 
 @media (width <= 480px) {
-	.code-snippets-feedback-modal {
+	.components-modal__frame.code-snippets-feedback-modal {
 		inline-size: 100vw;
 	}
 
