@@ -44,6 +44,7 @@ class Feedback_Panel_Test extends UnitTestCase {
 	public function tear_down() {
 		update_setting( 'general', Feedback_Panel::SETTING_FIELD, false );
 		remove_all_filters( 'code_snippets_feedback_badge_label' );
+		delete_transient( Feedback_Panel::SUMMARY_TRANSIENT );
 		unset( $_GET['page'] );
 		wp_set_current_user( 0 );
 
@@ -159,6 +160,36 @@ class Feedback_Panel_Test extends UnitTestCase {
 		$this->panel->render_container();
 
 		$this->assertSame( '', ob_get_clean() );
+	}
+
+	/**
+	 * Reading every plugin header is too much work to repeat on each page load, so the
+	 * summary the panel shows is collected once and reused.
+	 *
+	 * @return void
+	 */
+	public function test_the_environment_summary_is_only_collected_once(): void {
+		update_setting( 'general', Feedback_Panel::SETTING_FIELD, true );
+		$this->log_in_as_administrator();
+		$this->visit_snippets_screen();
+
+		$collected = 0;
+
+		add_filter(
+			'code_snippets_feedback_system_info',
+			static function ( array $info ) use ( &$collected ): array {
+				++$collected;
+				return $info;
+			}
+		);
+
+		$this->panel->enqueue_assets();
+		$this->panel->enqueue_assets();
+
+		remove_all_filters( 'code_snippets_feedback_system_info' );
+
+		$this->assertSame( 1, $collected );
+		$this->assertIsArray( get_transient( Feedback_Panel::SUMMARY_TRANSIENT ) );
 	}
 
 	/**

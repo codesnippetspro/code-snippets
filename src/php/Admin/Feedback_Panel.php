@@ -30,6 +30,16 @@ class Feedback_Panel {
 	public const CONTAINER_ID = 'code-snippets-feedback-container';
 
 	/**
+	 * Transient holding the environment summary shown in the panel.
+	 */
+	public const SUMMARY_TRANSIENT = 'code_snippets_feedback_summary';
+
+	/**
+	 * How long, in seconds, the environment summary is reused for.
+	 */
+	private const SUMMARY_TIMEOUT = 15 * MINUTE_IN_SECONDS;
+
+	/**
 	 * Script handle.
 	 */
 	private const SCRIPT_HANDLE = 'code-snippets-feedback';
@@ -93,7 +103,6 @@ class Feedback_Panel {
 		wp_set_script_translations( self::SCRIPT_HANDLE, 'code-snippets' );
 
 		$user = wp_get_current_user();
-		$info = System_Info::get_system_info();
 
 		wp_localize_script(
 			self::SCRIPT_HANDLE,
@@ -105,12 +114,35 @@ class Feedback_Panel {
 					'name'  => $user->display_name,
 					'email' => $user->user_email,
 				],
-				'summary' => System_Info::get_summary( $info ),
+				'summary' => $this->get_cached_summary(),
 				'badge'   => self::get_badge_label(),
-				'version' => $info['plugin_version'],
-				'edition' => $info['edition'],
+				'version' => PLUGIN_VERSION,
+				'edition' => System_Info::get_edition(),
 			]
 		);
+	}
+
+	/**
+	 * Retrieve the environment summary shown in the panel.
+	 *
+	 * Collecting it means reading the header of every installed plugin, which is too much
+	 * to repeat on every admin page load for a panel that is rarely opened. The report
+	 * itself is assembled from freshly collected details when one is sent.
+	 *
+	 * @return array<string, string>
+	 */
+	private function get_cached_summary(): array {
+		$summary = get_transient( self::SUMMARY_TRANSIENT );
+
+		if ( is_array( $summary ) ) {
+			return $summary;
+		}
+
+		$summary = System_Info::get_summary( System_Info::get_system_info() );
+
+		set_transient( self::SUMMARY_TRANSIENT, $summary, self::SUMMARY_TIMEOUT );
+
+		return $summary;
 	}
 
 	/**
