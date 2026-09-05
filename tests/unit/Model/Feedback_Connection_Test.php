@@ -55,26 +55,60 @@ class Feedback_Connection_Test extends UnitTestCase {
 	public function tear_down() {
 		delete_option( Feedback_Connection::CREDENTIALS_OPTION );
 		remove_all_filters( 'code_snippets_feedback_endpoint_url' );
+		remove_all_filters( 'code_snippets_feedback_host' );
 		remove_all_filters( 'code_snippets_feedback_key' );
 
 		parent::tear_down();
 	}
 
 	/**
-	 * The reporting endpoint hangs off the cloud API URL the rest of the plugin uses.
+	 * Reports go to the reporting service, at the path it serves them on.
 	 *
 	 * @return void
 	 */
-	public function test_endpoint_url_is_built_from_the_cloud_api_url(): void {
+	public function test_endpoint_url_addresses_the_reporting_service(): void {
 		$this->assertSame(
-			$this->connection->get_api_url() . '/beta-reports',
+			'https://codesnippets.cloud/api/v1/beta-reports',
 			$this->connection->get_endpoint_url()
 		);
 
 		$this->assertSame(
-			$this->connection->get_api_url() . '/beta-reports/register',
+			'https://codesnippets.cloud/api/v1/beta-reports/register',
 			$this->connection->get_endpoint_url( 'register' )
 		);
+
+		$this->assertSame(
+			'https://codesnippets.cloud/api/v1/beta-reports/search',
+			$this->connection->get_endpoint_url( 'search' )
+		);
+	}
+
+	/**
+	 * Reporting and the snippet library are separate services. A site pointed at a cloud
+	 * build of its own for development still reports to the service that reads reports.
+	 *
+	 * @return void
+	 */
+	public function test_endpoint_url_ignores_the_cloud_api_url(): void {
+		$this->assertStringStartsWith( 'https://codesnippets.cloud/', $this->connection->get_endpoint_url() );
+
+		add_filter( 'code_snippets_feedback_host', static fn() => 'http://localhost:8080' );
+
+		$this->assertSame(
+			'http://localhost:8080/api/v1/beta-reports',
+			$this->connection->get_endpoint_url()
+		);
+	}
+
+	/**
+	 * A trailing slash on the host does not double up in the endpoint.
+	 *
+	 * @return void
+	 */
+	public function test_endpoint_url_tolerates_a_trailing_slash_on_the_host(): void {
+		add_filter( 'code_snippets_feedback_host', static fn() => 'https://example.com/' );
+
+		$this->assertSame( 'https://example.com/api/v1/beta-reports', $this->connection->get_endpoint_url() );
 	}
 
 	/**

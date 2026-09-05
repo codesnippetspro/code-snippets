@@ -7,6 +7,11 @@ use Code_Snippets\Utils\System_Info;
 /**
  * Connection to the Code Snippets Cloud reporting API.
  *
+ * The reporting endpoint is resolved on its own rather than from the cloud API URL the rest
+ * of the plugin uses. Those are separate services: a site pointed at a local cloud build for
+ * development would otherwise send its reports there too, where nobody would read them, and
+ * the reports would fail outright whenever that build was not running.
+ *
  * Trust model: the programme key below is public. It ships in the plugin source and identifies
  * the reporting programme, not the site, in the same way as the public token on the parent
  * class. Per-site authenticity comes from the registration handshake instead: a site enrols
@@ -27,9 +32,14 @@ class Feedback_Connection extends Basic_Cloud_Connection {
 	private const PROGRAMME_KEY = 'csb_nhv937hQa0mbBNyB0n9FTQvXZR6i3d9UA2OAZU2E04lu9loS';
 
 	/**
-	 * Path of the reporting endpoint, relative to the cloud API URL.
+	 * Host serving the reporting API.
 	 */
-	private const REPORTS_PATH = 'beta-reports';
+	private const REPORTS_HOST = 'https://codesnippets.cloud';
+
+	/**
+	 * Path of the reporting endpoint, relative to the reporting host.
+	 */
+	private const REPORTS_PATH = 'api/v1/beta-reports';
 
 	/**
 	 * Name of the option holding this site's credential.
@@ -63,6 +73,24 @@ class Feedback_Connection extends Basic_Cloud_Connection {
 	}
 
 	/**
+	 * Retrieve the host serving the reporting API.
+	 *
+	 * `CS_BETA_FEEDBACK_HOST` names a reporting service on its own, so it wins over the
+	 * cloud URL a site may be pointing elsewhere for unrelated development.
+	 *
+	 * @return string
+	 */
+	public function get_host(): string {
+		$host = self::REPORTS_HOST;
+
+		if ( defined( 'CS_BETA_FEEDBACK_HOST' ) && CS_BETA_FEEDBACK_HOST ) {
+			$host = CS_BETA_FEEDBACK_HOST;
+		}
+
+		return untrailingslashit( apply_filters( 'code_snippets_feedback_host', $host ) );
+	}
+
+	/**
 	 * Retrieve the URL of a reporting endpoint.
 	 *
 	 * @param string $path Optional path below the reporting endpoint.
@@ -70,7 +98,7 @@ class Feedback_Connection extends Basic_Cloud_Connection {
 	 * @return string
 	 */
 	public function get_endpoint_url( string $path = '' ): string {
-		$url = sprintf( '%s/%s', $this->get_api_url(), self::REPORTS_PATH );
+		$url = sprintf( '%s/%s', $this->get_host(), self::REPORTS_PATH );
 
 		if ( $path ) {
 			$url .= '/' . ltrim( $path, '/' );
