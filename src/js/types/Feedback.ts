@@ -2,6 +2,7 @@ export type FeedbackType = 'bug' | 'feature' | 'feedback'
 
 export interface FeedbackConfig {
 	restUrl: string
+	searchUrl: string
 	nonce: string
 	user: {
 		name: string

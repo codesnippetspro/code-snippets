@@ -111,7 +111,7 @@ export const useFeedbackReport = (config: FeedbackConfig): FeedbackReport => {
 		setDraft(current => ({ ...current, ...changes }))
 	}, [])
 
-	const duplicates = useDuplicateReports(config.restUrl, draft.title)
+	const duplicates = useDuplicateReports(config.searchUrl, draft.title)
 
 	const submit = useCallback(() => {
 		const type = draft.type

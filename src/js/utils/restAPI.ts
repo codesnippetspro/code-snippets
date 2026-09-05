@@ -109,3 +109,16 @@ export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
 		'Access-Control': window.CODE_SNIPPETS?.restAPI.cloud.token
 	}
 }
+
+/**
+ * Add a query parameter to a REST URL.
+ *
+ * Concatenation is not enough: with plain permalinks a REST URL already carries the route
+ * in a query string, so a second `?` would bury the parameter inside the route instead of
+ * adding one.
+ */
+export const addQueryArg = (url: string, name: string, value: string): string => {
+	const parsed = new URL(url, window.location.origin)
+	parsed.searchParams.set(name, value)
+	return parsed.toString()
+}

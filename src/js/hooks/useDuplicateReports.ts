@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { addQueryArg } from '../utils/restAPI'
 import { useRestAPI } from './useRestAPI'
 import type { DuplicateReport, DuplicateSearchResponse } from '../types/Feedback'
 
@@ -13,7 +14,7 @@ const SEARCH_DEBOUNCE_MS = 600
  * not reported twice. A cloud that cannot answer leaves the list empty rather than
  * interrupting the report being written.
  */
-export const useDuplicateReports = (restUrl: string, title: string): DuplicateReport[] => {
+export const useDuplicateReports = (searchUrl: string, title: string): DuplicateReport[] => {
 	const { api } = useRestAPI()
 	const [duplicates, setDuplicates] = useState<DuplicateReport[]>([])
 
@@ -26,13 +27,13 @@ export const useDuplicateReports = (restUrl: string, title: string): DuplicateRe
 		}
 
 		const timer = setTimeout(() => {
-			api.get<DuplicateSearchResponse>(`${restUrl}/search?q=${encodeURIComponent(query)}`)
+			api.get<DuplicateSearchResponse>(addQueryArg(searchUrl, 'q', query))
 				.then(data => setDuplicates(data.results))
 				.catch(() => setDuplicates([]))
 		}, SEARCH_DEBOUNCE_MS)
 
 		return () => clearTimeout(timer)
-	}, [api, restUrl, title])
+	}, [api, searchUrl, title])
 
 	return duplicates
 }

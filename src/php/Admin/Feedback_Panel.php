@@ -108,16 +108,19 @@ class Feedback_Panel {
 			self::SCRIPT_HANDLE,
 			'CODE_SNIPPETS_FEEDBACK',
 			[
-				'restUrl' => esc_url_raw( rest_url( Feedback_REST_Controller::get_base_route() ) ),
-				'nonce'   => wp_create_nonce( 'wp_rest' ),
-				'user'    => [
+				'restUrl'   => esc_url_raw( rest_url( Feedback_REST_Controller::get_base_route() ) ),
+				// Built here rather than appended in the browser: with plain permalinks the
+				// route travels in a query parameter, where a path cannot simply be added.
+				'searchUrl' => esc_url_raw( rest_url( Feedback_REST_Controller::get_base_route() . '/search' ) ),
+				'nonce'     => wp_create_nonce( 'wp_rest' ),
+				'user'      => [
 					'name'  => $user->display_name,
 					'email' => $user->user_email,
 				],
-				'summary' => $this->get_cached_summary(),
-				'badge'   => self::get_badge_label(),
-				'version' => PLUGIN_VERSION,
-				'edition' => System_Info::get_edition(),
+				'summary'   => $this->get_cached_summary(),
+				'badge'     => self::get_badge_label(),
+				'version'   => PLUGIN_VERSION,
+				'edition'   => System_Info::get_edition(),
 			]
 		);
 	}

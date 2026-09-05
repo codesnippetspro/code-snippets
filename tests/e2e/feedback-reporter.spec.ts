@@ -76,6 +76,21 @@ test.describe('Feedback reporter', () => {
 		await expect(page.getByRole('button', { name: 'Send report' })).toBeInViewport()
 	})
 
+	test('reaches the duplicate search route while a title is typed', async ({ page }) => {
+		await setReporterEnabled(true)
+		await openPanel(page)
+
+		const search = page.waitForResponse(response =>
+			response.url().includes('feedback/search') || response.url().includes('feedback%2Fsearch'))
+
+		await page.getByLabel('What kind of feedback is this?').selectOption('feedback')
+		await page.getByLabel('Title').fill('Highlighting stops after switching tabs')
+
+		// A route the request never reaches would answer 404, leaving the panel unable to
+		// offer reports that already exist.
+		expect((await search).status()).toBe(200)
+	})
+
 	test('asks for a longer title before sending anything', async ({ page }) => {
 		await setReporterEnabled(true)
 		await openPanel(page)
