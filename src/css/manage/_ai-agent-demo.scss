@@ -108,7 +108,7 @@ $muted: #50575e;
 	.ai-agent-empty__chip:disabled {
 		opacity: 1;
 		cursor: default;
-		color: var(--cs-color-text, #2c3337);
+		color: var(--cs-color-text);
 	}
 
 	.ai-agent-history__open {
