@@ -47,7 +47,9 @@ const initialiseDatabase = (): DatabaseOptions => {
 	assertSafeIdentifier(db.schema, 'WP_PHPUNIT_DB_NAME')
 	assertSafeIdentifier(db.user, 'WP_PHPUNIT_DB_USER')
 	assertSimpleString(db.host, 'WP_PHPUNIT_DB_HOST')
-	assertSimpleString(db.password, 'WP_PHPUNIT_DB_PASS')
+	if ('' !== db.password) {
+		assertSimpleString(db.password, 'WP_PHPUNIT_DB_PASS')
+	}
 
 	const useDbSocket = 'true' === (process.env.WP_PHPUNIT_DB_USE_SOCKET ?? 'false').toLowerCase()
 
