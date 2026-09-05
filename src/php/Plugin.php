@@ -6,6 +6,7 @@ use Code_Snippets\Admin\Bootstrap_Admin;
 use Code_Snippets\Admin\Feedback_Error_Capture;
 use Code_Snippets\Admin\Feedback_Panel;
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
+use Code_Snippets\Client\Feedback_Client;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
@@ -17,7 +18,9 @@ use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Integration\Promotions\Promotion_Manager;
 use Code_Snippets\Integration\Shortcodes;
 use Code_Snippets\Model\Basic_Cloud_Connection;
+use Code_Snippets\Model\Feedback_Connection;
 use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
+use Code_Snippets\REST_API\Feedback\Feedback_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
 use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
@@ -167,6 +170,8 @@ class Plugin {
 		new File_Import_REST_Controller();
 
 		new Cloud_Snippets_REST_Controller( $cloud_search );
+
+		new Feedback_REST_Controller( new Feedback_Client( new Feedback_Connection() ) );
 	}
 
 	/**
