@@ -35,7 +35,7 @@
 
 	&.drag-over {
 		border-color: #0073aa;
-		background-color: #f0f6fc;
+		background-color: var(--cs-color-surface-info);
 	}
 
 	&.disabled {

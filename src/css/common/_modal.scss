@@ -163,7 +163,7 @@
 			&:hover,
 			&:focus {
 				border-color: #d63638;
-				background: #f0f0f1;
+				background: var(--cs-color-surface-muted);
 				color: #d63638;
 			}
 		}

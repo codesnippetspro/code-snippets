@@ -3,7 +3,7 @@
 
 // Match the active subnavigation tile so it blends into the admin canvas.
 body.wp-admin {
-	background: #f0f0f1;
+	background: var(--cs-color-surface-muted);
 }
 
 // Remove the WordPress core 10px top margin on the import and manage snippets containers
@@ -108,7 +108,7 @@ body.wp-admin {
 		color: var(--cs-color-accent);
 
 		&:hover:not(:disabled) {
-			background: #f0f0f1;
+			background: var(--cs-color-surface-muted);
 			border-color: var(--cs-color-accent-hover);
 			color: var(--cs-color-accent-hover);
 		}

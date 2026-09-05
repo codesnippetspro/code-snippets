@@ -28,7 +28,7 @@
 
 	&:hover,
 	&:focus {
-		background: #f0f6fc;
+		background: var(--cs-color-surface-info);
 	}
 }
 
@@ -74,7 +74,7 @@
 
 	&:hover,
 	&:focus {
-		background: #f0f0f1;
+		background: var(--cs-color-surface-muted);
 	}
 
 	&:disabled {

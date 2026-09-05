@@ -168,7 +168,7 @@ body.js {
 		font-size: 1.1em;
 		font-weight: bold;
 		color: #0073aa;
-		background: #f0f6fc;
+		background: var(--cs-color-surface-info);
 		padding: 2px 8px;
 		border-radius: 5px;
 		border: 1px solid var(--cs-color-border);
@@ -183,7 +183,7 @@ body.js {
 		&[disabled] {
 			opacity: 0.6;
 			cursor: not-allowed;
-			background-color: #f0f0f1 !important;
+			background-color: var(--cs-color-surface-muted) !important;
 			color: #a7aaad !important;
 			border-color: var(--cs-color-border-subtle) !important;
 		}
@@ -279,7 +279,7 @@ body.js {
 		&.active-type:hover,
 		&.active-type:focus {
 			color: var(--cs-color-accent);
-			background: #f0f0f1;
+			background: var(--cs-color-surface-muted);
 		}
 	}
 }
