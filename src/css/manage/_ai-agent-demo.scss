@@ -51,7 +51,7 @@ $muted: #50575e;
 	padding-inline: 14px;
 	border: 1px dashed #c3c4c7;
 	border-radius: 8px;
-	background: #fff;
+	background: var(--cs-color-surface);
 	color: $muted;
 	font-size: 13px;
 	animation: ai-agent-fade-in 0.25s ease;

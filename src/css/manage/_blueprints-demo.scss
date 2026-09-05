@@ -22,7 +22,7 @@ $panel-block-size: 420px;
 		input[type='text'],
 		textarea,
 		select {
-			background: #fff;
+			background: var(--cs-color-surface);
 			color: #2c3337;
 			opacity: 1;
 		}
@@ -78,7 +78,7 @@ $panel-block-size: 420px;
 	padding: 18px 20px;
 	border: 1px solid #c3c4c7;
 	border-radius: 8px;
-	background: #fff;
+	background: var(--cs-color-surface);
 	animation: demo-fade-in 0.35s ease;
 }
 
