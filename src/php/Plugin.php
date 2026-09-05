@@ -3,6 +3,8 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
+use Code_Snippets\Admin\Feedback_Error_Capture;
+use Code_Snippets\Admin\Feedback_Panel;
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
@@ -129,6 +131,7 @@ class Plugin {
 		if ( is_admin() ) {
 			$this->admin = new Bootstrap_Admin();
 			new Promotion_Manager();
+			new Feedback_Error_Capture( new Feedback_Panel() );
 		}
 
 		new Shortcodes();

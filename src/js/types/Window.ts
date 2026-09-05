@@ -21,6 +21,7 @@ declare global {
 				) => void
 			}
 		}
+		codeSnippetsErrors?: string[]
 		readonly pagenow?: string
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
