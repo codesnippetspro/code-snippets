@@ -152,19 +152,19 @@
 			min-block-size: 38px;
 			padding-block: 0;
 			padding-inline: 16px;
-			border: 1px solid #d63638;
+			border: 1px solid var(--cs-color-error);
 			border-radius: 5px;
 			background: var(--cs-color-surface-subtle);
 			line-height: 2.5715;
 			font-weight: 400;
-			color: #d63638;
+			color: var(--cs-color-error);
 			text-decoration: none;
 
 			&:hover,
 			&:focus {
-				border-color: #d63638;
-				background: #f0f0f1;
-				color: #d63638;
+				border-color: var(--cs-color-error);
+				background: var(--cs-color-surface-muted);
+				color: var(--cs-color-error);
 			}
 		}
 	}

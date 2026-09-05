@@ -64,21 +64,39 @@ interface TableHeadingCheckboxProps {
 	setSelectedIds: Dispatch<SetStateAction<Set<CloudSnippetSchema['id']>>>
 }
 
+/**
+ * Selects every snippet on the page that can be downloaded. With nothing
+ * downloadable the box is disabled and unticked: "all of nothing" must not
+ * read as a selection.
+ */
 const TableHeadingCheckbox: React.FC<TableHeadingCheckboxProps> = ({ availableIds, selectedIds, setSelectedIds }) =>
 	<td className="column-cb check-column">
 		<input
 			id="cb-select-all-cloud-snippets"
 			type="checkbox"
-			checked={availableIds.every(snippetId => selectedIds.has(snippetId))}
+			checked={0 < availableIds.length && availableIds.every(snippetId => selectedIds.has(snippetId))}
+			disabled={0 === availableIds.length}
+			title={0 === availableIds.length ? __('Nothing on this page can be downloaded.', 'code-snippets') : undefined}
 			onChange={event =>
 				setSelectedIds(previous =>
 					new Set(event.target.checked
 						? [...previous, ...availableIds]
 						: [...previous].filter(snippetId => !availableIds.includes(snippetId)))
 				)}
-			aria-label={__('Select all snippets', 'code-snippets')}
+			aria-label={__('Select all downloadable snippets', 'code-snippets')}
 		/>
 	</td>
+
+/** Why a snippet cannot be selected for download, or undefined when it can. */
+const unavailableReason = (snippet: CloudSnippetSchema): string | undefined => {
+	if (snippet.local_id) {
+		return __('Already in your library.', 'code-snippets')
+	}
+
+	return isCloudSnippetDownloadable(snippet)
+		? undefined
+		: __('Requires Code Snippets Pro.', 'code-snippets')
+}
 
 interface TableRowCheckboxProps {
 	snippet: CloudSnippetSchema
@@ -86,24 +104,37 @@ interface TableRowCheckboxProps {
 	setSelected: Dispatch<SetStateAction<Set<CloudSnippetSchema['id']>>>
 }
 
-const TableRowCheckbox: React.FC<TableRowCheckboxProps> = ({ snippet, selected, setSelected }) =>
-	<th scope="row" className="check-column">
-		{isCloudSnippetDownloadable(snippet) && (
+/**
+ * Every row shows a box, so the column reads as one control: a snippet that
+ * cannot be downloaded gets a disabled box that says why.
+ */
+const TableRowCheckbox: React.FC<TableRowCheckboxProps> = ({ snippet, selected, setSelected }) => {
+	const reason = unavailableReason(snippet)
+
+	return (
+		<th scope="row" className="check-column">
 			<input
 				id={`cb-select-${snippet.id}`}
 				type="checkbox"
 				name="checked[]"
-				checked={selected.has(snippet.id)}
-				// translators: %s: snippet name.
-				aria-label={sprintf(__('Select %s', 'code-snippets'), snippet.name)}
+				checked={!reason && selected.has(snippet.id)}
+				disabled={!!reason}
+				title={reason}
+				aria-label={reason
+					// translators: 1: snippet name, 2: why it cannot be selected.
+					? sprintf(__('%1$s cannot be selected: %2$s', 'code-snippets'), snippet.name, reason)
+					// translators: %s: snippet name.
+					: sprintf(__('Select %s', 'code-snippets'), snippet.name)}
 				onChange={event =>
 					setSelected(previous =>
 						new Set(event.target.checked
 							? [...previous, snippet.id]
 							: [...previous].filter(snippetId => snippetId !== snippet.id))
 					)}
-			/>)}
-	</th>
+			/>
+		</th>
+	)
+}
 
 export interface CloudSnippetsTableProps {
 	snippets: CloudSnippetSchema[]

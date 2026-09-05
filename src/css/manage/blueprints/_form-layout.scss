@@ -1,11 +1,11 @@
-$sidebar-width: 220px;
-$border-color: #c3c4c7;
 
 .blueprint-form-layout {
+	--cs-blueprint-sidebar-width: 220px;
+
 	display: grid;
-	grid-template-columns: $sidebar-width 1fr;
+	grid-template-columns: var(--cs-blueprint-sidebar-width) 1fr;
 	gap: 0;
-	border: 1px solid $border-color;
+	border: 1px solid var(--cs-color-border);
 	border-radius: 0 0 0 4px;
 	overflow: hidden;
 
@@ -17,7 +17,7 @@ $border-color: #c3c4c7;
 .blueprint-form-sidebar {
 	display: flex;
 	flex-direction: column;
-	background: #f6f7f7;
+	background: var(--cs-color-surface-subtle);
 	padding: 0;
 
 	ul {
@@ -36,11 +36,11 @@ $border-color: #c3c4c7;
 		inline-size: 100%;
 		padding: 12px 16px;
 		border: none;
-		border-block-end: 1px solid #e2e2e4;
-		border-inline-end: 1px solid #e2e2e4;
+		border-block-end: 1px solid var(--cs-color-border-subtle);
+		border-inline-end: 1px solid var(--cs-color-border);
 		border-radius: 0;
-		background: #f6f7f7;
-		color: #2c3337;
+		background: var(--cs-color-surface-subtle);
+		color: var(--cs-color-text);
 		cursor: pointer;
 		font-weight: 400;
 		text-align: start;
@@ -66,7 +66,7 @@ $border-color: #c3c4c7;
 		}
 
 		&.is-active {
-			background: #fff;
+			background: var(--cs-color-surface);
 			color: var(--cs-color-accent);
 			border-inline-end: none;
 		}
@@ -75,14 +75,14 @@ $border-color: #c3c4c7;
 	&__generate-wrap {
 		flex: 1 1 auto;
 		min-block-size: 0;
-		border-inline-end: 1px solid #e2e2e4;
+		border-inline-end: 1px solid var(--cs-color-border-subtle);
 		padding: 16px;
 		display: flex;
 		flex-direction: column;
 	}
 
 	&__generate {
-		background-color: #2271b1;
+		background-color: var(--cs-color-accent);
 		border: none;
 		border-radius: 4px;
 		box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
@@ -108,7 +108,7 @@ $border-color: #c3c4c7;
 }
 
 .blueprint-form-content {
-	background: #fff;
+	background: var(--cs-color-surface);
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
@@ -117,7 +117,7 @@ $border-color: #c3c4c7;
 	h4 {
 		margin: 0;
 		font-size: 1.4rem;
-		color: #2c3337;
+		color: var(--cs-color-text);
 	}
 
 	input[type='date'],
@@ -147,7 +147,7 @@ $border-color: #c3c4c7;
 }
 
 .blueprint-form-section-description {
-	color: #646970;
+	color: var(--cs-color-text-muted);
 	font-size: 0.95rem;
 	line-height: 1.4;
 	margin: 0 0 24px;
@@ -157,5 +157,5 @@ $border-color: #c3c4c7;
 	font-weight: 600;
 	font-size: 14px;
 	line-height: 1.5;
-	color: #2c3337;
+	color: var(--cs-color-text);
 }

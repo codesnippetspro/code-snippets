@@ -145,7 +145,7 @@
 		}
 
 		&.active-type {
-			background: #f0f0f1;
+			background: var(--cs-color-surface-muted);
 			color: var(--cs-color-accent);
 		}
 
@@ -181,7 +181,7 @@
 		box-sizing: border-box;
 		padding: 0;
 		margin: 0;
-		background: #f0f0f1;
+		background: var(--cs-color-surface-muted);
 		color: var(--cs-color-text-muted);
 		border: none;
 		border-radius: 5px;

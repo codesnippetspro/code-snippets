@@ -62,6 +62,8 @@
 		gap: 16px;
 		font-size: 14px;
 		line-height: 1.5;
+		border-block-end: 1px solid var(--cs-color-border-subtle);
+		padding-block-end: 16px;
 
 		.cloud-snippet-tags {
 			color: var(--cs-color-accent);
@@ -83,8 +85,6 @@
 		font-size: 14px;
 		line-height: 1.5;
 		color: var(--cs-color-text-muted);
-		border-block-start: 1px solid var(--cs-color-border-subtle);
-		padding-block-start: 16px;
 	}
 
 	.cloud-snippet-author {
@@ -99,7 +99,7 @@
 
 	footer {
 		.dashicons-warning {
-			color: #d63638;
+			color: var(--cs-color-error);
 		}
 
 		.cloud-snippet-update svg {
@@ -130,7 +130,7 @@
 
 	&:hover,
 	&:focus {
-		background-color: #eff5f9;
+		background-color: var(--cs-color-surface-info);
 		border-color: var(--cs-color-accent);
 		color: var(--cs-color-accent);
 	}

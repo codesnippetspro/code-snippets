@@ -140,6 +140,10 @@ plugins.
 ### SCSS
 
 - Use logical CSS properties (e.g., `margin-inline-start` not `margin-left`) — enforced by stylelint.
+- Use CSS variables (`var(--cs-*)`) for themeable runtime values instead of SASS variables. Define shared runtime tokens
+  under `:root` in `src/css/common/_theme.scss`.
+- Keep SASS variables and maps for compile-time generation only, such as selector generators, mixins, and SASS color
+  operations that cannot operate on runtime `var()` values.
 
 ### Code Organization
 

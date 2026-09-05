@@ -23,7 +23,7 @@
 	gap: 5px;
 
 	.dashicons-warning {
-		color: #d63638;
+		color: var(--cs-color-error);
 	}
 
 	.snippet-tags-container &,
@@ -77,7 +77,7 @@
 		}
 
 		.remove {
-			color: #d63638;
+			color: var(--cs-color-error);
 		}
 
 		.action {

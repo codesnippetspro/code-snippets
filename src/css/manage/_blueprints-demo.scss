@@ -1,18 +1,16 @@
 @use '../common/theme';
 
-$primary: #2271b1;
-
-// Every section is held to one height so stepping between them never resizes
-// the card. The value fits the tallest tab (Output, with its code textarea);
-// shorter tabs simply leave space beneath their fields.
-$panel-block-size: 420px;
-
 .blueprints-demo {
+	// Every section is held to one height so stepping between them never resizes
+	// the card. The value fits the tallest tab (Output, with its code textarea);
+	// shorter tabs simply leave space beneath their fields.
+	--cs-panel-block-size: 420px;
+
 	// Read-only controls keep their ordinary appearance: the walkthrough
 	// supplies the values, and greying every field out would misread as a
 	// broken form.
 	.blueprint-form-content {
-		min-block-size: $panel-block-size;
+		min-block-size: var(--cs-panel-block-size);
 		transition: opacity 220ms ease;
 
 		&.is-fading {
@@ -22,8 +20,8 @@ $panel-block-size: 420px;
 		input[type='text'],
 		textarea,
 		select {
-			background: #fff;
-			color: #2c3337;
+			background: var(--cs-color-surface);
+			color: var(--cs-color-text);
 			opacity: 1;
 		}
 
@@ -76,9 +74,9 @@ $panel-block-size: 420px;
 	gap: 12px;
 	margin-block: 20px;
 	padding: 18px 20px;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cs-color-border);
 	border-radius: 8px;
-	background: #fff;
+	background: var(--cs-color-surface);
 	animation: demo-fade-in 0.35s ease;
 }
 
@@ -86,7 +84,7 @@ $panel-block-size: 420px;
 	margin: 0;
 	font-size: 15px;
 	font-weight: 600;
-	color: #1d2327;
+	color: var(--cs-color-text);
 }
 
 @media (prefers-reduced-motion: reduce) {

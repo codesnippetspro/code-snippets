@@ -148,7 +148,7 @@
 			color: #cc1818;
 
 			&:disabled {
-				color: #a7aaad;
+				color: var(--cs-color-text-disabled);
 				cursor: not-allowed;
 			}
 

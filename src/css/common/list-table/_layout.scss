@@ -189,7 +189,7 @@
 			}
 
 			&.delete {
-				color: #d63638;
+				color: var(--cs-color-error);
 			}
 
 			&.snippet-cloud-update {
@@ -211,11 +211,11 @@
 		}
 
 		.snippet-row-action-error {
-			color: #d63638;
+			color: var(--cs-color-error);
 		}
 
 		.delete.disabled {
-			color: #a7aaad;
+			color: var(--cs-color-text-disabled);
 			cursor: not-allowed;
 			pointer-events: none;
 		}
@@ -272,7 +272,7 @@
 	}
 
 	.delete {
-		color: #d63638;
+		color: var(--cs-color-error);
 	}
 
 	a.delete:not(.disabled) {

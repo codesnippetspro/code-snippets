@@ -44,7 +44,7 @@ input[type='checkbox'].switch:checked {
 
 	// Travel distance: pill width minus the knob, its margins and the borders.
 	&::before {
-		background-color: white;
+		background-color: #fff;
 		transform: translateX(calc((100% + 4px) * var(--cs-direction-multiplier)));
 	}
 }
@@ -55,7 +55,7 @@ input[type='checkbox'].switch:checked {
 	text-align: center;
 	font-weight: bold;
 	line-height: 1;
-	color: #1d2327;
+	color: var(--cs-color-text);
 }
 
 a.snippet-condition-count {

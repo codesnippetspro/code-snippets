@@ -1,13 +1,10 @@
-$primary: #2271b1;
-$muted: #50575e;
-
 /* Prompt box */
 
 .ai-agent-demo-prompt__text {
 	display: block;
 	white-space: pre-wrap;
 	word-break: break-word;
-	color: #1d2327;
+	color: var(--cs-color-text);
 	line-height: 1.6;
 }
 
@@ -16,8 +13,8 @@ $muted: #50575e;
 }
 
 .ai-agent-demo-prompt.is-typing {
-	border-color: $primary;
-	box-shadow: 0 0 0 1px $primary;
+	border-color: var(--cs-color-accent);
+	box-shadow: 0 0 0 1px var(--cs-color-accent);
 }
 
 .ai-agent-demo-prompt__caret {
@@ -25,7 +22,7 @@ $muted: #50575e;
 	inline-size: 2px;
 	block-size: 1.1em;
 	margin-inline-start: 1px;
-	background: $primary;
+	background: var(--cs-color-accent);
 	vertical-align: text-bottom;
 	animation: ai-agent-demo-caret 1s step-end infinite;
 }
@@ -49,10 +46,10 @@ $muted: #50575e;
 	gap: 12px;
 	padding-block: 10px;
 	padding-inline: 14px;
-	border: 1px dashed #c3c4c7;
+	border: 1px dashed var(--cs-color-border);
 	border-radius: 8px;
-	background: #fff;
-	color: $muted;
+	background: var(--cs-color-surface);
+	color: var(--cs-color-text-secondary);
 	font-size: 13px;
 	animation: ai-agent-fade-in 0.25s ease;
 }
@@ -76,7 +73,7 @@ $muted: #50575e;
 	inset-block: 0;
 	inline-size: 40%;
 	border-radius: 2px;
-	background: $primary;
+	background: var(--cs-color-accent);
 	animation: ai-agent-demo-transit 1.4s ease-in-out infinite;
 }
 
@@ -108,7 +105,7 @@ $muted: #50575e;
 	.ai-agent-empty__chip:disabled {
 		opacity: 1;
 		cursor: default;
-		color: var(--cs-color-text, #2c3337);
+		color: var(--cs-color-text);
 	}
 
 	.ai-agent-history__open {
