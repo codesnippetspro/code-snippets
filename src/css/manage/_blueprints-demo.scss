@@ -1,18 +1,16 @@
 @use '../common/theme';
 
-$primary: #2271b1;
-
-// Every section is held to one height so stepping between them never resizes
-// the card. The value fits the tallest tab (Output, with its code textarea);
-// shorter tabs simply leave space beneath their fields.
-$panel-block-size: 420px;
-
 .blueprints-demo {
+	// Every section is held to one height so stepping between them never resizes
+	// the card. The value fits the tallest tab (Output, with its code textarea);
+	// shorter tabs simply leave space beneath their fields.
+	--cs-panel-block-size: 420px;
+
 	// Read-only controls keep their ordinary appearance: the walkthrough
 	// supplies the values, and greying every field out would misread as a
 	// broken form.
 	.blueprint-form-content {
-		min-block-size: $panel-block-size;
+		min-block-size: var(--cs-panel-block-size);
 		transition: opacity 220ms ease;
 
 		&.is-fading {

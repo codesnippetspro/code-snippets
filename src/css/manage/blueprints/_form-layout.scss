@@ -1,8 +1,9 @@
-$sidebar-width: 220px;
 
 .blueprint-form-layout {
+	--cs-blueprint-sidebar-width: 220px;
+
 	display: grid;
-	grid-template-columns: $sidebar-width 1fr;
+	grid-template-columns: var(--cs-blueprint-sidebar-width) 1fr;
 	gap: 0;
 	border: 1px solid var(--cs-color-border);
 	border-radius: 0 0 0 4px;
