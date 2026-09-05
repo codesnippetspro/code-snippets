@@ -87,11 +87,15 @@ test.describe('Cloud bulk download eligibility', () => {
 
 		const table = page.locator('.cloud-snippets-table')
 		await expect(table.getByRole('checkbox', { name: 'Select Eligible Alpha' })).toBeVisible()
-		await expect(table.getByRole('checkbox', { name: 'Select Linked Beta' })).toHaveCount(0)
-		await expect(table.getByRole('checkbox', { name: 'Select Pro Gamma' })).toHaveCount(0)
+		// Rows that cannot be downloaded keep a box, disabled, that says why.
+		await expect(table.getByRole('checkbox', { name: 'Linked Beta cannot be selected: Already in your library.' })).toBeDisabled()
+		await expect(table.getByRole('checkbox', { name: 'Pro Gamma cannot be selected: Requires Code Snippets Pro.' })).toBeDisabled()
 
-		await table.getByRole('checkbox', { name: 'Select all snippets' }).check()
+		const selectAll = table.getByRole('checkbox', { name: 'Select all downloadable snippets' })
+		await expect(selectAll).not.toBeChecked()
+		await selectAll.check()
 		await expect(table.getByRole('checkbox', { name: 'Select Eligible Alpha' })).toBeChecked()
+		await expect(table.getByRole('checkbox', { name: 'Linked Beta cannot be selected: Already in your library.' })).not.toBeChecked()
 
 		await applyBulkDownload(page)
 		await expect.poll(() => state.downloads).toEqual([ELIGIBLE.id])
@@ -123,11 +127,32 @@ test.describe('Cloud bulk download eligibility', () => {
 
 		const table = page.locator('.cloud-snippets-table')
 		await expect(table.getByRole('checkbox', { name: 'Select Pro Gamma' })).toBeVisible()
-		await expect(table.getByRole('checkbox', { name: 'Select Linked Beta' })).toHaveCount(0)
+		await expect(table.getByRole('checkbox', { name: 'Linked Beta cannot be selected: Already in your library.' })).toBeDisabled()
 
-		await table.getByRole('checkbox', { name: 'Select all snippets' }).check()
+		await table.getByRole('checkbox', { name: 'Select all downloadable snippets' }).check()
 		await applyBulkDownload(page)
 		await expect.poll(() => [...state.downloads].sort((a, b) => a - b)).toEqual([ELIGIBLE.id, PRO_LOCKED.id])
+	})
+
+	test('a page with nothing downloadable offers no selection at all', async ({ page }) => {
+		const state: CloudRoutesState = {
+			snippets: [
+				cloudSnippet({ id: 201, name: 'Owned One', local_id: 11 }),
+				cloudSnippet({ id: 202, name: 'Owned Two', local_id: 12 })
+			],
+			downloads: []
+		}
+		await forceLicenseState(page, true)
+		await routeCloudSnippets(page, state)
+		await openCommunityCloud(page, 'table')
+
+		const table = page.locator('.cloud-snippets-table')
+		const selectAll = table.getByRole('checkbox', { name: 'Select all downloadable snippets' })
+		// "All of nothing" must not read as a selection: the header box is unticked and disabled.
+		await expect(selectAll).toBeDisabled()
+		await expect(selectAll).not.toBeChecked()
+		await expect(table.getByRole('checkbox', { name: 'Owned One cannot be selected: Already in your library.' })).toBeDisabled()
+		await expect(table.getByRole('checkbox', { name: 'Owned Two cannot be selected: Already in your library.' })).toBeDisabled()
 	})
 
 	test('selections hidden by a new search are not downloaded', async ({ page }) => {
