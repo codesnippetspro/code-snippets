@@ -172,7 +172,7 @@
 	padding-inline: 10px;
 
 	&:hover {
-		color: var(#b32d2e);
+		color: var(--cs-color-error);
 	}
 }
 
@@ -407,15 +407,15 @@
 }
 
 .ai-agent-result__status.is-error {
-	color: var(#b32d2e);
+	color: var(--cs-color-error);
 	font-size: 12px;
 }
 
 .ai-agent-result__status.is-deleted {
-	color: var(#b32d2e);
+	color: var(--cs-color-error);
 	font-weight: 600;
 	text-decoration: underline;
-	text-decoration-color: var(#b32d2e);
+	text-decoration-color: var(--cs-color-error);
 }
 
 .ai-agent-result__status.is-checking {
@@ -747,7 +747,7 @@
 	overflow: hidden;
 
 	&.is-warning .ai-agent-quota__fill {
-		background: var(#b32d2e);
+		background: var(--cs-color-error);
 	}
 }
 
@@ -757,6 +757,6 @@
 	color: var(--cs-color-text-secondary);
 
 	&.is-warning {
-		color: var(#b32d2e);
+		color: var(--cs-color-error);
 	}
 }
