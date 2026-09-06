@@ -46,7 +46,7 @@
 	padding: 20px;
 	background: var(--cs-color-surface-subtle);
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 }
 
 .ai-agent-loading {
@@ -102,7 +102,7 @@
 	display: flex;
 	align-items: stretch;
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 4px;
+	border-radius: 5px;
 	background: var(--cs-color-surface);
 	margin: 0;
 
@@ -197,7 +197,7 @@
 .ai-agent-message {
 	padding-block: 10px;
 	padding-inline: 14px;
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	max-inline-size: 90%;
 
 	&.is-user {
@@ -235,7 +235,7 @@
 .ai-agent-plan,
 .ai-agent-result {
 	animation: ai-agent-fade-in 0.25s ease;
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface);
 	padding: 16px;
 }
@@ -479,7 +479,7 @@
 // nothing has gone wrong, and the user is being asked to consent.
 .ai-agent-context-request {
 	border: 1px solid #c3d9ed;
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	padding: 16px;
 	background: var(--cs-color-surface-info);
 
@@ -504,7 +504,7 @@
 	align-items: center;
 	gap: 12px;
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	padding: 12px 16px;
 	background: var(--cs-color-surface-subtle);
 
@@ -517,7 +517,7 @@
 
 .ai-agent-error {
 	border: 1px solid #f0c33c;
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	padding: 16px;
 	background: #fcf9e8;
 
@@ -536,7 +536,7 @@
 
 .ai-agent-prompt {
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface);
 	padding: 8px;
 
@@ -641,7 +641,7 @@
 
 .ai-agent-sidebar {
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface);
 	overflow: hidden;
 	display: flex;
@@ -708,7 +708,7 @@
 	padding-block: 8px;
 	padding-inline: 10px;
 	border: 1px solid var(--cs-color-border-subtle);
-	border-radius: 6px;
+	border-radius: 5px;
 	background: var(--cs-color-surface-subtle);
 	cursor: pointer;
 

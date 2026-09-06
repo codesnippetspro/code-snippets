@@ -6,7 +6,7 @@
 	grid-template-columns: var(--cs-blueprint-sidebar-width) 1fr;
 	gap: 0;
 	border: 1px solid var(--cs-color-border);
-	border-radius: 0 0 0 4px;
+	border-radius: 0 0 var(--cs-card-radius) var(--cs-card-radius);
 	overflow: hidden;
 
 	@media (width <= 960px) {
@@ -84,7 +84,7 @@
 	&__generate {
 		background-color: var(--cs-color-accent);
 		border: none;
-		border-radius: 4px;
+		border-radius: 5px;
 		box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
 		color: #fff;
 		cursor: pointer;

@@ -61,7 +61,7 @@ $surface-color: #fff;
 	padding: 12px 14px;
 	background: color.adjust($surface-color, $lightness: -2%);
 	border: 1px solid var(--cs-color-border);
-	border-radius: 6px;
+	border-radius: 5px;
 
 	.blueprint-form-repeater__cell {
 		flex: 1 1 350px;
