@@ -125,6 +125,7 @@ test.describe('Insights screen', () => {
 	test('links chart entries to their filtered snippet lists', async ({ page, baseURL }) => {
 		await SnippetsTestHelper.createSnippetViaCli({
 			name: 'Insights Tagged Snippet',
+			active: true,
 			tags: ['sample']
 		})
 
