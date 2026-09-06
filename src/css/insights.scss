@@ -18,6 +18,7 @@
 	border: 1px solid var(--cs-color-border-subtle);
 	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface);
+	color: var(--cs-color-text);
 	padding: 24px;
 
 	.insights-chart-card-header {
@@ -108,6 +109,22 @@
 	padding: 0;
 	margin: 0;
 	list-style: none;
+}
+
+.insights-chart-entry-link {
+	color: var(--cs-color-text);
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--cs-color-accent);
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: 2px;
+	}
 }
 
 .insights-bar-chart {
