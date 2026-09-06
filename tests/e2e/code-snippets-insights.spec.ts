@@ -122,13 +122,15 @@ test.describe('Insights screen', () => {
 		await expect(tagsChart.locator('.insights-pie-chart')).toHaveCount(0)
 	})
 
-	test('links chart entries to their filtered snippet lists', async ({ page }) => {
+	test('links chart entries to their filtered snippet lists', async ({ page, baseURL }) => {
 		await SnippetsTestHelper.createSnippetViaCli({
 			name: 'Insights Tagged Snippet',
 			tags: ['sample']
 		})
 
 		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+
+		const manageUrl = (query: string) => new URL(`${URLS.SNIPPETS_ADMIN}${query}`, baseURL).toString()
 
 		const typeChart = page.locator('[data-insights-chart="type"]')
 		const activationChart = page.locator('[data-insights-chart="activation"]')
@@ -138,16 +140,16 @@ test.describe('Insights screen', () => {
 			['PHP', 'php'],
 			['HTML', 'html'],
 			['CSS', 'css'],
-			['JavaScript', 'js'],
+			['JS', 'js'],
 			['Conditions', 'cond']
 		]) {
 			await expect(typeChart.getByRole('link', { name: label })).toHaveAttribute(
-				'href', `${URLS.SNIPPETS_ADMIN}&subpage=snippets&type=${type}`)
+				'href', manageUrl(`&subpage=snippets&type=${type}`))
 		}
 
 		for (const status of ['active', 'inactive']) {
 			await expect(activationChart.getByRole('link', { name: new RegExp(`^${status}$`, 'i') })).toHaveAttribute(
-				'href', `${URLS.SNIPPETS_ADMIN}&subpage=snippets&status=${status}`)
+				'href', manageUrl(`&subpage=snippets&status=${status}`))
 		}
 
 		const tagLink = tagsChart.getByRole('link', { name: 'sample' })
@@ -159,7 +161,7 @@ test.describe('Insights screen', () => {
 			return color
 		})
 
-		await expect(tagLink).toHaveAttribute('href', `${URLS.SNIPPETS_ADMIN}&tag=sample`)
+		await expect(tagLink).toHaveAttribute('href', manageUrl('&tag=sample'))
 		await expect(tagLink).toHaveCSS('color', textColor)
 		await expect(tagLink).toHaveCSS('text-decoration-line', 'none')
 	})
