@@ -47,7 +47,7 @@
 	padding-block: 10px;
 	padding-inline: 14px;
 	border: 1px dashed var(--cs-color-border);
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface);
 	color: var(--cs-color-text-secondary);
 	font-size: 13px;

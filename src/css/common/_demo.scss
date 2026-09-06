@@ -189,14 +189,14 @@ body.modal-open .demo-callout {
 .demo-spotlight__ring {
 	position: fixed;
 	border: 2px solid #fff;
-	border-radius: 6px;
+	border-radius: 5px;
 	box-shadow: 0 0 0 1px rgb(29 35 39 / 25%), 0 8px 24px rgb(0 0 0 / 25%);
 	transition: all 200ms ease;
 }
 
 .demo-upsell {
 	border: 1px solid #c5d9ed;
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface-info);
 	padding: 20px;
 	animation: demo-fade-in 0.35s ease;
