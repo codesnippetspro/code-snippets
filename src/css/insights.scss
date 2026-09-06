@@ -2,17 +2,18 @@
 @use 'common/toolbar';
 @use 'common/wp-admin';
 
-.code-snippets-insights {
-	margin-block: 50px;
-	margin-inline: auto;
-	color: var(--cs-color-text);
+#code-snippets-insights-container {
+	margin-block-start: 0;
+}
 
+.snippets-page-header {
 	h1 {
-		padding: 0;
-		margin: 0;
-		font-size: 32px;
-		font-weight: 510;
+		font-size: 26px;
+		font-weight: 500;
 		line-height: 1.25;
+		color: var(--cs-color-text);
+		padding: 0;
+		margin-block: 0.5rem 1rem;
 	}
 }
 
@@ -20,7 +21,6 @@
 	display: grid;
 	gap: 16px;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	margin-block: 16px;
 }
 
 .insights-chart-card {
