@@ -208,26 +208,6 @@
 	}
 }
 
-// Slot that adopts the WordPress Screen Options / Help tabs so they appear
-// directly below the snippet-type nav instead of above the page content.
-.snippets-screen-meta-slot {
-	#screen-meta-links {
-		float: none;
-		display: flex;
-		justify-content: flex-end;
-		margin: 0;
-		border-color: var(--cs-color-border-subtle);
-
-		.show-settings {
-			border-color: var(--cs-color-border-subtle);
-		}
-	}
-
-	#screen-meta {
-		margin: 0;
-	}
-}
-
 // Item count shown after a subnav tab's label, using the label colour at reduced opacity.
 .snippet-type-nav .subnav-count {
 	font-size: 14px;

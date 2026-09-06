@@ -75,7 +75,7 @@
 	margin-block: 20px;
 	padding: 18px 20px;
 	border: 1px solid var(--cs-color-border);
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface);
 	animation: demo-fade-in 0.35s ease;
 }

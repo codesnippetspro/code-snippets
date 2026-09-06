@@ -31,7 +31,7 @@
 		background: #fff;
 		border: 1px solid var(--cs-color-border);
 		border-block-end: none;
-		border-radius: 6px 6px 0 0;
+		border-radius: var(--cs-card-radius) var(--cs-card-radius) 0 0;
 		padding: 36px 12px;
 
 		&-title-row {

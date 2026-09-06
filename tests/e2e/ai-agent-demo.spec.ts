@@ -31,7 +31,7 @@ test.describe('AI Agent demo', () => {
 		await expect(link.locator('.pro-chip')).toHaveCount(0)
 
 		await link.click()
-		await expect(page.locator('.ai-agent-demo h1')).toContainText('AI Agent')
+		await expect(page.locator('.demo-page-header h1')).toContainText('AI Agent')
 		await expect(page.locator('.demo-play')).toBeVisible()
 	})
 

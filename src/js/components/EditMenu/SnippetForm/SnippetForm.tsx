@@ -9,6 +9,7 @@ import { handleUnknownError } from '../../../utils/errors'
 import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
+import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { Toolbar } from '../../common/Toolbar'
 import { UpsellBanner } from '../../common/UpsellBanner'
 import { UpsellDialog } from '../../common/UpsellDialog'
@@ -234,6 +235,7 @@ export const SnippetForm: React.FC = () =>
 					initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}
 				>
 					<Toolbar />
+					<ScreenMetaSlot />
 					<EditFormWrap />
 				</WithSnippetFormContext>
 			</WithSnippetsListContext>

@@ -9,22 +9,14 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 	gap: 16px 24px;
-	margin-block: 8px 16px;
-
-	h1,
-	h2 {
-		margin: 0;
-		padding: 0;
-		font-size: 26px;
-		font-weight: 510;
-		line-height: 1.25;
-	}
+	margin-block: 0.5rem 16px;
 
 	h1 {
-		color: var(--cs-color-text);
-	}
-
-	h2 {
+		margin: 0;
+		padding: 0;
+		font-size: 24px;
+		font-weight: 500;
+		line-height: 1.25;
 		color: var(--cs-color-text);
 	}
 }

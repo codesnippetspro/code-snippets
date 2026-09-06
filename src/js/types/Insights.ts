@@ -11,6 +11,7 @@ export type InsightsChartViews = Readonly<Record<InsightsConfigurableChartKey, I
 export interface InsightsChartEntry {
 	readonly label: string
 	readonly count: number | string
+	readonly url?: string
 }
 
 export interface InsightsSummary {

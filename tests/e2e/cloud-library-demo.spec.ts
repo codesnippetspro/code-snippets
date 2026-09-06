@@ -16,7 +16,7 @@ test.describe('Cloud Library demo', () => {
 		await expect(link.locator('.pro-chip')).toHaveCount(0)
 
 		await link.click()
-		await expect(page.locator('.cloud-library-demo h1')).toContainText('Cloud Library')
+		await expect(page.locator('.demo-page-header h1')).toContainText('Cloud Library')
 		await expect(page.locator('.demo-play')).toBeVisible()
 	})
 

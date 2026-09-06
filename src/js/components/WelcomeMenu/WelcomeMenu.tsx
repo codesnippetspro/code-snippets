@@ -1,5 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
+import { ScreenMetaSlot } from '../common/ScreenMetaSlot'
 import { Toolbar } from '../common/Toolbar'
 import { Changelog } from './Changelog'
 import type { ImageLinkSchema } from '../../types/schema/WelcomeSchema'
@@ -100,10 +101,16 @@ const Articles: React.FC<ArticlesProps> = ({ articles }) =>
 export const WelcomeMenu = () =>
 	<>
 		<Toolbar />
-		<div className="code-snippets-welcome">
-			<h1>{__('Resources and Updates', 'code-snippets')}</h1>
 
-			<hr className="wp-header-end" />
+		<ScreenMetaSlot />
+
+		<div className="snippets-page-header">
+			<h1>{__('Resources and Updates', 'code-snippets')}</h1>
+		</div>
+
+		<hr className="wp-header-end" />
+
+		<div className="code-snippets-welcome">
 
 			<div className="code-snippets-updates">
 				<HeroImage />

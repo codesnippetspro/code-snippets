@@ -31,6 +31,9 @@ interface ChartProps {
 	colors?: Readonly<Record<string, string>>
 }
 
+const EntryLabel: React.FC<Pick<InsightsChartEntry, 'label' | 'url'>> = ({ label, url }) =>
+	url ? <a className="insights-chart-entry-link" href={url}>{label}</a> : <>{label}</>
+
 const BarChart: React.FC<ChartProps> = ({ colors, entries }) => {
 	const entryCounts = useMemo(() =>
 		Object.values(entries)
@@ -41,7 +44,7 @@ const BarChart: React.FC<ChartProps> = ({ colors, entries }) => {
 		<ul className="insights-bar-chart">
 			{Object.entries(entries).map(([key, entry]) =>
 				<li key={key}>
-					<span>{entry.label}</span>
+					<span><EntryLabel {...entry} /></span>
 					<div className="insights-bar-track" aria-hidden="true">
 						<div
 							className="insights-bar-fill"
@@ -75,7 +78,7 @@ const PieChart: React.FC<ChartProps> = ({ colors, entries }) => {
 					<li key={key}>
 						<span>
 							<i aria-hidden="true" style={{ backgroundColor: colors?.[key] ?? DEFAULT_COLOR }} />
-							{entry.label}
+							<EntryLabel {...entry} />
 						</span>
 						<strong>{entry.count}</strong>
 					</li>)}

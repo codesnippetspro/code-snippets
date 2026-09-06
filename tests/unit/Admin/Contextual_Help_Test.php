@@ -35,12 +35,15 @@ class Contextual_Help_Test extends AdminUnitTestCase {
 	 */
 	public function interactive_screens(): array {
 		return [
-			'manage'   => [ 'manage' ],
-			'edit'     => [ 'edit' ],
-			'insights'  => [ 'insights' ],
-			'import'    => [ 'import' ],
-			'settings'  => [ 'settings' ],
-			'welcome'   => [ 'welcome' ],
+			'manage'        => [ 'manage' ],
+			'edit'          => [ 'edit' ],
+			'cloud-library' => [ 'cloud-library' ],
+			'blueprints'    => [ 'blueprints' ],
+			'ai-agent'      => [ 'ai-agent' ],
+			'insights'      => [ 'insights' ],
+			'import'        => [ 'import' ],
+			'settings'      => [ 'settings' ],
+			'welcome'       => [ 'welcome' ],
 		];
 	}
 }

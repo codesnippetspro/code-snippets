@@ -48,12 +48,6 @@
 		}
 	}
 
-	h1 {
-		font-size: 18px;
-		font-weight: 700;
-		line-height: 1.5;
-	}
-
 	ul {
 		display: flex;
 		gap: 22px;
@@ -336,5 +330,25 @@
 @media (width <= 640px) {
 	.code-snippets-toolbar-upper .logo div {
 		display: none;
+	}
+}
+
+// Slot that adopts the WordPress Screen Options / Help tabs so they appear
+// directly below the toolbar instead of above the page content.
+.snippets-screen-meta-slot {
+	#screen-meta-links {
+		float: none;
+		display: flex;
+		justify-content: flex-end;
+		margin: 0;
+		border-color: var(--cs-color-border-subtle);
+
+		.show-settings {
+			border-color: var(--cs-color-border-subtle);
+		}
+	}
+
+	#screen-meta {
+		margin: 0;
 	}
 }

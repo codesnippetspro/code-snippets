@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { REST_BASES } from '../../utils/restAPI'
 import { SNIPPET_SCOPE_DESCRIPTIONS } from '../../utils/snippets/snippets'
+import { buildUrl } from '../../utils/urls'
 import { useRestAPI } from '../../hooks/useRestAPI'
 import { InsightsChart, TotalsInsightsChart } from './InsightsCharts'
 import type { InsightChartPreferencesSchema, InsightsChartEntry, InsightsChartView, InsightsChartViews, InsightsConfigurableChartKey, InsightsSummary } from '../../types/Insights'
@@ -54,7 +55,10 @@ const SnippetTypeChart: React.FC<ConfigurableChartProps> = ({ summary, view, set
 	<InsightsChart
 		chart="type"
 		title={__('Snippet type', 'code-snippets')}
-		entries={summary.typeCounts}
+		entries={Object.fromEntries(
+			Object.entries(summary.typeCounts).map(([type, entry]) =>
+				[type, { ...entry, url: buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: 'snippets', type }) }])
+		)}
 		colors={INSIGHTS_TYPE_COLORS}
 		view={view}
 		setView={setView}
@@ -65,8 +69,16 @@ const ActivationStatusChart: React.FC<ConfigurableChartProps> = ({ summary, view
 		chart="activation"
 		title={__('Activation status', 'code-snippets')}
 		entries={{
-			active: { label: __('Active', 'code-snippets'), count: summary.active },
-			inactive: { label: __('Inactive', 'code-snippets'), count: summary.inactive }
+			active: {
+				label: __('Active', 'code-snippets'),
+				count: summary.active,
+				url: buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: 'snippets', status: 'active' })
+			},
+			inactive: {
+				label: __('Inactive', 'code-snippets'),
+				count: summary.inactive,
+				url: buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: 'snippets', status: 'inactive' })
+			}
 		}}
 		colors={INSIGHTS_ACTIVATION_COLORS}
 		view={view}
@@ -95,7 +107,10 @@ const TagsChart: React.FC<StaticChartProps> = ({ summary }) =>
 	<InsightsChart
 		chart="tags"
 		title={__('Tags', 'code-snippets')}
-		entries={summary.tagCounts}
+		entries={Object.fromEntries(
+			Object.entries(summary.tagCounts).map(([tag, entry]) =>
+				[tag, { ...entry, url: buildUrl(window.CODE_SNIPPETS?.urls.manage, { tag }) }])
+		)}
 		view="bar"
 	/>
 

@@ -27,7 +27,6 @@ $modal-gutter-inset: 40px;
 // title rather than being pushed to the far end of the row.
 .demo-page-header {
 	justify-content: flex-start;
-	margin-block: 32px 24px;
 
 	h1 {
 		display: flex;
@@ -75,7 +74,7 @@ $modal-gutter-inset: 40px;
 	padding: 16px 18px;
 	border: 1px solid #b9d4ea;
 	border-inline-start: 4px solid var(--cs-color-accent);
-	border-radius: 10px;
+	border-radius: var(--cs-card-radius);
 	background: #f4f9fd;
 	box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
 	animation: demo-callout-in 300ms ease both;
@@ -189,14 +188,14 @@ body.modal-open .demo-callout {
 .demo-spotlight__ring {
 	position: fixed;
 	border: 2px solid #fff;
-	border-radius: 6px;
+	border-radius: 5px;
 	box-shadow: 0 0 0 1px rgb(29 35 39 / 25%), 0 8px 24px rgb(0 0 0 / 25%);
 	transition: all 200ms ease;
 }
 
 .demo-upsell {
 	border: 1px solid #c5d9ed;
-	border-radius: 8px;
+	border-radius: var(--cs-card-radius);
 	background: var(--cs-color-surface-info);
 	padding: 20px;
 	animation: demo-fade-in 0.35s ease;

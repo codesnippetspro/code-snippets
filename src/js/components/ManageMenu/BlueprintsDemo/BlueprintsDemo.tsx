@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
+import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
 import { DemoSpotlight } from '../../common/demo/DemoSpotlight'
 import { DemoCallout } from '../../common/demo/DemoCallout'
@@ -85,7 +86,9 @@ const BlueprintsDemoPage: React.FC = () => {
 	}, [reducedMotion, stage])
 
 	return (
-		<div className="blueprints-demo">
+		<>
+			<ScreenMetaSlot />
+
 			<DemoPageHeader
 				title={__('Blueprints', 'code-snippets')}
 				description={__('A guided walkthrough of Pro Blueprints. Press play and watch a shortcode blueprint fill itself in and generate a snippet.', 'code-snippets')}
@@ -96,37 +99,39 @@ const BlueprintsDemoPage: React.FC = () => {
 				onReplay={replay}
 			/>
 
-			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
+			<div className="blueprints-demo">
+				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
-			<DemoCallout callout={getCallout(stage)} />
+				<DemoCallout callout={getCallout(stage)} />
 
-			<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
+				<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
 
-			<div className="blueprint-detail">
-				<BlueprintHeader />
+				<div className="blueprint-detail">
+					<BlueprintHeader />
 
-				<div className="blueprint-form-layout">
-					<BlueprintSidebar
-						activeSection={activeSection}
-						browsable={sectionsBrowsable}
-						generating={'generating' === stage}
-						onSelect={selectSection}
-					/>
+					<div className="blueprint-form-layout">
+						<BlueprintSidebar
+							activeSection={activeSection}
+							browsable={sectionsBrowsable}
+							generating={'generating' === stage}
+							onSelect={selectSection}
+						/>
 
-					<BlueprintFormPanel section={getSection(activeSection)} isFading={isFading} />
+						<BlueprintFormPanel section={getSection(activeSection)} isFading={isFading} />
+					</div>
 				</div>
+
+				{showGenerated && <GeneratedNotice ref={generatedRef} />}
+
+				{isFinished && <DemoUpsell
+					title={__('That was a demo — Blueprints build the code for you', 'code-snippets')}
+					onReplay={replay}
+				>
+					<p>{__('The whole walkthrough was scripted and ran inside this plugin. No code was generated and nothing was saved.', 'code-snippets')}</p>
+					<p>{__('Code Snippets Pro ships blueprints for shortcodes, post types, taxonomies, settings pages, and more — fill in the form and it writes the snippet for you.', 'code-snippets')}</p>
+				</DemoUpsell>}
 			</div>
-
-			{showGenerated && <GeneratedNotice ref={generatedRef} />}
-
-			{isFinished && <DemoUpsell
-				title={__('That was a demo — Blueprints build the code for you', 'code-snippets')}
-				onReplay={replay}
-			>
-				<p>{__('The whole walkthrough was scripted and ran inside this plugin. No code was generated and nothing was saved.', 'code-snippets')}</p>
-				<p>{__('Code Snippets Pro ships blueprints for shortcodes, post types, taxonomies, settings pages, and more — fill in the form and it writes the snippet for you.', 'code-snippets')}</p>
-			</DemoUpsell>}
-		</div>
+		</>
 	)
 }
 

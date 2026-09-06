@@ -26,7 +26,7 @@ test.describe('Blueprints demo', () => {
 		await expect(link.locator('.pro-chip')).toHaveCount(0)
 
 		await link.click()
-		await expect(page.locator('.blueprints-demo h1')).toContainText('Blueprints')
+		await expect(page.locator('.demo-page-header h1')).toContainText('Blueprints')
 		await expect(page.locator('.demo-play')).toBeVisible()
 	})
 
