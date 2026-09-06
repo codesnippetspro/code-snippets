@@ -75,7 +75,7 @@ $modal-gutter-inset: 40px;
 	padding: 16px 18px;
 	border: 1px solid #b9d4ea;
 	border-inline-start: 4px solid var(--cs-color-accent);
-	border-radius: 10px;
+	border-radius: var(--cs-card-radius);
 	background: #f4f9fd;
 	box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
 	animation: demo-callout-in 300ms ease both;
