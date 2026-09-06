@@ -15,7 +15,10 @@ test.describe('Screen meta slot', () => {
 		test(`renders a slot on the ${screen.name} screen`, async ({ page }) => {
 			await page.goto(screen.url)
 
-			await expect(page.locator('#snippets-screen-meta-slot')).toHaveCount(1)
+			const screenMetaSlot = page.locator('#snippets-screen-meta-slot')
+
+			await expect(screenMetaSlot.locator('#screen-meta')).toHaveCount(1)
+			await expect(screenMetaSlot.locator('#screen-meta-links')).toHaveCount(1)
 		})
 	}
 })
