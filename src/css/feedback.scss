@@ -1,0 +1,330 @@
+@use 'common/theme';
+
+$feedback-panel-inline-size: 460px;
+$feedback-danger: #d63638;
+$feedback-success: #00a32a;
+
+.code-snippets-feedback-launcher {
+	position: fixed;
+	inset-block-end: 24px;
+	inset-inline-end: 24px;
+	z-index: 100000;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-block-size: var(--cs-control-height);
+	padding-block: 2px;
+	padding-inline: 16px;
+	border: none;
+	border-radius: 24px;
+	background: var(--cs-color-accent);
+	color: var(--cs-color-surface);
+	font-size: var(--cs-font-size-body);
+	font-weight: 700;
+	line-height: 2.5715;
+	cursor: pointer;
+	box-shadow: 0 4px 14px rgb(0 0 0 / 18%);
+	transition: transform 0.15s ease, background 0.15s ease;
+
+	&:hover {
+		background: var(--cs-color-accent-hover);
+		transform: translateY(-1px);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: 2px;
+	}
+}
+
+.code-snippets-feedback-launcher__dot {
+	inline-size: 7px;
+	block-size: 7px;
+	border-radius: 50%;
+	background: var(--cs-color-primary);
+	box-shadow: 0 0 0 3px rgb(3 199 210 / 25%);
+}
+
+.code-snippets-feedback-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	vertical-align: middle;
+	margin-inline-start: 12px;
+	padding-block: 3px;
+	padding-inline: 10px;
+	border: 1px solid #f0c0c1;
+	border-radius: 999px;
+	background: #fcf0f1;
+	color: #8a2424;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: 1.6;
+	white-space: nowrap;
+}
+
+.code-snippets-feedback-badge__dot {
+	inline-size: 6px;
+	block-size: 6px;
+	border-radius: 50%;
+	background: $feedback-danger;
+}
+
+// The drawer slides in from the inline end, so it reads as arriving from the edge of the
+// screen rather than appearing over the page. Modal animates its frame by name, so the
+// scale-and-fade it ships with has to be replaced rather than overridden a property at a
+// time. WordPress supplies the duration, and leaves it unset under reduced motion.
+@keyframes code-snippets-feedback-slide-in {
+	from {
+		transform: translateX(calc(100% * var(--cs-direction-multiplier)));
+	}
+
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes code-snippets-feedback-slide-out {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(calc(100% * var(--cs-direction-multiplier)));
+	}
+}
+
+.components-modal__frame.code-snippets-feedback-modal {
+	position: fixed;
+	inset-block: 0;
+	inset-inline-end: 0;
+	inline-size: $feedback-panel-inline-size;
+	max-inline-size: 100vw;
+	block-size: 100%;
+	max-block-size: 100%;
+	margin: 0;
+	border-radius: 0;
+	border-inline-start: 1px solid var(--cs-color-border-subtle);
+	box-shadow: -8px 0 32px rgb(0 0 0 / 12%);
+	animation-name: code-snippets-feedback-slide-in;
+
+	.components-modal__header {
+		padding-inline: 24px;
+		border-block-end: 1px solid var(--cs-color-border-subtle);
+	}
+
+	// The header is positioned over the content, which keeps the offset WordPress gives it
+	// to clear it. Only the body scrolls, so the buttons stay reachable however long the
+	// form gets.
+	.components-modal__content {
+		display: flex;
+		flex-flow: column;
+		min-block-size: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+
+	// Newer Modal versions wrap children in an unstyled focus container.
+	.components-modal__header + div {
+		display: flex;
+		flex-flow: column;
+		flex: 1;
+		min-block-size: 0;
+		overflow: hidden;
+	}
+}
+
+.components-modal__screen-overlay.is-animating-out .components-modal__frame.code-snippets-feedback-modal {
+	animation-name: code-snippets-feedback-slide-out;
+}
+
+.code-snippets-feedback-panel__subtitle {
+	flex-shrink: 0;
+	padding-block: 12px 0;
+	padding-inline: 24px;
+	margin: 0;
+	color: var(--cs-color-text-muted);
+	font-size: 12px;
+}
+
+.code-snippets-feedback-panel__body {
+	flex: 1;
+	min-block-size: 0;
+	overflow-y: auto;
+	padding-block: 16px 20px;
+	padding-inline: 24px;
+}
+
+.code-snippets-feedback-panel__footer {
+	display: flex;
+	flex-shrink: 0;
+	justify-content: flex-end;
+	gap: 10px;
+	padding-block: 16px;
+	padding-inline: 24px;
+	border-block-start: 1px solid var(--cs-color-border-subtle);
+	background: var(--cs-color-surface-subtle);
+}
+
+.code-snippets-feedback-field {
+	margin-block-end: 18px;
+
+	.components-base-control__help {
+		color: var(--cs-color-text-muted);
+	}
+}
+
+.code-snippets-feedback-fieldset {
+	padding: 0;
+	margin-block: 0 18px;
+	margin-inline: 0;
+	border: 0;
+
+	legend {
+		padding: 0;
+		margin-block-end: 8px;
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	.components-base-control {
+		margin-block-end: 10px;
+
+		&:last-child {
+			margin-block-end: 0;
+		}
+	}
+}
+
+.code-snippets-feedback-duplicates {
+	padding: 12px;
+	margin-block: -6px 18px;
+	border: 1px solid #f0c33c;
+	border-radius: var(--cs-control-radius);
+	background: #fcf9e8;
+
+	p {
+		margin-block: 0 8px;
+		font-size: 12px;
+		font-weight: 600;
+	}
+
+	ul {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+
+	li {
+		margin-block-end: 6px;
+		font-size: 12px;
+		line-height: 1.4;
+
+		&:last-child {
+			margin-block-end: 0;
+		}
+	}
+}
+
+.code-snippets-feedback-disclosure {
+	padding-block-start: 14px;
+	border-block-start: 1px solid var(--cs-color-border-subtle);
+
+	summary {
+		color: var(--cs-color-accent);
+		font-weight: 600;
+		cursor: pointer;
+
+		&:focus-visible {
+			outline: 2px solid var(--cs-color-accent);
+			outline-offset: 2px;
+		}
+	}
+}
+
+.code-snippets-feedback-disclosure__list {
+	display: grid;
+	grid-template-columns: 108px 1fr;
+	gap: 4px 12px;
+	margin-block: 12px 0;
+	font-size: 12px;
+
+	dt {
+		color: var(--cs-color-text-muted);
+	}
+
+	dd {
+		margin: 0;
+		word-break: break-word;
+	}
+}
+
+.code-snippets-feedback-disclosure__note {
+	margin-block: 12px 0;
+	color: var(--cs-color-text-muted);
+	font-size: 12px;
+}
+
+.code-snippets-feedback-message {
+	padding-block: 10px;
+	padding-inline: 12px;
+	margin-block: 0 18px;
+	border-radius: var(--cs-control-radius);
+	border-inline-start: 4px solid $feedback-danger;
+	background: #fcf0f1;
+	scroll-margin-block-start: 8px;
+
+	&:focus {
+		outline: 2px solid $feedback-danger;
+		outline-offset: 2px;
+	}
+}
+
+.code-snippets-feedback-success {
+	padding-block: 48px;
+	padding-inline: 12px;
+	text-align: center;
+
+	h3 {
+		margin-block: 0 8px;
+		font-size: 15px;
+	}
+
+	p {
+		margin: 0;
+		color: var(--cs-color-text-muted);
+	}
+
+	&::before {
+		content: '';
+		display: block;
+		inline-size: 8px;
+		block-size: 8px;
+		margin-block-end: 12px;
+		margin-inline: auto;
+		border-radius: 50%;
+		background: $feedback-success;
+	}
+}
+
+@media (width <= 480px) {
+	.components-modal__frame.code-snippets-feedback-modal {
+		inline-size: 100vw;
+	}
+
+	.code-snippets-feedback-launcher {
+		inset-block-end: 16px;
+		inset-inline-end: 16px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.code-snippets-feedback-launcher {
+		transition: none;
+
+		&:hover {
+			transform: none;
+		}
+	}
+}

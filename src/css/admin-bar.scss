@@ -27,7 +27,7 @@
 	.code-snippets-safe-mode-active {
 		> .ab-item,
 		&.ab-item {
-			background: #d63638;
+			background: var(--cs-color-error);
 			color: #fff;
 		}
 	}
@@ -84,7 +84,7 @@
 
 	.code-snippets-safe-mode-active:hover > .ab-item,
 	.code-snippets-safe-mode-active.hover > .ab-item {
-		background: #d63638;
+		background: var(--cs-color-error);
 		color: #fff;
 	}
 

@@ -57,7 +57,7 @@
 		border-radius: var(--cs-card-radius);
 		position: relative;
 		block-size: auto;
-		background: #efefef;
+		background: var(--cs-color-surface-muted);
 		flex: 1;
 		text-align: center;
 
@@ -140,7 +140,7 @@
 	}
 
 	.item-category {
-		color: white;
+		color: #fff;
 		background: color-mix(in srgb, var(--cs-color-secondary) 85%, #000 15%);
 		display: block;
 		font-size: 12px;

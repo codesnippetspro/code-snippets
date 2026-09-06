@@ -99,7 +99,7 @@
 
 	footer {
 		.dashicons-warning {
-			color: #d63638;
+			color: var(--cs-color-error);
 		}
 
 		.cloud-snippet-update svg {
@@ -130,7 +130,7 @@
 
 	&:hover,
 	&:focus {
-		background-color: #eff5f9;
+		background-color: var(--cs-color-surface-info);
 		border-color: var(--cs-color-accent);
 		color: var(--cs-color-accent);
 	}

@@ -5,7 +5,7 @@
 	font-size: 20px;
 	font-weight: 510;
 	line-height: 1.25;
-	color: #2c3337;
+	color: var(--cs-color-text);
 
 	a {
 		color: var(--cs-color-accent);
@@ -16,7 +16,7 @@
 	> p {
 		font-size: 14px;
 		line-height: 1.5;
-		color: #2c3337;
+		color: var(--cs-color-text);
 
 		a {
 			color: var(--cs-color-accent);

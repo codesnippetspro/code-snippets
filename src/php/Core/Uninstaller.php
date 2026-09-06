@@ -9,6 +9,10 @@
 
 namespace Code_Snippets\Core;
 
+use Code_Snippets\Admin\Feedback_Panel;
+use Code_Snippets\Client\Feedback_Client;
+use Code_Snippets\Model\Feedback_Connection;
+
 /**
  * Uninstaller class.
  *
@@ -82,6 +86,10 @@ class Uninstaller {
 		delete_transient( 'code_snippets_cloud_links' );
 		delete_transient( 'cs_codevault_snippets' );
 		delete_transient( 'cs_local_to_cloud_map' );
+
+		delete_option( Feedback_Connection::CREDENTIALS_OPTION );
+		delete_transient( Feedback_Panel::SUMMARY_TRANSIENT );
+		delete_transient( Feedback_Client::REGISTRATION_FAILURE_TRANSIENT );
 	}
 
 	/**

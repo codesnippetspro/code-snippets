@@ -51,7 +51,7 @@
 .wp-core-ui .button.nav-tab-button {
 	margin-inline-start: 0.5em;
 	float: inline-end;
-	color: #a7aaad;
+	color: var(--cs-color-text-disabled);
 	background: var(--cs-color-surface-subtle);
 	border-color: var(--cs-color-surface-subtle);
 	align-self: center;
@@ -75,7 +75,7 @@ $badges: (
 	css: #9b59b6,
 	js: #f7d67a #1c1f20,
 	cond: #22826f,
-	core: #4fa1a6,
+	core: #0ca0a9,
 	pro: #f7e8e3 #df9279,
 	cloud: #009fb4,
 	bundles: #50575e,
@@ -167,7 +167,7 @@ $badges: (
 .inverted-badges .badge.pro-badge,
 .nav-tab-inactive .badge.pro-badge {
 	color: var(--cs-color-accent);
-	background-color: #eff5f9;
+	background-color: var(--cs-color-surface-info);
 	border: 1px solid rgb(34 113 177 / 10%) !important;
 	border-radius: 999px;
 	padding-block: 3px;

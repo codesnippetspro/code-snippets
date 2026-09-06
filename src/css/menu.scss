@@ -36,8 +36,9 @@
 			transition-duration: 0.01s;
 		}
 
-		&:hover {
-			background-color: #0ca0a9;
+		&:hover,
+		&:focus {
+			background-color: var(--cs-color-primary-hover);
 		}
 
 		.dashicons {

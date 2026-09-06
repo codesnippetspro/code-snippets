@@ -2,7 +2,6 @@
 // content; everything here is the frame around it.
 
 $callout-inline-size: 320px;
-$click-colour: #d63638;
 $callout-breakpoint: 1400px;
 
 // One step above the WordPress modal overlay (100000), so the commentary is
@@ -102,14 +101,14 @@ $modal-gutter-inset: 40px;
 	margin-block: 0 6px;
 	font-size: 15px;
 	font-weight: 600;
-	color: #1d2327;
+	color: var(--cs-color-text);
 }
 
 .demo-callout__body {
 	margin: 0;
 	font-size: 13px;
 	line-height: 1.5;
-	color: #50575e;
+	color: var(--cs-color-text-secondary);
 }
 
 @keyframes demo-callout-in {
@@ -138,7 +137,7 @@ body.modal-open .demo-callout {
 // as deliberate rather than as a stray focus ring.
 .demo-click {
 	position: relative;
-	outline: 2px solid $click-colour;
+	outline: 2px solid var(--cs-color-error);
 	outline-offset: 2px;
 
 	&::after {
@@ -151,7 +150,7 @@ body.modal-open .demo-callout {
 		margin-block-start: -6px;
 		margin-inline-start: -6px;
 		border-radius: 50%;
-		background: $click-colour;
+		background: var(--cs-color-error);
 		box-shadow: 0 0 0 3px rgb(214 54 56 / 30%);
 		animation: demo-click-pulse 1.1s ease-out infinite;
 		pointer-events: none;
@@ -198,13 +197,13 @@ body.modal-open .demo-callout {
 .demo-upsell {
 	border: 1px solid #c5d9ed;
 	border-radius: 8px;
-	background: #f0f6fc;
+	background: var(--cs-color-surface-info);
 	padding: 20px;
 	animation: demo-fade-in 0.35s ease;
 
 	p {
 		margin-block: 0 12px;
-		color: #1d2327;
+		color: var(--cs-color-text);
 	}
 }
 
