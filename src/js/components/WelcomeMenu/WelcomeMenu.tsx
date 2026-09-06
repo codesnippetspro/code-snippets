@@ -101,11 +101,16 @@ const Articles: React.FC<ArticlesProps> = ({ articles }) =>
 export const WelcomeMenu = () =>
 	<>
 		<Toolbar />
-		<ScreenMetaSlot />
-		<div className="code-snippets-welcome">
-			<h1>{__('Resources and Updates', 'code-snippets')}</h1>
 
-			<hr className="wp-header-end" />
+		<ScreenMetaSlot />
+
+		<div className="snippets-page-header">
+			<h1>{__('Resources and Updates', 'code-snippets')}</h1>
+		</div>
+
+		<hr className="wp-header-end" />
+
+		<div className="code-snippets-welcome">
 
 			<div className="code-snippets-updates">
 				<HeroImage />

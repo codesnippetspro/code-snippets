@@ -88,17 +88,18 @@ const BlueprintsDemoPage: React.FC = () => {
 	return (
 		<>
 			<ScreenMetaSlot />
-			<div className="blueprints-demo">
-				<DemoPageHeader
-					title={__('Blueprints', 'code-snippets')}
-					description={__('A guided walkthrough of Pro Blueprints. Press play and watch a shortcode blueprint fill itself in and generate a snippet.', 'code-snippets')}
-					hasStarted={hasStarted}
-					isFinished={isFinished}
-					onPlay={play}
-					onSkip={skip}
-					onReplay={replay}
-				/>
 
+			<DemoPageHeader
+				title={__('Blueprints', 'code-snippets')}
+				description={__('A guided walkthrough of Pro Blueprints. Press play and watch a shortcode blueprint fill itself in and generate a snippet.', 'code-snippets')}
+				hasStarted={hasStarted}
+				isFinished={isFinished}
+				onPlay={play}
+				onSkip={skip}
+				onReplay={replay}
+			/>
+
+			<div className="blueprints-demo">
 				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
 				<DemoCallout callout={getCallout(stage)} />

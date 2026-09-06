@@ -10,7 +10,9 @@ export const InsightsMenu: React.FC = () => {
 	return (
 		<>
 			<Toolbar />
+
 			<ScreenMetaSlot />
+
 			{summary && (
 				<div className="code-snippets-insights">
 					<WithRestAPIContext>

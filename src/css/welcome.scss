@@ -2,20 +2,10 @@
 @use 'common/badges';
 @use 'common/toolbar';
 @use 'common/wp-admin';
+@use 'common/page-header';
 
 #code-snippets-welcome-container {
 	margin-block-start: 0;
-}
-
-.code-snippets-welcome {
-	h1 {
-		font-size: 26px;
-		font-weight: 500;
-		line-height: 1.25;
-		color: var(--cs-color-text);
-		padding: 0;
-		margin-block: 0.5rem 1rem;
-	}
 }
 
 .code-snippets-updates {

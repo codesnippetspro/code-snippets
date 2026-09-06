@@ -86,17 +86,18 @@ const AiAgentDemoPage: React.FC = () => {
 	return (
 		<>
 			<ScreenMetaSlot />
-			<div className="ai-agent ai-agent-demo">
-				<DemoPageHeader
-					title={__('AI Agent', 'code-snippets')}
-					description={__('A guided walkthrough of the Pro AI Agent. Press play and watch it plan, build, and refine a snippet on your site.', 'code-snippets')}
-					hasStarted={hasStarted}
-					isFinished={isFinished}
-					onPlay={play}
-					onSkip={skip}
-					onReplay={replay}
-				/>
 
+			<DemoPageHeader
+				title={__('AI Agent', 'code-snippets')}
+				description={__('A guided walkthrough of the Pro AI Agent. Press play and watch it plan, build, and refine a snippet on your site.', 'code-snippets')}
+				hasStarted={hasStarted}
+				isFinished={isFinished}
+				onPlay={play}
+				onSkip={skip}
+				onReplay={replay}
+			/>
+
+			<div className="ai-agent ai-agent-demo">
 				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
 				<DemoCallout callout={getCallout(stage)} />

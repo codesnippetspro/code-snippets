@@ -62,17 +62,18 @@ export const CloudLibraryDemo: React.FC = () => {
 	return (
 		<>
 			<ScreenMetaSlot />
-			<div className="cloud-library-demo">
-				<DemoPageHeader
-					title={__('Cloud Library', 'code-snippets')}
-					description={__('A guided walkthrough of the Pro Cloud Library. Press play and watch a snippet move from your cloud onto this site.', 'code-snippets')}
-					hasStarted={hasStarted}
-					isFinished={isFinished}
-					onPlay={play}
-					onSkip={skip}
-					onReplay={replay}
-				/>
 
+			<DemoPageHeader
+				title={__('Cloud Library', 'code-snippets')}
+				description={__('A guided walkthrough of the Pro Cloud Library. Press play and watch a snippet move from your cloud onto this site.', 'code-snippets')}
+				hasStarted={hasStarted}
+				isFinished={isFinished}
+				onPlay={play}
+				onSkip={skip}
+				onReplay={replay}
+			/>
+
+			<div className="cloud-library-demo">
 				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
 				<DemoCallout callout={getCallout(stage)} />

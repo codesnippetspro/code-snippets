@@ -1,20 +1,10 @@
 @use 'common/theme';
 @use 'common/toolbar';
 @use 'common/wp-admin';
+@use 'common/page-header';
 
 #code-snippets-insights-container {
 	margin-block-start: 0;
-}
-
-.snippets-page-header {
-	h1 {
-		font-size: 26px;
-		font-weight: 500;
-		line-height: 1.25;
-		color: var(--cs-color-text);
-		padding: 0;
-		margin-block: 0.5rem 1rem;
-	}
 }
 
 .insights-chart-grid {
