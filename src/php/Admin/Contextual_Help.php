@@ -54,6 +54,18 @@ class Contextual_Help {
 				$this->load_edit_help();
 				break;
 
+			case 'cloud-library':
+				$this->load_cloud_library_help();
+				break;
+
+			case 'blueprints':
+				$this->load_blueprints_help();
+				break;
+
+			case 'ai-agent':
+				$this->load_ai_agent_help();
+				break;
+
 			case 'insights':
 				$this->load_insights_help();
 				break;
@@ -184,6 +196,93 @@ class Contextual_Help {
 			[
 				__( 'You need to fill out the name and code fields for your snippet to be added. While the description field will add more information about how your snippet works, what is does and where you found it, it is completely optional.', 'code-snippets' ),
 				__( 'Please be sure to check that your snippet is valid PHP code and will not produce errors before adding it through this page. While doing so will not become active straight away, it will help to minimize the chance of a faulty snippet becoming active on your site.', 'code-snippets' ),
+			]
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the Cloud Library demo page.
+	 */
+	private function load_cloud_library_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text(),
+				__( 'Cloud Library lets you reuse snippets across the sites connected to your Code Snippets Cloud.', 'code-snippets' ),
+			]
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the Blueprints demo page.
+	 */
+	private function load_blueprints_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text(),
+				__( 'Blueprints help you create snippets from templates for supported WordPress features.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'using-blueprints',
+			__( 'Using Blueprints', 'code-snippets' ),
+			[
+				__( 'Blueprints provide guided forms for creating snippets from supported WordPress features.', 'code-snippets' ),
+				__( 'Choose a blueprint, complete its fields and review the generated snippet before saving it.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'generating-snippets',
+			__( 'Generating Snippets', 'code-snippets' ),
+			[
+				__( 'Code Snippets Pro combines your choices with the required boilerplate to generate a complete snippet.', 'code-snippets' ),
+				__( 'Review the generated snippet before saving or activating it on your site.', 'code-snippets' ),
+			]
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the AI Agent demo page.
+	 */
+	private function load_ai_agent_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text(),
+				__( 'The AI Agent can plan, build and refine snippets from prompts.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'writing-prompts',
+			__( 'Writing Prompts', 'code-snippets' ),
+			[
+				__( 'Describe what you want your site to do in plain language, including any relevant details.', 'code-snippets' ),
+				__( 'The AI Agent uses your prompt to prepare a plan before creating snippets.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'reviewing-plans',
+			__( 'Reviewing Plans', 'code-snippets' ),
+			[
+				__( 'Review the plan to see what the AI Agent intends to build before it creates any snippets.', 'code-snippets' ),
+				__( 'Accept the plan to continue, or ask for changes when it does not match your requirements.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'reviewing-snippets',
+			__( 'Reviewing Snippets', 'code-snippets' ),
+			[
+				__( 'New snippets are added inactive, so you can review the code before it runs on your site.', 'code-snippets' ),
+				__( 'Activate each snippet only after confirming that it does what you expect.', 'code-snippets' ),
 			]
 		);
 	}

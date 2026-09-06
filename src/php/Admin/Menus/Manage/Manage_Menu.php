@@ -344,6 +344,13 @@ class Manage_Menu extends Admin_Menu {
 		$this->screen_options->load();
 
 		if ( $this->screen_options->is_upsell_view() ) {
+			$subpage = $this->screen_options->get_current_subpage();
+
+			if ( in_array( $subpage, [ 'cloud-library', 'blueprints', 'ai-agent' ], true ) ) {
+				$contextual_help = new Contextual_Help( $subpage );
+				$contextual_help->load();
+			}
+
 			return;
 		}
 
