@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 import { URLS } from './helpers/constants'
 
+const EXPECTED_H1_HEADING_COUNT = 1
+
 const SCREENS = [
 	{ name: 'Manage Snippets', url: URLS.SNIPPETS_ADMIN },
 	{ name: 'Add Snippet', url: URLS.ADD_SNIPPET_ADMIN },
@@ -19,7 +21,7 @@ test.describe('Admin screen h1 headings', () => {
 		test(`${screen.name} renders one page heading`, async ({ page }) => {
 			await page.goto(screen.url)
 
-			await expect(page.locator('#wpbody-content h1')).toHaveCount(1)
+			await expect(page.getByRole('heading', { level: 1 })).toHaveCount(EXPECTED_H1_HEADING_COUNT)
 		})
 	}
 })
