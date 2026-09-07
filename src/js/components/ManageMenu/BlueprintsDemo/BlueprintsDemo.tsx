@@ -39,7 +39,7 @@ const BlueprintHeader: React.FC = () =>
 	<header className="blueprint-detail__header">
 		<div className="blueprint-detail__header-content">
 			<div>
-				<h3>{BLUEPRINT_TITLE}</h3>
+				<h2>{BLUEPRINT_TITLE}</h2>
 				<p>{BLUEPRINT_DESCRIPTION}</p>
 			</div>
 		</div>

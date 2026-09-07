@@ -33,7 +33,8 @@ test.describe('Blueprints demo', () => {
 	test('the blueprint is shown prepopulated before play', async ({ page }) => {
 		await page.goto(DEMO_URL)
 
-		await expect(page.locator('.blueprint-detail__header h3')).toHaveText('Create a Shortcode')
+		await expect(page.locator('.blueprint-detail__header h2')).toHaveText('Create a Shortcode')
+		await expect(page.locator('.blueprint-form-content h3')).toHaveText('General')
 		await expect(page.locator('.blueprint-form-sidebar__item')).toHaveCount(SECTIONS.length)
 		await expect(activeTab(page)).toHaveText('General')
 

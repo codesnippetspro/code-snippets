@@ -81,7 +81,7 @@ interface BlueprintFormPanelProps {
 
 export const BlueprintFormPanel: React.FC<BlueprintFormPanelProps> = ({ section, isFading }) =>
 	<div className={classnames('blueprint-form-content', { 'is-fading': isFading })}>
-		<h4>{section.title}</h4>
+		<h3>{section.title}</h3>
 
 		{section.description && <p className="blueprint-form-section-description">{section.description}</p>}
 
