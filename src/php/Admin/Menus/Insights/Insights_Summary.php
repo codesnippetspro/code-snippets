@@ -45,6 +45,7 @@ final class Insights_Summary {
 	 *     active: int,
 	 *     inactive: int,
 	 *     typeCounts: array<string, array{label: string, count: int}>,
+	 *     conditionCounts: array<string, array{label: string, count: int}>,
 	 *     locationCounts: array<string, int>,
 	 *     tagCounts: array<string, array{label: string, count: int}>
 	 * }
@@ -62,6 +63,7 @@ final class Insights_Summary {
 	 *     active: int,
 	 *     inactive: int,
 	 *     typeCounts: array<string, array{label: string, count: int}>,
+	 *     conditionCounts: array<string, array{label: string, count: int}>,
 	 *     locationCounts: array<string, int>,
 	 *     tagCounts: array<string, array{label: string, count: int}>
 	 * }
@@ -84,6 +86,7 @@ final class Insights_Summary {
 		}
 
 		$type_counts = array_fill_keys( self::TYPE_ORDER, 0 );
+		$condition_counts = array_fill_keys( [ 'with', 'without' ], 0 );
 		$location_counts = array_fill_keys( self::LOCATION_ORDER, 0 );
 		$tag_counts = [];
 		$active = 0;
@@ -94,6 +97,8 @@ final class Insights_Summary {
 			if ( isset( $type_counts[ $type ] ) ) {
 				++$type_counts[ $type ];
 			}
+
+			++$condition_counts[ $snippet->condition_id ? 'with' : 'without' ];
 
 			if ( 'condition' === $snippet->scope ) {
 				$is_active = isset( $active_condition_ids[ $snippet->id ] );
@@ -120,6 +125,7 @@ final class Insights_Summary {
 			'active'         => $active,
 			'inactive'       => count( $snippets ) - $active,
 			'typeCounts'     => $this->create_chart_entries( $type_counts, $this->get_type_labels() ),
+			'conditionCounts' => $this->create_chart_entries( $condition_counts, $this->get_condition_usage_labels() ),
 			'locationCounts' => array_filter( $location_counts ),
 			'tagCounts'      => $this->create_tag_chart_entries( $tag_counts ),
 		];
@@ -194,6 +200,18 @@ final class Insights_Summary {
 			'css'  => __( 'CSS', 'code-snippets' ),
 			'js'   => __( 'JS', 'code-snippets' ),
 			'cond' => __( 'Conditions', 'code-snippets' ),
+		];
+	}
+
+	/**
+	 * Retrieve display labels for condition usage.
+	 *
+	 * @return array<string, string>
+	 */
+	private function get_condition_usage_labels(): array {
+		return [
+			'with'    => __( 'Uses conditions', 'code-snippets' ),
+			'without' => __( 'Does not use conditions', 'code-snippets' ),
 		];
 	}
 }

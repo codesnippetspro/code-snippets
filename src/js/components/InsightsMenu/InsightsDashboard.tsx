@@ -11,6 +11,7 @@ import type { SnippetCodeScope, SnippetType } from '../../types/Snippet'
 export const DEFAULT_INSIGHTS_CHART_VIEWS: InsightsChartViews = window.CODE_SNIPPETS?.insightsChartViews ?? {
 	type: 'bar',
 	activation: 'pie',
+	conditions: 'pie',
 	location: 'bar'
 }
 
@@ -25,6 +26,11 @@ export const INSIGHTS_TYPE_COLORS: Readonly<Record<SnippetType, string>> = {
 export const INSIGHTS_ACTIVATION_COLORS: Readonly<Record<string, string>> = {
 	active: '#118822',
 	inactive: '#cd4510'
+}
+
+export const INSIGHTS_CONDITION_COLORS: Readonly<Record<string, string>> = {
+	with: '#22826f',
+	without: '#9b59b6'
 }
 
 export const INSIGHTS_LOCATION_COLORS: Readonly<Record<SnippetCodeScope, string>> = {
@@ -81,6 +87,16 @@ const ActivationStatusChart: React.FC<ConfigurableChartProps> = ({ summary, view
 			}
 		}}
 		colors={INSIGHTS_ACTIVATION_COLORS}
+		view={view}
+		setView={setView}
+	/>
+
+const ConditionUsageChart: React.FC<ConfigurableChartProps> = ({ summary, view, setView }) =>
+	<InsightsChart
+		chart="conditions"
+		title={__('Condition usage', 'code-snippets')}
+		entries={summary.conditionCounts}
+		colors={INSIGHTS_CONDITION_COLORS}
 		view={view}
 		setView={setView}
 	/>
@@ -158,6 +174,12 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 				summary={summary}
 				view={chartViews.activation}
 				setView={view => updateChartView('activation', view)}
+			/>
+
+			<ConditionUsageChart
+				summary={summary}
+				view={chartViews.conditions}
+				setView={view => updateChartView('conditions', view)}
 			/>
 
 			<LocationChart

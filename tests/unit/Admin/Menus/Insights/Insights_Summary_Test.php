@@ -27,6 +27,19 @@ class Insights_Summary_Test extends AdminUnitTestCase {
 		$this->assertSame( [ 'php', 'html', 'css', 'js', 'cond' ], array_keys( $summary['typeCounts'] ) );
 		$this->assertSame( 0, $summary['typeCounts']['php']['count'] );
 		$this->assertSame( 0, $summary['typeCounts']['cond']['count'] );
+		$this->assertSame(
+			[
+				'with' => [
+					'label' => 'Uses conditions',
+					'count' => 0,
+				],
+				'without' => [
+					'label' => 'Does not use conditions',
+					'count' => 0,
+				],
+			],
+			$summary['conditionCounts']
+		);
 		$this->assertSame( [], $summary['locationCounts'] );
 		$this->assertSame( [], $summary['tagCounts'] );
 	}
@@ -251,6 +264,19 @@ class Insights_Summary_Test extends AdminUnitTestCase {
 		$this->assertSame( 1, $summary['typeCounts']['css']['count'] );
 		$this->assertSame( 1, $summary['typeCounts']['js']['count'] );
 		$this->assertSame( 1, $summary['typeCounts']['cond']['count'] );
+		$this->assertSame(
+			[
+				'with' => [
+					'label' => 'Uses conditions',
+					'count' => 1,
+				],
+				'without' => [
+					'label' => 'Does not use conditions',
+					'count' => 6,
+				],
+			],
+			$summary['conditionCounts']
+		);
 		$this->assertSame( 2, $summary['locationCounts']['global'] );
 		$this->assertSame( 1, $summary['locationCounts']['site-css'] );
 		$this->assertArrayNotHasKey( 'condition', $summary['locationCounts'] );

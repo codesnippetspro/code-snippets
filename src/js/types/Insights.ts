@@ -2,7 +2,7 @@ import type { SnippetScope, SnippetType } from './Snippet'
 
 export type InsightsChartKey = 'total' | InsightsConfigurableChartKey | 'tags'
 
-export type InsightsConfigurableChartKey = 'type' | 'activation' | 'location'
+export type InsightsConfigurableChartKey = 'type' | 'activation' | 'conditions' | 'location'
 
 export type InsightsChartView = 'pie' | 'bar'
 
@@ -18,6 +18,7 @@ export interface InsightsSummary {
 	readonly active: number | string
 	readonly inactive: number | string
 	readonly typeCounts: Readonly<Record<SnippetType, InsightsChartEntry>>
+	readonly conditionCounts: Readonly<Record<string, InsightsChartEntry>>
 	readonly locationCounts: Readonly<Record<SnippetScope, number>>
 	readonly tagCounts: Readonly<Record<string, InsightsChartEntry>>
 }
