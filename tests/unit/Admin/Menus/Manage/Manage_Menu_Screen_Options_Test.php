@@ -75,6 +75,19 @@ class Manage_Menu_Screen_Options_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * The explicit snippets subpage renders the Manage table.
+	 *
+	 * @return void
+	 */
+	public function test_explicit_snippets_subpage_is_the_manage_table_view(): void {
+		$_REQUEST['subpage'] = 'snippets';
+		$options = new Manage_Menu_Screen_Options();
+
+		$this->assertTrue( $options->is_manage_table_view() );
+		$this->assertFalse( $options->is_upsell_view() );
+	}
+
+	/**
 	 * The AI Agent demo is detected as its own view, and keeps the upsell
 	 * treatment that strips Screen Options and Help tabs from the page.
 	 *

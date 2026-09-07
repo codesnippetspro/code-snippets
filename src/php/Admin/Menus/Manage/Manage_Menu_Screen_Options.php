@@ -107,7 +107,7 @@ class Manage_Menu_Screen_Options {
 	 * @return bool
 	 */
 	public function is_manage_table_view(): bool {
-		return ! $this->get_current_subpage();
+		return in_array( $this->get_current_subpage(), [ '', 'snippets' ], true );
 	}
 
 	/**

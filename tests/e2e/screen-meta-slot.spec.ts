@@ -3,6 +3,7 @@ import { URLS } from './helpers/constants'
 
 const SCREENS = [
 	{ name: 'Add Snippet', url: URLS.ADD_SNIPPET_ADMIN },
+	{ name: 'Manage Snippets', url: `${URLS.SNIPPETS_ADMIN}&subpage=snippets` },
 	{ name: 'Cloud Library', url: '/wp-admin/admin.php?page=snippets&subpage=cloud-library' },
 	{ name: 'Blueprints', url: '/wp-admin/admin.php?page=snippets&subpage=blueprints' },
 	{ name: 'AI Agent', url: '/wp-admin/admin.php?page=snippets&subpage=ai-agent' },
