@@ -68,7 +68,7 @@ const routeCloudSnippets = (page: Page, state: CloudRoutesState) =>
 	})
 
 const openCommunityCloud = async (page: Page, view: 'table' | 'card') => {
-	await page.goto(URLS.COMMUNITY_CLOUD)
+	await page.goto(URLS.COMMUNITY_CLOUD_ADMIN)
 	await expect(page.locator('.cloud-search')).toBeVisible()
 	await page.getByTitle(`Switch to ${view} view`).click()
 }

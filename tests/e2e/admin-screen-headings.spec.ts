@@ -4,7 +4,7 @@ import { URLS } from './helpers/constants'
 const SCREENS = [
 	{ name: 'Manage Snippets', url: URLS.SNIPPETS_ADMIN },
 	{ name: 'Add Snippet', url: URLS.ADD_SNIPPET_ADMIN },
-	{ name: 'Community Cloud', url: URLS.COMMUNITY_CLOUD },
+	{ name: 'Community Cloud', url: URLS.COMMUNITY_CLOUD_ADMIN },
 	{ name: 'Blueprints', url: URLS.BLUEPRINTS_ADMIN },
 	{ name: 'Cloud Library', url: URLS.CLOUD_LIBRARY_ADMIN },
 	{ name: 'AI Agent', url: URLS.AI_AGENT_ADMIN },
