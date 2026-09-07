@@ -16,12 +16,27 @@ const SCREENS = [
 	{ name: 'Welcome', url: URLS.WELCOME_SCREEN_ADMIN }
 ]
 
-test.describe('Admin screen h1 headings', () => {
+test.describe('Admin screen headings', () => {
 	for (const screen of SCREENS) {
-		test(`${screen.name} renders one page heading`, async ({ page }) => {
+		test(`${screen.name} renders one h1 heading`, async ({ page }) => {
 			await page.goto(screen.url)
 
 			await expect(page.getByRole('heading', { level: 1 })).toHaveCount(EXPECTED_H1_HEADING_COUNT)
+		})
+
+		test(`${screen.name} does not skip heading levels`, async ({ page }) => {
+			await page.goto(screen.url)
+
+			const headingLevels = await page.getByRole('heading').evaluateAll(headings =>
+				headings.map(heading => Number(heading.getAttribute('aria-level') ?? heading.tagName.slice(1)))
+			)
+
+			for (let index = 1; index < headingLevels.length; index++) {
+				expect(
+					headingLevels[index],
+					`${screen.name} skips from h${headingLevels[index - 1]} to h${headingLevels[index]}`
+				).toBeLessThanOrEqual(headingLevels[index - 1] + 1)
+			}
 		})
 	}
 })
