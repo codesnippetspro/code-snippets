@@ -30,6 +30,9 @@ export const TIMEOUTS = <const> {
 export const URLS = <const> {
 	SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets',
 	COMMUNITY_CLOUD_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
+	BLUEPRINTS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=blueprints',
+	CLOUD_LIBRARY_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-library',
+	AI_AGENT_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=ai-agent',
 	ADD_SNIPPET_ADMIN: '/wp-admin/admin.php?page=add-snippet',
 	INSIGHTS_ADMIN: '/wp-admin/admin.php?page=code-snippets-insights',
 	IMPORT_SNIPPETS_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
