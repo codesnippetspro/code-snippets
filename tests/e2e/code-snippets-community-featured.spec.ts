@@ -25,7 +25,7 @@ const closePreviewIfOpen = async (page: Page) => {
 }
 
 const openCommunityCloud = async (page: Page) => {
-	await page.goto(URLS.COMMUNITY_CLOUD)
+	await page.goto(URLS.COMMUNITY_CLOUD_ADMIN)
 	await page.waitForLoadState('domcontentloaded')
 }
 
