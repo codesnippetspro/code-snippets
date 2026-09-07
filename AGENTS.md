@@ -99,6 +99,7 @@ plugins.
   `defined('ABSPATH') || exit;`; do not add guards to autoloaded class files.
 - Use `wp_die()` for fatal admin errors; never `die()` or `exit` with user-facing output.
 - In `src/php/Plugin.php` (and Core bootstrap), rely on `autoload.php`; avoid manual `require_once` chains.
+- Delete plugin-owned options, transients, and other persisted state during uninstall.
 - Avoid creating custom database tables. Prefer WordPress-native storage: `wp_options` for settings/flags, transients
   for cached/temporary data, or hidden custom post types for structured content. Custom tables require manual schema
   management, migration, and uninstall logic — only justify them when native storage genuinely cannot meet the
@@ -130,6 +131,8 @@ plugins.
 - **Translator comments**: Place `// translators:` comments on the line immediately before the translatable string,
   not before the enclosing JSX expression.
 - **Headings**: Admin screens render a single `h1`; section headings within a page start at `h2`.
+- **Section names**: Give meaningful sections an accessible name: use `aria-labelledby` for an existing visible
+  heading and `aria-label` only when no visible heading exists.
 - **Component composition**: Separate components when doing so clarifies responsibility or enables reuse. Use JSX for
   markup rather than `createElement` in utility functions.
 - Do not create 'index.ts' barrel files for components or hooks; import them directly to avoid circular dependencies and
@@ -144,6 +147,10 @@ plugins.
   under `:root` in `src/css/common/_theme.scss`.
 - Keep SASS variables and maps for compile-time generation only, such as selector generators, mixins, and SASS color
   operations that cannot operate on runtime `var()` values.
+- For custom interactive controls, show keyboard focus with `:focus-visible` using `outline: 2px solid var(--cs-color-accent)`.
+  A `:focus` rule may clear inherited box shadows, but must not remove the visible keyboard-focus indicator.
+- Reuse an existing semantic `--cs-*` token before adding one. Do not add a `var()` fallback unless it is deliberately
+  required, and use shared card and control radius tokens for repeated radii.
 
 ### Code Organization
 
@@ -256,12 +263,16 @@ Apply to every change:
 - Apply `rel="noopener noreferrer"` to every `target="_blank"` link.
 - Use `$wpdb->prepare()` for every dynamic SQL value.
 - Any feature fetching remote content must document its trust model.
+- State-changing query-string actions must use an action-specific nonce, sanitize inputs, verify capability, and
+  redirect to a URL without the action parameters.
 
 ## Testing Requirements
 
 - **Unit tests** (PHPUnit) — required for all PHP logic changes.
 - **Integration tests** (PHPUnit) — required when changing DB schema, REST endpoints, or hook behaviour.
 - **E2E tests** (Playwright) — required for changes affecting snippet create/edit/execute flows.
+- **E2E assertions** — prefer roles, accessible names, and states over structural selectors. For viewport geometry,
+  use only a documented tolerance for unavoidable browser sub-pixel rounding.
 - **Minimum requirements** - Tests must be compatible with the minimum supported PHP 7.4 and WordPress 5.5.
 - **Build** - Generated build artifacts (`src/dist/`, Composer autoload maps) must be regenerated when source changes.
 
