@@ -42,7 +42,7 @@ class Insights_Menu_Test extends AdminUnitTestCase {
 		$localized = json_decode( substr( $json, 0, strrpos( $json, ';' ) ), true );
 
 		$this->assertSame(
-			[ 'active', 'inactive', 'typeCounts', 'locationCounts', 'tagCounts' ],
+			[ 'active', 'inactive', 'typeCounts', 'conditionCounts', 'locationCounts', 'tagCounts' ],
 			array_keys( $localized )
 		);
 	}
