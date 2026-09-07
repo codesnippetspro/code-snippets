@@ -32,7 +32,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	/**
 	 * Insights charts with independently configurable views.
 	 */
-	public const CHART_KEYS = [ 'type', 'activation', 'location' ];
+	public const CHART_KEYS = [ 'type', 'activation', 'conditions', 'location' ];
 
 	/**
 	 * Valid Insights chart view values.
@@ -45,6 +45,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	public const DEFAULT_VIEWS = [
 		'type'       => 'bar',
 		'activation' => 'pie',
+		'conditions' => 'pie',
 		'location'   => 'bar',
 	];
 

@@ -92,6 +92,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 		$views = [
 			'type'       => 'pie',
 			'activation' => 'bar',
+			'conditions' => 'bar',
 			'location'   => 'pie',
 		];
 		$response = $this->dispatch( 'POST', [ 'views' => $views ] );
@@ -130,6 +131,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 			[
 				'type'       => 'pie',
 				'activation' => 'pie',
+				'conditions' => 'pie',
 				'location'   => 'bar',
 			],
 			Insights_View_Rest_Controller::get_insights_chart_views()

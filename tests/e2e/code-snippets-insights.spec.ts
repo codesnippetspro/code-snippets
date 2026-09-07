@@ -44,6 +44,9 @@ test.describe('Insights screen', () => {
 		await expect(page).toHaveURL(/page=code-snippets-insights/)
 		await expect(page.getByRole('heading', { name: 'Insights' })).toBeVisible()
 		await expect(page.locator('.insights-chart-card').first()).toHaveAttribute('data-insights-chart', 'total')
+		expect(await page.locator('[data-insights-chart]').evaluateAll(charts =>
+			charts.map(chart => chart.getAttribute('data-insights-chart')))).toEqual(
+			['total', 'type', 'activation', 'conditions', 'location', 'tags'])
 		await expect(totalChart.locator('.insights-number-chart-value')).toHaveText('0')
 		await expect(totalChart.locator('.insights-number-chart-label')).toHaveText('Total snippets')
 		await expect(totalChart.locator('.insights-chart-view-toggle')).toHaveCount(0)
@@ -87,14 +90,21 @@ test.describe('Insights screen', () => {
 		})
 		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
 		const activationPie = page.locator('[data-insights-chart="activation"] .insights-pie-chart')
+		const conditionsChart = page.locator('[data-insights-chart="conditions"]')
 
 		await expect(page.getByRole('heading', { name: 'Insights' })).toBeVisible()
 		await expect(page.locator('[data-insights-chart="total"] .insights-number-chart-value')).toHaveText('5')
 		await expect(page.getByRole('heading', { name: 'Snippet type' })).toBeVisible()
 		await expect(page.getByRole('heading', { name: 'Activation status' })).toBeVisible()
+		await expect(page.getByRole('heading', { name: 'Condition usage' })).toBeVisible()
 		await expect(page.getByRole('heading', { name: 'Location' })).toBeVisible()
 		await expect(page.getByText('Conditions', { exact: true })).toBeVisible()
 		expect(await activationPie.evaluate(element => element.style.background)).toContain('60%')
+		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
+		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toContainText('Uses conditions')
+		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toContainText('Does not use conditions')
+		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toContainText('1')
+		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toContainText('4')
 	})
 
 	test('shows used tags in a fixed bar chart', async ({ page }) => {
@@ -172,12 +182,15 @@ test.describe('Insights screen', () => {
 
 		const typeChart = page.locator('[data-insights-chart="type"]')
 		const activationChart = page.locator('[data-insights-chart="activation"]')
+		const conditionsChart = page.locator('[data-insights-chart="conditions"]')
 		const locationChart = page.locator('[data-insights-chart="location"]')
 
 		await expect(typeChart).toHaveAttribute('data-view', 'bar')
 		await expect(typeChart.locator('.insights-bar-chart')).toBeVisible()
 		await expect(activationChart).toHaveAttribute('data-view', 'pie')
 		await expect(activationChart.locator('.insights-pie-chart-legend')).toBeVisible()
+		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
+		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toBeVisible()
 		await expect(locationChart).toHaveAttribute('data-view', 'bar')
 
 		const switchView = async (chart: typeof typeChart, view: 'Pie' | 'Bar') => {
@@ -199,6 +212,11 @@ test.describe('Insights screen', () => {
 		await expect(activationChart.locator('.insights-bar-chart')).toContainText('Active')
 		await expect(activationChart.locator('.insights-bar-chart')).toContainText('Inactive')
 
+		await switchView(conditionsChart, 'Bar')
+		await expect(conditionsChart).toHaveAttribute('data-view', 'bar')
+		await expect(conditionsChart.locator('.insights-bar-chart')).toContainText('Uses conditions')
+		await expect(conditionsChart.locator('.insights-bar-chart')).toContainText('Does not use conditions')
+
 		await switchView(locationChart, 'Pie')
 		await expect(locationChart).toHaveAttribute('data-view', 'pie')
 		await expect(locationChart.locator('.insights-pie-chart-legend')).toHaveCount(1)
@@ -206,22 +224,23 @@ test.describe('Insights screen', () => {
 		await page.reload()
 		await expect(typeChart).toHaveAttribute('data-view', 'pie')
 		await expect(activationChart).toHaveAttribute('data-view', 'bar')
+		await expect(conditionsChart).toHaveAttribute('data-view', 'bar')
 		await expect(locationChart).toHaveAttribute('data-view', 'pie')
 	})
 
 	test('restores a chart view when saving the preference fails', async ({ page }) => {
 		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
-		const typeChart = page.locator('[data-insights-chart="type"]')
+		const conditionsChart = page.locator('[data-insights-chart="conditions"]')
 
-		await expect(typeChart).toHaveAttribute('data-view', 'bar')
+		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
 
 		await page.route('**/preferences/insights-chart-views', async route => {
 			await route.fulfill({ status: 500, body: JSON.stringify({ message: 'Save failed' }) })
 		})
 
-		await typeChart.getByRole('button', { name: 'Pie chart view' }).click()
+		await conditionsChart.getByRole('button', { name: 'Bar chart view' }).click()
 
-		await expect(typeChart).toHaveAttribute('data-view', 'bar')
+		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
 	})
 
 	test('keeps the latest chart views when an earlier save fails', async ({ page }) => {
