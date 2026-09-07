@@ -57,6 +57,17 @@
 	a {
 		color: inherit;
 		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var(--cs-color-accent);
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--cs-color-accent);
+			outline-offset: 6px;
+		}
 	}
 
 	@media (width <= 480px) {
@@ -101,6 +112,7 @@
 
 	// Items fill the 60px band; the active tab is indicated by accent colour on
 	// its icon and label, with no underline.
+	// stylelint-disable-next-line no-descending-specificity
 	li a {
 		display: flex;
 		margin: 0;
