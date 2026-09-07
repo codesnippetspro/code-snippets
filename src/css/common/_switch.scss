@@ -36,6 +36,14 @@ input[type='checkbox'].switch {
 			transition-duration: 0.01s;
 		}
 	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+	}
 }
 
 .active-snippet .snippet-activation-switch,

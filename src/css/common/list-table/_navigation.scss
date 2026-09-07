@@ -21,6 +21,11 @@
 	&:hover,
 	&:focus {
 		color: var(--cs-color-accent-hover);
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
 	}
 }
 
@@ -38,6 +43,11 @@
 	&:hover,
 	&:focus {
 		color: var(--cs-color-accent-hover);
+		box-shadow: none;
+	}
+
+	&:focus {
+		outline: 2px solid var(--cs-color-accent);
 	}
 }
 

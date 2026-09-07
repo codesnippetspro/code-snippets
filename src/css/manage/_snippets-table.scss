@@ -47,9 +47,10 @@
 
 	&:hover, &:focus, &:active {
 		color: var(--cs-color-text);
-		background-color: rgb(0 0 0 / 10%);
 		border-radius: 5px;
 		appearance: unset;
+		box-shadow: none;
+		outline: 2px solid var(--cs-color-accent);
 
 		&:disabled {
 			color: inherit;
@@ -180,6 +181,14 @@
 		.snippet-card-tags a {
 			color: var(--cs-color-accent);
 			text-decoration: none;
+
+			&:focus {
+				box-shadow: none;
+			}
+
+			&:focus-visible {
+				outline: 2px solid var(--cs-color-accent);
+			}
 		}
 
 		.snippet-card-modified {
