@@ -21,13 +21,13 @@ export const DemoPlanCard: React.FC<DemoPlanCardProps> = ({ accepted }) => {
 	return (
 		<div className="ai-agent-plan">
 			<div className="ai-agent-plan__header">
-				<h3 className="ai-agent-plan__title">{DEMO_PLAN.title}</h3>
+				<h2 className="ai-agent-plan__title">{DEMO_PLAN.title}</h2>
 				<span className="ai-agent-plan__badge is-bundle">{badge}</span>
 			</div>
 
 			<p className="ai-agent-plan__overview">{DEMO_PLAN.summary}</p>
 
-			<h4 className="ai-agent-plan__parts-heading">{__('What will be created', 'code-snippets')}</h4>
+			<h3 className="ai-agent-plan__parts-heading">{__('What will be created', 'code-snippets')}</h3>
 
 			<ul className="ai-agent-plan__parts">
 				{DEMO_PLAN.parts.map(part =>

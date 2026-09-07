@@ -72,7 +72,7 @@ export const DemoResultCard: React.FC<DemoResultCardProps> = ({ stage, snippets,
 	return (
 		<div className="ai-agent-result">
 			<div className="ai-agent-plan__header">
-				<h3 className="ai-agent-plan__title">{__('Dismissible welcome banner', 'code-snippets')}</h3>
+				<h2 className="ai-agent-plan__title">{__('Dismissible welcome banner', 'code-snippets')}</h2>
 				<span className="ai-agent-plan__badge is-done">
 					{'applying' === stage ? __('Updating…', 'code-snippets') : __('Created', 'code-snippets')}
 				</span>
