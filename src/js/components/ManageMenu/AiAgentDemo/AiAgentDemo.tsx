@@ -97,7 +97,7 @@ const AiAgentDemoPage: React.FC = () => {
 				onReplay={replay}
 			/>
 
-			<div className="ai-agent ai-agent-demo">
+			<section className="ai-agent ai-agent-demo" aria-label={__('AI Agent demo', 'code-snippets')}>
 				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
 				<DemoCallout callout={getCallout(stage)} />
@@ -159,10 +159,15 @@ const AiAgentDemoPage: React.FC = () => {
 					</div>
 				</div>
 
-				{isFinished && <div ref={upsellRef} className="ai-agent-demo__closing">
+				{isFinished && <div
+					ref={upsellRef}
+					className="ai-agent-demo__closing"
+					role="region"
+					aria-label={__('AI Agent demo complete', 'code-snippets')}
+				>
 					<AiAgentDemoUpsell onReplay={replay} />
 				</div>}
-			</div>
+			</section>
 		</>
 	)
 }

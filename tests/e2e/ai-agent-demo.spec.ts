@@ -100,6 +100,7 @@ test.describe('AI Agent demo', () => {
 
 		const closing = page.locator('.ai-agent-demo > .ai-agent-demo__closing .demo-upsell')
 		await expect(closing).toBeVisible()
+		await expect(page.getByRole('region', { name: 'AI Agent demo complete' })).toBeVisible()
 		await expect(page.locator('.ai-agent-thread .demo-upsell')).toHaveCount(0)
 		await expect(closing).toBeInViewport()
 	})
