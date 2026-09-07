@@ -104,9 +104,14 @@ export const InsightsChart: React.FC<InsightsChartProps> = ({
 	title,
 	view
 }) =>
-	<section className="insights-chart-card" data-insights-chart={chart} data-view={view}>
+	<section
+		className="insights-chart-card"
+		data-insights-chart={chart}
+		data-view={view}
+		aria-labelledby={`insights-chart-${chart}-heading`}
+	>
 		<div className="insights-chart-card-header">
-			<h2>{title}</h2>
+			<h2 id={`insights-chart-${chart}-heading`}>{title}</h2>
 			{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} />}
 		</div>
 		{'bar' === view
@@ -119,7 +124,7 @@ export interface TotalsInsightsChartProps extends InsightsChartEntry {
 }
 
 export const TotalsInsightsChart: React.FC<TotalsInsightsChartProps> = ({ chart, count, label }) =>
-	<section className="insights-chart-card" data-insights-chart={chart}>
+	<section className="insights-chart-card" data-insights-chart={chart} aria-label={label}>
 		<div className="insights-number-chart">
 			<strong className="insights-number-chart-value">{count}</strong>
 			<span className="insights-number-chart-label">{label}</span>
