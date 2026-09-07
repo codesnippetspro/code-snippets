@@ -101,10 +101,19 @@ test.describe('Insights screen', () => {
 		await expect(page.getByText('Conditions', { exact: true })).toBeVisible()
 		expect(await activationPie.evaluate(element => element.style.background)).toContain('60%')
 		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
-		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toContainText('Uses conditions')
-		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toContainText('Does not use conditions')
-		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toContainText('1')
-		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toContainText('4')
+
+		const conditionLegend = conditionsChart.locator('.insights-pie-chart-legend')
+		const withConditions = conditionLegend.locator('li').filter({
+			hasText: /^Uses conditions/
+		})
+		const withoutConditions = conditionLegend.locator('li').filter({
+			hasText: /^Does not use conditions/
+		})
+
+		await expect(withConditions.locator('span')).toHaveText('Uses conditions')
+		await expect(withConditions.locator('strong')).toHaveText('1')
+		await expect(withoutConditions.locator('span')).toHaveText('Does not use conditions')
+		await expect(withoutConditions.locator('strong')).toHaveText('4')
 	})
 
 	test('shows used tags in a fixed bar chart', async ({ page }) => {
