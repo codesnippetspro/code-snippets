@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { wpCli } from './helpers/wpCli'
+import { URLS } from './helpers/constants'
 
 const QUICKNAV_PREFIX = 'E2E QuickNav'
 const QUICKNAV_PER_PAGE = 2
@@ -88,7 +89,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		const errors: string[] = []
 		page.on('pageerror', error => errors.push(error.message))
 
-		await page.goto('/')
+		await page.goto(URLS.FRONTEND)
 
 		// The admin bar bundle is enqueued on the front end as well as in wp-admin,
 		// but `wp.i18n`, `wp.url` and `pagenow` are only present in wp-admin unless
@@ -141,7 +142,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 
 		await removeMuPlugin()
 
-		await page.goto('/wp-admin/admin.php?page=snippets')
+		await page.goto(URLS.SNIPPETS_ADMIN)
 		await expect(page.locator('#wp-admin-bar-code-snippets-safe-mode')).toHaveCount(0)
 
 		try {
@@ -158,7 +159,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 				`
 			])
 
-			await page.goto('/wp-admin/admin.php?page=snippets')
+			await page.goto(URLS.SNIPPETS_ADMIN)
 			const safeModeNode = page.locator('#wp-admin-bar-code-snippets-safe-mode')
 			await expect(safeModeNode).toBeVisible({ timeout: 30000 })
 
@@ -169,7 +170,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 			await removeMuPlugin()
 		}
 
-		await page.goto('/wp-admin/admin.php?page=snippets')
+		await page.goto(URLS.SNIPPETS_ADMIN)
 		await expect(page.locator('#wp-admin-bar-code-snippets-safe-mode')).toHaveCount(0)
 	})
 })

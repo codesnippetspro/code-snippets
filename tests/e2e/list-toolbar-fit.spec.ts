@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test'
-
-const SNIPPETS_URL = '/wp-admin/admin.php?page=snippets'
+import { URLS } from './helpers/constants'
 
 // The toolbar's end group (pagination plus the view toggle) cannot shrink, so at
 // widths where the row does not fit it must wrap rather than spill off the page.
@@ -10,7 +9,7 @@ test.describe('Snippets toolbar fit', () => {
 	for (const width of [1280, 1360, 1400, 1401, 1600]) {
 		test(`nothing spills out of the toolbar at ${width}px`, async ({ page }) => {
 			await page.setViewportSize({ width, height: 900 })
-			await page.goto(SNIPPETS_URL)
+			await page.goto(URLS.SNIPPETS_ADMIN)
 			await page.waitForSelector('.snippet-view-toggle')
 
 			const fit = await page.evaluate(() => {

@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test'
+import { URLS } from './helpers/constants'
 
-const SETTINGS_URL = '/wp-admin/admin.php?page=snippets-settings&section=editing'
 const TABS = '#settings-sections-tabs'
 
 test.describe('Settings tabs', () => {
 	test('switch between rendered sections in place', async ({ page }) => {
-		await page.goto(SETTINGS_URL)
+		await page.goto(`${URLS.SETTINGS_ADMIN}&section=editing`)
 
 		const wrap = page.locator('.wrap[data-active-tab]')
 		await expect(wrap).toHaveAttribute('data-active-tab', 'editing')

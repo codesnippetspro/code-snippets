@@ -1,15 +1,16 @@
 import { expect, test } from '@playwright/test'
+import { URLS } from './helpers/constants'
 
 // The admin screens under a right-to-left locale. Mirroring is driven by the
 // direction multiplier and logical properties; what can still go wrong is a
 // control pushed past the page edge or a row that no longer fits, so every
 // screen is checked for those rather than for how it looks.
-const SCREENS: [string, string, string][] = [
-	['settings, editing tab', '/wp-admin/admin.php?page=snippets-settings&section=editing', '#settings-sections-tabs'],
-	['settings, advanced tab', '/wp-admin/admin.php?page=snippets-settings&section=advanced', '#settings-sections-tabs'],
-	['snippets list', '/wp-admin/admin.php?page=snippets', '.snippet-view-toggle'],
-	['new snippet', '/wp-admin/admin.php?page=add-snippet', '.CodeMirror'],
-	['import', '/wp-admin/admin.php?page=import-code-snippets', '#wpbody-content']
+const SCREENS: { name: string; url: string; ready: string }[] = [
+	{ name: 'Add Snippet', url: URLS.ADD_SNIPPET_ADMIN, ready: '.CodeMirror' },
+	{ name: 'Manage Snippets', url: URLS.SNIPPETS_ADMIN, ready: '.snippet-view-toggle' },
+	{ name: 'Import', url: URLS.IMPORT_ADMIN, ready: '#wpbody-content' },
+	{ name: 'Settings (editing tab)', url: `${URLS.SETTINGS_ADMIN}&section=editing`, ready: '#settings-sections-tabs' },
+	{ name: 'Settings (advanced tab)', url: `${URLS.SETTINGS_ADMIN}&section=advanced`, ready: '#settings-sections-tabs' }
 ]
 
 interface LayoutReport {
@@ -44,7 +45,7 @@ const inspect = (): LayoutReport => {
 }
 
 test.describe('Right-to-left layout', () => {
-	for (const [name, url, ready] of SCREENS) {
+	for (const { name, url, ready } of SCREENS) {
 		test(`${name} mirrors without spilling off the page`, async ({ page }) => {
 			await page.setViewportSize({ width: 1360, height: 900 })
 			await page.goto(url)

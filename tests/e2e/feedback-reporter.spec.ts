@@ -1,9 +1,8 @@
 import { expect, test } from '@playwright/test'
 import { wpCli } from './helpers/wpCli'
+import { URLS } from './helpers/constants'
 import type { Page } from '@playwright/test'
 
-const SNIPPETS_URL = '/wp-admin/admin.php?page=snippets'
-const SETTINGS_URL = '/wp-admin/admin.php?page=snippets-settings&section=advanced'
 const LAUNCHER = '.code-snippets-feedback-launcher'
 const PANEL = '.code-snippets-feedback-modal'
 
@@ -19,7 +18,7 @@ const setReporterEnabled = async (enabled: boolean): Promise<void> => {
 }
 
 const openPanel = async (page: Page): Promise<void> => {
-	await page.goto(SNIPPETS_URL)
+	await page.goto(URLS.SNIPPETS_ADMIN)
 	await page.locator(LAUNCHER).click()
 	await expect(page.locator(PANEL)).toBeVisible()
 }
@@ -31,13 +30,13 @@ test.describe('Feedback reporter', () => {
 
 	test('stays hidden until the setting is switched on', async ({ page }) => {
 		await setReporterEnabled(false)
-		await page.goto(SNIPPETS_URL)
+		await page.goto(URLS.SNIPPETS_ADMIN)
 
 		await expect(page.locator(LAUNCHER)).toHaveCount(0)
 	})
 
 	test('is offered on the Advanced settings tab', async ({ page }) => {
-		await page.goto(SETTINGS_URL)
+		await page.goto(`${URLS.SETTINGS_ADMIN}&section=advanced`)
 
 		await expect(page.locator('input[name*="enable_feedback_reporter"]')).toHaveCount(1)
 	})
