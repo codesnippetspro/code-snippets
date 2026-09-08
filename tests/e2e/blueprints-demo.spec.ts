@@ -1,10 +1,9 @@
 import { expect, test } from '@playwright/test'
-import { TIMEOUTS } from './helpers/constants'
+import { TIMEOUTS, URLS } from './helpers/constants'
 import { measureCalloutSteps } from './helpers/demoPacing'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
-const DEMO_URL = '/wp-admin/admin.php?page=snippets&subpage=blueprints'
 const SECTIONS = ['General', 'Attributes', 'Output']
 
 const forgetDemos = () => wpCli(['option', 'delete', 'code_snippets_demos_seen'])
@@ -17,7 +16,7 @@ test.describe('Blueprints demo', () => {
 	test.afterAll(forgetDemos)
 
 	test('the tab is reachable from the toolbar and highlighted as new', async ({ page }) => {
-		await page.goto('/wp-admin/admin.php?page=snippets')
+		await page.goto(URLS.SNIPPETS_ADMIN)
 
 		const link = page.locator('.code-snippets-toolbar-lower a.blueprints-link')
 		await expect(link).toBeVisible()
@@ -31,7 +30,7 @@ test.describe('Blueprints demo', () => {
 	})
 
 	test('the blueprint is shown prepopulated before play', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 
 		await expect(page.locator('.blueprint-detail__header h2')).toHaveText('Create a Shortcode')
 		await expect(page.locator('.blueprint-form-content h3')).toHaveText('General')
@@ -44,7 +43,7 @@ test.describe('Blueprints demo', () => {
 	})
 
 	test('playing steps through every section and confirms a generated snippet', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 		await page.locator('.demo-play').click()
 
 		for (const section of SECTIONS) {
@@ -65,7 +64,7 @@ test.describe('Blueprints demo', () => {
 	})
 
 	test('sections become browsable once the walkthrough finishes', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 
 		await expect(page.locator('.blueprint-form-sidebar__item').first()).toBeDisabled()
 
@@ -82,7 +81,7 @@ test.describe('Blueprints demo', () => {
 
 	test('every section is the same height', async ({ page }) => {
 		await page.setViewportSize({ width: 1600, height: 950 })
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
@@ -104,7 +103,7 @@ test.describe('Blueprints demo', () => {
 	})
 
 	test('the toolbar badge softens to Demo once the walkthrough has been watched', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 		await expect(page.locator('.code-snippets-toolbar-lower a.blueprints-link .new-chip')).toBeVisible()
 
 		await page.locator('.demo-play').click()
@@ -115,7 +114,7 @@ test.describe('Blueprints demo', () => {
 		await expect.poll(async () =>
 			(await wpCli(['option', 'get', 'code_snippets_demos_seen'])).includes('blueprints')).toBe(true)
 
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 
 		const link = page.locator('.code-snippets-toolbar-lower a.blueprints-link')
 		await expect(link.locator('.demo-chip')).toHaveText('Demo')
@@ -123,7 +122,7 @@ test.describe('Blueprints demo', () => {
 	})
 
 	test('the demo-reset URL puts the badge back to New', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
 		await expect(page.locator('.demo-upsell')).toBeVisible()
@@ -132,7 +131,7 @@ test.describe('Blueprints demo', () => {
 			(await wpCli(['option', 'get', 'code_snippets_demos_seen'])).includes('blueprints')).toBe(true)
 
 		const link = page.locator('.code-snippets-toolbar-lower a.blueprints-link')
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 		await expect(link.locator('.demo-chip')).toBeVisible()
 
 		// The reset is nonce-protected, so the signed address is taken from the
@@ -145,13 +144,13 @@ test.describe('Blueprints demo', () => {
 		await expect(page).toHaveURL(/page=snippets/)
 		await expect(page).not.toHaveURL(/demo-reset/)
 
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 		await expect(link.locator('.new-chip')).toHaveText('New')
 		await expect(link.locator('.demo-chip')).toHaveCount(0)
 	})
 
 	test('replaying restarts from the first section', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
 
@@ -163,7 +162,7 @@ test.describe('Blueprints demo', () => {
 	})
 
 	test('the walkthrough holds each step long enough to be read', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
 		await page.locator('.demo-play').click()
 
 		const steps = await measureCalloutSteps(page)

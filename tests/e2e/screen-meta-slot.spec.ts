@@ -3,11 +3,11 @@ import { URLS } from './helpers/constants'
 
 const SCREENS = [
 	{ name: 'Add Snippet', url: URLS.ADD_SNIPPET_ADMIN },
-	{ name: 'Manage Snippets', url: `${URLS.SNIPPETS_ADMIN}&subpage=snippets` },
-	{ name: 'Cloud Library', url: '/wp-admin/admin.php?page=snippets&subpage=cloud-library' },
-	{ name: 'Blueprints', url: '/wp-admin/admin.php?page=snippets&subpage=blueprints' },
-	{ name: 'AI Agent', url: '/wp-admin/admin.php?page=snippets&subpage=ai-agent' },
-	{ name: 'Insights', url: '/wp-admin/admin.php?page=code-snippets-insights' },
+	{ name: 'Manage Snippets', url: URLS.SNIPPETS_ADMIN },
+	{ name: 'Cloud Library', url: URLS.CLOUD_LIBRARY_ADMIN },
+	{ name: 'Blueprints', url: URLS.BLUEPRINTS_ADMIN },
+	{ name: 'AI Agent', url: URLS.AI_AGENT_ADMIN },
+	{ name: 'Insights', url: URLS.INSIGHTS_ADMIN },
 	{ name: 'Welcome', url: URLS.WELCOME_SCREEN_ADMIN }
 ]
 

@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test'
+import { URLS } from './helpers/constants'
 import type { Page } from '@playwright/test'
-
-const MANAGE_URL = '/wp-admin/admin.php?page=snippets'
 
 // The manage screen resolves an absent or unrecognised `subpage` to the first
 // subpage, so the toolbar must highlight whichever subpage actually rendered.
@@ -21,7 +20,7 @@ const activeSubpageLinks = (page: Page) =>
 test.describe('Toolbar active subpage', () => {
 	for (const { name, query, active, body } of CASES) {
 		test(`the highlighted tab matches the rendered page with ${name}`, async ({ page }) => {
-			await page.goto(`${MANAGE_URL}${query}`)
+			await page.goto(`${URLS.SNIPPETS_ADMIN}${query}`)
 			await expect(page.locator(body)).toBeVisible()
 
 			await expect(activeSubpageLinks(page)).toHaveCount(1)
@@ -30,7 +29,7 @@ test.describe('Toolbar active subpage', () => {
 	}
 
 	test('no lower-nav tab is highlighted away from the manage screen', async ({ page }) => {
-		await page.goto('/wp-admin/admin.php?page=snippets-settings')
+		await page.goto(URLS.SETTINGS_ADMIN)
 
 		await expect(page.locator('.code-snippets-toolbar-lower')).toBeVisible()
 		await expect(activeSubpageLinks(page)).toHaveCount(0)

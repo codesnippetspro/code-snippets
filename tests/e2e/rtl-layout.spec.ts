@@ -1,15 +1,16 @@
 import { expect, test } from '@playwright/test'
+import { URLS } from './helpers/constants'
 
 // The admin screens under a right-to-left locale. Mirroring is driven by the
 // direction multiplier and logical properties; what can still go wrong is a
 // control pushed past the page edge or a row that no longer fits, so every
 // screen is checked for those rather than for how it looks.
 const SCREENS: [string, string, string][] = [
-	['settings, editing tab', '/wp-admin/admin.php?page=snippets-settings&section=editing', '#settings-sections-tabs'],
-	['settings, advanced tab', '/wp-admin/admin.php?page=snippets-settings&section=advanced', '#settings-sections-tabs'],
-	['snippets list', '/wp-admin/admin.php?page=snippets', '.snippet-view-toggle'],
-	['new snippet', '/wp-admin/admin.php?page=add-snippet', '.CodeMirror'],
-	['import', '/wp-admin/admin.php?page=import-code-snippets', '#wpbody-content']
+	['settings, editing tab', `${URLS.SETTINGS_ADMIN}&section=editing`, '#settings-sections-tabs'],
+	['settings, advanced tab', `${URLS.SETTINGS_ADMIN}&section=advanced`, '#settings-sections-tabs'],
+	['snippets list', URLS.SNIPPETS_ADMIN, '.snippet-view-toggle'],
+	['new snippet', URLS.ADD_SNIPPET_ADMIN, '.CodeMirror'],
+	['import', URLS.IMPORT_SNIPPETS_ADMIN, '#wpbody-content']
 ]
 
 interface LayoutReport {

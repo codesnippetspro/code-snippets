@@ -1,13 +1,12 @@
 import { expect, test } from '@playwright/test'
-import { TIMEOUTS } from './helpers/constants'
+import { TIMEOUTS, URLS } from './helpers/constants'
 import { measureCalloutSteps } from './helpers/demoPacing'
 
-const DEMO_URL = '/wp-admin/admin.php?page=snippets&subpage=cloud-library'
 const FEATURED_ROW = '.cloud-library-snippets tbody tr.demo-featured-row'
 
 test.describe('Cloud Library demo', () => {
 	test('the tab carries a demo badge rather than announcing itself as new', async ({ page }) => {
-		await page.goto('/wp-admin/admin.php?page=snippets')
+		await page.goto(URLS.SNIPPETS_ADMIN)
 
 		const link = page.locator('.code-snippets-toolbar-lower a.cloud-library-link')
 		await expect(link).toBeVisible()
@@ -21,7 +20,7 @@ test.describe('Cloud Library demo', () => {
 	})
 
 	test('the library is shown as a table on its own before play', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.CLOUD_LIBRARY_ADMIN)
 
 		// Deliberately a short library, so the closing panel is reachable.
 		await expect(page.locator('.cloud-library-snippets tbody tr')).toHaveCount(4)
@@ -36,7 +35,7 @@ test.describe('Cloud Library demo', () => {
 	})
 
 	test('playing previews, downloads, and leaves the snippet synced', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.CLOUD_LIBRARY_ADMIN)
 		await page.locator('.demo-play').click()
 
 		// The code preview opens on its own, then closes before the download.
@@ -58,7 +57,7 @@ test.describe('Cloud Library demo', () => {
 
 	test('the preview step keeps its callout in place, over the modal overlay', async ({ page }) => {
 		await page.setViewportSize({ width: 1600, height: 900 })
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.CLOUD_LIBRARY_ADMIN)
 		await page.locator('.demo-play').click()
 
 		const modal = page.locator('.code-snippets-preview-modal')
@@ -90,7 +89,7 @@ test.describe('Cloud Library demo', () => {
 	})
 
 	test('each step marks the click and spotlights what it describes', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.CLOUD_LIBRARY_ADMIN)
 		await page.locator('.demo-play').click()
 
 		const spotlight = page.locator('.demo-spotlight')
@@ -115,7 +114,7 @@ test.describe('Cloud Library demo', () => {
 
 	test('the walkthrough ends scrolled to the closing panel', async ({ page }) => {
 		await page.setViewportSize({ width: 1280, height: 800 })
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.CLOUD_LIBRARY_ADMIN)
 
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
@@ -131,7 +130,7 @@ test.describe('Cloud Library demo', () => {
 	})
 
 	test('replaying returns the snippet to its undownloaded state', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.CLOUD_LIBRARY_ADMIN)
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
 
@@ -144,7 +143,7 @@ test.describe('Cloud Library demo', () => {
 	})
 
 	test('the walkthrough holds each step long enough to be read', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.CLOUD_LIBRARY_ADMIN)
 		await page.locator('.demo-play').click()
 
 		const steps = await measureCalloutSteps(page)

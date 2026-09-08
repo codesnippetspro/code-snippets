@@ -1,9 +1,8 @@
 import { expect, test } from '@playwright/test'
-import { TIMEOUTS } from './helpers/constants'
+import { TIMEOUTS, URLS } from './helpers/constants'
 import { measureCalloutSteps } from './helpers/demoPacing'
 import { wpCli } from './helpers/wpCli'
 
-const DEMO_URL = '/wp-admin/admin.php?page=snippets&subpage=ai-agent'
 const DEMO_NAMES = "'Welcome banner', 'Welcome banner styles'"
 
 const countDemoSnippets = async (): Promise<number> => {
@@ -22,7 +21,7 @@ test.describe('AI Agent demo', () => {
 	test.afterAll(forgetDemos)
 
 	test('the tab is reachable from the toolbar and highlighted as new', async ({ page }) => {
-		await page.goto('/wp-admin/admin.php?page=snippets')
+		await page.goto(URLS.SNIPPETS_ADMIN)
 
 		const link = page.locator('.code-snippets-toolbar-lower a.ai-agent-link')
 		await expect(link).toBeVisible()
@@ -36,7 +35,7 @@ test.describe('AI Agent demo', () => {
 	})
 
 	test('the page opens on the agent\u2019s own layout, with its starter prompts and sidebar', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.AI_AGENT_ADMIN)
 
 		await expect(page.locator('.ai-agent-empty__chip')).toHaveCount(5)
 		await expect(page.locator('.ai-agent-layout__main > .ai-agent-prompt')).toBeVisible()
@@ -50,7 +49,7 @@ test.describe('AI Agent demo', () => {
 	})
 
 	test('playing the walkthrough plans, builds and refines without touching the site', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.AI_AGENT_ADMIN)
 		expect(await countDemoSnippets()).toBe(0)
 
 		await page.locator('.demo-play').click()
@@ -75,7 +74,7 @@ test.describe('AI Agent demo', () => {
 	})
 
 	test('the walkthrough never writes a snippet, however many times it runs', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.AI_AGENT_ADMIN)
 
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
@@ -93,7 +92,7 @@ test.describe('AI Agent demo', () => {
 
 	test('the walkthrough ends with the closing panel below the agent, scrolled into view', async ({ page }) => {
 		await page.setViewportSize({ width: 1280, height: 800 })
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.AI_AGENT_ADMIN)
 
 		await page.locator('.demo-play').click()
 		await page.getByRole('button', { name: 'Skip animation' }).click()
@@ -106,7 +105,7 @@ test.describe('AI Agent demo', () => {
 	})
 
 	test('the walkthrough holds each step long enough to be read', async ({ page }) => {
-		await page.goto(DEMO_URL)
+		await page.goto(URLS.AI_AGENT_ADMIN)
 		await page.locator('.demo-play').click()
 
 		const steps = await measureCalloutSteps(page)
