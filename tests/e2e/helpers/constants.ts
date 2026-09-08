@@ -38,6 +38,8 @@ export const URLS = <const> {
 	IMPORT_SNIPPETS_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
 	SETTINGS_ADMIN: '/wp-admin/admin.php?page=snippets-settings',
 	WELCOME_SCREEN_ADMIN: '/wp-admin/admin.php?page=code-snippets-welcome',
+	WP_ADMIN: '/wp-admin/',
+	WP_LOGIN: '/wp-login.php',
 	FRONTEND: '/'
 }
 

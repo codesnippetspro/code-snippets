@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { SELECTORS } from './helpers/constants'
+import { SELECTORS, URLS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
@@ -113,7 +113,7 @@ test.describe('Code Snippets Evaluation', () => {
 			code: BODY_CLASS_TEST_CODE
 		})
 
-		await page.goto('/wp-admin/')
+		await page.goto(URLS.WP_ADMIN)
 		await expect(page.locator('body')).toHaveClass(/custom-admin-class/)
 
 		await helper.navigateToFrontend()
@@ -127,7 +127,7 @@ test.describe('Code Snippets Evaluation', () => {
 			code: BODY_CLASS_TEST_CODE
 		})
 
-		await page.goto('/wp-admin/')
+		await page.goto(URLS.WP_ADMIN)
 		await expect(page.locator('body')).toHaveClass(/custom-admin-class/)
 
 		await helper.navigateToFrontend()
@@ -141,7 +141,7 @@ test.describe('Code Snippets Evaluation', () => {
 			code: BODY_CLASS_TEST_CODE
 		})
 
-		await page.goto('/wp-admin/')
+		await page.goto(URLS.WP_ADMIN)
 		await expect(page.locator('body')).not.toHaveClass(/custom-admin-class/)
 
 		await helper.navigateToFrontend()

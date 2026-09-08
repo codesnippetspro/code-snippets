@@ -2,6 +2,7 @@ import { writeFileSync } from 'fs'
 import { expect, test as setup } from '@playwright/test'
 import { RTL_LOCALE, RTL_USER, rtlAuthFile, rtlCreatedMarker } from './helpers/rtlUser'
 import { wpCli } from './helpers/wpCli'
+import { URLS } from './helpers/constants'
 
 // The RTL specs sign in as a user of their own whose locale is right-to-left,
 // so the rest of the suite, which signs in as the usual admin, never sees the
@@ -32,7 +33,7 @@ setup('sign in as a right-to-left user', async ({ page }) => {
 	writeFileSync(rtlCreatedMarker, created ? 'created' : 'existing')
 	await wpCli(['user', 'update', RTL_USER, '--user_pass=password', `--locale=${RTL_LOCALE}`])
 
-	await page.goto('/wp-login.php')
+	await page.goto(URLS.WP_LOGIN)
 	await page.waitForSelector('#user_login')
 	await page.fill('#user_login', RTL_USER)
 	await page.fill('#user_pass', 'password')

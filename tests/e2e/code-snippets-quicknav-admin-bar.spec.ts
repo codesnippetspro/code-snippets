@@ -89,7 +89,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		const errors: string[] = []
 		page.on('pageerror', error => errors.push(error.message))
 
-		await page.goto('/')
+		await page.goto(URLS.FRONTEND)
 
 		// The admin bar bundle is enqueued on the front end as well as in wp-admin,
 		// but `wp.i18n`, `wp.url` and `pagenow` are only present in wp-admin unless

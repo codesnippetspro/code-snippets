@@ -1,6 +1,7 @@
 import { join } from 'path'
 import { expect, test as setup } from '@playwright/test'
 import { wpCli } from './helpers/wpCli'
+import { URLS } from './helpers/constants'
 
 const authFile = join(__dirname, '.auth/user.json')
 const AUTH_SETUP_TIMEOUT_MS = 120000
@@ -34,7 +35,7 @@ setup('authenticate', async ({ page }) => {
 		])
 	}
 
-	await page.goto('/wp-login.php')
+	await page.goto(URLS.WP_LOGIN)
 	await page.waitForSelector('#user_login')
 
 	await page.fill('#user_login', 'admin')
