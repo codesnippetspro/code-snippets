@@ -28,19 +28,19 @@ export const TIMEOUTS = <const> {
 }
 
 export const URLS = <const> {
+	FRONTEND: '/',
+	WP_ADMIN: '/wp-admin/',
+	WP_LOGIN: '/wp-login.php',
 	SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets',
-	COMMUNITY_CLOUD_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
-	BLUEPRINTS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=blueprints',
+	CLOUD_COMMUNITY_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
 	CLOUD_LIBRARY_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-library',
+	BLUEPRINTS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=blueprints',
 	AI_AGENT_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=ai-agent',
 	ADD_SNIPPET_ADMIN: '/wp-admin/admin.php?page=add-snippet',
 	INSIGHTS_ADMIN: '/wp-admin/admin.php?page=code-snippets-insights',
-	IMPORT_SNIPPETS_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
+	IMPORT_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
 	SETTINGS_ADMIN: '/wp-admin/admin.php?page=snippets-settings',
-	WELCOME_SCREEN_ADMIN: '/wp-admin/admin.php?page=code-snippets-welcome',
-	WP_ADMIN: '/wp-admin/',
-	WP_LOGIN: '/wp-login.php',
-	FRONTEND: '/'
+	WELCOME_ADMIN: '/wp-admin/admin.php?page=code-snippets-welcome'
 }
 
 export const MESSAGES = <const> {

@@ -8,7 +8,7 @@ const SCREENS = [
 	{ name: 'Blueprints', url: URLS.BLUEPRINTS_ADMIN },
 	{ name: 'AI Agent', url: URLS.AI_AGENT_ADMIN },
 	{ name: 'Insights', url: URLS.INSIGHTS_ADMIN },
-	{ name: 'Welcome', url: URLS.WELCOME_SCREEN_ADMIN }
+	{ name: 'Welcome', url: URLS.WELCOME_ADMIN }
 ]
 
 test.describe('Screen meta slot', () => {

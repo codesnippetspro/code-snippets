@@ -10,7 +10,7 @@ const SCREENS: [string, string, string][] = [
 	['settings, advanced tab', `${URLS.SETTINGS_ADMIN}&section=advanced`, '#settings-sections-tabs'],
 	['snippets list', URLS.SNIPPETS_ADMIN, '.snippet-view-toggle'],
 	['new snippet', URLS.ADD_SNIPPET_ADMIN, '.CodeMirror'],
-	['import', URLS.IMPORT_SNIPPETS_ADMIN, '#wpbody-content']
+	['import', URLS.IMPORT_ADMIN, '#wpbody-content']
 ]
 
 interface LayoutReport {
