@@ -2,9 +2,9 @@ import type { SnippetScope, SnippetType } from './Snippet'
 
 export type InsightsChartKey = 'total' | InsightsConfigurableChartKey | 'tags'
 
-export type InsightsConfigurableChartKey = 'type' | 'activation' | 'conditions' | 'location'
+export type InsightsConfigurableChartKey = 'type' | 'activation' | 'conditions' | 'location' | 'tags'
 
-export type InsightsChartView = 'pie' | 'bar'
+export type InsightsChartView = 'pie' | 'bar' | 'cloud'
 
 export type InsightsChartViews = Readonly<Record<InsightsConfigurableChartKey, InsightsChartView>>
 

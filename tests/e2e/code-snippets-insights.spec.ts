@@ -116,16 +116,11 @@ test.describe('Insights screen', () => {
 		await expect(withoutConditions.locator('strong')).toHaveText('4')
 	})
 
-	test('shows used tags in a fixed bar chart', async ({ page }) => {
+	test('switches used tags between bar and cloud views', async ({ page }) => {
 		await SnippetsTestHelper.createSnippetViaCli({
-			name: 'Insights Shared and Alpha Tags',
+			name: 'Insights Shared Tag',
 			active: true,
-			tags: ['Shared', 'Alpha', 'Shared']
-		})
-		await SnippetsTestHelper.createSnippetViaCli({
-			name: 'Insights Shared and Beta Tags',
-			active: true,
-			tags: ['Shared', 'Beta']
+			tags: ['Shared']
 		})
 
 		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
@@ -134,11 +129,20 @@ test.describe('Insights screen', () => {
 		await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible()
 		await expect(tagsChart).toHaveAttribute('data-view', 'bar')
 		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Shared')
-		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('2')
-		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Alpha')
-		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Beta')
-		await expect(tagsChart.locator('.insights-chart-view-toggle')).toHaveCount(0)
-		await expect(tagsChart.locator('.insights-pie-chart')).toHaveCount(0)
+		await expect(tagsChart.getByRole('button', { name: 'Tags cloud view' })).toBeVisible()
+
+		const response = page.waitForResponse(request =>
+			'POST' === request.request().method() && request.url().includes('/preferences/insights-chart-views')
+		)
+		await tagsChart.getByRole('button', { name: 'Tags cloud view' }).click()
+		await response
+
+		await expect(tagsChart).toHaveAttribute('data-view', 'cloud')
+		await expect(tagsChart.locator('.insights-tags-cloud')).toContainText('Shared')
+		await expect(tagsChart.locator('.insights-bar-chart')).toHaveCount(0)
+
+		await page.reload()
+		await expect(tagsChart).toHaveAttribute('data-view', 'cloud')
 	})
 
 	test('links chart entries to their filtered snippet lists', async ({ page, baseURL }) => {

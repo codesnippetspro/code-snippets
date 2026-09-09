@@ -1,3 +1,4 @@
+import { _n, sprintf } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useMemo } from 'react'
 import { InsightsChartViewToggle } from './InsightsChartViewToggle'
@@ -6,6 +7,10 @@ import type { InsightsChartEntry, InsightsChartKey, InsightsChartView } from '..
 const PERCENTAGE_MAX = 100
 
 const DEFAULT_COLOR = '#646970'
+
+const TAG_CLOUD_MIN_FONT_SIZE = 0.875
+
+const TAG_CLOUD_FONT_SIZE_RANGE = 0.625
 
 const getPieBackground = (
 	entries: Readonly<Record<string, InsightsChartEntry>>,
@@ -87,6 +92,28 @@ const PieChart: React.FC<ChartProps> = ({ colors, entries }) => {
 	)
 }
 
+const TagCloud: React.FC<ChartProps> = ({ entries }) => {
+	const largestCount = useMemo(() =>
+		Math.max(1, ...Object.values(entries).map(entry => Number(entry.count))),
+	[entries])
+
+	return (
+		<ul className="insights-tags-cloud">
+			{Object.entries(entries).map(([key, entry]) =>
+				<li
+					key={key}
+					style={{ fontSize: `${TAG_CLOUD_MIN_FONT_SIZE + Number(entry.count) / largestCount * TAG_CLOUD_FONT_SIZE_RANGE}rem` }}
+				>
+					<EntryLabel {...entry} />
+					<span className="screen-reader-text">{sprintf(
+						_n(' (%s snippet)', ' (%s snippets)', Number(entry.count), 'code-snippets'),
+						entry.count
+					)}</span>
+				</li>)}
+		</ul>
+	)
+}
+
 export interface InsightsChartProps {
 	chart: InsightsChartKey
 	entries: Readonly<Record<string, InsightsChartEntry>>
@@ -94,6 +121,7 @@ export interface InsightsChartProps {
 	view: InsightsChartView
 	setView?: (view: InsightsChartView) => void
 	colors?: Readonly<Record<string, string>>
+	views?: readonly InsightsChartView[]
 }
 
 export const InsightsChart: React.FC<InsightsChartProps> = ({
@@ -102,7 +130,8 @@ export const InsightsChart: React.FC<InsightsChartProps> = ({
 	entries,
 	setView,
 	title,
-	view
+	view,
+	views
 }) =>
 	<section
 		className="insights-chart-card"
@@ -112,11 +141,13 @@ export const InsightsChart: React.FC<InsightsChartProps> = ({
 	>
 		<div className="insights-chart-card-header">
 			<h2 id={`insights-chart-${chart}-heading`}>{title}</h2>
-			{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} />}
+			{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} views={views} />}
 		</div>
 		{'bar' === view
 			? <BarChart colors={colors} entries={entries} />
-			: <PieChart colors={colors} entries={entries} />}
+			: 'pie' === view
+				? <PieChart colors={colors} entries={entries} />
+				: <TagCloud entries={entries} />}
 	</section>
 
 export interface TotalsInsightsChartProps extends InsightsChartEntry {

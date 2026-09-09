@@ -32,12 +32,18 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	/**
 	 * Insights charts with independently configurable views.
 	 */
-	public const CHART_KEYS = [ 'type', 'activation', 'conditions', 'location' ];
+	public const CHART_KEYS = [ 'type', 'activation', 'conditions', 'location', 'tags' ];
 
 	/**
 	 * Valid Insights chart view values.
 	 */
-	public const CHART_VIEWS = [ 'pie', 'bar' ];
+	public const CHART_VIEWS = [
+		'type'       => [ 'pie', 'bar' ],
+		'activation' => [ 'pie', 'bar' ],
+		'conditions' => [ 'pie', 'bar' ],
+		'location'   => [ 'pie', 'bar' ],
+		'tags'       => [ 'bar', 'cloud' ],
+	];
 
 	/**
 	 * The Insights chart views shown when no preference has been saved.
@@ -47,6 +53,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 		'activation' => 'pie',
 		'conditions' => 'pie',
 		'location'   => 'bar',
+		'tags'       => 'bar',
 	];
 
 	/**
@@ -65,7 +72,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 			self::CHART_KEYS,
 			static function ( array $normalized, string $key ) use ( $views ): array {
 				$view = $views[ $key ] ?? self::DEFAULT_VIEWS[ $key ];
-				$normalized[ $key ] = in_array( $view, self::CHART_VIEWS, true )
+				$normalized[ $key ] = in_array( $view, self::CHART_VIEWS[ $key ], true )
 					? $view
 					: self::DEFAULT_VIEWS[ $key ];
 
@@ -118,7 +125,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 
 			$view = $views[ $key ];
 
-			if ( ! in_array( $view, self::CHART_VIEWS, true ) ) {
+			if ( ! in_array( $view, self::CHART_VIEWS[ $key ], true ) ) {
 				return false;
 			}
 		}

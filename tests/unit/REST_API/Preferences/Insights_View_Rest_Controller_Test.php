@@ -94,6 +94,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 			'activation' => 'bar',
 			'conditions' => 'bar',
 			'location'   => 'pie',
+			'tags'       => 'cloud',
 		];
 		$response = $this->dispatch( 'POST', [ 'views' => $views ] );
 
@@ -133,6 +134,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 				'activation' => 'pie',
 				'conditions' => 'pie',
 				'location'   => 'bar',
+				'tags'       => 'bar',
 			],
 			Insights_View_Rest_Controller::get_insights_chart_views()
 		);
