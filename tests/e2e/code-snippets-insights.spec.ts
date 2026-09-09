@@ -147,8 +147,8 @@ test.describe('Insights screen', () => {
 		const sharedTag = tagCloud.locator('li').filter({ hasText: /^Shared/ })
 		const alphaTag = tagCloud.locator('li').filter({ hasText: /^Alpha/ })
 
-		await expect(sharedTag).toHaveAccessibleName('Shared (2 snippets)')
-		await expect(alphaTag).toHaveAccessibleName('Alpha (1 snippet)')
+		await expect(sharedTag).toHaveText('Shared (2 snippets)')
+		await expect(alphaTag).toHaveText('Alpha (1 snippet)')
 		expect(await sharedTag.evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize)))
 			.toBeGreaterThan(await alphaTag.evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize)))
 		await expect(tagsChart.locator('.insights-bar-chart')).toHaveCount(0)
@@ -223,7 +223,7 @@ test.describe('Insights screen', () => {
 				'POST' === request.request().method() && request.url().includes('/preferences/insights-chart-views')
 			)
 
-			await chart.getByRole('button', { name: `${view} chart view` }).click()
+			await chart.getByRole('button', { name: 'Pie' === view ? 'Chart view' : 'List view' }).click()
 			await response
 		}
 
