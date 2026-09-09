@@ -76,6 +76,10 @@
 
 		> .dashicons {
 			font-size: 18px;
+
+			&.dashicons-chart-bar {
+				rotate: 90deg;
+			}
 		}
 
 		&:hover,
