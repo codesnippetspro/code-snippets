@@ -119,6 +119,18 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 		);
 
 		$this->assertSame( 400, $response->get_status() );
+
+		foreach (
+			[
+				array_merge( Insights_View_Rest_Controller::DEFAULT_VIEWS, [ 'type' => 'cloud' ] ),
+				array_merge( Insights_View_Rest_Controller::DEFAULT_VIEWS, [ 'tags' => 'pie' ] ),
+			] as $views
+		) {
+			$response = $this->dispatch( 'POST', [ 'views' => $views ] );
+
+			$this->assertSame( 400, $response->get_status() );
+		}
+
 		$this->assertFalse( get_option( Insights_View_Rest_Controller::OPTION_NAME ) );
 	}
 

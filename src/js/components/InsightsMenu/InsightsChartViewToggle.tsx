@@ -3,13 +3,15 @@ import classnames from 'classnames'
 import React from 'react'
 import type { InsightsChartView } from '../../types/Insights'
 
-interface ViewToggleButtonProps extends InsightsChartViewToggleProps {
+interface ViewToggleButtonProps<View extends InsightsChartView> extends InsightsChartViewToggleProps<View> {
 	icon: string
 	label: string
-	currentView: InsightsChartView
+	currentView: View
 }
 
-const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ icon, title, label, view, setView, currentView }) =>
+const ViewToggleButton = <View extends InsightsChartView,>(
+	{ icon, title, label, view, setView, currentView }: ViewToggleButtonProps<View>
+) =>
 	<button
 		type="button"
 		className={classnames('insights-chart-view-toggle-option', { 'active-view': currentView === view })}
@@ -21,11 +23,11 @@ const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ icon, title, label,
 		<span className="screen-reader-text">{label}</span>
 	</button>
 
-export interface InsightsChartViewToggleProps {
+export interface InsightsChartViewToggleProps<View extends InsightsChartView> {
 	title: string
-	view: InsightsChartView
-	setView: (view: InsightsChartView) => void
-	views?: readonly InsightsChartView[]
+	view: View
+	setView: (view: View) => void
+	views: readonly View[]
 }
 
 const VIEW_OPTIONS: Readonly<Record<InsightsChartView, { icon: string, label: string, title: string }>> = {
@@ -46,7 +48,9 @@ const VIEW_OPTIONS: Readonly<Record<InsightsChartView, { icon: string, label: st
 	}
 }
 
-export const InsightsChartViewToggle: React.FC<InsightsChartViewToggleProps> = ({ title, view, setView, views = ['pie', 'bar'] }) =>
+export const InsightsChartViewToggle = <View extends InsightsChartView,>(
+	{ title, view, setView, views }: InsightsChartViewToggleProps<View>
+) =>
 	<div
 		className="insights-chart-view-toggle"
 		role="group"

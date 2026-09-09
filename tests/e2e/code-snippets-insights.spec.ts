@@ -118,6 +118,11 @@ test.describe('Insights screen', () => {
 
 	test('switches used tags between bar and cloud views', async ({ page }) => {
 		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Shared and Alpha Tags',
+			active: true,
+			tags: ['Shared', 'Alpha']
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
 			name: 'Insights Shared Tag',
 			active: true,
 			tags: ['Shared']
@@ -138,7 +143,14 @@ test.describe('Insights screen', () => {
 		await response
 
 		await expect(tagsChart).toHaveAttribute('data-view', 'cloud')
-		await expect(tagsChart.locator('.insights-tags-cloud')).toContainText('Shared')
+		const tagCloud = tagsChart.locator('.insights-tags-cloud')
+		const sharedTag = tagCloud.locator('li').filter({ hasText: /^Shared/ })
+		const alphaTag = tagCloud.locator('li').filter({ hasText: /^Alpha/ })
+
+		await expect(sharedTag).toHaveAccessibleName('Shared (2 snippets)')
+		await expect(alphaTag).toHaveAccessibleName('Alpha (1 snippet)')
+		expect(await sharedTag.evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize)))
+			.toBeGreaterThan(await alphaTag.evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize)))
 		await expect(tagsChart.locator('.insights-bar-chart')).toHaveCount(0)
 
 		await page.reload()
@@ -251,7 +263,7 @@ test.describe('Insights screen', () => {
 			await route.fulfill({ status: 500, body: JSON.stringify({ message: 'Save failed' }) })
 		})
 
-		await conditionsChart.getByRole('button', { name: 'Bar chart view' }).click()
+		await conditionsChart.getByRole('button', { name: 'List view' }).click()
 
 		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
 	})
@@ -281,13 +293,13 @@ test.describe('Insights screen', () => {
 			await route.fulfill({ status: 200, body: JSON.stringify({ views }) })
 		})
 
-		await typeChart.getByRole('button', { name: 'Pie chart view' }).click()
+		await typeChart.getByRole('button', { name: 'Chart view' }).click()
 		await firstRequestStarted
 
 		const successfulResponse = page.waitForResponse(response =>
 			'POST' === response.request().method() && 200 === response.status()
 		)
-		await activationChart.getByRole('button', { name: 'Bar chart view' }).click()
+		await activationChart.getByRole('button', { name: 'List view' }).click()
 		await successfulResponse
 
 		if (undefined === rejectFirstRequest) {

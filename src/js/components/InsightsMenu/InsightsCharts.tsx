@@ -2,7 +2,7 @@ import { _n, sprintf } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useMemo } from 'react'
 import { InsightsChartViewToggle } from './InsightsChartViewToggle'
-import type { InsightsChartEntry, InsightsChartKey, InsightsChartView } from '../../types/Insights'
+import type { InsightsChartEntry, InsightsChartKey, InsightsChartViews, InsightsConfigurableChartKey } from '../../types/Insights'
 
 const PERCENTAGE_MAX = 100
 
@@ -114,17 +114,17 @@ const TagCloud: React.FC<ChartProps> = ({ entries }) => {
 	)
 }
 
-export interface InsightsChartProps {
-	chart: InsightsChartKey
+export interface InsightsChartProps<Chart extends InsightsConfigurableChartKey> {
+	chart: Chart
 	entries: Readonly<Record<string, InsightsChartEntry>>
 	title: string
-	view: InsightsChartView
-	setView?: (view: InsightsChartView) => void
+	view: InsightsChartViews[Chart]
+	setView?: (view: InsightsChartViews[Chart]) => void
 	colors?: Readonly<Record<string, string>>
-	views?: readonly InsightsChartView[]
+	views: readonly InsightsChartViews[Chart][]
 }
 
-export const InsightsChart: React.FC<InsightsChartProps> = ({
+export const InsightsChart = <Chart extends InsightsConfigurableChartKey,>({
 	chart,
 	colors,
 	entries,
@@ -132,7 +132,7 @@ export const InsightsChart: React.FC<InsightsChartProps> = ({
 	title,
 	view,
 	views
-}) =>
+}: InsightsChartProps<Chart>) =>
 	<section
 		className="insights-chart-card"
 		data-insights-chart={chart}

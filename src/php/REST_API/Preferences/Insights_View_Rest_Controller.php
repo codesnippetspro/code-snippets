@@ -99,7 +99,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	 */
 	protected function get_update_request_schema(): array {
 		return [
-			'description'       => esc_html__( 'Pie or bar view for each Insights chart.', 'code-snippets' ),
+			'description'       => esc_html__( 'Supported chart-specific view for each Insights chart; tags also supports the cloud view.', 'code-snippets' ),
 			'type'              => 'object',
 			'required'          => true,
 			'validate_callback' => [ $this, 'validate_insights_chart_views' ],
