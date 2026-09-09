@@ -116,16 +116,16 @@ test.describe('Insights screen', () => {
 		await expect(withoutConditions.locator('strong')).toHaveText('4')
 	})
 
-	test('shows used tags in a fixed bar chart', async ({ page }) => {
+	test('switches used tags between bar and cloud views', async ({ page }) => {
 		await SnippetsTestHelper.createSnippetViaCli({
 			name: 'Insights Shared and Alpha Tags',
 			active: true,
-			tags: ['Shared', 'Alpha', 'Shared']
+			tags: ['Shared', 'Alpha']
 		})
 		await SnippetsTestHelper.createSnippetViaCli({
-			name: 'Insights Shared and Beta Tags',
+			name: 'Insights Shared Tag',
 			active: true,
-			tags: ['Shared', 'Beta']
+			tags: ['Shared']
 		})
 
 		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
@@ -134,11 +134,27 @@ test.describe('Insights screen', () => {
 		await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible()
 		await expect(tagsChart).toHaveAttribute('data-view', 'bar')
 		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Shared')
-		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('2')
-		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Alpha')
-		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Beta')
-		await expect(tagsChart.locator('.insights-chart-view-toggle')).toHaveCount(0)
-		await expect(tagsChart.locator('.insights-pie-chart')).toHaveCount(0)
+		await expect(tagsChart.getByRole('button', { name: 'Tags cloud view' })).toBeVisible()
+
+		const response = page.waitForResponse(request =>
+			'POST' === request.request().method() && request.url().includes('/preferences/insights-chart-views')
+		)
+		await tagsChart.getByRole('button', { name: 'Tags cloud view' }).click()
+		await response
+
+		await expect(tagsChart).toHaveAttribute('data-view', 'cloud')
+		const tagCloud = tagsChart.locator('.insights-tags-cloud')
+		const sharedTag = tagCloud.locator('li').filter({ hasText: /^Shared/ })
+		const alphaTag = tagCloud.locator('li').filter({ hasText: /^Alpha/ })
+
+		await expect(sharedTag).toHaveAccessibleName('Shared (2 snippets)')
+		await expect(alphaTag).toHaveAccessibleName('Alpha (1 snippet)')
+		expect(await sharedTag.evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize)))
+			.toBeGreaterThan(await alphaTag.evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize)))
+		await expect(tagsChart.locator('.insights-bar-chart')).toHaveCount(0)
+
+		await page.reload()
+		await expect(tagsChart).toHaveAttribute('data-view', 'cloud')
 	})
 
 	test('links chart entries to their filtered snippet lists', async ({ page, baseURL }) => {
@@ -247,7 +263,7 @@ test.describe('Insights screen', () => {
 			await route.fulfill({ status: 500, body: JSON.stringify({ message: 'Save failed' }) })
 		})
 
-		await conditionsChart.getByRole('button', { name: 'Bar chart view' }).click()
+		await conditionsChart.getByRole('button', { name: 'List view' }).click()
 
 		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
 	})
@@ -277,13 +293,13 @@ test.describe('Insights screen', () => {
 			await route.fulfill({ status: 200, body: JSON.stringify({ views }) })
 		})
 
-		await typeChart.getByRole('button', { name: 'Pie chart view' }).click()
+		await typeChart.getByRole('button', { name: 'Chart view' }).click()
 		await firstRequestStarted
 
 		const successfulResponse = page.waitForResponse(response =>
 			'POST' === response.request().method() && 200 === response.status()
 		)
-		await activationChart.getByRole('button', { name: 'Bar chart view' }).click()
+		await activationChart.getByRole('button', { name: 'List view' }).click()
 		await successfulResponse
 
 		if (undefined === rejectFirstRequest) {

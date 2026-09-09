@@ -14,6 +14,7 @@
 }
 
 .insights-chart-card {
+	min-block-size: 220px;
 	box-sizing: border-box;
 	border: 1px solid var(--cs-color-border-subtle);
 	border-radius: var(--cs-card-radius);
@@ -113,6 +114,21 @@
 	padding: 0;
 	margin: 0;
 	list-style: none;
+}
+
+.insights-tags-cloud {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 8px 12px;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+
+	li {
+		margin: 0;
+		line-height: 1.4;
+	}
 }
 
 .insights-chart-entry-link {

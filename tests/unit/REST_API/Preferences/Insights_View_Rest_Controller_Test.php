@@ -94,6 +94,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 			'activation' => 'bar',
 			'conditions' => 'bar',
 			'location'   => 'pie',
+			'tags'       => 'cloud',
 		];
 		$response = $this->dispatch( 'POST', [ 'views' => $views ] );
 
@@ -118,6 +119,18 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 		);
 
 		$this->assertSame( 400, $response->get_status() );
+
+		foreach (
+			[
+				array_merge( Insights_View_Rest_Controller::DEFAULT_VIEWS, [ 'type' => 'cloud' ] ),
+				array_merge( Insights_View_Rest_Controller::DEFAULT_VIEWS, [ 'tags' => 'pie' ] ),
+			] as $views
+		) {
+			$response = $this->dispatch( 'POST', [ 'views' => $views ] );
+
+			$this->assertSame( 400, $response->get_status() );
+		}
+
 		$this->assertFalse( get_option( Insights_View_Rest_Controller::OPTION_NAME ) );
 	}
 
@@ -133,6 +146,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 				'activation' => 'pie',
 				'conditions' => 'pie',
 				'location'   => 'bar',
+				'tags'       => 'bar',
 			],
 			Insights_View_Rest_Controller::get_insights_chart_views()
 		);

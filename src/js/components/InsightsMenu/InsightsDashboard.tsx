@@ -5,14 +5,15 @@ import { SNIPPET_SCOPE_DESCRIPTIONS } from '../../utils/snippets/snippets'
 import { buildUrl } from '../../utils/urls'
 import { useRestAPI } from '../../hooks/useRestAPI'
 import { InsightsChart, TotalsInsightsChart } from './InsightsCharts'
-import type { InsightChartPreferencesSchema, InsightsChartEntry, InsightsChartView, InsightsChartViews, InsightsConfigurableChartKey, InsightsSummary } from '../../types/Insights'
+import type { InsightChartPreferencesSchema, InsightsChartEntry, InsightsChartViews, InsightsConfigurableChartKey, InsightsSummary } from '../../types/Insights'
 import type { SnippetCodeScope, SnippetType } from '../../types/Snippet'
 
 export const DEFAULT_INSIGHTS_CHART_VIEWS: InsightsChartViews = window.CODE_SNIPPETS?.insightsChartViews ?? {
 	type: 'bar',
 	activation: 'pie',
 	conditions: 'pie',
-	location: 'bar'
+	location: 'bar',
+	tags: 'bar'
 }
 
 export const INSIGHTS_TYPE_COLORS: Readonly<Record<SnippetType, string>> = {
@@ -52,12 +53,12 @@ interface StaticChartProps {
 	summary: InsightsSummary
 }
 
-interface ConfigurableChartProps extends StaticChartProps {
-	view: InsightsChartView
-	setView: (view: InsightsChartView) => void
+interface ConfigurableChartProps<Chart extends InsightsConfigurableChartKey> extends StaticChartProps {
+	view: InsightsChartViews[Chart]
+	setView: (view: InsightsChartViews[Chart]) => void
 }
 
-const SnippetTypeChart: React.FC<ConfigurableChartProps> = ({ summary, view, setView }) =>
+const SnippetTypeChart: React.FC<ConfigurableChartProps<'type'>> = ({ summary, view, setView }) =>
 	<InsightsChart
 		chart="type"
 		title={__('Snippet type', 'code-snippets')}
@@ -66,11 +67,12 @@ const SnippetTypeChart: React.FC<ConfigurableChartProps> = ({ summary, view, set
 				[type, { ...entry, url: buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: 'snippets', type }) }])
 		)}
 		colors={INSIGHTS_TYPE_COLORS}
+		views={['pie', 'bar']}
 		view={view}
 		setView={setView}
 	/>
 
-const ActivationStatusChart: React.FC<ConfigurableChartProps> = ({ summary, view, setView }) =>
+const ActivationStatusChart: React.FC<ConfigurableChartProps<'activation'>> = ({ summary, view, setView }) =>
 	<InsightsChart
 		chart="activation"
 		title={__('Activation status', 'code-snippets')}
@@ -87,21 +89,23 @@ const ActivationStatusChart: React.FC<ConfigurableChartProps> = ({ summary, view
 			}
 		}}
 		colors={INSIGHTS_ACTIVATION_COLORS}
+		views={['pie', 'bar']}
 		view={view}
 		setView={setView}
 	/>
 
-const ConditionUsageChart: React.FC<ConfigurableChartProps> = ({ summary, view, setView }) =>
+const ConditionUsageChart: React.FC<ConfigurableChartProps<'conditions'>> = ({ summary, view, setView }) =>
 	<InsightsChart
 		chart="conditions"
 		title={__('Condition usage', 'code-snippets')}
 		entries={summary.conditionCounts}
 		colors={INSIGHTS_CONDITION_COLORS}
+		views={['pie', 'bar']}
 		view={view}
 		setView={setView}
 	/>
 
-const LocationChart = ({ summary, view, setView }: ConfigurableChartProps) => {
+const LocationChart = ({ summary, view, setView }: ConfigurableChartProps<'location'>) => {
 	const entries: Record<string, InsightsChartEntry> = Object.fromEntries(
 		Object.entries(summary.locationCounts).map(([scope, count]) =>
 			[scope, { label: SNIPPET_SCOPE_DESCRIPTIONS[scope as SnippetCodeScope], count }])
@@ -113,13 +117,14 @@ const LocationChart = ({ summary, view, setView }: ConfigurableChartProps) => {
 			title={__('Location', 'code-snippets')}
 			entries={entries}
 			colors={INSIGHTS_LOCATION_COLORS}
+			views={['pie', 'bar']}
 			view={view}
 			setView={setView}
 		/>
 	)
 }
 
-const TagsChart: React.FC<StaticChartProps> = ({ summary }) =>
+const TagsChart: React.FC<ConfigurableChartProps<'tags'>> = ({ summary, view, setView }) =>
 	<InsightsChart
 		chart="tags"
 		title={__('Tags', 'code-snippets')}
@@ -127,7 +132,9 @@ const TagsChart: React.FC<StaticChartProps> = ({ summary }) =>
 			Object.entries(summary.tagCounts).map(([tag, entry]) =>
 				[tag, { ...entry, url: buildUrl(window.CODE_SNIPPETS?.urls.manage, { tag }) }])
 		)}
-		view="bar"
+		views={['bar', 'cloud']}
+		view={view}
+		setView={setView}
 	/>
 
 export interface InsightsDashboardProps {
@@ -137,9 +144,8 @@ export interface InsightsDashboardProps {
 export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary }) => {
 	const { api } = useRestAPI()
 	const [chartViews, setChartViews] = useState<InsightsChartViews>(DEFAULT_INSIGHTS_CHART_VIEWS)
-
-	const updateChartView = (chart: InsightsConfigurableChartKey, view: InsightsChartView) => {
-		const views = { ...chartViews, [chart]: view }
+	const updateChartView = <Chart extends InsightsConfigurableChartKey,>(chart: Chart, view: InsightsChartViews[Chart]) => {
+		const views: InsightsChartViews = { ...chartViews, [chart]: view }
 
 		setChartViews(views)
 
@@ -158,11 +164,7 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 		<hr className="wp-header-end"></hr>
 
 		<section className="insights-chart-grid">
-			<TotalsInsightsChart
-				chart="total"
-				label={__('Total snippets', 'code-snippets')}
-				count={Number(summary.active) + Number(summary.inactive)}
-			/>
+			<TotalsInsightsChart chart="total" label={__('Total snippets', 'code-snippets')} count={Number(summary.active) + Number(summary.inactive)} />
 
 			<SnippetTypeChart
 				summary={summary}
@@ -188,7 +190,11 @@ export const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ summary })
 				setView={view => updateChartView('location', view)}
 			/>
 
-			<TagsChart summary={summary} />
+			<TagsChart
+				summary={summary}
+				view={chartViews.tags}
+				setView={view => updateChartView('tags', view)}
+			/>
 		</section>
 	</>
 }
