@@ -142,10 +142,6 @@ class Plugin {
 		new Upgrader( PLUGIN_VERSION, $this->db );
 		new Admin_Bar();
 
-		if ( is_admin() ) {
-			new Promotion_Manager();
-		}
-
 		$this->init_snippet_files();
 
 		add_action( 'rest_api_init', [ $this, 'init_rest_api' ], 1 );
