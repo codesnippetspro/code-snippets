@@ -488,6 +488,40 @@ test.describe('Manage table Screen Options', () => {
 		await expect(page.locator('.wp-list-table th.column-desc').first()).not.toHaveClass(/\bhidden\b/)
 	})
 
+	test('ID column visibility persists when enabled and supports ID search', async ({ page }) => {
+		const snippetRow = snippetRowByName(page, snippetName)
+		const editUrl = await snippetRow.locator('.snippet-name').getAttribute('href')
+		const snippetId = new URL(editUrl ?? '', page.url()).searchParams.get('id')
+
+		if (!snippetId) {
+			throw new Error('Created snippet does not have an edit URL with an ID')
+		}
+
+		await openScreenOptions(page)
+
+		const idToggle = page.locator('#adv-settings input.hide-column-tog[value="id"]')
+		await expect(idToggle).toBeVisible()
+		await idToggle.uncheck()
+		await expect(page.locator('.wp-list-table th.column-id').first()).toHaveClass(/\bhidden\b/)
+
+		await idToggle.check()
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+
+		await helper.navigateToSnippetsAdmin()
+		await openScreenOptions(page)
+		await expect(idToggle).toBeChecked()
+		await expect(page.locator('.wp-list-table th.column-id').first()).not.toHaveClass(/\bhidden\b/)
+		await expect(snippetRowByName(page, snippetName).locator('.column-id')).toHaveText(snippetId)
+
+		await page.getByRole('searchbox', { name: 'Search Snippets:' }).fill(snippetId)
+		await expect(snippetRowByName(page, snippetName)).toBeVisible()
+
+		await idToggle.uncheck()
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+	})
+
 	test('Truncation toggle applies and removes the truncation class in real time', async ({ page }) => {
 		await openScreenOptions(page)
 

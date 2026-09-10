@@ -181,6 +181,12 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 		render: snippet => <ActivateColumn snippet={snippet} />
 	},
 	{
+		id: 'id',
+		title: __('ID', 'code-snippets'),
+		sortedValue: snippet => snippet.id,
+		render: snippet => snippet.id
+	},
+	{
 		id: 'name',
 		title: __('Name', 'code-snippets'),
 		isPrimary: true,

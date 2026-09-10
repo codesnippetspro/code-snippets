@@ -47,6 +47,17 @@ class Manage_Menu_Screen_Options_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * The optional ID column stays hidden until a user enables it.
+	 *
+	 * @return void
+	 */
+	public function test_default_hidden_columns_include_id(): void {
+		$options = new Manage_Menu_Screen_Options();
+
+		$this->assertSame( [ 'id' ], $options->get_default_hidden_columns( [], get_current_screen() ) );
+	}
+
+	/**
 	 * The manage screen renders a truncation toggle.
 	 *
 	 * @return void
