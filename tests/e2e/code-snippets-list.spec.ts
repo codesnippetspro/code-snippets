@@ -443,10 +443,12 @@ test.describe('Code Snippets List Page Actions', () => {
 test.describe('Manage table Screen Options', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
+	let unrelatedSnippetName: string | undefined
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Screen Options')
+		unrelatedSnippetName = undefined
 		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 		await helper.createAndActivateSnippet({
 			name: snippetName,
@@ -457,6 +459,9 @@ test.describe('Manage table Screen Options', () => {
 
 	test.afterEach(async () => {
 		await helper.cleanupSnippet(snippetName)
+		if (unrelatedSnippetName) {
+			await helper.cleanupSnippet(unrelatedSnippetName)
+		}
 	})
 
 	const openScreenOptions = async (page: Page) => {
@@ -497,6 +502,13 @@ test.describe('Manage table Screen Options', () => {
 			throw new Error('Created snippet does not have an edit URL with an ID')
 		}
 
+		unrelatedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E ID Search')
+		const unrelatedSnippetId = await SnippetsTestHelper.createSnippetViaCli({
+			name: unrelatedSnippetName,
+			active: false
+		})
+		expect(unrelatedSnippetId).not.toBe(Number(snippetId))
+
 		await openScreenOptions(page)
 
 		const idToggle = page.locator('#adv-settings input.hide-column-tog[value="id"]')
@@ -513,9 +525,11 @@ test.describe('Manage table Screen Options', () => {
 		await expect(idToggle).toBeChecked()
 		await expect(page.locator('.wp-list-table th.column-id').first()).not.toHaveClass(/\bhidden\b/)
 		await expect(snippetRowByName(page, snippetName).locator('.column-id')).toHaveText(snippetId)
+		await expect(snippetRowByName(page, unrelatedSnippetName)).toBeVisible()
 
 		await page.getByRole('searchbox', { name: 'Search Snippets:' }).fill(snippetId)
 		await expect(snippetRowByName(page, snippetName)).toBeVisible()
+		await expect(snippetRowByName(page, unrelatedSnippetName)).toBeHidden()
 
 		await idToggle.uncheck()
 		await page.locator('#screen-options-apply').click()

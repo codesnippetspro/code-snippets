@@ -53,8 +53,11 @@ class Manage_Menu_Screen_Options_Test extends AdminUnitTestCase {
 	 */
 	public function test_default_hidden_columns_include_id(): void {
 		$options = new Manage_Menu_Screen_Options();
+		$screen  = get_current_screen();
 
-		$this->assertSame( [ 'id' ], $options->get_default_hidden_columns( [], get_current_screen() ) );
+		$this->assertSame( [ 'id' ], $options->get_default_hidden_columns( [], $screen ) );
+		$this->assertSame( [ 'type', 'id' ], $options->get_default_hidden_columns( [ 'type' ], $screen ) );
+		$this->assertSame( [ 'type' ], $options->get_default_hidden_columns( [ 'type' ], \WP_Screen::get( 'dashboard' ) ) );
 	}
 
 	/**
