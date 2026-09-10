@@ -71,7 +71,7 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 			if (sanitizedSearchQueryText) {
 				return searchLineNumber !== undefined
 					? snippet.code.split('\n')[searchLineNumber]?.includes(sanitizedSearchQueryText)
-					: searchFields.some(field =>
+					: String(snippet.id) === sanitizedSearchQueryText || searchFields.some(field =>
 						('tags' === field ? snippet.tags.join(' ') : snippet[field])
 							.toLowerCase().includes(sanitizedSearchQueryText))
 			}

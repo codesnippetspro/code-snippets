@@ -34,6 +34,7 @@ class Manage_Menu_Screen_Options {
 
 		if ( $screen && ! $this->is_cloud_community_view() ) {
 			add_filter( "manage_{$screen->id}_columns", [ $this, 'get_columns' ] );
+			add_filter( 'default_hidden_columns', [ $this, 'get_default_hidden_columns' ], 10, 2 );
 			add_filter( 'screen_settings', [ $this, 'render' ] );
 		}
 
@@ -60,6 +61,7 @@ class Manage_Menu_Screen_Options {
 			[
 				'_title'   => __( 'Columns', 'code-snippets' ),
 				'activate' => __( 'Active', 'code-snippets' ),
+				'id'       => __( 'ID', 'code-snippets' ),
 				'name'     => __( 'Name', 'code-snippets' ),
 				'type'     => __( 'Type', 'code-snippets' ),
 				'desc'     => __( 'Description', 'code-snippets' ),
@@ -68,6 +70,20 @@ class Manage_Menu_Screen_Options {
 				'priority' => __( 'Priority', 'code-snippets' ),
 			]
 		);
+	}
+
+	/**
+	 * Hide the optional ID column until a user enables it.
+	 *
+	 * @param string[]   $hidden_columns Column identifiers hidden by default.
+	 * @param \WP_Screen $screen Current admin screen.
+	 *
+	 * @return string[]
+	 */
+	public function get_default_hidden_columns( array $hidden_columns, \WP_Screen $screen ): array {
+		return get_current_screen() === $screen
+			? array_merge( $hidden_columns, [ 'id' ] )
+			: $hidden_columns;
 	}
 
 	/**
