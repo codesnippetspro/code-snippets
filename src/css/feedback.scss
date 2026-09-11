@@ -1,9 +1,5 @@
 @use 'common/theme';
 
-$feedback-panel-inline-size: 460px;
-$feedback-danger: #d63638;
-$feedback-success: #00a32a;
-
 .code-snippets-feedback-launcher {
 	position: fixed;
 	inset-block-end: 24px;
@@ -68,7 +64,7 @@ $feedback-success: #00a32a;
 	inline-size: 6px;
 	block-size: 6px;
 	border-radius: 50%;
-	background: $feedback-danger;
+	background: var(--cs-color-error);
 }
 
 // The drawer slides in from the inline end, so it reads as arriving from the edge of the
@@ -99,7 +95,7 @@ $feedback-success: #00a32a;
 	position: fixed;
 	inset-block: 0;
 	inset-inline-end: 0;
-	inline-size: $feedback-panel-inline-size;
+	inline-size: var(--cs-feedback-modal-inline-size);
 	max-inline-size: 100vw;
 	block-size: 100%;
 	max-block-size: 100%;
@@ -271,12 +267,12 @@ $feedback-success: #00a32a;
 	padding-inline: 12px;
 	margin-block: 0 18px;
 	border-radius: var(--cs-control-radius);
-	border-inline-start: 4px solid $feedback-danger;
+	border-inline-start: 4px solid var(--cs-color-error);
 	background: #fcf0f1;
 	scroll-margin-block-start: 8px;
 
 	&:focus {
-		outline: 2px solid $feedback-danger;
+		outline: 2px solid var(--cs-color-error);
 		outline-offset: 2px;
 	}
 }
@@ -304,7 +300,7 @@ $feedback-success: #00a32a;
 		margin-block-end: 12px;
 		margin-inline: auto;
 		border-radius: 50%;
-		background: $feedback-success;
+		background: var(--cs-color-success);
 	}
 }
 

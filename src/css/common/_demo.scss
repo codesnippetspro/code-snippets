@@ -1,17 +1,6 @@
 // Shared chrome for the feature walkthroughs. Each demo styles its own stage
 // content; everything here is the frame around it.
 
-$callout-inline-size: 320px;
-$callout-breakpoint: 1400px;
-
-// One step above the WordPress modal overlay (100000), so the commentary is
-// not dimmed by a modal the walkthrough opened.
-$above-modal-overlay: 100001;
-
-// Space kept between the callout and both the modal and the viewport edge.
-$modal-gutter-inset: 40px;
-
-
 @keyframes demo-fade-in {
 	from {
 		opacity: 0;
@@ -62,6 +51,8 @@ $modal-gutter-inset: 40px;
 }
 
 .demo-callout {
+	--cs-callout-inline-size: 320px;
+
 	// Anchored to the foot of the viewport rather than its middle: the demo
 	// pages fill their width, so a centred panel lands on the fields the
 	// commentary is describing.
@@ -69,7 +60,7 @@ $modal-gutter-inset: 40px;
 	inset-inline-end: 28px;
 	inset-block-end: 28px;
 	z-index: 100;
-	inline-size: $callout-inline-size;
+	inline-size: var(--cs-callout-inline-size);
 	box-sizing: border-box;
 	padding: 16px 18px;
 	border: 1px solid #b9d4ea;
@@ -81,7 +72,7 @@ $modal-gutter-inset: 40px;
 
 	// Narrow screens have no room beside the walkthrough, so the panel is
 	// dropped rather than allowed to obscure the thing it describes.
-	@media (width <= $callout-breakpoint) {
+	@media (width <= 1400px) {
 		display: none;
 	}
 }
@@ -127,9 +118,11 @@ $modal-gutter-inset: 40px;
 // rises above the overlay instead, narrowing to the gutter beside the modal so
 // it never covers what it is describing.
 body.modal-open .demo-callout {
-	z-index: $above-modal-overlay;
-	inline-size: calc((100vw - var(--cs-preview-modal-inline-size)) / 2 - #{$modal-gutter-inset});
-	max-inline-size: $callout-inline-size;
+	// One step above the WordPress modal overlay (100000), so the commentary is
+	// not dimmed by a modal the walkthrough opened.
+	z-index: 100001;
+	inline-size: calc((100vw - var(--cs-preview-modal-inline-size)) / 2 - var(--cs-preview-modal-inset));
+	max-inline-size: var(--cs-callout-inline-size);
 }
 
 // Marks the button the walkthrough is "clicking", so a simulated press reads
