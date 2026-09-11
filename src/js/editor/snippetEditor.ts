@@ -13,6 +13,7 @@ import {
 	rectangularSelection
 } from '@codemirror/view'
 import { applyFilters } from '@wordpress/hooks'
+import { snippetCompletions } from './completions'
 import { keymapExtension, loadVimKeymap, saveKeymap } from './keymaps'
 import { languageForType, lintForType } from './languages'
 import { activeLineBackground, hasDarkBackground, themeClass, themeHighlighting } from './theme'
@@ -145,7 +146,7 @@ const editorExtensions = (
 		EditorState.phrases.of(phrases),
 		indentOnInput(),
 		search({ top: true }),
-		context.isReadOnly ? [] : autocompletion(),
+		context.isReadOnly ? [] : [autocompletion(), snippetCompletions],
 		themeHighlighting,
 		EditorView.editorAttributes.of({ class: 'cs-code-editor' }),
 		EditorView.contentAttributes.of(contentAttributes),

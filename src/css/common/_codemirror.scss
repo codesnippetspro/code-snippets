@@ -52,6 +52,25 @@
 	.cm-foldPlaceholder {
 		font-weight: bold;
 	}
+
+	.cs-completion-info {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		max-inline-size: 420px;
+		white-space: normal;
+
+		code {
+			padding: 0;
+			background: none;
+			font-size: inherit;
+			overflow-wrap: anywhere;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
 }
 
 .snippet-condition-editor-container {

@@ -37,6 +37,7 @@ export const getEditorPhrases = (): Record<string, string> => ({
 	'Diagnostics': __('Diagnostics', 'code-snippets'),
 	'No diagnostics': __('No diagnostics', 'code-snippets'),
 	'Completions': __('Completions', 'code-snippets'),
+	'Documentation': __('Documentation', 'code-snippets'),
 	'Control character': __('Control character', 'code-snippets'),
 	'Selection deleted': __('Selection deleted', 'code-snippets'),
 	'Syntax error': __('Syntax error', 'code-snippets')

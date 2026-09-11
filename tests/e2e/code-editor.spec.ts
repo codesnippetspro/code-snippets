@@ -22,6 +22,19 @@ const openNewSnippet = async (page: Page) => {
 	return editor
 }
 
+const completionOption = (page: Page, label: string) =>
+	page.locator('.cm-tooltip-autocomplete .cm-completionLabel', { hasText: new RegExp(`^${label.replace(/\$/g, '\\$')}$`) })
+
+// The completion list ignores Enter for a moment after it opens, so that a
+// keystroke meant as a new line is not taken as accepting the completion.
+const COMPLETION_INTERACTION_DELAY_MS = 150
+
+const acceptCompletion = async (page: Page, label: string): Promise<void> => {
+	await expect(completionOption(page, label)).toBeVisible()
+	await page.waitForTimeout(COMPLETION_INTERACTION_DELAY_MS)
+	await page.keyboard.press('Enter')
+}
+
 const selectType = async (page: Page, label: string): Promise<void> => {
 	await page.locator('.snippet-type-container .code-snippets-select').click()
 	await page.getByRole('listbox').getByRole('option', { name: new RegExp(label, 'i') }).click()
@@ -84,6 +97,67 @@ test.describe('Code editor', () => {
 		await expect(editor.locator('.cm-tag', { hasText: 'p' }).first()).toBeVisible()
 		await expect(editor.locator('.cm-attribute', { hasText: 'class' })).toBeVisible()
 		await expect(editor.locator('.cm-variable-2', { hasText: '$greeting' })).toBeVisible()
+	})
+
+	test('completes WordPress and PHP functions with their documentation', async ({ page }) => {
+		const editor = await openNewSnippet(page)
+		await typeIntoEditor(page, editor, '')
+
+		await page.keyboard.type('add_filt')
+		await expect(completionOption(page, 'add_filter')).toBeVisible()
+
+		const info = page.locator('.cm-completionInfo .cs-completion-info')
+		await expect(info).toContainText('add_filter( $hook_name, $callback')
+		await expect(info.getByRole('link')).toHaveAttribute('href', 'https://developer.wordpress.org/reference/functions/add_filter/')
+
+		await acceptCompletion(page, 'add_filter')
+		await expect.poll(() => readEditorValue(editor)).toBe('add_filter')
+
+		await page.keyboard.type(';\nstr_repl')
+		await acceptCompletion(page, 'str_replace')
+		await expect.poll(() => readEditorValue(editor)).toBe('add_filter;\nstr_replace')
+	})
+
+	test('completes variables and functions declared in the snippet', async ({ page }) => {
+		const editor = await openNewSnippet(page)
+		await pasteIntoEditor(page, editor, '$site_name = 1;\nfunction cs_local_helper() {}\n')
+		await page.keyboard.press('ControlOrMeta+End')
+
+		await page.keyboard.type('$si')
+		await acceptCompletion(page, '$site_name')
+
+		await page.keyboard.type(';\ncs_local')
+		await acceptCompletion(page, 'cs_local_helper')
+
+		await expect.poll(() => readEditorValue(editor))
+			.toBe('$site_name = 1;\nfunction cs_local_helper() {}\n$site_name;\ncs_local_helper')
+	})
+
+	test('does not complete functions inside comments', async ({ page }) => {
+		const editor = await openNewSnippet(page)
+		await typeIntoEditor(page, editor, '')
+
+		await page.keyboard.type('// add_filt')
+		await page.waitForTimeout(500)
+		await expect(page.locator('.cm-tooltip-autocomplete')).toHaveCount(0)
+	})
+
+	test('completes markup, styles and scripts in content snippets', async ({ page }) => {
+		const editor = await openNewSnippet(page)
+		await selectType(page, 'Content')
+		await typeIntoEditor(page, editor, '')
+
+		await page.keyboard.type('<di')
+		await expect(completionOption(page, 'div')).toBeVisible()
+		await page.keyboard.press('Escape')
+
+		await page.keyboard.type('v><style>.a { backgr')
+		await expect(completionOption(page, 'background-color')).toBeVisible()
+		await page.keyboard.press('Escape')
+
+		await typeIntoEditor(page, editor, '')
+		await page.keyboard.type('<script>docu')
+		await expect(completionOption(page, 'document')).toBeVisible()
 	})
 
 	test('colours fold markers so they stay visible on dark themes', async ({ page }) => {

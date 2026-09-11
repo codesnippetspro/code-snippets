@@ -30,6 +30,7 @@
     "lint:php:fix": "src/vendor/bin/phpcbf --standard=phpcs.xml src/php tests",
     "lint:readme": "ts-node scripts/linters/lint-readme.ts",
     "lint:changelog": "ts-node scripts/linters/lint-changelog.ts",
+    "generate:function-index": "php scripts/generate-function-index.php .wp-core > src/js/editor/data/function-index.json",
     "version": "ts-node scripts/version.ts",
     "version-dev": "npm version --git-tag-version=false --preid=dev",
     "version-alpha": "npm version --git-tag-version=false --preid=alpha",
