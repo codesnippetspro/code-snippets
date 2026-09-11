@@ -6,6 +6,10 @@
 	background-color: #fff;
 	color: #000;
 
+	// Without wrapping, a long line would otherwise widen the editor, and the
+	// page layout around it, to fit; containment keeps the scrolling inside.
+	contain: inline-size;
+
 	&.cm-focused {
 		outline: 2px solid var(--cs-color-accent);
 		outline-offset: -1px;

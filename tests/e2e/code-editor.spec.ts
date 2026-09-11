@@ -205,6 +205,21 @@ test.describe('Code editor', () => {
 		await expect(editor.locator('.cm-trailingSpace')).toBeVisible()
 	})
 
+	test('wraps long lines, or scrolls them inside the editor when wrapping is off', async ({ page }) => {
+		const longLine = `$message = '${'lorem ipsum dolor sit amet '.repeat(30)}';`
+		const overflow = (selector: string) => page.locator(selector).evaluate(element => element.scrollWidth - element.clientWidth)
+
+		let editor = await openNewSnippet(page)
+		await pasteIntoEditor(page, editor, longLine)
+		await expect.poll(() => overflow('.snippet-editor .cm-scroller')).toBeLessThanOrEqual(1)
+
+		await setEditorSetting('wrap_lines', false)
+		editor = await openNewSnippet(page)
+		await pasteIntoEditor(page, editor, longLine)
+		await expect.poll(() => overflow('.snippet-editor .cm-scroller')).toBeGreaterThan(0)
+		expect(await overflow('html')).toBeLessThanOrEqual(0)
+	})
+
 	test('wraps long lines in the snippet preview without scrolling sideways', async ({ page }) => {
 		const name = SnippetsTestHelper.makeUniqueSnippetName()
 		const longLine = `$message = '${'lorem ipsum dolor sit amet '.repeat(30)}';`
