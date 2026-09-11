@@ -12,7 +12,7 @@ const SELECTOR_MAP: readonly (readonly [RegExp, string])[] = [
 	[/\.CodeMirror-gutter-elt(?![\w-])/g, '.cm-gutterElement'],
 	[/\.CodeMirror-gutter(?![\w-])/g, '.cm-gutter'],
 	[/\.CodeMirror-linenumber(?![\w-])/g, '.cm-lineNumbers .cm-gutterElement'],
-	[/\.CodeMirror-guttermarker(?:-subtle)?(?![\w-])/g, '.cm-foldGutter .cm-gutterElement'],
+	[/\.CodeMirror-guttermarker-subtle(?![\w-])/g, '.cm-foldGutter .cm-gutterElement'],
 	[/\.CodeMirror-foldmarker(?![\w-])/g, '.cm-foldPlaceholder'],
 	[/\.CodeMirror-cursor(?![\w-])/g, '.cm-cursor'],
 	[/\.CodeMirror-selected(?![\w-])/g, '.cm-selectionBackground'],
@@ -30,9 +30,11 @@ const SELECTOR_MAP: readonly (readonly [RegExp, string])[] = [
 /**
  * Selectors with no CodeMirror 6 counterpart: native selection is hidden in
  * favour of drawn selection, and the rest style addons that are not loaded.
+ * Fold markers were the subtle gutter markers; plain ones marked breakpoints
+ * and the like, which the editor does not have.
  */
 const UNSUPPORTED_ADDON_CLASSES = [
-	'simplescroll', 'overlayscroll', 'hint', 'ruler', 'widget', 'secondarycursor', 'overwrite', 'cursors',
+	'guttermarker(?![\\w-])', 'simplescroll', 'overlayscroll', 'hint', 'ruler', 'widget', 'secondarycursor', 'overwrite', 'cursors',
 	'matchingtag', 'selectedtext', 'foldgutter', 'gutter-text', 'activeline(?![\\w-])'
 ]
 

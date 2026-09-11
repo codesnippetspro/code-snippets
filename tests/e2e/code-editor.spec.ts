@@ -86,6 +86,15 @@ test.describe('Code editor', () => {
 		await expect(editor.locator('.cm-variable-2', { hasText: '$greeting' })).toBeVisible()
 	})
 
+	test('colours fold markers so they stay visible on dark themes', async ({ page }) => {
+		await setEditorSetting('theme', 'dracula')
+		const editor = await openNewSnippet(page)
+		await pasteIntoEditor(page, editor, 'if ( true ) {\n\treturn;\n}')
+
+		const foldMarker = editor.locator('.cm-foldGutter .cm-gutterElement', { hasText: /\S/ }).first()
+		await expect(foldMarker).toHaveCSS('color', 'rgb(153, 153, 153)')
+	})
+
 	test('reports PHP errors in the lint gutter', async ({ page }) => {
 		const editor = await openNewSnippet(page)
 		await pasteIntoEditor(page, editor, 'function example() {}\nfunction example() {}')

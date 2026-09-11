@@ -25,6 +25,13 @@
 		color: #666;
 	}
 
+	// Themes that colour their fold markers override this, which is the colour
+	// CodeMirror 5 gave them by default. Many dark themes set the gutter text to
+	// the gutter background, relying on it.
+	.cm-foldGutter .cm-gutterElement {
+		color: #999;
+	}
+
 	.cm-matchingBracket {
 		background: rgb(255 150 0 / 30%);
 		color: inherit;
