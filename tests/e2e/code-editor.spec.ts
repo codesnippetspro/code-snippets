@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { CODE_EDITOR_SELECTOR, pasteIntoEditor, readEditorValue, typeIntoEditor } from './helpers/codeEditor'
 import { URLS } from './helpers/constants'
-import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper, escapeRegExp } from './helpers/SnippetsTestHelper'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
@@ -23,7 +23,7 @@ const openNewSnippet = async (page: Page) => {
 }
 
 const completionOption = (page: Page, label: string) =>
-	page.locator('.cm-tooltip-autocomplete .cm-completionLabel', { hasText: new RegExp(`^${label.replace(/\$/g, '\\$')}$`) }).first()
+	page.locator('.cm-tooltip-autocomplete .cm-completionLabel', { hasText: new RegExp(`^${escapeRegExp(label)}$`) }).first()
 
 // The completion list ignores Enter for a moment after it opens, so that a
 // keystroke meant as a new line is not taken as accepting the completion.
@@ -37,7 +37,7 @@ const acceptCompletion = async (page: Page, label: string): Promise<void> => {
 
 const selectType = async (page: Page, label: string): Promise<void> => {
 	await page.locator('.snippet-type-container .code-snippets-select').click()
-	await page.getByRole('listbox').getByRole('option', { name: new RegExp(label, 'i') }).click()
+	await page.getByRole('listbox').getByRole('option', { name: new RegExp(escapeRegExp(label), 'i') }).click()
 }
 
 test.describe('Code editor', () => {

@@ -4,7 +4,7 @@ import { BUTTONS, MESSAGES, SELECTORS, SNIPPET_LOCATIONS, SNIPPET_TYPES, TIMEOUT
 import { wpCli } from './wpCli'
 import type { Page } from '@playwright/test'
 
-const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+export const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 const RANDOM_RADIX = 36
 const RANDOM_SLICE_START = 2
