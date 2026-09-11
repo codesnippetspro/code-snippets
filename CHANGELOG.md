@@ -8,6 +8,8 @@
 * Cloud Library demo: a guided, scripted walkthrough of the Pro Cloud Library, showing how a cloud snippet is previewed, downloaded inactive, and then kept in sync. Runs entirely inside the plugin — the snippets shown are examples and nothing is downloaded.
 * "New" badges on the AI Agent, Blueprints, and Cloud Library toolbar tabs, which soften once each demo walkthrough has been watched.
 * CSS and JavaScript snippets are checked for syntax errors as you type.
+* Autocompletion for PHP in the code editor, covering keywords, the snippet's own variables and functions, and WordPress and PHP functions with their parameters, a summary and a link to their documentation.
+* Browser globals such as `document` and `window` are suggested while typing JavaScript.
 
 ### Changed
 * The code editor now uses CodeMirror 6, bundled with the plugin rather than loaded from WordPress. Existing editor settings and themes carry over.
