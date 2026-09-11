@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { readEditorValue } from './helpers/codeEditor'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS, TIMEOUTS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
@@ -9,10 +10,9 @@ const MAXIMUM_BADGE_ALIGNMENT_OFFSET = 4
 const PREVIEW_VIEWPORT_WIDTHS = [1280, 640]
 const CONTROL_HEIGHT = 38
 
-// Disabling the admin's "Syntax Highlighting" preference makes
-// wp_enqueue_code_editor() a no-op, so window.wp.codeEditor is undefined when
-// the preview modal opens. The modal must fall back to the read-only textarea
-// instead of throwing.
+// Disabling the admin's "Syntax Highlighting" preference turns the code editor
+// off, so the preview modal must fall back to a read-only textarea instead of
+// throwing.
 const setSyntaxHighlighting = (enabled: boolean): Promise<string> => {
 	const value = enabled ? "'true'" : "'false'"
 	const php = `
@@ -41,32 +41,23 @@ test.describe('Code Snippets Preview Modal', () => {
 		await row.hover()
 		await row.locator(SELECTORS.PREVIEW_ACTION).first().click()
 
-		const editor = page.locator('.code-snippets-preview-modal .CodeMirror')
+		const editor = page.locator('.code-snippets-preview-modal .cm-editor')
 		await expect(editor).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 		return editor
 	}
 	const focusPreviewEditor = async (page: Page, editor: Locator): Promise<void> => {
 		for (let attempt = 0; attempt < MAXIMUM_FOCUS_ATTEMPTS; attempt++) {
-			if (await editor.evaluate(element => element.classList.contains('CodeMirror-focused'))) {
+			if (await editor.evaluate(element => element.contains(document.activeElement))) {
 				break
 			}
 
 			await page.keyboard.press('Tab')
 		}
 
-		await expect(editor).toHaveClass(/CodeMirror-focused/)
+		await expect(editor).toHaveClass(/cm-focused/)
 	}
-	// The CodeMirror input differs by inputStyle ('textarea' or 'contenteditable'
-	// depending on the WordPress version), so read the document and selection
-	// through the editor instance instead of locating the input element.
-	const readPreviewEditor = (editor: Locator, method: 'getSelection' | 'getValue'): Promise<string> =>
-		editor.evaluate((element, editorMethod) => {
-			const codeMirror = (<HTMLElement & {
-				CodeMirror?: Partial<Record<'getSelection' | 'getValue', () => string>>
-			}>element).CodeMirror
-
-			return codeMirror?.[editorMethod]?.() ?? ''
-		}, method)
+	const readPreviewSelection = (page: Page): Promise<string> =>
+		page.evaluate(() => window.getSelection()?.toString() ?? '')
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
@@ -116,13 +107,13 @@ test.describe('Code Snippets Preview Modal', () => {
 
 	test('Preview code can be selected with the keyboard without being changed', async ({ page }) => {
 		const editor = await openPreviewEditor(page)
-		const initialValue = await readPreviewEditor(editor, 'getValue')
+		const initialValue = await readEditorValue(editor)
 		expect(initialValue).not.toBe('')
 		await focusPreviewEditor(page, editor)
 		await page.keyboard.press('Shift+ArrowRight')
 
-		await expect.poll(() => readPreviewEditor(editor, 'getSelection')).not.toBe('')
-		await expect.poll(() => readPreviewEditor(editor, 'getValue')).toBe(initialValue)
+		await expect.poll(() => readPreviewSelection(page)).not.toBe('')
+		await expect.poll(() => readEditorValue(editor)).toBe(initialValue)
 	})
 
 	test('Preview editor exposes its accessible label', async ({ page }) => {

@@ -3,10 +3,11 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { isLicensed } from '../../../utils/screen'
 import { isProSnippet } from '../../../utils/snippets/snippets'
+import { replaceEditorContent } from '../../../editor/snippetEditor'
+import type { EditorView } from '@codemirror/view'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { ScreenNotice } from '../../../types/ScreenNotice'
 import type { Snippet } from '../../../types/Snippet'
-import type { CodeEditorInstance } from '../../../types/vendor/WordPressCodeEditor'
 
 export interface SnippetFormContext {
 	snippet: Snippet
@@ -19,9 +20,9 @@ export interface SnippetFormContext {
 	setIsWorking: Dispatch<SetStateAction<boolean>>
 	currentNotice: ScreenNotice | undefined
 	setCurrentNotice: Dispatch<SetStateAction<ScreenNotice | undefined>>
-	codeEditorInstance: CodeEditorInstance | undefined
+	editorView: EditorView | undefined
 	handleRequestError: (error: unknown, message?: string) => void
-	setCodeEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
+	setEditorView: Dispatch<SetStateAction<EditorView | undefined>>
 }
 
 const [Context, useSnippetForm] = createContextHook<SnippetFormContext>('useSnippetForm')
@@ -56,7 +57,7 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 	const [savedSnippet, setSavedSnippet] = useState<Snippet>(initialValue)
 	const [isWorking, setIsWorking] = useState(false)
 	const [currentNotice, setCurrentNotice] = useState<ScreenNotice>()
-	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
+	const [editorView, setEditorView] = useState<EditorView>()
 
 	const isReadOnly = useMemo(
 		() => snippet.locked || !isLicensed() && isProSnippet({ scope: snippet.scope }),
@@ -80,11 +81,11 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 	const updateSnippet: Dispatch<SetStateAction<Snippet>> = useCallback((value: SetStateAction<Snippet>) => {
 		setSnippet(previous => {
 			const updated = 'object' === typeof value ? value : value(previous)
-			codeEditorInstance?.codemirror.setValue(updated.code)
+			replaceEditorContent(editorView, updated.code)
 			window.tinymce?.activeEditor.setContent(updated.desc)
 			return updated
 		})
-	}, [codeEditorInstance?.codemirror])
+	}, [editorView])
 
 	const value: SnippetFormContext = {
 		snippet,
@@ -97,9 +98,9 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		updateSnippet,
 		currentNotice,
 		setCurrentNotice,
-		codeEditorInstance,
+		editorView,
 		handleRequestError,
-		setCodeEditorInstance
+		setEditorView
 	}
 
 	return <Context.Provider value={value}>{children}</Context.Provider>

@@ -1,11 +1,10 @@
 import { expect } from '@playwright/test'
+import { CODE_EDITOR_SELECTOR, pasteIntoEditor, readEditorValue } from './codeEditor'
 import { BUTTONS, MESSAGES, SELECTORS, SNIPPET_LOCATIONS, SNIPPET_TYPES, TIMEOUTS, URLS } from './constants'
 import { wpCli } from './wpCli'
 import type { Page } from '@playwright/test'
 
-const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-
-const META_OR_CONTROL_A = 'darwin' === process.platform ? 'Meta+A' : 'Control+A'
+export const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 const RANDOM_RADIX = 36
 const RANDOM_SLICE_START = 2
@@ -179,43 +178,11 @@ export class SnippetsTestHelper {
 		throw new Error(`Failed to click button: ${name}`)
 	}
 
-	private async setCodeMirrorValue(value: string): Promise<void> {
-		await this.page.locator('.CodeMirror').first().waitFor({ state: 'visible', timeout: TIMEOUTS.DEFAULT })
-
-		const didSetViaApi = await this.page
-			.evaluate(newValue => {
-				const wrapper = document.querySelector<HTMLElement>('.CodeMirror')
-				const cm = (<{ CodeMirror?: unknown }><unknown>wrapper).CodeMirror
-
-				if (!cm || 'object' !== typeof cm) {
-					return false
-				}
-
-				const { setValue, refresh } = <{ setValue?: unknown; refresh?: unknown }>cm
-
-				if ('function' !== typeof setValue) {
-					return false
-				}
-
-				setValue.call(cm, newValue)
-
-				if ('function' === typeof refresh) {
-					refresh.call(cm)
-				}
-
-				return true
-			}, value)
-			.catch(() => false)
-
-		if (didSetViaApi) {
-			return
-		}
-
-		const editor = this.page.locator('.CodeMirror').first()
+	private async setEditorValue(value: string): Promise<void> {
+		const editor = this.page.locator(CODE_EDITOR_SELECTOR).first()
 		await expect(editor).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-		await editor.click()
-		await this.page.keyboard.press(META_OR_CONTROL_A)
-		await this.page.keyboard.type(value)
+		await pasteIntoEditor(this.page, editor, value)
+		await expect.poll(() => readEditorValue(editor)).toBe(value)
 	}
 
 	private async selectSnippetLocation(location: keyof typeof SNIPPET_LOCATIONS): Promise<void> {
@@ -296,8 +263,7 @@ export class SnippetsTestHelper {
 			await listbox.getByRole('option', { name: new RegExp(escapeRegExp(optionLabel), 'i') }).click()
 		}
 
-		await this.page.waitForSelector(SELECTORS.CODE_MIRROR_TEXTAREA)
-		await this.setCodeMirrorValue(options.code)
+		await this.setEditorValue(options.code)
 
 		if (options.location) {
 			await this.selectSnippetLocation(options.location)

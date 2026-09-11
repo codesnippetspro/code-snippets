@@ -31,14 +31,14 @@
  */
 
 import { Engine } from 'php-parser'
-import CodeMirror from 'codemirror'
 import type { Block, Location, Node } from 'php-parser'
 
+/** A problem found in the code, located by character offsets. */
 export interface Annotation {
 	message: string
-	severity: string
-	from: CodeMirror.Position
-	to: CodeMirror.Position
+	severity: 'error' | 'warning'
+	from: number
+	to: number
 }
 
 export interface Identifier extends Node {
@@ -155,16 +155,11 @@ export class Linter {
 	 * @param location
 	 * @param severity
 	 */
-	annotate(message: string, location: Location | null, severity = 'error') {
-		const [start, end] = location
-			? location.end.offset < location.start.offset ? [location.end, location.start] : [location.start, location.end]
-			: [{ line: 0, column: 0 }, { line: 0, column: 0 }]
+	annotate(message: string, location: Location | null, severity: Annotation['severity'] = 'error') {
+		const [from, to] = location
+			? [location.start.offset, location.end.offset].sort((a, b) => a - b)
+			: [0, 0]
 
-		this.annotations.push({
-			message,
-			severity,
-			from: CodeMirror.Pos(start.line - 1, start.column),
-			to: CodeMirror.Pos(end.line - 1, end.column)
-		})
+		this.annotations.push({ message, severity, from, to })
 	}
 }

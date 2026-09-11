@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.1.0] (UPCOMING)
+
+### Added
+* CSS and JavaScript snippets are checked for syntax errors as you type.
+* Autocompletion for PHP in the code editor, covering keywords, the snippet's own variables and functions, and WordPress and PHP functions with their parameters, a summary and a link to their documentation.
+* Browser globals such as `document` and `window` are suggested while typing JavaScript.
+* Templates for common WordPress code, such as hooking into an action or filter, registering a shortcode and enqueueing a stylesheet, offered in PHP autocompletion.
+* Indentation Guides editor setting, on by default, showing a vertical guide for each level of indentation.
+* Highlight Trailing Spaces editor setting, off by default, marking spaces and tabs left at the end of a line.
+
+### Changed
+* The code editor now uses CodeMirror 6, bundled with the plugin rather than loaded from WordPress. Existing editor settings and themes carry over.
+* The editor's find and replace panel is now a single panel at the top of the editor, and its labels can be translated.
+* The keyboard shortcut list in the editor now reflects CodeMirror 6 shortcuts. Shift+Tab outdents the current line or selection.
+* With Indent With Tabs enabled, each indentation level is one tab.
+* The Sublime Text keymap now covers the most-used Sublime Text shortcuts, such as selecting, deleting, duplicating and moving lines, and selecting the next occurrence. Less common ones, such as joining lines and selecting between brackets, are no longer available.
+* CSS snippets no longer show CSSLint style warnings; only syntax errors are reported.
+* Code previews on the snippets list load the code editor only when a preview is opened.
+* Custom editor themes added through the `code_snippets_codemirror_atts` filter keep their syntax colours, but rules for the editor background, gutters, cursor, selection and active line must use CodeMirror 6 class names such as `.cm-editor`, `.cm-gutters` and `.cm-activeLine`.
+* The `code_snippets_codemirror_atts` filter only applies the editor settings' own options; options for the WordPress code editor, such as `mode`, `gutters` and `extraKeys`, are ignored. Plugin screens no longer create `wp.codeEditor` instances or `.CodeMirror` elements.
+
 ## [4.0.0] (UPCOMING)
 
 ### Added

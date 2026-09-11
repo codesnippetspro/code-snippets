@@ -47,8 +47,6 @@ class Edit_Menu extends Admin_Menu {
 			_x( 'Edit Snippet', 'menu label', 'code-snippets' ),
 			__( 'Edit Snippet', 'code-snippets' )
 		);
-
-		$this->remove_debug_bar_codemirror();
 	}
 
 	/**
@@ -260,15 +258,12 @@ class Edit_Menu extends Admin_Menu {
 		$tags_enabled = $settings['general']['enable_tags'];
 		$desc_enabled = $settings['general']['enable_description'];
 
-		enqueue_code_editor( $this->snippet->type );
+		enqueue_code_editor();
 
 		wp_enqueue_style(
 			self::CSS_HANDLE,
 			plugins_url( 'dist/edit.css', PLUGIN_FILE ),
-			[
-				'code-editor',
-				'wp-components',
-			],
+			[ 'wp-components' ],
 			PLUGIN_VERSION
 		);
 
@@ -295,7 +290,6 @@ class Edit_Menu extends Admin_Menu {
 			[
 				'snippet'           => $this->snippet->get_fields(),
 				'activateByDefault' => get_setting( 'general', 'activate_by_default' ),
-				'editorTheme'       => get_setting( 'editor', 'theme' ),
 				'enableDownloads'   => apply_filters( 'code_snippets/enable_downloads', true ),
 				'enableDescription' => $desc_enabled,
 				'tagOptions'        => apply_filters(
@@ -311,24 +305,5 @@ class Edit_Menu extends Admin_Menu {
 				],
 			]
 		);
-	}
-
-	/**
-	 * Remove the old CodeMirror version used by the Debug Bar Console plugin that is messing up the snippet editor.
-	 */
-	public function remove_debug_bar_codemirror() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
-
-		// Try to discern if we are on the single snippet page as good as we can at this early time.
-		$is_codemirror_page =
-			is_admin() && 'admin.php' === $GLOBALS['pagenow'] && $current_page && (
-				code_snippets()->get_menu_slug( 'edit' ) === $current_page ||
-				code_snippets()->get_menu_slug( 'settings' ) === $current_page
-			);
-
-		if ( $is_codemirror_page ) {
-			remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
-		}
 	}
 }

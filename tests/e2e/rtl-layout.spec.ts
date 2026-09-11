@@ -6,7 +6,7 @@ import { URLS } from './helpers/constants'
 // control pushed past the page edge or a row that no longer fits, so every
 // screen is checked for those rather than for how it looks.
 const SCREENS: { name: string; url: string; ready: string }[] = [
-	{ name: 'Add Snippet', url: URLS.ADD_SNIPPET_ADMIN, ready: '.CodeMirror' },
+	{ name: 'Add Snippet', url: URLS.ADD_SNIPPET_ADMIN, ready: '.cm-editor' },
 	{ name: 'Manage Snippets', url: URLS.SNIPPETS_ADMIN, ready: '.snippet-view-toggle' },
 	{ name: 'Import', url: URLS.IMPORT_ADMIN, ready: '#wpbody-content' },
 	{ name: 'Settings (editing tab)', url: `${URLS.SETTINGS_ADMIN}&section=editing`, ready: '#settings-sections-tabs' },

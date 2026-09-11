@@ -1,4 +1,4 @@
-import React, { useEffect, useId } from 'react'
+import React, { useId } from 'react'
 import classnames from 'classnames'
 import { __, _x } from '@wordpress/i18n'
 import Select from 'react-select'
@@ -9,19 +9,11 @@ import { SNIPPET_TYPE_LABELS, getSnippetType, isProType } from '../../../../util
 import { Badge } from '../../../common/Badge'
 import type { FormatOptionLabelContext, StylesConfig } from 'react-select'
 import type { Dispatch, SetStateAction } from 'react'
-import type { SnippetCodeType, SnippetType } from '../../../../types/Snippet'
+import type { SnippetType } from '../../../../types/Snippet'
 import type { SelectOption } from '../../../../types/SelectOption'
-import type { EditorConfiguration } from 'codemirror'
 
 export interface SnippetTypeInputProps {
 	setIsUpgradeDialogOpen: Dispatch<SetStateAction<boolean>>
-}
-
-const EDITOR_MODES: Record<SnippetCodeType, string> = {
-	css: 'text/css',
-	js: 'javascript',
-	php: 'text/x-php',
-	html: 'application/x-httpd-php'
 }
 
 const OPTIONS: SelectOption<SnippetType>[] =
@@ -60,25 +52,9 @@ const SnippetTypeOption: React.FC<SnippetTypeOptionProps> = ({
 	</div>
 
 export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgradeDialogOpen }) => {
-	const { snippet, setSnippet, codeEditorInstance, isReadOnly } = useSnippetForm()
+	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
 	const snippetType = getSnippetType(snippet)
 	const snippetTypeId = useId()
-
-	useEffect(() => {
-		if (codeEditorInstance) {
-			const codeEditor = codeEditorInstance.codemirror
-
-			codeEditor.setOption(
-				'lint' as keyof EditorConfiguration,
-				'php' === snippetType || 'css' === snippetType
-			)
-
-			if ('cond' !== snippetType && EDITOR_MODES[snippetType]) {
-				codeEditor.setOption('mode', EDITOR_MODES[snippetType])
-				codeEditor.refresh()
-			}
-		}
-	}, [codeEditorInstance, snippetType])
 
 	return (
 		<div className="snippet-type-container">

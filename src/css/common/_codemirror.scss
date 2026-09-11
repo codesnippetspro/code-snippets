@@ -1,113 +1,119 @@
-.CodeMirror, .snippet-condition-editor-container {
+// CodeMirror injects its base theme after the page's stylesheets, so rules
+// here are qualified with the plugin's own editor class to take precedence.
+.cs-code-editor.cm-editor {
+	border: 1px solid var(--cs-color-border);
+	border-radius: 5px;
+	background-color: #fff;
+	color: #000;
+
+	// Without wrapping, a long line would otherwise widen the editor, and the
+	// page layout around it, to fit; containment keeps the scrolling inside.
+	contain: inline-size;
+
+	&.cm-focused {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: -1px;
+	}
+
+	.cm-scroller {
+		font-family: monospace;
+		line-height: 1.5;
+	}
+
+	.cm-gutters {
+		border-start-start-radius: 5px;
+		border-end-start-radius: 5px;
+	}
+
+	.cm-lineNumbers .cm-gutterElement {
+		color: #666;
+	}
+
+	// Themes that colour their fold markers override this, which is the colour
+	// CodeMirror 5 gave them by default. Many dark themes set the gutter text to
+	// the gutter background, relying on it.
+	.cm-foldGutter .cm-gutterElement {
+		color: #999;
+	}
+
+	.cm-matchingBracket {
+		background: rgb(255 150 0 / 30%);
+		color: inherit;
+	}
+
+	.cm-diagnostic-error {
+		border-inline-start-color: var(--cs-color-error);
+	}
+
+	.cm-diagnostic-warning {
+		border-inline-start-color: var(--cs-color-warning);
+	}
+
+	.cm-panels {
+		border-color: var(--cs-color-border);
+	}
+
+	.cm-foldPlaceholder {
+		font-weight: bold;
+	}
+
+	.cs-completion-info {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		max-inline-size: 420px;
+		white-space: normal;
+
+		code {
+			padding: 0;
+			background: none;
+			font-size: inherit;
+			overflow-wrap: anywhere;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
+}
+
+.snippet-condition-editor-container {
 	border: 1px solid #c3c4c7;
 	border-radius: 5px;
 	block-size: auto !important;
 	background-color: #fff;
 }
 
-.CodeMirror-code {
-	outline: none;
+// Token colours for the default theme. Other themes are CodeMirror 5 theme
+// stylesheets, converted at build time, which style these same classes.
+.cm-s-default {
+	.cm-header { color: blue; }
+	.cm-quote { color: #090; }
+	.cm-keyword { color: #708; }
+	.cm-atom { color: #219; }
+	.cm-number { color: #164; }
+	.cm-def { color: #00f; }
+	.cm-variable-2 { color: #05a; }
+	.cm-variable-3, .cm-type { color: #085; }
+	.cm-comment { color: #a50; }
+	.cm-string { color: #a11; }
+	.cm-string-2 { color: #f50; }
+	.cm-meta { color: #555; }
+	.cm-qualifier { color: #555; }
+	.cm-builtin { color: #30a; }
+	.cm-bracket { color: #997; }
+	.cm-tag { color: #170; }
+	.cm-attribute { color: #00c; }
+	.cm-hr { color: #999; }
+	.cm-link { color: #00c; }
+	.cm-error { color: #f00; }
 }
 
-.CodeMirror-focused .cm-matchhighlight {
-	color: white !important;
-	outline: 1px solid green;
-}
-
-/* Add a bit of extra space above the editor */
-.CodeMirror-sizer {
-	&::before, &::after {
-		display: block;
-		color: #bbb;
-	}
-
-	&::before {
-		content: '';
-		padding-block-end: 5px;
-	}
-}
-
-/* Fix cursor color with rubyblue theme (see https://goo.gl/3HDgRm */
-.cm-s-rubyblue .CodeMirror-cursor {
-	border-inline-start: 1px solid white !important;
-}
-
-[class*='CodeMirror-lint-marker'], [class*='CodeMirror-lint-message'], .CodeMirror-lint-marker-multiple {
-	background-image: none;
-}
-
-.CodeMirror-lint-marker-error, .CodeMirror-lint-marker-warning {
-	cursor: help;
-}
-
-.CodeMirror-lint-marker-multiple {
-	position: absolute;
-	inset-block-start: 0;
-}
-
-[class*='CodeMirror-lint-marker']::before {
-	font: normal 18px/1 dashicons;
-	position: relative;
-	inset-block-start: -2px;
-}
-
-[class*='CodeMirror-lint-message']::before {
-	font: normal 16px/1 dashicons;
-	position: absolute;
-	inset-inline-start: 16px;
-}
-
-.CodeMirror-lint-message-error,
-.CodeMirror-lint-message-warning {
-	box-shadow: 0 1px 1px 0 rgb(0 0 0 / 10%);
-	margin-block: 5px 2px;
-	padding-block: 3px;
-	margin-inline: 0;
-	padding-inline: 28px 12px;
-}
-
-.CodeMirror-lint-message-warning {
-	background-color: #fff8e5;
-	border-inline-start: 4px solid #ffb900;
-}
-
-.CodeMirror-lint-marker-warning::before, .CodeMirror-lint-message-warning::before {
-	content: '\f534';
-	color: #f6a306;
-}
-
-.CodeMirror-lint-message-error {
-	background-color: #fbeaea;
-	border-inline-start: 4px solid #dc3232;
-}
-
-.CodeMirror-lint-marker-error::before, .CodeMirror-lint-message-error::before {
-	content: '\f153';
-	color: #dc3232;
-}
-
-.CodeMirror-lint-tooltip {
-	background: none;
-	border: none;
-	border-radius: 0;
-	direction: ltr;
-}
-
-.CodeMirror .CodeMirror-matchingbracket {
-	background: rgb(255 150 0 / 30%);
-	color: inherit;
-}
-
-.CodeMirror .CodeMirror-linenumber {
-	color: #666;
-}
-
-.CodeMirror .codemirror-colorview {
-	border: 0;
-}
-
-.CodeMirror-foldmarker {
-	color: inherit;
-	margin-inline: 0.25em;
-	font-weight: bold;
+.cm-editor {
+	.cm-negative { color: #d44; }
+	.cm-positive { color: #292; }
+	.cm-header, .cm-strong { font-weight: bold; }
+	.cm-em { font-style: italic; }
+	.cm-link { text-decoration: underline; }
+	.cm-strikethrough { text-decoration: line-through; }
 }

@@ -108,6 +108,8 @@ class Settings_Fields {
 				'auto_close_brackets'         => true,
 				'highlight_selection_matches' => true,
 				'highlight_active_line'       => true,
+				'indentation_markers'         => true,
+				'highlight_trailing_spaces'   => false,
 				'keymap'                      => 'default',
 				'theme'                       => 'default',
 			],
@@ -309,6 +311,18 @@ class Settings_Fields {
 				'label'      => __( 'Highlight the line that is currently being edited.', 'code-snippets' ),
 				'type'       => 'checkbox',
 				'codemirror' => 'styleActiveLine',
+			],
+			'indentation_markers'         => [
+				'name'       => __( 'Indentation Guides', 'code-snippets' ),
+				'label'      => __( 'Show vertical guides marking each level of indentation.', 'code-snippets' ),
+				'type'       => 'checkbox',
+				'codemirror' => 'indentationMarkers',
+			],
+			'highlight_trailing_spaces'   => [
+				'name'       => __( 'Highlight Trailing Spaces', 'code-snippets' ),
+				'label'      => __( 'Mark spaces and tabs left at the end of a line.', 'code-snippets' ),
+				'type'       => 'checkbox',
+				'codemirror' => 'highlightTrailingWhitespace',
 			],
 			'keymap'                      => [
 				'name'       => __( 'Keymap', 'code-snippets' ),

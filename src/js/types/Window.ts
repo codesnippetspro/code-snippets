@@ -6,14 +6,13 @@ import type { FeedbackConfig } from './Feedback'
 import type { InsightsChartViews, InsightsSummary } from './Insights'
 import type { Snippet } from './Snippet'
 import type { SnippetView } from './SnippetView'
-import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './vendor/WordPressCodeEditor'
+import type { EditorConfig, EditorOption } from './EditorSettings'
 import type { WordPressEditor } from './vendor/WordPressEditor'
 
 declare global {
 	interface Window {
 		readonly wp: {
 			readonly editor?: WordPressEditor
-			readonly codeEditor?: WordPressCodeEditor
 			readonly hooks?: {
 				addAction: (
 					hookName: string,
@@ -27,8 +26,8 @@ declare global {
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
 		readonly wpActiveEditor?: string
-		code_snippets_editor_preview?: CodeEditorInstance
 		readonly code_snippets_editor_settings: EditorOption[]
+		readonly CODE_SNIPPETS_EDITOR?: EditorConfig
 		CODE_SNIPPETS_PRISM?: typeof Prism
 		readonly CODE_SNIPPETS?: {
 			debug: boolean
@@ -90,7 +89,6 @@ declare global {
 			bulkDownloadNonce: string
 			runOnceNonce?: string
 			supportsZipDownloads: boolean
-			editorTheme: string
 			aiDemo?: {
 				siteName: string
 			}
@@ -102,7 +100,6 @@ declare global {
 			enableDownloads: boolean
 			activateByDefault: boolean
 			enableDescription: boolean
-			editorTheme: string
 			tagOptions: {
 				enabled: boolean
 				allowSpaces: boolean

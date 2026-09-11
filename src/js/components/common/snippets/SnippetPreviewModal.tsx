@@ -1,6 +1,7 @@
 import { Modal } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useRef, useState } from 'react'
+import { getEditorPhrases } from '../../../editor/phrases'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
@@ -11,31 +12,75 @@ import { Button } from '../Button'
 import { CloudSnippetDownloadButton } from '../cloud/CloudSnippetDownloadButton'
 import { ConfirmDeleteDialog, useDeleteSnippet } from './ConfirmDeleteDialog'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
-import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
+import type { EditorView } from '@codemirror/view'
 import type { ReactNode } from 'react'
-import type { Snippet, SnippetType } from '../../../types/Snippet'
-
-const EDITOR_MODES: Record<string, string> = {
-	css: 'text/css',
-	js: 'javascript',
-	php: 'text/x-php',
-	html: 'application/x-httpd-php'
-}
+import type { Snippet, SnippetCodeType, SnippetType } from '../../../types/Snippet'
 
 const getClipboard = (): Clipboard | undefined =>
 	window.isSecureContext ? navigator.clipboard as Clipboard | undefined : undefined
 
-const getPreviewEditorSettings = (type: string): EditorConfiguration => ({
-	extraKeys: {
-		'Tab': false,
-		'Shift-Tab': false
-	},
-	readOnly: true,
-	lineNumbers: true,
-	theme: window.CODE_SNIPPETS_MANAGE?.editorTheme ?? 'default',
-	mode: EDITOR_MODES[type] ?? EDITOR_MODES.php,
-	screenReaderLabel: __('Snippet code preview', 'code-snippets')
-})
+/**
+ * PHP code is previewed with its opening tag, so it is parsed as a template
+ * rather than as the bare code a PHP snippet's editor holds.
+ */
+const getPreviewLanguage = (type: SnippetType): SnippetCodeType =>
+	'css' === type || 'js' === type ? type : 'html'
+
+const getPreviewCode = (type: SnippetType, code: string): string =>
+	`${'php' === type ? '<?php\n\n' : ''}${code}`
+
+/**
+ * Show snippet code in a read-only editor. The editor is loaded when a preview
+ * is first opened, so the snippets list does not pay for it up front.
+ */
+const usePreviewEditor = (type: SnippetType, code: string) => {
+	const containerRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		const container = containerRef.current
+		const settings = window.CODE_SNIPPETS_EDITOR?.settings
+
+		if (!container || !settings) {
+			return undefined
+		}
+
+		let view: EditorView | undefined
+		let isCancelled = false
+
+		// The modal scales in as it opens. The editor measures itself against that
+		// scale, and a transform does not resize anything that would prompt it to
+		// measure again, so its cursor, selection and highlight layers would stay
+		// scaled once the animation ends.
+		const modalFrame = container.closest('.components-modal__frame')
+		const remeasure = () => view?.requestMeasure()
+		modalFrame?.addEventListener('animationend', remeasure)
+
+		import(/* webpackChunkName: "snippet-editor" */ '../../../editor/snippetEditor.js')
+			.then(({ createSnippetEditor }) => {
+				if (!isCancelled) {
+					view = createSnippetEditor({
+						parent: container,
+						doc: getPreviewCode(type, code),
+						snippetType: getPreviewLanguage(type),
+						settings: { ...settings, lineNumbers: true },
+						surface: 'preview',
+						readOnly: true,
+						phrases: getEditorPhrases(),
+						contentAttributes: { 'aria-label': __('Snippet code preview', 'code-snippets') }
+					})
+				}
+			})
+			.catch(handleUnknownError)
+
+		return () => {
+			isCancelled = true
+			modalFrame?.removeEventListener('animationend', remeasure)
+			view?.destroy()
+		}
+	}, [type, code])
+
+	return containerRef
+}
 
 /**
  * Tracks whether a footer action is in flight. The ref mirrors the state so
@@ -96,27 +141,8 @@ export interface PreviewModalProps {
 }
 
 export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, title, type, code, children }) => {
-	const textareaRef = useRef<HTMLTextAreaElement>(null)
-
-	useEffect(() => {
-		if (!textareaRef.current || !window.wp.codeEditor) {
-			return undefined
-		}
-
-		const instance = window.wp.codeEditor.initialize(
-			textareaRef.current,
-			{ codemirror: getPreviewEditorSettings(type) }
-		)
-
-		// CodeMirror hides the labeled source textarea and creates an unlabelled
-		// internal input. The screenReaderLabel option only exists from CodeMirror
-		// 5.59, while WordPress 5.5 ships 5.29, so label the input directly.
-		instance.codemirror.getInputField().setAttribute('aria-label', __('Snippet code preview', 'code-snippets'))
-
-		return () => {
-			(instance.codemirror as EditorFromTextArea).toTextArea()
-		}
-	}, [type])
+	const editorRef = usePreviewEditor(type, code)
+	const isEditorEnabled = window.CODE_SNIPPETS_EDITOR?.enabled ?? false
 
 	return (
 		<Modal
@@ -129,14 +155,15 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 				</div>
 			}
 		>
-			<div className="code-snippets-preview-modal__editor">
-				<textarea
-					ref={textareaRef}
-					readOnly
-					aria-label={__('Snippet code preview', 'code-snippets')}
-					defaultValue={`${'php' === type ? '<?php\n\n' : ''}${code}`}
-				/>
-			</div>
+			{isEditorEnabled
+				? <div className="code-snippets-preview-modal__editor" ref={editorRef} />
+				: <div className="code-snippets-preview-modal__editor">
+					<textarea
+						readOnly
+						aria-label={__('Snippet code preview', 'code-snippets')}
+						defaultValue={getPreviewCode(type, code)}
+					/>
+				</div>}
 			{children}
 		</Modal>
 	)
