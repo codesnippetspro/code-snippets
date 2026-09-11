@@ -1,12 +1,8 @@
 # Changelog
 
-## [4.0.0] (UPCOMING)
+## [4.1.0] (UPCOMING)
 
 ### Added
-* AI Agent demo: a guided, scripted walkthrough of the Pro AI Agent that plans, builds, and refines a welcome banner snippet named after your site. Runs entirely inside the plugin — no data leaves your site and no snippets are added to your library.
-* Blueprints demo: a guided, scripted walkthrough of Pro Blueprints that steps through the "Create a Shortcode" blueprint and confirms the snippet it would generate. Runs entirely inside the plugin — no code is generated and nothing is saved.
-* Cloud Library demo: a guided, scripted walkthrough of the Pro Cloud Library, showing how a cloud snippet is previewed, downloaded inactive, and then kept in sync. Runs entirely inside the plugin — the snippets shown are examples and nothing is downloaded.
-* "New" badges on the AI Agent, Blueprints, and Cloud Library toolbar tabs, which soften once each demo walkthrough has been watched.
 * CSS and JavaScript snippets are checked for syntax errors as you type.
 * Autocompletion for PHP in the code editor, covering keywords, the snippet's own variables and functions, and WordPress and PHP functions with their parameters, a summary and a link to their documentation.
 * Browser globals such as `document` and `window` are suggested while typing JavaScript.
@@ -24,6 +20,14 @@
 * Code previews on the snippets list load the code editor only when a preview is opened.
 * Custom editor themes added through the `code_snippets_codemirror_atts` filter keep their syntax colours, but rules for the editor background, gutters, cursor, selection and active line must use CodeMirror 6 class names such as `.cm-editor`, `.cm-gutters` and `.cm-activeLine`.
 * The `code_snippets_codemirror_atts` filter only applies the editor settings' own options; options for the WordPress code editor, such as `mode`, `gutters` and `extraKeys`, are ignored. Plugin screens no longer create `wp.codeEditor` instances or `.CodeMirror` elements.
+
+## [4.0.0] (UPCOMING)
+
+### Added
+* AI Agent demo: a guided, scripted walkthrough of the Pro AI Agent that plans, builds, and refines a welcome banner snippet named after your site. Runs entirely inside the plugin — no data leaves your site and no snippets are added to your library.
+* Blueprints demo: a guided, scripted walkthrough of Pro Blueprints that steps through the "Create a Shortcode" blueprint and confirms the snippet it would generate. Runs entirely inside the plugin — no code is generated and nothing is saved.
+* Cloud Library demo: a guided, scripted walkthrough of the Pro Cloud Library, showing how a cloud snippet is previewed, downloaded inactive, and then kept in sync. Runs entirely inside the plugin — the snippets shown are examples and nothing is downloaded.
+* "New" badges on the AI Agent, Blueprints, and Cloud Library toolbar tabs, which soften once each demo walkthrough has been watched.
 
 ## [3.10.2] (2026-09-01)
 
