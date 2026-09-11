@@ -47,7 +47,7 @@ test.describe('Code Snippets Preview Modal', () => {
 	}
 	const focusPreviewEditor = async (page: Page, editor: Locator): Promise<void> => {
 		for (let attempt = 0; attempt < MAXIMUM_FOCUS_ATTEMPTS; attempt++) {
-			if (await editor.evaluate(element => element.classList.contains('cm-focused'))) {
+			if (await editor.evaluate(element => element.contains(document.activeElement))) {
 				break
 			}
 
