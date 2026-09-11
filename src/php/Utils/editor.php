@@ -62,7 +62,21 @@ function get_code_editor_settings( array $extra_atts = [] ): array {
 		}
 	}
 
-	foreach ( [ 'indentWithTabs', 'lineWrapping', 'foldGutter', 'lineNumbers', 'autoCloseBrackets', 'highlightSelectionMatches', 'styleActiveLine', 'matchBrackets', 'lint' ] as $boolean_att ) {
+	$boolean_atts = [
+		'indentWithTabs',
+		'lineWrapping',
+		'foldGutter',
+		'lineNumbers',
+		'autoCloseBrackets',
+		'highlightSelectionMatches',
+		'styleActiveLine',
+		'indentationMarkers',
+		'highlightTrailingWhitespace',
+		'matchBrackets',
+		'lint',
+	];
+
+	foreach ( $boolean_atts as $boolean_att ) {
 		$atts[ $boolean_att ] = ! empty( $atts[ $boolean_att ] );
 	}
 

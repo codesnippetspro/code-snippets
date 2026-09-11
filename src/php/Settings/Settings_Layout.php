@@ -66,6 +66,8 @@ class Settings_Layout {
 				[ 'editor', 'auto_close_brackets' ],
 				[ 'editor', 'highlight_active_line' ],
 				[ 'editor', 'highlight_selection_matches' ],
+				[ 'editor', 'indentation_markers' ],
+				[ 'editor', 'highlight_trailing_spaces' ],
 			],
 			'running'   => [
 				[ 'general', 'enable_flat_files' ],

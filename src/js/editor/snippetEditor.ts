@@ -9,9 +9,11 @@ import {
 	dropCursor,
 	highlightActiveLineGutter,
 	highlightSpecialChars,
+	highlightTrailingWhitespace,
 	lineNumbers,
 	rectangularSelection
 } from '@codemirror/view'
+import { indentationMarkers } from '@replit/codemirror-indentation-markers'
 import { applyFilters } from '@wordpress/hooks'
 import { snippetCompletions } from './completions'
 import { keymapExtension, loadVimKeymap, saveKeymap } from './keymaps'
@@ -66,6 +68,17 @@ interface EditorConfigState {
 
 const DEFAULT_TAB_SIZE = 4
 
+/**
+ * Guide colours for light and dark themes, strong enough to see against a
+ * theme's background without competing with the code.
+ */
+const INDENTATION_MARKER_COLORS = {
+	light: '#dcdcde',
+	activeLight: '#a7aaad',
+	dark: '#4a4e57',
+	activeDark: '#7b808a'
+}
+
 const compartments = {
 	language: new Compartment(),
 	lint: new Compartment(),
@@ -94,6 +107,8 @@ const settingsExtensions = (settings: EditorSettings): Extension => [
 	settings.autoCloseBrackets ? closeBrackets() : [],
 	settings.highlightSelectionMatches ? highlightSelectionMatches() : [],
 	settings.styleActiveLine ? [activeLineBackground, highlightActiveLineGutter()] : [],
+	settings.indentationMarkers ? indentationMarkers({ colors: INDENTATION_MARKER_COLORS }) : [],
+	settings.highlightTrailingWhitespace ? highlightTrailingWhitespace() : [],
 	settings.matchBrackets ? bracketMatching() : []
 ]
 

@@ -64,6 +64,7 @@
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
     "@replit/codemirror-emacs": "^6.1.0",
+    "@replit/codemirror-indentation-markers": "^6.5.3",
     "@replit/codemirror-vim": "^6.4.0",
     "@wordpress/components": "^29.3.0",
     "@wordpress/date": "^5.43.0",

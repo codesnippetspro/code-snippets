@@ -13,6 +13,8 @@ export interface EditorSettings {
 	autoCloseBrackets: boolean
 	highlightSelectionMatches: boolean
 	styleActiveLine: boolean
+	indentationMarkers: boolean
+	highlightTrailingWhitespace: boolean
 	matchBrackets: boolean
 	lint: boolean
 	keyMap: string

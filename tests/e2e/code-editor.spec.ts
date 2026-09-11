@@ -169,6 +169,30 @@ test.describe('Code editor', () => {
 		await expect(foldMarker).toHaveCSS('color', 'rgb(153, 153, 153)')
 	})
 
+	test('shows indentation guides unless turned off', async ({ page }) => {
+		const code = 'if ( true ) {\n\tif ( false ) {\n\t\treturn;\n\t}\n}'
+
+		let editor = await openNewSnippet(page)
+		await pasteIntoEditor(page, editor, code)
+		await expect(editor.locator('.cm-indent-markers').first()).toBeAttached()
+
+		await setEditorSetting('indentation_markers', false)
+		editor = await openNewSnippet(page)
+		await pasteIntoEditor(page, editor, code)
+		await expect(editor.locator('.cm-indent-markers')).toHaveCount(0)
+	})
+
+	test('highlights trailing spaces when turned on', async ({ page }) => {
+		let editor = await openNewSnippet(page)
+		await pasteIntoEditor(page, editor, 'echo 1;   ')
+		await expect(editor.locator('.cm-trailingSpace')).toHaveCount(0)
+
+		await setEditorSetting('highlight_trailing_spaces', true)
+		editor = await openNewSnippet(page)
+		await pasteIntoEditor(page, editor, 'echo 1;   ')
+		await expect(editor.locator('.cm-trailingSpace')).toBeVisible()
+	})
+
 	test('wraps long lines in the snippet preview without scrolling sideways', async ({ page }) => {
 		const name = SnippetsTestHelper.makeUniqueSnippetName()
 		const longLine = `$message = '${'lorem ipsum dolor sit amet '.repeat(30)}';`

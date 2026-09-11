@@ -66,6 +66,8 @@ class Editor_Test extends UnitTestCase {
 		$this->assertTrue( $settings['matchBrackets'] );
 		$this->assertTrue( $settings['lint'] );
 		$this->assertSame( 'ltr', $settings['direction'] );
+		$this->assertTrue( $settings['indentationMarkers'] );
+		$this->assertFalse( $settings['highlightTrailingWhitespace'] );
 	}
 
 	/**
