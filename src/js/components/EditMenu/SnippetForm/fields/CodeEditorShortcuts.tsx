@@ -1,9 +1,8 @@
 import { __, _x } from '@wordpress/i18n'
-import { getKeyMap } from 'codemirror/src/input/keymap'
-import React, { Fragment, useMemo } from 'react'
-import { useSnippetForm } from '../WithSnippetFormContext'
+import React, { Fragment } from 'react'
+import { EDITOR_SHORTCUTS } from '../../../../editor/keymaps'
 import { isMacOS } from '../../../../utils/screen'
-import type { KeyMap } from 'codemirror'
+import type { EditorShortcutAction } from '../../../../editor/keymaps'
 
 const KEYBOARD_KEYS = {
 	'Fn': _x('Fn', 'keyboard key', 'code-snippets'),
@@ -43,8 +42,8 @@ const KEYBOARD_KEYS = {
 	'Y': _x('Y', 'keyboard key', 'code-snippets'),
 	'Z': _x('Z', 'keyboard key', 'code-snippets'),
 	'/': _x('/', 'keyboard key', 'code-snippets'),
-	'[': _x(']', 'keyboard key', 'code-snippets'),
-	']': _x(']', 'keyboard key', 'code-snippets')
+	'\\': _x('\\', 'keyboard key', 'code-snippets'),
+	'Space': _x('Space', 'keyboard key', 'code-snippets')
 }
 
 export const KEYBOARD_SYMBOLS: Partial<typeof KEYBOARD_KEYS> = {
@@ -59,19 +58,28 @@ export const KEYBOARD_SYMBOLS: Partial<typeof KEYBOARD_KEYS> = {
 	Right: '→'
 }
 
-const keyMapLabels = {
+const SHORTCUT_LABELS: Record<EditorShortcutAction, string> = {
 	saveChanges: __('Save changes', 'code-snippets'),
 	selectAll: __('Select all', 'code-snippets'),
-	find: __('Begin searching', 'code-snippets'),
+	find: __('Find and replace', 'code-snippets'),
 	findNext: __('Find next', 'code-snippets'),
 	findPrev: __('Find previous', 'code-snippets'),
-	replace: __('Replace', 'code-snippets'),
-	replaceAll: __('Replace all', 'code-snippets'),
-	findPersistent: __('Persistent search', 'code-snippets'),
+	gotoLine: __('Go to line', 'code-snippets'),
+	selectNextOccurrence: __('Select next occurrence', 'code-snippets'),
 	toggleComment: __('Toggle comment', 'code-snippets'),
 	swapLineUp: __('Swap line up', 'code-snippets'),
 	swapLineDown: __('Swap line down', 'code-snippets'),
-	autoIndent: __('Auto-indent current line or selection', 'code-snippets')
+	autoIndent: __('Auto-indent current line or selection', 'code-snippets'),
+	indentLess: __('Outdent current line or selection', 'code-snippets'),
+	autocomplete: __('Show completions', 'code-snippets')
+}
+
+const KEY_NAMES: Partial<Record<string, string>> = {
+	Mod: isMacOS() ? 'Cmd' : 'Ctrl',
+	ArrowUp: 'Up',
+	ArrowDown: 'Down',
+	ArrowLeft: 'Left',
+	ArrowRight: 'Right'
 }
 
 const KEY_ORDER: readonly (keyof typeof KEYBOARD_KEYS)[] = isMacOS()
@@ -83,22 +91,15 @@ const getKeyComparisonValue = (key: string): string =>
 		? String(KEY_ORDER.indexOf(key as keyof typeof KEYBOARD_KEYS))
 		: key
 
-const unpackKeyMap = (keyMap: KeyMap): Map<string, string[]> => {
-	const result = new Map<string, string[]>()
-
-	for (const [shortcut, action] of Object.entries(keyMap)) {
-		if ('string' === typeof action && keyMapLabels[action as keyof typeof keyMapLabels]) {
-			const keys = shortcut.split('-')
-
-			keys.sort((a, b) =>
-				getKeyComparisonValue(a).localeCompare(getKeyComparisonValue(b)))
-
-			result.set(action, keys)
-		}
-	}
-
-	return result
-}
+/**
+ * Split a CodeMirror key name, such as `Shift-Mod-G`, into the keys to press
+ * in the order the platform conventionally lists them.
+ */
+const parseShortcut = (shortcut: string): string[] =>
+	shortcut
+		.split(/-(?!$)/)
+		.map(key => KEY_NAMES[key] ?? key)
+		.sort((a, b) => getKeyComparisonValue(a).localeCompare(getKeyComparisonValue(b)))
 
 interface KeyboardShortcutMacProps {
 	keys: string[]
@@ -128,72 +129,32 @@ const KeyboardShortcutPC: React.FC<KeyboardShortcutPCProps> = ({ keys, keyLabels
 			</Fragment>)}
 	</span>
 
-const fallbackKeyMap: Partial<Record<`${string}-${string}`, keyof typeof keyMapLabels>> = {
-	'Ctrl-S': 'saveChanges',
-	'Shift-Tab': 'autoIndent'
-}
-
-const fallbackKeyMapMac: typeof fallbackKeyMap = {
-	'Cmd-S': 'saveChanges',
-	'Shift-Tab': 'autoIndent'
-}
-
 export interface CodeEditorShortcutsProps {
 	editorTheme: string
 }
 
-export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editorTheme }) => {
-	const { codeEditorInstance } = useSnippetForm()
+export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editorTheme }) =>
+	<div className="snippet-editor-help tooltip tooltip-inline tooltip-start">
+		<span className={`dashicons dashicons-editor-help cm-s-${editorTheme}`} aria-hidden="true"></span>
 
-	const shortcutKeys: Map<string, string[]> | undefined = useMemo(() => {
-		if (codeEditorInstance) {
-			const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys')
-			const keyMapName = codeEditorInstance.codemirror.getOption('keyMap')
+		<div className="tooltip-content">
+			<table>
+				<tbody>
+					{Object.entries(EDITOR_SHORTCUTS).map(([action, shortcut]) => {
+						const keys = parseShortcut(shortcut)
 
-			const combinedKeyMap: KeyMap = {
-				...isMacOS() ? fallbackKeyMapMac : fallbackKeyMap,
-				...keyMapName && getKeyMap(keyMapName),
-				...'object' === typeof extraKeys ? extraKeys : undefined
-			}
-
-			return unpackKeyMap(combinedKeyMap)
-		}
-
-		return undefined
-	},
-	[codeEditorInstance]
-	)
-
-	return shortcutKeys
-		? <div className="snippet-editor-help tooltip tooltip-inline tooltip-start">
-			<span className={`dashicons dashicons-editor-help cm-s-${editorTheme}`} aria-hidden="true"></span>
-
-			<div className="tooltip-content">
-				<table>
-					<tbody>
-						{Object.entries(keyMapLabels).map(([action, label]) => {
-							const keys = shortcutKeys.get(action)
-							return keys
-								? <tr key={action}>
-									<td>{label}</td>
-									<td>
-										{isMacOS()
-											? <KeyboardShortcutMac
-												keys={keys}
-												keyLabels={KEYBOARD_KEYS}
-												keySymbols={KEYBOARD_SYMBOLS}
-											/>
-											: <KeyboardShortcutPC
-												keys={keys}
-												keyLabels={KEYBOARD_KEYS}
-											/>}
-									</td>
-								</tr>
-								: null
-						})}
-					</tbody>
-				</table>
-			</div>
+						return (
+							<tr key={action}>
+								<td>{SHORTCUT_LABELS[action as EditorShortcutAction]}</td>
+								<td>
+									{isMacOS()
+										? <KeyboardShortcutMac keys={keys} keyLabels={KEYBOARD_KEYS} keySymbols={KEYBOARD_SYMBOLS} />
+										: <KeyboardShortcutPC keys={keys} keyLabels={KEYBOARD_KEYS} />}
+								</td>
+							</tr>
+						)
+					})}
+				</tbody>
+			</table>
 		</div>
-		: null
-}
+	</div>

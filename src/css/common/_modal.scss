@@ -74,7 +74,7 @@
 		margin-inline-end: 8px;
 	}
 
-	// Header and footer stay pinned; the CodeMirror editor is the only
+	// Header and footer stay pinned; the code editor is the only
 	// scroll region, scrolling long code both vertically and horizontally.
 	.components-modal__content {
 		display: flex;
@@ -99,7 +99,7 @@
 		flex: 1;
 		min-block-size: 0;
 
-		.CodeMirror {
+		.cm-editor {
 			flex: 1;
 			min-block-size: 0;
 			block-size: 100%;

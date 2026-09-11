@@ -1,39 +1,22 @@
 import { expect, test } from '@playwright/test'
+import { CODE_EDITOR_SELECTOR, pasteIntoEditor, readEditorValue, typeIntoEditor } from './helpers/codeEditor'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import type { Page } from '@playwright/test'
 
-interface CodeMirrorHost {
-	CodeMirror: {
-		setValue: (value: string) => void
-		getValue: () => string
-		replaceRange: (
-			text: string,
-			from: { line: number, ch: number },
-			to: { line: number, ch: number },
-			origin: string
-		) => void
-	}
-}
-
 /**
- * Put code into the editor with the origin CodeMirror reports for a real paste.
- * Typing produces a different origin and must not be treated the same way.
+ * Put code into the editor by pasting or by typing. Only pasted code has its
+ * wrapper tags removed.
  */
-const enterCode = async (page: Page, code: string, origin: 'paste' | '+input'): Promise<void> => {
-	await page.locator('.CodeMirror').first().waitFor({ state: 'visible' })
+const enterCode = async (page: Page, code: string, method: 'paste' | 'type'): Promise<void> => {
+	const editor = page.locator(CODE_EDITOR_SELECTOR).first()
+	await editor.waitFor({ state: 'visible' })
 
-	await page.evaluate(([text, changeOrigin]) => {
-		const cm = (<CodeMirrorHost><unknown>document.querySelector('.CodeMirror')).CodeMirror
-		cm.setValue('')
-		cm.replaceRange(text, { line: 0, ch: 0 }, { line: 0, ch: 0 }, changeOrigin)
-	}, [code, origin])
-
+	await ('paste' === method ? pasteIntoEditor(page, editor, code) : typeIntoEditor(page, editor, code))
 	await page.waitForTimeout(400)
 }
 
 const editorValue = (page: Page): Promise<string> =>
-	page.evaluate(() =>
-		(<CodeMirrorHost><unknown>document.querySelector('.CodeMirror')).CodeMirror.getValue())
+	readEditorValue(page.locator(CODE_EDITOR_SELECTOR).first())
 
 /**
  * Whether this install offers the licensed snippet types.
@@ -51,7 +34,7 @@ const isLicensed = (page: Page): Promise<boolean> =>
 const selectType = async (page: Page, label: string): Promise<void> => {
 	await page.locator('.snippet-type-container .code-snippets-select').click()
 	await page.getByRole('listbox').getByRole('option', { name: new RegExp(label, 'i') }).click()
-	await page.locator('.CodeMirror').first().waitFor({ state: 'visible' })
+	await page.locator(CODE_EDITOR_SELECTOR).first().waitFor({ state: 'visible' })
 }
 
 
@@ -94,7 +77,7 @@ test.describe('Wrapper tags in pasted code', () => {
 	})
 
 	test('does not interfere with a tag that is typed rather than pasted', async ({ page }) => {
-		await enterCode(page, '<?php\nreturn 1;', '+input')
+		await enterCode(page, '<?php\nreturn 1;', 'type')
 
 		expect(await editorValue(page)).toContain('<?php')
 		await expect(page.locator('.code-snippets-notice')).toHaveCount(0)

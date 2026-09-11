@@ -40,6 +40,7 @@ export const jsWebpackConfig: Configuration = {
 	output: {
 		path: join(resolve(__dirname), '..', '..', DEST_DIR),
 		filename: '[name].js',
+		chunkFilename: 'chunks/[name].[contenthash:8].js',
 		clean: true
 	},
 	externalsType: 'window',
@@ -50,7 +51,6 @@ export const jsWebpackConfig: Configuration = {
 		'react/jsx-runtime': 'ReactJSXRuntime',
 		'jquery': 'jQuery',
 		'tinymce': 'tinymce',
-		'codemirror': ['wp', 'CodeMirror'],
 		...Object.fromEntries(
 			Object.keys(dependencies)
 				.filter(name => name.startsWith('@wordpress/'))
@@ -69,6 +69,11 @@ export const jsWebpackConfig: Configuration = {
 			{
 				test: /\.[jt]sx?$/,
 				exclude: /node_modules/,
+				// Dynamic imports are resolved as ECMAScript modules by TypeScript, which
+				// requires them to name a file extension.
+				resolve: {
+					extensionAlias: { '.js': ['.ts', '.tsx', '.js'] }
+				},
 				use: {
 					loader: 'babel-loader',
 					options: babelConfig

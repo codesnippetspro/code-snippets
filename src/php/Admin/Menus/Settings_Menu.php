@@ -7,7 +7,6 @@ use Code_Snippets\Settings\Settings_Fields;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\are_settings_unified;
 use function Code_Snippets\Utils\enqueue_code_editor;
-use function Code_Snippets\Utils\get_editor_themes;
 use const Code_Snippets\PLUGIN_FILE;
 use const Code_Snippets\PLUGIN_VERSION;
 use const Code_Snippets\Settings\OPTION_GROUP;
@@ -66,7 +65,7 @@ class Settings_Menu extends Admin_Menu {
 		wp_enqueue_style(
 			$handle,
 			plugins_url( 'dist/settings.css', PLUGIN_FILE ),
-			array_merge( self::$style_deps, [ 'code-editor' ] ),
+			self::$style_deps,
 			PLUGIN_VERSION
 		);
 
@@ -110,22 +109,19 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Enqueue the CodeMirror scripts and styles, including all themes.
+	 * Enqueue the code editor, including every theme so that the preview can switch between them.
 	 *
 	 * @return void
 	 */
 	protected function enqueue_codemirror() {
-		enqueue_code_editor( 'php' );
-		$themes = get_editor_themes();
+		enqueue_code_editor();
 
-		foreach ( $themes as $theme ) {
-			wp_enqueue_style(
-				'code-snippets-editor-theme-' . $theme,
-				plugins_url( "dist/editor-themes/$theme.css", PLUGIN_FILE ),
-				[ 'code-editor' ],
-				PLUGIN_VERSION
-			);
-		}
+		wp_enqueue_style(
+			'code-snippets-editor-themes',
+			plugins_url( 'dist/editor-themes.css', PLUGIN_FILE ),
+			[],
+			PLUGIN_VERSION
+		);
 	}
 
 	/**

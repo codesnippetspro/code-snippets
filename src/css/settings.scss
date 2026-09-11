@@ -49,14 +49,18 @@ input[type='number'] {
 	inline-size: 4em;
 }
 
-.CodeMirror {
+.cm-editor {
 	max-inline-size: 800px;
 	inline-size: 100%;
-	padding-inline-end: 1em;
-}
 
-.CodeMirror-sizer::before {
-	content: '<?php';
+	&::before {
+		display: block;
+		padding-block: 4px;
+		padding-inline: 8px;
+		color: #bbb;
+		font-family: monospace;
+		content: '<?php';
+	}
 }
 
 body.no-js {

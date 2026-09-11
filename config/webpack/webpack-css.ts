@@ -6,6 +6,7 @@ import rgbaCompat from 'postcss-hexrgba'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import RemoveEmptyScriptsPlugin from 'webpack-remove-empty-scripts'
 import { glob } from 'glob'
+import codeMirrorTheme from './postcss-codemirror-theme'
 import hslCompat from './postcss-hsl-legacy'
 import type { Configuration, EntryObject } from 'webpack'
 import type { Config as PostCssConfig } from 'postcss-load-config'
@@ -21,6 +22,8 @@ const postcssOptions: PostCssConfig = {
 	]
 }
 
+const EDITOR_THEME_FILES = 'node_modules/codemirror/theme/*.css'
+
 const entriesFromFiles = (patterns: string | string[], entry: (filename: string) => string): EntryObject =>
 	Object.fromEntries(
 		glob.sync(patterns)
@@ -34,9 +37,10 @@ export const cssWebpackConfig: Configuration = {
 			filename => `${path.parse(filename).name}-css`
 		),
 		...entriesFromFiles(
-			'node_modules/codemirror/theme/*.css',
+			EDITOR_THEME_FILES,
 			filename => `codemirror-theme-${path.parse(filename).name}`
-		)
+		),
+		'editor-themes-css': glob.sync(EDITOR_THEME_FILES).sort().map(filename => `./${filename}`)
 	},
 	module: {
 		rules: [
@@ -85,7 +89,7 @@ export const cssWebpackConfig: Configuration = {
 						loader: 'postcss-loader',
 						options: {
 							postcssOptions: {
-								plugins: [cssnano()]
+								plugins: [codeMirrorTheme(), cssnano()]
 							}
 						}
 					}

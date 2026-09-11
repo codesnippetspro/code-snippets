@@ -51,7 +51,6 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 				'bulkDownloadNonce',
 				'runOnceNonce',
 				'supportsZipDownloads',
-				'editorTheme',
 				'typeCounts',
 				'listOrder',
 				'snippetsList',
@@ -91,22 +90,19 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
-	 * Preview assets exclude the full editing dependencies.
+	 * The manage script is given the editor configuration its previews need, and loads the editor itself on demand.
 	 *
 	 * @return void
 	 */
-	public function test_enqueue_loads_only_preview_editor_dependencies(): void {
-		foreach ( [ 'htmlhint', 'csslint', 'jshint', 'code-snippets-code-editor' ] as $handle ) {
-			wp_dequeue_script( $handle );
-		}
+	public function test_enqueue_configures_preview_editor(): void {
+		wp_dequeue_script( 'code-snippets-code-editor' );
 
 		$this->enqueue_assets();
 
-		$this->assertTrue( wp_script_is( 'code-editor' ) );
-		$this->assertTrue( wp_style_is( 'code-editor' ) );
-		$this->assertFalse( wp_script_is( 'htmlhint' ) );
-		$this->assertFalse( wp_script_is( 'csslint' ) );
-		$this->assertFalse( wp_script_is( 'jshint' ) );
+		$before = implode( '', (array) wp_scripts()->get_data( 'code-snippets-manage-menu', 'before' ) );
+
+		$this->assertStringContainsString( 'var CODE_SNIPPETS_EDITOR = ', $before );
+		$this->assertContains( 'wp-hooks', wp_scripts()->registered['code-snippets-manage-menu']->deps );
 		$this->assertFalse( wp_script_is( 'code-snippets-code-editor' ) );
 	}
 
@@ -252,7 +248,7 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
-	 * The manage page no longer loads the Prism assets: CodeMirror renders the
+	 * The manage page no longer loads the Prism assets: the code editor renders the
 	 * preview modal, and Prism remains registered for the front-end shortcode.
 	 *
 	 * @return void
@@ -267,22 +263,17 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
-	 * The manage screen loads only the assets required for read-only code previews.
+	 * The manage screen does not load the code editor bundled with WordPress or its linters.
 	 *
 	 * @return void
 	 */
-	public function test_enqueue_assets_loads_preview_editor_without_full_editor_dependencies(): void {
-		foreach ( [ 'htmlhint', 'csslint', 'jshint', 'code-snippets-code-editor' ] as $handle ) {
-			wp_dequeue_script( $handle );
-		}
-
+	public function test_enqueue_assets_does_not_load_wordpress_code_editor(): void {
 		$this->enqueue_assets();
 
-		$this->assertTrue( wp_script_is( 'code-editor' ) );
-		$this->assertTrue( wp_style_is( 'code-editor' ) );
-		$this->assertFalse( wp_script_is( 'htmlhint' ) );
-		$this->assertFalse( wp_script_is( 'csslint' ) );
-		$this->assertFalse( wp_script_is( 'jshint' ) );
-		$this->assertFalse( wp_script_is( 'code-snippets-code-editor' ) );
+		foreach ( [ 'wp-codemirror', 'code-editor', 'htmlhint', 'csslint', 'jshint' ] as $handle ) {
+			$this->assertFalse( wp_script_is( $handle ), "$handle should not be enqueued." );
+		}
+
+		$this->assertFalse( wp_style_is( 'code-editor' ) );
 	}
 }

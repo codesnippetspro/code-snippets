@@ -1,26 +1,26 @@
 
-.CodeMirror,
 .snippet-form textarea {
 	inline-size: 100%;
 	font-family: monospace;
 }
 
-.CodeMirror-sizer {
-	min-block-size: 300px !important;
-	box-sizing: border-box;
-	padding-block-end: 1.5em !important;
+.snippet-editor .cm-content,
+.snippet-editor .cm-gutter {
+	min-block-size: 300px;
+}
 
-	&::after {
-		position: absolute;
-		inset-block-end: 0;
+// The markup a snippet is wrapped in when it runs, shown around the code.
+.snippet-editor .cm-editor {
+	&::before, &::after {
+		display: block;
+		padding-block: 4px;
+		padding-inline: 8px;
+		color: #bbb;
+		font-family: monospace;
 	}
 
-	.snippet-form.php-snippet & {
-		padding-block-end: 0 !important;
-
-		&::before {
-			content: '<?php';
-		}
+	.snippet-form.php-snippet &::before {
+		content: '<?php';
 	}
 
 	.snippet-form.css-snippet & {

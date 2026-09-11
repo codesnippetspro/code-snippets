@@ -81,12 +81,12 @@ class Manage_Menu_Assets {
 		wp_enqueue_script(
 			self::JS_HANDLE,
 			plugins_url( 'dist/manage.js', PLUGIN_FILE ),
-			$script_dependencies,
+			array_merge( $script_dependencies, [ 'wp-hooks' ] ),
 			PLUGIN_VERSION,
 			[ 'in_footer' => true ]
 		);
 
-		enqueue_code_preview_editor( 'php' );
+		enqueue_code_preview_editor( self::JS_HANDLE );
 		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
 		code_snippets()->localize_script( self::JS_HANDLE );
 
@@ -102,7 +102,6 @@ class Manage_Menu_Assets {
 			'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
 			'runOnceNonce'         => wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ),
 			'supportsZipDownloads' => class_exists( 'ZipArchive' ),
-			'editorTheme'          => get_setting( 'editor', 'theme' ),
 			'typeCounts'           => $this->get_snippet_type_counts(),
 			'listOrder'            => get_setting( 'general', 'list_order' ),
 		];

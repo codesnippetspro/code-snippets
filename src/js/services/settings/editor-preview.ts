@@ -1,37 +1,50 @@
 import { __ } from '@wordpress/i18n'
-import '../../entries/editor'
+import { getEditorPhrases } from '../../editor/phrases'
+import { createSnippetEditor, setEditorSettings } from '../../editor/snippetEditor'
+import type { EditorView } from '@codemirror/view'
+import type { EditorSettings } from '../../types/EditorSettings'
 
 const parseSelect = (select: HTMLSelectElement) => select.options[select.selectedIndex].value
 const parseCheckbox = (checkbox: HTMLInputElement) => checkbox.checked
 const parseNumber = (input: HTMLInputElement) => parseInt(input.value, 10)
 
-const initialiseCodeMirror = () => {
-	const { codeEditor } = window.wp
+const initialiseEditor = (settings: EditorSettings): EditorView | undefined => {
 	const textarea = document.getElementById('code_snippets_editor_preview')
 
-	if (textarea && codeEditor) {
-		window.code_snippets_editor_preview = codeEditor.initialize(textarea)
-
-		// CodeMirror's own input is unlabelled; name it so the preview reads as what it is.
-		window.code_snippets_editor_preview.codemirror.getInputField().setAttribute('aria-label', __('Code editor preview', 'code-snippets'))
-
-		return window.code_snippets_editor_preview.codemirror
+	if (!(textarea instanceof HTMLTextAreaElement)) {
+		console.error('Could not find the code editor preview.', textarea)
+		return undefined
 	}
 
-	console.error('Could not initialise CodeMirror on textarea.', textarea)
-	return undefined
+	const parent = document.createElement('div')
+	textarea.after(parent)
+	textarea.hidden = true
+
+	return createSnippetEditor({
+		parent,
+		doc: textarea.value,
+		snippetType: 'php',
+		settings,
+		surface: 'settings',
+		phrases: getEditorPhrases(),
+		contentAttributes: { 'aria-label': __('Code editor preview', 'code-snippets') }
+	})
 }
 
 export const handleEditorPreviewUpdates = () => {
-	const editor = initialiseCodeMirror()
-	const editorSettings = window.code_snippets_editor_settings
+	const config = window.CODE_SNIPPETS_EDITOR
 
-	for (const setting of editorSettings) {
+	if (!config?.enabled) {
+		return
+	}
+
+	let { settings } = config
+	const editor = initialiseEditor(settings)
+
+	for (const setting of window.code_snippets_editor_settings) {
 		const element = document.querySelector(`[name="code_snippets_settings[editor][${setting.name}]"]`)
 
 		element?.addEventListener('change', () => {
-			const opt = setting.codemirror
-
 			const value = (() => {
 				switch (setting.type) {
 					case 'select':
@@ -45,15 +58,16 @@ export const handleEditorPreviewUpdates = () => {
 				}
 			})()
 
-			if (null !== value) {
-				if ('font_size' === setting.name) {
-					const codeElement = document.querySelector('.CodeMirror-code')
-					if (codeElement && codeElement instanceof HTMLElement) {
-						codeElement.style.fontSize = `${value}px`
-					}
-				} else {
-					editor?.setOption(opt, value)
-				}
+			if (null === value || !editor) {
+				return
+			}
+
+			if ('fontSize' === setting.codemirror) {
+				editor.dom.style.fontSize = `${String(value)}px`
+				editor.requestMeasure()
+			} else {
+				settings = { ...settings, [setting.codemirror]: value }
+				setEditorSettings(editor, settings)
 			}
 		})
 	}
