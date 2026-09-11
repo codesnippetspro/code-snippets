@@ -10,6 +10,9 @@
 * CSS and JavaScript snippets are checked for syntax errors as you type.
 * Autocompletion for PHP in the code editor, covering keywords, the snippet's own variables and functions, and WordPress and PHP functions with their parameters, a summary and a link to their documentation.
 * Browser globals such as `document` and `window` are suggested while typing JavaScript.
+* Templates for common WordPress code, such as hooking into an action or filter, registering a shortcode and enqueueing a stylesheet, offered in PHP autocompletion.
+* Indentation Guides editor setting, on by default, showing a vertical guide for each level of indentation.
+* Highlight Trailing Spaces editor setting, off by default, marking spaces and tabs left at the end of a line.
 
 ### Changed
 * The code editor now uses CodeMirror 6, bundled with the plugin rather than loaded from WordPress. Existing editor settings and themes carry over.
