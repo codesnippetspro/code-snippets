@@ -38,6 +38,8 @@ export const getEditorPhrases = (): Record<string, string> => ({
 	'No diagnostics': __('No diagnostics', 'code-snippets'),
 	'Completions': __('Completions', 'code-snippets'),
 	'Documentation': __('Documentation', 'code-snippets'),
+	// translators: Shown beside a completion that inserts boilerplate code.
+	'template': __('template', 'code-snippets'),
 	'Control character': __('Control character', 'code-snippets'),
 	'Selection deleted': __('Selection deleted', 'code-snippets'),
 	'Syntax error': __('Syntax error', 'code-snippets')

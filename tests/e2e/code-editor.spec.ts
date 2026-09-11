@@ -169,6 +169,18 @@ test.describe('Code editor', () => {
 		await expect(foldMarker).toHaveCSS('color', 'rgb(153, 153, 153)')
 	})
 
+	test('expands WordPress templates from the completion list', async ({ page }) => {
+		const editor = await openNewSnippet(page)
+		await typeIntoEditor(page, editor, '')
+
+		await page.keyboard.type('add_act')
+		const template = page.locator('.cm-tooltip-autocomplete li', { hasText: 'template' }).first()
+		await expect(template).toContainText('add_action')
+		await template.click()
+
+		await expect.poll(() => readEditorValue(editor)).toBe("add_action( 'hook', function () {\n\t\n} );")
+	})
+
 	test('shows indentation guides unless turned off', async ({ page }) => {
 		const code = 'if ( true ) {\n\tif ( false ) {\n\t\treturn;\n\t}\n}'
 

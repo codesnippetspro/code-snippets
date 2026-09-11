@@ -1,6 +1,7 @@
 import { javascriptLanguage, scopeCompletionSource } from '@codemirror/lang-javascript'
 import { phpLanguage } from '@codemirror/lang-php'
 import { syntaxTree } from '@codemirror/language'
+import { snippetCompletion } from '@codemirror/autocomplete'
 import type { Completion, CompletionContext, CompletionResult, CompletionSource } from '@codemirror/autocomplete'
 import type { EditorState, Extension } from '@codemirror/state'
 import type { SyntaxNode } from '@lezer/common'
@@ -26,6 +27,73 @@ const PHP_KEYWORDS = [
 ]
 
 const KEYWORD_COMPLETIONS: readonly Completion[] = PHP_KEYWORDS.map(label => ({ label, type: 'keyword' }))
+
+/**
+ * Boilerplate for common WordPress snippets. Tab moves between the named
+ * fields, and lines are indented with the editor's indent unit.
+ */
+const TEMPLATES: readonly (readonly [label: string, lines: readonly string[]])[] = [
+	['add_action', [
+		"add_action( '${hook}', function () {",
+		'\t${}',
+		'} );'
+	]],
+	['add_filter', [
+		"add_filter( '${hook}', function ( $${value} ) {",
+		'\t${}',
+		'\treturn $${value};',
+		'} );'
+	]],
+	['add_shortcode', [
+		"add_shortcode( '${tag}', function ( $atts, $content = null ) {",
+		'\t$atts = shortcode_atts( [${}], $atts );',
+		'',
+		"\treturn '${}';",
+		'} );'
+	]],
+	['wp_enqueue_scripts', [
+		"add_action( 'wp_enqueue_scripts', function () {",
+		"\twp_enqueue_style( '${handle}', '${url}', [], '${version}' );",
+		'} );'
+	]],
+	['admin_notices', [
+		"add_action( 'admin_notices', function () {",
+		'\t?>',
+		'\t<div class="notice notice-${info}"><p>${message}</p></div>',
+		'\t<?php',
+		'} );'
+	]],
+	['function_exists', [
+		"if ( ! function_exists( '${name}' ) ) {",
+		'\tfunction ${name}() {',
+		'\t\t${}',
+		'\t}',
+		'}'
+	]],
+	['foreach', [
+		'foreach ( $${items} as $${item} ) {',
+		'\t${}',
+		'}'
+	]],
+	['if', [
+		'if ( ${condition} ) {',
+		'\t${}',
+		'}'
+	]]
+]
+
+const templateCompletions = (detail: string): Completion[] =>
+	TEMPLATES.map(([label, lines]) => {
+		const template = lines.join('\n')
+
+		return snippetCompletion(template, {
+			label,
+			type: 'text',
+			detail,
+			info: template.replace(/[$#]\{(?<field>[^}]*)\}/g, '$<field>'),
+			boost: -1
+		})
+	})
 
 /**
  * Words shorter than this only offer completions when asked for with
@@ -139,8 +207,8 @@ const isInNonCode = (context: CompletionContext): boolean => {
 }
 
 /**
- * Completions for PHP: variables in scope, then keywords, the snippet's own
- * functions and classes, and WordPress and PHP functions.
+ * Completions for PHP: variables in scope, then keywords, templates, the
+ * snippet's own functions and classes, and WordPress and PHP functions.
  */
 export const phpCompletionSource: CompletionSource = async (context): Promise<CompletionResult | null> => {
 	const variable = context.matchBefore(/\$\w*/)
@@ -170,7 +238,12 @@ export const phpCompletionSource: CompletionSource = async (context): Promise<Co
 
 	return {
 		from,
-		options: [...KEYWORD_COMPLETIONS, ...localCompletions(context.state, -1).names, ...functions],
+		options: [
+			...KEYWORD_COMPLETIONS,
+			...templateCompletions(context.state.phrase('template')),
+			...localCompletions(context.state, -1).names,
+			...functions
+		],
 		validFor: /^\w*$/
 	}
 }
