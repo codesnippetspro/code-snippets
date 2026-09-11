@@ -58,7 +58,7 @@ plugins.
 | Layer         | Technology                                                     |
 |---------------|----------------------------------------------------------------|
 | Backend       | PHP 7.4+, WordPress APIs, PSR-4 via Composer                   |
-| Frontend      | TypeScript, React 18, `@wordpress/components`, CodeMirror 5    |
+| Frontend      | TypeScript, React 18, `@wordpress/components`, CodeMirror 6    |
 | Styling       | SCSS (PostCSS, logical properties via `stylelint-use-logical`) |
 | Build         | Webpack 5, Babel, `ts-loader`, `sass-loader`                   |
 | PHP linting   | PHPCS + WPCS (`npm run lint:php`)                              |

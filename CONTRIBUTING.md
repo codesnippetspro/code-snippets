@@ -51,7 +51,7 @@ npm run build
 
 This will run the basic Webpack configuration, which will:
 
-1. Copies required vendor files from the `node_modules/` directory, such as CodeMirror and PrismJS theme files.
+1. Converts the CodeMirror 5 theme stylesheets in `node_modules/` into code editor themes.
 2. Transforms the SCSS source files into browser-ready minified CSS code, including right-to-left files where
    appropriate.
 3. Transforms the TypeScript source files into browser-ready minified JavaScript code, after checking with a linter.

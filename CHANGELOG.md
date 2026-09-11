@@ -7,6 +7,18 @@
 * Blueprints demo: a guided, scripted walkthrough of Pro Blueprints that steps through the "Create a Shortcode" blueprint and confirms the snippet it would generate. Runs entirely inside the plugin — no code is generated and nothing is saved.
 * Cloud Library demo: a guided, scripted walkthrough of the Pro Cloud Library, showing how a cloud snippet is previewed, downloaded inactive, and then kept in sync. Runs entirely inside the plugin — the snippets shown are examples and nothing is downloaded.
 * "New" badges on the AI Agent, Blueprints, and Cloud Library toolbar tabs, which soften once each demo walkthrough has been watched.
+* CSS and JavaScript snippets are checked for syntax errors as you type.
+
+### Changed
+* The code editor now uses CodeMirror 6, bundled with the plugin rather than loaded from WordPress. Existing editor settings and themes carry over.
+* The editor's find and replace panel is now a single panel at the top of the editor, and its labels can be translated.
+* The keyboard shortcut list in the editor now reflects CodeMirror 6 shortcuts. Shift+Tab outdents the current line or selection.
+* With Indent With Tabs enabled, each indentation level is one tab.
+* The Sublime Text keymap now covers the most-used Sublime Text shortcuts, such as selecting, deleting, duplicating and moving lines, and selecting the next occurrence. Less common ones, such as joining lines and selecting between brackets, are no longer available.
+* CSS snippets no longer show CSSLint style warnings; only syntax errors are reported.
+* Code previews on the snippets list load the code editor only when a preview is opened.
+* Custom editor themes added through the `code_snippets_codemirror_atts` filter keep their syntax colours, but rules for the editor background, gutters, cursor, selection and active line must use CodeMirror 6 class names such as `.cm-editor`, `.cm-gutters` and `.cm-activeLine`.
+* The `code_snippets_codemirror_atts` filter only applies the editor settings' own options; options for the WordPress code editor, such as `mode`, `gutters` and `extraKeys`, are ignored. Plugin screens no longer create `wp.codeEditor` instances or `.CodeMirror` elements.
 
 ## [3.10.2] (2026-09-01)
 
