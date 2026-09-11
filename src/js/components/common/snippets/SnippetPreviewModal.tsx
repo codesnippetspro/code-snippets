@@ -47,6 +47,14 @@ const usePreviewEditor = (type: SnippetType, code: string) => {
 		let view: EditorView | undefined
 		let isCancelled = false
 
+		// The modal scales in as it opens. The editor measures itself against that
+		// scale, and a transform does not resize anything that would prompt it to
+		// measure again, so its cursor, selection and highlight layers would stay
+		// scaled once the animation ends.
+		const modalFrame = container.closest('.components-modal__frame')
+		const remeasure = () => view?.requestMeasure()
+		modalFrame?.addEventListener('animationend', remeasure)
+
 		import(/* webpackChunkName: "snippet-editor" */ '../../../editor/snippetEditor.js')
 			.then(({ createSnippetEditor }) => {
 				if (!isCancelled) {
@@ -66,6 +74,7 @@ const usePreviewEditor = (type: SnippetType, code: string) => {
 
 		return () => {
 			isCancelled = true
+			modalFrame?.removeEventListener('animationend', remeasure)
 			view?.destroy()
 		}
 	}, [type, code])

@@ -23,7 +23,7 @@ const openNewSnippet = async (page: Page) => {
 }
 
 const completionOption = (page: Page, label: string) =>
-	page.locator('.cm-tooltip-autocomplete .cm-completionLabel', { hasText: new RegExp(`^${label.replace(/\$/g, '\\$')}$`) })
+	page.locator('.cm-tooltip-autocomplete .cm-completionLabel', { hasText: new RegExp(`^${label.replace(/\$/g, '\\$')}$`) }).first()
 
 // The completion list ignores Enter for a moment after it opens, so that a
 // keystroke meant as a new line is not taken as accepting the completion.
@@ -167,6 +167,30 @@ test.describe('Code editor', () => {
 
 		const foldMarker = editor.locator('.cm-foldGutter .cm-gutterElement', { hasText: /\S/ }).first()
 		await expect(foldMarker).toHaveCSS('color', 'rgb(153, 153, 153)')
+	})
+
+	test('wraps long lines in the snippet preview without scrolling sideways', async ({ page }) => {
+		const name = SnippetsTestHelper.makeUniqueSnippetName()
+		const longLine = `$message = '${'lorem ipsum dolor sit amet '.repeat(30)}';`
+		await wpCli(['eval', `
+			$snippet = new \\Code_Snippets\\Model\\Snippet();
+			$snippet->name = ${JSON.stringify(name)};
+			$snippet->code = base64_decode( '${Buffer.from(longLine).toString('base64')}' );
+			\\Code_Snippets\\save_snippet( $snippet );
+		`])
+
+		const helper = new SnippetsTestHelper(page)
+		await helper.navigateToSnippetsAdmin()
+		await helper.filterSnippetsByName(name)
+		const row = page.locator('.wp-list-table tbody tr', { hasText: name }).first()
+		await row.hover()
+		await row.locator('.row-actions button:has-text("Preview")').click()
+
+		const scroller = page.locator('.code-snippets-preview-modal .cm-scroller')
+		await expect(scroller).toBeVisible()
+		await expect.poll(() => scroller.evaluate(element => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1)
+
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 	})
 
 	test('reports PHP errors in the lint gutter', async ({ page }) => {
