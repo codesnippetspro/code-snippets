@@ -1,5 +1,14 @@
 import { closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete'
-import { defaultKeymap, historyKeymap, indentWithTab } from '@codemirror/commands'
+import {
+	copyLineDown,
+	defaultKeymap,
+	deleteLine,
+	historyKeymap,
+	indentWithTab,
+	moveLineDown,
+	moveLineUp,
+	selectLine
+} from '@codemirror/commands'
 import { foldKeymap } from '@codemirror/language'
 import { lintKeymap } from '@codemirror/lint'
 import { openSearchPanel, searchKeymap } from '@codemirror/search'
@@ -43,6 +52,17 @@ const commonKeymaps = (editable: boolean): readonly KeyBinding[] => [
 ]
 
 /**
+ * Sublime Text shortcuts that the default keymap does not already provide.
+ */
+const sublimeKeymap: readonly KeyBinding[] = [
+	{ key: 'Mod-l', run: selectLine, preventDefault: true },
+	{ key: 'Shift-Mod-k', run: deleteLine, preventDefault: true },
+	{ key: 'Shift-Mod-d', run: copyLineDown, preventDefault: true },
+	{ key: 'Shift-Ctrl-ArrowUp', mac: 'Ctrl-Cmd-ArrowUp', run: moveLineUp },
+	{ key: 'Shift-Ctrl-ArrowDown', mac: 'Ctrl-Cmd-ArrowDown', run: moveLineDown }
+]
+
+/**
  * Key bindings for a keymap setting. Vim is loaded separately by
  * `loadVimKeymap()`, as it is large and rarely chosen; until it arrives the
  * default bindings apply.
@@ -51,6 +71,8 @@ export const keymapExtension = (keyMap: string, editable: boolean, vim?: Extensi
 	switch (keyMap) {
 		case 'emacs':
 			return [emacs(), keymap.of(commonKeymaps(editable))]
+		case 'sublime':
+			return keymap.of([...sublimeKeymap, ...commonKeymaps(editable)])
 		case 'vim':
 			return vim
 				? [vim, keymap.of(commonKeymaps(editable))]
