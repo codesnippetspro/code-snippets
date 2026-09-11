@@ -6,9 +6,6 @@
 @use 'common/wp-admin';
 @use 'common/page-header';
 
-$sections: general, editor, debug, version-switch,
-	editing, running, insights, library, interface, advanced;
-
 .wrap.code-snippets-settings {
 	margin-block-start: 0;
 }
@@ -91,10 +88,17 @@ body.js {
 		display: none;
 	}
 
-	@each $section in $sections {
-		.wrap[data-active-tab=#{$section}] .#{$section}-settings {
-			display: block;
-		}
+	.wrap[data-active-tab='general'] .general-settings,
+	.wrap[data-active-tab='editor'] .editor-settings,
+	.wrap[data-active-tab='debug'] .debug-settings,
+	.wrap[data-active-tab='version-switch'] .version-switch-settings,
+	.wrap[data-active-tab='editing'] .editing-settings,
+	.wrap[data-active-tab='running'] .running-settings,
+	.wrap[data-active-tab='insights'] .insights-settings,
+	.wrap[data-active-tab='library'] .library-settings,
+	.wrap[data-active-tab='interface'] .interface-settings,
+	.wrap[data-active-tab='advanced'] .advanced-settings {
+		display: block;
 	}
 }
 

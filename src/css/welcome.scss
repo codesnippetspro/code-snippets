@@ -188,20 +188,32 @@
 		gap: 10px;
 	}
 
-	$icon-colors: (
-		lightbulb #f1c40f,
-		chart-line #85144b,
-		buddicons-replies #3d9970,
-		remove #ffbf00,
-		trash #c0c0c0,
-		shield #0074d9,
-		open-folder #5d2f27
-	);
+	.dashicons-lightbulb {
+		color: #f1c40f;
+	}
 
-	@each $icon, $color in $icon-colors {
-		.dashicons-#{$icon} {
-			color: $color;
-		}
+	.dashicons-chart-line {
+		color: #85144b;
+	}
+
+	.dashicons-buddicons-replies {
+		color: #3d9970;
+	}
+
+	.dashicons-remove {
+		color: #ffbf00;
+	}
+
+	.dashicons-trash {
+		color: #c0c0c0;
+	}
+
+	.dashicons-shield {
+		color: #0074d9;
+	}
+
+	.dashicons-open-folder {
+		color: #5d2f27;
 	}
 }
 
