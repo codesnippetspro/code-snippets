@@ -81,7 +81,7 @@ const UpperNavItems = () =>
 
 		<UpperNavItem
 			name="cloud"
-			url="https://codesnippets.cloud/"
+			url={window.CODE_SNIPPETS?.urls.cloud ?? 'https://codesnippets.cloud'}
 			label={__('Cloud Dashboard', 'code-snippets')}
 		/>
 

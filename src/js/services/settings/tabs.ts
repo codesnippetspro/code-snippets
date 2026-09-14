@@ -72,14 +72,16 @@ export const handleSettingsTabs = () => {
 
 	for (const tab of tabs) {
 		tab.addEventListener('click', event => {
-			event.preventDefault()
 			const section = tab.getAttribute('data-section')
 
-			if (section) {
-				selectTab(tabsWrapper, tab, section)
-				refreshEditorPreview()
-				updateHttpReferer(section)
+			if (!section || !document.querySelector(`.settings-section.${section}-settings`)) {
+				return
 			}
+
+			event.preventDefault()
+			selectTab(tabsWrapper, tab, section)
+			refreshEditorPreview()
+			updateHttpReferer(section)
 		})
 	}
 }

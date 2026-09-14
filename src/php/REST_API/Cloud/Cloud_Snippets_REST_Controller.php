@@ -31,6 +31,11 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	public const BASE_ROUTE = 'cloud/snippets';
 
 	/**
+	 * Search methods supported by the cloud API.
+	 */
+	private const SEARCH_METHODS = [ 'term', 'codevault', 'ai' ];
+
+	/**
 	 * Search controller instance.
 	 *
 	 * @var Cloud_Search_Controller
@@ -132,6 +137,12 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 								'type'        => 'boolean',
 								'default'     => false,
 							],
+							'searchMethod'      => [
+								'description' => esc_html__( 'Optional search method. Set to "ai" to match snippets by natural-language intent.', 'code-snippets' ),
+								'type'        => 'string',
+								'enum'        => self::SEARCH_METHODS,
+								'default'     => 'term',
+							],
 							'page'              => $collection_args['page'],
 							'per_page'          => $collection_args['per_page'],
 						],
@@ -231,7 +242,8 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_items( $request ) {
-		$method = $request->get_param( 'searchByCodevault' ) ? 'codevault' : 'term';
+		$method_param = $request->get_param( 'searchByCodevault' );
+		$method = in_array( $method_param, self::SEARCH_METHODS, true ) ? $method_param : 'term';
 		$query = $request->get_param( 'query' ) ?? '';
 
 		$page = max( 1, intval( $request->get_param( 'page' ) ) );
@@ -350,6 +362,11 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 				'revision'    => [
 					'description' => esc_html__( 'Snippet revision number.', 'code-snippets' ),
 					'type'        => 'integer',
+				],
+				'active'      => [
+					'description' => esc_html__( 'Whether the snippet should be active on the receiving site. Defaults to false to preserve install-as-inactive behaviour; set true for the self-heal redeploy path.', 'code-snippets' ),
+					'type'        => 'boolean',
+					'default'     => false,
 				],
 			],
 		];

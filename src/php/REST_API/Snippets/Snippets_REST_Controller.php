@@ -16,6 +16,7 @@ use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
 use function Code_Snippets\delete_snippet;
+use function Code_Snippets\get_snippet_author;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\restore_snippet;
@@ -820,11 +821,26 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function prepare_item_for_response( $item, $request ) {
 		$schema = $this->get_item_schema();
-		$response = [];
 
-		foreach ( array_keys( $schema['properties'] ) as $property ) {
-			$response[ $property ] = $item->$property;
-		}
+		$properties = array_keys( $schema['properties'] );
+
+		$response_data = array_map(
+			function ( $property ) use ( $item ) {
+				switch ( $property ) {
+					case 'created_by':
+						return get_snippet_author( $item->created_by );
+
+					case 'updated_by':
+						return get_snippet_author( $item->updated_by );
+
+					default:
+						return $item->$property;
+				}
+			},
+			$properties
+		);
+
+		$response = array_combine( $properties, $response_data );
 
 		// The schema declares this as a date-time, so send one: the stored value
 		// is UTC without an offset, which clients read as local time.
@@ -887,6 +903,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 				'trashed'          => [
 					'description' => esc_html__( 'Whether the snippet is marked as deleted.', 'code-snippets' ),
 					'type'        => 'boolean',
+					'readonly'    => true,
 				],
 				'locked'           => [
 					'description' => esc_html__( 'Whether the snippet is locked from modification or deletion.', 'code-snippets' ),
@@ -928,6 +945,26 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 					'description' => esc_html__( 'Stack trace for the most recent snippet code error.', 'code-snippets' ),
 					'type'        => [ 'string', 'null' ],
 					'readonly'    => true,
+				],
+				'created_by'       => [
+					'description' => esc_html__( 'The snippet author.', 'code-snippets' ),
+					'type'        => [ 'object', 'null' ],
+					'readonly'    => true,
+					'properties'  => [
+						'id'           => [ 'type' => 'integer' ],
+						'display_name' => [ 'type' => 'string' ],
+						'avatar_url'   => [ 'type' => 'string' ],
+					],
+				],
+				'updated_by'       => [
+					'description' => esc_html__( 'The most recent editor.', 'code-snippets' ),
+					'type'        => [ 'object', 'null' ],
+					'readonly'    => true,
+					'properties'  => [
+						'id'           => [ 'type' => 'integer' ],
+						'display_name' => [ 'type' => 'string' ],
+						'avatar_url'   => [ 'type' => 'string' ],
+					],
 				],
 			],
 		];

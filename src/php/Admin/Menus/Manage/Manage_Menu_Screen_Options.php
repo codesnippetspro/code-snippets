@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Admin\Menus\Manage;
 
+use WP_Screen;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -68,6 +69,8 @@ class Manage_Menu_Screen_Options {
 				'tags'     => __( 'Tags', 'code-snippets' ),
 				'date'     => __( 'Modified', 'code-snippets' ),
 				'priority' => __( 'Priority', 'code-snippets' ),
+				'author'   => __( 'Author', 'code-snippets' ),
+				'insights' => __( 'Insights', 'code-snippets' ),
 			]
 		);
 	}
@@ -75,12 +78,12 @@ class Manage_Menu_Screen_Options {
 	/**
 	 * Hide the optional ID column until a user enables it.
 	 *
-	 * @param string[]   $hidden_columns Column identifiers hidden by default.
-	 * @param \WP_Screen $screen Current admin screen.
+	 * @param string[]  $hidden_columns Column identifiers hidden by default.
+	 * @param WP_Screen $screen         Current admin screen.
 	 *
 	 * @return string[]
 	 */
-	public function get_default_hidden_columns( array $hidden_columns, \WP_Screen $screen ): array {
+	public function get_default_hidden_columns( array $hidden_columns, WP_Screen $screen ): array {
 		return get_current_screen() === $screen
 			? array_merge( $hidden_columns, [ 'id' ] )
 			: $hidden_columns;
@@ -127,11 +130,11 @@ class Manage_Menu_Screen_Options {
 	}
 
 	/**
-	 * Whether the current request renders the AI Agent demo.
+	 * Whether the current request renders the AI Agent.
 	 *
-	 * The demo has no screen options or help tabs of its own, so it remains an
-	 * upsell view for {@see load()}; this detection exists only so its runtime
-	 * data can be localized on the subpage that uses it.
+	 * The subpage has no screen options or help tabs of its own, so it remains
+	 * an upsell view for {@see load()}; this detection exists only so its
+	 * runtime data can be localized on the subpage that uses it.
 	 *
 	 * @return bool
 	 */

@@ -1,11 +1,10 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { Notice } from './Notice'
+import type { LoadingStatus } from '../../hooks/useFetchData'
 import type { ReactNode } from 'react'
 
-export interface LoadingStatusNoticesProps {
-	isLoading: boolean
-	errorMessage: string | undefined
+export interface LoadingStatusNoticesProps extends LoadingStatus {
 	loadingNotice: ReactNode
 	noticeLabel: string
 }

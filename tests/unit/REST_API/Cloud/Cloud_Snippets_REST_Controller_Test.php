@@ -1,14 +1,14 @@
 <?php
 
-namespace Code_Snippets\REST_API;
+namespace Code_Snippets\REST_API\Cloud;
 
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\AdminUnitTestCase;
-use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Snippet;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
 
 /**
@@ -16,7 +16,7 @@ use function Code_Snippets\save_snippet;
  *
  * @group rest-api
  */
-class REST_API_Cloud_Test extends AdminUnitTestCase {
+class Cloud_Snippets_REST_Controller_Test extends AdminUnitTestCase {
 
 	/**
 	 * Default per-page value used when none is configured.
@@ -38,11 +38,25 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 	private string $requested_url = '';
 
 	/**
+	 * Number of outbound CodeVault list requests intercepted during a test.
+	 *
+	 * @var int
+	 */
+	private int $codevault_request_count = 0;
+
+	/**
 	 * REST server that was active before the current test.
 	 *
 	 * @var WP_REST_Server|null
 	 */
 	private ?WP_REST_Server $rest_server = null;
+
+	/**
+	 * Whether this test seeded a local token on the shared cloud connection.
+	 *
+	 * @var bool
+	 */
+	private bool $did_seed_local_token = false;
 
 	/**
 	 * Set up before each test.
@@ -55,7 +69,26 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 
 		$this->requested_url = '';
 		$this->rest_server = $wp_rest_server ?? null;
+		$this->codevault_request_count = 0;
+		$this->did_seed_local_token = false;
+
+		delete_transient( 'cs_codevault_snippets' );
+		delete_transient( 'code_snippets_cloud_links' );
 		delete_user_option( $this->get_user_id(), 'snippets_per_page' );
+
+		if ( '' === code_snippets()->cloud_connection->get_local_token() ) {
+			code_snippets()->cloud_connection->set_local_token(
+				[
+					'code_verifier'  => 'tests-code-verifier',
+					'code_challenge' => 'tests-code-challenge',
+					'state'          => 'tests-state',
+					'local_token'    => 'tests-local-token',
+				]
+			);
+
+			$this->did_seed_local_token = true;
+		}
+
 		add_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ], 10, 3 );
 	}
 
@@ -69,6 +102,11 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 
 		remove_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ] );
 		delete_user_option( $this->get_user_id(), 'snippets_per_page' );
+
+		if ( $this->did_seed_local_token ) {
+			code_snippets()->cloud_connection->reset();
+		}
+
 		$wp_rest_server = $this->rest_server;
 
 		parent::tear_down();
@@ -84,6 +122,30 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 	 * @return mixed
 	 */
 	public function mock_cloud_search_request( $preempt, array $parsed_args, string $url ) {
+		if ( false !== strpos( $url, 'private/allsnippets' ) ) {
+			++$this->codevault_request_count;
+
+			return [
+				'headers'  => [],
+				'body'     => wp_json_encode(
+					[
+						'snippets'     => [],
+						'cloud_id_rev' => [],
+						'meta'         => [
+							'total'       => 0,
+							'total_pages' => 0,
+							'page'        => 1,
+						],
+					]
+				),
+				'response' => [
+					'code'    => 200,
+					'message' => 'OK',
+				],
+				'cookies'  => [],
+			];
+		}
+
 		if ( false === strpos( $url, 'public/search' ) && false === strpos( $url, 'public/featured' ) ) {
 			return $preempt;
 		}
@@ -145,17 +207,12 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 	 */
 	private function make_request( array $params, string $route = '' ): WP_REST_Response {
 		global $wp_rest_server;
-		static $connection;
-
-		if ( ! isset( $connection ) ) {
-			$connection = new Basic_Cloud_Connection();
-		}
 
 		$wp_rest_server = null;
 		rest_get_server();
 
 		$request = new WP_REST_Request( 'GET', $this->endpoint . $route );
-		$request->add_header( 'Access-Control', $connection->get_local_token() );
+		$request->add_header( 'Access-Control', code_snippets()->cloud_connection->get_local_token() );
 
 		foreach ( $params as $key => $value ) {
 			$request->set_param( $key, $value );
@@ -305,5 +362,81 @@ class REST_API_Cloud_Test extends AdminUnitTestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( $local->id, wp_list_pluck( $snippets, 'local_id', 'id' )[3] ?? null );
+	}
+
+	/**
+	 * Registering REST routes for an unrelated request must not fetch CodeVault data.
+	 *
+	 * @return void
+	 */
+	public function test_unrelated_rest_request_does_not_fetch_codevault_snippets(): void {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/types' );
+		rest_do_request( $request );
+
+		$this->assertSame( 0, $this->codevault_request_count );
+	}
+
+	/**
+	 * The first Cloud Library request fetches CodeVault data once and then uses the transient cache.
+	 *
+	 * @return void
+	 */
+	public function test_codevault_request_uses_cached_codevault_snippets(): void {
+		$request = new WP_REST_Request( 'GET', $this->endpoint . '/codevault' );
+		$request->add_header( 'Access-Control', code_snippets()->cloud_connection->get_local_token() );
+		$request->set_param( 'page', 1 );
+
+		$second_request = clone $request;
+
+		$server = rest_get_server();
+		$server->dispatch( $request );
+		$server->dispatch( $second_request );
+
+		$this->assertSame( 1, $this->codevault_request_count );
+	}
+
+	/**
+	 * The AI search method is forwarded to the cloud as s_method=ai.
+	 */
+	public function test_search_method_ai_is_forwarded_to_cloud(): void {
+		$response = $this->make_request(
+			[
+				'query'        => 'make my site more secure',
+				'searchMethod' => 'ai',
+			]
+		);
+
+		parse_str( (string) wp_parse_url( $this->requested_url, PHP_URL_QUERY ), $query_args );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'ai', $query_args['s_method'] ?? null );
+	}
+
+	/**
+	 * With no method params, the search defaults to keyword matching (term).
+	 */
+	public function test_search_method_defaults_to_term(): void {
+		$this->make_request( [ 'query' => 'test' ] );
+
+		parse_str( (string) wp_parse_url( $this->requested_url, PHP_URL_QUERY ), $query_args );
+
+		$this->assertSame( 'term', $query_args['s_method'] ?? null );
+	}
+
+	/**
+	 * A codevault search takes precedence over an AI search method.
+	 */
+	public function test_codevault_takes_precedence_over_ai(): void {
+		$this->make_request(
+			[
+				'query'             => 'general',
+				'searchByCodevault' => true,
+				'searchMethod'      => 'ai',
+			]
+		);
+
+		parse_str( (string) wp_parse_url( $this->requested_url, PHP_URL_QUERY ), $query_args );
+
+		$this->assertSame( 'codevault', $query_args['s_method'] ?? null );
 	}
 }

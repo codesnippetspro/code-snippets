@@ -58,11 +58,11 @@ class Validator {
 	 * A snippet is validated against everything PHP has declared so far, which
 	 * does not include a snippet that is about to be activated in the same
 	 * batch. Two snippets declaring the same function therefore both passed and
-	 * both activated, and the site fataled on the next request.
+	 * both activated, and the site crashed on the next request.
 	 *
 	 * @var array<string, string[]>
 	 */
-	private array $claimed_identifiers = [];
+	private array $claimed_identifiers;
 
 	/**
 	 * Namespace the code being read currently declares, lower-cased, or empty for the global namespace.
