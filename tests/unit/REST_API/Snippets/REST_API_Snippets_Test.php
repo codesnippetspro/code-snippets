@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\REST_API;
+namespace Code_Snippets\REST_API\Snippets;
 
 use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;

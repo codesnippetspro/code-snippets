@@ -72,6 +72,8 @@ class Feedback_Connection extends Basic_Cloud_Connection {
 	 * cloud URL a site may be pointing elsewhere for unrelated development.
 	 *
 	 * @return string
+	 *
+	 * @noinspection PhpUndefinedConstantInspection
 	 */
 	public function get_host(): string {
 		$host = self::REPORTS_HOST;

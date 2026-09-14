@@ -61,7 +61,7 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
-	 * The AI Agent demo receives the site name it personalises its snippet with.
+	 * The AI Agent demo receives the site name it personalizes its snippet with.
 	 *
 	 * @return void
 	 */

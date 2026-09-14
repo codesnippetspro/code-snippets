@@ -11,10 +11,12 @@ import type { Snippet } from '../../../../types/Snippet'
 interface ExportButtonProps {
 	name: string
 	label: string
+	icon: string
+	title?: string
 	makeRequest: (snippet: Snippet) => Promise<SnippetsExport | string>
 }
 
-const ExportButton: React.FC<ExportButtonProps> = ({ name, label, makeRequest }) => {
+const ExportButton: React.FC<ExportButtonProps> = ({ name, label, icon, title, makeRequest }) => {
 	const { snippet, isWorking, setIsWorking, handleRequestError } = useSnippetForm()
 
 	const handleClick = () => {
@@ -28,7 +30,8 @@ const ExportButton: React.FC<ExportButtonProps> = ({ name, label, makeRequest })
 	}
 
 	return (
-		<Button name={name} onClick={handleClick} disabled={isWorking}>
+		<Button name={name} onClick={handleClick} disabled={isWorking} title={title}>
+			<span className={`dashicons ${icon}`} aria-hidden="true" />
 			{label}
 		</Button>
 	)
@@ -43,13 +46,16 @@ export const ExportButtons: React.FC = () => {
 			<ExportButton
 				name="export_snippet"
 				label={__('Export', 'code-snippets')}
+				icon="dashicons-upload"
+				title={__('Download snippet as JSON', 'code-snippets')}
 				makeRequest={api.export}
 			/>
 
 			{window.CODE_SNIPPETS_EDIT?.enableDownloads && 'cond' !== getSnippetType(snippet) && (
 				<ExportButton
 					name="export_snippet_code"
-					label={__('Download Code', 'code-snippets')}
+					label={__('Download', 'code-snippets')}
+					icon="dashicons-download"
 					makeRequest={api.exportCode}
 				/>)}
 		</div>

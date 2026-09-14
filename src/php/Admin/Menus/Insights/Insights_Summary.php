@@ -166,7 +166,7 @@ final class Insights_Summary {
 	}
 
 	/**
-	 * Convert aggregate counts into labelled chart entries.
+	 * Convert aggregate counts into labeled chart entries.
 	 *
 	 * @param array<string, int>    $counts Count for each type.
 	 * @param array<string, string> $labels Display label for each type.

@@ -111,7 +111,8 @@
 	}
 
 	// Items fill the 60px band; the active tab is indicated by accent colour on
-	// its icon and label, with no underline.
+	// its icon and label plus a 3px accent underline, reserved on every item as a
+	// transparent border so activating a tab never shifts the row.
 	// stylelint-disable-next-line no-descending-specificity
 	li a {
 		display: flex;
@@ -243,7 +244,25 @@
 }
 
 .code-snippets-return-link {
-	float: inline-end;
+	display: inline-flex;
+	float: none;
+	align-items: center;
+	min-block-size: 36px;
+	margin-block: 32px 20px;
+	padding-inline: 12px;
+	border-color: var(--cs-color-accent);
+	background: transparent;
+	color: var(--cs-color-accent);
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		border-color: var(--cs-color-accent-hover);
+		background: transparent;
+		color: var(--cs-color-accent-hover);
+	}
 }
 
 .code-snippets-toolbar-upper .toolbar-more-item {
@@ -348,6 +367,53 @@
 @media (width <= 640px) {
 	.code-snippets-toolbar-upper .logo div {
 		display: none;
+	}
+}
+
+.wp-core-ui .code-snippets-toolbar-upper .button.cloud-connected-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: 8px;
+	text-transform: uppercase;
+	background: #f6f7f7;
+	color: #646970;
+	font-size: 12px;
+	font-weight: bold;
+	border: none;
+	min-block-size: 3.5em;
+	min-inline-size: 12.5em;
+}
+
+.cloud-disconnect-confirmation-modal .components-modal__children-container {
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	font-size: 16px;
+	gap: 1em;
+	min-inline-size: 512px;
+
+	h1 {
+		font-size: 28px;
+		margin-block: 0;
+	}
+
+	p {
+		color: #646970;
+		font-size: inherit;
+		max-inline-size: 22em;
+		text-align: center;
+	}
+
+	a.button {
+		font-size: inherit;
+		background-color: var(--cs-color-secondary);
+	}
+
+	.button-link {
+		color: var(--cs-color-secondary);
+		border: none;
 	}
 }
 
