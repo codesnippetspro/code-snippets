@@ -23,6 +23,28 @@ test.describe('Code Snippets Admin', () => {
 		})
 	})
 
+	test('Expands and collapses the code editor', async ({ page }) => {
+		await helper.clickAddNewSnippet()
+		const form = page.locator('form.snippet-form')
+
+		await expect(form).toHaveClass(/snippet-form-collapsed/)
+		await page.getByRole('button', { name: 'Expand' }).click()
+		await expect(form).toHaveClass(/snippet-form-expanded/)
+		await expect(page.getByRole('button', { name: 'Minimize' })).toBeVisible()
+
+		await page.getByRole('button', { name: 'Minimize' }).click()
+		await expect(form).toHaveClass(/snippet-form-collapsed/)
+	})
+
+	test('Shows the code editor keyboard shortcut reference', async ({ page }) => {
+		await helper.clickAddNewSnippet()
+		const shortcuts = page.locator('.snippet-editor-help')
+
+		await expect(shortcuts).toBeVisible()
+		await shortcuts.hover()
+		await expect(shortcuts.locator('.tooltip-content')).toContainText('Save changes')
+	})
+
 	test('Can activate and deactivate a snippet', async () => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.createSnippet({
@@ -62,6 +84,70 @@ test.describe('Code Snippets Admin', () => {
 		await expect(snippetRow.locator(SELECTORS.SNIPPET_TOGGLE).first()).toBeChecked({ timeout: TIMEOUTS.DEFAULT })
 
 		await helper.cleanupSnippet(snippetName)
+	})
+
+	test('Saves a snippet priority from the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Priority snippet')
+
+		try {
+			await helper.createSnippet({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.openSnippet(snippetName)
+
+			const priority = page.getByRole('spinbutton', { name: 'Priority' })
+			await priority.fill('7')
+			await helper.saveSnippet()
+			await helper.expectSuccessMessage(/Snippet updated/i)
+
+			await page.reload()
+			await expect(page.getByRole('spinbutton', { name: 'Priority' })).toHaveValue('7')
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Exports a saved snippet as JSON from the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Sidebar export')
+
+		try {
+			await helper.createSnippet({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.openSnippet(snippetName)
+
+			const download = await Promise.all([
+				page.waitForEvent('download'),
+				page.getByRole('button', { name: 'Export', exact: true }).click()
+			]).then(([event]) => event)
+
+			expect(download.suggestedFilename()).toMatch(/\.json$/)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Downloads a PHP code file from the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Sidebar code download')
+
+		try {
+			await helper.createSnippet({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.openSnippet(snippetName)
+
+			const download = await Promise.all([
+				page.waitForEvent('download'),
+				page.getByRole('button', { name: 'Download Code' }).click()
+			]).then(([event]) => event)
+
+			expect(download.suggestedFilename()).toMatch(/\.php$/)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
 	})
 
 	test('Locks a snippet until it is unlocked from the editor sidebar', async ({ page }) => {

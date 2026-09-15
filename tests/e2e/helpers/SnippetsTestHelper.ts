@@ -111,10 +111,10 @@ export class SnippetsTestHelper {
 				'desc' => ${JSON.stringify(options.description ?? '')},
 				'code' => ${JSON.stringify(code)},
 				'scope' => ${JSON.stringify(scope)},
-			'active' => ${options.active ? 'true' : 'false'},
-			'condition_id' => ${options.conditionId ?? 0},
-			'priority' => ${options.priority ?? 10},
-			'tags' => ${JSON.stringify(options.tags ?? [])},
+				'active' => ${options.active ? 'true' : 'false'},
+				'condition_id' => ${options.conditionId ?? 0},
+				'priority' => ${options.priority ?? 10},
+				'tags' => ${JSON.stringify(options.tags ?? [])},
 			]);
 			$snippet = \\Code_Snippets\\save_snippet($snippet);
 			if (${options.locked ? 'true' : 'false'}) {

@@ -167,6 +167,47 @@ test.describe('Code Snippets Evaluation', () => {
 		await expect(page).toHaveURL(/snippets-safe-mode=1/, { timeout: 5000 })
 	})
 
+	test('Safe mode constant disables snippets while keeping the editor accessible', async ({ page }) => {
+		const safeModeClass = `safe-mode-constant-${Date.now()}`
+		const safeModeMuPluginPath = 'wp-content/mu-plugins/code-snippets-e2e-safe-mode-execution.php'
+		const removeMuPlugin = () =>
+			wpCli(['eval', `@unlink( ABSPATH . ${JSON.stringify(safeModeMuPluginPath)} );`])
+		const enableSafeMode = `
+			$path = ABSPATH . ${JSON.stringify(safeModeMuPluginPath)};
+			wp_mkdir_p( dirname( $path ) );
+			file_put_contents( $path, "<?php\\ndefine( 'CODE_SNIPPETS_SAFE_MODE', true );\\n" );
+		`
+
+		await removeMuPlugin()
+
+		try {
+			await helper.createAndActivateSnippet({
+				name: snippetName,
+				code: `add_filter('body_class', function($classes) { $classes[] = '${safeModeClass}'; return $classes; });`
+			})
+			await page.goto(URLS.FRONTEND)
+			await expect(page.locator('body')).toHaveClass(new RegExp(safeModeClass))
+
+			await wpCli(['eval', enableSafeMode])
+
+			await page.goto(URLS.FRONTEND)
+			await expect(page.locator('body')).not.toHaveClass(new RegExp(safeModeClass))
+
+			await helper.navigateToSnippetsAdmin()
+			const row = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+			await row.locator(SELECTORS.SNIPPET_NAME_LINK).click()
+			await expect(page.locator('#title')).toBeEnabled()
+			await page.getByRole('button', { name: 'Save and Deactivate' }).click()
+			await helper.expectSuccessMessage(/Snippet updated/i)
+
+			await helper.navigateToSnippetsAdmin()
+			const deactivatedRow = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+			await expect(deactivatedRow.getByRole('switch')).not.toBeChecked()
+		} finally {
+			await removeMuPlugin()
+		}
+	})
+
 	test('Single-use PHP snippets run once from the list', async ({ page }) => {
 		const markerKey = `code_snippets_e2e_single_use_${Date.now()}`
 
@@ -191,6 +232,20 @@ test.describe('Code Snippets Evaluation', () => {
 		} finally {
 			await wpCli(['eval', `delete_option('${markerKey}');`])
 		}
+	})
+
+	test('asks for confirmation before running a single-use snippet', async ({ page }) => {
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: snippetName,
+			active: false,
+			scope: 'single-use',
+			code: '// A harmless Run Once confirmation fixture.'
+		})
+		await helper.navigateToSnippetsAdmin()
+
+		const row = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+		await row.getByRole('link', { name: 'Run Once' }).click()
+		await expect(page.getByRole('dialog', { name: /Run Once/ })).toBeVisible({ timeout: 5000 })
 	})
 
 	test('PHP snippets execute in priority order', async ({ page }) => {

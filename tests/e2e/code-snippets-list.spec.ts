@@ -63,6 +63,65 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
 	})
 
+	test('Shows an empty state when no snippets match the search', async ({ page }) => {
+		const searchInput = page.getByRole('searchbox', { name: 'Search Snippets:' })
+		await searchInput.fill(`${snippetName}-does-not-exist`)
+
+		await expect(page.getByText('No snippets were found matching the current search query.')).toBeVisible()
+	})
+
+	test('Filters snippets by the selected tag', async ({ page }) => {
+		const taggedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('Tag filter')
+		const tag = `e2e-tag-${Date.now()}`
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: taggedSnippetName,
+				active: false,
+				tags: [tag]
+			})
+			await helper.navigateToSnippetsAdmin()
+
+			await page.getByRole('combobox', { name: 'Filter snippets by tag' }).selectOption({ label: tag })
+			await expect(snippetRowByName(page, taggedSnippetName)).toBeVisible()
+			await expect(snippetRowByName(page, snippetName)).toBeHidden()
+		} finally {
+			await helper.cleanupSnippet(taggedSnippetName)
+		}
+	})
+
+	test('Clears search, tag, and status filters together', async ({ page }) => {
+		const taggedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('Clear filters')
+		const tag = `e2e-clear-${Date.now()}`
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: taggedSnippetName,
+				active: false,
+				tags: [tag]
+			})
+			await helper.navigateToSnippetsAdmin()
+
+			await page.locator('.subsubsub .inactive a').click()
+			await page.getByRole('combobox', { name: 'Filter snippets by tag' }).selectOption({ label: tag })
+			await page.getByRole('searchbox', { name: 'Search Snippets:' }).fill(taggedSnippetName)
+			await expect(snippetRowByName(page, taggedSnippetName)).toBeVisible()
+
+			await page.getByRole('button', { name: 'Clear Filters' }).click()
+			await expect.poll(async () => ({
+				search: await page.getByRole('searchbox', { name: 'Search Snippets:' }).inputValue(),
+				tag: await page.getByRole('combobox', { name: 'Filter snippets by tag' }).inputValue(),
+				activeSnippetVisible: await snippetRowByName(page, snippetName).isVisible()
+			}), { timeout: 5000 }).toEqual({
+				search: '',
+				tag: '',
+				activeSnippetVisible: true
+			})
+		} finally {
+			await helper.cleanupSnippet(taggedSnippetName)
+		}
+	})
+
 	test('Searches snippets by name, description, and code', async ({ page }) => {
 		const nameQuery = SnippetsTestHelper.makeUniqueSnippetName('Search name')
 		const descriptionQuery = SnippetsTestHelper.makeUniqueSnippetName('Search-description-query')
@@ -340,6 +399,47 @@ test.describe('Code Snippets List Page Actions', () => {
 		await helper.cleanupSnippet(`${snippetName} [CLONE]`)
 	})
 
+	test('Selects rows with the header checkbox and individual checkboxes', async ({ page }) => {
+		const row = snippetRowByName(page, snippetName)
+		const rowCheckbox = row.locator('input[name="checked[]"]')
+		const selectAll = page.locator(SELECTORS.SNIPPETS_TABLE)
+			.locator('thead')
+			.getByRole('checkbox', { name: 'Select All', exact: true })
+
+		await selectAll.check()
+		await expect(rowCheckbox).toBeChecked()
+
+		await rowCheckbox.uncheck()
+		await expect(selectAll).not.toBeChecked()
+	})
+
+	test('labels table controls and row actions for assistive technology', async ({ page }) => {
+		const tableHead = page.locator(SELECTORS.SNIPPETS_TABLE).locator('thead')
+		const row = snippetRowByName(page, snippetName)
+
+		await expect(tableHead.getByRole('checkbox', { name: 'Select All', exact: true }))
+			.toHaveAccessibleName('Select All')
+
+		for (const column of ['Name', 'Type', 'Modified', 'Priority']) {
+			await expect(tableHead.getByRole('button', { name: new RegExp(`^${column}`) }))
+				.toHaveAccessibleName(new RegExp(column))
+		}
+
+		await row.hover()
+		await expect(row.getByRole('link', { name: 'Edit' })).toHaveAccessibleName('Edit')
+		for (const action of ['Preview', 'Clone', 'Export', 'Trash']) {
+			await expect(row.getByRole('button', { name: action })).toHaveAccessibleName(action)
+		}
+	})
+
+	test('reduces switch animation when the user prefers less motion', async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: 'reduce' })
+		const toggleSwitch = snippetRowByName(page, snippetName).getByRole('switch')
+
+		expect(await toggleSwitch.evaluate(element =>
+			getComputedStyle(element, '::before').transitionDuration)).toBe('0.01s')
+	})
+
 	test('Can trash a snippet from the preview modal', async ({ page }) => {
 		const snippetRow = snippetRowByName(page, snippetName)
 		await clickRowAction(snippetRow, SELECTORS.PREVIEW_ACTION)
@@ -533,6 +633,35 @@ test.describe('Code Snippets List Page Actions', () => {
 				await helper.cleanupSnippet(name)
 			}
 		}
+	})
+
+	test('Does not apply a bulk action when no rows are selected', async ({ page }) => {
+		const row = snippetRowByName(page, snippetName)
+
+		await page.locator('select[name="action"]').first().selectOption({ label: 'Trash' })
+		await page.locator('#doaction').click()
+
+		await expect(row).toBeVisible()
+		await expect(row).not.toHaveClass(/trashed-snippet/)
+	})
+
+	test('Restores selected snippets from the Trash with a bulk action', async ({ page }) => {
+		const row = snippetRowByName(page, snippetName)
+
+		await row.locator('input[name="checked[]"]').check({ force: true })
+		await page.locator('select[name="action"]').first().selectOption({ label: 'Trash' })
+		await page.locator('#doaction').click()
+		await expect(row).toHaveCount(0)
+
+		await page.locator('.subsubsub .trashed a').click()
+		const trashedRow = snippetRowByName(page, snippetName)
+		await trashedRow.locator('input[name="checked[]"]').check({ force: true })
+		await page.locator('select[name="action"]').first().selectOption({ label: 'Restore' })
+		await page.locator('#doaction').click()
+		await expect(trashedRow).toHaveCount(0)
+
+		await page.locator('.subsubsub .all a').click()
+		await expect(snippetRowByName(page, snippetName)).toBeVisible()
 	})
 
 	test('Can export multiple snippets from bulk actions', async ({ page }) => {

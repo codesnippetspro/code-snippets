@@ -83,6 +83,30 @@ class Uninstaller_Test extends UnitTestCase {
 	}
 
 	/**
+	 * A reinstall after a preserving uninstall keeps existing snippets available.
+	 *
+	 * @return void
+	 */
+	public function test_reinstall_after_incomplete_uninstall_keeps_existing_snippets(): void {
+		$snippet = save_snippet(
+			new Snippet(
+				[
+					'name' => 'Reinstalled preserved snippet',
+					'code' => 'add_action( \'init\', \'__return_null\' );',
+				]
+			)
+		);
+
+		update_option( 'code_snippets_settings', [ 'general' => [ 'complete_uninstall' => false ] ] );
+		( new Uninstaller() )->uninstall_plugin();
+		code_snippets()->db->create_or_upgrade_tables();
+
+		$this->assertSame( 'Reinstalled preserved snippet', get_snippet( $snippet->id )->name );
+
+		delete_snippet( $snippet->id );
+	}
+
+	/**
 	 * A complete uninstall removes the snippets table and plugin settings.
 	 *
 	 * @return void

@@ -3,6 +3,7 @@ import { wpCli } from './helpers/wpCli'
 import { URLS } from './helpers/constants'
 
 const TABS = '#settings-sections-tabs'
+const SETTINGS_SECTIONS = ['editing', 'running', 'insights', 'library', 'interface', 'advanced']
 
 test.describe('Settings tabs', () => {
 	test('shows a success notice after saving the current tab', async ({ page }) => {
@@ -51,6 +52,14 @@ test.describe('Settings tabs', () => {
 		await page.locator(`${TABS} [data-section="editing"]`).click()
 		await expect(wrap).toHaveAttribute('data-active-tab', 'editing')
 		await expect(page.locator(`${TABS} [data-section="editing"]`)).toHaveClass(/active-type/)
+	})
+
+	test('renders every mandatory Settings tab', async ({ page }) => {
+		await page.goto(`${URLS.SETTINGS_ADMIN}&section=editing`)
+
+		for (const section of SETTINGS_SECTIONS) {
+			await expect(page.locator(`${TABS} [data-section="${section}"]`)).toBeVisible({ timeout: 5000 })
+		}
 	})
 
 	test('confirms cache reset from Advanced settings', async ({ page }) => {
