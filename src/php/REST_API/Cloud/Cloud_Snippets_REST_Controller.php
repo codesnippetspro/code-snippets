@@ -237,6 +237,8 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	/**
 	 * Determine the search method to use based on request parameters.
 	 *
+	 * @param WP_REST_Request $request The request object containing the search parameters.
+	 *
 	 * @return string The search method to use.
 	 */
 	private function get_search_method( WP_REST_Request $request ): string {
