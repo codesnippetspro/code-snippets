@@ -63,6 +63,95 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
 	})
 
+	test('Searches snippets by name, description, and code', async ({ page }) => {
+		const nameQuery = SnippetsTestHelper.makeUniqueSnippetName('Search name')
+		const descriptionQuery = SnippetsTestHelper.makeUniqueSnippetName('Search-description-query')
+		const codeQuery = SnippetsTestHelper.makeUniqueSnippetName('Search-code-query')
+		const fixtures = [
+			{
+				name: nameQuery,
+				query: nameQuery
+			},
+			{
+				name: SnippetsTestHelper.makeUniqueSnippetName('Search description'),
+				description: descriptionQuery,
+				query: descriptionQuery
+			},
+			{
+				name: SnippetsTestHelper.makeUniqueSnippetName('Search code'),
+				code: `// ${codeQuery}`,
+				query: codeQuery
+			}
+		]
+
+		try {
+			for (const fixture of fixtures) {
+				await SnippetsTestHelper.createSnippetViaCli({ ...fixture, active: false })
+			}
+
+			await helper.navigateToSnippetsAdmin()
+			const searchInput = page.getByRole('searchbox', { name: 'Search Snippets:' })
+
+			for (const fixture of fixtures) {
+				await searchInput.fill(fixture.query)
+				await expect(snippetRowByName(page, fixture.name)).toBeVisible()
+
+				for (const otherFixture of fixtures.filter(other => other !== fixture)) {
+					await expect(snippetRowByName(page, otherFixture.name)).toBeHidden()
+				}
+			}
+		} finally {
+			for (const fixture of fixtures) {
+				await helper.cleanupSnippet(fixture.name)
+			}
+		}
+	})
+
+	test('Lists active and inactive snippets in the table', async ({ page }) => {
+		const inactiveSnippetName = SnippetsTestHelper.makeUniqueSnippetName('Inactive snippet')
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({ name: inactiveSnippetName, active: false })
+			await helper.navigateToSnippetsAdmin()
+
+			await expect(snippetRowByName(page, snippetName)).toBeVisible()
+			await expect(snippetRowByName(page, inactiveSnippetName)).toBeVisible()
+		} finally {
+			await helper.cleanupSnippet(inactiveSnippetName)
+		}
+	})
+
+	test('Filters snippets by each status link', async ({ page }) => {
+		const inactiveSnippetName = SnippetsTestHelper.makeUniqueSnippetName('Inactive snippet')
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({ name: inactiveSnippetName, active: false })
+			await helper.navigateToSnippetsAdmin()
+
+			const activeRow = snippetRowByName(page, snippetName)
+			const inactiveRow = snippetRowByName(page, inactiveSnippetName)
+			await expect(activeRow).toBeVisible()
+			await expect(inactiveRow).toBeVisible()
+
+			await page.locator('.subsubsub .active a').click()
+			await expect(activeRow).toBeVisible()
+			await expect(inactiveRow).toBeHidden()
+
+			await page.locator('.subsubsub .inactive a').click()
+			await expect(activeRow).toBeHidden()
+			await expect(inactiveRow).toBeVisible()
+
+			await helper.navigateToSnippetsAdmin()
+			await activeRow.getByRole('switch').click({ force: true })
+			await expect(activeRow.getByRole('switch')).not.toBeChecked()
+			await page.locator('.subsubsub .recently_active a').click()
+			await expect(activeRow).toBeVisible()
+			await expect(inactiveRow).toBeHidden()
+		} finally {
+			await helper.cleanupSnippet(inactiveSnippetName)
+		}
+	})
+
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
 		await switchSnippetView(page, 'Card view')
 
@@ -243,6 +332,43 @@ test.describe('Code Snippets List Page Actions', () => {
 		const trashedRow = page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()
 		await expect(trashedRow).toBeVisible({ timeout: 30000 })
 		await expect(trashedRow).toContainText(/Restore/i)
+	})
+
+	test('Can restore a trashed snippet from list page', async ({ page }) => {
+		const snippetRow = snippetRowByName(page, snippetName)
+		await clickRowAction(snippetRow, SELECTORS.DELETE_ACTION)
+
+		const confirmDialog = page.locator('[role="dialog"]').filter({ hasText: /Are you sure\?/i })
+		if (await confirmDialog.isVisible()) {
+			await confirmDialog.getByRole('button', { name: 'Trash' }).click()
+		}
+
+		await page.locator('.subsubsub .trashed a').click()
+		await expect(snippetRow).toBeVisible()
+		await clickRowAction(snippetRow, 'button:has-text("Restore")')
+
+		await expect(snippetRow).toBeVisible()
+		await expect(snippetRow).not.toHaveClass(/trashed-snippet/)
+		await expect(snippetRow.getByRole('switch')).not.toBeChecked()
+	})
+
+	test('Confirms permanent deletion from the Trash view', async ({ page }) => {
+		const snippetRow = snippetRowByName(page, snippetName)
+		await clickRowAction(snippetRow, SELECTORS.DELETE_ACTION)
+
+		const trashDialog = page.locator('[role="dialog"]').filter({ hasText: /Are you sure\?/i })
+		if (await trashDialog.isVisible()) {
+			await trashDialog.getByRole('button', { name: 'Trash' }).click()
+		}
+
+		await page.locator('.subsubsub .trashed a').click()
+		await expect(snippetRow).toBeVisible()
+		await clickRowAction(snippetRow, 'button:has-text("Delete Permanently")')
+
+		const deleteDialog = page.locator('[role="dialog"]').filter({ hasText: /Are you sure\?/i })
+		await expect(deleteDialog).toBeVisible()
+		await deleteDialog.getByRole('button', { name: 'Delete' }).click()
+		await expect(snippetRow).toHaveCount(0)
 	})
 
 	test('Can export snippet from list page', async ({ page }) => {

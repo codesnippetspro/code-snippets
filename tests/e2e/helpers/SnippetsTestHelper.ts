@@ -32,6 +32,8 @@ export interface SnippetFormOptions {
 export interface CreateSnippetCliOptions {
 	name: string;
 	active: boolean;
+	description?: string;
+	code?: string;
 	conditionId?: number;
 	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
@@ -97,12 +99,12 @@ export class SnippetsTestHelper {
 				break
 		}
 
-		const code = 'html' === type ? `<p>${options.name}</p>\n` : `// ${options.name}\n`
+		const code = options.code ?? ('html' === type ? `<p>${options.name}</p>\n` : `// ${options.name}\n`)
 
 		const php = `
 			$snippet = new \\Code_Snippets\\Model\\Snippet([
 				'name' => ${JSON.stringify(options.name)},
-				'desc' => '',
+				'desc' => ${JSON.stringify(options.description ?? '')},
 				'code' => ${JSON.stringify(code)},
 				'scope' => ${JSON.stringify(scope)},
 				'active' => ${options.active ? 'true' : 'false'},
