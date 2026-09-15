@@ -2,10 +2,14 @@
 
 namespace Code_Snippets\Core;
 
+use Code_Snippets\Model\Snippet;
 use Code_Snippets\REST_API\Preferences\Insights_View_Rest_Controller;
 use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
 use Code_Snippets\UnitTestCase;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\delete_snippet;
+use function Code_Snippets\get_snippet;
+use function Code_Snippets\save_snippet;
 
 /**
  * Tests for complete plugin uninstallation.
@@ -51,5 +55,51 @@ class Uninstaller_Test extends UnitTestCase {
 		( new Uninstaller() )->uninstall_plugin();
 
 		$this->assertFalse( get_option( Insights_View_Rest_Controller::OPTION_NAME ) );
+	}
+
+	/**
+	 * A standard uninstall leaves snippets and settings ready for a reinstall.
+	 *
+	 * @return void
+	 */
+	public function test_incomplete_uninstall_preserves_snippets_and_settings(): void {
+		$settings = [ 'general' => [ 'complete_uninstall' => false ] ];
+		$snippet  = save_snippet(
+			new Snippet(
+				[
+					'name' => 'Preserved uninstall snippet',
+					'code' => 'add_action( \'init\', \'__return_null\' );',
+				]
+			)
+		);
+
+		update_option( 'code_snippets_settings', $settings );
+		( new Uninstaller() )->uninstall_plugin();
+
+		$this->assertSame( $settings, get_option( 'code_snippets_settings' ) );
+		$this->assertSame( 'Preserved uninstall snippet', get_snippet( $snippet->id )->name );
+
+		delete_snippet( $snippet->id );
+	}
+
+	/**
+	 * A complete uninstall removes the snippets table and plugin settings.
+	 *
+	 * @return void
+	 */
+	public function test_complete_uninstall_removes_the_snippets_table_and_settings(): void {
+		$db = code_snippets()->db;
+
+		update_option(
+			'code_snippets_settings',
+			[
+				'general' => [ 'complete_uninstall' => true ],
+			]
+		);
+
+		( new Uninstaller() )->uninstall_plugin();
+
+		$this->assertFalse( DB::table_exists( $db->table, true ) );
+		$this->assertFalse( get_option( 'code_snippets_settings' ) );
 	}
 }

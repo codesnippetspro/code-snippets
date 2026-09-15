@@ -37,6 +37,7 @@ export interface CreateSnippetCliOptions {
 	conditionId?: number;
 	locked?: boolean;
 	priority?: number;
+	scope?: string;
 	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
@@ -102,6 +103,7 @@ export class SnippetsTestHelper {
 		}
 
 		const code = options.code ?? ('html' === type ? `<p>${options.name}</p>\n` : `// ${options.name}\n`)
+		scope = options.scope ?? scope
 
 		const php = `
 			$snippet = new \\Code_Snippets\\Model\\Snippet([

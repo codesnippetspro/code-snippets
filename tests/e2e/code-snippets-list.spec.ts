@@ -296,6 +296,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		// Verify that a cloned snippet exists in the table (use table-scoped check to avoid admin bar matches)
 		const clonedRow = snippetRowByName(page, `${snippetName} [CLONE]`)
 		await expect(clonedRow).toBeVisible()
+		await expect(clonedRow.getByRole('switch')).not.toBeChecked()
 
 		// Clean up the clone by trashing it
 		await clickRowAction(clonedRow, SELECTORS.DELETE_ACTION)
@@ -439,6 +440,46 @@ test.describe('Code Snippets List Page Actions', () => {
 		]).then(([downloadEvent]) => downloadEvent)
 
 		expect(download.suggestedFilename()).toMatch(/\.json$/)
+	})
+
+	test('Exports the metadata needed to re-import a snippet', async ({ page }) => {
+		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		const exportName = SnippetsTestHelper.makeUniqueSnippetName('Export metadata')
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: exportName,
+				description: 'An E2E export description.',
+				priority: 7,
+				scope: 'front-end',
+				tags: ['e2e-export'],
+				active: false
+			})
+			await helper.navigateToSnippetsAdmin()
+
+			const exportRow = snippetRowByName(page, exportName)
+			await exportRow.hover()
+			const download = await Promise.all([
+				page.waitForEvent('download'),
+				exportRow.locator(SELECTORS.EXPORT_ACTION).first().click()
+			]).then(([downloadEvent]) => downloadEvent)
+			const downloadPath = await download.path()
+
+			if (!downloadPath) {
+				throw new Error('Export did not produce a local file path')
+			}
+
+			const exported = <{ snippets: Record<string, unknown>[] }><unknown>JSON.parse(readFileSync(downloadPath, 'utf-8'))
+			expect(exported.snippets).toEqual([expect.objectContaining({
+				name: exportName,
+				desc: 'An E2E export description.',
+				priority: 7,
+				scope: 'front-end',
+				tags: ['e2e-export']
+			})])
+		} finally {
+			await helper.cleanupSnippet(exportName)
+		}
 	})
 
 	test('Can activate, deactivate, trash, and permanently delete snippets from bulk actions', async ({ page }) => {

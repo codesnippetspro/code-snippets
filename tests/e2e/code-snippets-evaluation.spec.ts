@@ -148,6 +148,51 @@ test.describe('Code Snippets Evaluation', () => {
 		await expect(page.locator('body')).toHaveClass(/custom-frontend-class/)
 	})
 
+	test('Safe mode query disables front-end snippet execution', async ({ page }) => {
+		const safeModeClass = `safe-mode-${Date.now()}`
+
+		await helper.createAndActivateSnippet({
+			name: snippetName,
+			code: `add_filter('body_class', function($classes) { $classes[] = '${safeModeClass}'; return $classes; });`
+		})
+
+		await page.goto(URLS.FRONTEND)
+		await expect(page.locator('body')).toHaveClass(new RegExp(safeModeClass))
+
+		await page.goto(`${URLS.FRONTEND}?snippets-safe-mode=1`)
+		await expect(page.locator('body')).not.toHaveClass(new RegExp(safeModeClass))
+
+		await page.goto(`${URLS.SNIPPETS_ADMIN}&snippets-safe-mode=1`)
+		await page.getByRole('link', { name: 'Add New' }).click()
+		await expect(page).toHaveURL(/snippets-safe-mode=1/, { timeout: 5000 })
+	})
+
+	test('Single-use PHP snippets run once from the list', async ({ page }) => {
+		const markerKey = `code_snippets_e2e_single_use_${Date.now()}`
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: snippetName,
+				active: false,
+				scope: 'single-use',
+				code: `update_option('${markerKey}', 'ran once');`
+			})
+			await helper.navigateToSnippetsAdmin()
+
+			const row = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+			const runOnce = row.getByRole('link', { name: 'Run Once' })
+			await expect(runOnce).toBeVisible()
+			await Promise.all([
+				page.waitForURL(/result=executed/),
+				runOnce.click()
+			])
+
+			expect((await wpCli(['option', 'get', markerKey])).trim()).toBe('ran once')
+		} finally {
+			await wpCli(['eval', `delete_option('${markerKey}');`])
+		}
+	})
+
 	test('PHP snippets execute in priority order', async ({ page }) => {
 		const outputPrefix = `snippet-priority-${Date.now()}`
 		const highPriorityId = `${outputPrefix}-high`
@@ -179,6 +224,26 @@ test.describe('Code Snippets Evaluation', () => {
 			await helper.cleanupSnippet(highPriorityName)
 			await helper.cleanupSnippet(lowPriorityName)
 		}
+	})
+
+	test('CSS snippets load on the front end', async ({ page }) => {
+		if (!await SnippetsTestHelper.isProLicensed()) {
+			test.skip(true, 'CSS snippets require an active Pro license.')
+		}
+
+		const property = `--e2e-css-${Date.now()}`
+
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: snippetName,
+			active: true,
+			type: 'css',
+			code: `body { ${property}: loaded; }`
+		})
+
+		await page.goto(URLS.FRONTEND)
+		await expect.poll(() => page.locator('body').evaluate((body, propertyName) =>
+			getComputedStyle(body).getPropertyValue(propertyName).trim(), property)
+		).toBe('loaded')
 	})
 
 	test('HTML snippet is evaluating correctly in footer', async () => {
