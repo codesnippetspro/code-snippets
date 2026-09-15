@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { wpCli } from './helpers/wpCli'
-import { URLS } from './helpers/constants'
+import { TIMEOUTS, URLS } from './helpers/constants'
 
 const TABS = '#settings-sections-tabs'
 const SETTINGS_SECTIONS = ['editing', 'running', 'insights', 'library', 'interface', 'advanced']
@@ -58,7 +58,7 @@ test.describe('Settings tabs', () => {
 		await page.goto(`${URLS.SETTINGS_ADMIN}&section=editing`)
 
 		for (const section of SETTINGS_SECTIONS) {
-			await expect(page.locator(`${TABS} [data-section="${section}"]`)).toBeVisible({ timeout: 5000 })
+			await expect(page.locator(`${TABS} [data-section="${section}"]`)).toBeVisible({ timeout: TIMEOUTS.SHORT })
 		}
 	})
 
@@ -103,8 +103,8 @@ test.describe('Settings tabs', () => {
 	test('shows Insights controls for performance tracking and security scanning', async ({ page }) => {
 		await page.goto(`${URLS.SETTINGS_ADMIN}&section=insights`)
 
-		await expect(page.getByRole('checkbox', { name: /Track Snippet Performance/ })).toBeVisible({ timeout: 5000 })
-		await expect(page.getByRole('checkbox', { name: /Scan Snippets for Security Issues/ })).toBeVisible({ timeout: 5000 })
+		await expect(page.getByRole('checkbox', { name: /Track Snippet Performance/ })).toBeVisible({ timeout: TIMEOUTS.SHORT })
+		await expect(page.getByRole('checkbox', { name: /Scan Snippets for Security Issues/ })).toBeVisible({ timeout: TIMEOUTS.SHORT })
 	})
 
 	test('resets settings to their defaults', async ({ page }) => {
@@ -118,7 +118,7 @@ test.describe('Settings tabs', () => {
 
 			await expect(page.locator('#setting-error-settings_reset')).toContainText(
 				'All settings have been reset to their defaults.',
-				{ timeout: 5000 }
+				{ timeout: TIMEOUTS.SHORT }
 			)
 			await page.goto(URLS.ADD_SNIPPET_ADMIN)
 			await expect(page.getByRole('button', { name: 'Save and Activate' })).toHaveClass(/button-primary/)
@@ -146,7 +146,7 @@ test.describe('Settings tabs', () => {
 			await page.reload()
 			await expect(
 				page.getByRole('checkbox', { name: /also delete all snippets and plugin settings/ })
-			).toBeChecked({ timeout: 5000 })
+			).toBeChecked({ timeout: TIMEOUTS.SHORT })
 		} finally {
 			await wpCli([
 				'eval',

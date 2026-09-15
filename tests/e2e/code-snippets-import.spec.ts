@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { SELECTORS, URLS } from './helpers/constants'
+import { SELECTORS, TIMEOUTS, URLS } from './helpers/constants'
 
 const importFile = (snippet: Record<string, unknown>) => ({
 	name: 'code-snippets-export.json',
@@ -50,7 +50,7 @@ test.describe('Code Snippets Import', () => {
 	})
 
 	test('re-imports an exported snippet from its downloaded JSON file', async ({ page }) => {
-		test.setTimeout(60000)
+		test.setTimeout(TIMEOUTS.LONG)
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Export round trip')
 
 		await SnippetsTestHelper.createSnippetViaCli({

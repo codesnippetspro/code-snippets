@@ -1,14 +1,17 @@
 import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { SELECTORS } from './helpers/constants'
+import { SELECTORS, TIMEOUTS } from './helpers/constants'
 import type { Page, Route } from '@playwright/test'
 
 // The view preference saves through an optimistic background request, so wait
 // for it to persist before navigating or ending the test.
 const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
 	const saved = page
-		.waitForResponse(response => response.url().includes('/snippet-view') && 'GET' !== response.request().method(), { timeout: 5000 })
+		.waitForResponse(
+			response => response.url().includes('/snippet-view') && 'GET' !== response.request().method(),
+			{ timeout: TIMEOUTS.SHORT }
+		)
 		.catch(() => undefined)
 	await page.getByRole('button', { name: view }).click()
 	await saved
@@ -31,8 +34,6 @@ const clickRowAction = async (row: ReturnType<typeof snippetRowByName>, selector
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
-	const EXPORT_TEST_TIMEOUT_MS = 60000
-
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName()
@@ -112,7 +113,7 @@ test.describe('Code Snippets List Page Actions', () => {
 				search: await page.getByRole('searchbox', { name: 'Search Snippets:' }).inputValue(),
 				tag: await page.getByRole('combobox', { name: 'Filter snippets by tag' }).inputValue(),
 				activeSnippetVisible: await snippetRowByName(page, snippetName).isVisible()
-			}), { timeout: 5000 }).toEqual({
+			}), { timeout: TIMEOUTS.SHORT }).toEqual({
 				search: '',
 				tag: '',
 				activeSnippetVisible: true
@@ -376,7 +377,7 @@ test.describe('Code Snippets List Page Actions', () => {
 
 			if (isCreateRequest) {
 				createRequests += 1
-				await new Promise(resolve => setTimeout(resolve, 500))
+				await new Promise(resolve => setTimeout(resolve, TIMEOUTS.VERY_SHORT))
 			}
 
 			await route.continue()
@@ -465,13 +466,13 @@ test.describe('Code Snippets List Page Actions', () => {
 		// Some implementations show a confirmation modal that must be dismissed.
 		const confirmDialog = page.locator('[role="dialog"]').filter({ hasText: /Are you sure\\?/i })
 		const dialogVisible = await confirmDialog
-			.waitFor({ state: 'visible', timeout: 2000 })
+			.waitFor({ state: 'visible', timeout: TIMEOUTS.VERY_SHORT })
 			.then(() => true)
 			.catch(() => false)
 
 		if (dialogVisible) {
 			await confirmDialog.locator('button:has-text("Trash"), button:has-text("Delete")').first().click()
-			await confirmDialog.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => undefined)
+			await confirmDialog.waitFor({ state: 'hidden', timeout: TIMEOUTS.DEFAULT }).catch(() => undefined)
 		}
 
 		await expect(page).toHaveURL(/page=snippets/)
@@ -482,11 +483,11 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(trashedLink).toBeVisible()
 		await trashedLink.click()
 
-		await expect(page).toHaveURL(/status=trashed/, { timeout: 30000 })
+		await expect(page).toHaveURL(/status=trashed/, { timeout: TIMEOUTS.DEFAULT })
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
 		const trashedRow = page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()
-		await expect(trashedRow).toBeVisible({ timeout: 30000 })
+		await expect(trashedRow).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 		await expect(trashedRow).toContainText(/Restore/i)
 	})
 
@@ -528,7 +529,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can export snippet from list page', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const snippetRow = snippetRowByName(page, snippetName)
 		await expect(snippetRow).toBeVisible()
 		await snippetRow.hover()
@@ -543,7 +544,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Exports the metadata needed to re-import a snippet', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const exportName = SnippetsTestHelper.makeUniqueSnippetName('Export metadata')
 
 		try {
@@ -665,7 +666,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can export multiple snippets from bulk actions', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName()
 
 		await helper.createAndActivateSnippet({
@@ -695,7 +696,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can download a single snippet from bulk actions', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		await helper.filterSnippetsByName(snippetName)
 		const snippetRow = snippetRowByName(page, snippetName)
 		await expect(snippetRow).toBeVisible()
@@ -712,7 +713,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can download multiple snippets from bulk actions as a zip archive', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Download CSS')
 
 		await SnippetsTestHelper.createSnippetViaCli({
@@ -743,7 +744,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Bulk download stays scoped to the current page selection', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const bulkScopeBaseName = 'E2E Bulk Scope'
 		const firstScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
 		const secondScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
@@ -788,7 +789,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Bulk export stays scoped to the current page selection', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const bulkScopeBaseName = 'E2E Bulk Scope Export'
 		const firstScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
 		const secondScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)

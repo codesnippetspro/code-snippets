@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { SELECTORS, URLS } from './helpers/constants'
+import { SELECTORS, TIMEOUTS, URLS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
@@ -164,7 +164,7 @@ test.describe('Code Snippets Evaluation', () => {
 
 		await page.goto(`${URLS.SNIPPETS_ADMIN}&snippets-safe-mode=1`)
 		await page.getByRole('link', { name: 'Add New' }).click()
-		await expect(page).toHaveURL(/snippets-safe-mode=1/, { timeout: 5000 })
+		await expect(page).toHaveURL(/snippets-safe-mode=1/, { timeout: TIMEOUTS.SHORT })
 	})
 
 	test('Safe mode constant disables snippets while keeping the editor accessible', async ({ page }) => {
@@ -245,7 +245,7 @@ test.describe('Code Snippets Evaluation', () => {
 
 		const row = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
 		await row.getByRole('link', { name: 'Run Once' }).click()
-		await expect(page.getByRole('dialog', { name: /Run Once/ })).toBeVisible({ timeout: 5000 })
+		await expect(page.getByRole('dialog', { name: /Run Once/ })).toBeVisible({ timeout: TIMEOUTS.SHORT })
 	})
 
 	test('PHP snippets execute in priority order', async ({ page }) => {
