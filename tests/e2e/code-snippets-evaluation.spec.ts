@@ -148,6 +148,39 @@ test.describe('Code Snippets Evaluation', () => {
 		await expect(page.locator('body')).toHaveClass(/custom-frontend-class/)
 	})
 
+	test('PHP snippets execute in priority order', async ({ page }) => {
+		const outputPrefix = `snippet-priority-${Date.now()}`
+		const highPriorityId = `${outputPrefix}-high`
+		const lowPriorityId = `${outputPrefix}-low`
+		const highPriorityName = SnippetsTestHelper.makeUniqueSnippetName('High priority snippet')
+		const lowPriorityName = SnippetsTestHelper.makeUniqueSnippetName('Low priority snippet')
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: highPriorityName,
+				active: true,
+				priority: 20,
+				code: `add_action('wp_footer', function() { echo '<span id="${highPriorityId}"></span>'; });`
+			})
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: lowPriorityName,
+				active: true,
+				priority: 5,
+				code: `add_action('wp_footer', function() { echo '<span id="${lowPriorityId}"></span>'; });`
+			})
+
+			await helper.navigateToFrontend()
+			await expect(page.locator(`#${lowPriorityId}`)).toBeAttached()
+			await expect(page.locator(`#${highPriorityId}`)).toBeAttached()
+			expect(await page.locator(`span[id^="${outputPrefix}"]`).evaluateAll(elements =>
+				elements.map(({ id }) => id)
+			)).toEqual([lowPriorityId, highPriorityId])
+		} finally {
+			await helper.cleanupSnippet(highPriorityName)
+			await helper.cleanupSnippet(lowPriorityName)
+		}
+	})
+
 	test('HTML snippet is evaluating correctly in footer', async () => {
 		await helper.createAndActivateSnippet({
 			name: snippetName,

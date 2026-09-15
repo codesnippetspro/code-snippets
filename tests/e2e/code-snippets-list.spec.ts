@@ -220,6 +220,37 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(toggleSwitch).toHaveAccessibleName(initialChecked ? /Deactivate/i : /Activate/i)
 	})
 
+	test('Runs and stops a snippet when its row toggle changes', async ({ page }) => {
+		const executionSnippetName = SnippetsTestHelper.makeUniqueSnippetName('Row toggle execution')
+		const bodyClass = `row-toggle-${Date.now()}`
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: executionSnippetName,
+				active: false,
+				code: `add_filter('body_class', function() { return ['${bodyClass}']; });`
+			})
+			await helper.navigateToSnippetsAdmin()
+
+			let executionRow = snippetRowByName(page, executionSnippetName)
+			await executionRow.getByRole('switch').click({ force: true })
+			await expect(executionRow.getByRole('switch')).toBeChecked()
+
+			await helper.navigateToFrontend()
+			await expect(page.locator('body')).toHaveClass(new RegExp(bodyClass))
+
+			await helper.navigateToSnippetsAdmin()
+			executionRow = snippetRowByName(page, executionSnippetName)
+			await executionRow.getByRole('switch').click({ force: true })
+			await expect(executionRow.getByRole('switch')).not.toBeChecked()
+
+			await helper.navigateToFrontend()
+			await expect(page.locator('body')).not.toHaveClass(new RegExp(bodyClass))
+		} finally {
+			await helper.cleanupSnippet(executionSnippetName)
+		}
+	})
+
 	test('Can access edit from list page', async ({ page }) => {
 		const snippetRow = snippetRowByName(page, snippetName)
 
@@ -228,6 +259,30 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await expect(page).toHaveURL(/page=edit-snippet/)
 		await expect(page.locator('#title')).toHaveValue(snippetName)
+	})
+
+	test('Shows View and omits Trash for a locked snippet', async ({ page }) => {
+		const lockedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('Locked snippet')
+
+		try {
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: lockedSnippetName,
+				active: false,
+				locked: true
+			})
+			await helper.navigateToSnippetsAdmin()
+
+			const lockedRow = snippetRowByName(page, lockedSnippetName)
+			await expect(lockedRow).toBeVisible()
+			await lockedRow.hover()
+			const actions = lockedRow.locator('.row-actions')
+
+			await expect(actions.getByRole('link', { name: 'View' })).toBeVisible()
+			await expect(actions.getByRole('link', { name: 'Edit' })).toHaveCount(0)
+			await expect(actions.getByRole('button', { name: 'Trash' })).toHaveCount(0)
+		} finally {
+			await helper.cleanupSnippet(lockedSnippetName)
+		}
 	})
 
 	test('Can clone snippet from list page', async ({ page }) => {
@@ -384,6 +439,59 @@ test.describe('Code Snippets List Page Actions', () => {
 		]).then(([downloadEvent]) => downloadEvent)
 
 		expect(download.suggestedFilename()).toMatch(/\.json$/)
+	})
+
+	test('Can activate, deactivate, trash, and permanently delete snippets from bulk actions', async ({ page }) => {
+		const bulkSnippetNames = [
+			SnippetsTestHelper.makeUniqueSnippetName('Bulk action snippet'),
+			SnippetsTestHelper.makeUniqueSnippetName('Bulk action snippet')
+		]
+		const rows = () => bulkSnippetNames.map(name => snippetRowByName(page, name))
+		const selectRows = async () => {
+			for (const row of rows()) {
+				await row.locator('input[name="checked[]"]').check({ force: true })
+			}
+		}
+		const applyAction = async (action: string) => {
+			await page.locator('select[name="action"]').first().selectOption({ label: action })
+			await page.locator('#doaction').click()
+		}
+
+		try {
+			for (const name of bulkSnippetNames) {
+				await SnippetsTestHelper.createSnippetViaCli({ name, active: false })
+			}
+			await helper.navigateToSnippetsAdmin()
+			await selectRows()
+			await applyAction('Activate')
+
+			for (const row of rows()) {
+				await expect(row.getByRole('switch')).toBeChecked()
+			}
+
+			await selectRows()
+			await applyAction('Deactivate')
+			for (const row of rows()) {
+				await expect(row.getByRole('switch')).not.toBeChecked()
+			}
+
+			await selectRows()
+			await applyAction('Trash')
+			for (const row of rows()) {
+				await expect(row).toHaveCount(0)
+			}
+
+			await page.locator('.subsubsub .trashed a').click()
+			await selectRows()
+			await applyAction('Delete Permanently')
+			for (const row of rows()) {
+				await expect(row).toHaveCount(0)
+			}
+		} finally {
+			for (const name of bulkSnippetNames) {
+				await helper.cleanupSnippet(name)
+			}
+		}
 	})
 
 	test('Can export multiple snippets from bulk actions', async ({ page }) => {

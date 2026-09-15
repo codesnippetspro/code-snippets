@@ -64,6 +64,38 @@ test.describe('Code Snippets Admin', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
+	test('Locks a snippet until it is unlocked from the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Locked snippet')
+		const updatedSnippetName = `${snippetName} unlocked`
+		let cleanupName = snippetName
+
+		try {
+			await helper.createSnippet({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.openSnippet(snippetName)
+
+			const lockButton = page.locator('button.snippet-lock-button')
+			await lockButton.click()
+			await expect(page.getByRole('heading', { name: /View Snippet/ })).toBeVisible()
+			await expect(page.locator('#title')).toBeDisabled()
+			await expect(page.locator('button.delete-button')).toBeDisabled()
+
+			await lockButton.click()
+			await expect(page.getByRole('heading', { name: /Edit Snippet/ })).toBeVisible()
+			await expect(page.locator('#title')).toBeEnabled()
+			await expect(page.locator('button.delete-button')).toBeEnabled()
+
+			await page.locator('#title').fill(updatedSnippetName)
+			await helper.saveSnippet()
+			await helper.expectSuccessMessage(/Snippet updated/i)
+			cleanupName = updatedSnippetName
+		} finally {
+			await helper.cleanupSnippet(cleanupName)
+		}
+	})
+
 	test('Back navigation confirms before discarding unsaved changes', async ({ page }) => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.clickAddNewSnippet()
@@ -119,6 +151,31 @@ test.describe('Code Snippets Admin', () => {
 		expect(dialogs[0].message).toContain('unsaved changes')
 
 		await helper.cleanupSnippet(snippetName)
+	})
+
+	test('Shows a clear error and leaves a snippet inactive when its PHP has a syntax error', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Syntax error snippet')
+
+		try {
+			await helper.clickAddNewSnippet()
+			await helper.fillSnippetForm({
+				name: snippetName,
+				code: 'function invalid_syntax( {'
+			})
+			await helper.saveSnippet('save_and_activate')
+
+			const errorNotice = page.locator('.wrap > .notice.error').first()
+			await expect(errorNotice).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+			await expect(errorNotice).toContainText(/syntax error/i)
+			await expect(errorNotice).toContainText(/remains inactive/i)
+
+			await helper.navigateToSnippetsAdmin()
+			await helper.filterSnippetsByName(snippetName)
+			const snippetRow = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+			await expect(snippetRow.getByRole('switch')).not.toBeChecked()
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
 	})
 
 	test('Shows an error notice when activation fails after saving', async ({ page }) => {

@@ -35,6 +35,8 @@ export interface CreateSnippetCliOptions {
 	description?: string;
 	code?: string;
 	conditionId?: number;
+	locked?: boolean;
+	priority?: number;
 	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
@@ -107,11 +109,15 @@ export class SnippetsTestHelper {
 				'desc' => ${JSON.stringify(options.description ?? '')},
 				'code' => ${JSON.stringify(code)},
 				'scope' => ${JSON.stringify(scope)},
-				'active' => ${options.active ? 'true' : 'false'},
-				'condition_id' => ${options.conditionId ?? 0},
-				'tags' => ${JSON.stringify(options.tags ?? [])},
+			'active' => ${options.active ? 'true' : 'false'},
+			'condition_id' => ${options.conditionId ?? 0},
+			'priority' => ${options.priority ?? 10},
+			'tags' => ${JSON.stringify(options.tags ?? [])},
 			]);
 			$snippet = \\Code_Snippets\\save_snippet($snippet);
+			if (${options.locked ? 'true' : 'false'}) {
+				\\Code_Snippets\\set_snippet_locked($snippet->id, true);
+			}
 			echo $snippet->id;
 		`
 
@@ -133,7 +139,9 @@ export class SnippetsTestHelper {
 				[ $network, $table ] = $target;
 				$ids = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$table} WHERE name LIKE %s", $like ) );
 				foreach ( $ids as $id ) {
-					\\Code_Snippets\\delete_snippet( intval( $id ), (bool) $network );
+					$id = intval( $id );
+					\\Code_Snippets\\set_snippet_locked( $id, false, (bool) $network );
+					\\Code_Snippets\\delete_snippet( $id, (bool) $network );
 				}
 			}
 		`
