@@ -118,6 +118,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		flex-wrap: wrap;
 		flex-shrink: 0;
 		gap: 16px;
 		padding: 11px 19px;
@@ -141,6 +142,7 @@
 	.code-snippets-preview-modal__buttons {
 		display: flex;
 		align-items: center;
+		flex-wrap: wrap;
 		gap: 8px;
 
 		.button {
@@ -167,5 +169,16 @@
 				color: var(--cs-color-error);
 			}
 		}
+	}
+}
+
+.components-modal__content {
+	.action-buttons {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.components-button.is-secondary {
+		box-shadow: none;
 	}
 }

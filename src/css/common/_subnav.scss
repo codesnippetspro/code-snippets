@@ -247,8 +247,7 @@
 	}
 }
 
-// When an admin notice pushes the page content down, restore the top border
-// above the subnav bar (no extra margin — the wrapper sits flush).
+// The notice already supplies the top edge; do not render a second border.
 .notice + .wrap .snippet-type-nav-wrapper {
-	border-block-start: 1px solid var(--cs-color-border-subtle);
+	border-block-start: 0;
 }

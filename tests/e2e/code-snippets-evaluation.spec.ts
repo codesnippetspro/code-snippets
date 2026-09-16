@@ -4,6 +4,16 @@ import { SELECTORS, TIMEOUTS, URLS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
+declare global {
+	interface Window {
+		customHeadJSTest?: string;
+		testHeadFunction?: () => string;
+		customFooterJSTest?: string;
+		testFooterFunction?: () => string;
+		footerDOMTest?: string;
+	}
+}
+
 const BODY_CLASS_TEST_CODE = `
 	add_filter('admin_body_class', function($classes) {
 		return $classes . ' custom-admin-class';
@@ -425,6 +435,140 @@ test.describe('Code Snippets Evaluation', () => {
 		const pageUrl = await createPageWithShortcode(snippetId, snippetName)
 
 		await verifyShortcodeRendersCorrectly(helper, page, pageUrl)
+	})
+
+	test('CSS snippet is evaluating correctly on site front-end', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+			name: snippetName,
+			code: `
+				.custom-css-test-element {
+					background-color: #f00;
+					color: #fff;
+					padding: 10px;
+					font-size: 16px;
+				}
+			`,
+			type: 'CSS',
+			location: 'CSS_FRONTEND_ONLY'
+		})
+
+		await helper.navigateToFrontend()
+		await helper.createTestElement('custom-css-test-element', 'CSS Test Element')
+
+		await helper.verifyStylesApplied('.custom-css-test-element', {
+			backgroundColor: '#f00',
+			color: '#fff',
+			padding: '10px'
+		})
+
+		// Verify CSS is not loaded in admin
+		await page.goto(URLS.WP_ADMIN)
+		await helper.createTestElement('custom-css-test-element', 'CSS Test Element Admin')
+
+		await helper.verifyStylesNotApplied('.custom-css-test-element', {
+			backgroundColor: '#f00'
+		})
+	})
+
+	test('CSS snippet is evaluating correctly in administration area', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+			name: snippetName,
+			code: `
+				.custom-admin-css-test {
+					background-color: #00f;
+					color: #fff;
+					border: 2px solid #ff0;
+				}
+			`,
+			type: 'CSS',
+			location: 'CSS_ADMIN_ONLY'
+		})
+
+		await page.goto(URLS.WP_ADMIN)
+		await helper.createTestElement('custom-admin-css-test', 'Admin CSS Test Element')
+
+		await helper.verifyStylesApplied('.custom-admin-css-test', {
+			backgroundColor: '#00f',
+			color: '#fff'
+		})
+
+		// Compare through the helper, which normalises colours: computed styles come
+		// back as rgb() in Chromium, so a raw hex comparison never matches.
+		await helper.verifyStylesApplied('.custom-admin-css-test', { borderColor: '#ffff00' })
+
+		// Verify CSS is not loaded on frontend
+		await helper.navigateToFrontend()
+		await helper.createTestElement('custom-admin-css-test', 'Frontend CSS Test Element')
+
+		await helper.verifyStylesNotApplied('.custom-admin-css-test', {
+			backgroundColor: '#00f'
+		})
+	})
+
+	test('JavaScript snippet is evaluating correctly in site <head> section', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+			name: snippetName,
+			code: `
+				window.customHeadJSTest = 'loaded-in-head';
+
+				document.addEventListener('DOMContentLoaded', function() {
+					const testDiv = document.createElement('div');
+					testDiv.id = 'js-head-test-element';
+					testDiv.textContent = 'JavaScript Head Test Loaded';
+					testDiv.style.display = 'none';
+					document.body.appendChild(testDiv);
+				});
+
+				window.testHeadFunction = function() {
+					return 'head-function-works';
+				};
+			`,
+			type: 'JS',
+			location: 'SITE_HEADER'
+		})
+
+		await helper.navigateToFrontend()
+
+		await helper.verifyGlobalVariable('customHeadJSTest', 'loaded-in-head')
+		await helper.verifyGlobalFunction('testHeadFunction', 'head-function-works')
+
+		await expect(page.locator('#js-head-test-element')).toBeAttached()
+		await expect(page.locator('#js-head-test-element')).toContainText('JavaScript Head Test Loaded')
+	})
+
+	test('JavaScript snippet is evaluating correctly in site footer', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+			name: snippetName,
+			code: `
+				window.customFooterJSTest = 'loaded-in-footer';
+
+				const footerTestDiv = document.createElement('div');
+				footerTestDiv.id = 'js-footer-test-element';
+				footerTestDiv.textContent = 'JavaScript Footer Test Loaded';
+				footerTestDiv.style.color = '#f00';
+				footerTestDiv.style.display = 'none';
+				document.body.appendChild(footerTestDiv);
+
+				window.testFooterFunction = function() {
+					return 'footer-function-works';
+				};
+
+				window.footerDOMTest = document.body ? 'dom-available' : 'dom-not-available';
+			`,
+			type: 'JS',
+			location: 'SITE_FOOTER'
+		})
+
+		await helper.navigateToFrontend()
+
+		await helper.verifyGlobalVariable('customFooterJSTest', 'loaded-in-footer')
+		await helper.verifyGlobalFunction('testFooterFunction', 'footer-function-works')
+		await helper.verifyGlobalVariable('footerDOMTest', 'dom-available')
+
+		await expect(page.locator('#js-footer-test-element')).toBeAttached()
+		await expect(page.locator('#js-footer-test-element')).toContainText('JavaScript Footer Test Loaded')
+
+		await helper.verifyStylesApplied('#js-footer-test-element', { color: '#f00' })
 	})
 
 	test.afterEach(async () => {

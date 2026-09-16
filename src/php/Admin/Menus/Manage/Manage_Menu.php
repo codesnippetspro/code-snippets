@@ -5,6 +5,7 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
+use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
 use function Code_Snippets\activate_snippet;
 use function Code_Snippets\code_snippets;
@@ -210,7 +211,7 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Clear the watched-demo record when asked to through the query string.
+	 * Clear the watched-demo record when asked through the query string.
 	 *
 	 * This is deliberately not exposed in the settings screen: it exists to put
 	 * the walkthrough tabs back to their "New" state for a screenshot or a
@@ -245,11 +246,11 @@ class Manage_Menu extends Admin_Menu {
 	public const RUN_ONCE_NONCE = 'code_snippets_run_once';
 
 	/**
-	 * Run a single-use snippet, when asked to by the snippets list.
+	 * Run a single-use snippet, when asked by the snippets list.
 	 *
 	 * Activating the snippet is all that is required: single-use snippets are
 	 * executed and then deactivated again on the next page load, so redirecting
-	 * afterwards both runs the code and returns the snippet to its resting
+	 * afterward both runs the code and returns the snippet to its resting
 	 * state. This mirrors what the list table did before the snippets list
 	 * moved to the REST API, at which point the button was left pointing at a
 	 * URL that nothing handled.
@@ -292,7 +293,7 @@ class Manage_Menu extends Admin_Menu {
 
 		// Safe mode skips execution, so activating here would leave the snippet on
 		// without ever running it, behind a false success notice. Report it instead.
-		if ( \Code_Snippets\Integration\Evaluate_Functions::is_safe_mode_active() ) {
+		if ( Evaluate_Functions::is_safe_mode_active() ) {
 			wp_safe_redirect(
 				add_query_arg(
 					[ 'result' => 'run-once-safe-mode' ],

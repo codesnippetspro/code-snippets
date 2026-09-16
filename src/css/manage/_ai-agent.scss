@@ -1,28 +1,3 @@
-.ai-agent-heading {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	inline-size: 100%;
-	margin-block: 28px 16px;
-}
-
-.ai-agent-heading__text {
-	h1 {
-		margin-block: 0 4px;
-	}
-
-	p {
-		margin-block: 0;
-		color: var(--cs-color-text-secondary);
-	}
-}
-
-.ai-agent-heading__new {
-	flex-shrink: 0;
-	margin-inline-start: auto;
-}
-
 .ai-agent-layout {
 	display: grid;
 	gap: var(--cs-sidebar-gap);
@@ -170,10 +145,26 @@
 	color: var(--cs-color-text-subtle);
 	font-size: 18px;
 	padding-inline: 10px;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 120ms ease, color 120ms ease;
 
+	&:focus-visible,
 	&:hover {
 		color: var(--cs-color-error);
 	}
+
+	.ai-agent-history__item:hover &,
+	.ai-agent-history__item:focus-within & {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
+
+.ai-agent-history__delete-icon {
+	block-size: 18px;
+	inline-size: 18px;
+	display: block;
 }
 
 .ai-agent-history::after {
@@ -523,11 +514,6 @@
 
 	p {
 		margin-block: 0 12px;
-	}
-
-	// A refusal has no Retry button, so its message needs no trailing gap.
-	&.is-refusal p {
-		margin-block-end: 0;
 	}
 }
 

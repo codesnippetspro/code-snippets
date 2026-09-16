@@ -63,7 +63,8 @@
 		align-items: center;
 		gap: 8px;
 		inline-size: 100%;
-		border-color: var(--cs-color-border);
+		min-block-size: 48px;
+		border-color: var(--cs-color-accent);
 		background: transparent;
 		padding: 6px 12px;
 

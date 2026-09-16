@@ -131,7 +131,7 @@ export const isSnippetActive = (
 
 /**
  * Whether the snippet belongs to the network and is not shared with subsites,
- * making it read-only outside of the network admin.
+ * making it read-only outside the network admin.
  */
 export const isNetworkOnlySnippet = (snippet: Snippet): boolean =>
 	!isNetworkAdmin() && snippet.network && !snippet.shared_network

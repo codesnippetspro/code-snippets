@@ -1,3 +1,4 @@
+@use 'common/buttons';
 @use 'common/theme';
 @use 'common/codemirror';
 @use 'common/badges';
@@ -52,8 +53,6 @@
 	}
 
 	.generate-button {
-		float: inline-end;
-		margin-block-start: 37px;
 		z-index: 99;
 		position: relative;
 	}
