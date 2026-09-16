@@ -8,6 +8,9 @@
 * Cloud Library demo: a guided, scripted walkthrough of the Pro Cloud Library, showing how a cloud snippet is previewed, downloaded inactive, and then kept in sync. Runs entirely inside the plugin — the snippets shown are examples and nothing is downloaded.
 * "New" badges on the AI Agent, Blueprints, and Cloud Library toolbar tabs, which soften once each demo walkthrough has been watched.
 
+### Fixed
+* Snippets list showing only the first 100 snippets on sites with larger libraries, with the type counts agreeing with that shortened list instead of the real total. The list is now requested without snippet code, which makes it far smaller and less likely to fail, and the screen says so if it cannot be loaded rather than presenting a partial list as though it were complete.
+
 ## [3.10.2] (2026-09-01)
 
 ### Added

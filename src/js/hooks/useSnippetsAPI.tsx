@@ -10,9 +10,23 @@ import type { SnippetSchema, WritableSnippetSchema } from '../types/schema/Snipp
 import type { RestAPI } from './useRestAPI'
 import type { PropsWithChildren } from 'react'
 
+export interface FetchAllOptions {
+	/**
+	 * Whether to include each snippet's code. The list screen never renders it,
+	 * so it is left out by default; only searching code contents needs it.
+	 */
+	withCode?: boolean
+}
+
 export interface SnippetsAPI {
-	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
+	fetchAll: (network?: boolean | null, options?: FetchAllOptions) => Promise<Snippet[]>
 	fetch: (snippetId: number, network?: boolean | null) => Promise<Snippet>
+	/**
+	 * Resolve a snippet that may have come from the list, which omits code.
+	 * Anything needing the body — cloning, previewing, copying — goes through
+	 * this so it works whichever source the snippet came from.
+	 */
+	ensureCode: (snippet: Snippet) => Promise<Snippet>
 	create: (snippet: Partial<Snippet>) => Promise<Snippet>
 	update: (snippet: Pick<Snippet, 'id' | 'network'> & Partial<Snippet>) => Promise<Snippet>
 	delete: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
@@ -24,6 +38,17 @@ export interface SnippetsAPI {
 	attach: (snippet: Pick<Snippet, 'id' | 'network' | 'conditionId'>) => Promise<void>
 	detach: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
 }
+
+/**
+ * Fields the snippets list needs, which is every schema field except `code`.
+ * A list carrying full snippet bodies is by far the largest thing the manage
+ * screen transfers and grows without bound as a library does, while nothing in
+ * the list renders it. Keep in step with the item schema.
+ */
+const LIST_FIELDS = [
+	'id', 'name', 'desc', 'tags', 'scope', 'condition_id', 'active', 'trashed', 'locked',
+	'priority', 'network', 'shared_network', 'modified', 'last_active', 'code_error', 'code_error_trace'
+].join(',')
 
 const buildSnippetUrl = ({ id, network }: Pick<Snippet, 'id' | 'network'>, action?: string) =>
 	buildUrl([REST_BASES.snippets, id, action].filter(Boolean).join('/'), { network })
@@ -57,13 +82,22 @@ const mapToSchema = ({
 })
 
 const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
-	fetchAll: network =>
-		get<SnippetSchema[]>(buildUrl(REST_BASES.snippets, { network }))
+	fetchAll: (network, options) =>
+		get<SnippetSchema[]>(buildUrl(REST_BASES.snippets, {
+			network,
+			...options?.withCode ? {} : { _fields: LIST_FIELDS }
+		}))
 			.then(response => response.map(createSnippetObject)),
 
 	fetch: (snippetId, network) =>
 		get<SnippetSchema>(buildUrl(`${REST_BASES.snippets}/${snippetId}`, { network }))
 			.then(createSnippetObject),
+
+	ensureCode: snippet =>
+		snippet.code
+			? Promise.resolve(snippet)
+			: get<SnippetSchema>(buildUrl(`${REST_BASES.snippets}/${snippet.id}`, { network: snippet.network }))
+				.then(createSnippetObject),
 
 	create: snippet =>
 		post<SnippetSchema, WritableSnippetSchema>(REST_BASES.snippets, mapToSchema(snippet))
