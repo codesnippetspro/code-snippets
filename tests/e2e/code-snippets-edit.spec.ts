@@ -23,6 +23,119 @@ test.describe('Code Snippets Admin', () => {
 		})
 	})
 
+	test('Saves a description entered in the visual editor', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Visual description')
+		const description = 'Saved from the visual description editor.'
+
+		try {
+			await helper.clickAddNewSnippet()
+			await helper.fillSnippetForm({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+
+			const visualEditor = page.frameLocator('#snippet_description_ifr').locator('body')
+			await expect(visualEditor).toBeVisible()
+			await visualEditor.fill(description)
+			await helper.saveSnippet()
+			await helper.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
+
+			await page.reload()
+			await expect(page.frameLocator('#snippet_description_ifr').locator('body')).toHaveText(description)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Preserves a description when switching between visual and text tabs', async ({ page }) => {
+		const description = 'Description preserved between editor tabs.'
+
+		await helper.clickAddNewSnippet()
+		const visualEditor = page.frameLocator('#snippet_description_ifr').locator('body')
+		await expect(visualEditor).toBeVisible()
+		await visualEditor.fill(description)
+
+		await page.getByRole('button', { name: 'Code', exact: true }).click()
+		await expect(page.locator('#snippet_description')).toHaveValue(new RegExp(description))
+
+		await page.getByRole('button', { name: 'Visual', exact: true }).click()
+		await expect(visualEditor).toHaveText(description)
+	})
+
+	test('Adds and removes tags before saving a snippet', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Tagged snippet')
+		const removedTag = 'remove-me'
+		const savedTag = 'saved-tag'
+
+		try {
+			await helper.clickAddNewSnippet()
+			await helper.fillSnippetForm({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+
+			const tags = page.getByRole('combobox', { name: 'Snippet Tags' })
+			for (const tag of [removedTag, savedTag]) {
+				await tags.fill(tag)
+				await tags.press('Enter')
+				await expect(page.locator('.components-form-token-field__token').filter({ hasText: tag })).toBeVisible()
+			}
+
+			await page.locator('.components-form-token-field__token')
+				.filter({ hasText: removedTag })
+				.locator('.components-form-token-field__remove-token')
+				.click()
+			await expect(page.locator('.components-form-token-field__token').filter({ hasText: removedTag })).toHaveCount(0)
+
+			await helper.saveSnippet()
+			await helper.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
+			await page.reload()
+			await expect(page.locator('.components-form-token-field__token').filter({ hasText: savedTag })).toBeVisible()
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Splits comma-separated tags into individual tokens', async ({ page }) => {
+		const tags = ['first-pasted-tag', 'second-pasted-tag']
+
+		await helper.clickAddNewSnippet()
+		const tagInput = page.getByRole('combobox', { name: 'Snippet Tags' })
+		await tagInput.fill(tags.join(','))
+		await tagInput.press('Enter')
+
+		for (const tag of tags) {
+			await expect(page.locator('.components-form-token-field__token').filter({ hasText: tag })).toBeVisible()
+		}
+	})
+
+	test('Copies a content snippet shortcode from the sidebar', async ({ page, context }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Shortcode snippet')
+
+		try {
+			const snippetId = await SnippetsTestHelper.createSnippetViaCli({
+				name: snippetName,
+				active: false,
+				type: 'html',
+				scope: 'content'
+			})
+			const shortcode = `[code_snippet id=${snippetId} format name="${snippetName}"]`
+
+			await helper.navigateToSnippetsAdmin()
+			await helper.openSnippet(snippetName)
+			await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(page.url()).origin })
+
+			await page.getByRole('button', { name: 'See options' }).click()
+			const dialog = page.getByRole('dialog', { name: 'Embed Snippet with Shortcode' })
+			await expect(dialog.locator('.shortcode-tag')).toHaveText(shortcode)
+			await dialog.getByRole('button', { name: 'Copy' }).click()
+			await expect(dialog.getByRole('status')).toHaveText('Copied to clipboard.')
+			expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(shortcode)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
 	test('Expands and collapses the code editor', async ({ page }) => {
 		await helper.clickAddNewSnippet()
 		const form = page.locator('form.snippet-form')

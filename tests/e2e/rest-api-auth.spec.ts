@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test'
+import { URLS } from './helpers/constants'
 
 test.describe('Snippets REST API authentication', () => {
 	test('rejects creating a snippet without a REST nonce', async ({ page }) => {
-		await page.goto('/wp-admin/')
+		await page.goto(URLS.WP_ADMIN)
 
 		const response = await page.evaluate(async () => {
 			const request = await fetch('/?rest_route=/code-snippets/v1/snippets', {

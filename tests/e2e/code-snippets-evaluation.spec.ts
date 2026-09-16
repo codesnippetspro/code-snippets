@@ -208,6 +208,27 @@ test.describe('Code Snippets Evaluation', () => {
 		}
 	})
 
+	test('Safe mode constant warns that snippets will not execute', async ({ page }) => {
+		const safeModeMuPluginPath = 'wp-content/mu-plugins/code-snippets-e2e-safe-mode-notice.php'
+		const removeMuPlugin = () =>
+			wpCli(['eval', `@unlink( ABSPATH . ${JSON.stringify(safeModeMuPluginPath)} );`])
+
+		await removeMuPlugin()
+
+		try {
+			await wpCli(['eval', `
+				$path = ABSPATH . ${JSON.stringify(safeModeMuPluginPath)};
+				wp_mkdir_p( dirname( $path ) );
+				file_put_contents( $path, "<?php\\ndefine( 'CODE_SNIPPETS_SAFE_MODE', true );\\n" );
+			`])
+
+			await page.goto(URLS.SNIPPETS_ADMIN)
+			await expect(page.getByText('Safe mode is active and snippets will not execute!')).toBeVisible()
+		} finally {
+			await removeMuPlugin()
+		}
+	})
+
 	test('Single-use PHP snippets run once from the list', async ({ page }) => {
 		const markerKey = `code_snippets_e2e_single_use_${Date.now()}`
 
@@ -299,6 +320,50 @@ test.describe('Code Snippets Evaluation', () => {
 		await expect.poll(() => page.locator('body').evaluate((body, propertyName) =>
 			getComputedStyle(body).getPropertyValue(propertyName).trim(), property)
 		).toBe('loaded')
+	})
+
+	test('JavaScript snippets load in the site header', async ({ page }) => {
+		if (!await SnippetsTestHelper.isProLicensed()) {
+			test.skip(true, 'JavaScript snippets require an active Pro license.')
+		}
+
+		const marker = `e2e-header-script-${Date.now()}`
+
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: snippetName,
+			active: true,
+			type: 'js',
+			scope: 'site-head-js',
+			code: `document.documentElement.dataset.e2eHeaderScript = '${marker}';`
+		})
+
+		await helper.navigateToFrontend()
+		await expect(page.locator('html')).toHaveAttribute('data-e2e-header-script', marker)
+		expect(await page.locator('head script').evaluateAll((scripts, scriptMarker) =>
+			scripts.some(script => script.textContent?.includes(scriptMarker)), marker
+		)).toBe(true)
+	})
+
+	test('JavaScript snippets load in the site footer', async ({ page }) => {
+		if (!await SnippetsTestHelper.isProLicensed()) {
+			test.skip(true, 'JavaScript snippets require an active Pro license.')
+		}
+
+		const marker = `e2e-footer-script-${Date.now()}`
+
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: snippetName,
+			active: true,
+			type: 'js',
+			scope: 'site-footer-js',
+			code: `document.body.dataset.e2eFooterScript = '${marker}';`
+		})
+
+		await helper.navigateToFrontend()
+		await expect(page.locator('body')).toHaveAttribute('data-e2e-footer-script', marker)
+		expect(await page.locator('body script').evaluateAll((scripts, scriptMarker) =>
+			scripts.some(script => script.textContent?.includes(scriptMarker)), marker
+		)).toBe(true)
 	})
 
 	test('HTML snippet is evaluating correctly in footer', async () => {

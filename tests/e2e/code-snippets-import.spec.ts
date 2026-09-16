@@ -106,6 +106,69 @@ test.describe('Code Snippets Import', () => {
 		await expect(page.locator('.import-result-message')).toContainText('No valid snippets found')
 	})
 
+	test('removes a selected file before uploading the remaining file', async ({ page }) => {
+		const keptName = SnippetsTestHelper.makeUniqueSnippetName('Kept import')
+		const removedName = SnippetsTestHelper.makeUniqueSnippetName('Removed import')
+
+		await page.goto(URLS.IMPORT_ADMIN)
+		await page.getByLabel('Select files to import').setInputFiles([
+			{ ...importFile({ id: 1, name: keptName, code: '// kept', scope: 'global' }), name: 'keep.json' },
+			{ ...importFile({ id: 2, name: removedName, code: '// removed', scope: 'global' }), name: 'remove.json' }
+		])
+		await expect(page.getByRole('heading', { name: 'Selected files: (2)' })).toBeVisible()
+
+		await page.getByRole('button', { name: 'Remove file remove.json' }).click()
+		await expect(page.getByRole('heading', { name: 'Selected files: (1)' })).toBeVisible()
+		await page.getByRole('button', { name: 'Upload files' }).click()
+
+		await expect(page.getByRole('heading', { name: 'Available snippets (1)' })).toBeVisible()
+		await expect(page.getByRole('row', { name: new RegExp(keptName) })).toBeVisible()
+		await expect(page.getByRole('row', { name: new RegExp(removedName) })).toHaveCount(0)
+	})
+
+	test('selects and deselects every parsed snippet before importing', async ({ page }) => {
+		const snippets = [
+			{ id: 1, name: SnippetsTestHelper.makeUniqueSnippetName('Select import'), code: '// first', scope: 'global' },
+			{ id: 2, name: SnippetsTestHelper.makeUniqueSnippetName('Select import'), code: '// second', scope: 'global' }
+		]
+
+		await page.goto(URLS.IMPORT_ADMIN)
+		await page.getByLabel('Select files to import').setInputFiles({
+			name: 'multiple-snippets.json',
+			mimeType: 'application/json',
+			buffer: Buffer.from(JSON.stringify({ snippets }))
+		})
+		await page.getByRole('button', { name: 'Upload files' }).click()
+
+		const selectAll = page.getByRole('button', { name: 'Select All' }).first()
+		await selectAll.click()
+		await expect(page.getByRole('checkbox', { name: 'Select all snippets' })).toBeChecked()
+		await expect(page.getByRole('button', { name: 'Deselect All' }).first()).toBeVisible()
+		await page.getByRole('button', { name: 'Deselect All' }).first().click()
+		await expect(page.getByRole('checkbox', { name: 'Select all snippets' })).not.toBeChecked()
+		await expect(page.getByRole('button', { name: 'Import Selected (0)' }).first()).toBeDisabled()
+	})
+
+	test('imports snippets from multiple selected files', async ({ page }) => {
+		const firstName = SnippetsTestHelper.makeUniqueSnippetName('First file import')
+		const secondName = SnippetsTestHelper.makeUniqueSnippetName('Second file import')
+
+		await page.goto(URLS.IMPORT_ADMIN)
+		await page.getByLabel('Select files to import').setInputFiles([
+			{ ...importFile({ id: 1, name: firstName, code: '// first', scope: 'global' }), name: 'first.json' },
+			{ ...importFile({ id: 2, name: secondName, code: '// second', scope: 'global' }), name: 'second.json' }
+		])
+		await page.getByRole('button', { name: 'Upload files' }).click()
+		await expect(page.getByRole('heading', { name: 'Available snippets (2)' })).toBeVisible()
+		await page.getByRole('button', { name: 'Select All' }).first().click()
+		await page.getByRole('button', { name: 'Import Selected (2)' }).first().click()
+
+		await expect(page.locator('.import-result-message')).toContainText('Successfully imported 2 snippets.')
+		await page.goto(URLS.SNIPPETS_ADMIN)
+		await expect(page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: firstName })).toBeVisible()
+		await expect(page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: secondName })).toBeVisible()
+	})
+
 	test('skips and replaces duplicate snippets according to the selected policy', async ({ page }) => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Imported duplicate')
 		const duplicate = {

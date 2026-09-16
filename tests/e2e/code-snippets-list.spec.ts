@@ -212,6 +212,27 @@ test.describe('Code Snippets List Page Actions', () => {
 		}
 	})
 
+	test('Clears the Recently Active list without deleting snippets', async ({ page }) => {
+		const row = snippetRowByName(page, snippetName)
+
+		await row.getByRole('switch').click({ force: true })
+		await expect(row.getByRole('switch')).not.toBeChecked()
+		await page.locator('.subsubsub .recently_active a').click()
+		await expect(row).toBeVisible()
+
+		const clearList = page.waitForResponse(response =>
+			'POST' === response.request().method() &&
+			'DELETE' === response.request().headers()['x-http-method-override'] &&
+			response.url().includes('/recently-active')
+		)
+		await page.getByRole('button', { name: 'Clear List' }).click()
+		expect((await clearList).status()).toBe(200)
+		await expect(row).toHaveCount(0)
+
+		await page.locator('.subsubsub .all a').click()
+		await expect(snippetRowByName(page, snippetName)).toBeVisible()
+	})
+
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
 		await switchSnippetView(page, 'Card view')
 
