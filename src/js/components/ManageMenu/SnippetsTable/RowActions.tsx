@@ -132,7 +132,9 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 		? <SnippetActionButton
 			label={__('Clone', 'code-snippets')}
 			workingLabel={__('Cloning…', 'code-snippets')}
-			action={() => api.create(cloneSnippetObject(snippet)).then(refreshSnippetsList)}
+			action={() => api.ensureCode(snippet)
+				.then(full => api.create(cloneSnippetObject(full)))
+				.then(refreshSnippetsList)}
 		/>
 		: null
 

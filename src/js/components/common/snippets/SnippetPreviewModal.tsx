@@ -97,6 +97,8 @@ export interface PreviewModalProps {
 
 export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, title, type, code, children }) => {
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
+	const editorRef = useRef<EditorFromTextArea>()
+	const contents = `${'php' === type ? '<?php\n\n' : ''}${code}`
 
 	useEffect(() => {
 		if (!textareaRef.current || !window.wp.codeEditor) {
@@ -108,15 +110,29 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 			{ codemirror: getPreviewEditorSettings(type) }
 		)
 
+		editorRef.current = instance.codemirror as EditorFromTextArea
+
 		// CodeMirror hides the labeled source textarea and creates an unlabelled
 		// internal input. The screenReaderLabel option only exists from CodeMirror
 		// 5.59, while WordPress 5.5 ships 5.29, so label the input directly.
 		instance.codemirror.getInputField().setAttribute('aria-label', __('Snippet code preview', 'code-snippets'))
 
 		return () => {
+			editorRef.current = undefined;
 			(instance.codemirror as EditorFromTextArea).toTextArea()
 		}
 	}, [type])
+
+	// The editor is created as soon as the modal opens, but a snippet opened from
+	// the list arrives without its body and is fetched, so the code can turn up
+	// afterwards. Keep the editor showing whatever the current code is.
+	useEffect(() => {
+		const editor = editorRef.current
+
+		if (editor && editor.getValue() !== contents) {
+			editor.setValue(contents)
+		}
+	}, [contents])
 
 	return (
 		<Modal
@@ -134,7 +150,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 					ref={textareaRef}
 					readOnly
 					aria-label={__('Snippet code preview', 'code-snippets')}
-					defaultValue={`${'php' === type ? '<?php\n\n' : ''}${code}`}
+					defaultValue={contents}
 				/>
 			</div>
 			{children}
@@ -187,7 +203,8 @@ const CloneButton: React.FC<CloneButtonProps> = ({ snippet, isWorking, setIsWork
 	const handleClone = () => {
 		setIsWorking(true)
 
-		api.create(cloneSnippetObject(snippet))
+		api.ensureCode(snippet)
+			.then(full => api.create(cloneSnippetObject(full)))
 			.then(refreshSnippetsList)
 			.then(() => setIsOpen(false))
 			.catch(handleUnknownError)
@@ -229,7 +246,37 @@ export interface SnippetPreviewModalProps {
 	setIsOpen: (open: boolean) => void
 }
 
-export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippet, setIsOpen }) => {
+/**
+ * The snippets list is fetched without code, so a snippet opened from it arrives
+ * with an empty body. Fetch that one snippet so the preview has something to show.
+ */
+const useSnippetWithCode = (snippet: Snippet): Snippet => {
+	const api = useSnippetsAPI()
+	const [resolved, setResolved] = useState(snippet)
+
+	useEffect(() => {
+		let cancelled = false
+
+		api.ensureCode(snippet)
+			.then(full => {
+				if (!cancelled) {
+					setResolved(full)
+				}
+			})
+			.catch(handleUnknownError)
+
+		return () => {
+			cancelled = true
+		}
+		// Refetching whenever the api object changes identity would loop; the snippet is what matters.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [snippet])
+
+	return resolved
+}
+
+export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippet: listSnippet, setIsOpen }) => {
+	const snippet = useSnippetWithCode(listSnippet)
 	const { refreshSnippetsList } = useSnippetsList()
 	const { isWorking, setIsWorking } = useWorkingState()
 

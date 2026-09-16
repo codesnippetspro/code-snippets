@@ -44,7 +44,8 @@ const CloneExportMenuItems: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 		<>
 			<KebabMenuItem
 				onSelect={() => {
-					api.create(cloneSnippetObject(snippet))
+					api.ensureCode(snippet)
+						.then(full => api.create(cloneSnippetObject(full)))
 						.then(refreshSnippetsList)
 						.catch(handleUnknownError)
 				}}
