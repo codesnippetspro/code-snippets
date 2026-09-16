@@ -9,5 +9,8 @@ export const isMacOS = (): boolean =>
 export const isLicensed = (): boolean =>
 	!!window.CODE_SNIPPETS?.isLicensed
 
+export const isCloudConnected = (): boolean =>
+	!!window.CODE_SNIPPETS?.isCloudConnected
+
 export const shouldShowUpsell = () =>
 	!isLicensed() && !window.CODE_SNIPPETS?.hideUpsell

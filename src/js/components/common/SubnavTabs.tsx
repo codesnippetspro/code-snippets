@@ -26,6 +26,47 @@ export const getTabFromQuery = <Tab extends SubnavTab<string>>(
 	return tabs[0]
 }
 
+interface SubnavTabItemProps<Tab extends SubnavTab<string>> {
+	tab: Tab
+	currentTab: Tab
+	getTabCount?: (tab: Tab) => number | undefined
+	setCurrentTab: (tab: Tab) => void
+	queryParamName?: string
+}
+
+const SubnavTabItem = <Tab extends SubnavTab<string>>({
+	tab,
+	currentTab,
+	getTabCount,
+	setCurrentTab,
+	queryParamName
+}: SubnavTabItemProps<Tab>) => {
+	const count = getTabCount?.(tab)
+
+	return (
+		<li>
+			<button
+				type="button"
+				className={classnames('snippet-type-link', `${tab.name}-subnav-link`, {
+					'active-type': tab.name === currentTab.name
+				})}
+				aria-current={tab.name === currentTab.name ? 'page' : undefined}
+				onClick={() => {
+					setCurrentTab(tab)
+
+					if (queryParamName) {
+						updateQueryParams({ [queryParamName]: tab.name })
+					}
+				}}
+			>
+				<span>{tab.label}</span>
+				{count !== undefined && <span className="subnav-count">{count}</span>}
+				{tab.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+			</button>
+		</li>
+	)
+}
+
 export interface SubnavTabsProps<Tab extends SubnavTab<string>> {
 	tabs: readonly Tab[]
 	ariaLabel: string
@@ -43,7 +84,7 @@ export const SubnavTabs = <Tab extends SubnavTab<string>>({
 	currentTab,
 	getTabCount,
 	setCurrentTab,
-	queryParamName,
+	queryParamName
 }: SubnavTabsProps<Tab>) => {
 	const { atStart, atEnd, scrollRef } = useHorizontalScrollOverflow()
 
@@ -56,32 +97,15 @@ export const SubnavTabs = <Tab extends SubnavTab<string>>({
 		>
 			<nav ref={scrollRef} className={classnames('snippet-type-nav', className)} aria-label={ariaLabel}>
 				<ul>
-					{tabs.map(tab => {
-						const count = getTabCount?.(tab)
-
-						return (
-							<li key={tab.name}>
-								<button
-									type="button"
-									className={classnames('snippet-type-link', `${tab.name}-subnav-link`, {
-										'active-type': tab.name === currentTab.name
-									})}
-									aria-current={tab.name === currentTab.name ? 'page' : undefined}
-									onClick={() => {
-										setCurrentTab(tab)
-
-										if (queryParamName) {
-											updateQueryParams({ [queryParamName]: tab.name })
-										}
-									}}
-								>
-									<span>{tab.label}</span>
-									{count && <span className="subnav-count">{count}</span>}
-									{tab.pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
-								</button>
-							</li>
-						)
-					})}
+					{tabs.map(tab =>
+						<SubnavTabItem
+							key={tab.name}
+							tab={tab}
+							currentTab={currentTab}
+							getTabCount={getTabCount}
+							setCurrentTab={setCurrentTab}
+							queryParamName={queryParamName}
+						/>)}
 				</ul>
 			</nav>
 		</div>

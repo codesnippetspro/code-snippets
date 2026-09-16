@@ -52,7 +52,9 @@ export const MESSAGES = <const> {
 
 export const SNIPPET_TYPES = <const> {
 	PHP: 'Functions',
-	HTML: 'Content'
+	HTML: 'Content',
+	CSS: 'Styles',
+	JS: 'Scripts'
 }
 
 export const SNIPPET_LOCATIONS = <const> {
@@ -61,7 +63,9 @@ export const SNIPPET_LOCATIONS = <const> {
 	SITE_FOOTER: 'In site footer (end of <body>)',
 	IN_EDITOR: 'Where inserted in editor',
 	ADMIN_ONLY: 'Only run in administration area',
+	CSS_ADMIN_ONLY: 'Administration area',
 	FRONTEND_ONLY: 'Only run on site front-end',
+	CSS_FRONTEND_ONLY: 'Site front-end',
 	EVERYWHERE: 'Run everywhere'
 }
 

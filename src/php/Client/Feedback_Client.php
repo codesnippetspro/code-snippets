@@ -10,9 +10,9 @@ use const Code_Snippets\PLUGIN_VERSION;
 /**
  * Sends feedback reports to Code Snippets Cloud.
  *
- * A site enrols once and signs everything it sends afterwards. Two failures are worth
+ * A site enrols once and signs everything it sends afterward. Two failures are worth
  * recovering from rather than surfacing: a clock far enough out of step with the cloud that
- * signatures arrive expired, and a credential the cloud no longer recognises. Each is retried
+ * signatures arrive expired, and a credential the cloud no longer recognizes. Each is retried
  * once, so a report is not lost to a problem the site can correct on its own.
  *
  * @package Code_Snippets
@@ -269,7 +269,7 @@ class Feedback_Client {
 		}
 
 		$parsed = json_decode( wp_remote_retrieve_body( $response ), true );
-		$error = isset( $parsed['code'] ) ? $parsed['code'] : '';
+		$error = $parsed['code'] ?? '';
 
 		if ( 'signature_expired' === $error && isset( $parsed['server_time'] ) ) {
 			$credentials = $this->connection->get_credentials();
