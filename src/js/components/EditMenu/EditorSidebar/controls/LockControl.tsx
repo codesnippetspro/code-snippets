@@ -41,6 +41,7 @@ export const LockControl: React.FC = () => {
 				{snippet.locked
 					? <span className="dashicons dashicons-unlock" aria-hidden="true" />
 					: <span className="dashicons dashicons-lock" aria-hidden="true" />}
+				{snippet.locked ? __('Unlock', 'code-snippets') : __('Lock', 'code-snippets')}
 			</TooltipButton>
 		</div>
 	)

@@ -164,7 +164,7 @@ class Feedback_Panel {
 	/**
 	 * Describe the build a report was sent from, when it is not a released one.
 	 *
-	 * A released build carries no badge: labelling every install as a test build would
+	 * A released build carries no badge: labeling every install as a test build would
 	 * misrepresent it. Pre-release builds are named so that a report can be read against
 	 * the build it came from.
 	 *

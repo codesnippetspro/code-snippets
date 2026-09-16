@@ -1,9 +1,17 @@
 import { __ } from '@wordpress/i18n'
-import { isAxiosError } from 'axios'
+import { isAxiosError, isCancel } from 'axios'
 
 export const handleUnknownError = (error: unknown) => {
 	console.error(error)
 }
+
+/**
+ * Whether a rejection came from the caller aborting the request rather than
+ * from a failure — axios rejects cancelled requests with no response attached,
+ * so these must not be surfaced to the user as errors.
+ */
+export const isAbortError = (error: unknown): boolean =>
+	isCancel(error) || error instanceof DOMException && 'AbortError' === error.name
 
 export const unpackErrorResponse = (error: unknown): string => {
 	if (isAxiosError(error)) {

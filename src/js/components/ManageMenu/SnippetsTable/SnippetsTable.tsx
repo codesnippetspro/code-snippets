@@ -55,12 +55,13 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 							<span className="snippet-type-name-short">{__('All', 'code-snippets')}</span>
 						</>}
 				</span>
-				{count && !isProLocked && <span className="subnav-count">{count}</span>}
+				{count !== undefined && !isProLocked && <span className="subnav-count">{count}</span>}
 				{isProLocked && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 			</a>
 		</li>
 	)
 }
+
 
 const SafeModeNotice = () =>
 	window.CODE_SNIPPETS_MANAGE?.isSafeModeActive

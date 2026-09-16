@@ -6,7 +6,7 @@ import { buildUrl } from '../utils/urls'
 import { useRestAPI } from './useRestAPI'
 import type { Snippet } from '../types/Snippet'
 import type { SnippetsExport } from '../types/schema/SnippetsExport'
-import type { SnippetSchema, WritableSnippetSchema } from '../types/schema/SnippetSchema'
+import type { SnippetIdentifierSchema, SnippetSchema, WritableSnippetSchema } from '../types/schema/SnippetSchema'
 import type { RestAPI } from './useRestAPI'
 import type { PropsWithChildren } from 'react'
 
@@ -47,7 +47,8 @@ export interface SnippetsAPI {
  */
 const LIST_FIELDS = [
 	'id', 'name', 'desc', 'tags', 'scope', 'condition_id', 'active', 'trashed', 'locked',
-	'priority', 'network', 'shared_network', 'modified', 'last_active', 'code_error', 'code_error_trace'
+	'priority', 'network', 'shared_network', 'modified', 'last_active', 'created_by', 'updated_by',
+	'code_error', 'code_error_trace'
 ].join(',')
 
 const buildSnippetUrl = ({ id, network }: Pick<Snippet, 'id' | 'network'>, action?: string) =>
@@ -66,7 +67,7 @@ const mapToSchema = ({
 	trashed,
 	shared_network,
 	conditionId
-}: Partial<Snippet>): WritableSnippetSchema => ({
+}: Partial<Snippet>): WritableSnippetSchema & Pick<SnippetIdentifierSchema, 'network'> => ({
 	name,
 	desc,
 	code,
@@ -107,7 +108,7 @@ const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
 		post<SnippetSchema, WritableSnippetSchema>(snippet.id ? buildSnippetUrl(snippet) : REST_BASES.snippets, mapToSchema(snippet))
 			.then(createSnippetObject),
 
-	delete: snippet =>
+	delete: (snippet): Promise<void> =>
 		del(buildSnippetUrl(snippet)),
 
 	restore: snippet =>

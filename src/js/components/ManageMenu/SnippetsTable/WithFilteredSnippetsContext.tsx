@@ -66,6 +66,9 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 	const visibleSnippets = useMemo(() => {
 		const searchFields = ['name', 'desc', 'code', 'tags'] as const
 		const sanitizedSearchQueryText = searchQueryText?.toLowerCase().trim()
+		const matchesAuthor = (snippet: Snippet, query: string): boolean =>
+			[snippet.updatedBy, snippet.createdBy]
+				.some(author => Boolean(author?.displayName.toLowerCase().includes(query)))
 
 		return snippets.filter(snippet => {
 			if (currentType && getSnippetType(snippet) !== currentType) {
@@ -77,11 +80,13 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 			}
 
 			if (sanitizedSearchQueryText) {
-				return searchLineNumber !== undefined
-					? snippet.code.split('\n')[searchLineNumber]?.includes(sanitizedSearchQueryText)
-					: String(snippet.id) === sanitizedSearchQueryText || searchFields.some(field =>
-						('tags' === field ? snippet.tags.join(' ') : snippet[field])
-							.toLowerCase().includes(sanitizedSearchQueryText))
+				if (searchLineNumber !== undefined) {
+					return (snippet.code.split('\n')[searchLineNumber] ?? '').includes(sanitizedSearchQueryText)
+				}
+				const matchesField = searchFields.some(field =>
+					('tags' === field ? snippet.tags.join(' ') : snippet[field])
+						.toLowerCase().includes(sanitizedSearchQueryText))
+				return String(snippet.id) === sanitizedSearchQueryText || matchesField || matchesAuthor(snippet, sanitizedSearchQueryText)
 			}
 
 			return true

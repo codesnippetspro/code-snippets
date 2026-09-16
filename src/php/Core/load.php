@@ -1,6 +1,6 @@
 <?php
 /**
- * Initialise and load the plugin under the proper namespace.
+ * Initialize and load the plugin under the proper namespace.
  *
  * @package Code_Snippets
  */
@@ -41,13 +41,7 @@ const CACHE_GROUP_BASE = 'code_snippets';
 /**
  * Name of the group used for caching data.
  *
- * Scoped to the plugin version, so data cached by one version is never read by
- * another. Snippet objects are cached here, and the Snippet class moved
- * namespace in 3.10. A version that cannot resolve the stored class fatals on
- * unserialize, which broke the admin for anyone downgrading on a site with a
- * persistent object cache. Keeping the group distinct per version means the
- * two never see each other's data, in either direction, without relying on the
- * other version to clean up after itself.
+ * Scoped to the plugin version, so data cached by one version is never read by another.
  *
  * @var string
  */
@@ -64,8 +58,7 @@ const REST_API_NAMESPACE = 'code-snippets/v';
  * Load the Composer autoloader.
  *
  * After loading, remove any PSR-4 namespace mappings that do not start with our vendor prefix but have a corresponding
- * prefixed version, as these are not removed by Imposter and would cause collisions with other plugins that use the same
- * libraries.
+ * prefixed version. These are not removed by Imposter and would cause collisions with other plugins that use the same libraries.
  *
  * @var ClassLoader $autoloader Composer autoloader instance.
  */
