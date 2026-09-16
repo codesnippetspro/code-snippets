@@ -9,10 +9,10 @@ import { useSnippetForm } from '../SnippetForm/WithSnippetFormContext'
 import type { Dispatch, SetStateAction } from 'react'
 
 export interface ConditionModalButtonProps {
-	setIsModalOpen: Dispatch<SetStateAction<boolean>>
+	setIsDialogOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setIsModalOpen }) => {
+export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setIsDialogOpen }) => {
 	const { snippet, isReadOnly } = useSnippetForm()
 
 	const hasCondition = 0 !== snippet.conditionId
@@ -29,7 +29,7 @@ export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setI
 						{!isLicensed() && <Badge name="pro" small>{__('Pro', 'code-snippets')}</Badge>}
 					</div>
 
-					<Button large disabled={isReadOnly} onClick={() => setIsModalOpen(true)}>
+					<Button large disabled={isReadOnly} onClick={() => setIsDialogOpen(true)}>
 						<Badge name="cond" small />
 						{hasCondition
 							? __('Edit Conditions', 'code-snippets')

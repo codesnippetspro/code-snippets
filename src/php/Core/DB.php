@@ -2,7 +2,6 @@
 
 namespace Code_Snippets\Core;
 
-use function Code_Snippets\Utils\validate_network_param;
 use const Code_Snippets\CACHE_GROUP;
 
 /**
@@ -63,6 +62,28 @@ class DB {
 	}
 
 	/**
+	 * Validate a provided 'network' or 'multisite' param, converting it to a boolean.
+	 *
+	 * @param bool|null $network Network argument value.
+	 *
+	 * @return bool Sanitized value.
+	 */
+	public static function validate_network_param( ?bool $network = null ): bool {
+
+		// If multisite is not active, then assume the value is false.
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		// If $multisite is null, try to base it on the current admin page.
+		if ( is_null( $network ) && function_exists( 'is_network_admin' ) ) {
+			return is_network_admin();
+		}
+
+		return (bool) $network;
+	}
+
+	/**
 	 * Return the appropriate snippet table name
 	 *
 	 * @param bool|null $is_network Whether retrieve the multisite table name (true) or the site table name (false).
@@ -71,7 +92,7 @@ class DB {
 	 * @since 2.0
 	 */
 	public function get_table_name( ?bool $is_network = null ): string {
-		$is_network = is_bool( $is_network ) ? $is_network : validate_network_param( $is_network );
+		$is_network = is_bool( $is_network ) ? $is_network : self::validate_network_param( $is_network );
 		return $is_network ? $this->ms_table : $this->table;
 	}
 
@@ -145,13 +166,9 @@ class DB {
 				modified     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				revision     BIGINT(20)   NOT NULL DEFAULT 1,
 				cloud_id     VARCHAR(255) NULL,
-				created_by   BIGINT(20)   UNSIGNED NULL,
-				updated_by   BIGINT(20)   UNSIGNED NULL,
 				PRIMARY KEY  (id),
 				KEY scope (scope),
-				KEY active (active),
-				KEY created_by (created_by),
-				KEY updated_by (updated_by)
+				KEY active (active)
 			) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -205,9 +222,7 @@ class DB {
 
 			if ( $ms_snippets ) {
 				$active_shared_ids = get_option( 'active_shared_network_snippets', [] );
-				$active_shared_ids = is_array( $active_shared_ids )
-					? array_map( 'intval', $active_shared_ids )
-					: [];
+				$active_shared_ids = is_array( $active_shared_ids ) ? array_map( 'intval', $active_shared_ids ) : [];
 
 				foreach ( $ms_snippets as $snippet ) {
 					$id = intval( $snippet['id'] );
@@ -317,9 +332,7 @@ class DB {
 		}
 
 		$scopes_format = implode( ',', array_fill( 0, count( $scopes ), '%s' ) );
-		$extra_where = $active_only
-			? 'AND active=1'
-			: 'AND active <> -1';
+		$extra_where = $active_only ? 'AND active=1' : '';
 
 		$snippets = $wpdb->get_results(
 			// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare

@@ -121,11 +121,7 @@ class Admin_Bar_Test extends AdminUnitTestCase {
 		$ref = new ReflectionClass( $wp_admin_bar );
 		if ( $ref->hasProperty( 'nodes' ) ) {
 			$prop = $ref->getProperty( 'nodes' );
-
-			if ( version_compare( PHP_VERSION, '8.1.0', '<' ) ) {
-				$prop->setAccessible( true );
-			}
-
+			$prop->setAccessible( true );
 			return (array) $prop->getValue( $wp_admin_bar );
 		}
 
@@ -224,8 +220,8 @@ class Admin_Bar_Test extends AdminUnitTestCase {
 
 		$active_titles = array_values( array_filter( $active_titles, static fn( $title ) => false !== strpos( $title, 'QuickNav Active' ) ) );
 		$this->assertCount( 2, $active_titles );
-		$this->assertStringContainsString( '>PHP</span> QuickNav Active A', $active_titles[0] );
-		$this->assertStringContainsString( '>PHP</span> QuickNav Active B', $active_titles[1] );
+		$this->assertStringContainsString( '(PHP) QuickNav Active A', $active_titles[0] );
+		$this->assertStringContainsString( '(PHP) QuickNav Active B', $active_titles[1] );
 
 		$_GET['code_snippets_ab_active_page'] = 2;
 
@@ -245,7 +241,7 @@ class Admin_Bar_Test extends AdminUnitTestCase {
 
 		$active_titles_page_2 = array_values( array_filter( $active_titles_page_2, static fn( $title ) => false !== strpos( $title, 'QuickNav Active' ) ) );
 		$this->assertCount( 1, $active_titles_page_2 );
-		$this->assertStringContainsString( '>PHP</span> QuickNav Active C', $active_titles_page_2[0] );
+		$this->assertStringContainsString( '(PHP) QuickNav Active C', $active_titles_page_2[0] );
 
 		$_GET['code_snippets_ab_inactive_page'] = 2;
 
@@ -268,7 +264,7 @@ class Admin_Bar_Test extends AdminUnitTestCase {
 		);
 
 		$this->assertCount( 1, $inactive_titles_page_2 );
-		$this->assertStringContainsString( '>HTML</span> QuickNav Inactive Z HTML', $inactive_titles_page_2[0] );
+		$this->assertStringContainsString( '(HTML) QuickNav Inactive Z HTML', $inactive_titles_page_2[0] );
 	}
 
 	/**

@@ -112,22 +112,8 @@
 		opacity: 1;
 	}
 
-	#wp-admin-bar-code-snippets-ran-on-this-page > .ab-sub-wrapper > .ab-submenu,
 	#wp-admin-bar-code-snippets-active-snippets > .ab-sub-wrapper > .ab-submenu,
 	#wp-admin-bar-code-snippets-inactive-snippets > .ab-sub-wrapper > .ab-submenu {
 		padding-block-start: 0;
-	}
-
-	.code-snippets-kind-badge {
-		display: inline-block;
-		min-inline-size: 30px;
-		padding-inline: 5px;
-		border-radius: 3px;
-		color: #fff;
-		font-size: 10px;
-		font-weight: 600;
-		line-height: 1.7;
-		text-align: center;
-		text-transform: uppercase;
 	}
 }

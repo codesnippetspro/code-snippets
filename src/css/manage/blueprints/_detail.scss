@@ -1,17 +1,38 @@
 .blueprint-detail {
+	.blueprint-detail__back {
+		margin: 0 0 20px;
+
+		.button.button-secondary {
+			min-block-size: 36px;
+			padding-inline: 12px;
+			border-color: var(--cs-color-accent);
+			background: transparent;
+			color: var(--cs-color-accent);
+			font-size: 14px;
+			font-weight: 500;
+
+			&:hover,
+			&:focus-visible {
+				border-color: var(--cs-color-accent-hover);
+				background: transparent;
+				color: var(--cs-color-accent-hover);
+			}
+		}
+	}
+
 	inline-size: 100%;
 	max-inline-size: 100%;
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	margin-block: 24px 32px;
+	margin-block-end: 32px;
 
 	&__header {
 		background: #fff;
 		border: 1px solid var(--cs-color-border);
 		border-block-end: none;
 		border-radius: var(--cs-card-radius) var(--cs-card-radius) 0 0;
-		padding: 24px 12px;
+		padding: 36px 12px;
 
 		&-title-row {
 			display: flex;
@@ -19,6 +40,12 @@
 			justify-content: space-between;
 			align-items: flex-start;
 			gap: 20px;
+		}
+
+		h2 {
+			font-size: 24px;
+			font-weight: 500;
+			margin-block: 0 24px;
 		}
 
 		p {
@@ -42,9 +69,14 @@
 			flex-shrink: 0;
 			font-size: 14px;
 			padding: 0;
-			margin-block-start: 12px;
 			text-decoration: underline;
 			line-height: 1;
 		}
 	}
+}
+
+.blueprint-back-button {
+	align-self: flex-start;
+	margin-block-end: -8px;
+	font-size: 14px;
 }

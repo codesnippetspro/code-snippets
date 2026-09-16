@@ -26,11 +26,7 @@ const PreviewButton: React.FC<RowActionsProps> = ({ snippet }) => {
 				{__('Preview', 'code-snippets')}
 			</Button>
 
-			{isPreviewOpen && (
-				<SnippetPreviewModal
-					snippet={snippet}
-					setIsOpen={setIsPreviewOpen}
-				/>)}
+			{isPreviewOpen && <SnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} />}
 		</>
 	)
 }
@@ -100,6 +96,7 @@ const SnippetActionButton: React.FC<SnippetActionButtonProps> = ({ action, label
 		</Button>
 	)
 }
+
 const DeleteActionLink: React.FC<RowActionsProps> = ({ snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
 	const { requestDelete, deleteDialogProps } = useDeleteSnippet({ snippet, onSuccess: refreshSnippetsList })

@@ -2,14 +2,14 @@
 
 namespace Code_Snippets\Integration;
 
-use WP_Post;
+use Code_Snippets\Core\DB;
 use Code_Snippets\Flat_Files\Snippet_Files;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Code_Highlighter;
+use WP_Post;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\Settings\get_setting;
-use function Code_Snippets\Utils\validate_network_param;
 
 /**
  * This class manages the shortcodes included with the plugin,
@@ -143,7 +143,7 @@ class Shortcodes {
 			return $this->evaluate_shortcode_from_db( $snippet, $atts );
 		}
 
-		$network = validate_network_param( $snippet->network );
+		$network = DB::validate_network_param( $snippet->network );
 		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
 		$filepath = $this->build_snippet_flat_file_path( $table_name, $snippet );
 
@@ -175,16 +175,6 @@ class Shortcodes {
 		eval( "?>\n\n" . $snippet->code );
 
 		return ob_get_clean();
-	}
-
-	/**
-	 * Check if being rendered within the block editor.
-	 *
-	 * @return bool True if in the block editor, false otherwise.
-	 */
-	private function is_block_editor(): bool {
-		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		return $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor();
 	}
 
 	/**
@@ -220,12 +210,12 @@ class Shortcodes {
 	 *
 	 * @return Snippet|null
 	 */
-	private function get_snippet( int $id, bool $network ): ?Snippet {
+	private function get_content_snippet( int $id, bool $network ): ?Snippet {
 		if ( ! Snippet_Files::is_active() ) {
 			return get_snippet( $id, $network );
 		}
 
-		$validated_network = validate_network_param( $network );
+		$validated_network = DB::validate_network_param( $network );
 		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $validated_network ) );
 		$handler = code_snippets()->snippet_handler_registry->get_handler( 'html' );
 		$config_filepath = Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/index.php';
@@ -262,7 +252,7 @@ class Shortcodes {
 				'php'        => false,
 				'format'     => false,
 				'shortcodes' => false,
-				'debug'      => $this->is_block_editor(),
+				'debug'      => false,
 			],
 			$atts,
 			self::CONTENT_SHORTCODE
@@ -282,26 +272,24 @@ class Shortcodes {
 
 		// If the snippet is inactive, either display a message or render nothing.
 		if ( ! $snippet->active ) {
-			if ( $atts['debug'] ) {
-				/* translators: 1: snippet name, 2: snippet edit link */
-				$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
-				$snippet_name = '<strong>' . $snippet->name . '</strong>';
-				$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
-
-				$message = wp_kses(
-					sprintf( $text, $snippet_name, $edit_url ),
-					[
-						'strong' => [],
-						'a'      => [
-							'href' => [],
-						],
-					]
-				);
-
-				return "<p>$message</p><p>" . esc_html__( 'This message will not appear in the published post.', 'code-snippets' ) . '</p>';
-			} else {
+			if ( ! $atts['debug'] ) {
 				return '';
 			}
+
+			/* translators: 1: snippet name, 2: snippet edit link */
+			$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
+			$snippet_name = '<strong>' . $snippet->name . '</strong>';
+			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
+
+			return wp_kses(
+				sprintf( $text, $snippet_name, $edit_url ),
+				[
+					'strong' => [],
+					'a'      => [
+						'href' => [],
+					],
+				]
+			);
 		}
 
 		$content = $this->evaluate_shortcode_content( $snippet, $original_atts );
@@ -417,7 +405,7 @@ class Shortcodes {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = $this->get_snippet( $id, (bool) $atts['network'] );
+		$snippet = $this->get_content_snippet( $id, (bool) $atts['network'] );
 		return $this->render_snippet_source( $snippet, $atts );
 	}
 }

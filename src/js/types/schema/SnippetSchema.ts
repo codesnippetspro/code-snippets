@@ -11,22 +11,15 @@ export interface WritableSnippetSchema {
 	locked?: boolean
 	trashed?: boolean
 	priority?: number
+	network?: boolean | null
 	shared_network?: boolean | null
 }
 
-export interface SnippetIdentifierSchema {
-	readonly id: number
-	readonly network?: boolean | null
-}
-
-export interface SnippetSchema extends Readonly<Required<WritableSnippetSchema>>, SnippetIdentifierSchema {
+export interface SnippetSchema extends Readonly<Required<WritableSnippetSchema>> {
 	readonly id: number
 	readonly modified: string
 	readonly last_active?: number
 	readonly trashed: boolean
 	readonly code_error?: readonly [string, number] | null
 	readonly code_error_trace?: string | null
-	readonly revision: string
-	readonly cloud_id: number
-	readonly is_cloud_owner: boolean
 }

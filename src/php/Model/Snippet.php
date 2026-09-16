@@ -33,8 +33,6 @@ use function Code_Snippets\Utils\get_self_option;
  * @property int                    $revision           Revision or version number of snippet.
  * @property int                    $cloud_id           The cloud ID of the snippet, if applicable.
  * @property bool                   $is_cloud_owner     Whether the user is the owner of the cloud snippet, if applicable.
- * @property int                    $created_by         User ID of the snippet's original author. 0 if unknown.
- * @property int                    $updated_by         User ID of the last person to save the snippet. 0 if unknown.
  *
  * @property-read int               $last_active        Timestamp of when the snippet was last active, if available.
  * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
@@ -45,7 +43,6 @@ use function Code_Snippets\Utils\get_self_option;
  * @property-read string            $lang               The language that the snippet code is written in.
  * @property-read int               $modified_timestamp The last modification date in Unix timestamp format.
  * @property-read DateTime          $modified_local     The last modification date in the local timezone.
- * @property-read DateTime          $modified_iso       The last modification date in ISO 8601 format.
  * @property-read bool              $is_pro             Whether the snippet type is pro-only.
  * @property-read string            $cloud_id_owner     Cloud ownership information as a single value, if applicable.
  */
@@ -86,8 +83,6 @@ class Snippet extends Model {
 		'revision'         => 1,
 		'cloud_id'         => 0,
 		'is_cloud_owner'   => false,
-		'created_by'       => 0,
-		'updated_by'       => 0,
 	];
 
 	/**
@@ -116,8 +111,6 @@ class Snippet extends Model {
 			case 'condition_id':
 			case 'cloud_id':
 			case 'revision':
-			case 'created_by':
-			case 'updated_by':
 				return absint( $value );
 
 			case 'tags':

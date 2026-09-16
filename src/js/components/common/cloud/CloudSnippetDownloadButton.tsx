@@ -18,7 +18,7 @@ export interface DownloadSnippetResponse {
 }
 
 export interface CloudSnippetDownloadButtonProps {
-	onDownloaded?: VoidFunction
+	onDownloaded: VoidFunction
 	snippet: CloudSnippetSchema
 }
 
@@ -56,7 +56,7 @@ export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProp
 		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)
 			.then(response => {
 				updateDownloadRecord(snippet.id, { localId: response.snippet_id })
-				onDownloaded?.()
+				onDownloaded()
 			})
 			.catch((error: unknown) => {
 				setErrorMessage('string' === typeof error

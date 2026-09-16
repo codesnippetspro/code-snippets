@@ -215,20 +215,9 @@ function register_plugin_settings() {
 
 			$field_object = new Setting_Field( $section_id, $field_id, $field );
 
-			// Field types that render a single labelable control get their table
-			// heading turned into a real <label for>, giving the control an
-			// accessible name. Checkboxes render their own labels, and
-			// callback/action fields have no single control to point at.
-			$labelable_types = [ 'text', 'number', 'select' ];
-			$field_args      = [];
-
-			if ( isset( $field['type'] ) && in_array( $field['type'], $labelable_types, true ) ) {
-				$field_args['label_for'] = $field_object->element_id;
-			}
-
-			if ( isset( $headings[ $tab_id ][ $field_id ] ) ) {
-				$field_args['group_heading'] = $headings[ $tab_id ][ $field_id ];
-			}
+			$field_args = isset( $headings[ $tab_id ][ $field_id ] )
+				? [ 'group_heading' => $headings[ $tab_id ][ $field_id ] ]
+				: [];
 
 			add_settings_field(
 				$field_id,

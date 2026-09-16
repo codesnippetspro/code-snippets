@@ -77,24 +77,24 @@ class Settings_Fields {
 	}
 
 	/**
-	 * Initialize default settings values.
+	 * Initialise default settings values.
 	 *
 	 * @return void
 	 */
 	private function init_defaults() {
 		$this->defaults = [
 			'general'        => [
-				'activate_by_default'      => true,
-				'enable_tags'              => true,
-				'enable_description'       => true,
-				'visual_editor_rows'       => 5,
-				'list_order'               => 'priority-asc',
-				'disable_prism'            => false,
-				'hide_upgrade_menu'        => false,
-				'complete_uninstall'       => false,
-				'enable_flat_files'        => false,
-				'enable_admin_bar'         => true,
-				'admin_bar_snippet_limit'  => 20,
+				'activate_by_default'     => true,
+				'enable_tags'             => true,
+				'enable_description'      => true,
+				'visual_editor_rows'      => 5,
+				'list_order'              => 'priority-asc',
+				'disable_prism'           => false,
+				'hide_upgrade_menu'       => false,
+				'complete_uninstall'      => false,
+				'enable_flat_files'       => false,
+				'enable_admin_bar'        => true,
+				'admin_bar_snippet_limit' => 20,
 				'enable_feedback_reporter' => false,
 			],
 			'editor'         => [
@@ -120,7 +120,7 @@ class Settings_Fields {
 	}
 
 	/**
-	 * Initialize the settings fields values.
+	 * Initialise the settings fields values.
 	 *
 	 * @return void
 	 */
@@ -128,13 +128,13 @@ class Settings_Fields {
 		$this->fields = [];
 
 		$this->fields['debug'] = [
-			'database_update' => [
+			'database_update'       => [
 				'name'  => __( 'Database Table Upgrade', 'code-snippets' ),
 				'type'  => 'action',
 				'label' => __( 'Upgrade Database Table', 'code-snippets' ),
 				'desc'  => __( 'Use this button to manually upgrade the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
 			],
-			'reset_caches'    => [
+			'reset_caches'          => [
 				'name' => __( 'Reset Caches', 'code-snippets' ),
 				'type' => 'action',
 				'desc' => __( 'Use this button to manually clear snippets caches. Worth doing before switching to an older version of the plugin, if your site uses a persistent object cache.', 'code-snippets' ),
@@ -223,12 +223,12 @@ class Settings_Fields {
 		];
 
 		$this->fields['general']['admin_bar_snippet_limit'] = [
-			'name'    => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
-			'type'    => 'number',
-			'desc'    => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
-			'label'   => __( 'snippets', 'code-snippets' ),
-			'min'     => 1,
-			'max'     => 100,
+			'name'  => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
+			'type'  => 'number',
+			'desc'  => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
+			'label' => __( 'snippets', 'code-snippets' ),
+			'min'   => 1,
+			'max'   => 100,
 			'show_if' => [
 				'section' => 'general',
 				'field'   => 'enable_admin_bar',

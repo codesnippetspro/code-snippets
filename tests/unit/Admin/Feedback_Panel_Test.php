@@ -210,7 +210,7 @@ class Feedback_Panel_Test extends UnitTestCase {
 
 		$this->assertStringContainsString(
 			sprintf( '"searchUrl":"%s"', rest_url( Feedback_REST_Controller::get_base_route() . '/search' ) ),
-			stripslashes( $data )
+			(string) $data
 		);
 	}
 

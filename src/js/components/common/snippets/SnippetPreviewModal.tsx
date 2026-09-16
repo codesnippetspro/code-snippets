@@ -42,14 +42,7 @@ const getPreviewEditorSettings = (type: string): EditorConfiguration => ({
  * `beginWorking` can reject re-entry within the same tick, before React
  * re-renders with the disabled buttons.
  */
-export interface PreviewWorkingState {
-	isWorking: boolean
-	beginWorking: () => boolean
-	finishWorking: () => void
-	setIsWorking: (isWorking: boolean) => void
-}
-
-const useWorkingState = (): PreviewWorkingState => {
+const useWorkingState = () => {
 	const [isWorking, setIsWorking] = useState(false)
 	const isWorkingRef = useRef(false)
 	const updateWorking = (value: boolean) => {
@@ -57,19 +50,7 @@ const useWorkingState = (): PreviewWorkingState => {
 		setIsWorking(value)
 	}
 
-	return {
-		isWorking,
-		beginWorking: () => {
-			if (isWorkingRef.current) {
-				return false
-			}
-
-			updateWorking(true)
-			return true
-		},
-		finishWorking: () => updateWorking(false),
-		setIsWorking: updateWorking
-	}
+	return { isWorking, setIsWorking: updateWorking }
 }
 
 enum CopyStatus { Ready, Copied, Failed}
@@ -164,7 +145,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 export interface SnippetCodePreviewModalProps {
 	snippet: CloudSnippetSchema
 	setIsOpen: (isOpen: boolean) => void
-	onDownloaded?: VoidFunction
+	onDownloaded: VoidFunction
 }
 
 export const CloudSnippetPreviewModal: React.FC<SnippetCodePreviewModalProps> = ({
@@ -246,10 +227,9 @@ const ExportButton: React.FC<ActionButtonProps> = ({ snippet, isWorking, setIsWo
 export interface SnippetPreviewModalProps {
 	snippet: Snippet
 	setIsOpen: (open: boolean) => void
-	extraActions?: (working: boolean) => ReactNode
 }
 
-export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippet, setIsOpen, extraActions }) => {
+export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippet, setIsOpen }) => {
 	const { refreshSnippetsList } = useSnippetsList()
 	const { isWorking, setIsWorking } = useWorkingState()
 
@@ -301,7 +281,6 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 					<span className="code-snippets-preview-modal__priority-value">{snippet.priority}</span>
 				</div>
 
-				{extraActions?.(isWorking)}
 				<ConfirmDeleteDialog {...deleteDialogProps} />
 			</div>
 		</PreviewModal>

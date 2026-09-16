@@ -118,7 +118,7 @@ class Snippet_Files {
 			add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
 			add_action( 'code_snippets/trash_snippet', [ $this, 'delete_snippet' ], 10, 2 );
-			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ] );
+			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 1 );
 			add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
 			add_action( 'code_snippets/activate_snippets', [ $this, 'activate_snippets' ], 10, 2 );
 
@@ -126,8 +126,8 @@ class Snippet_Files {
 			add_action( 'add_option', [ $this, 'sync_active_shared_network_snippets_add' ], 10, 2 );
 		}
 
-		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ] );
-		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ] );
+		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ], 10, 1 );
+		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 1 );
 	}
 
 	/**
@@ -169,9 +169,9 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Synchronize a snippet with the filesystem storage.
+	 * Synchronise a snippet with the filesystem storage.
 	 *
-	 * @param Snippet $snippet Snippet to synchronize.
+	 * @param Snippet $snippet Snippet to synchronise.
 	 * @param string  $table   Database table snippet belongs to.
 	 *
 	 * @return void

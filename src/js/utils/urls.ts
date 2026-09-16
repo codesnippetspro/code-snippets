@@ -50,17 +50,15 @@ const normaliseQueryArg = (value: unknown): string | undefined => {
 }
 
 export const buildAdminUrl = (
-	queryArgs?: UrlQueryArgs,
+	queryArgs: UrlQueryArgs,
 	preserveQueryArgs: string[] = []
 ) => {
 	const searchParams = new URLSearchParams(window.location.search)
 
-	if (queryArgs) {
-		for (const queryArgName of ['page', ...preserveQueryArgs]) {
-			const value = searchParams.get(queryArgName)
-			if (value && queryArgs[queryArgName] === undefined) {
-				queryArgs[queryArgName] = value
-			}
+	for (const queryArgName of ['page', ...preserveQueryArgs]) {
+		const value = searchParams.get(queryArgName)
+		if (value && queryArgs[queryArgName] === undefined) {
+			queryArgs[queryArgName] = value
 		}
 	}
 

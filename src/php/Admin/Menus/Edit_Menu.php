@@ -60,7 +60,7 @@ class Edit_Menu extends Admin_Menu {
 		// The page itself is always registered outside the menu, so nothing that
 		// reads the menu during `admin_menu` — menu editors and role managers
 		// among them — ever sees it. Registering it in the menu and removing it
-		// afterward is why a page that never renders in the menu could still end
+		// afterwards is why a page that never renders in the menu could still end
 		// up in someone's saved menu.
 		$this->register_without_menu_item();
 
@@ -163,7 +163,7 @@ class Edit_Menu extends Admin_Menu {
 
 	/**
 	 * Retrieve every hookname registered by this menu, including the separate
-	 * "Add New" page, so screen-based checks recognize both editor views.
+	 * "Add New" page, so screen-based checks recognise both editor views.
 	 *
 	 * @return string[]
 	 */

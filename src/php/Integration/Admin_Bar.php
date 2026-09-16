@@ -155,46 +155,6 @@ class Admin_Bar {
 	}
 
 	/**
-	 * Render a small color badge for a snippet's execution kind, matching the
-	 * type-badge treatment on the snippets list.
-	 *
-	 * @param string $kind Execution kind: 'php', 'content', 'css', 'js'.
-	 *
-	 * @return string Safe HTML.
-	 */
-	private function format_kind_badge( string $kind ): string {
-		$kind = 'content' === $kind ? 'html' : $kind;
-		$labels = [
-			'php'  => 'PHP',
-			'html' => 'HTML',
-			'css'  => 'CSS',
-			'js'   => 'JS',
-			'cond' => 'COND',
-		];
-		$colours = [
-			'php'  => '#2271b1',
-			'html' => '#cd4510',
-			'css'  => '#9b59b6',
-			'js'   => '#f7d67a',
-			'cond' => '#22826f',
-		];
-		$text_colours = [
-			'js' => '#1c1f20',
-		];
-
-		$label = $labels[ $kind ] ?? strtoupper( $kind );
-		$colour = $colours[ $kind ] ?? '#5b7290';
-		$text_colour = $text_colours[ $kind ] ?? '#fff';
-
-		return sprintf(
-			'<span class="code-snippets-kind-badge" style="background:%1$s;color:%2$s">%3$s</span> ',
-			esc_attr( $colour ),
-			esc_attr( $text_colour ),
-			esc_html( $label )
-		);
-	}
-
-	/**
 	 * Add menu item for safe mode status.
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar Admin bar instance.
@@ -450,7 +410,7 @@ class Admin_Bar {
 			$wp_admin_bar->add_node(
 				[
 					'id'     => self::ROOT_NODE_ID . '-snippet-' . $snippet->id,
-					'title'  => $this->format_snippet_title( $snippet ),
+					'title'  => esc_html( $this->format_snippet_title( $snippet ) ),
 					'href'   => esc_url( add_query_arg( 'id', $snippet->id, $plugin->get_menu_url( 'edit' ) ) ),
 					'parent' => self::ROOT_NODE_ID . '-active-snippets',
 					'meta'   => [ 'class' => 'code-snippets-snippet-item' ],
@@ -483,7 +443,7 @@ class Admin_Bar {
 			$wp_admin_bar->add_node(
 				[
 					'id'     => self::ROOT_NODE_ID . '-snippet-' . $snippet->id,
-					'title'  => $this->format_snippet_title( $snippet ),
+					'title'  => esc_html( $this->format_snippet_title( $snippet ) ),
 					'href'   => esc_url( add_query_arg( 'id', $snippet->id, $plugin->get_menu_url( 'edit' ) ) ),
 					'parent' => self::ROOT_NODE_ID . '-inactive-snippets',
 					'meta'   => [ 'class' => 'code-snippets-snippet-item' ],
@@ -497,10 +457,10 @@ class Admin_Bar {
 	 *
 	 * @param Snippet $snippet Snippet object.
 	 *
-	 * @return string Safe HTML.
+	 * @return string
 	 */
 	private function format_snippet_title( Snippet $snippet ): string {
-		return $this->format_kind_badge( $snippet->type ) . esc_html( $snippet->display_name );
+		return sprintf( '(%s) %s', strtoupper( $snippet->type ), $snippet->display_name );
 	}
 
 	/**

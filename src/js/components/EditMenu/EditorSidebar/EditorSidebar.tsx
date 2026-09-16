@@ -47,19 +47,16 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 
 				{isRTL() && <RTLControl />}
 
-				<div className="snippet-editor-sidebar-settings">
-					<ConditionModalButton setIsModalOpen={setIsUpgradeDialogOpen} />
-					<SnippetLocationInput />
-					<ShortcodeInfo />
-					<PriorityInput />
-				</div>
+				<ConditionModalButton setIsDialogOpen={setIsUpgradeDialogOpen} />
+				<SnippetLocationInput />
+				<ShortcodeInfo />
+				<PriorityInput />
 
 				{!!snippet.id && (
 					<div className="row-actions visible inline-form-field">
 						<ExportButtons />
 
 						<Button className="delete-button" onClick={() => void requestDelete()} disabled={isWorking || snippet.locked}>
-							<span className="dashicons dashicons-trash" aria-hidden="true" />
 							{snippet.trashed ? __('Delete Permanently', 'code-snippets') : __('Trash', 'code-snippets')}
 						</Button>
 

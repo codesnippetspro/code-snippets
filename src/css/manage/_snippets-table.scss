@@ -64,49 +64,6 @@
 	display: table-cell !important;
 }
 
-.snippet-name-group {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	max-inline-size: 100%;
-	min-inline-size: 0;
-
-	.snippet-name {
-		min-inline-size: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.badge {
-		flex-shrink: 0;
-	}
-}
-
-.snippet-secure-status {
-	display: inline-flex;
-	align-items: center;
-	block-size: 24px;
-	box-sizing: border-box;
-	flex: 0 0 auto;
-	vertical-align: top;
-
-	.tooltip-trigger {
-		align-items: center;
-		justify-content: center;
-		inline-size: 24px;
-		block-size: 24px;
-		background: #cbf2d3;
-		border: 1px solid #a9d5b2;
-		border-radius: 5px;
-		color: #1a7f37;
-
-		svg {
-			display: block;
-		}
-	}
-}
-
 .snippets-card-grid {
 	// Three equal-height cards per row; descriptions are clamped so height
 	// stays uniform regardless of text length. The compound selector wins
@@ -162,10 +119,6 @@
 		align-items: center;
 		gap: 10px;
 
-		// Insights pills close out this row, so allow wrapping: on a narrow card
-		// they drop to a line of their own rather than squeezing the name away.
-		flex-wrap: wrap;
-
 		// Keep header content clear of the absolutely-positioned selection checkbox.
 		padding-inline-end: 32px;
 
@@ -180,42 +133,23 @@
 			}
 		}
 
-		// Insights pills close out the header row, sitting directly below the
-		// selection checkbox in the card corner. End-aligning them in flow means
-		// the header never has to reserve a fixed gutter for a variable-width
-		// group — the heading absorbs the shrink down to its floor, and past
-		// that the pills wrap instead.
-		.cs-insights-trigger {
-			margin-inline-start: auto;
-			flex-wrap: nowrap;
-			flex-shrink: 0;
-		}
-
 		h3 {
 			margin: 0;
 			font-size: 18px;
 			font-weight: 700;
 			line-height: 1.5;
 
-			// Zero basis, not auto: with a wrapping flex row, line-breaking uses
-			// each item's content width before any shrinking, so an auto-basis
-			// heading would break to its own line whenever the name is long.
-			// A zero basis keeps it on the first line and grows into the slack.
-			flex: 1 1 0;
-
-			// Let the heading shrink inside the flex row so long names truncate
-			// instead of pushing the header icons out of the card — but not below
-			// a readable stub, or a card with pills shows no name at all.
-			min-inline-size: 9ch;
+			// Let the heading shrink inside the flex row so long names
+			// truncate instead of pushing the header icons out of the card.
+			min-inline-size: 0;
 
 			.snippet-name {
+				display: block;
 				color: var(--cs-color-accent);
 				text-decoration: none;
-			}
-
-			.snippet-name-group {
-				display: flex;
-				inline-size: 100%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 		}
 
@@ -234,28 +168,11 @@
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		gap: 8px;
+		gap: 16px;
 		font-size: 14px;
 		line-height: 1.5;
 		border-block-end: 1px solid var(--cs-color-border-subtle);
 		padding-block-end: 16px;
-
-		.snippet-card-statuses {
-			display: inline-flex;
-			align-items: center;
-			block-size: 24px;
-			box-sizing: border-box;
-			gap: 4px;
-			flex-shrink: 0;
-
-			> .cs-insights-statuses,
-			> .cs-insights-statuses > .cs-insights-trigger {
-				display: inline-flex;
-				align-items: center;
-				block-size: 24px;
-				box-sizing: border-box;
-			}
-		}
 
 		.snippet-card-tags-label {
 			color: var(--cs-color-text-muted);
@@ -294,13 +211,9 @@
 		color: var(--cs-color-text-muted);
 	}
 
-	// Align the selection checkbox with the taller card header row, so its top
-	// edge matches the insights pills sharing that row.
-	// Qualified with .code-snippets-card to outrank the base
-	// `.code-snippets-card .snippet-card-corner` rule in common/_cards.scss,
-	// which has equal specificity but is emitted later.
-	.code-snippets-card .snippet-card-corner {
-		inset-block-start: 27px;
+	// Align the selection checkbox with the taller card header row.
+	.snippet-card-corner {
+		inset-block-start: 28px;
 	}
 
 	.code-snippets-card footer {

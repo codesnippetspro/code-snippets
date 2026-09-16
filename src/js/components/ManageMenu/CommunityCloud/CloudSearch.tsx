@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n'
-import React, { useEffect, useId, useState } from 'react'
+import React, { useId, useState } from 'react'
 import classnames from 'classnames'
 import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
@@ -8,8 +8,8 @@ import { isCloudSnippetDownloadable } from '../../../utils/snippets/snippets'
 import { TableNav } from '../../common/ListTable/TableNavigation'
 import { LoadingStatusNotices } from '../../common/LoadingStatusNotices'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
-import { CloudSnippetAuthor, CloudSnippetCard } from '../../common/cloud/CloudSnippetCard'
 import { CloudSnippetsTable } from './CloudSnippetsTable'
+import { CloudSnippetAuthor, SearchResult } from './SearchResult'
 import { useCloudSearch } from './WithCloudSearchContext'
 import { SearchFilters } from './SearchFilters'
 import type { CloudSearchResults } from './WithCloudSearchContext'
@@ -76,41 +76,35 @@ interface SearchResultsGridProps {
 	setSelected: Dispatch<SetStateAction<Set<CloudSnippetSchema['id']>>>
 }
 
-const SearchResultsGrid: React.FC<SearchResultsGridProps> = ({ snippets, selected, setSelected }) => {
-	const { doSearch } = useCloudSearch()
+const SearchResultsGrid: React.FC<SearchResultsGridProps> = ({ snippets, selected, setSelected }) =>
+	<ul
+		className={classnames('cloud-search-results', 'code-snippets-cards', {
+			'has-selection': snippets.some(snippet => selected.has(snippet.id))
+		})}
+	>
+		{snippets.map(result =>
+			<SearchResult
+				key={result.id}
+				snippet={result}
+				author={<CloudSnippetAuthor codevaultSlug={result.codevault} />}
+				isSelected={selected.has(result.id)}
+				onSelectedChange={isCloudSnippetDownloadable(result)
+					? isSelected => {
+						setSelected(previous => {
+							const updated = new Set(previous)
 
-	return (
-		<ul
-			className={classnames('cloud-search-results', 'code-snippets-cards', {
-				'has-selection': snippets.some(snippet => selected.has(snippet.id))
-			})}
-		>
-			{snippets.map(result =>
-				<CloudSnippetCard
-					key={result.id}
-					snippet={result}
-					author={<CloudSnippetAuthor codevaultSlug={result.codevault} />}
-					isSelected={selected.has(result.id)}
-					onSnippetDownloaded={() => doSearch()}
-					onSelectedChange={isCloudSnippetDownloadable(result)
-						? isSelected => {
-							setSelected(previous => {
-								const updated = new Set(previous)
+							if (isSelected) {
+								updated.add(result.id)
+							} else {
+								updated.delete(result.id)
+							}
 
-								if (isSelected) {
-									updated.add(result.id)
-								} else {
-									updated.delete(result.id)
-								}
-
-								return updated
-							})
-						}
-						: undefined}
-				/>)}
-		</ul>
-	)
-}
+							return updated
+						})
+					}
+					: undefined}
+			/>)}
+	</ul>
 
 interface SearchResultsViewProps {
 	snippetView: SnippetView
@@ -160,25 +154,10 @@ const SearchResultsTableNav: React.FC<SearchResultsTableNavProps> = ({
 		{...props}
 	/>
 
-/**
- * Bulk selection for the current page of results. A new set of results replaces
- * the rows the selection referred to, so nothing carries over: a stale
- * selection would let a bulk action act on snippets no longer on screen.
- */
-const useResultsSelection = (snippets: CloudSnippetSchema[] | undefined) => {
-	const [selected, setSelected] = useState<Set<CloudSnippetSchema['id']>>(new Set())
-
-	useEffect(() => {
-		setSelected(new Set())
-	}, [snippets])
-
-	return { selected, setSelected }
-}
-
 const SearchResultsTable: React.FC<SearchResultsViewProps> = ({ snippetView, setSnippetView }) => {
 	const { api } = useRestAPI()
 	const { searchResults, isSearching, doSearch } = useCloudSearch()
-	const { selected, setSelected } = useResultsSelection(searchResults?.snippets)
+	const [selected, setSelected] = useState<Set<CloudSnippetSchema['id']>>(new Set())
 
 	if (!searchResults) {
 		return null

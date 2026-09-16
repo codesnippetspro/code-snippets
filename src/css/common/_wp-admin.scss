@@ -70,8 +70,6 @@ body.wp-admin {
 	// side. WP 7.0 keeps the chevron as a background image; clamping both paddings to 8px (as
 	// for text inputs) would let the arrow overlap the text, so the inline-end padding is wider.
 	select:not([class*='components-']) {
-		min-inline-size: 170px;
-		field-sizing: content;
 		min-block-size: var(--cs-control-height);
 		padding-block: 0;
 		padding-inline: 8px 24px;

@@ -1,11 +1,8 @@
+@use '../common/theme';
 
 .snippet-condition-editor-container {
 	margin-block-start: 33px;
 	padding: 32px;
 	border: 1px solid var(--cs-color-border);
 	background: var(--cs-color-surface-subtle);
-
-	h2:first-of-type {
-		margin-block-start: 0;
-	}
 }

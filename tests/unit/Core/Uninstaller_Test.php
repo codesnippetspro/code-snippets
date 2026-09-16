@@ -112,15 +112,7 @@ class Uninstaller_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_complete_uninstall_removes_the_snippets_table_and_settings(): void {
-		$table = code_snippets()->db->table;
-		$drop_table_query = '';
-		$filter = static function ( string $query ) use ( &$drop_table_query ): string {
-			if ( 0 === strpos( $query, 'DROP TABLE' ) ) {
-				$drop_table_query = $query;
-			}
-
-			return $query;
-		};
+		$db = code_snippets()->db;
 
 		update_option(
 			'code_snippets_settings',
@@ -129,11 +121,9 @@ class Uninstaller_Test extends UnitTestCase {
 			]
 		);
 
-		add_filter( 'query', $filter, 9 );
 		( new Uninstaller() )->uninstall_plugin();
-		remove_filter( 'query', $filter, 9 );
 
-		$this->assertSame( "DROP TABLE IF EXISTS $table", $drop_table_query );
+		$this->assertFalse( DB::table_exists( $db->table, true ) );
 		$this->assertFalse( get_option( 'code_snippets_settings' ) );
 	}
 }

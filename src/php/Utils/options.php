@@ -8,30 +8,6 @@
 namespace Code_Snippets\Utils;
 
 /**
- * Resolve whether an operation should apply to the network or the current site.
- *
- * A null value is resolved from the current admin screen, so a caller that has
- * no explicit preference follows whichever admin the request is being made from.
- *
- * @param bool|null $network Whether the operation is network-wide, or null to infer it.
- *
- * @return bool
- */
-function validate_network_param( ?bool $network = null ): bool {
-	// If multisite is not active, then assume the value is false.
-	if ( ! is_multisite() ) {
-		return false;
-	}
-
-	// If the value is null, try to base it on the current admin page.
-	if ( is_null( $network ) && function_exists( 'is_network_admin' ) ) {
-		return is_network_admin();
-	}
-
-	return (bool) $network;
-}
-
-/**
  * Retrieves an option value based on an option name from either the current site or the current network.
  *
  * @param bool   $network       Whether to get a network-wide option.
@@ -47,7 +23,7 @@ function get_self_option( bool $network, string $option, $default_value = false 
 }
 
 /**
- * Adds a new option value for either the current site or the current network.
+ * Adds a new option option value for either the current site or the current network.
  *
  * @param bool   $network Whether to get a network-wide option.
  * @param string $option  Name of the option to add. Expected to not be SQL-escaped.

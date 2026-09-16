@@ -69,7 +69,7 @@ final class Demos_Seen_REST_Controller extends Preference_REST_Controller {
 	}
 
 	/**
-	 * Retrieve the stored preference value, discarding any unrecognized demo names.
+	 * Retrieve the stored preference value, discarding any unrecognised demo names.
 	 *
 	 * @return string[]
 	 */

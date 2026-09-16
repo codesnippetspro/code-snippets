@@ -24,8 +24,9 @@
 
 		select {
 			inline-size: auto;
-			flex: 0 1 auto;
-			min-inline-size: 170px;
+			flex: 1 1 154px;
+			min-inline-size: 104px;
+			max-inline-size: 154px;
 		}
 	}
 

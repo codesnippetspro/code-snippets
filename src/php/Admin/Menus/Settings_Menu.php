@@ -6,7 +6,6 @@ use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Settings\Settings_Fields;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\are_settings_unified;
-use function Code_Snippets\Settings\do_settings_fields_with_headings;
 use function Code_Snippets\Utils\enqueue_code_editor;
 use function Code_Snippets\Utils\get_editor_themes;
 use const Code_Snippets\PLUGIN_FILE;
@@ -36,35 +35,6 @@ class Settings_Menu extends Admin_Menu {
 			_x( 'Settings', 'menu label', 'code-snippets' ),
 			__( 'Snippets Settings', 'code-snippets' )
 		);
-	}
-
-	/**
-	 * Register the settings menu.
-	 *
-	 * Deliberately bypasses the snippet view-permission gate applied by the
-	 * parent. The settings page is already restricted to the core capability
-	 * (`manage_options` via `get_cap()`), so it stays admin-only regardless —
-	 * but it must always remain reachable so an administrator who restricts
-	 * their own role's snippet permissions can never lock themselves out of the
-	 * Permissions tab needed to undo it.
-	 */
-	public function register() {
-		$this->add_menu( $this->slug, $this->label, $this->title );
-	}
-
-	/**
-	 * The settings page is configuration territory (it includes the Permissions
-	 * tab itself), so it must remain restricted to full administrators — never
-	 * the broader snippet access capability that can be granted to other roles.
-	 * This is also what keeps an administrator from ever losing access to the
-	 * Permissions tab needed to undo a misconfiguration.
-	 *
-	 * @return string
-	 */
-	protected function menu_cap(): string {
-		return is_multisite() && ( is_network_admin() || ! code_snippets()->is_subsite_menu_enabled() )
-			? 'manage_network_options'
-			: 'manage_options';
 	}
 
 	/**
@@ -344,7 +314,7 @@ class Settings_Menu extends Admin_Menu {
 
 			printf( '<div class="settings-section %s-settings"><table class="form-table">', esc_attr( $section['id'] ) );
 
-			do_settings_fields_with_headings( self::SETTINGS_PAGE, $section['id'] );
+			\Code_Snippets\Settings\do_settings_fields_with_headings( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table></div>';
 		}
 	}

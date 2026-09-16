@@ -3,8 +3,6 @@
 namespace Code_Snippets\Admin;
 
 use Code_Snippets\AdminUnitTestCase;
-use Code_Snippets\Controller\Cloud_Auth_Controller;
-use Code_Snippets\Model\Basic_Cloud_Connection;
 use function Code_Snippets\code_snippets;
 
 /**

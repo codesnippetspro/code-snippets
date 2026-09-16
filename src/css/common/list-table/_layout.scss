@@ -154,16 +154,6 @@
 		position: relative;
 		inset-inline-start: 0;
 
-		// Anchor inline dashicons (e.g. the trash glyph on the Delete action) to
-		// the surrounding text. WP's `.wp-core-ui .button .dashicons` rule sets
-		// line-height: 1.9, which would drop the glyph below the link baseline,
-		// and the icon should inherit the link's colour rather than link blue.
-		.button .dashicons {
-			line-height: 1;
-			vertical-align: text-bottom;
-			color: inherit;
-		}
-
 		a:not(.delete) {
 			color: var(--cs-color-accent);
 
@@ -320,12 +310,15 @@
 	}
 
 	// Names and descriptions are both governed by the "Truncate long snippet
-	// names and descriptions" Screen Option. When it is off, the name group may
-	// take the full cell; when on, it is capped and the name inside it
-	// truncates, with the full value available through the title attribute.
-	&.truncate-row-values td.column-name > .snippet-name-group {
-		display: flex;
+	// names and descriptions" Screen Option. When it is off, the full name is
+	// shown; when on, it stays on a single line and the full value remains
+	// available through the title attribute.
+	&.truncate-row-values td.column-name > .snippet-name {
+		display: block;
 		max-inline-size: min(15rem, 30vw);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	&.truncate-row-values td.column-desc .snippet-description-content {

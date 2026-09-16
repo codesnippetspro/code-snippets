@@ -36,12 +36,7 @@ export interface ConfirmDeleteDialogProps {
 	makeDeleteRequest: () => Promise<void>
 }
 
-export const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
-	snippet,
-	isDialogOpen,
-	setIsDialogOpen,
-	makeDeleteRequest
-}) =>
+export const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({ snippet, isDialogOpen, setIsDialogOpen, makeDeleteRequest }) =>
 	<ConfirmDialog
 		open={isDialogOpen}
 		title={__('Are you sure?', 'code-snippets')}
@@ -100,13 +95,5 @@ export const useDeleteSnippet = ({
 		}
 	}
 
-	return {
-		requestDelete,
-		deleteDialogProps: {
-			snippet,
-			isDialogOpen,
-			setIsDialogOpen,
-			makeDeleteRequest
-		}
-	}
+	return { requestDelete, deleteDialogProps: { snippet, isDialogOpen, setIsDialogOpen, makeDeleteRequest } }
 }

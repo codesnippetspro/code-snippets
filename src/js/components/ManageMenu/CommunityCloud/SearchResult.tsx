@@ -3,12 +3,14 @@ import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { stripTags, truncateChars } from '../../../utils/text'
-import { Badge } from '../Badge'
-import { Button } from '../Button'
-import { SnippetCard } from '../snippets/SnippetCard'
-import { CloudSnippetPreviewModal } from '../snippets/SnippetPreviewModal'
-import { CloudStatusIndicator } from './CloudStatusBadge'
-import { CloudSnippetDownloadButton } from './CloudSnippetDownloadButton'
+import { Badge } from '../../common/Badge'
+import { Button } from '../../common/Button'
+import { CloudSnippetDownloadButton } from '../../common/cloud/CloudSnippetDownloadButton'
+import { CloudStatusIndicator } from '../../common/cloud/CloudStatusBadge'
+import { CloudUpdateIcon } from '../../common/icons/CloudUpdateIcon'
+import { SnippetCard } from '../../common/snippets/SnippetCard'
+import { CloudSnippetPreviewModal } from '../../common/snippets/SnippetPreviewModal'
+import { useCloudSearch } from './WithCloudSearchContext'
 import type { ReactNode } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 
@@ -88,21 +90,20 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({
 		{author}
 	</div>
 
-export interface CloudSnippetCardProps {
+export interface SearchResultProps {
 	snippet: CloudSnippetSchema
 	author?: ReactNode
 	isSelected?: boolean
 	onSelectedChange?: (isSelected: boolean) => void
-	onSnippetDownloaded?: () => void
 }
 
-export const CloudSnippetCard: React.FC<CloudSnippetCardProps> = ({
+export const SearchResult: React.FC<SearchResultProps> = ({
 	snippet,
 	author,
 	isSelected = false,
-	onSelectedChange,
-	onSnippetDownloaded
+	onSelectedChange
 }) => {
+	const { doSearch } = useCloudSearch()
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	return (
@@ -115,19 +116,27 @@ export const CloudSnippetCard: React.FC<CloudSnippetCardProps> = ({
 				__('Select %s', 'code-snippets'),
 				snippet.name
 			)}
-			footerStatus={<CloudStatusIndicator status={snippet.status} />}
+			footerStatus={<>
+				<CloudStatusIndicator status={snippet.status} />
+
+				{snippet.update_available
+					? <span className="cloud-snippet-update" title={__('Update available', 'code-snippets')}>
+						<CloudUpdateIcon aria-label={__('Update available', 'code-snippets')} />
+					</span>
+					: null}
+			</>}
 			footer={<>
 				<Button secondary onClick={() => setIsPreviewOpen(true)}>
 					{__('Preview', 'code-snippets')}
 				</Button>
 
-				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={onSnippetDownloaded} />
+				<CloudSnippetDownloadButton snippet={snippet} onDownloaded={doSearch} />
 			</>}
 		>
 			<CloudSnippetDetails snippet={snippet} author={author} setIsPreviewOpen={setIsPreviewOpen} />
 
 			{isPreviewOpen && (
-				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={onSnippetDownloaded} />)}
+				<CloudSnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} onDownloaded={doSearch} />)}
 		</SnippetCard>
 	)
 }

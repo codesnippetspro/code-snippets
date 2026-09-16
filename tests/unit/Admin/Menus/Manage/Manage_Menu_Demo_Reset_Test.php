@@ -4,7 +4,6 @@ namespace Code_Snippets\Admin\Menus\Manage;
 
 use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
 use Code_Snippets\UnitTestCase;
-use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
 
@@ -64,8 +63,6 @@ class Manage_Menu_Demo_Reset_Test extends UnitTestCase {
 	 * @param string $nonce Nonce to present.
 	 *
 	 * @return bool Whether the handler redirected, which it only does after resetting.
-	 *
-	 * @throws ReflectionException Uses reflection to access a private method.
 	 */
 	private function reset_request( string $nonce ): bool {
 		$_GET[ Manage_Menu::DEMO_RESET_PARAM ] = '1';
@@ -73,12 +70,8 @@ class Manage_Menu_Demo_Reset_Test extends UnitTestCase {
 
 		// The admin bootstrap does not run under PHPUnit, so the menu is built here.
 		$menu = new Manage_Menu();
-
 		$method = new ReflectionMethod( $menu, 'maybe_reset_demos' );
-
-		if ( version_compare( PHP_VERSION, '8.1', '<' ) ) {
-			$method->setAccessible( true );
-		}
+		$method->setAccessible( true );
 
 		try {
 			$method->invoke( $menu );

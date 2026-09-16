@@ -137,7 +137,7 @@ class Evaluate_Functions {
 	 * @return bool New filter value.
 	 */
 	public function disable_snippet_execution( $execute_snippets ): bool {
-		return $execute_snippets && ! $this->is_safe_mode_requested();
+		return (bool) $execute_snippets && ! $this->is_safe_mode_requested();
 	}
 
 	/**
@@ -177,15 +177,15 @@ class Evaluate_Functions {
 	}
 
 	/**
-	 * Evaluate a snippet.
+	 * Evaluate a snippet stored in a flat file.
 	 *
-	 * @param array       $snippet      Snippet data.
-	 * @param string|null $file_path    Path to the snippet file, or null if executing from the database.
-	 * @param array|null  $edit_snippet Data of snippet currently being edited, if applicable.
+	 * @param array      $snippet      Snippet data.
+	 * @param string     $file_path    Path to the snippet file.
+	 * @param array|null $edit_snippet Data of snippet currently being edited, if applicable.
 	 *
 	 * @return void
 	 */
-	private function evaluate_snippet( array $snippet, ?string $file_path, ?array $edit_snippet ) {
+	private function evaluate_snippet_flat_file( array $snippet, string $file_path, ?array $edit_snippet = null ) {
 		$snippet_id = $snippet['id'];
 		$code = $snippet['code'];
 		$table_name = $snippet['table'];
@@ -200,11 +200,7 @@ class Evaluate_Functions {
 		}
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
-			if ( is_null( $file_path ) ) {
-				execute_snippet( $code, $snippet_id );
-			} else {
-				execute_snippet_from_flat_file( $code, $file_path, $snippet_id );
-			}
+			execute_snippet_from_flat_file( $code, $file_path, $snippet_id );
 		}
 	}
 
@@ -236,8 +232,18 @@ class Evaluate_Functions {
 		$edit_snippet = $this->get_currently_editing_snippet();
 
 		foreach ( $active_snippets as $snippet ) {
-			if ( 'condition' !== $snippet['scope'] ) {
-				$this->evaluate_snippet( $snippet, null, $edit_snippet );
+			$snippet_id = $snippet['id'];
+			$code = $snippet['code'];
+			$table_name = $snippet['table'];
+
+			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
+			if ( 'single-use' === $snippet['scope'] ) {
+				$this->quick_deactivate_snippet( $snippet_id, $table_name );
+			}
+
+			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
+			     ( is_null( $edit_snippet ) || $edit_snippet['id'] !== $snippet_id || $edit_snippet['table'] !== $table_name ) ) {
+				execute_snippet( $code, $snippet_id );
 			}
 		}
 
@@ -256,13 +262,11 @@ class Evaluate_Functions {
 		$edit_snippet = $this->get_currently_editing_snippet();
 
 		foreach ( $snippets as $snippet ) {
-			if ( 'condition' !== $snippet['scope'] ) {
-				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
-				$base_path = Snippet_Files::get_base_dir( $table_name, $type );
-				$file = $base_path . '/' . $snippet['id'] . '.' . $type;
+			$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
+			$base_path = Snippet_Files::get_base_dir( $table_name, $type );
+			$file = $base_path . '/' . $snippet['id'] . '.' . $type;
 
-				$this->evaluate_snippet( $snippet, $file, $edit_snippet );
-			}
+			$this->evaluate_snippet_flat_file( $snippet, $file, $edit_snippet );
 		}
 
 		return true;

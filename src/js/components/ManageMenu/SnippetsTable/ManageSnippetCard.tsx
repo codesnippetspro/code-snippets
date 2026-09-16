@@ -13,13 +13,10 @@ import { Button } from '../../common/Button'
 import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../common/KebabMenu'
 import { SnippetCard } from '../../common/snippets/SnippetCard'
 import { SnippetPreviewModal } from '../../common/snippets/SnippetPreviewModal'
+import { SnippetPriorityInput } from '../../common/snippets/SnippetPriorityInput'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import { ActivateColumn, PriorityColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
+import { ActivateColumn, SnippetExtraIcons, SnippetName, TagsColumn, TypeColumn } from './TableColumns'
 import type { Snippet } from '../../../types/Snippet'
-
-interface SnippetCardActionsProps {
-	snippet: Snippet
-}
 
 interface SnippetCardActionsProps {
 	snippet: Snippet
@@ -34,11 +31,7 @@ const CardPreviewButton: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 				{__('Preview', 'code-snippets')}
 			</Button>
 
-			{isPreviewOpen && (
-				<SnippetPreviewModal
-					snippet={snippet}
-					setIsOpen={setIsPreviewOpen}
-				/>)}
+			{isPreviewOpen && <SnippetPreviewModal snippet={snippet} setIsOpen={setIsPreviewOpen} />}
 		</>
 	)
 }
@@ -110,7 +103,7 @@ const RestoreDeleteMenuItems: React.FC<RestoreDeleteMenuItemsProps> = ({
 
 const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
-
+	const canModify = canModifySnippet(snippet)
 	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
 		snippet,
 		onSuccess: refreshSnippetsList,
@@ -126,14 +119,14 @@ const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 					getSnippetDisplayName(snippet)
 				)}
 			>
-				{!snippet.trashed ? <CloneExportMenuItems snippet={snippet} /> : null}
+				{canModify && !snippet.trashed ? <CloneExportMenuItems snippet={snippet} /> : null}
 
 				<KebabMenuRow className="kebab-menu-priority">
 					<label htmlFor={`snippet-${snippet.id}-priority`}>{__('Priority', 'code-snippets')}</label>
-					<PriorityColumn snippet={snippet} />
+					<SnippetPriorityInput snippet={snippet} />
 				</KebabMenuRow>
 
-				{canModifySnippet(snippet) && (snippet.trashed || !snippet.locked) && (
+				{canModify && (snippet.trashed || !snippet.locked) && (
 					<RestoreDeleteMenuItems snippet={snippet} requestDelete={() => void requestDelete()} />)}
 			</KebabMenu>
 
@@ -158,7 +151,7 @@ const CardFooterActions: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 			</a>
 			: null}
 
-		{canModifySnippet(snippet) ? <CardActionsMenu snippet={snippet} /> : null}
+		<CardActionsMenu snippet={snippet} />
 	</>
 
 const CardModifiedDate: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
@@ -171,14 +164,6 @@ const CardModifiedDate: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 			)}
 		</time>
 		: null
-
-const CardHeader: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
-	<div className="snippet-card-header">
-		<ActivateColumn snippet={snippet} />
-		<TypeColumn snippet={snippet} />
-		<h3><SnippetName snippet={snippet} /></h3>
-		<SnippetExtraIcons snippet={snippet} />
-	</div>
 
 export interface ManageSnippetCardProps {
 	snippet: Snippet
@@ -211,7 +196,12 @@ export const ManageSnippetCard: React.FC<ManageSnippetCardProps> = ({
 			footer={<CardFooterActions snippet={snippet} />}
 		>
 			<div className="card-inner">
-				<CardHeader snippet={snippet} />
+				<div className="snippet-card-header">
+					<ActivateColumn snippet={snippet} />
+					<TypeColumn snippet={snippet} />
+					<h3><SnippetName snippet={snippet} /></h3>
+					<SnippetExtraIcons snippet={snippet} />
+				</div>
 
 				{(0 < snippet.tags.length || !!snippet.modified) && (
 					<div className={classnames('snippet-card-meta', { 'has-tags': 0 < snippet.tags.length })}>

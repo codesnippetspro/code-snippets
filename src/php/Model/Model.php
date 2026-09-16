@@ -12,7 +12,7 @@ use WP_Exception;
 abstract class Model {
 
 	/**
-	 * List of data fields keyed to their current values. Will be initialized with default values.
+	 * List of data fields keyed to their current values. Will be initialised with default values.
 	 *
 	 * @var array<string, mixed>
 	 */

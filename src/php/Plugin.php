@@ -116,7 +116,7 @@ class Plugin {
 	}
 
 	/**
-	 * Initialize the plugin and load all necessary classes.
+	 * Initialise the plugin and load all necessary classes.
 	 */
 	public function load_plugin() {
 		$this->load_utilities();
@@ -171,7 +171,7 @@ class Plugin {
 	}
 
 	/**
-	 * Initializes the snippet files component.
+	 * Initialises the snippet files component.
 	 *
 	 * @return void
 	 */
@@ -355,7 +355,7 @@ class Plugin {
 	}
 
 	/**
-	 * Localize a plugin script to provide the CODE_SNIPPETS object.
+	 * Localise a plugin script to provide the CODE_SNIPPETS object.
 	 *
 	 * @param string $handle Script handle.
 	 *
@@ -389,18 +389,18 @@ class Plugin {
 					],
 				],
 				'urls'               => [
-					'plugin'    => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
-					'manage'    => esc_url_raw( $this->get_menu_url() ),
-					'edit'      => esc_url_raw( $this->get_menu_url( 'edit' ) ),
-					'addNew'    => esc_url_raw( $this->get_menu_url( 'add' ) ),
-					'insights'  => esc_url_raw( $this->get_menu_url( 'insights' ) ),
-					'welcome'   => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
-					'import'    => esc_url_raw( $this->get_menu_url( 'import' ) ),
-					'cloud'     => esc_url_raw( $this->cloud_connection->get_base_url() ),
-					'demoReset' => esc_url_raw( Manage_Menu::get_demo_reset_url() ),
-					'settings'  => ! are_settings_unified() || is_super_admin()
+					'plugin'   => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
+					'manage'   => esc_url_raw( $this->get_menu_url() ),
+					'edit'     => esc_url_raw( $this->get_menu_url( 'edit' ) ),
+					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
+					'insights' => esc_url_raw( $this->get_menu_url( 'insights' ) ),
+					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
+					'import'   => esc_url_raw( $this->get_menu_url( 'import' ) ),
+					'cloud'    => esc_url_raw( $this->cloud_connection->get_base_url() ),
+					'settings' => ! are_settings_unified() || is_super_admin()
 						? esc_url_raw( $this->get_menu_url( 'settings' ) )
 						: null,
+					'demoReset' => esc_url_raw( Manage_Menu::get_demo_reset_url() ),
 				],
 			]
 		);

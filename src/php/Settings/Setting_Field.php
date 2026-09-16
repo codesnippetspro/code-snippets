@@ -75,12 +75,6 @@ class Setting_Field {
 			return sprintf( '%s[%s][%s]', OPTION_NAME, $this->section, $this->field_id );
 		}
 
-		// Stable DOM id for the rendered control, so the settings-table heading
-		// can be associated with it via `label_for` (accessible name).
-		if ( 'element_id' === $argument ) {
-			return sanitize_key( sprintf( '%s_%s_%s', OPTION_NAME, $this->section, $this->field_id ) );
-		}
-
 		return $this->args[ $argument ];
 	}
 
@@ -220,8 +214,7 @@ class Setting_Field {
 	 */
 	private function render_number_field() {
 		printf(
-			'<input id="%s" type="number" name="%s" value="%s"',
-			esc_attr( $this->element_id ),
+			'<input type="number" name="%s" value="%s"',
 			esc_attr( $this->input_name ),
 			esc_attr( $this->get_saved_value() )
 		);
@@ -248,11 +241,7 @@ class Setting_Field {
 	 */
 	private function render_select_field() {
 		$saved_value = $this->get_saved_value();
-		printf(
-			'<select id="%s" name="%s">',
-			esc_attr( $this->element_id ),
-			esc_attr( $this->input_name )
-		);
+		printf( '<select name="%s">', esc_attr( $this->input_name ) );
 
 		foreach ( $this->options as $option => $option_label ) {
 			printf(

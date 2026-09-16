@@ -104,25 +104,12 @@ abstract class Admin_Menu {
 			$this->base_slug,
 			$title,
 			$label,
-			$this->menu_cap(),
+			code_snippets()->get_cap(),
 			$slug,
 			array( $this, 'render' )
 		);
 
 		add_action( 'load-' . $hook, array( $this, 'load' ) );
-	}
-
-	/**
-	 * Capability required to access this menu.
-	 *
-	 * Defaults to the snippet access capability. Subclasses such as the
-	 * settings menu override this to require the core admin capability so they
-	 * remain accessible only to full administrators.
-	 *
-	 * @return string
-	 */
-	protected function menu_cap(): string {
-		return code_snippets()->get_cap();
 	}
 
 	/**
@@ -168,7 +155,7 @@ abstract class Admin_Menu {
 	 */
 	public function load() {
 		// Make sure the user has permission to be here.
-		if ( ! current_user_can( $this->menu_cap() ) ) {
+		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
 			wp_die( esc_html__( 'You are not authorized to access this page.', 'code-snippets' ) );
 		}
 

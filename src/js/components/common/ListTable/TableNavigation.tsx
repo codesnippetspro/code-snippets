@@ -125,7 +125,7 @@ const BulkActions = function BulkActions<K extends Key, A extends string>({
 				name="bulk_action"
 				text={__('Apply', 'code-snippets')}
 				className="action"
-				disabled={!!disabled || isPerformingAction || !selectedAction || 0 === selected.size}
+				disabled={!!disabled || isPerformingAction || !selectedAction}
 				onClick={handleSubmit}
 			/>
 

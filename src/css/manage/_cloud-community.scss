@@ -91,6 +91,9 @@
 		justify-content: center;
 	}
 
+	.cloud-search-filters select {
+		inline-size: 245px;
+	}
 }
 
 .bundle-share-code-form {
@@ -132,11 +135,6 @@
 
 	.column-name {
 		inline-size: 22%;
-	}
-
-	.column-desc {
-		inline-size: 30%;
-		min-inline-size: 18rem;
 	}
 
 	.column-type {

@@ -4,6 +4,7 @@ namespace Code_Snippets\Integration;
 
 use Code_Snippets\Core\DB;
 use Code_Snippets\Flat_Files\Snippet_Files;
+use Code_Snippets\Model\Snippet;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -21,9 +22,9 @@ class Evaluate_Content {
 	private DB $db;
 
 	/**
-	 * Cached list of active snippets, indexed by scope.
+	 * Cached list of active snippets.
 	 *
-	 * @var ?array[]
+	 * @var ?Snippet[]
 	 */
 	private ?array $active_snippets = null;
 
@@ -34,11 +35,11 @@ class Evaluate_Content {
 	 */
 	public function __construct( DB $db ) {
 		$this->db = $db;
-		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'init', array( $this, 'init' ) );
 	}
 
 	/**
-	 * Initialize class functions.
+	 * Initialise class functions.
 	 */
 	public function init() {
 		add_action( 'wp_head', [ $this, 'load_head_content' ] );
@@ -47,52 +48,33 @@ class Evaluate_Content {
 	}
 
 	/**
-	 * Populate the active snippets cache.
-	 *
-	 * This function fetches active snippets from the database and stores them in the
-	 * $active_snippets property.
-	 */
-	private function populate_active_snippets() {
-		$scopes = [ 'head-content', 'body-content', 'footer-content' ];
-		$snippets = $this->db->fetch_active_snippets( $scopes );
-
-		foreach ( $snippets as $snippet ) {
-			$scope = $snippet['scope'];
-
-			if ( 'condition' !== $scope ) {
-				$this->active_snippets[ $scope ][] = $snippet;
-			}
-		}
-	}
-
-	/**
 	 * Print snippet code fetched from the database from a certain scope.
 	 *
 	 * @param string $scope Name of scope to print.
 	 */
 	private function print_content_snippets( string $scope ) {
-		if ( is_null( $this->active_snippets ) ) {
-			if ( Snippet_Files::is_active() ) {
+		if ( Snippet_Files::is_active() ) {
+			if ( is_null( $this->active_snippets ) ) {
 				$this->populate_active_snippets_from_flat_files();
-			} else {
-				$this->populate_active_snippets();
-			}
-		}
-
-		if ( ! isset( $this->active_snippets[ $scope ] ) ) {
-			return;
-		}
-
-		foreach ( $this->active_snippets[ $scope ] as $snippet ) {
-			if ( isset( $snippet['id'] ) ) {
-				do_action( 'code_snippets/snippet_ran_on_page', (int) $snippet['id'], 'content' );
 			}
 
-			if ( Snippet_Files::is_active() ) {
-				require_once $snippet['file_path'];
-			} else {
-				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo "\n", $snippet['code'], "\n";
+			if ( isset( $this->active_snippets[ $scope ] ) ) {
+				foreach ( $this->active_snippets[ $scope ] as $snippet ) {
+					require_once $snippet['file_path'];
+				}
+			}
+		} else {
+			$scopes = [ 'head-content', 'body-content', 'footer-content' ];
+
+			if ( is_null( $this->active_snippets ) ) {
+				$this->active_snippets = $this->db->fetch_active_snippets( $scopes );
+			}
+
+			foreach ( $this->active_snippets as $snippet ) {
+				if ( $scope === $snippet['scope'] ) {
+					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo "\n", $snippet['code'], "\n";
+				}
 			}
 		}
 	}
@@ -140,14 +122,12 @@ class Evaluate_Content {
 		foreach ( $all_snippets as $snippet ) {
 			$scope = $snippet['scope'];
 
-			if ( 'condition' !== $scope ) {
-				// Add file path information to the snippet for later use.
-				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
-				$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
-				$snippet['file_path'] = $base_path . '/' . $snippet['id'] . '.' . $ext;
+			// Add file path information to the snippet for later use.
+			$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
+			$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+			$snippet['file_path'] = $base_path . '/' . $snippet['id'] . '.' . $ext;
 
-				$this->active_snippets[ $scope ][] = $snippet;
-			}
+			$this->active_snippets[ $scope ][] = $snippet;
 		}
 	}
 }

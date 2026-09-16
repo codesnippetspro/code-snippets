@@ -1,4 +1,3 @@
-@use 'common/buttons';
 @use 'common/theme';
 @use 'common/checkbox';
 @use 'common/codemirror';
@@ -118,8 +117,7 @@ body.js {
 	color: var(--cs-color-error);
 }
 
-.wrap[data-active-tab='license'] .submit,
-.wrap[data-active-tab='account'] .submit {
+.wrap[data-active-tab='license'] .submit {
 	display: none;
 }
 

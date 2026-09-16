@@ -12,7 +12,6 @@ use WP_REST_Response;
  *
  * @property Cloud_Snippet[]      $snippets          List of snippet items for the current page.
  * @property int                  $page              Page of data that this data belongs to.
- * @property int                  $per_page          Number of items requested per page.
  * @property int                  $total_pages       Total number of available pages of items.
  * @property int                  $total_snippets    Total number of available snippet items.
  * @property array<int, int>      $cloud_id_rev      An array of all cloud snippet IDs and their revision numbers.
@@ -30,7 +29,6 @@ class Cloud_Snippets extends Model {
 		'total_snippets'    => 0,
 		'total_pages'       => 0,
 		'page'              => 0,
-		'per_page'          => 0,
 		'cloud_id_rev'      => [],
 		'available_filters' => [],
 	];
@@ -58,7 +56,6 @@ class Cloud_Snippets extends Model {
 	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
 			case 'page':
-			case 'per_page':
 			case 'total_pages':
 			case 'total_snippets':
 				return absint( $value );
@@ -106,10 +103,6 @@ class Cloud_Snippets extends Model {
 		if ( isset( $meta['page'] ) && is_numeric( $meta['page'] ) ) {
 			$this->page = max( 0, (int) $meta['page'] - 1 );
 		}
-
-		if ( isset( $meta['per_page'] ) && is_numeric( $meta['per_page'] ) ) {
-			$this->per_page = $meta['per_page'];
-		}
 	}
 
 	/**
@@ -117,15 +110,10 @@ class Cloud_Snippets extends Model {
 	 *
 	 * @param array|null $response    Response data as returned from API.
 	 * @param int|null   $page_number Page number requested, if applicible.
-	 * @param int|null   $per_page    Page size requested, if applicible.
 	 *
 	 * @return Cloud_Snippets Constructed cloud snippets object from response data.
 	 */
-	public static function unpack_api_response(
-		?array $response,
-		?int $page_number = null,
-		?int $per_page = null
-	): ?Cloud_Snippets {
+	public static function unpack_api_response( ?array $response, ?int $page_number = null ): ?Cloud_Snippets {
 		if ( ! $response ) {
 			return null;
 		}
@@ -149,13 +137,6 @@ class Cloud_Snippets extends Model {
 
 		if ( ! is_null( $page_number ) ) {
 			$result->page = $page_number;
-		}
-
-		// The requested size, not the reported one: callers compare it against a
-		// later request to decide whether cached data still covers what is asked
-		// for, and older cloud builds omit `per_page` from the meta block.
-		if ( ! is_null( $per_page ) ) {
-			$result->per_page = $per_page;
 		}
 
 		return $result;

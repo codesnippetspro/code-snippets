@@ -39,11 +39,7 @@ class Plugin_Test extends UnitTestCase {
 			foreach ( $callbacks as $callback ) {
 				$function = $callback['function'];
 
-				if (
-					is_array( $function )
-					&& $function[0] instanceof Elementor_Editor
-					&& 'promotion_in_custom_css_section' === $function[1]
-				) {
+				if ( is_array( $function ) && $function[0] instanceof Elementor_Editor && 'promotion_in_custom_css_section' === $function[1] ) {
 					$promotion_callbacks[] = $function;
 				}
 			}

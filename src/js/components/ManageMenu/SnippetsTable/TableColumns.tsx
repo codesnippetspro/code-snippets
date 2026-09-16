@@ -1,6 +1,6 @@
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
-import { __, sprintf } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import React, { Fragment } from 'react'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
@@ -116,7 +116,7 @@ export const SnippetExtraIcons: React.FC<ColumnProps> = ({ snippet }) =>
 	</div>
 
 export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
-	<span className="snippet-name-group">
+	<>
 		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
 			? <a
 				href={getSnippetEditUrl(snippet)}
@@ -130,7 +130,7 @@ export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
 			</span>}
 
 		{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
-	</span>
+	</>
 
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
@@ -173,36 +173,6 @@ export const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 			</time>
 		</span>
 		: <>&#8212;</>
-
-export const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) =>
-	<SnippetPriorityInput snippet={snippet} />
-
-export const getAuthorDisplayName = (snippet: Snippet): string =>
-	(snippet.updatedBy ?? snippet.createdBy)?.displayName ?? ''
-
-const AuthorColumn: React.FC<ColumnProps> = ({ snippet }) => {
-	const creator = snippet.createdBy
-	const updater = snippet.updatedBy
-	const primary = updater ?? creator
-
-	if (!primary) {
-		return <span className="snippet-author is-unknown">&#8212;</span>
-	}
-
-	const tooltip = creator && updater && creator.id !== updater.id
-		? sprintf(__('Created by %1$s · Last edited by %2$s', 'code-snippets'), creator.displayName, updater.displayName)
-		: creator
-			? sprintf(__('Created by %s', 'code-snippets'), creator.displayName)
-			: sprintf(__('Last edited by %s', 'code-snippets'), primary.displayName)
-
-	return (
-		<span className="snippet-author" title={tooltip}>
-			{primary.avatarUrl &&
-				<img className="snippet-author__avatar" src={primary.avatarUrl} alt="" width={20} height={20} />}
-			<span className="snippet-author__name">{primary.displayName}</span>
-		</span>
-	)
-}
 
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
@@ -250,12 +220,6 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 		title: __('Priority', 'code-snippets'),
 		sortedValue: snippet => snippet.priority,
 		render: snippet => <SnippetPriorityInput snippet={snippet} />
-	},
-	{
-		id: 'author',
-		title: __('Author', 'code-snippets'),
-		sortedValue: snippet => getAuthorDisplayName(snippet).toLowerCase(),
-		render: snippet => <AuthorColumn snippet={snippet} />
 	}
 ]
 

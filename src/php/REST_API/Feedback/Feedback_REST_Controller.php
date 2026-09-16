@@ -54,7 +54,7 @@ class Feedback_REST_Controller extends REST_Controller {
 	private const MAX_JS_ERRORS = 10;
 
 	/**
-	 * Shortest title that summarizes anything.
+	 * Shortest title that summarises anything.
 	 */
 	private const MIN_TITLE_LENGTH = 8;
 

@@ -15,7 +15,7 @@ namespace Code_Snippets\Settings;
  * whole features were sitting in the same flat list as small preferences.
  *
  * The map below names every field across both editions. Anything not present
- * in the running installation is skipped, and a tab left with nothing in it does not
+ * in the running install is skipped, and a tab left with nothing in it does not
  * appear at all, so the free plugin shows fewer tabs than Pro without needing a
  * separate map.
  */
@@ -149,16 +149,19 @@ class Settings_Layout {
 	 */
 	public static function get_available_tabs(): array {
 		$settings = get_settings_values();
+		$available = [];
 
-		return array_filter(
-			self::get_tabs(),
-			fn( $tab_id ) => self::get_visible_fields( $tab_id, $settings ),
-			ARRAY_FILTER_USE_KEY
-		);
+		foreach ( self::get_tabs() as $tab_id => $label ) {
+			if ( self::get_visible_fields( $tab_id, $settings ) ) {
+				$available[ $tab_id ] = $label;
+			}
+		}
+
+		return $available;
 	}
 
 	/**
-	 * Retrieve the headings that break a tab into labeled groups.
+	 * Retrieve the headings that break a tab into labelled groups.
 	 *
 	 * Keyed by tab, then by the field the heading is drawn above. A heading
 	 * whose field is absent is skipped along with it.
