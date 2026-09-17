@@ -245,6 +245,9 @@ class Snippet_Files {
 			return;
 		}
 
+		// The object-cache copy can still say active; the database row does not.
+		$snippet->active = false;
+
 		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
@@ -645,12 +648,14 @@ class Snippet_Files {
 		$db = code_snippets()->db;
 
 		$scopes = Snippet::get_all_scopes();
+		$indexes = [];
 
 		$data = $db->fetch_active_snippets( $scopes );
 
 		foreach ( $data as $snippet ) {
 			$snippet_obj = get_snippet( $snippet['id'], $db->ms_table === $snippet['table'] );
 			$this->handle_snippet( $snippet_obj, $snippet['table'] );
+			$this->remember_index_entry( $indexes, $snippet_obj, $snippet['table'] );
 		}
 
 		if ( is_multisite() ) {
@@ -664,6 +669,7 @@ class Snippet_Files {
 					$table_name = $snippet['table'];
 					$snippet_obj = get_snippet( $snippet['id'], false );
 					$this->handle_snippet( $snippet_obj, $table_name );
+					$this->remember_index_entry( $indexes, $snippet_obj, $table_name );
 				}
 
 				restore_current_blog();
@@ -671,6 +677,34 @@ class Snippet_Files {
 
 			$db->set_table_vars();
 		}
+
+		foreach ( $indexes as $base_dir => $snippets ) {
+			$this->config_repo->save( $base_dir, $snippets );
+		}
+	}
+
+	/**
+	 * Record a snippet for a full index rewrite.
+	 *
+	 * handle_snippet() merges into the existing index, which can leave a
+	 * deactivated snippet marked active. Replacing the index with only the
+	 * currently active set drops those stale entries.
+	 *
+	 * @param array<string, array<int, array<string, mixed>>> $indexes Index lists keyed by directory.
+	 * @param Snippet                                         $snippet Snippet just written.
+	 * @param string                                          $table   Database table name.
+	 *
+	 * @return void
+	 */
+	private function remember_index_entry( array &$indexes, Snippet $snippet, string $table ): void {
+		$handler = $this->handler_registry->get_handler( $snippet->type );
+
+		if ( ! $handler ) {
+			return;
+		}
+
+		$base_dir = self::get_base_dir( self::get_hashed_table_name( $table ), $handler->get_dir_name() );
+		$indexes[ $base_dir ][ $snippet->id ] = $snippet->get_fields();
 	}
 
 	/**
