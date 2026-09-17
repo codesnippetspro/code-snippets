@@ -97,6 +97,8 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Card view surfaces snippet insights in the card corner', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Snippet insights are available with a Pro licence.')
+
 		await switchSnippetView(page, 'Card view')
 
 		try {
