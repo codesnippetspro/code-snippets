@@ -3,15 +3,6 @@
 		min-inline-size: 550px;
 	}
 
-	.action-buttons {
-		display: flex;
-		justify-content: flex-end;
-	}
-
-	.components-button.is-secondary {
-		box-shadow: none;
-	}
-
 	.banner {
 		margin-inline: 0;
 	}
@@ -88,25 +79,6 @@
 				opacity: 1;
 			}
 		}
-	}
-}
-
-.cloud-connect-modal {
-	.icons-group {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		.dashicons {
-			inline-size: 50px;
-			block-size: 50px;
-			font-size: 50px;
-		}
-	}
-
-	.action-buttons {
-		display: flex;
-		justify-content: flex-end;
 	}
 }
 

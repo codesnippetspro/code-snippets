@@ -1,10 +1,13 @@
 import { trimTrailingChar } from './text'
+import { buildUrl } from './urls'
+import type { UrlQueryArgs } from './urls'
 import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios'
 
 const normalizeUrl = (url: string | undefined) =>
 	trimTrailingChar(url ?? '', '/')
 
 export const REST_BASES = {
+	base: normalizeUrl(window.CODE_SNIPPETS?.restAPI.base),
 	snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippets),
 	recentlyActive: normalizeUrl(window.CODE_SNIPPETS?.restAPI.recentlyActive),
 	import: {
@@ -128,3 +131,11 @@ export const addQueryArg = ({ url, name, value }: QueryArg): string => {
 	parsed.searchParams.set(name, value)
 	return parsed.toString()
 }
+
+/**
+ * A WordPress core REST route (`wp/v2/…`) with its query arguments, built so it
+ * works whether or not the site has pretty permalinks: without them the REST
+ * base already carries a query string, so arguments must be appended with `&`.
+ */
+export const buildWpRestUrl = (route: string, args: UrlQueryArgs = {}): string =>
+	buildUrl(`${REST_BASES.base}/wp/v2/${route}`, args)

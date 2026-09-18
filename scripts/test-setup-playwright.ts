@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
 import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const run = (cmd: string, args: readonly string[]) => {
@@ -9,6 +9,22 @@ const run = (cmd: string, args: readonly string[]) => {
 }
 
 const runWpEnvCli = (args: readonly string[]) => run('npx', ['wp-env', 'run', 'cli', ...args])
+
+const loadEnvFile = (): void => {
+	const envPath = resolve(process.cwd(), '.env')
+
+	if (!existsSync(envPath)) {
+		return
+	}
+
+	for (const line of readFileSync(envPath, 'utf8').split('\n')) {
+		const match = /^\s*(?<key>[\w.-]+)\s*=\s*(?<value>.*?)\s*$/u.exec(line)
+
+		if (match?.groups && !(match.groups.key in process.env)) {
+			process.env[match.groups.key] = match.groups.value.replace(/^["']|["']$/u, '')
+		}
+	}
+}
 
 const getPluginSlug = (): string => {
 	const prefix = 'wp-content/plugins/'
@@ -28,6 +44,8 @@ const main = () => {
 	// - ensure plugin is active
 	// - force enable_flat_files=false so the Playwright setup test can flip it to true
 	// - delete all DB snippets with an E2E prefix (keeps list clean across runs)
+
+	loadEnvFile()
 
 	runWpEnvCli(['sh', '-lc', 'rm -rf wp-content/code-snippets'])
 	runWpEnvCli(['wp', 'plugin', 'activate', getPluginSlug()])

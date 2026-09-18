@@ -3,7 +3,7 @@
 namespace Code_Snippets\REST_API\Preferences;
 
 /**
- * Controller for reading and updating the user's preference as to whether snippet lists
+ * Controller for reading and updating the user's preference whether snippet lists
  * display as a table or a grid of cards.
  *
  * @package Code_Snippets
