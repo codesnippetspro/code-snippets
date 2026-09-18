@@ -120,8 +120,13 @@ class Uninstaller_Test extends UnitTestCase {
 				'general' => [ 'complete_uninstall' => true ],
 			]
 		);
+		remove_filter( 'query', [ $this, '_drop_temporary_tables' ] );
 
-		( new Uninstaller() )->uninstall_plugin();
+		try {
+			( new Uninstaller() )->uninstall_plugin();
+		} finally {
+			add_filter( 'query', [ $this, '_drop_temporary_tables' ] );
+		}
 
 		$this->assertFalse( DB::table_exists( $db->table, true ) );
 		$this->assertFalse( get_option( 'code_snippets_settings' ) );
