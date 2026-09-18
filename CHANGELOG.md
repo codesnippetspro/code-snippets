@@ -67,6 +67,9 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed the snippets list showing only the first 100 snippets on sites with larger libraries, with the type counts
+  agreeing with that shortened list rather than the real total. The list no longer carries snippet code, making the
+  request far smaller, and the screen now reports a problem instead of presenting a partial list as complete.
 
 ## [3.10.2] (2026-09-01)
 

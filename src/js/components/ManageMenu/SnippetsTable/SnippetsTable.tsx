@@ -84,9 +84,13 @@ const SafeModeNotice = () =>
 		</Notice>
 		: null
 
-// Counts render immediately from localized values, then switch to live values.
+// Counts render immediately from the values localized with the page, then switch
+// to live values derived from the snippets list once it has loaded. The switch is
+// driven by isListLoaded rather than by the list being present, because the list
+// starts out holding the capped set embedded in the page: counting that would
+// quietly report a truncated library as the whole of it.
 const useSnippetTypeCounts = () => {
-	const { snippetsList } = useSnippetsList()
+	const { snippetsList, isListLoaded } = useSnippetsList()
 
 	const countedSnippets = useMemo(
 		() => snippetsList?.filter(snippet => !snippet.trashed),
@@ -104,13 +108,21 @@ const useSnippetTypeCounts = () => {
 	const localized = window.CODE_SNIPPETS_MANAGE?.typeCounts
 
 	const getCount = useCallback(
-		(type?: SnippetType) => countedSnippets
-			? type ? typeCounts?.get(type) ?? 0 : countedSnippets.length
+		(type?: SnippetType) => isListLoaded
+			? type ? typeCounts?.get(type) ?? 0 : countedSnippets?.length ?? 0
 			: localized?.[type ?? 'all'],
-		[countedSnippets, typeCounts, localized]
+		[isListLoaded, countedSnippets, typeCounts, localized]
 	)
 
 	return { getCount }
+}
+
+const ListErrorNotice: React.FC = () => {
+	const { listError } = useSnippetsList()
+
+	return listError
+		? <Notice type="error"><p>{listError}</p></Notice>
+		: null
 }
 
 const SnippetsTableInner = () => {
@@ -155,6 +167,8 @@ const SnippetsTableInner = () => {
 			<hr className="wp-header-end" />
 
 			<SafeModeNotice />
+
+			<ListErrorNotice />
 
 			{currentType && !isLicensed() && isProType(currentType)
 				? <UpsellPage />
