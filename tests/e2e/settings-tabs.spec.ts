@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test'
+import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { wpCli } from './helpers/wpCli'
 import { TIMEOUTS, URLS } from './helpers/constants'
 
 const TABS = '#settings-sections-tabs'
-const SETTINGS_SECTIONS = ['editing', 'running', 'insights', 'library', 'interface', 'advanced']
+const SETTINGS_SECTIONS = ['editing', 'running', 'interface', 'advanced']
 
 test.describe('Settings tabs', () => {
 	test('shows a success notice after saving the current tab', async ({ page }) => {
@@ -101,6 +102,8 @@ test.describe('Settings tabs', () => {
 	})
 
 	test('shows Insights controls for performance tracking and security scanning', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Insights controls require an active Pro license.')
+
 		await page.goto(`${URLS.SETTINGS_ADMIN}&section=insights`)
 
 		await expect(page.getByRole('checkbox', { name: /Track Snippet Performance/ })).toBeVisible({ timeout: TIMEOUTS.SHORT })

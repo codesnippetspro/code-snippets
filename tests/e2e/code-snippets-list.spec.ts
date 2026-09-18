@@ -227,10 +227,8 @@ test.describe('Code Snippets List Page Actions', () => {
 		)
 		await page.getByRole('button', { name: 'Clear List' }).click()
 		expect((await clearList).status()).toBe(200)
-		await expect(row).toHaveCount(0)
-
-		await page.locator('.subsubsub .all a').click()
-		await expect(snippetRowByName(page, snippetName)).toBeVisible()
+		await expect(page.locator('.subsubsub .all a')).toHaveAttribute('aria-current', 'page')
+		await expect(row).toBeVisible()
 	})
 
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
@@ -725,7 +723,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		const row = snippetRowByName(page, snippetName)
 
 		await page.locator('select[name="action"]').first().selectOption({ label: 'Trash' })
-		await page.locator('#doaction').click()
+		await expect(page.locator('#doaction')).toBeDisabled()
 
 		await expect(row).toBeVisible()
 		await expect(row).not.toHaveClass(/trashed-snippet/)
@@ -735,6 +733,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		const row = snippetRowByName(page, snippetName)
 
 		await row.locator('input[name="checked[]"]').check({ force: true })
+		await expect(row.locator('input[name="checked[]"]')).toBeChecked()
 		await page.locator('select[name="action"]').first().selectOption({ label: 'Trash' })
 		await page.locator('#doaction').click()
 		await expect(row).toHaveCount(0)
@@ -742,12 +741,11 @@ test.describe('Code Snippets List Page Actions', () => {
 		await page.locator('.subsubsub .trashed a').click()
 		const trashedRow = snippetRowByName(page, snippetName)
 		await trashedRow.locator('input[name="checked[]"]').check({ force: true })
+		await expect(trashedRow.locator('input[name="checked[]"]')).toBeChecked()
 		await page.locator('select[name="action"]').first().selectOption({ label: 'Restore' })
 		await page.locator('#doaction').click()
-		await expect(trashedRow).toHaveCount(0)
-
-		await page.locator('.subsubsub .all a').click()
-		await expect(snippetRowByName(page, snippetName)).toBeVisible()
+		await expect(page.locator('.subsubsub .all a')).toHaveAttribute('aria-current', 'page')
+		await expect(row).toBeVisible()
 	})
 
 	test('Can export multiple snippets from bulk actions', async ({ page }) => {
