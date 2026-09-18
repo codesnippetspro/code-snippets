@@ -23,6 +23,141 @@ test.describe('Code Snippets Admin', () => {
 		})
 	})
 
+	test('Saves a description entered in the visual editor', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Visual description')
+		const description = 'Saved from the visual description editor.'
+
+		try {
+			await helper.clickAddNewSnippet()
+			await helper.fillSnippetForm({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+
+			const visualEditor = page.frameLocator('#snippet_description_ifr').locator('body')
+			await expect(visualEditor).toBeVisible()
+			await visualEditor.fill(description)
+			await helper.saveSnippet()
+			await helper.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
+
+			await page.reload()
+			await expect(page.frameLocator('#snippet_description_ifr').locator('body')).toHaveText(description)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Preserves a description when switching between visual and text tabs', async ({ page }) => {
+		const description = 'Description preserved between editor tabs.'
+
+		await helper.clickAddNewSnippet()
+		const visualEditor = page.frameLocator('#snippet_description_ifr').locator('body')
+		await expect(visualEditor).toBeVisible()
+		await visualEditor.fill(description)
+
+		await page.getByRole('button', { name: 'Code', exact: true }).click()
+		await expect(page.locator('#snippet_description')).toHaveValue(new RegExp(description))
+
+		await page.getByRole('button', { name: 'Visual', exact: true }).click()
+		await expect(visualEditor).toHaveText(description)
+	})
+
+	test('Adds and removes tags before saving a snippet', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Tagged snippet')
+		const removedTag = 'remove-me'
+		const savedTag = 'saved-tag'
+
+		try {
+			await helper.clickAddNewSnippet()
+			await helper.fillSnippetForm({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+
+			const tags = page.getByRole('combobox', { name: 'Snippet Tags' })
+			for (const tag of [removedTag, savedTag]) {
+				await tags.fill(tag)
+				await tags.press('Enter')
+				await expect(page.locator('.components-form-token-field__token').filter({ hasText: tag })).toBeVisible()
+			}
+
+			await page.locator('.components-form-token-field__token')
+				.filter({ hasText: removedTag })
+				.locator('.components-form-token-field__remove-token')
+				.click()
+			await expect(page.locator('.components-form-token-field__token').filter({ hasText: removedTag })).toHaveCount(0)
+
+			await helper.saveSnippet()
+			await helper.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
+			await page.reload()
+			await expect(page.locator('.components-form-token-field__token').filter({ hasText: savedTag })).toBeVisible()
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Splits comma-separated tags into individual tokens', async ({ page }) => {
+		const tags = ['first-pasted-tag', 'second-pasted-tag']
+
+		await helper.clickAddNewSnippet()
+		const tagInput = page.getByRole('combobox', { name: 'Snippet Tags' })
+		await tagInput.fill(tags.join(','))
+		await tagInput.press('Enter')
+
+		for (const tag of tags) {
+			await expect(page.locator('.components-form-token-field__token').filter({ hasText: tag })).toBeVisible()
+		}
+	})
+
+	test('Copies a content snippet shortcode from the sidebar', async ({ page, context }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Shortcode snippet')
+
+		try {
+			const snippetId = await SnippetsTestHelper.createSnippetViaCli({
+				name: snippetName,
+				active: false,
+				type: 'html',
+				scope: 'content'
+			})
+			const shortcode = `[code_snippet id=${snippetId} format name="${snippetName}"]`
+
+			await helper.navigateToSnippetsAdmin()
+			await helper.openSnippet(snippetName)
+			await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(page.url()).origin })
+
+			await page.getByRole('button', { name: 'See options' }).click()
+			const dialog = page.getByRole('dialog', { name: 'Embed Snippet with Shortcode' })
+			await expect(dialog.locator('.shortcode-tag')).toHaveText(shortcode)
+			await dialog.getByRole('button', { name: 'Copy' }).click()
+			await expect(dialog.getByRole('status')).toHaveText('Copied to clipboard.')
+			expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(shortcode)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Expands and collapses the code editor', async ({ page }) => {
+		await helper.clickAddNewSnippet()
+		const form = page.locator('form.snippet-form')
+
+		await expect(form).toHaveClass(/snippet-form-collapsed/)
+		await page.getByRole('button', { name: 'Expand' }).click()
+		await expect(form).toHaveClass(/snippet-form-expanded/)
+		await expect(page.getByRole('button', { name: 'Minimize' })).toBeVisible()
+
+		await page.getByRole('button', { name: 'Minimize' }).click()
+		await expect(form).toHaveClass(/snippet-form-collapsed/)
+	})
+
+	test('Shows the code editor keyboard shortcut reference', async ({ page }) => {
+		await helper.clickAddNewSnippet()
+		const shortcuts = page.locator('.snippet-editor-help')
+
+		await expect(shortcuts).toBeVisible()
+		await shortcuts.hover()
+		await expect(shortcuts.locator('.tooltip-content')).toContainText('Save changes')
+	})
+
 	test('Can activate and deactivate a snippet', async () => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.createSnippet({
@@ -62,6 +197,102 @@ test.describe('Code Snippets Admin', () => {
 		await expect(snippetRow.locator(SELECTORS.SNIPPET_TOGGLE).first()).toBeChecked({ timeout: TIMEOUTS.DEFAULT })
 
 		await helper.cleanupSnippet(snippetName)
+	})
+
+	test('Saves a snippet priority from the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Priority snippet')
+
+		try {
+			await helper.createSnippet({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.openSnippet(snippetName)
+
+			const priority = page.getByRole('spinbutton', { name: 'Priority' })
+			await priority.fill('7')
+			await helper.saveSnippet()
+			await helper.expectSuccessMessage(/Snippet updated/i)
+
+			await page.reload()
+			await expect(page.getByRole('spinbutton', { name: 'Priority' })).toHaveValue('7')
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Exports a saved snippet as JSON from the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Sidebar export')
+
+		try {
+			await helper.createSnippet({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.openSnippet(snippetName)
+
+			const download = await Promise.all([
+				page.waitForEvent('download'),
+				page.getByRole('button', { name: 'Export', exact: true }).click()
+			]).then(([event]) => event)
+
+			expect(download.suggestedFilename()).toMatch(/\.json$/)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Downloads a PHP code file from the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Sidebar code download')
+
+		try {
+			await helper.createSnippet({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.openSnippet(snippetName)
+
+			const download = await Promise.all([
+				page.waitForEvent('download'),
+				page.getByRole('button', { name: 'Download' }).click()
+			]).then(([event]) => event)
+
+			expect(download.suggestedFilename()).toMatch(/\.php$/)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
+	test('Locks a snippet until it is unlocked from the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Locked snippet')
+		const updatedSnippetName = `${snippetName} unlocked`
+		let cleanupName = snippetName
+
+		try {
+			await helper.createSnippet({
+				name: snippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.openSnippet(snippetName)
+
+			const lockButton = page.locator('button.snippet-lock-button')
+			await lockButton.click()
+			await expect(page.getByRole('heading', { name: /View Snippet/ })).toBeVisible()
+			await expect(page.locator('#title')).toBeDisabled()
+			await expect(page.locator('button.delete-button')).toBeDisabled()
+
+			await lockButton.click()
+			await expect(page.getByRole('heading', { name: /Edit Snippet/ })).toBeVisible()
+			await expect(page.locator('#title')).toBeEnabled()
+			await expect(page.locator('button.delete-button')).toBeEnabled()
+
+			await page.locator('#title').fill(updatedSnippetName)
+			await helper.saveSnippet()
+			await helper.expectSuccessMessage(/Snippet updated/i)
+			cleanupName = updatedSnippetName
+		} finally {
+			await helper.cleanupSnippet(cleanupName)
+		}
 	})
 
 	test('Back navigation confirms before discarding unsaved changes', async ({ page }) => {
@@ -119,6 +350,31 @@ test.describe('Code Snippets Admin', () => {
 		expect(dialogs[0].message).toContain('unsaved changes')
 
 		await helper.cleanupSnippet(snippetName)
+	})
+
+	test('Shows a clear error and leaves a snippet inactive when its PHP has a syntax error', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('Syntax error snippet')
+
+		try {
+			await helper.clickAddNewSnippet()
+			await helper.fillSnippetForm({
+				name: snippetName,
+				code: 'function invalid_syntax( {'
+			})
+			await helper.saveSnippet('save_and_activate')
+
+			const errorNotice = page.locator('.wrap > .notice.error').first()
+			await expect(errorNotice).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+			await expect(errorNotice).toContainText(/syntax error/i)
+			await expect(errorNotice).toContainText(/remains inactive/i)
+
+			await helper.navigateToSnippetsAdmin()
+			await helper.filterSnippetsByName(snippetName)
+			const snippetRow = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+			await expect(snippetRow.getByRole('switch')).not.toBeChecked()
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
 	})
 
 	test('Shows an error notice when activation fails after saving', async ({ page }) => {

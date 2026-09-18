@@ -13,7 +13,6 @@ const RANDOM_SLICE_END = 7
 const CLICK_RETRIES = 3
 const SAVE_CONFIRM_RETRIES = 3
 const AT_LEAST_ONE = 1
-const SAVE_SETTLE_TIMEOUT_MS = 10000
 
 const getErrorMessage = (error: unknown): string => {
 	if (error instanceof Error) {
@@ -32,7 +31,12 @@ export interface SnippetFormOptions {
 export interface CreateSnippetCliOptions {
 	name: string;
 	active: boolean;
+	description?: string;
+	code?: string;
 	conditionId?: number;
+	locked?: boolean;
+	priority?: number;
+	scope?: string;
 	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
@@ -97,19 +101,24 @@ export class SnippetsTestHelper {
 				break
 		}
 
-		const code = 'html' === type ? `<p>${options.name}</p>\n` : `// ${options.name}\n`
+		const code = options.code ?? ('html' === type ? `<p>${options.name}</p>\n` : `// ${options.name}\n`)
+		scope = options.scope ?? scope
 
 		const php = `
 			$snippet = new \\Code_Snippets\\Model\\Snippet([
 				'name' => ${JSON.stringify(options.name)},
-				'desc' => '',
+				'desc' => ${JSON.stringify(options.description ?? '')},
 				'code' => ${JSON.stringify(code)},
 				'scope' => ${JSON.stringify(scope)},
 				'active' => ${options.active ? 'true' : 'false'},
 				'condition_id' => ${options.conditionId ?? 0},
+				'priority' => ${options.priority ?? 10},
 				'tags' => ${JSON.stringify(options.tags ?? [])},
 			]);
 			$snippet = \\Code_Snippets\\save_snippet($snippet);
+			if (${options.locked ? 'true' : 'false'}) {
+				\\Code_Snippets\\set_snippet_locked($snippet->id, true);
+			}
 			echo $snippet->id;
 		`
 
@@ -131,7 +140,9 @@ export class SnippetsTestHelper {
 				[ $network, $table ] = $target;
 				$ids = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$table} WHERE name LIKE %s", $like ) );
 				foreach ( $ids as $id ) {
-					\\Code_Snippets\\delete_snippet( intval( $id ), (bool) $network );
+					$id = intval( $id );
+					\\Code_Snippets\\set_snippet_locked( $id, false, (bool) $network );
+					\\Code_Snippets\\delete_snippet( $id, (bool) $network );
 				}
 			}
 		`
@@ -347,7 +358,7 @@ export class SnippetsTestHelper {
 			await this.clickButton(name)
 
 			const settled = await this.page.locator(SELECTORS.SAVE_SETTLED_NOTICE).first()
-				.waitFor({ state: 'visible', timeout: SAVE_SETTLE_TIMEOUT_MS })
+				.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM })
 				.then(() => true)
 				.catch(() => false)
 

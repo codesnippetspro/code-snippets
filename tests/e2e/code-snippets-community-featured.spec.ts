@@ -37,6 +37,11 @@ const isSnippetDownloadRequest = (url: URL): boolean =>
 	url.pathname.includes('/cloud/snippets/501/download') ||
 	true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/501/download')
 
+const isSearchRequest = (url: URL): boolean =>
+	(url.pathname.includes('/cloud/snippets') || true === url.searchParams.get('rest_route')?.includes('/cloud/snippets')) &&
+	!isFeaturedRequest(url) && !url.pathname.includes('/download') &&
+	!url.searchParams.get('rest_route')?.includes('/download')
+
 const makeCloudSnippet = (id: number, name: string, localId: number | null = null) => ({
 	id,
 	slug: `mock-cloud-snippet-${id}`,
@@ -167,6 +172,71 @@ test.describe('Community Cloud Featured Snippets', () => {
 		await expect(errorNotice).toHaveClass(/code-snippets-notice/)
 		await expect(errorNotice)
 			.toContainText('An error occurred while fetching search results. Please try again.')
+	})
+
+	test('shows a clear empty state when a keyword search has no results', async ({ page }) => {
+		await page.route(isSearchRequest, route => route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify(makeFeaturedResponse([]))
+		}))
+		await openCommunityCloud(page)
+
+		await page.getByRole('searchbox', { name: 'Search query' }).fill('no matching snippet')
+		await page.getByRole('button', { name: 'Search Cloud Library' }).click()
+		await expect(page.locator('.no-results'))
+			.toHaveText('No snippets could be found with that search term. Please try again.')
+	})
+
+	test('shows a library-specific empty state for a codevault search', async ({ page }) => {
+		await page.route(isSearchRequest, route => route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify(makeFeaturedResponse([]))
+		}))
+		await openCommunityCloud(page)
+
+		await page.getByRole('combobox', { name: 'Search method' }).selectOption('codevault')
+		await page.getByRole('searchbox', { name: 'Search query' }).fill('missing library')
+		await page.getByRole('button', { name: 'Search Cloud Library' }).click()
+		await expect(page.locator('.no-results'))
+			.toHaveText('Could not find a codevault with that name. Please try again.')
+	})
+
+	test('shows every available cloud filter', async ({ page }) => {
+		await page.route(isFeaturedRequest, route => route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify({
+				...makeFeaturedResponse(),
+				available_filters: {
+					categories: [{ id: 12, name: 'Utilities' }],
+					types: [{ id: 1, name: 'PHP' }],
+					statuses: [{ id: 4, name: 'Verified' }]
+				}
+			})
+		}))
+		await openCommunityCloud(page)
+
+		await expect(page.getByRole('combobox', { name: 'Snippet Category' })).toContainText('Utilities')
+		await expect(page.getByRole('combobox', { name: 'Snippet Type' })).toContainText('PHP')
+		await expect(page.getByRole('combobox', { name: 'Snippet Status' })).toContainText('Verified')
+	})
+
+	test('includes a chosen category in the next cloud request', async ({ page }) => {
+		await page.route(isFeaturedRequest, route => route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify({
+				...makeFeaturedResponse(),
+				available_filters: { categories: [{ id: 12, name: 'Utilities' }] }
+			})
+		}))
+		await openCommunityCloud(page)
+		await expect(page.getByRole('combobox', { name: 'Snippet Category' })).toBeVisible()
+
+		const filteredRequest = page.waitForRequest(request => {
+			const url = new URL(request.url())
+			return isFeaturedRequest(url) && '12' === url.searchParams.get('category')
+		})
+		await page.getByRole('combobox', { name: 'Snippet Category' }).selectOption('12')
+		await filteredRequest
 	})
 
 	test('Shares download state between the card and its preview', async ({ page }) => {
