@@ -126,6 +126,67 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * A missing snippet is reported as a 404 instead of an internal error.
+	 *
+	 * @return void
+	 */
+	public function test_getting_a_missing_snippet_returns_404(): void {
+		$request = new WP_REST_Request( 'GET', "/$this->namespace/$this->base_route/999999" );
+		$request->set_param( 'network', false );
+		$response = rest_do_request( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 404, $response->get_status() );
+		$this->assertSame( 'rest_cannot_get', $data['code'] );
+		$this->assertSame( 'The snippet could not be found.', $data['message'] );
+	}
+
+	/**
+	 * Snippets can be created, read, updated, trashed, and permanently deleted.
+	 *
+	 * @return void
+	 */
+	public function test_snippet_crud_lifecycle(): void {
+		$endpoint = "/$this->namespace/$this->base_route";
+		$created  = $this->make_mutating_request(
+			'POST',
+			$endpoint,
+			[
+				'name'    => 'REST CRUD fixture',
+				'code'    => '// REST CRUD fixture',
+				'scope'   => 'global',
+				'active'  => false,
+				'network' => false,
+			]
+		);
+		$snippet_id = $created['id'];
+
+		$this->assertGreaterThan( 0, $snippet_id );
+		$this->assertSame( 'REST CRUD fixture', $this->make_request( "$endpoint/$snippet_id", [ 'network' => false ] )['name'] );
+
+		$updated = $this->make_mutating_request(
+			'PUT',
+			"$endpoint/$snippet_id",
+			[
+				'name'    => 'Updated REST CRUD fixture',
+				'network' => false,
+			]
+		);
+
+		$this->assertSame( 'Updated REST CRUD fixture', $updated['name'] );
+
+		$trashed = $this->make_mutating_request( 'DELETE', "$endpoint/$snippet_id", [ 'network' => false ] );
+		$this->assertTrue( $trashed['trashed'] );
+
+		$request = new WP_REST_Request( 'DELETE', "$endpoint/$snippet_id" );
+		$request->set_param( 'network', false );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertSame( 0, get_snippet( $snippet_id )->id );
+	}
+
+	/**
 	 * Test pagination with per_page parameter only (first page).
 	 */
 	public function test_get_snippets_with_per_page() {
