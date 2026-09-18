@@ -22,6 +22,7 @@ class Uninstaller_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function tear_down() {
+		remove_filter( 'query', [ $this, '_create_temporary_tables' ] );
 		code_snippets()->db->create_or_upgrade_tables();
 		delete_option( Snippet_View_REST_Controller::OPTION_NAME );
 		delete_option( Insights_View_Rest_Controller::OPTION_NAME );
