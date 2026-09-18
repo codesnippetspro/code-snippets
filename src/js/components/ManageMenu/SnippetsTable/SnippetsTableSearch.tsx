@@ -1,7 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n'
 import React from 'react'
 import { Button } from '../../common/Button'
-import { useSnippetsFilters } from './WithSnippetsTableFilters'
+import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
 
 export const SearchArea = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
@@ -30,7 +30,14 @@ export const SearchArea = () => {
 }
 
 export const SearchResultsIndicator = () => {
-	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
+	const {
+		searchQueryText,
+		searchLineNumber,
+		currentTag,
+		setCurrentStatus,
+		setSearchQuery,
+		setCurrentTag
+	} = useSnippetsFilters()
 
 	return searchQueryText || currentTag
 		? <p className="snippets-search-subtitle">
@@ -47,6 +54,7 @@ export const SearchResultsIndicator = () => {
 
 			{' '}
 			<Button small className="clear-filters" onClick={() => {
+				setCurrentStatus(INDEX_STATUS)
 				setSearchQuery()
 				setCurrentTag()
 			}}>
