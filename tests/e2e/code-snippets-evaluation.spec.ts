@@ -220,6 +220,8 @@ test.describe('Code Snippets Evaluation', () => {
 	})
 
 	test('CSS snippet is evaluating correctly on site front-end', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Styles is a licensed snippet type.')
+
 		await helper.createAndActivateSnippet({
 			name: snippetName,
 			code: `
@@ -253,6 +255,8 @@ test.describe('Code Snippets Evaluation', () => {
 	})
 
 	test('CSS snippet is evaluating correctly in administration area', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Styles is a licensed snippet type.')
+
 		await helper.createAndActivateSnippet({
 			name: snippetName,
 			code: `
@@ -288,6 +292,8 @@ test.describe('Code Snippets Evaluation', () => {
 	})
 
 	test('JavaScript snippet is evaluating correctly in site <head> section', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Scripts is a licensed snippet type.')
+
 		await helper.createAndActivateSnippet({
 			name: snippetName,
 			code: `
@@ -319,6 +325,8 @@ test.describe('Code Snippets Evaluation', () => {
 	})
 
 	test('JavaScript snippet is evaluating correctly in site footer', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Scripts is a licensed snippet type.')
+
 		await helper.createAndActivateSnippet({
 			name: snippetName,
 			code: `
