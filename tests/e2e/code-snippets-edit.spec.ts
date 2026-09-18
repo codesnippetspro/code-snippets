@@ -254,7 +254,7 @@ test.describe('Code Snippets Admin', () => {
 
 			const download = await Promise.all([
 				page.waitForEvent('download'),
-				page.getByRole('button', { name: 'Download Code' }).click()
+				page.getByRole('button', { name: 'Download' }).click()
 			]).then(([event]) => event)
 
 			expect(download.suggestedFilename()).toMatch(/\.php$/)

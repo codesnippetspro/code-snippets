@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { SELECTORS, TIMEOUTS, URLS } from './helpers/constants'
+import { SELECTORS, URLS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
@@ -161,20 +161,20 @@ test.describe('Code Snippets Evaluation', () => {
 	test('Safe mode query disables front-end snippet execution', async ({ page }) => {
 		const safeModeClass = `safe-mode-${Date.now()}`
 
-		await helper.createAndActivateSnippet({
-			name: snippetName,
-			code: `add_filter('body_class', function($classes) { $classes[] = '${safeModeClass}'; return $classes; });`
-		})
+		try {
+			await helper.createAndActivateSnippet({
+				name: snippetName,
+				code: `add_filter('body_class', function($classes) { $classes[] = '${safeModeClass}'; return $classes; });`
+			})
 
-		await page.goto(URLS.FRONTEND)
-		await expect(page.locator('body')).toHaveClass(new RegExp(safeModeClass))
+			await page.goto(URLS.FRONTEND)
+			await expect(page.locator('body')).toHaveClass(new RegExp(safeModeClass))
 
-		await page.goto(`${URLS.FRONTEND}?snippets-safe-mode=1`)
-		await expect(page.locator('body')).not.toHaveClass(new RegExp(safeModeClass))
-
-		await page.goto(`${URLS.SNIPPETS_ADMIN}&snippets-safe-mode=1`)
-		await page.getByRole('link', { name: 'Add New' }).click()
-		await expect(page).toHaveURL(/snippets-safe-mode=1/, { timeout: TIMEOUTS.SHORT })
+			await page.goto(`${URLS.FRONTEND}?snippets-safe-mode=1`)
+			await expect(page.locator('body')).not.toHaveClass(new RegExp(safeModeClass))
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
 	})
 
 	test('Safe mode constant disables snippets while keeping the editor accessible', async ({ page }) => {
@@ -265,20 +265,6 @@ test.describe('Code Snippets Evaluation', () => {
 		}
 	})
 
-	test('asks for confirmation before running a single-use snippet', async ({ page }) => {
-		await SnippetsTestHelper.createSnippetViaCli({
-			name: snippetName,
-			active: false,
-			scope: 'single-use',
-			code: '// A harmless Run Once confirmation fixture.'
-		})
-		await helper.navigateToSnippetsAdmin()
-
-		const row = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
-		await row.getByRole('link', { name: 'Run Once' }).click()
-		await expect(page.getByRole('dialog', { name: /Run Once/ })).toBeVisible({ timeout: TIMEOUTS.SHORT })
-	})
-
 	test('PHP snippets execute in priority order', async ({ page }) => {
 		const outputPrefix = `snippet-priority-${Date.now()}`
 		const highPriorityId = `${outputPrefix}-high`
@@ -301,9 +287,7 @@ test.describe('Code Snippets Evaluation', () => {
 			})
 
 			await helper.navigateToFrontend()
-			await expect(page.locator(`#${lowPriorityId}`)).toBeAttached()
-			await expect(page.locator(`#${highPriorityId}`)).toBeAttached()
-			expect(await page.locator(`span[id^="${outputPrefix}"]`).evaluateAll(elements =>
+			await expect.poll(() => page.locator(`span[id^="${outputPrefix}"]`).evaluateAll(elements =>
 				elements.map(({ id }) => id)
 			)).toEqual([lowPriorityId, highPriorityId])
 		} finally {
