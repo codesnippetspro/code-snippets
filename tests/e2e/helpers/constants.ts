@@ -23,8 +23,13 @@ export const SELECTORS = <const> {
 }
 
 export const TIMEOUTS = <const> {
+	VERY_SHORT: 2000,
+	SHORT: 5000,
+	MEDIUM: 10000,
 	DEFAULT: 30000,
-	SHORT: 5000
+	LONG: 60000,
+	VERY_LONG: 120000,
+	EXTRA_LONG: 180000
 }
 
 export const URLS = <const> {

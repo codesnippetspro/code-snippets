@@ -13,8 +13,6 @@ const RANDOM_SLICE_END = 7
 const CLICK_RETRIES = 3
 const SAVE_CONFIRM_RETRIES = 3
 const AT_LEAST_ONE = 1
-const SAVE_SETTLE_TIMEOUT_MS = 10000
-
 const getErrorMessage = (error: unknown): string => {
 	if (error instanceof Error) {
 		return error.message
@@ -347,7 +345,7 @@ export class SnippetsTestHelper {
 			await this.clickButton(name)
 
 			const settled = await this.page.locator(SELECTORS.SAVE_SETTLED_NOTICE).first()
-				.waitFor({ state: 'visible', timeout: SAVE_SETTLE_TIMEOUT_MS })
+				.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM })
 				.then(() => true)
 				.catch(() => false)
 
