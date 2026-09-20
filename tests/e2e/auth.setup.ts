@@ -4,7 +4,6 @@ import { wpCli } from './helpers/wpCli'
 import { TIMEOUTS, URLS } from './helpers/constants'
 
 const authFile = join(__dirname, '.auth/user.json')
-
 setup('authenticate', async ({ page }) => {
 	setup.setTimeout(TIMEOUTS.VERY_LONG)
 
