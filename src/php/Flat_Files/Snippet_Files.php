@@ -484,10 +484,10 @@ class Snippet_Files {
 						'condition_id' => intval( $snippet['condition_id'] ),
 					];
 				}
-
-				self::sort_active_snippets( $active_snippets, $db );
 			}
 		}
+
+		self::sort_active_snippets( $active_snippets, $db );
 
 		return $active_snippets;
 	}

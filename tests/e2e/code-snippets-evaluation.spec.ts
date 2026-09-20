@@ -214,6 +214,7 @@ test.describe('Code Snippets Evaluation', () => {
 			const deactivatedRow = page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
 			await expect(deactivatedRow.getByRole('switch')).not.toBeChecked()
 		} finally {
+			await helper.cleanupSnippet(snippetName)
 			await removeMuPlugin()
 		}
 	})
@@ -262,6 +263,7 @@ test.describe('Code Snippets Evaluation', () => {
 			expect((await wpCli(['option', 'get', markerKey])).trim()).toBe('ran once')
 		} finally {
 			await wpCli(['eval', `delete_option('${markerKey}');`])
+			await helper.cleanupSnippet(snippetName)
 		}
 	})
 
