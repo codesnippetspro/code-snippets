@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { TIMEOUTS } from './helpers/constants'
 import type { Page } from '@playwright/test'
 
 interface CodeMirrorHost {
@@ -28,7 +29,7 @@ const enterCode = async (page: Page, code: string, origin: 'paste' | '+input'): 
 		cm.replaceRange(text, { line: 0, ch: 0 }, { line: 0, ch: 0 }, changeOrigin)
 	}, [code, origin])
 
-	await page.waitForTimeout(400)
+	await page.waitForTimeout(TIMEOUTS.VERY_SHORT)
 }
 
 const editorValue = (page: Page): Promise<string> =>

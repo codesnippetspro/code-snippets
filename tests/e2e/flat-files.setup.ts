@@ -1,4 +1,5 @@
 import { expect, test as setup } from '@playwright/test'
+import { TIMEOUTS } from './helpers/constants'
 
 setup('enable flat files', async ({ page }) => {
 	const isMultisite = 'true' === process.env.WP_E2E_MULTISITE_MODE || '1' === process.env.WP_E2E_MULTISITE_MODE
@@ -22,12 +23,12 @@ setup('enable flat files', async ({ page }) => {
 
 	// Await page.click('input[type="submit"][name="submit"]')
 	
-	// await page.waitForSelector('.notice-success', { timeout: 10000 })
+	// await page.waitForSelector('.notice-success', { timeout: TIMEOUTS.MEDIUM })
 	// await expect(page.locator('.notice-success')).toContainText('Settings saved')
 	const saveButton = page.getByRole('button', { name: 'Save Changes' })
 
 	await Promise.all([
-		page.waitForURL(/settings-updated=true/, { timeout: 10000 }),
+		page.waitForURL(/settings-updated=true/, { timeout: TIMEOUTS.MEDIUM }),
 		saveButton.click()
 	])
 
