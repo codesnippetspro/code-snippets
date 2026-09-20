@@ -273,7 +273,7 @@ class Shortcodes {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = $this->get_content_snippet( $id, (bool) $atts['network'] );
+		$snippet = $this->get_snippet( $id, (bool) $atts['network'] );
 
 		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
