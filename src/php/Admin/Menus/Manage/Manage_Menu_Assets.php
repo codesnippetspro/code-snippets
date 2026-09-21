@@ -139,16 +139,6 @@ class Manage_Menu_Assets {
 			$localized['aiDemo'] = [
 				'siteName' => get_bloginfo( 'name' ),
 			];
-
-			$localized['snippetsList'] = array_map(
-				fn( Snippet $snippet ) => [
-					'id'      => $snippet->id,
-					'name'    => $snippet->name,
-					'scope'   => $snippet->scope,
-					'trashed' => (bool) $snippet->trashed,
-				],
-				get_snippets()
-			);
 		}
 
 		wp_localize_script( self::JS_HANDLE, 'CODE_SNIPPETS_MANAGE', $localized );
