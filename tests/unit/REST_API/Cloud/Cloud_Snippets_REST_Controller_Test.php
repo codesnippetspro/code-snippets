@@ -69,25 +69,8 @@ class Cloud_Snippets_REST_Controller_Test extends AdminUnitTestCase {
 
 		$this->requested_url = '';
 		$this->rest_server = $wp_rest_server ?? null;
-		$this->codevault_request_count = 0;
-		$this->did_seed_local_token = false;
 
-		delete_transient( 'cs_codevault_snippets' );
-		delete_transient( 'code_snippets_cloud_links' );
 		delete_user_option( $this->get_user_id(), 'snippets_per_page' );
-
-		if ( '' === code_snippets()->cloud_connection->get_local_token() ) {
-			code_snippets()->cloud_connection->set_local_token(
-				[
-					'code_verifier'  => 'tests-code-verifier',
-					'code_challenge' => 'tests-code-challenge',
-					'state'          => 'tests-state',
-					'local_token'    => 'tests-local-token',
-				]
-			);
-
-			$this->did_seed_local_token = true;
-		}
 
 		add_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ], 10, 3 );
 	}
@@ -102,10 +85,6 @@ class Cloud_Snippets_REST_Controller_Test extends AdminUnitTestCase {
 
 		remove_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ] );
 		delete_user_option( $this->get_user_id(), 'snippets_per_page' );
-
-		if ( $this->did_seed_local_token ) {
-			code_snippets()->cloud_connection->reset();
-		}
 
 		$wp_rest_server = $this->rest_server;
 
@@ -365,6 +344,7 @@ class Cloud_Snippets_REST_Controller_Test extends AdminUnitTestCase {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Registering REST routes for an unrelated request must not fetch CodeVault data.
 	 *
 	 * @return void
@@ -396,6 +376,8 @@ class Cloud_Snippets_REST_Controller_Test extends AdminUnitTestCase {
 	}
 
 	/**
+=======
+>>>>>>> 8e653c946b1fe836902c9ef664f86f992bf8d9ab
 	 * The AI search method is forwarded to the cloud as s_method=ai.
 	 */
 	public function test_search_method_ai_is_forwarded_to_cloud(): void {

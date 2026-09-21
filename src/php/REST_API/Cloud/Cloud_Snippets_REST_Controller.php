@@ -235,6 +235,23 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Determine the search method to use based on request parameters.
+	 *
+	 * @param WP_REST_Request $request The request object containing the search parameters.
+	 *
+	 * @return string The search method to use.
+	 */
+	private function get_search_method( WP_REST_Request $request ): string {
+		$search_by_codevault = $request->get_param( 'searchByCodevault' );
+		if ( $search_by_codevault ) {
+			return 'codevault';
+		}
+
+		$method_param = $request->get_param( 'searchMethod' );
+		return in_array( $method_param, self::SEARCH_METHODS, true ) ? $method_param : 'term';
+	}
+
+	/**
 	 * Retrieve cloud snippets using a search query.
 	 *
 	 * @param WP_REST_Request $request The request object containing the search parameters.
@@ -242,16 +259,13 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_items( $request ) {
-		$method_param = $request->get_param( 'searchByCodevault' );
-		$method = in_array( $method_param, self::SEARCH_METHODS, true ) ? $method_param : 'term';
 		$query = $request->get_param( 'query' ) ?? '';
-
 		$page = max( 1, intval( $request->get_param( 'page' ) ) );
 		$per_page = intval( $request->get_param( 'per_page' ) ?? Manage_Menu::get_cloud_search_per_page() );
 		$filters = $this->extract_filters( $request );
 
 		$snippets = $this->search_controller
-			->fetch_search_results( $method, $query, $page, $per_page, $filters );
+			->fetch_search_results( $this->get_search_method( $request ), $query, $page, $per_page, $filters );
 
 		return $snippets
 			? rest_ensure_response( $this->attach_local_ids( $snippets )->to_rest_response() )
