@@ -137,7 +137,7 @@ class Settings_Fields {
 			'reset_caches'    => [
 				'name' => __( 'Reset Caches', 'code-snippets' ),
 				'type' => 'action',
-				'desc' => __( 'Use this button to manually clear snippets caches. Worth doing before switching to an older version of the plugin, if your site uses a persistent object cache.', 'code-snippets' ),
+				'desc' => __( 'Use this button to manually clear snippets caches and refetch the list of plugin versions available to install. Worth doing before switching to an older version of the plugin, if your site uses a persistent object cache.', 'code-snippets' ),
 			],
 		];
 
