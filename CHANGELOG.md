@@ -36,6 +36,9 @@
   upload controls. (PRO)
 * Feedback reporter for sending bug reports, feature requests and general feedback from the plugin screens, with an
   optional summary of the site environment so the team can reproduce the problem. (PRO)
+* New `code_snippets_version_source` and `code_snippets_package_installer` filters, for replacing where the version
+  switcher lists plugin versions from and how it installs them. A source may mark a version as the latest, beta or
+  release candidate build, and name the WordPress version it was tested up to.
 
 ### Changed
 * Redesigned the main snippets table with improved search, filtering, sorting, pagination, row actions, and bulk
@@ -52,6 +55,9 @@
   toolbar, dialogs, tooltips, and code editor. (PRO)
 * Improved colour contrast and reduced-motion support across admin screens. (PRO)
 * Faster loading of large code vaults, which are now fetched a page at a time instead of all at once. (PRO)
+* The version switching warning now notes that beta and release candidate builds are not recommended for production
+  sites.
+* Resetting caches now refetches the list of plugin versions available to install, and reports how many were found.
 
 ### Fixed
 * Fixed AI conversations from one connected site being visible from another. (PRO)
@@ -67,6 +73,7 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed the version switcher's cached data being left behind after a complete uninstall.
 
 ## [3.10.2] (2026-09-01)
 
