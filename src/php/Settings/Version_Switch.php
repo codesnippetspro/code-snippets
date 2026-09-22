@@ -25,7 +25,8 @@ class Version_Switch {
 	private const PROGRESS_KEY = 'code_snippets_version_switch_progress';
 
 	/**
-	 * Transient key holding the reason the last catalogue request failed.
+	 * Transient key holding the code and message of the last failed catalogue
+	 * request.
 	 */
 	private const ERROR_KEY = 'code_snippets_version_switch_error';
 
@@ -153,7 +154,14 @@ class Version_Switch {
 		$result = $source->fetch_catalogue();
 
 		if ( is_wp_error( $result ) ) {
-			set_transient( self::ERROR_KEY, $result->get_error_code(), self::ERROR_CACHE_DURATION );
+			set_transient(
+				self::ERROR_KEY,
+				[
+					'code'    => $result->get_error_code(),
+					'message' => $result->get_error_message(),
+				],
+				self::ERROR_CACHE_DURATION
+			);
 			return $empty;
 		}
 
@@ -189,10 +197,30 @@ class Version_Switch {
 	/**
 	 * Retrieve the code of the last catalogue request failure.
 	 *
+	 * Sites upgrading mid-cache still hold the previous shape — a bare code —
+	 * for up to ERROR_CACHE_DURATION.
+	 *
 	 * @return string
 	 */
 	public static function get_last_error_code(): string {
-		return (string) get_transient( self::ERROR_KEY );
+		$error = get_transient( self::ERROR_KEY );
+
+		if ( is_array( $error ) ) {
+			return isset( $error['code'] ) ? (string) $error['code'] : '';
+		}
+
+		return is_string( $error ) ? $error : '';
+	}
+
+	/**
+	 * Retrieve the message explaining the last catalogue request failure.
+	 *
+	 * @return string
+	 */
+	public static function get_last_error_message(): string {
+		$error = get_transient( self::ERROR_KEY );
+
+		return is_array( $error ) && isset( $error['message'] ) ? (string) $error['message'] : '';
 	}
 
 	/**
