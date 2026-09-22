@@ -2,14 +2,17 @@
 
 namespace Code_Snippets\Settings;
 
-use Plugin_Upgrader;
-use WP_Ajax_Upgrader_Skin;
 use WP_Error;
-use WP_Upgrader_Skin;
 use function Code_Snippets\code_snippets;
 
 /**
  * Version switching functionality for the Code Snippets plugin.
+ *
+ * This class owns the parts of switching that do not vary: the caches, the
+ * progress marker, the capability and nonce checks, and the rendering. Where
+ * versions come from, and how a package is written to disk, are supplied by a
+ * Version_Source and a Package_Installer, which an edition replaces through the
+ * `code_snippets_version_source` and `code_snippets_package_installer` filters.
  *
  * @package    Code_Snippets
  * @subpackage Settings
@@ -17,14 +20,15 @@ use function Code_Snippets\code_snippets;
 class Version_Switch {
 
 	/**
-	 * Transient key where the available version data is cached.
-	 */
-	private const CACHE_KEY = 'code_snippets_available_versions';
-
-	/**
 	 * Transient key used to indicate when a version switch is currently taking place.
 	 */
 	private const PROGRESS_KEY = 'code_snippets_version_switch_progress';
+
+	/**
+	 * Transient key holding the code and message of the last failed catalogue
+	 * request.
+	 */
+	private const ERROR_KEY = 'code_snippets_version_switch_error';
 
 	/**
 	 * Duration of the version cache transient.
@@ -32,14 +36,21 @@ class Version_Switch {
 	private const VERSION_CACHE_DURATION = HOUR_IN_SECONDS;
 
 	/**
+	 * Duration of the last-error transient.
+	 */
+	private const ERROR_CACHE_DURATION = 5 * MINUTE_IN_SECONDS;
+
+	/**
 	 * Duration of the 'in progress' transient.
 	 */
 	private const PROGRESS_TIMEOUT = 5 * MINUTE_IN_SECONDS;
 
 	/**
-	 * API endpoint for checking for available plugin versions.
+	 * Source supplying the available versions.
+	 *
+	 * @var Version_Source|null
 	 */
-	private const WORDPRESS_API_ENDPOINT = 'https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&slug=code-snippets';
+	private static ?Version_Source $source = null;
 
 	/**
 	 * Initialise class.
@@ -52,51 +63,179 @@ class Version_Switch {
 	}
 
 	/**
-	 * Retrieve a list of plugin versions available for switching.
+	 * Retrieve the source supplying available versions.
 	 *
-	 * @return array
+	 * @return Version_Source
 	 */
-	public static function get_available_versions(): array {
-		$versions = get_transient( self::CACHE_KEY );
+	public static function get_source(): Version_Source {
+		if ( null === self::$source ) {
+			/**
+			 * Filters the source the version switcher lists versions from.
+			 *
+			 * @param Version_Source $source Default source.
+			 */
+			$source = apply_filters( 'code_snippets_version_source', new WordPress_Org_Version_Source() );
 
-		if ( false === $versions ) {
-			$response = wp_remote_get( self::WORDPRESS_API_ENDPOINT );
-
-			if ( is_wp_error( $response ) ) {
-				return [];
-			}
-
-			$body = wp_remote_retrieve_body( $response );
-			$data = json_decode( $body, true );
-
-			if ( ! $data || ! isset( $data['versions'] ) ) {
-				return [];
-			}
-
-			// Filter out 'trunk' and sort versions.
-			$versions = [];
-			foreach ( $data['versions'] as $version => $download_url ) {
-				if ( 'trunk' !== $version ) {
-					$versions[] = [
-						'version' => $version,
-						'url'     => $download_url,
-					];
-				}
-			}
-
-			// Sort versions in descending order.
-			usort(
-				$versions,
-				function ( $a, $b ) {
-					return version_compare( $b['version'], $a['version'] );
-				}
-			);
-
-			// Cache for configured duration.
-			set_transient( self::CACHE_KEY, $versions, self::VERSION_CACHE_DURATION );
+			self::$source = $source instanceof Version_Source ? $source : new WordPress_Org_Version_Source();
 		}
 
-		return $versions;
+		return self::$source;
+	}
+
+	/**
+	 * Retrieve the installer that writes a package to disk.
+	 *
+	 * @return Package_Installer
+	 */
+	public static function get_installer(): Package_Installer {
+		/**
+		 * Filters the installer the version switcher writes packages with.
+		 *
+		 * @param Package_Installer $installer Default installer.
+		 */
+		$installer = apply_filters( 'code_snippets_package_installer', new Upgrader_Package_Installer() );
+
+		return $installer instanceof Package_Installer ? $installer : new Upgrader_Package_Installer();
+	}
+
+	/**
+	 * Discard the memoised source, so the next call resolves the filter again.
+	 *
+	 * @return void
+	 */
+	public static function reset_source(): void {
+		self::$source = null;
+	}
+
+	/**
+	 * Determine whether versions can currently be listed.
+	 *
+	 * @return bool
+	 */
+	public static function is_available(): bool {
+		return self::get_source()->is_available();
+	}
+
+	/**
+	 * Explain why the switcher is unavailable.
+	 *
+	 * @return array{message: string, action_url: string, action_label: string}
+	 */
+	public static function get_unavailable_notice(): array {
+		return self::get_source()->get_unavailable_notice();
+	}
+
+	/**
+	 * Retrieve the cached catalogue, fetching it from the source when the cache
+	 * is cold.
+	 *
+	 * A failed request is not cached: a transient outage must not blank the
+	 * switcher for the full cache duration.
+	 *
+	 * @return array{versions: array<int, array<string, mixed>>, floor: string}
+	 */
+	private static function get_catalogue(): array {
+		$source = self::get_source();
+		$cached = get_transient( $source->get_cache_key() );
+
+		if ( is_array( $cached ) && isset( $cached['versions'] ) ) {
+			return $cached;
+		}
+
+		$empty = [
+			'versions' => [],
+			'floor'    => '',
+		];
+
+		if ( ! $source->is_available() ) {
+			return $empty;
+		}
+
+		$result = $source->fetch_catalogue();
+
+		if ( is_wp_error( $result ) ) {
+			set_transient(
+				self::ERROR_KEY,
+				[
+					'code'    => $result->get_error_code(),
+					'message' => $result->get_error_message(),
+				],
+				self::ERROR_CACHE_DURATION
+			);
+			return $empty;
+		}
+
+		$catalogue = [
+			'versions' => $result['versions'],
+			'floor'    => $result['floor'],
+		];
+
+		delete_transient( self::ERROR_KEY );
+		set_transient( $source->get_cache_key(), $catalogue, self::VERSION_CACHE_DURATION );
+
+		return $catalogue;
+	}
+
+	/**
+	 * Retrieve a list of plugin versions available for switching.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function get_available_versions(): array {
+		return self::get_catalogue()['versions'];
+	}
+
+	/**
+	 * Retrieve the oldest installable version, if the source reported one.
+	 *
+	 * @return string
+	 */
+	public static function get_version_floor(): string {
+		return self::get_catalogue()['floor'];
+	}
+
+	/**
+	 * Retrieve the code of the last catalogue request failure.
+	 *
+	 * Sites upgrading mid-cache still hold the previous shape — a bare code —
+	 * for up to ERROR_CACHE_DURATION.
+	 *
+	 * @return string
+	 */
+	public static function get_last_error_code(): string {
+		$error = get_transient( self::ERROR_KEY );
+
+		if ( is_array( $error ) ) {
+			return isset( $error['code'] ) ? (string) $error['code'] : '';
+		}
+
+		return is_string( $error ) ? $error : '';
+	}
+
+	/**
+	 * Retrieve the message explaining the last catalogue request failure.
+	 *
+	 * @return string
+	 */
+	public static function get_last_error_message(): string {
+		$error = get_transient( self::ERROR_KEY );
+
+		return is_array( $error ) && isset( $error['message'] ) ? (string) $error['message'] : '';
+	}
+
+	/**
+	 * Discard the cached catalogue and fetch a fresh one from the source.
+	 *
+	 * Used by the maintenance tools, where the point of clearing caches is to see
+	 * what the source is serving right now rather than what it served an hour ago.
+	 *
+	 * @return array<int, array<string, mixed>> The freshly fetched versions.
+	 */
+	public static function refresh_available_versions(): array {
+		delete_transient( self::get_source()->get_cache_key() );
+		delete_transient( self::ERROR_KEY );
+
+		return self::get_available_versions();
 	}
 
 	/**
@@ -123,41 +262,58 @@ class Version_Switch {
 	 * @return void
 	 */
 	public static function clear_version_caches(): void {
-		delete_transient( self::CACHE_KEY );
+		delete_transient( self::get_source()->get_cache_key() );
 		delete_transient( self::PROGRESS_KEY );
+		delete_transient( self::ERROR_KEY );
+	}
+
+	/**
+	 * Locate a version in a catalogue.
+	 *
+	 * @param string                           $target_version     Version to find.
+	 * @param array<int, array<string, mixed>> $available_versions Catalogue entries.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private static function find_version( string $target_version, array $available_versions ): ?array {
+		foreach ( $available_versions as $version_info ) {
+			if ( isset( $version_info['version'] ) && $version_info['version'] === $target_version ) {
+				return $version_info;
+			}
+		}
+
+		return null;
 	}
 
 	/**
 	 * Validate that a target version is valid.
 	 *
-	 * @param string $target_version     Target version for switching.
-	 * @param array  $available_versions List of available versions.
+	 * This is a usability guard rather than a security boundary: a source is
+	 * free to refuse the version again when the package is requested.
 	 *
-	 * @return array
+	 * @param string                           $target_version     Target version for switching.
+	 * @param array<int, array<string, mixed>> $available_versions List of available versions.
+	 *
+	 * @return array{success: bool, message: string}
 	 */
 	public static function validate_target_version( string $target_version, array $available_versions ): array {
 		if ( empty( $target_version ) ) {
 			return [
-				'success'      => false,
-				'message'      => __( 'No target version specified.', 'code-snippets' ),
-				'download_url' => '',
+				'success' => false,
+				'message' => __( 'No target version specified.', 'code-snippets' ),
 			];
 		}
 
-		foreach ( $available_versions as $version_info ) {
-			if ( $version_info['version'] === $target_version ) {
-				return [
-					'success'      => true,
-					'message'      => '',
-					'download_url' => $version_info['url'],
-				];
-			}
+		if ( null === self::find_version( $target_version, $available_versions ) ) {
+			return [
+				'success' => false,
+				'message' => __( 'Invalid version specified.', 'code-snippets' ),
+			];
 		}
 
 		return [
-			'success'      => false,
-			'message'      => __( 'Invalid version specified.', 'code-snippets' ),
-			'download_url' => '',
+			'success' => true,
+			'message' => '',
 		];
 	}
 
@@ -185,131 +341,14 @@ class Version_Switch {
 	}
 
 	/**
-	 * Install a plugin version from a URL.
+	 * Install a plugin version from a package.
 	 *
-	 * @param string $download_url Download URL.
+	 * @param string $package Local path to a package, or a download URL.
 	 *
-	 * @return array|bool|WP_Error
+	 * @return array{version: string}|WP_Error
 	 */
-	public static function perform_version_install( string $download_url ) {
-		if ( ! function_exists( 'wp_update_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/update.php';
-		}
-		if ( ! function_exists( 'show_message' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/misc.php';
-		}
-		if ( ! class_exists( 'Plugin_Upgrader' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-		}
-
-		$update_handler = new WP_Ajax_Upgrader_Skin();
-		$upgrader = new Plugin_Upgrader( $update_handler );
-
-		global $code_snippets_last_update_handler, $code_snippets_last_upgrader;
-		$code_snippets_last_update_handler = $update_handler;
-		$code_snippets_last_upgrader = $upgrader;
-
-		return $upgrader->install(
-			$download_url,
-			[
-				'overwrite_package'  => true,
-				'clear_update_cache' => true,
-			]
-		);
-	}
-
-	/**
-	 * Extract error message from an upgrade handler.
-	 *
-	 * @param WP_Upgrader_Skin|null $update_handler Update handler.
-	 * @param Plugin_Upgrader|null  $upgrader       Plugin upgrader.
-	 *
-	 * @return string
-	 *
-	 * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_print_r
-	 */
-	public static function extract_handler_messages( ?WP_Upgrader_Skin $update_handler, ?Plugin_Upgrader $upgrader ): string {
-		$handler_messages = '';
-
-		if ( isset( $update_handler ) ) {
-			if ( method_exists( $update_handler, 'get_errors' ) ) {
-				$errs = $update_handler->get_errors();
-				if ( $errs instanceof WP_Error && $errs->has_errors() ) {
-					$handler_messages .= implode( "\n", $errs->get_error_messages() );
-				}
-			}
-			if ( method_exists( $update_handler, 'get_error_messages' ) ) {
-				$em = $update_handler->get_error_messages();
-				if ( $em ) {
-					$handler_messages .= "\n" . $em;
-				}
-			}
-			if ( method_exists( $update_handler, 'get_upgrade_messages' ) ) {
-				$upgrade_msgs = $update_handler->get_upgrade_messages();
-				if ( is_array( $upgrade_msgs ) ) {
-					$handler_messages .= "\n" . implode( "\n", $upgrade_msgs );
-				} elseif ( $upgrade_msgs ) {
-					$handler_messages .= "\n" . $upgrade_msgs;
-				}
-			}
-		}
-
-		if ( empty( $handler_messages ) && isset( $upgrader->result ) ) {
-			if ( is_wp_error( $upgrader->result ) ) {
-				$handler_messages = implode( "\n", $upgrader->result->get_error_messages() );
-			} else {
-				$handler_messages = is_scalar( $upgrader->result )
-					? (string) $upgrader->result
-					: print_r( $upgrader->result, true );
-			}
-		}
-
-		return trim( $handler_messages );
-	}
-
-	/**
-	 * Report the failure of a version switch attempt.
-	 *
-	 * @param string $target_version Version number of attempted upgrade.
-	 * @param mixed  $result         Result of upgrade.
-	 * @param string $details        Additional details.
-	 *
-	 * @return void
-	 *
-	 * phpcs:disable WordPress.PHP.DevelopmentFunctions
-	 */
-	private static function log_version_switch_attempt( string $target_version, $result, string $details = '' ): void {
-		if ( function_exists( 'error_log' ) ) {
-			error_log( sprintf( 'Code Snippets version switch failed. target=%s, result=%s, details=%s', $target_version, var_export( $result, true ), $details ) );
-		}
-	}
-
-	/**
-	 * Handle the failure to install a new version.
-	 *
-	 * @param string $target_version Version used for attempted installation.
-	 * @param string $download_url   URL used for downloading new version.
-	 * @param mixed  $install_result Result of installation attempt.
-	 *
-	 * @return array
-	 */
-	private static function handle_installation_failure( string $target_version, string $download_url, $install_result ): array {
-		global $code_snippets_last_update_handler, $code_snippets_last_upgrader;
-
-		$handler_messages = self::extract_handler_messages( $code_snippets_last_update_handler, $code_snippets_last_upgrader );
-		self::log_version_switch_attempt( $target_version, $install_result, "URL: $download_url, Messages: $handler_messages" );
-
-		$fallback_message = __( 'Failed to switch versions. Please try again.', 'code-snippets' );
-
-		if ( ! empty( $handler_messages ) ) {
-			$short = wp_trim_words( wp_strip_all_tags( $handler_messages ), 40 );
-			$fallback_message = sprintf( '%s %s', $fallback_message, $short );
-		}
-
-		return [
-			'success' => false,
-			'message' => $fallback_message,
-		];
+	public static function perform_version_install( string $package ) {
+		return self::get_installer()->install( $package );
 	}
 
 	/**
@@ -322,6 +361,12 @@ class Version_Switch {
 	public static function handle_version_switch( string $target_version ): array {
 		if ( ! current_user_can( 'update_plugins' ) ) {
 			return self::create_error_response( __( 'You do not have permission to update plugins.', 'code-snippets' ) );
+		}
+
+		$source = self::get_source();
+
+		if ( ! $source->is_available() ) {
+			return self::create_error_response( $source->get_unavailable_notice()['message'] );
 		}
 
 		$available_versions = self::get_available_versions();
@@ -337,27 +382,53 @@ class Version_Switch {
 
 		set_transient( self::PROGRESS_KEY, $target_version, self::PROGRESS_TIMEOUT );
 
-		$install_result = self::perform_version_install( $validation['download_url'] );
+		$package = $source->fetch_package( self::find_version( $target_version, $available_versions ) );
 
-		delete_transient( self::PROGRESS_KEY );
+		if ( is_wp_error( $package ) ) {
+			delete_transient( self::PROGRESS_KEY );
+
+			// The cached catalogue is stale when the source no longer recognises a
+			// version it listed, so discard it and let the next render refetch.
+			delete_transient( $source->get_cache_key() );
+
+			return self::create_error_response( $package->get_error_message() );
+		}
+
+		try {
+			$install_result = self::perform_version_install( $package['package'] );
+		} finally {
+			if ( $package['cleanup'] ) {
+				wp_delete_file( $package['package'] );
+			}
+
+			delete_transient( self::PROGRESS_KEY );
+		}
 
 		if ( is_wp_error( $install_result ) ) {
-			return self::create_error_response( $install_result->get_error_message() );
+			return self::create_error_response(
+				sprintf(
+					// translators: %s: reason the installation failed.
+					__( 'Failed to switch versions: %s', 'code-snippets' ),
+					$install_result->get_error_message()
+				)
+			);
 		}
 
-		if ( $install_result ) {
-			delete_transient( self::CACHE_KEY );
+		// The version on disk is the authoritative one when the installer can read
+		// it, since the package decides what was actually written.
+		$installed_version = $install_result['version'] ? $install_result['version'] : $target_version;
 
-			// translators: %s: new version number.
-			$message = esc_html__( 'Successfully switched to version %s. Please refresh the page to see changes.', 'code-snippets' );
+		delete_transient( $source->get_cache_key() );
+		$source->report_installed_version( $installed_version );
 
-			return [
-				'success' => true,
-				'message' => sprintf( $message, $target_version ),
-			];
-		} else {
-			return self::handle_installation_failure( $target_version, $validation['download_url'], $install_result );
-		}
+		return [
+			'success' => true,
+			'message' => sprintf(
+				// translators: %s: new version number.
+				__( 'Successfully switched to version %s. Please refresh the page to see changes.', 'code-snippets' ),
+				$installed_version
+			),
+		];
 	}
 
 	/**
@@ -367,8 +438,6 @@ class Version_Switch {
 	 */
 	public static function render_version_switch_field(): void {
 		$current_version = self::get_current_version();
-		$available_versions = self::get_available_versions();
-		$is_switching = self::is_version_switch_in_progress();
 
 		?>
 		<div class="code-snippets-version-switch">
@@ -377,44 +446,160 @@ class Version_Switch {
 			<span class="current-version"><?php echo esc_html( $current_version ); ?></span>
 		</p>
 
-		<?php if ( $is_switching ) : ?>
+		<?php
+
+		if ( self::is_version_switch_in_progress() ) {
+			?>
 			<div class="notice code-snippets-notice notice-info inline">
 				<p><?php esc_html_e( 'Version switch in progress. Please wait…', 'code-snippets' ); ?></p>
 			</div>
-		<?php else : ?>
+			</div>
+			<?php
+			return;
+		}
+
+		if ( ! self::is_available() ) {
+			self::render_unavailable_notice();
+			?>
+			</div>
+			<?php
+			return;
+		}
+
+		$available_versions = self::get_available_versions();
+
+		if ( ! $available_versions ) {
+			self::render_empty_catalogue_notice();
+			?>
+			</div>
+			<?php
+			return;
+		}
+
+		$floor = self::get_version_floor();
+		$floor_notice = $floor ? self::get_source()->get_floor_notice( $floor ) : '';
+
+		?>
 			<p>
 				<label for="target_version">
 					<?php esc_html_e( 'Switch to Version:', 'code-snippets' ); ?>
 				</label>
-				<select id="target_version" name="target_version" <?php disabled( empty( $available_versions ) ); ?>>
+				<select id="target_version" name="target_version">
 					<option value=""><?php esc_html_e( 'Select a version…', 'code-snippets' ); ?></option>
 					<?php foreach ( $available_versions as $version_info ) { ?>
 						<option value="<?php echo esc_attr( $version_info['version'] ); ?>"
 							<?php selected( $version_info['version'], $current_version ); ?>>
-							<?php
-
-							echo esc_html( $version_info['version'] );
-
-							if ( $version_info['version'] === $current_version ) {
-								esc_html_e( ' (Current)', 'code-snippets' );
-							}
-
-							?>
+							<?php echo esc_html( self::describe_version( $version_info, $current_version ) ); ?>
 						</option>
 					<?php } ?>
 				</select>
 			</p>
 
+			<?php if ( $floor_notice ) { ?>
+				<p class="description"><?php echo esc_html( $floor_notice ); ?></p>
+			<?php } ?>
+
 			<p>
-				<button type="button" id="switch-version-btn" class="button button-secondary" disabled
-					<?php disabled( empty( $available_versions ) ); ?>>
+				<button type="button" id="switch-version-btn" class="button button-secondary" disabled>
 					<?php esc_html_e( 'Switch Version', 'code-snippets' ); ?>
 				</button>
 			</p>
 
 			<div id="version-switch-result" class="notice code-snippets-notice" style="display: none;"></div>
-		<?php endif; ?>
-		</div><?php
+		</div>
+		<?php
+	}
+
+	/**
+	 * Build the label shown for a single version in the dropdown.
+	 *
+	 * @param array<string, mixed> $version_info    Catalogue entry.
+	 * @param string               $current_version Version currently installed.
+	 *
+	 * @return string
+	 */
+	private static function describe_version( array $version_info, string $current_version ): string {
+		$version = (string) $version_info['version'];
+		$release_mode = isset( $version_info['release_mode'] ) ? (string) $version_info['release_mode'] : '';
+		$tested_up_to = isset( $version_info['tested_up_to'] ) ? (string) $version_info['tested_up_to'] : '';
+
+		if ( $version === $current_version ) {
+			// translators: %s: plugin version number.
+			$label = sprintf( __( '%s (current)', 'code-snippets' ), $version );
+		} elseif ( 'beta' === $release_mode ) {
+			// translators: %s: plugin version number.
+			$label = sprintf( __( '%s (beta)', 'code-snippets' ), $version );
+		} elseif ( 'rc' === $release_mode ) {
+			// translators: %s: plugin version number.
+			$label = sprintf( __( '%s (release candidate)', 'code-snippets' ), $version );
+		} elseif ( ! empty( $version_info['is_latest'] ) ) {
+			// translators: %s: plugin version number.
+			$label = sprintf( __( '%s (latest)', 'code-snippets' ), $version );
+		} else {
+			$label = $version;
+		}
+
+		if ( ! $tested_up_to ) {
+			return $label;
+		}
+
+		return sprintf(
+			// translators: 1: labelled plugin version, 2: WordPress version number.
+			__( '%1$s — tested up to WordPress %2$s', 'code-snippets' ),
+			$label,
+			$tested_up_to
+		);
+	}
+
+	/**
+	 * Render the explanation shown in place of the switcher when the catalogue
+	 * holds no versions.
+	 *
+	 * The list is empty both when the request for it failed and when the source
+	 * answered with nothing to install, which are not the same thing to the user.
+	 *
+	 * @return void
+	 */
+	private static function render_empty_catalogue_notice(): void {
+		$error_message = self::get_last_error_message();
+
+		if ( $error_message ) {
+			?>
+			<div class="notice code-snippets-notice notice-warning inline">
+				<p><?php echo esc_html( $error_message ); ?></p>
+			</div>
+			<?php
+			return;
+		}
+
+		?>
+		<p class="description">
+			<?php esc_html_e( 'There are no versions available to install.', 'code-snippets' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Render the notice shown in place of the switcher when versions cannot be
+	 * listed for this site.
+	 *
+	 * @return void
+	 */
+	private static function render_unavailable_notice(): void {
+		$notice = self::get_unavailable_notice();
+
+		?>
+		<div class="notice code-snippets-notice notice-warning inline">
+			<p><?php echo esc_html( $notice['message'] ); ?></p>
+			<?php if ( $notice['action_url'] && $notice['action_label'] ) { ?>
+				<p>
+					<a href="<?php echo esc_url( $notice['action_url'] ); ?>" class="button button-primary">
+						<?php echo esc_html( $notice['action_label'] ); ?>
+					</a>
+				</p>
+			<?php } ?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -457,12 +642,12 @@ class Version_Switch {
 
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Check for the latest available plugin versions from WordPress.org.', 'code-snippets' )
+			esc_html( self::get_source()->get_refresh_description() )
 		);
 	}
 
 	/**
-	 * AJAX handler for refreshing the installed version.
+	 * AJAX handler for refreshing the list of available versions.
 	 *
 	 * @return void
 	 */
@@ -473,8 +658,7 @@ class Version_Switch {
 			wp_send_json_error( [ 'message' => __( 'You do not have permission to manage options.', 'code-snippets' ) ] );
 		}
 
-		delete_transient( self::CACHE_KEY );
-		self::get_available_versions();
+		self::refresh_available_versions();
 
 		wp_send_json_success( [ 'message' => __( 'Available versions updated successfully.', 'code-snippets' ) ] );
 	}
@@ -491,6 +675,7 @@ class Version_Switch {
 				<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
 				<?php esc_html_e( 'Switching versions may cause compatibility issues. Always backup your site before switching versions.', 'code-snippets' ); ?>
 			</p>
+			<p><?php esc_html_e( 'Beta and release candidate builds are not recommended for production sites.', 'code-snippets' ); ?></p>
 		</div>
 		<?php
 	}

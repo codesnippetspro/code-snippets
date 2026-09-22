@@ -401,10 +401,25 @@ function process_settings_actions( array $input ): ?array {
 		// versioned groups (current, previous and legacy) all go too.
 		flush_versioned_cache_groups( (string) get_option( 'code_snippets_cache_version', '' ) );
 
+		// Refetched rather than merely discarded: resetting caches before a
+		// rollback is also how an administrator checks what the version source is
+		// serving right now, which a cleared cache alone would not show until the
+		// switcher was next rendered.
+		$available_versions = Version_Switch::refresh_available_versions();
+
 		add_settings_error(
 			OPTION_NAME,
 			'snippet_caches_reset',
-			__( 'Successfully reset snippets caches.', 'code-snippets' ),
+			sprintf(
+				/* translators: %d: number of plugin versions available to install. */
+				_n(
+					'Successfully reset snippets caches. %d plugin version is available to install.',
+					'Successfully reset snippets caches. %d plugin versions are available to install.',
+					count( $available_versions ),
+					'code-snippets'
+				),
+				count( $available_versions )
+			),
 			'updated'
 		);
 	}

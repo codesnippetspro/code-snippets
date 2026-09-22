@@ -210,7 +210,7 @@ class Settings_Layout {
 			'max_revisions'              => __( 'Saves a copy each time a snippet changes, so you can compare versions and roll back a bad edit.', 'code-snippets' ),
 			'preserve_on_delete'         => __( 'Keep the revision history after a snippet is deleted, so it can still be recovered.', 'code-snippets' ),
 			'enable_admin_bar'           => __( 'Jump to any snippet from anywhere in the admin, and see which ones ran on the page you are looking at.', 'code-snippets' ),
-			'reset_caches'               => __( 'Clears stored snippet data. Worth doing before switching to an older version of the plugin.', 'code-snippets' ),
+			'reset_caches'               => __( 'Clears stored snippet data and refetches the list of plugin versions available to install. Worth doing before switching to an older version of the plugin.', 'code-snippets' ),
 		];
 	}
 }
