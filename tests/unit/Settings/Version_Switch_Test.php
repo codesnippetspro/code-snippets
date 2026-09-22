@@ -26,6 +26,11 @@ class Version_Switch_Test extends UnitTestCase {
 	private const PROGRESS_KEY = 'code_snippets_version_switch_progress';
 
 	/**
+	 * Transient key holding the reason the last catalogue request failed.
+	 */
+	private const ERROR_KEY = 'code_snippets_version_switch_error';
+
+	/**
 	 * Source registered on the seam filter for the duration of a test.
 	 *
 	 * @var Recording_Version_Source|null
@@ -204,6 +209,17 @@ class Version_Switch_Test extends UnitTestCase {
 	 */
 	private function create_package_file(): string {
 		return tempnam( get_temp_dir(), 'cs-pkg' );
+	}
+
+	/**
+	 * Capture the markup the version switcher field renders.
+	 *
+	 * @return string
+	 */
+	private function render_version_switch_field(): string {
+		ob_start();
+		Version_Switch::render_version_switch_field();
+		return (string) ob_get_clean();
 	}
 
 	/**
@@ -577,6 +593,104 @@ class Version_Switch_Test extends UnitTestCase {
 		} finally {
 			wp_delete_file( $package_path );
 		}
+	}
+
+	/**
+	 * A catalogue request that failed is explained in the field itself, rather
+	 * than leaving a dead control with nothing to act on.
+	 *
+	 * @return void
+	 */
+	public function test_failed_catalogue_request_renders_its_message_instead_of_the_switcher(): void {
+		$this->register_test_services();
+		$this->source->catalogue = new WP_Error( 'version_source_request_error', 'The version list could not be retrieved.' );
+
+		$output = $this->render_version_switch_field();
+
+		$this->assertStringContainsString( 'The version list could not be retrieved.', $output );
+		$this->assertStringContainsString( 'notice-warning', $output );
+		$this->assertStringNotContainsString( '<select', $output );
+		$this->assertStringContainsString( 'Current Version:', $output );
+	}
+
+	/**
+	 * A source that answered with nothing to install says so, instead of
+	 * presenting the same dead control a failed request would.
+	 *
+	 * @return void
+	 */
+	public function test_empty_catalogue_renders_an_explicit_nothing_to_install_line(): void {
+		$this->register_test_services();
+
+		$output = $this->render_version_switch_field();
+
+		$this->assertStringContainsString( 'no versions available to install', $output );
+		$this->assertStringNotContainsString( '<select', $output );
+		$this->assertStringContainsString( 'Current Version:', $output );
+	}
+
+	/**
+	 * A catalogue with versions in it still renders the dropdown, with an entry
+	 * for each version.
+	 *
+	 * @return void
+	 */
+	public function test_populated_catalogue_renders_the_version_dropdown(): void {
+		$this->register_test_services();
+		$this->seed_catalogue( '3.9.2' );
+
+		$output = $this->render_version_switch_field();
+
+		$this->assertStringContainsString( '<select', $output );
+		$this->assertStringContainsString( 'value="3.9.2"', $output );
+		$this->assertStringNotContainsString( 'no versions available to install', $output );
+	}
+
+	/**
+	 * The message behind a failed request is kept alongside its code, and a
+	 * successful fetch clears both.
+	 *
+	 * @return void
+	 */
+	public function test_last_error_message_is_stored_and_cleared_with_the_code(): void {
+		$this->register_test_services();
+
+		$this->assertSame( '', Version_Switch::get_last_error_message() );
+
+		$this->source->catalogue = new WP_Error( 'version_source_request_error', 'The version list could not be retrieved.' );
+
+		Version_Switch::get_available_versions();
+
+		$this->assertSame( 'version_source_request_error', Version_Switch::get_last_error_code() );
+		$this->assertSame( 'The version list could not be retrieved.', Version_Switch::get_last_error_message() );
+
+		$this->source->catalogue = [
+			'versions' => [
+				[
+					'version' => '3.9.2',
+					'url'     => 'https://example.org/code-snippets.3.9.2.zip',
+				],
+			],
+			'floor'    => '',
+		];
+
+		Version_Switch::refresh_available_versions();
+
+		$this->assertSame( '', Version_Switch::get_last_error_code() );
+		$this->assertSame( '', Version_Switch::get_last_error_message() );
+	}
+
+	/**
+	 * A site still holding the previous transient shape — a bare error code —
+	 * reports that code rather than a mangled one.
+	 *
+	 * @return void
+	 */
+	public function test_last_error_code_tolerates_the_previous_transient_shape(): void {
+		set_transient( self::ERROR_KEY, 'version_source_request_error', MINUTE_IN_SECONDS );
+
+		$this->assertSame( 'version_source_request_error', Version_Switch::get_last_error_code() );
+		$this->assertSame( '', Version_Switch::get_last_error_message() );
 	}
 
 	/**

@@ -467,6 +467,15 @@ class Version_Switch {
 		}
 
 		$available_versions = self::get_available_versions();
+
+		if ( ! $available_versions ) {
+			self::render_empty_catalogue_notice();
+			?>
+			</div>
+			<?php
+			return;
+		}
+
 		$floor_notice = self::get_source()->get_floor_notice( self::get_version_floor() );
 
 		?>
@@ -474,7 +483,7 @@ class Version_Switch {
 				<label for="target_version">
 					<?php esc_html_e( 'Switch to Version:', 'code-snippets' ); ?>
 				</label>
-				<select id="target_version" name="target_version" <?php disabled( empty( $available_versions ) ); ?>>
+				<select id="target_version" name="target_version">
 					<option value=""><?php esc_html_e( 'Select a version…', 'code-snippets' ); ?></option>
 					<?php foreach ( $available_versions as $version_info ) { ?>
 						<option value="<?php echo esc_attr( $version_info['version'] ); ?>"
@@ -490,8 +499,7 @@ class Version_Switch {
 			<?php } ?>
 
 			<p>
-				<button type="button" id="switch-version-btn" class="button button-secondary" disabled
-					<?php disabled( empty( $available_versions ) ); ?>>
+				<button type="button" id="switch-version-btn" class="button button-secondary" disabled>
 					<?php esc_html_e( 'Switch Version', 'code-snippets' ); ?>
 				</button>
 			</p>
@@ -540,6 +548,34 @@ class Version_Switch {
 			$label,
 			$tested_up_to
 		);
+	}
+
+	/**
+	 * Render the explanation shown in place of the switcher when the catalogue
+	 * holds no versions.
+	 *
+	 * The list is empty both when the request for it failed and when the source
+	 * answered with nothing to install, which are not the same thing to the user.
+	 *
+	 * @return void
+	 */
+	private static function render_empty_catalogue_notice(): void {
+		$error_message = self::get_last_error_message();
+
+		if ( $error_message ) {
+			?>
+			<div class="notice code-snippets-notice notice-warning inline">
+				<p><?php echo esc_html( $error_message ); ?></p>
+			</div>
+			<?php
+			return;
+		}
+
+		?>
+		<p class="description">
+			<?php esc_html_e( 'There are no versions available to install.', 'code-snippets' ); ?>
+		</p>
+		<?php
 	}
 
 	/**
