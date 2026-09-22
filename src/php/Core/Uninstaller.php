@@ -12,6 +12,7 @@ namespace Code_Snippets\Core;
 use Code_Snippets\Admin\Feedback_Panel;
 use Code_Snippets\Client\Feedback_Client;
 use Code_Snippets\Model\Feedback_Connection;
+use Code_Snippets\Settings\Version_Switch;
 use function Code_Snippets\flush_versioned_cache_groups;
 
 /**
@@ -91,6 +92,10 @@ class Uninstaller {
 		delete_option( Feedback_Connection::CREDENTIALS_OPTION );
 		delete_transient( Feedback_Panel::SUMMARY_TRANSIENT );
 		delete_transient( Feedback_Client::REGISTRATION_FAILURE_TRANSIENT );
+
+		// The switcher caches under a key belonging to whichever source is in
+		// force, so it has to do its own clearing rather than name the keys here.
+		Version_Switch::clear_version_caches();
 	}
 
 	/**
