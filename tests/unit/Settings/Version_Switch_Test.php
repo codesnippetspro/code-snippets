@@ -694,6 +694,49 @@ class Version_Switch_Test extends UnitTestCase {
 	}
 
 	/**
+	 * A source that reports no floor has nothing to explain, so the floor notice
+	 * is not rendered at all.
+	 *
+	 * @return void
+	 */
+	public function test_floor_notice_is_omitted_when_the_source_reports_no_floor(): void {
+		$this->register_test_services();
+		$this->seed_catalogue( '3.9.2' );
+
+		$output = $this->render_version_switch_field();
+
+		$this->assertStringContainsString( '<select', $output );
+		$this->assertStringNotContainsString( 'are not installable', $output );
+	}
+
+	/**
+	 * A source that reports a floor explains where the catalogue stops.
+	 *
+	 * @return void
+	 */
+	public function test_floor_notice_is_rendered_when_the_source_reports_a_floor(): void {
+		$this->register_test_services();
+
+		set_transient(
+			$this->source->get_cache_key(),
+			[
+				'versions' => [
+					[
+						'version' => '3.9.2',
+						'url'     => 'https://example.org/code-snippets.3.9.2.zip',
+					],
+				],
+				'floor'    => '3.6.0',
+			],
+			HOUR_IN_SECONDS
+		);
+
+		$output = $this->render_version_switch_field();
+
+		$this->assertStringContainsString( 'Versions before 3.6.0 are not installable.', $output );
+	}
+
+	/**
 	 * The WordPress.org source drops the trunk entry and lists releases newest
 	 * first, and reports no floor because every release remains installable.
 	 *

@@ -476,7 +476,8 @@ class Version_Switch {
 			return;
 		}
 
-		$floor_notice = self::get_source()->get_floor_notice( self::get_version_floor() );
+		$floor = self::get_version_floor();
+		$floor_notice = $floor ? self::get_source()->get_floor_notice( $floor ) : '';
 
 		?>
 			<p>
