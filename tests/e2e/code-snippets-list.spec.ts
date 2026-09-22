@@ -97,6 +97,70 @@ test.describe('Code Snippets List Page Actions', () => {
 		}
 	})
 
+	test('Card view surfaces snippet insights in the card corner', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Snippet insights are available with a Pro licence.')
+
+		await switchSnippetView(page, 'Card view')
+
+		try {
+			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: snippetName })
+			const secureStatus = card.locator('.snippet-card-meta .snippet-secure-status')
+
+			await expect(card).toBeVisible()
+			await expect(secureStatus).toBeVisible()
+			await expect(secureStatus.locator('.tooltip-trigger')).toHaveAccessibleName('Secure snippet')
+
+			// A clean PHP snippet exposes security in the metadata row. Performance
+			// or finding data remains beside it when available.
+			const trigger = card.locator('.snippet-card-meta .cs-insights-trigger')
+
+			// The snippet name must survive alongside the status elements rather than
+			// being truncated away to nothing by a reserved gutter.
+			const nameWidth = await card.locator('.snippet-card-header h3').evaluate(el => el.clientWidth)
+			expect(nameWidth).toBeGreaterThan(100)
+
+			if (await trigger.count()) {
+				// The corner insights control opens the same modal as the table's
+				// Insights column.
+				const modal = page.locator('.cs-insights-modal')
+				await trigger.click()
+				await expect(modal).toBeVisible()
+
+				// Dismiss before cleanup: the modal's screen overlay swallows pointer
+				// events, so leaving it open makes the view switch below hang.
+				await page.keyboard.press('Escape')
+				await expect(modal).toHaveCount(0)
+			}
+		} finally {
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+		}
+	})
+
+	test('Card view omits the insights corner when a snippet has no data', async ({ page }) => {
+		const cssSnippetName = SnippetsTestHelper.makeUniqueSnippetName()
+
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: cssSnippetName,
+			active: false,
+			type: 'css'
+		})
+		await helper.navigateToSnippetsAdmin()
+		await switchSnippetView(page, 'Card view')
+
+		try {
+			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: cssSnippetName })
+
+			await expect(card).toBeVisible()
+
+			// The scanner only covers PHP, so there is nothing to show — and unlike
+			// the table column, the card renders no em-dash placeholder.
+			await expect(card.locator('.cs-insights-trigger')).toHaveCount(0)
+		} finally {
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+			await helper.cleanupSnippet(cssSnippetName)
+		}
+	})
+
 	test('Can toggle snippet activation from list page', async ({ page }) => {
 		const snippetRow = snippetRowByName(page, snippetName)
 
