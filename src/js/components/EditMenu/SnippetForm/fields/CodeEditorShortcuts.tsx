@@ -151,9 +151,9 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 			const keyMapName = codeEditorInstance.codemirror.getOption('keyMap')
 
 			const combinedKeyMap: KeyMap = {
-				...isMacOS() ? fallbackKeyMapMac : fallbackKeyMap,
 				...keyMapName && getKeyMap(keyMapName),
-				...'object' === typeof extraKeys ? extraKeys : undefined
+				...'object' === typeof extraKeys ? extraKeys : undefined,
+				...isMacOS() ? fallbackKeyMapMac : fallbackKeyMap
 			}
 
 			return unpackKeyMap(combinedKeyMap)

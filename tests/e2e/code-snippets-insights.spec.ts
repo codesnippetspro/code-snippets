@@ -88,7 +88,7 @@ test.describe('Insights screen', () => {
 			active: false,
 			type: 'js'
 		})
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		await page.goto(URLS.INSIGHTS_ADMIN)
 		const activationPie = page.locator('[data-insights-chart="activation"] .insights-pie-chart')
 		const conditionsChart = page.locator('[data-insights-chart="conditions"]')
 
@@ -116,6 +116,35 @@ test.describe('Insights screen', () => {
 		await expect(withoutConditions.locator('strong')).toHaveText('4')
 	})
 
+	test('shows snippet scope counts in the location chart', async ({ page }) => {
+		await SnippetsTestHelper.createSnippetViaCli({ name: 'Insights Global One', active: true })
+		await SnippetsTestHelper.createSnippetViaCli({ name: 'Insights Global Two', active: true })
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Admin Scope',
+			active: true,
+			scope: 'admin'
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Front-end Scope',
+			active: true,
+			scope: 'front-end'
+		})
+
+		await page.goto(URLS.INSIGHTS_ADMIN)
+		const locationChart = page.locator('[data-insights-chart="location"]')
+
+		for (const [label, count] of [
+			['Run everywhere', '2'],
+			['Only run in administration area', '1'],
+			['Only run on site front-end', '1']
+		]) {
+			const entry = locationChart.locator('li').filter({ hasText: label })
+
+			await expect(entry).toHaveCount(1)
+			await expect(entry.locator('strong')).toHaveText(count)
+		}
+	})
+
 	test('switches used tags between bar and cloud views', async ({ page }) => {
 		await SnippetsTestHelper.createSnippetViaCli({
 			name: 'Insights Shared and Alpha Tags',
@@ -128,7 +157,7 @@ test.describe('Insights screen', () => {
 			tags: ['Shared']
 		})
 
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		await page.goto(URLS.INSIGHTS_ADMIN)
 		const tagsChart = page.locator('[data-insights-chart="tags"]')
 
 		await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible()
@@ -164,7 +193,7 @@ test.describe('Insights screen', () => {
 			tags: ['sample']
 		})
 
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		await page.goto(URLS.INSIGHTS_ADMIN)
 
 		const manageUrl = (query: string) => new URL(`${URLS.SNIPPETS_ADMIN}${query}`, baseURL).toString()
 
@@ -202,8 +231,23 @@ test.describe('Insights screen', () => {
 		await expect(tagLink).toHaveCSS('text-decoration-line', 'none')
 	})
 
+	test('opens the matching filtered list from a chart entry', async ({ page }) => {
+		const name = 'Insights Chart Link Snippet'
+		await SnippetsTestHelper.createSnippetViaCli({
+			name,
+			active: true,
+			tags: ['chart-link']
+		})
+
+		await page.goto(URLS.INSIGHTS_ADMIN)
+		await page.locator('[data-insights-chart="tags"]').getByRole('link', { name: 'chart-link' }).click()
+
+		await expect(page).toHaveURL(/page=snippets.*tag=chart-link/)
+		await expect(page.locator('.wp-list-table tbody tr').filter({ hasText: name })).toBeVisible()
+	})
+
 	test('switches and restores each Insights chart view', async ({ page }) => {
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		await page.goto(URLS.INSIGHTS_ADMIN)
 
 		const typeChart = page.locator('[data-insights-chart="type"]')
 		const activationChart = page.locator('[data-insights-chart="activation"]')
@@ -254,7 +298,7 @@ test.describe('Insights screen', () => {
 	})
 
 	test('restores a chart view when saving the preference fails', async ({ page }) => {
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		await page.goto(URLS.INSIGHTS_ADMIN)
 		const conditionsChart = page.locator('[data-insights-chart="conditions"]')
 
 		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
@@ -269,7 +313,7 @@ test.describe('Insights screen', () => {
 	})
 
 	test('keeps the latest chart views when an earlier save fails', async ({ page }) => {
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		await page.goto(URLS.INSIGHTS_ADMIN)
 		const typeChart = page.locator('[data-insights-chart="type"]')
 		const activationChart = page.locator('[data-insights-chart="activation"]')
 		let rejectFirstRequest: (() => void) | undefined
