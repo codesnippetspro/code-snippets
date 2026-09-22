@@ -1,0 +1,314 @@
+import { expect, test } from '@playwright/test'
+import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { URLS } from './helpers/constants'
+import { wpCli } from './helpers/wpCli'
+
+const clearSnippets = async () => {
+	const php = `
+		global $wpdb;
+		$tables = [ \\Code_Snippets\\code_snippets()->db->get_table_name( false ) ];
+
+		if ( is_multisite() ) {
+			$tables[] = \\Code_Snippets\\code_snippets()->db->get_table_name( true );
+		}
+
+		foreach ( $tables as $table ) {
+			$wpdb->query( "DELETE FROM {$table}" );
+		}
+	`
+
+	await wpCli(['eval', php])
+}
+
+const clearInsightsChartViews = async () => {
+	await wpCli(['eval', "delete_option( 'code_snippets_insights_preferences' );"])
+}
+
+test.describe('Insights screen', () => {
+	test.beforeEach(async () => {
+		await clearSnippets()
+		await clearInsightsChartViews()
+	})
+
+	test.afterEach(async () => {
+		await clearSnippets()
+		await clearInsightsChartViews()
+	})
+
+	test('opens a zero-data dashboard from the upper toolbar', async ({ page }) => {
+		await page.goto(URLS.SNIPPETS_ADMIN)
+		await page.locator('.code-snippets-toolbar-upper').getByRole('link', { name: 'Insights', exact: true }).click()
+		const activationChart = page.locator('[data-insights-chart="activation"]')
+		const totalChart = page.locator('[data-insights-chart="total"]')
+
+		await expect(page).toHaveURL(/page=code-snippets-insights/)
+		await expect(page.getByRole('heading', { name: 'Insights' })).toBeVisible()
+		await expect(page.locator('.insights-chart-card').first()).toHaveAttribute('data-insights-chart', 'total')
+		expect(await page.locator('[data-insights-chart]').evaluateAll(charts =>
+			charts.map(chart => chart.getAttribute('data-insights-chart')))).toEqual(
+			['total', 'type', 'activation', 'conditions', 'location', 'tags'])
+		await expect(totalChart.locator('.insights-number-chart-value')).toHaveText('0')
+		await expect(totalChart.locator('.insights-number-chart-label')).toHaveText('Total snippets')
+		await expect(totalChart.locator('.insights-chart-view-toggle')).toHaveCount(0)
+		await expect(totalChart.locator('.insights-bar-chart')).toHaveCount(0)
+		await expect(totalChart.locator('.insights-pie-chart')).toHaveCount(0)
+		await expect(page.getByRole('heading', { name: 'Snippet type' })).toBeVisible()
+		await expect(page.getByText('PHP', { exact: true })).toBeVisible()
+		await expect(page.getByText('Conditions', { exact: true })).toBeVisible()
+		await expect(activationChart.locator('.insights-pie-chart.is-empty')).toBeVisible()
+		await expect(activationChart.locator('.insights-pie-chart-legend')).toContainText('Active')
+		await expect(activationChart.locator('.insights-pie-chart-legend')).toContainText('Inactive')
+		await expect(page.getByRole('link', { name: 'Create new Snippet' })).toHaveCount(0)
+	})
+
+	test('shows current snippet distributions', async ({ page }) => {
+		const conditionId = await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Active Conditions',
+			active: true,
+			type: 'cond'
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Active PHP',
+			active: true,
+			conditionId,
+			type: 'php'
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Inactive HTML',
+			active: false,
+			type: 'html'
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Active CSS',
+			active: true,
+			type: 'css'
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Inactive JavaScript',
+			active: false,
+			type: 'js'
+		})
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		const activationPie = page.locator('[data-insights-chart="activation"] .insights-pie-chart')
+		const conditionsChart = page.locator('[data-insights-chart="conditions"]')
+
+		await expect(page.getByRole('heading', { name: 'Insights' })).toBeVisible()
+		await expect(page.locator('[data-insights-chart="total"] .insights-number-chart-value')).toHaveText('5')
+		await expect(page.getByRole('heading', { name: 'Snippet type' })).toBeVisible()
+		await expect(page.getByRole('heading', { name: 'Activation status' })).toBeVisible()
+		await expect(page.getByRole('heading', { name: 'Condition usage' })).toBeVisible()
+		await expect(page.getByRole('heading', { name: 'Location' })).toBeVisible()
+		await expect(page.getByText('Conditions', { exact: true })).toBeVisible()
+		expect(await activationPie.evaluate(element => element.style.background)).toContain('60%')
+		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
+
+		const conditionLegend = conditionsChart.locator('.insights-pie-chart-legend')
+		const withConditions = conditionLegend.locator('li').filter({
+			hasText: /^Uses conditions/
+		})
+		const withoutConditions = conditionLegend.locator('li').filter({
+			hasText: /^Does not use conditions/
+		})
+
+		await expect(withConditions.locator('span')).toHaveText('Uses conditions')
+		await expect(withConditions.locator('strong')).toHaveText('1')
+		await expect(withoutConditions.locator('span')).toHaveText('Does not use conditions')
+		await expect(withoutConditions.locator('strong')).toHaveText('4')
+	})
+
+	test('switches used tags between bar and cloud views', async ({ page }) => {
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Shared and Alpha Tags',
+			active: true,
+			tags: ['Shared', 'Alpha']
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Shared Tag',
+			active: true,
+			tags: ['Shared']
+		})
+
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		const tagsChart = page.locator('[data-insights-chart="tags"]')
+
+		await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible()
+		await expect(tagsChart).toHaveAttribute('data-view', 'bar')
+		await expect(tagsChart.locator('.insights-bar-chart')).toContainText('Shared')
+		await expect(tagsChart.getByRole('button', { name: 'Tags cloud view' })).toBeVisible()
+
+		const response = page.waitForResponse(request =>
+			'POST' === request.request().method() && request.url().includes('/preferences/insights-chart-views')
+		)
+		await tagsChart.getByRole('button', { name: 'Tags cloud view' }).click()
+		await response
+
+		await expect(tagsChart).toHaveAttribute('data-view', 'cloud')
+		const tagCloud = tagsChart.locator('.insights-tags-cloud')
+		const sharedTag = tagCloud.locator('li').filter({ hasText: /^Shared/ })
+		const alphaTag = tagCloud.locator('li').filter({ hasText: /^Alpha/ })
+
+		await expect(sharedTag).toHaveText('Shared (2 snippets)')
+		await expect(alphaTag).toHaveText('Alpha (1 snippet)')
+		expect(await sharedTag.evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize)))
+			.toBeGreaterThan(await alphaTag.evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize)))
+		await expect(tagsChart.locator('.insights-bar-chart')).toHaveCount(0)
+
+		await page.reload()
+		await expect(tagsChart).toHaveAttribute('data-view', 'cloud')
+	})
+
+	test('links chart entries to their filtered snippet lists', async ({ page, baseURL }) => {
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Insights Tagged Snippet',
+			active: true,
+			tags: ['sample']
+		})
+
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+
+		const manageUrl = (query: string) => new URL(`${URLS.SNIPPETS_ADMIN}${query}`, baseURL).toString()
+
+		const typeChart = page.locator('[data-insights-chart="type"]')
+		const activationChart = page.locator('[data-insights-chart="activation"]')
+		const tagsChart = page.locator('[data-insights-chart="tags"]')
+
+		for (const [label, type] of [
+			['PHP', 'php'],
+			['HTML', 'html'],
+			['CSS', 'css'],
+			['JS', 'js'],
+			['Conditions', 'cond']
+		]) {
+			await expect(typeChart.getByRole('link', { name: label })).toHaveAttribute(
+				'href', manageUrl(`&subpage=snippets&type=${type}`))
+		}
+
+		for (const status of ['active', 'inactive']) {
+			await expect(activationChart.getByRole('link', { name: new RegExp(`^${status}$`, 'i') })).toHaveAttribute(
+				'href', manageUrl(`&subpage=snippets&status=${status}`))
+		}
+
+		const tagLink = tagsChart.getByRole('link', { name: 'sample' })
+		const textColor = await page.evaluate(() => {
+			const element = document.body.appendChild(document.createElement('span'))
+			element.style.color = 'var(--cs-color-text)'
+			const color = getComputedStyle(element).color
+			element.remove()
+			return color
+		})
+
+		await expect(tagLink).toHaveAttribute('href', manageUrl('&tag=sample'))
+		await expect(tagLink).toHaveCSS('color', textColor)
+		await expect(tagLink).toHaveCSS('text-decoration-line', 'none')
+	})
+
+	test('switches and restores each Insights chart view', async ({ page }) => {
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+
+		const typeChart = page.locator('[data-insights-chart="type"]')
+		const activationChart = page.locator('[data-insights-chart="activation"]')
+		const conditionsChart = page.locator('[data-insights-chart="conditions"]')
+		const locationChart = page.locator('[data-insights-chart="location"]')
+
+		await expect(typeChart).toHaveAttribute('data-view', 'bar')
+		await expect(typeChart.locator('.insights-bar-chart')).toBeVisible()
+		await expect(activationChart).toHaveAttribute('data-view', 'pie')
+		await expect(activationChart.locator('.insights-pie-chart-legend')).toBeVisible()
+		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
+		await expect(conditionsChart.locator('.insights-pie-chart-legend')).toBeVisible()
+		await expect(locationChart).toHaveAttribute('data-view', 'bar')
+
+		const switchView = async (chart: typeof typeChart, view: 'Pie' | 'Bar') => {
+			const response = page.waitForResponse(request =>
+				'POST' === request.request().method() && request.url().includes('/preferences/insights-chart-views')
+			)
+
+			await chart.getByRole('button', { name: 'Pie' === view ? 'Chart view' : 'List view' }).click()
+			await response
+		}
+
+		await switchView(typeChart, 'Pie')
+		await expect(typeChart).toHaveAttribute('data-view', 'pie')
+		await expect(typeChart.locator('.insights-pie-chart')).toBeVisible()
+		await expect(typeChart.locator('.insights-pie-chart-legend')).toContainText('PHP')
+
+		await switchView(activationChart, 'Bar')
+		await expect(activationChart).toHaveAttribute('data-view', 'bar')
+		await expect(activationChart.locator('.insights-bar-chart')).toContainText('Active')
+		await expect(activationChart.locator('.insights-bar-chart')).toContainText('Inactive')
+
+		await switchView(conditionsChart, 'Bar')
+		await expect(conditionsChart).toHaveAttribute('data-view', 'bar')
+		await expect(conditionsChart.locator('.insights-bar-chart')).toContainText('Uses conditions')
+		await expect(conditionsChart.locator('.insights-bar-chart')).toContainText('Does not use conditions')
+
+		await switchView(locationChart, 'Pie')
+		await expect(locationChart).toHaveAttribute('data-view', 'pie')
+		await expect(locationChart.locator('.insights-pie-chart-legend')).toHaveCount(1)
+
+		await page.reload()
+		await expect(typeChart).toHaveAttribute('data-view', 'pie')
+		await expect(activationChart).toHaveAttribute('data-view', 'bar')
+		await expect(conditionsChart).toHaveAttribute('data-view', 'bar')
+		await expect(locationChart).toHaveAttribute('data-view', 'pie')
+	})
+
+	test('restores a chart view when saving the preference fails', async ({ page }) => {
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		const conditionsChart = page.locator('[data-insights-chart="conditions"]')
+
+		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
+
+		await page.route('**/preferences/insights-chart-views', async route => {
+			await route.fulfill({ status: 500, body: JSON.stringify({ message: 'Save failed' }) })
+		})
+
+		await conditionsChart.getByRole('button', { name: 'List view' }).click()
+
+		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
+	})
+
+	test('keeps the latest chart views when an earlier save fails', async ({ page }) => {
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-insights'))
+		const typeChart = page.locator('[data-insights-chart="type"]')
+		const activationChart = page.locator('[data-insights-chart="activation"]')
+		let rejectFirstRequest: (() => void) | undefined
+		let signalFirstRequest: () => void
+		const firstRequestStarted = new Promise<void>(resolve => {
+			signalFirstRequest = resolve
+		})
+
+		await page.route('**/preferences/insights-chart-views', async route => {
+			const { views } = <{ views: { type: string, activation: string } }> route.request().postDataJSON()
+
+			if ('pie' === views.type && 'pie' === views.activation) {
+				await new Promise<void>(resolve => {
+					rejectFirstRequest = resolve
+					signalFirstRequest()
+				})
+				await route.fulfill({ status: 500, body: JSON.stringify({ message: 'Save failed' }) })
+				return
+			}
+
+			await route.fulfill({ status: 200, body: JSON.stringify({ views }) })
+		})
+
+		await typeChart.getByRole('button', { name: 'Chart view' }).click()
+		await firstRequestStarted
+
+		const successfulResponse = page.waitForResponse(response =>
+			'POST' === response.request().method() && 200 === response.status()
+		)
+		await activationChart.getByRole('button', { name: 'List view' }).click()
+		await successfulResponse
+
+		if (undefined === rejectFirstRequest) {
+			throw new Error('The first chart preference request was not intercepted.')
+		}
+
+		rejectFirstRequest()
+
+		await expect(typeChart).toHaveAttribute('data-view', 'pie')
+		await expect(activationChart).toHaveAttribute('data-view', 'bar')
+	})
+})

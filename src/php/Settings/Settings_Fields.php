@@ -15,18 +15,74 @@ use function Code_Snippets\code_snippets;
 class Settings_Fields {
 
 	/**
+	 * Instance of this class.
+	 *
+	 * @var Settings_Fields
+	 */
+	private static Settings_Fields $instance;
+
+	/**
+	 * The settings fields definitions.
+	 *
+	 * @var array<string, array<string, array>>
+	 */
+	private array $fields;
+
+	/**
+	 * The default settings values.
+	 *
+	 * @var array<string, array<string, mixed>>
+	 */
+	private array $defaults;
+
+	/**
+	 * Constructor.
+	 *
+	 * Initializes the settings fields and default values.
+	 */
+	public function __construct() {
+		$this->init_fields();
+		$this->init_defaults();
+	}
+
+	/**
+	 * Retrieve the instance of this class.
+	 *
+	 * @return Settings_Fields
+	 */
+	private static function get_instance(): Settings_Fields {
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
 	 * Retrieve the default setting values
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
 	public static function get_default_values(): array {
-		static $defaults = [];
+		return self::get_instance()->defaults;
+	}
 
-		if ( ! empty( $defaults ) ) {
-			return $defaults;
-		}
+	/**
+	 * Retrieve the settings fields.
+	 *
+	 * @return array<string, array<string, array>>
+	 */
+	public static function get_field_definitions(): array {
+		return self::get_instance()->fields;
+	}
 
-		$defaults = [
+	/**
+	 * Initialize default settings values.
+	 *
+	 * @return void
+	 */
+	private function init_defaults() {
+		$this->defaults = [
 			'general'        => [
 				'activate_by_default'      => true,
 				'enable_tags'              => true,
@@ -60,23 +116,18 @@ class Settings_Fields {
 			],
 		];
 
-		$defaults = apply_filters( 'code_snippets_settings_defaults', $defaults );
-		return $defaults;
+		$this->defaults = apply_filters( 'code_snippets_settings_defaults', $this->defaults );
 	}
 
 	/**
-	 * Retrieve the settings fields.
+	 * Initialize the settings fields values.
 	 *
-	 * @return array<string, array<string, array>>
+	 * @return void
 	 */
-	public static function get_field_definitions(): array {
-		static $fields = [];
+	private function init_fields() {
+		$this->fields = [];
 
-		if ( ! empty( $fields ) ) {
-			return $fields;
-		}
-
-		$fields['debug'] = [
+		$this->fields['debug'] = [
 			'database_update' => [
 				'name'  => __( 'Database Table Upgrade', 'code-snippets' ),
 				'type'  => 'action',
@@ -90,7 +141,7 @@ class Settings_Fields {
 			],
 		];
 
-		$fields['version-switch'] = [
+		$this->fields['version-switch'] = [
 			'version_switcher' => [
 				'name'            => __( 'Switch Version', 'code-snippets' ),
 				'type'            => 'callback',
@@ -108,7 +159,7 @@ class Settings_Fields {
 			],
 		];
 
-		$fields['general'] = [
+		$this->fields['general'] = [
 			'activate_by_default' => [
 				'name'  => __( 'Activate by Default', 'code-snippets' ),
 				'type'  => 'checkbox',
@@ -150,7 +201,7 @@ class Settings_Fields {
 		];
 
 		if ( ! code_snippets()->licensing->is_licensed() ) {
-			$fields['general']['hide_upgrade_menu'] = [
+			$this->fields['general']['hide_upgrade_menu'] = [
 				'name'  => __( 'Hide Upgrade Notices', 'code-snippets' ),
 				'type'  => 'checkbox',
 				'label' => __( 'Hide notices inviting you to upgrade to Code Snippets Pro.', 'code-snippets' ),
@@ -158,20 +209,20 @@ class Settings_Fields {
 		}
 
 		if ( ! is_multisite() || is_main_site() ) {
-			$fields['general']['complete_uninstall'] = [
+			$this->fields['general']['complete_uninstall'] = [
 				'name'  => __( 'Complete Uninstall', 'code-snippets' ),
 				'type'  => 'checkbox',
 				'label' => __( 'When the plugin is deleted from the Plugins menu, also delete all snippets and plugin settings.', 'code-snippets' ),
 			];
 		}
 
-		$fields['general']['enable_admin_bar'] = [
+		$this->fields['general']['enable_admin_bar'] = [
 			'name'  => __( 'Enable Admin Bar Menu', 'code-snippets' ),
 			'type'  => 'checkbox',
 			'label' => __( 'Show a Snippets menu in the admin bar for quick access to snippets.', 'code-snippets' ),
 		];
 
-		$fields['general']['admin_bar_snippet_limit'] = [
+		$this->fields['general']['admin_bar_snippet_limit'] = [
 			'name'    => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
 			'type'    => 'number',
 			'desc'    => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
@@ -185,14 +236,14 @@ class Settings_Fields {
 			],
 		];
 
-		$fields['general']['enable_feedback_reporter'] = [
+		$this->fields['general']['enable_feedback_reporter'] = [
 			'name'  => __( 'Enable Feedback Reporter', 'code-snippets' ),
 			'type'  => 'checkbox',
 			'label' => __( 'Show a button on Code Snippets pages for reporting bugs, requesting features and sending feedback.', 'code-snippets' ),
 			'desc'  => __( 'Reports include your site address, contact details and a list of active plugins, so that the team can reproduce the problem.', 'code-snippets' ),
 		];
 
-		$fields['editor'] = [
+		$this->fields['editor'] = [
 			'indent_with_tabs'            => [
 				'name'       => __( 'Indent With Tabs', 'code-snippets' ),
 				'type'       => 'checkbox',
@@ -279,7 +330,6 @@ class Settings_Fields {
 			],
 		];
 
-		$fields = apply_filters( 'code_snippets_settings_fields', $fields );
-		return $fields;
+		$this->fields = apply_filters( 'code_snippets_settings_fields', $this->fields );
 	}
 }
