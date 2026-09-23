@@ -562,15 +562,20 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 		return null;
 	}
 
+	// Flush before get_snippet() so file-based execution does not write a stale
+	// cached "active" object into wp-content/code-snippets/*/index.php.
+	clean_snippets_cache( $table );
+
+	$snippet = get_snippet( $id, $network );
+	$snippet->active = false;
+
 	// Update the recently active list.
-	$snippet = get_snippet( $id );
 	$recently_active = get_self_option( $network, 'recently_active_snippets', [] );
 	$recently_active[ $id ] = time();
 	update_self_option( $network, 'recently_active_snippets', $recently_active );
 
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/deactivate_snippet', $id, $network );
-	clean_snippets_cache( $table );
 
 	return $snippet;
 }
