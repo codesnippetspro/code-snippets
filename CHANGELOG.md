@@ -67,6 +67,8 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed snippet descriptions staying truncated after the "Truncate long snippet names and descriptions" screen option
+  was switched off.
 
 ## [3.10.2] (2026-09-01)
 
