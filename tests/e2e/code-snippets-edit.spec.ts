@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { MESSAGES, SELECTORS, TIMEOUTS } from './helpers/constants'
+import { wpCli } from './helpers/wpCli'
 
 test.describe('Code Snippets Admin', () => {
 	let helper: SnippetsTestHelper
@@ -13,6 +14,45 @@ test.describe('Code Snippets Admin', () => {
 
 	test('Can access snippets admin page', async () => {
 		await helper.expectToBeOnSnippetsAdminPage()
+	})
+
+	test('A long unbroken line does not widen the editor page', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Long Line')
+		const code = `// ${snippetName}\n$value = '${'a'.repeat(4000)}';\n`
+
+		await wpCli(['eval', `
+			$snippet = new \\Code_Snippets\\Model\\Snippet([
+				'name' => ${JSON.stringify(snippetName)},
+				'code' => ${JSON.stringify(code)},
+				'scope' => 'global',
+				'active' => false,
+			]);
+			echo \\Code_Snippets\\save_snippet($snippet)->id;
+		`])
+
+		try {
+			await helper.openSnippet(snippetName)
+
+			// Line wrapping is on by default, and the page widened regardless.
+			await expect(page.locator('.CodeMirror').first()).toHaveClass(/CodeMirror-wrap/)
+
+			// One pixel of tolerance covers sub-pixel rounding in layout.
+			const pageOverflow = await page.evaluate(() =>
+				document.documentElement.scrollWidth - document.documentElement.clientWidth)
+			expect(pageOverflow, 'the page should not scroll sideways').toBeLessThanOrEqual(1)
+
+			const sidebar = await page.locator('.snippet-editor-sidebar').boundingBox()
+
+			if (!sidebar) {
+				throw new Error('The editor sidebar is not laid out')
+			}
+
+			const viewportWidth = page.viewportSize()?.width ?? 0
+			expect(sidebar.x + sidebar.width, 'the sidebar should stay on screen')
+				.toBeLessThanOrEqual(viewportWidth + 1)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
 	})
 
 	test('Can add a new snippet', async () => {
