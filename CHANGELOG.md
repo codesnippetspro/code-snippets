@@ -67,6 +67,8 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed admin screens waiting on remote requests for longer than intended when the Code Snippets service is slow or
+  unreachable.
 
 ## [3.10.2] (2026-09-01)
 

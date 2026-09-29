@@ -22,6 +22,17 @@ class Cloud_Public_Client {
 	private const SEARCH_REQUEST_TIMEOUT = 15;
 
 	/**
+	 * Seconds to wait for the remaining public API requests.
+	 *
+	 * Each is made while an admin screen renders, so the wait is bounded here
+	 * rather than left to the shorter default, which was cutting slower
+	 * responses short, while still giving up before the screen stalls.
+	 *
+	 * @var int
+	 */
+	private const REQUEST_TIMEOUT = 10;
+
+	/**
 	 * Maximum number of cloud search results allowed per page.
 	 */
 	public const MAX_RESULTS_PER_PAGE = 100;
@@ -99,7 +110,8 @@ class Cloud_Public_Client {
 	 */
 	public function get_cloud_snippet( int $cloud_id ): ?Cloud_Snippet {
 		$response = wp_remote_get(
-			sprintf( '%s/public/getsnippet/%s', $this->connection->get_api_url(), $cloud_id )
+			sprintf( '%s/public/getsnippet/%s', $this->connection->get_api_url(), $cloud_id ),
+			[ 'timeout' => self::REQUEST_TIMEOUT ]
 		);
 
 		$data = unpack_response_body( $response );
@@ -120,7 +132,8 @@ class Cloud_Public_Client {
 	 */
 	public function get_cloud_snippet_revision( string $cloud_id ): ?string {
 		$response = wp_remote_get(
-			sprintf( '%s/public/getsnippetrevision/%s', $this->connection->get_api_url(), $cloud_id )
+			sprintf( '%s/public/getsnippetrevision/%s', $this->connection->get_api_url(), $cloud_id ),
+			[ 'timeout' => self::REQUEST_TIMEOUT ]
 		);
 
 		$body = unpack_response_body( $response );
@@ -150,7 +163,10 @@ class Cloud_Public_Client {
 
 		$response = wp_remote_get(
 			add_query_arg( $params, sprintf( '%s/public/featured', $this->connection->get_api_url() ) ),
-			[ 'headers' => $this->connection->get_request_headers() ]
+			[
+				'headers' => $this->connection->get_request_headers(),
+				'timeout' => self::REQUEST_TIMEOUT,
+			]
 		);
 
 		return Cloud_Snippets::unpack_api_response( unpack_response_body( $response ), $page );
