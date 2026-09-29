@@ -67,6 +67,8 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed the snippet editor reporting a save as failed and undelivered when no response was received, which it cannot
+  determine.
 
 ## [3.10.2] (2026-09-01)
 
