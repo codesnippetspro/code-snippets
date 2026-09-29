@@ -67,6 +67,7 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user.
 
 ## [3.10.2] (2026-09-01)
 

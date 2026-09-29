@@ -68,7 +68,28 @@ class Evaluate_Functions {
 	 * @return bool
 	 */
 	public function is_safe_mode_requested(): bool {
-		return $this->is_safe_mode_query_var_set() && code_snippets()->current_user_can();
+		static $resolving = false;
+
+		if ( ! $this->is_safe_mode_query_var_set() ) {
+			return false;
+		}
+
+		// Asking for a capability makes WordPress resolve the current user,
+		// which runs third-party callbacks on determine_current_user. One that
+		// builds a URL arrives back here before that resolution has finished,
+		// and answering it again would restart it, recursing until the request
+		// ran out of memory. No user is known yet at that point, so it is no.
+		if ( $resolving ) {
+			return false;
+		}
+
+		$resolving = true;
+
+		try {
+			return code_snippets()->current_user_can();
+		} finally {
+			$resolving = false;
+		}
 	}
 
 	/**
@@ -80,6 +101,14 @@ class Evaluate_Functions {
 	 */
 	public function add_safe_mode_query_var( $url ): string {
 		$url = is_string( $url ) ? $url : '';
+
+		// A URL built before WordPress has settled on a user belongs to that
+		// resolution rather than to anything a visitor follows, so it is left
+		// alone. Safe mode links are generated while a page renders, which is
+		// long after this point.
+		if ( ! did_action( 'set_current_user' ) ) {
+			return $url;
+		}
 
 		return $this->is_safe_mode_requested() ?
 			add_query_arg( 'snippets-safe-mode', true, $url ) :
