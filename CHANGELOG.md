@@ -67,6 +67,7 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed a fatal error in the Elementor editor on Elementor versions older than 3.19.
 
 ## [3.10.2] (2026-09-01)
 
