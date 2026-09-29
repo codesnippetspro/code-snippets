@@ -67,6 +67,8 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed saving, activating or deactivating a snippet reporting its previous state, which could leave a deactivated
+  snippet running under file-based execution.
 
 ## [3.10.2] (2026-09-01)
 
