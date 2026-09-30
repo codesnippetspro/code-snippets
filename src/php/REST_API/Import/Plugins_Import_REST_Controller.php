@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\REST_API\Import;
 
+use Code_Snippets\REST_API\Import\Plugins\Elementor_Custom_Code_Plugin_Importer;
 use Code_Snippets\REST_API\Import\Plugins\Header_Footer_Code_Manager_Plugin_Importer;
 use Code_Snippets\REST_API\Import\Plugins\Insert_Headers_And_Footers_Plugin_Importer;
 use Code_Snippets\REST_API\Import\Plugins\Insert_PHP_Code_Snippet_Plugin_Importer;
@@ -43,6 +44,7 @@ class Plugins_Import_REST_Controller extends REST_Controller {
 		parent::__construct();
 
 		$this->plugin_importers = [
+			'elementor'                  => new Elementor_Custom_Code_Plugin_Importer(),
 			'insert-headers-and-footers' => new Insert_Headers_And_Footers_Plugin_Importer(),
 			'header-footer-code-manager' => new Header_Footer_Code_Manager_Plugin_Importer(),
 			'insert-php-code-snippet'    => new Insert_PHP_Code_Snippet_Plugin_Importer(),
