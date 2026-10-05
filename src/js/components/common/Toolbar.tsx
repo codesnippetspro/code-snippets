@@ -52,11 +52,11 @@ const UpperNavItem = ({ name, url, label }: UpperNavItemProps) => {
 }
 const UpperNavItems = () =>
 	<>
-		{window.CODE_SNIPPETS?.urls.insights && (
+		{window.CODE_SNIPPETS?.urls.stats && (
 			<UpperNavItem
-				name="insights"
-				url={window.CODE_SNIPPETS.urls.insights}
-				label={__('Insights', 'code-snippets')}
+				name="stats"
+				url={window.CODE_SNIPPETS.urls.stats}
+				label={__('Stats', 'code-snippets')}
 			/>)}
 
 		{window.CODE_SNIPPETS?.urls.import && (

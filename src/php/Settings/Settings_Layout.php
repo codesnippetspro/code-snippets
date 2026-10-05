@@ -30,7 +30,7 @@ class Settings_Layout {
 		$tabs = [
 			'editing'   => __( 'Editing', 'code-snippets' ),
 			'running'   => __( 'Running', 'code-snippets' ),
-			'insights'  => __( 'Insights', 'code-snippets' ),
+			'stats'     => __( 'Stats', 'code-snippets' ),
 			'library'   => __( 'Library', 'code-snippets' ),
 			'interface' => __( 'Interface', 'code-snippets' ),
 			'advanced'  => __( 'Advanced', 'code-snippets' ),
@@ -72,7 +72,7 @@ class Settings_Layout {
 				[ 'general', 'minify_output' ],
 				[ 'general', 'activate_by_default' ],
 			],
-			'insights'  => [
+			'stats'     => [
 				[ 'general', 'enable_performance_tracker' ],
 				[ 'general', 'enable_security_scan' ],
 				[ 'general', 'rescan_all_snippets' ],
@@ -174,7 +174,7 @@ class Settings_Layout {
 			'running'   => [
 				'enable_flat_files' => __( 'Execution', 'code-snippets' ),
 			],
-			'insights'  => [
+			'stats'     => [
 				'enable_performance_tracker' => __( 'Performance', 'code-snippets' ),
 				'enable_security_scan'       => __( 'Security', 'code-snippets' ),
 			],
