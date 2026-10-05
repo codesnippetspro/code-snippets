@@ -635,10 +635,12 @@ test.describe('Manage table Screen Options', () => {
 
 		await helper.navigateToSnippetsAdmin()
 
+		await openScreenOptions(page)
+		await page.locator('#adv-settings input.hide-column-tog[value="desc"]').check()
+
 		const description = snippetRowByName(page, unrelatedSnippetName).locator('.snippet-description-content')
 		await expect(description).toBeVisible()
 
-		await openScreenOptions(page)
 		const truncationToggle = page.locator('#snippets-table-truncate-row-values')
 
 		await truncationToggle.check()
