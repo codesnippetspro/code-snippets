@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
 import { addQueryArg } from '../utils/restAPI'
+import { TIMEOUTS } from '../../../tests/e2e/helpers/constants'
 import { useRestAPI } from './useRestAPI'
 import type { DuplicateReport, DuplicateSearchResponse } from '../types/Feedback'
 
 /** Shortest title worth looking for existing reports of. */
 const MIN_SEARCH_LENGTH = 6
-
-/** How long to wait after the last keystroke before searching. */
-const SEARCH_DEBOUNCE_MS = 600
 
 /**
  * Offer reports already filed about whatever is being described, so the same problem is
@@ -32,7 +30,7 @@ export const useDuplicateReports = (searchUrl: string, title: string): Duplicate
 			api.get<DuplicateSearchResponse>(addQueryArg({ url: searchUrl, name: 'q', value: query }))
 				.then(data => active && setDuplicates(data.results))
 				.catch(() => active && setDuplicates([]))
-		}, SEARCH_DEBOUNCE_MS)
+		}, TIMEOUTS.VERY_SHORT)
 
 		return () => {
 			active = false

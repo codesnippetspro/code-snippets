@@ -37,6 +37,7 @@ export interface CreateSnippetCliOptions {
 	locked?: boolean;
 	priority?: number;
 	scope?: string;
+	desc?: string;
 	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
@@ -107,7 +108,7 @@ export class SnippetsTestHelper {
 		const php = `
 			$snippet = new \\Code_Snippets\\Model\\Snippet([
 				'name' => ${JSON.stringify(options.name)},
-				'desc' => ${JSON.stringify(options.description ?? '')},
+				'desc' => ${JSON.stringify(options.description ?? options.desc ?? '')},
 				'code' => ${JSON.stringify(code)},
 				'scope' => ${JSON.stringify(scope)},
 				'active' => ${options.active ? 'true' : 'false'},

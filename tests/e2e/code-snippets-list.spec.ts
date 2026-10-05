@@ -1043,6 +1043,45 @@ test.describe('Manage table Screen Options', () => {
 		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeVisible()
 	})
 
+	test('Descriptions are only clamped while truncation is enabled', async ({ page }) => {
+		const longDescription =
+			'This description is deliberately long enough to wrap well past the two lines ' +
+			'that the table clamps it to while the truncation option is enabled, so that ' +
+			'switching the option off has something visible to reveal. '
+
+		unrelatedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Long Description')
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: unrelatedSnippetName,
+			active: false,
+			desc: longDescription.repeat(3)
+		})
+
+		await helper.navigateToSnippetsAdmin()
+
+		await openScreenOptions(page)
+		await page.locator('#adv-settings input.hide-column-tog[value="desc"]').check()
+
+		const description = snippetRowByName(page, unrelatedSnippetName).locator('.snippet-description-content')
+		await expect(description).toBeVisible()
+
+		const truncationToggle = page.locator('#snippets-table-truncate-row-values')
+
+		await truncationToggle.check()
+		await expect(description).toHaveCSS('-webkit-line-clamp', '2')
+
+		await truncationToggle.uncheck()
+		await expect(description).toHaveCSS('-webkit-line-clamp', 'none')
+
+		// The clamp is what hid the rest of the description, so without it the
+		// element has to be tall enough for all of its own content. One pixel of
+		// tolerance covers sub-pixel rounding in the browser's layout.
+		const hiddenOverflow = await description.evaluate(el => el.scrollHeight - el.clientHeight)
+		expect(hiddenOverflow).toBeLessThanOrEqual(1)
+
+		// Restore the default so later tests and the dev site are unaffected.
+		await truncationToggle.check()
+	})
+
 	test('Truncation preference survives Apply and a page reload', async ({ page }) => {
 		await openScreenOptions(page)
 		await page.locator('#snippets-table-truncate-row-values').uncheck()

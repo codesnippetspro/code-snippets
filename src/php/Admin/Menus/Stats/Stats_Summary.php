@@ -1,14 +1,14 @@
 <?php
 
-namespace Code_Snippets\Admin\Menus\Insights;
+namespace Code_Snippets\Admin\Menus\Stats;
 
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\get_snippets;
 
 /**
- * Builds aggregate data for the Insights screen.
+ * Builds aggregate data for the Stats screen.
  */
-final class Insights_Summary {
+final class Stats_Summary {
 
 	/**
 	 * Display order for snippet types.
@@ -39,7 +39,7 @@ final class Insights_Summary {
 	];
 
 	/**
-	 * Build an aggregate of saved snippets for the Insights screen.
+	 * Build an aggregate of saved snippets for the Stats screen.
 	 *
 	 * @return array{
 	 *     active: int,
