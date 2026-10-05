@@ -22,6 +22,16 @@ class Version_Switch {
 	private const CACHE_KEY = 'code_snippets_available_versions';
 
 	/**
+	 * Seconds to wait for the WordPress.org plugin API.
+	 *
+	 * Requested while the settings screen renders, so the wait is bounded here
+	 * rather than left to the default.
+	 *
+	 * @var int
+	 */
+	private const REQUEST_TIMEOUT = 10;
+
+	/**
 	 * Transient key used to indicate when a version switch is currently taking place.
 	 */
 	private const PROGRESS_KEY = 'code_snippets_version_switch_progress';
@@ -60,7 +70,10 @@ class Version_Switch {
 		$versions = get_transient( self::CACHE_KEY );
 
 		if ( false === $versions ) {
-			$response = wp_remote_get( self::WORDPRESS_API_ENDPOINT );
+			$response = wp_remote_get(
+				self::WORDPRESS_API_ENDPOINT,
+				[ 'timeout' => self::REQUEST_TIMEOUT ]
+			);
 
 			if ( is_wp_error( $response ) ) {
 				return [];
