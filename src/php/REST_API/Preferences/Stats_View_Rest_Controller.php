@@ -3,11 +3,11 @@
 namespace Code_Snippets\REST_API\Preferences;
 
 /**
- * Controller for reading and updating the saved view preferences for Insights charts.
+ * Controller for reading and updating the saved view preferences for Stats charts.
  *
  * @package Code_Snippets
  */
-final class Insights_View_Rest_Controller extends Preference_REST_Controller {
+final class Stats_View_Rest_Controller extends Preference_REST_Controller {
 
 	/**
 	 * Current API version.
@@ -17,7 +17,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	/**
 	 * The base of this controller's route.
 	 */
-	public const BASE_ROUTE = 'insights-chart-views';
+	public const BASE_ROUTE = 'stats-chart-views';
 
 	/**
 	 * The key used to identify this preference in the REST API.
@@ -25,17 +25,17 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	protected const PREFERENCE_KEY = 'views';
 
 	/**
-	 * The name of the option used to store Insights chart view preferences.
+	 * The name of the option used to store Stats chart view preferences.
 	 */
-	public const OPTION_NAME = 'code_snippets_insights_preferences';
+	public const OPTION_NAME = 'code_snippets_stats';
 
 	/**
-	 * Insights charts with independently configurable views.
+	 * Stats charts with independently configurable views.
 	 */
 	public const CHART_KEYS = [ 'type', 'activation', 'conditions', 'location', 'tags' ];
 
 	/**
-	 * Valid Insights chart view values.
+	 * Valid Stats chart view values.
 	 */
 	public const CHART_VIEWS = [
 		'type'       => [ 'pie', 'bar' ],
@@ -46,7 +46,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	];
 
 	/**
-	 * The Insights chart views shown when no preference has been saved.
+	 * The Stats chart views shown when no preference has been saved.
 	 */
 	public const DEFAULT_VIEWS = [
 		'type'       => 'bar',
@@ -57,11 +57,11 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	];
 
 	/**
-	 * Retrieve the Insights chart views, normalizing missing or invalid values.
+	 * Retrieve the Stats chart views, normalizing missing or invalid values.
 	 *
 	 * @return array<string, string>
 	 */
-	public static function get_insights_chart_views(): array {
+	public static function get_stats_chart_views(): array {
 		$views = get_option( self::OPTION_NAME );
 
 		if ( ! is_array( $views ) ) {
@@ -89,7 +89,7 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	 * @return array
 	 */
 	protected function get_option_value(): array {
-		return self::get_insights_chart_views();
+		return self::get_stats_chart_views();
 	}
 
 	/**
@@ -99,21 +99,21 @@ final class Insights_View_Rest_Controller extends Preference_REST_Controller {
 	 */
 	protected function get_update_request_schema(): array {
 		return [
-			'description'       => esc_html__( 'Supported chart-specific view for each Insights chart; tags also supports the cloud view.', 'code-snippets' ),
+			'description'       => esc_html__( 'Supported chart-specific view for each Stats chart; tags also supports the cloud view.', 'code-snippets' ),
 			'type'              => 'object',
 			'required'          => true,
-			'validate_callback' => [ $this, 'validate_insights_chart_views' ],
+			'validate_callback' => [ $this, 'validate_stats_chart_views' ],
 		];
 	}
 
 	/**
-	 * Validate a complete Insights chart view preference map.
+	 * Validate a complete Stats chart view preference map.
 	 *
 	 * @param mixed $views Candidate preference map.
 	 *
 	 * @return bool
 	 */
-	public function validate_insights_chart_views( $views ): bool {
+	public function validate_stats_chart_views( $views ): bool {
 		if ( ! is_array( $views ) || count( self::CHART_KEYS ) !== count( $views ) ) {
 			return false;
 		}

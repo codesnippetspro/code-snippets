@@ -164,7 +164,7 @@ class Manage_Menu extends Admin_Menu {
 			'snippets'             => 'manage',
 			'add-snippet'          => 'edit',
 			'edit-snippet'         => 'edit',
-			'code-snippets-insights' => 'insights',
+			'code-snippets-stats'  => 'stats',
 			'import-code-snippets' => 'import',
 			'snippets-settings'    => 'settings',
 		];
