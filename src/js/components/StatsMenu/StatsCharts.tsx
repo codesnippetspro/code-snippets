@@ -1,8 +1,8 @@
 import { _n, sprintf } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useMemo } from 'react'
-import { InsightsChartViewToggle } from './InsightsChartViewToggle'
-import type { InsightsChartEntry, InsightsChartKey, InsightsChartViews, InsightsConfigurableChartKey } from '../../types/Insights'
+import { StatsChartViewToggle } from './StatsChartViewToggle'
+import type { StatsChartEntry, StatsChartKey, StatsChartViews, StatsConfigurableChartKey } from '../../types/Stats'
 
 const PERCENTAGE_MAX = 100
 
@@ -13,7 +13,7 @@ const TAG_CLOUD_MIN_FONT_SIZE = 0.875
 const TAG_CLOUD_FONT_SIZE_RANGE = 0.625
 
 const getPieBackground = (
-	entries: Readonly<Record<string, InsightsChartEntry>>,
+	entries: Readonly<Record<string, StatsChartEntry>>,
 	colors: Readonly<Record<string, string>> | undefined,
 	totalCount: number
 ): string => {
@@ -32,12 +32,12 @@ const getPieBackground = (
 }
 
 interface ChartProps {
-	entries: Readonly<Record<string, InsightsChartEntry>>
+	entries: Readonly<Record<string, StatsChartEntry>>
 	colors?: Readonly<Record<string, string>>
 }
 
-const EntryLabel: React.FC<Pick<InsightsChartEntry, 'label' | 'url'>> = ({ label, url }) =>
-	url ? <a className="insights-chart-entry-link" href={url}>{label}</a> : <>{label}</>
+const EntryLabel: React.FC<Pick<StatsChartEntry, 'label' | 'url'>> = ({ label, url }) =>
+	url ? <a className="stats-chart-entry-link" href={url}>{label}</a> : <>{label}</>
 
 const BarChart: React.FC<ChartProps> = ({ colors, entries }) => {
 	const entryCounts = useMemo(() =>
@@ -46,13 +46,13 @@ const BarChart: React.FC<ChartProps> = ({ colors, entries }) => {
 	[entries])
 
 	return (
-		<ul className="insights-bar-chart">
+		<ul className="stats-bar-chart">
 			{Object.entries(entries).map(([key, entry]) =>
 				<li key={key}>
 					<span><EntryLabel {...entry} /></span>
-					<div className="insights-bar-track" aria-hidden="true">
+					<div className="stats-bar-track" aria-hidden="true">
 						<div
-							className="insights-bar-fill"
+							className="stats-bar-fill"
 							style={{
 								backgroundColor: colors?.[key] ?? DEFAULT_COLOR,
 								inlineSize: `${Number(entry.count) / Math.max(1, ...entryCounts) * PERCENTAGE_MAX}%`
@@ -72,13 +72,13 @@ const PieChart: React.FC<ChartProps> = ({ colors, entries }) => {
 	[entries])
 
 	return (
-		<div className="insights-pie-chart-content">
+		<div className="stats-pie-chart-content">
 			<div
-				className={classnames('insights-pie-chart', { 'is-empty': 0 === totalCount })}
+				className={classnames('stats-pie-chart', { 'is-empty': 0 === totalCount })}
 				aria-hidden="true"
 				style={0 === totalCount ? undefined : { background: getPieBackground(entries, colors, totalCount) }}
 			/>
-			<ul className="insights-pie-chart-legend">
+			<ul className="stats-pie-chart-legend">
 				{Object.entries(entries).map(([key, entry]) =>
 					<li key={key}>
 						<span>
@@ -98,7 +98,7 @@ const TagCloud: React.FC<ChartProps> = ({ entries }) => {
 	[entries])
 
 	return (
-		<ul className="insights-tags-cloud">
+		<ul className="stats-tags-cloud">
 			{Object.entries(entries).map(([key, entry]) =>
 				<li
 					key={key}
@@ -114,17 +114,17 @@ const TagCloud: React.FC<ChartProps> = ({ entries }) => {
 	)
 }
 
-export interface InsightsChartProps<Chart extends InsightsConfigurableChartKey> {
+export interface StatsChartProps<Chart extends StatsConfigurableChartKey> {
 	chart: Chart
-	entries: Readonly<Record<string, InsightsChartEntry>>
+	entries: Readonly<Record<string, StatsChartEntry>>
 	title: string
-	view: InsightsChartViews[Chart]
-	setView?: (view: InsightsChartViews[Chart]) => void
+	view: StatsChartViews[Chart]
+	setView?: (view: StatsChartViews[Chart]) => void
 	colors?: Readonly<Record<string, string>>
-	views: readonly InsightsChartViews[Chart][]
+	views: readonly StatsChartViews[Chart][]
 }
 
-export const InsightsChart = <Chart extends InsightsConfigurableChartKey,>({
+export const StatsChart = <Chart extends StatsConfigurableChartKey,>({
 	chart,
 	colors,
 	entries,
@@ -132,16 +132,16 @@ export const InsightsChart = <Chart extends InsightsConfigurableChartKey,>({
 	title,
 	view,
 	views
-}: InsightsChartProps<Chart>) =>
+}: StatsChartProps<Chart>) =>
 	<section
-		className="insights-chart-card"
-		data-insights-chart={chart}
+		className="stats-chart-card"
+		data-stats-chart={chart}
 		data-view={view}
-		aria-labelledby={`insights-chart-${chart}-heading`}
+		aria-labelledby={`stats-chart-${chart}-heading`}
 	>
-		<div className="insights-chart-card-header">
-			<h2 id={`insights-chart-${chart}-heading`}>{title}</h2>
-			{setView && <InsightsChartViewToggle title={title} view={view} setView={setView} views={views} />}
+		<div className="stats-chart-card-header">
+			<h2 id={`stats-chart-${chart}-heading`}>{title}</h2>
+			{setView && <StatsChartViewToggle title={title} view={view} setView={setView} views={views} />}
 		</div>
 		{'bar' === view
 			? <BarChart colors={colors} entries={entries} />
@@ -150,14 +150,14 @@ export const InsightsChart = <Chart extends InsightsConfigurableChartKey,>({
 				: <TagCloud entries={entries} />}
 	</section>
 
-export interface TotalsInsightsChartProps extends InsightsChartEntry {
-	chart: InsightsChartKey
+export interface TotalsStatsChartProps extends StatsChartEntry {
+	chart: StatsChartKey
 }
 
-export const TotalsInsightsChart: React.FC<TotalsInsightsChartProps> = ({ chart, count, label }) =>
-	<section className="insights-chart-card" data-insights-chart={chart} aria-label={label}>
-		<div className="insights-number-chart">
-			<strong className="insights-number-chart-value">{count}</strong>
-			<span className="insights-number-chart-label">{label}</span>
+export const TotalsStatsChart: React.FC<TotalsStatsChartProps> = ({ chart, count, label }) =>
+	<section className="stats-chart-card" data-stats-chart={chart} aria-label={label}>
+		<div className="stats-number-chart">
+			<strong className="stats-number-chart-value">{count}</strong>
+			<span className="stats-number-chart-label">{label}</span>
 		</div>
 	</section>

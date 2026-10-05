@@ -3,7 +3,7 @@ import type { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
 import type { FeedbackConfig } from './Feedback'
-import type { InsightsChartViews, InsightsSummary } from './Insights'
+import type { StatsChartViews, StatsSummary } from './Stats'
 import type { Snippet } from './Snippet'
 import type { SnippetView } from './SnippetView'
 import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './vendor/WordPressCodeEditor'
@@ -36,14 +36,14 @@ declare global {
 			hideUpsell: boolean
 			isCloudConnected: boolean
 			snippetView: SnippetView
-			insightsChartViews: InsightsChartViews
+			statsChartViews: StatsChartViews
 			demosSeen?: string[]
 			restAPI: {
 				base: string
 				snippets: string
 				recentlyActive: string
 				snippetView: string
-				insightsView: string
+				statsView: string
 				demosSeen: string
 				importPlugins: string
 				importFiles: string
@@ -58,7 +58,7 @@ declare global {
 				manage: string
 				addNew: string
 				edit: string
-				insights: string
+				stats: string
 				welcome: string
 				import: string
 				settings: string | null
@@ -123,7 +123,7 @@ declare global {
 			features: ImageLinkSchema[]
 			partners: ImageLinkSchema[]
 		}
-		readonly CODE_SNIPPETS_INSIGHTS?: InsightsSummary
+		readonly CODE_SNIPPETS_STATS?: StatsSummary
 		readonly CODE_SNIPPETS_FEEDBACK?: FeedbackConfig
 	}
 }

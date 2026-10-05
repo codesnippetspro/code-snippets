@@ -2,10 +2,10 @@ import React from 'react'
 import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { ScreenMetaSlot } from '../common/ScreenMetaSlot'
 import { Toolbar } from '../common/Toolbar'
-import { InsightsDashboard } from './InsightsDashboard'
+import { StatsDashboard } from './StatsDashboard'
 
-export const InsightsMenu: React.FC = () => {
-	const summary = window.CODE_SNIPPETS_INSIGHTS
+export const StatsMenu: React.FC = () => {
+	const summary = window.CODE_SNIPPETS_STATS
 
 	return (
 		<>
@@ -14,9 +14,9 @@ export const InsightsMenu: React.FC = () => {
 			<ScreenMetaSlot />
 
 			{summary && (
-				<div className="code-snippets-insights">
+				<div className="code-snippets-stats">
 					<WithRestAPIContext>
-						<InsightsDashboard summary={summary} />
+						<StatsDashboard summary={summary} />
 					</WithRestAPIContext>
 				</div>)}
 		</>
