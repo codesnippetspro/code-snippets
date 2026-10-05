@@ -70,6 +70,8 @@
 * Fixed a fatal error in the Elementor editor on Elementor versions older than 3.19.
 * Fixed snippet descriptions staying truncated after the "Truncate long snippet names and descriptions" screen option
   was switched off.
+* Fixed saving, activating or deactivating a snippet reporting its previous state, which could leave a deactivated
+  snippet running under file-based execution.
 
 ## [3.10.2] (2026-09-01)
 
