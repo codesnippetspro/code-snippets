@@ -2,6 +2,20 @@ import { expect, test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { URLS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
+import type { Page } from '@playwright/test'
+
+const forceLicenseState = (page: Page, isLicensed: boolean) =>
+	page.addInitScript(licensed => {
+		let value: { isLicensed?: boolean } | undefined
+
+		Object.defineProperty(window, 'CODE_SNIPPETS', {
+			configurable: true,
+			get: () => value,
+			set: (incoming: { isLicensed?: boolean } | undefined) => {
+				value = incoming ? { ...incoming, isLicensed: licensed } : incoming
+			}
+		})
+	}, isLicensed)
 
 const clearSnippets = async () => {
 	const php = `
@@ -59,6 +73,47 @@ test.describe('Stats screen', () => {
 		await expect(activationChart.locator('.stats-pie-chart-legend')).toContainText('Active')
 		await expect(activationChart.locator('.stats-pie-chart-legend')).toContainText('Inactive')
 		await expect(page.getByRole('link', { name: 'Create new Snippet' })).toHaveCount(0)
+	})
+
+	test('blurs condition usage and links to Pro when unlicensed', async ({ page }) => {
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		const conditionUsage = page.locator('.stats-chart-lock')
+		const pieContent = page.locator('[data-stats-chart="conditions"] .stats-pie-chart-content')
+
+		await expect(conditionUsage).toHaveClass(/is-locked/)
+		await expect(pieContent).toHaveCSS('filter', 'blur(10px)')
+		const goProLink = conditionUsage.getByRole('link', { name: 'Go Pro' })
+		await expect(goProLink).toHaveAttribute('href', 'https://codesnippets.pro/pricing/')
+		const [contentBox, linkBox] = await Promise.all([pieContent.boundingBox(), goProLink.boundingBox()])
+		expect(contentBox).not.toBeNull()
+		expect(linkBox).not.toBeNull()
+		const contentCenterX = (contentBox?.x ?? 0) + (contentBox?.width ?? 0) / 2
+		const contentCenterY = (contentBox?.y ?? 0) + (contentBox?.height ?? 0) / 2
+		const linkCenterX = (linkBox?.x ?? 0) + (linkBox?.width ?? 0) / 2
+		const linkCenterY = (linkBox?.y ?? 0) + (linkBox?.height ?? 0) / 2
+
+		expect(Math.abs(linkCenterX - contentCenterX)).toBeLessThan(2)
+		expect(Math.abs(linkCenterY - contentCenterY)).toBeLessThan(2)
+	})
+
+	test('blurs condition usage in list view when unlicensed', async ({ page }) => {
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		const conditionsChart = page.locator('[data-stats-chart="conditions"]')
+
+		await conditionsChart.getByRole('button', { name: 'List view' }).click()
+		await expect(conditionsChart.locator('.stats-bar-chart')).toHaveCSS('filter', 'blur(10px)', { timeout: 3000 })
+		await expect(conditionsChart.getByRole('link', { name: 'Go Pro' })).toHaveAttribute('href', 'https://codesnippets.pro/pricing/')
+	})
+
+	test('shows condition usage without a Pro overlay when licensed', async ({ page }) => {
+		await forceLicenseState(page, true)
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		const conditionUsage = page.locator('.stats-chart-lock')
+		const pieContent = page.locator('[data-stats-chart="conditions"] .stats-pie-chart-content')
+
+		await expect(conditionUsage).not.toHaveClass(/is-locked/)
+		await expect(pieContent).toHaveCSS('filter', 'none')
+		await expect(conditionUsage.getByRole('link', { name: 'Go Pro' })).toHaveCount(0)
 	})
 
 	test('shows current snippet distributions', async ({ page }) => {
@@ -200,6 +255,20 @@ test.describe('Stats screen', () => {
 		await expect(tagLink).toHaveAttribute('href', manageUrl('&tag=sample'))
 		await expect(tagLink).toHaveCSS('color', textColor)
 		await expect(tagLink).toHaveCSS('text-decoration-line', 'none')
+	})
+
+	test('opens the matching filtered list from a Stats chart entry', async ({ page }) => {
+		const name = 'Stats Chart Link Snippet'
+		await SnippetsTestHelper.createSnippetViaCli({
+			name,
+			active: true,
+			tags: ['chart-link']
+		})
+		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		await page.locator('[data-stats-chart="tags"]').getByRole('link', { name: 'chart-link' }).click()
+
+		await expect(page).toHaveURL(/page=snippets.*tag=chart-link/)
+		await expect(page.locator('.wp-list-table tbody tr').filter({ hasText: name })).toBeVisible()
 	})
 
 	test('switches and restores each Stats chart view', async ({ page }) => {

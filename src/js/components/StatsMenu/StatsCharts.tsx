@@ -39,55 +39,61 @@ interface ChartProps {
 const EntryLabel: React.FC<Pick<StatsChartEntry, 'label' | 'url'>> = ({ label, url }) =>
 	url ? <a className="stats-chart-entry-link" href={url}>{label}</a> : <>{label}</>
 
-const BarChart: React.FC<ChartProps> = ({ colors, entries }) => {
+const BarChart: React.FC<ChartProps & { overlay?: React.ReactNode }> = ({ colors, entries, overlay }) => {
 	const entryCounts = useMemo(() =>
 		Object.values(entries)
 			.map(entry => Number(entry.count)),
 	[entries])
 
 	return (
-		<ul className="stats-bar-chart">
-			{Object.entries(entries).map(([key, entry]) =>
-				<li key={key}>
-					<span><EntryLabel {...entry} /></span>
-					<div className="stats-bar-track" aria-hidden="true">
-						<div
-							className="stats-bar-fill"
-							style={{
-								backgroundColor: colors?.[key] ?? DEFAULT_COLOR,
-								inlineSize: `${Number(entry.count) / Math.max(1, ...entryCounts) * PERCENTAGE_MAX}%`
-							}}
-						/>
-					</div>
-					<strong>{entry.count}</strong>
-				</li>)}
-		</ul>
+		<div className="stats-bar-chart-content-container">
+			<ul className="stats-bar-chart">
+				{Object.entries(entries).map(([key, entry]) =>
+					<li key={key}>
+						<span><EntryLabel {...entry} /></span>
+						<div className="stats-bar-track" aria-hidden="true">
+							<div
+								className="stats-bar-fill"
+								style={{
+									backgroundColor: colors?.[key] ?? DEFAULT_COLOR,
+									inlineSize: `${Number(entry.count) / Math.max(1, ...entryCounts) * PERCENTAGE_MAX}%`
+								}}
+							/>
+						</div>
+						<strong>{entry.count}</strong>
+					</li>)}
+			</ul>
+			{overlay && <div className="stats-lock">{overlay}</div>}
+		</div>
 	)
 }
 
-const PieChart: React.FC<ChartProps> = ({ colors, entries }) => {
+const PieChart: React.FC<ChartProps & { overlay?: React.ReactNode }> = ({ colors, entries, overlay }) => {
 	const totalCount = useMemo(() =>
 		Object.values(entries).reduce((count, entry) =>
 			count + Number(entry.count), 0),
 	[entries])
 
 	return (
-		<div className="stats-pie-chart-content">
-			<div
-				className={classnames('stats-pie-chart', { 'is-empty': 0 === totalCount })}
-				aria-hidden="true"
-				style={0 === totalCount ? undefined : { background: getPieBackground(entries, colors, totalCount) }}
-			/>
-			<ul className="stats-pie-chart-legend">
-				{Object.entries(entries).map(([key, entry]) =>
-					<li key={key}>
-						<span>
-							<i aria-hidden="true" style={{ backgroundColor: colors?.[key] ?? DEFAULT_COLOR }} />
-							<EntryLabel {...entry} />
-						</span>
-						<strong>{entry.count}</strong>
-					</li>)}
-			</ul>
+		<div className="stats-pie-chart-content-container">
+			<div className="stats-pie-chart-content">
+				<div
+					className={classnames('stats-pie-chart', { 'is-empty': 0 === totalCount })}
+					aria-hidden="true"
+					style={0 === totalCount ? undefined : { background: getPieBackground(entries, colors, totalCount) }}
+				/>
+				<ul className="stats-pie-chart-legend">
+					{Object.entries(entries).map(([key, entry]) =>
+						<li key={key}>
+							<span>
+								<i aria-hidden="true" style={{ backgroundColor: colors?.[key] ?? DEFAULT_COLOR }} />
+								<EntryLabel {...entry} />
+							</span>
+							<strong>{entry.count}</strong>
+						</li>)}
+				</ul>
+			</div>
+			{overlay && <div className="stats-lock">{overlay}</div>}
 		</div>
 	)
 }
@@ -117,6 +123,7 @@ const TagCloud: React.FC<ChartProps> = ({ entries }) => {
 export interface StatsChartProps<Chart extends StatsConfigurableChartKey> {
 	chart: Chart
 	entries: Readonly<Record<string, StatsChartEntry>>
+	overlay?: React.ReactNode
 	title: string
 	view: StatsChartViews[Chart]
 	setView?: (view: StatsChartViews[Chart]) => void
@@ -128,6 +135,7 @@ export const StatsChart = <Chart extends StatsConfigurableChartKey,>({
 	chart,
 	colors,
 	entries,
+	overlay,
 	setView,
 	title,
 	view,
@@ -144,9 +152,9 @@ export const StatsChart = <Chart extends StatsConfigurableChartKey,>({
 			{setView && <StatsChartViewToggle title={title} view={view} setView={setView} views={views} />}
 		</div>
 		{'bar' === view
-			? <BarChart colors={colors} entries={entries} />
+			? <BarChart colors={colors} entries={entries} overlay={overlay} />
 			: 'pie' === view
-				? <PieChart colors={colors} entries={entries} />
+				? <PieChart colors={colors} entries={entries} overlay={overlay} />
 				: <TagCloud entries={entries} />}
 	</section>
 
