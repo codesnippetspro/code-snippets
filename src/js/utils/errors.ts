@@ -30,6 +30,16 @@ export const unpackErrorResponse = (error: unknown): string => {
 }
 
 /**
+ * Whether a request finished without the browser receiving a response.
+ *
+ * Nothing can be concluded about the write itself from this: the request may
+ * never have arrived, or it may have been handled and the response lost on the
+ * way back. Aborts are excluded, as the caller stopped those deliberately.
+ */
+export const isUnconfirmedRequest = (error: unknown): boolean =>
+	isAxiosError(error) && !error.response && !isAbortError(error)
+
+/**
  * Explain a failed request in terms the reader can act on.
  *
  * An expired session is the common case worth naming: the snippet editor is a
@@ -44,7 +54,8 @@ export const describeRequestError = (error: unknown): string => {
 
 	if (!error.response) {
 		return __(
-			'The request did not reach your site. Check your connection, or whether a security plugin is blocking it.',
+			'No response came back, so this could not be confirmed. The change may already have been saved — ' +
+			'check in another tab before trying again.',
 			'code-snippets'
 		)
 	}

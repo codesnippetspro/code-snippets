@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
 import React, { useCallback } from 'react'
-import { describeRequestError } from '../utils/errors'
+import { describeRequestError, isUnconfirmedRequest } from '../utils/errors'
 import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
 import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
 import { buildUrl } from '../utils/urls'
@@ -24,6 +24,36 @@ const snippetMessages = {
 
 const conditionCreated = __('Condition <strong>created</strong>.', 'code-snippets')
 const conditionUpdated = __('Condition <strong>updated</strong>.', 'code-snippets')
+
+/** A save that did not produce a snippet, and whether its outcome is actually known. */
+interface SubmitFailure {
+	message?: string
+	unconfirmed: boolean
+}
+
+const isSubmitFailure = (result: Snippet | SubmitFailure): result is SubmitFailure =>
+	'unconfirmed' in result
+
+interface SubmitFailureNotice {
+	failure: SubmitFailure
+	messages: typeof snippetMessages
+	isUpdate: boolean
+}
+
+/**
+ * Word a save that did not return a snippet.
+ *
+ * A request that never received a response says nothing about whether the write
+ * happened, so it is reported on its own rather than behind a heading stating
+ * the snippet was not saved.
+ */
+const describeSubmitFailure = ({ failure, messages, isUpdate }: SubmitFailureNotice): string =>
+	failure.unconfirmed
+		? failure.message ?? ''
+		: [
+			isUpdate ? messages.failedUpdate : messages.failedCreate,
+			failure.message ?? __('The server did not send a valid response.', 'code-snippets')
+		].filter(Boolean).join(' ')
 
 const conditionMessages: typeof snippetMessages = {
 	addNew: __('Create New Condition', 'code-snippets'),
@@ -105,7 +135,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 			request.active = false
 		}
 
-		const result = await (async (): Promise<Snippet | string | undefined> => {
+		const result = await (async (): Promise<Snippet | SubmitFailure> => {
 			try {
 				const { id } = request
 
@@ -113,9 +143,12 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 					? api.create(request)
 					: api.update({ ...request, id }))
 
-				return response.id ? createSnippetObject(response) : undefined
+				return response.id ? createSnippetObject(response) : { unconfirmed: false }
 			} catch (error: unknown) {
-				return isAxiosError(error) ? describeRequestError(error) : undefined
+				return {
+					message: isAxiosError(error) ? describeRequestError(error) : undefined,
+					unconfirmed: isUnconfirmedRequest(error)
+				}
 			} finally {
 				setIsWorking(false)
 			}
@@ -123,13 +156,11 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 		const messages = isCondition(snippet) ? conditionMessages : snippetMessages
 
-		if (undefined === result || 'string' === typeof result) {
-			const message = [
-				request.id ? messages.failedUpdate : messages.failedCreate,
-				result ?? __('The server did not send a valid response.', 'code-snippets')
-			]
-
-			setCurrentNotice(['error', message.filter(Boolean).join(' ')])
+		if (isSubmitFailure(result)) {
+			setCurrentNotice([
+				'error',
+				describeSubmitFailure({ failure: result, messages, isUpdate: Boolean(request.id) })
+			])
 			return undefined
 		}
 

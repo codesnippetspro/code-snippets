@@ -72,6 +72,8 @@
   was switched off.
 * Fixed saving, activating or deactivating a snippet reporting its previous state, which could leave a deactivated
   snippet running under file-based execution.
+* Fixed the snippet editor reporting a save as failed and undelivered when no response was received, which it cannot
+  determine.
 
 ## [3.10.2] (2026-09-01)
 
