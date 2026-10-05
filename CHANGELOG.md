@@ -68,6 +68,8 @@
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
 * Fixed a fatal error in the Elementor editor on Elementor versions older than 3.19.
+* Fixed snippet descriptions staying truncated after the "Truncate long snippet names and descriptions" screen option
+  was switched off.
 
 ## [3.10.2] (2026-09-01)
 
