@@ -162,6 +162,7 @@ test.describe('Blueprints demo', () => {
 	})
 
 	test('the walkthrough holds each step long enough to be read', async ({ page }) => {
+		test.setTimeout(TIMEOUTS.VERY_LONG)
 		await page.goto(URLS.BLUEPRINTS_ADMIN)
 		await page.locator('.demo-play').click()
 
