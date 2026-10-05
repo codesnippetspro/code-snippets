@@ -37,6 +37,33 @@
 	}
 }
 
+.stats-pie-chart-content-container,
+.stats-bar-chart-content-container {
+	position: relative;
+}
+
+.stats-lock {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	pointer-events: none;
+
+	&-link {
+		pointer-events: auto;
+
+		&.button:not(.button-link) {
+			background-color: var(--cs-color-secondary);
+			border-color: var(--cs-color-secondary);
+		
+			&:is(:hover, :focus):not(.button-link, :disabled) {
+				background-color: var(--cs-color-primary-hover);
+				border-color: var(--cs-color-primary-hover);
+			}
+		}
+	}
+}
+
 .stats-number-chart {
 	display: grid;
 	gap: 4px;
@@ -226,6 +253,12 @@
 		border-radius: 50%;
 		margin-inline-end: 8px;
 	}
+}
+
+.stats-chart-lock.is-locked .stats-bar-chart,
+.stats-chart-lock.is-locked .stats-pie-chart-content {
+	filter: blur(10px);
+	user-select: none;
 }
 
 @media (width <= 782px) {
