@@ -3,6 +3,7 @@
 ## [4.0.0] (UPCOMING)
 
 ### Added
+* Stats page for viewing snippet totals and various snippet breakdowns.
 * AI Agent for building snippets from a description: it proposes a plan you can refine or approve before any code is
   written, and can revise the snippets it created. (PRO)
 * Snippet revisions, with a history of past versions, a side-by-side diff against the current code, and one-click
