@@ -23,6 +23,10 @@ class Elementor_Editor {
 	 * Promotion on the Custom CSS section, inside the Elementor Editor.
 	 */
 	public function promotion_in_custom_css_section() {
+		if ( ! $this->supports_notice_control() ) {
+			return;
+		}
+
 		// Elementor Core.
 		add_action(
 			'elementor/element/common/section_custom_css/after_section_start',
@@ -38,6 +42,20 @@ class Elementor_Editor {
 				$this->add_promotion_control( $element, 'pro' );
 			}
 		);
+	}
+
+	/**
+	 * Check whether this version of Elementor offers the notice control type.
+	 *
+	 * The type arrived in Elementor 3.19. On anything older the constant does
+	 * not exist, and reading it while the editor builds its controls raises an
+	 * Error that leaves the editor unusable, so the promotion is skipped
+	 * rather than degraded.
+	 *
+	 * @return bool
+	 */
+	protected function supports_notice_control(): bool {
+		return defined( Controls_Manager::class . '::NOTICE' );
 	}
 
 	/**
