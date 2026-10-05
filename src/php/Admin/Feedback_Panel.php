@@ -204,7 +204,7 @@ class Feedback_Panel {
 
 		$slugs = [];
 
-		foreach ( [ '', 'add', 'edit', 'import', 'settings', 'insights', 'welcome' ] as $menu ) {
+		foreach ( [ '', 'add', 'edit', 'import', 'settings', 'stats', 'welcome' ] as $menu ) {
 			$slugs[] = code_snippets()->get_menu_slug( $menu );
 		}
 
