@@ -18,7 +18,10 @@ test.describe('Code Snippets Admin', () => {
 
 	test('A long unbroken line does not widen the editor page', async ({ page }) => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Long Line')
-		const code = `// ${snippetName}\n$value = '${'a'.repeat(4000)}';\n`
+		// A comment, so the long line is valid PHP whatever it contains. The code
+		// is handed to PHP inside a double-quoted string, where a variable would
+		// be interpolated away and leave a parse error behind.
+		const code = `// ${snippetName}\n// ${'a'.repeat(4000)}\n`
 
 		await wpCli(['eval', `
 			$snippet = new \\Code_Snippets\\Model\\Snippet([
