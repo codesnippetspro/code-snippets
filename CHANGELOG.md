@@ -67,6 +67,11 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
+* Fixed a fatal error in the Elementor editor on Elementor versions older than 3.19.
+* Fixed snippet descriptions staying truncated after the "Truncate long snippet names and descriptions" screen option
+  was switched off.
+* Fixed saving, activating or deactivating a snippet reporting its previous state, which could leave a deactivated
+  snippet running under file-based execution.
 * Fixed admin screens waiting on remote requests for longer than intended when the Code Snippets service is slow or
   unreachable.
 
