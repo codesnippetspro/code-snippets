@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { MESSAGES, SELECTORS, TIMEOUTS } from './helpers/constants'
-import { wpCli } from './helpers/wpCli'
 
 test.describe('Code Snippets Admin', () => {
 	let helper: SnippetsTestHelper
@@ -17,21 +16,16 @@ test.describe('Code Snippets Admin', () => {
 	})
 
 	test('A long unbroken line does not widen the editor page', async ({ page }) => {
-		const snippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Long Line')
-		// A comment, so the long line is valid PHP whatever it contains. The code
-		// is handed to PHP inside a double-quoted string, where a variable would
-		// be interpolated away and leave a parse error behind.
-		const code = `// ${snippetName}\n// ${'a'.repeat(4000)}\n`
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 
-		await wpCli(['eval', `
-			$snippet = new \\Code_Snippets\\Model\\Snippet([
-				'name' => ${JSON.stringify(snippetName)},
-				'code' => ${JSON.stringify(code)},
-				'scope' => 'global',
-				'active' => false,
-			]);
-			echo \\Code_Snippets\\save_snippet($snippet)->id;
-		`])
+		// Saved through the editor rather than WP-CLI. CI runs WP-CLI as root, and
+		// with file-based execution on, the first snippet saved that way leaves
+		// root-owned directories that the web server cannot write later snippets
+		// into, so every snippet saved after it silently never runs.
+		await helper.createSnippet({
+			name: snippetName,
+			code: `// ${'a'.repeat(4000)}`
+		})
 
 		try {
 			await helper.openSnippet(snippetName)
