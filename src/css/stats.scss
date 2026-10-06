@@ -55,7 +55,7 @@
 		&.button:not(.button-link) {
 			background-color: var(--cs-color-secondary);
 			border-color: var(--cs-color-secondary);
-		
+
 			&:is(:hover, :focus):not(.button-link, :disabled) {
 				background-color: var(--cs-color-primary-hover);
 				border-color: var(--cs-color-primary-hover);
