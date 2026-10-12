@@ -42,6 +42,7 @@ class Manage_Menu_Screen_Options_Test extends AdminUnitTestCase {
 
 		$this->assertSame( 'Existing', $columns['existing'] );
 		$this->assertSame( 'Columns', $columns['_title'] );
+		$this->assertSame( 'Location', $columns['location'] );
 		$this->assertSame( 'Description', $columns['desc'] );
 		$this->assertSame( 'Modified', $columns['date'] );
 	}
