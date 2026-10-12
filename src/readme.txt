@@ -106,6 +106,13 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 4.0.0 (2026-10-12) =
+
+**Changed**
+* bump version to v4.0.0
+* prep release v4.0.0 (#584)
+
 = 3.10.2 (2026-09-01) =
 
 __Added__
