@@ -505,6 +505,103 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 })
 
+test.describe('Snippet run location', () => {
+	const PREFIX = 'E2E Run Location'
+
+	interface LocatedSnippet {
+		type: 'php' | 'html' | 'css' | 'js'
+		scope: string
+		label: string
+	}
+
+	const locatedSnippets: LocatedSnippet[] = [
+		{ type: 'php', scope: 'global', label: 'Run everywhere' },
+		{ type: 'php', scope: 'admin', label: 'Only run in administration area' },
+		{ type: 'php', scope: 'front-end', label: 'Only run on site front-end' },
+		{ type: 'php', scope: 'single-use', label: 'Only run once' },
+		{ type: 'html', scope: 'content', label: 'Where inserted in editor' },
+		{ type: 'css', scope: 'site-css', label: 'Site front-end' },
+		{ type: 'js', scope: 'site-head-js', label: 'In site header (<head> section)' }
+	]
+
+	const snippetNames: Record<string, string> = {}
+	let conditionSnippetName = ''
+	let helper: SnippetsTestHelper
+
+	test.beforeAll(async () => {
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(PREFIX)
+
+		for (const { type, scope } of locatedSnippets) {
+			snippetNames[scope] = SnippetsTestHelper.makeUniqueSnippetName(`${PREFIX} ${scope}`)
+			await SnippetsTestHelper.createSnippetViaCli({
+				name: snippetNames[scope],
+				active: false,
+				type,
+				scope
+			})
+		}
+
+		conditionSnippetName = SnippetsTestHelper.makeUniqueSnippetName(`${PREFIX} condition`)
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: conditionSnippetName,
+			active: false,
+			type: 'cond'
+		})
+	})
+
+	test.afterAll(async () => {
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(PREFIX)
+	})
+
+	test.beforeEach(async ({ page }) => {
+		helper = new SnippetsTestHelper(page)
+		await helper.navigateToSnippetsAdmin()
+	})
+
+	test('Table rows show the same location label the editor offers', async ({ page }) => {
+		for (const { scope, label } of locatedSnippets) {
+			const cell = snippetRowByName(page, snippetNames[scope]).locator('.column-location')
+			await expect(cell).toHaveText(label)
+
+			// The icon hides from assistive tech, so the label carries the meaning.
+			const icon = cell.locator('.dashicons')
+			await expect(icon).toHaveCount(1)
+			await expect(icon).toHaveAttribute('aria-hidden', 'true')
+		}
+	})
+
+	test('Table rows show no location for conditional snippets', async ({ page }) => {
+		const cell = snippetRowByName(page, conditionSnippetName).locator('.column-location')
+		await expect(cell).toHaveText('—')
+	})
+
+	test('Cards show the same location label as the table', async ({ page }) => {
+		await switchSnippetView(page, 'Card view')
+
+		try {
+			for (const { scope, label } of locatedSnippets) {
+				const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: snippetNames[scope] })
+				await expect(card).toBeVisible()
+				await expect(card.locator('.snippet-card-location .snippet-location')).toHaveText(label)
+			}
+		} finally {
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+		}
+	})
+
+	test('Cards show no location for conditional snippets', async ({ page }) => {
+		await switchSnippetView(page, 'Card view')
+
+		try {
+			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: conditionSnippetName })
+			await expect(card).toBeVisible()
+			await expect(card.locator('.snippet-card-location')).toHaveCount(0)
+		} finally {
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+		}
+	})
+})
+
 test.describe('Manage table Screen Options', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
@@ -599,6 +696,25 @@ test.describe('Manage table Screen Options', () => {
 		await idToggle.uncheck()
 		await page.locator('#screen-options-apply').click()
 		await page.waitForLoadState('networkidle')
+	})
+
+	test('Location column visibility toggle hides and shows columns in real time', async ({ page }) => {
+		await openScreenOptions(page)
+
+		const locationToggle = page.locator('#adv-settings input.hide-column-tog[value="location"]')
+		await expect(locationToggle).toBeVisible()
+
+		// Ensure Location column is initially visible.
+		await locationToggle.check()
+		await expect(page.locator('.wp-list-table th.column-location').first()).not.toHaveClass(/\bhidden\b/)
+
+		// Uncheck — column should disappear in real time.
+		await locationToggle.uncheck()
+		await expect(page.locator('.wp-list-table th.column-location').first()).toHaveClass(/\bhidden\b/)
+
+		// Re-check — column should reappear in real time.
+		await locationToggle.check()
+		await expect(page.locator('.wp-list-table th.column-location').first()).not.toHaveClass(/\bhidden\b/)
 	})
 
 	test('Truncation toggle applies and removes the truncation class in real time', async ({ page }) => {
