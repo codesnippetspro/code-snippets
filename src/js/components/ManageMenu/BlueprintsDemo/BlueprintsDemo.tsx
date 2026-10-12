@@ -102,7 +102,7 @@ const BlueprintsDemoPage: React.FC = () => {
 			<div className="blueprints-demo">
 				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
-				<DemoCallout callout={getCallout(stage)} />
+				<DemoCallout callout={getCallout(stage)} onClose={skip} />
 
 				<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
 
