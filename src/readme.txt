@@ -106,6 +106,12 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 4.0.0 (2026-10-12) =
+
+**Changed**
+* Updated the plugin, package metadata, and WordPress readme to version 4.0.0 for the new release.
+
 = 3.10.2 (2026-09-01) =
 
 __Added__
