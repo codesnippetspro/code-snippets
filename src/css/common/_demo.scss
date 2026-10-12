@@ -82,6 +82,7 @@
 	inset-block-start: 8px;
 	inset-inline-end: 8px;
 	color: var(--cs-color-text-secondary);
+	text-decoration: none;
 
 	&:hover:not(:disabled) {
 		color: var(--cs-color-text);
