@@ -75,6 +75,8 @@
   snippet running under file-based execution.
 * Fixed the snippet editor reporting a save as failed and undelivered when no response was received, which it cannot
   determine.
+* Fixed translations being loaded too early, with a notice from WordPress, when posts were queried while plugins were
+  still loading.
 
 ## [3.10.2] (2026-09-01)
 
