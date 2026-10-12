@@ -93,7 +93,7 @@ export const CloudLibraryDemo: React.FC = () => {
 
 				{isFinished && <div ref={upsellRef} className="cloud-library-demo__closing">
 					<DemoUpsell
-						title={__('That was a demo — your cloud travels with you', 'code-snippets')}
+						title={__('That was a demo: your cloud travels with you', 'code-snippets')}
 						onReplay={replay}
 					>
 						<p>{__('The whole walkthrough was scripted and ran inside this plugin. These snippets are examples, and nothing was downloaded or saved.', 'code-snippets')}</p>

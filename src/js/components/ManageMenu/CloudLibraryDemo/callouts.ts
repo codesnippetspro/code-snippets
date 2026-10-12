@@ -6,7 +6,7 @@ const STEPS: Partial<Record<DemoStage, CalloutContent>> = {
 	library: {
 		step: __('Step 1 of 4', 'code-snippets'),
 		title: __('Your whole cloud, in one place', 'code-snippets'),
-		body: __('Every snippet and bundle saved to your Code Snippets Cloud account is listed here, on every site you connect — so work you did once is never more than a click away.', 'code-snippets')
+		body: __('Every snippet and bundle saved to your Code Snippets Cloud account is listed here, on every site you connect. Work you did once is never more than a click away.', 'code-snippets')
 	},
 	preview: {
 		step: __('Step 2 of 4', 'code-snippets'),
@@ -16,7 +16,7 @@ const STEPS: Partial<Record<DemoStage, CalloutContent>> = {
 	download: {
 		step: __('Step 3 of 4', 'code-snippets'),
 		title: __('Download in one click', 'code-snippets'),
-		body: __('The snippet lands in your snippets table straight away — and inactive, so nothing runs until you have looked it over and switched it on.', 'code-snippets')
+		body: __('The snippet lands in your snippets table straight away, switched off, so nothing runs until you have looked it over and switched it on.', 'code-snippets')
 	},
 	synced: {
 		step: __('Step 4 of 4', 'code-snippets'),
