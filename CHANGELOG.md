@@ -1,10 +1,5 @@
 # Changelog
 
-
-
-
-```markdown
-
 ## [4.0.0] (2026-10-12)
 
 ### Added
@@ -83,10 +78,6 @@
 * Fixed translations being loaded too early, with a notice from WordPress, when posts were queried while plugins were
   still loading.
 
-
-```
-
-```markdown
 ## [3.10.2] (2026-09-01)
 
 ### Added

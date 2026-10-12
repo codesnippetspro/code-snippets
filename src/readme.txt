@@ -106,14 +106,10 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-
-
-
-```markdown
-
 = 4.0.0 (2026-10-12) =
 
-**Added**
+__Added__
+
 * Stats page for viewing snippet totals and various snippet breakdowns.
 * AI Agent for building snippets from a description: it proposes a plan you can refine or approve before any code is
   written, and can revise the snippets it created. (PRO)
@@ -149,7 +145,8 @@ You can report security bugs found in the source code of this plugin through the
 * Feedback reporter for sending bug reports, feature requests and general feedback from the plugin screens, with an
   optional summary of the site environment so the team can reproduce the problem. (PRO)
 
-**Changed**
+__Changed__
+
 * Redesigned the main snippets table with improved search, filtering, sorting, pagination, row actions, and bulk
   selection. (PRO)
 * Improved the snippet import and migration experience, including clearer file upload handling and third-party plugin
@@ -165,7 +162,8 @@ You can report security bugs found in the source code of this plugin through the
 * Improved colour contrast and reduced-motion support across admin screens. (PRO)
 * Faster loading of large code vaults, which are now fetched a page at a time instead of all at once. (PRO)
 
-**Fixed**
+__Fixed__
+
 * Fixed AI conversations from one connected site being visible from another. (PRO)
 * Fixed a snippet list stored in Code Snippets Cloud being emptied when the site was temporarily unable to read its own
   snippets. (PRO)
@@ -189,10 +187,6 @@ You can report security bugs found in the source code of this plugin through the
 * Fixed translations being loaded too early, with a notice from WordPress, when posts were queried while plugins were
   still loading.
 
-
-```
-
-```markdown
 = 3.10.2 (2026-09-01) =
 
 __Added__
