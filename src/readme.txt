@@ -108,7 +108,9 @@ You can report security bugs found in the source code of this plugin through the
 
 
 
+
 ```markdown
+
 = 4.0.0 (2026-10-12) =
 
 **Added**
@@ -186,8 +188,11 @@ You can report security bugs found in the source code of this plugin through the
   determine.
 * Fixed translations being loaded too early, with a notice from WordPress, when posts were queried while plugins were
   still loading.
+
+
 ```
 
+```markdown
 = 3.10.2 (2026-09-01) =
 
 __Added__
