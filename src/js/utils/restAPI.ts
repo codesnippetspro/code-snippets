@@ -1,15 +1,24 @@
 import { trimTrailingChar } from './text'
+import { buildUrl } from './urls'
+import type { UrlQueryArgs } from './urls'
 import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios'
 
 const normalizeUrl = (url: string | undefined) =>
 	trimTrailingChar(url ?? '', '/')
 
 export const REST_BASES = {
+	base: normalizeUrl(window.CODE_SNIPPETS?.restAPI.base),
 	snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippets),
 	recentlyActive: normalizeUrl(window.CODE_SNIPPETS?.restAPI.recentlyActive),
-	preferences: normalizeUrl(window.CODE_SNIPPETS?.restAPI.preferences),
-	importPlugins: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importPlugins),
-	importFiles: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importFiles),
+	import: {
+		plugins: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importPlugins),
+		files: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importFiles),
+	},
+	preferences: {
+		snippetView: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippetView),
+		stats: normalizeUrl(window.CODE_SNIPPETS?.restAPI.statsView),
+		demosSeen: normalizeUrl(window.CODE_SNIPPETS?.restAPI.demosSeen),
+	},
 	cloud: {
 		snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloud.snippets),
 	}
@@ -49,8 +58,15 @@ export const applyMethodOverride = (config: InternalAxiosRequestConfig): Interna
  * session, and the snippet editor is a screen people leave open for a long
  * time. Once it lapsed, every save failed with a 403 and the only cure was
  * reloading the page, which loses whatever was being written.
+ *
+ * The feedback reporter mounts on screens that do not enqueue the main
+ * `CODE_SNIPPETS` object, so it carries a nonce of its own to fall back on.
  */
-let restNonce = window.CODE_SNIPPETS?.restAPI.nonce
+let restNonce = window.CODE_SNIPPETS?.restAPI.nonce ?? window.CODE_SNIPPETS_FEEDBACK?.nonce
+let runOnceNonce = window.CODE_SNIPPETS_MANAGE?.runOnceNonce
+
+/** The Run Once nonce as last refreshed by the Heartbeat, or the one rendered with the page. */
+export const getRunOnceNonce = (): string => runOnceNonce ?? ''
 
 /**
  * Keep the REST nonce current for as long as the page is open.
@@ -66,9 +82,13 @@ export const listenForNonceRefresh = () => {
 	window.wp.hooks?.addAction(
 		'heartbeat.tick',
 		'code-snippets/refresh-rest-nonce',
-		(data: { rest_nonce?: string }) => {
+		(data: { rest_nonce?: string, code_snippets_run_once_nonce?: string }) => {
 			if (data.rest_nonce) {
 				restNonce = data.rest_nonce
+			}
+
+			if (data.code_snippets_run_once_nonce) {
+				runOnceNonce = data.code_snippets_run_once_nonce
 			}
 		}
 	)
@@ -92,3 +112,30 @@ export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
 		'Access-Control': window.CODE_SNIPPETS?.restAPI.cloud.token
 	}
 }
+
+export interface QueryArg {
+	url: string
+	name: string
+	value: string
+}
+
+/**
+ * Add a query parameter to a REST URL.
+ *
+ * Concatenation is not enough: with plain permalinks a REST URL already carries the route
+ * in a query string, so a second `?` would bury the parameter inside the route instead of
+ * adding one.
+ */
+export const addQueryArg = ({ url, name, value }: QueryArg): string => {
+	const parsed = new URL(url, window.location.origin)
+	parsed.searchParams.set(name, value)
+	return parsed.toString()
+}
+
+/**
+ * A WordPress core REST route (`wp/v2/…`) with its query arguments, built so it
+ * works whether or not the site has pretty permalinks: without them the REST
+ * base already carries a query string, so arguments must be appended with `&`.
+ */
+export const buildWpRestUrl = (route: string, args: UrlQueryArgs = {}): string =>
+	buildUrl(`${REST_BASES.base}/wp/v2/${route}`, args)

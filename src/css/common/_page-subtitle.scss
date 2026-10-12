@@ -1,0 +1,13 @@
+@use 'theme';
+
+.wrap .snippets-page-subtitle {
+	margin-block: 0 16px;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #646970;
+
+	a {
+		color: var(--cs-color-accent);
+		text-decoration: underline;
+	}
+}

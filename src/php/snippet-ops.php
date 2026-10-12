@@ -7,13 +7,12 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Core\DB;
-use Code_Snippets\Flat_Files\Snippet_Files;
 use Exception;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Validator;
 use Throwable;
 use function Code_Snippets\Utils\get_self_option;
+use function Code_Snippets\Utils\validate_network_param;
 use function Code_Snippets\Utils\update_self_option;
 
 /**
@@ -25,7 +24,7 @@ use function Code_Snippets\Utils\update_self_option;
  * @return bool Whether the snippet is locked.
  */
 function is_snippet_locked( int $snippet_id, ?bool $network = null ): bool {
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$locked_snippets = get_self_option( $network, 'code_snippets_locked', [] );
 
 	return isset( $locked_snippets[ $snippet_id ] ) && $locked_snippets[ $snippet_id ];
@@ -41,7 +40,7 @@ function is_snippet_locked( int $snippet_id, ?bool $network = null ): bool {
  * @return void
  */
 function set_snippet_locked( int $snippet_id, bool $locked, ?bool $network = null ): void {
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$locked_snippets = get_self_option( $network, 'code_snippets_locked', [] );
 
 	if ( $locked ) {
@@ -65,7 +64,10 @@ function clean_active_snippets_cache( string $table_name, $scopes = false ) {
 	$scope_groups = $scopes
 		? [ $scopes ]
 		: [
+			// Content snippets.
 			[ 'head-content', 'body-content', 'footer-content' ],
+
+			// Function snippets.
 			[ 'global', 'single-use', 'front-end' ],
 			[ 'global', 'single-use', 'admin' ],
 		];
@@ -102,13 +104,29 @@ function clean_snippets_cache( string $table_name ) {
  * @return bool Whether the group was flushed.
  */
 function flush_cache_group( string $group ): bool {
+	/**
+	 * Short-circuits flushing a cache group.
+	 *
+	 * Returning a boolean skips the object cache entirely: false makes the
+	 * caller fall back to deleting the known keys one by one, for a cache
+	 * that reports group support it does not really have.
+	 *
+	 * @param bool|null $flushed Whether the group was flushed, or null to let the cache try.
+	 * @param string    $group   Cache group.
+	 */
+	$flushed = apply_filters( 'code_snippets/pre_flush_cache_group', null, $group );
+
+	if ( null !== $flushed ) {
+		return (bool) $flushed;
+	}
+
 	if ( ! function_exists( 'wp_cache_flush_group' ) ||
 	     ! function_exists( 'wp_cache_supports' ) ||
 	     ! wp_cache_supports( 'flush_group' ) ) {
 		return false;
 	}
 
-	return (bool) wp_cache_flush_group( $group );
+	return wp_cache_flush_group( $group );
 }
 
 /**
@@ -129,7 +147,29 @@ function flush_versioned_cache_groups( string $previous_version ): void {
 	// still be waiting to break its next rollback.
 	flush_cache_group( CACHE_GROUP_BASE );
 
-	flush_cache_group( CACHE_GROUP );
+	// Where the cache cannot flush a whole group, the keys this plugin writes
+	// are deleted one by one instead, so an uninstall followed by a reinstall
+	// of the same version cannot read snippets that no longer exist.
+	if ( ! flush_cache_group( CACHE_GROUP ) ) {
+		flush_known_cache_keys();
+	}
+}
+
+/**
+ * Delete every key this plugin is known to write in its current cache group.
+ *
+ * @return void
+ */
+function flush_known_cache_keys(): void {
+	// Both tables' keys go, whether this is a network: deleting a key
+	// that was never written does not cost anything, and it keeps one path to test.
+	$tables = [ code_snippets()->db->get_table_name( false ), code_snippets()->db->get_table_name( true ) ];
+
+	foreach ( array_unique( $tables ) as $table ) {
+		clean_snippets_cache( $table );
+	}
+
+	wp_cache_delete( Settings\CACHE_KEY, CACHE_GROUP );
 }
 
 /**
@@ -152,7 +192,7 @@ function get_snippets( array $ids = [], ?bool $network = null ): array {
 		return [ get_snippet( $ids[0], $network ) ];
 	}
 
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table_name = code_snippets()->db->get_table_name( $network );
 
 	$snippets = wp_cache_get( "all_snippets_$table_name", CACHE_GROUP );
@@ -274,7 +314,7 @@ function get_snippet( int $id = 0, ?bool $network = null ): ?Snippet {
 	global $wpdb;
 
 	$id = absint( $id );
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table_name = code_snippets()->db->get_table_name( $network );
 
 	if ( 0 === $id ) {
@@ -385,7 +425,7 @@ function update_shared_network_snippets( array $snippets ): bool {
  */
 function activate_snippet( int $id, ?bool $network = null ) {
 	global $wpdb;
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table_name = code_snippets()->db->get_table_name( $network );
 
 	// Retrieve the snippet code from the database for validation before activating.
@@ -415,6 +455,11 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		return __( 'Could not activate snippet.', 'code-snippets' );
 	}
 
+	// Read back over a cleared cache, so what follows sees the snippet as
+	// active rather than as it was fetched for validation above.
+	clean_snippets_cache( $table_name );
+	$snippet = get_snippet( $id, $network );
+
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/activate_snippet', $snippet, $network );
 	clean_snippets_cache( $table_name );
@@ -434,7 +479,7 @@ function activate_snippet( int $id, ?bool $network = null ) {
  */
 function activate_snippets( array $ids, ?bool $network = null ): ?array {
 	global $wpdb;
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table_name = code_snippets()->db->get_table_name( $network );
 
 	$snippets = get_snippets( $ids, $network );
@@ -487,6 +532,8 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 		return null;
 	}
 
+	clean_snippets_cache( $table_name );
+
 	update_shared_network_snippets( $valid_snippets );
 	do_action( 'code_snippets/activate_snippets', $valid_snippets, $table_name );
 	clean_snippets_cache( $table_name );
@@ -506,7 +553,7 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
  */
 function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 	global $wpdb;
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
 	// Set the snippet to inactive.
@@ -522,8 +569,12 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 		return null;
 	}
 
+	// Read back over a cleared cache, so the snippet is seen as inactive by
+	// everything below rather than as it stood before the write.
+	clean_snippets_cache( $table );
+	$snippet = get_snippet( $id, $network );
+
 	// Update the recently active list.
-	$snippet = get_snippet( $id );
 	$recently_active = get_self_option( $network, 'recently_active_snippets', [] );
 	$recently_active[ $id ] = time();
 	update_self_option( $network, 'recently_active_snippets', $recently_active );
@@ -548,7 +599,7 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
  */
 function delete_snippet( int $id, ?bool $network = null ): bool {
 	global $wpdb;
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
 	$snippet = get_snippet( $id, $network );
@@ -565,8 +616,8 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	);
 
 	if ( $result ) {
-		do_action( 'code_snippets/delete_snippet', $snippet, $network );
 		clean_snippets_cache( $table );
+		do_action( 'code_snippets/delete_snippet', $snippet, $network );
 
 		$recently_active = get_self_option( $network, 'recently_active_snippets', [] );
 
@@ -592,7 +643,7 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
  */
 function trash_snippet( int $id, ?bool $network = null ): bool {
 	global $wpdb;
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
 	$snippet = get_snippet( $id, $network );
@@ -604,8 +655,8 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 
 	$wpdb->update( $table, [ 'active' => '-1' ], [ 'id' => $id ], [ '%d' ] );
 
-	do_action( 'code_snippets/trash_snippet', $snippet, $network );
 	clean_snippets_cache( $table );
+	do_action( 'code_snippets/trash_snippet', $snippet, $network );
 
 	return true;
 }
@@ -623,14 +674,14 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
  */
 function restore_snippet( int $id, ?bool $network = null ): bool {
 	global $wpdb;
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
 	$result = $wpdb->update( $table, [ 'active' => '0' ], [ 'id' => $id ], [ '%d' ] );
 
 	if ( $result ) {
-		do_action( 'code_snippets/restore_snippet', $id, $network );
 		clean_snippets_cache( $table );
+		do_action( 'code_snippets/restore_snippet', $id, $network );
 	}
 
 	return (bool) $result;
@@ -703,11 +754,10 @@ function save_snippet( $snippet ): ?Snippet {
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
 
-	if ( 'php' === $snippet->type ) {
-		// Remove tags from beginning and end of snippet.
-		$snippet->code = preg_replace( '|^\s*<\?(php)?|', '', $snippet->code );
-		$snippet->code = preg_replace( '|\?>\s*$|', '', $snippet->code );
+	// Strip any wrapper markup that came along with the pasted code.
+	$snippet->code = normalize_snippet_code( $snippet->code, $snippet->type );
 
+	if ( 'php' === $snippet->type ) {
 		// Deactivate snippet if code contains errors.
 		if ( $snippet->active && 'single-use' !== $snippet->scope ) {
 			test_snippet_code( $snippet );
@@ -726,6 +776,11 @@ function save_snippet( $snippet ): ?Snippet {
 	// Shared network snippets are always considered inactive.
 	$snippet->active = $snippet->active && ! $snippet->shared_network;
 
+	// Snippet authorship: track who created and who last edited each snippet.
+	// `created_by` is fixed at insert time; `updated_by` reflects every save.
+	$current_user_id = get_current_user_id();
+	$author_id = $current_user_id > 0 ? $current_user_id : null;
+
 	// Build the list of data to insert (excluding locked, which is stored in wp_options).
 	$data = [
 		'name'         => $snippet->name,
@@ -739,10 +794,12 @@ function save_snippet( $snippet ): ?Snippet {
 		'modified'     => $snippet->modified,
 		'revision'     => $snippet->revision,
 		'cloud_id'     => $snippet->cloud_id_owner ? $snippet->cloud_id_owner : null,
+		'updated_by'   => $author_id,
 	];
 
 	// Create a new snippet if the ID is not set.
 	if ( 0 === $snippet->id ) {
+		$data['created_by'] = $author_id;
 		$result = $wpdb->insert( $table, $data, '%s' );
 		if ( false === $result ) {
 			return null;
@@ -763,6 +820,12 @@ function save_snippet( $snippet ): ?Snippet {
 
 		set_snippet_locked( $snippet->id, $snippet->locked, $snippet->network );
 		$wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
+
+		// The row has changed, so the cached list no longer describes it. It is
+		// dropped before the snippet is read back, because everything below —
+		// the value this returns and what its hooks are handed — has to be the
+		// saved snippet rather than the one that was there beforehand.
+		clean_snippets_cache( $table );
 
 		$updated = get_snippet( $snippet->id, $snippet->network );
 		$updated->code_error = $snippet->code_error;
@@ -787,6 +850,38 @@ function save_snippet( $snippet ): ?Snippet {
 	update_shared_network_snippets( [ $updated ] );
 	clean_snippets_cache( $table );
 	return $updated;
+}
+
+/**
+ * Resolve a user ID to a compact author object for display.
+ *
+ * Returns the user's ID, display name, and avatar URL, or null when the ID is
+ * empty or the user no longer exists. Results are cached per request, so a list
+ * of snippets sharing authors only triggers one lookup per distinct user.
+ *
+ * @param int $user_id User ID to resolve.
+ *
+ * @return array{id: int, display_name: string, avatar_url: string}|null
+ */
+function get_snippet_author( int $user_id ): ?array {
+	static $cache = [];
+
+	if ( $user_id <= 0 ) {
+		return null;
+	}
+
+	if ( ! array_key_exists( $user_id, $cache ) ) {
+		$user = get_userdata( $user_id );
+		$cache[ $user_id ] = $user ?
+			[
+				'id'           => $user_id,
+				'display_name' => $user->display_name,
+				'avatar_url'   => (string) get_avatar_url( $user_id, [ 'size' => 32 ] ),
+			] :
+			null;
+	}
+
+	return $cache[ $user_id ];
 }
 
 /**
@@ -845,7 +940,7 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?Snippet {
 	global $wpdb;
 
-	$multisite = DB::validate_network_param( $multisite );
+	$multisite = validate_network_param( $multisite );
 	$table_name = code_snippets()->db->get_table_name( $multisite );
 
 	$cached_snippets = wp_cache_get( "all_snippets_$table_name", CACHE_GROUP );
@@ -873,6 +968,62 @@ function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?
 }
 
 /**
+ * Remove the wrapper markup that a snippet's code does not need.
+ *
+ * Snippet code is stored bare: PHP is evaluated already inside PHP, and CSS and
+ * JavaScript are wrapped in their own tags when printed. People increasingly
+ * paste code generated by an AI assistant, which almost always arrives wrapped
+ * in the tags for its language and sometimes in a markdown code fence as well.
+ *
+ * Leaving that markup in place fails differently depending on the type, and all
+ * three ways are unhelpful. PHP raises a syntax error, so the snippet saves and
+ * is then quietly deactivated. CSS and JavaScript have no syntax check at all,
+ * so they save as active and emit doubled tags on the front end with nothing
+ * reported anywhere.
+ *
+ * Only a wrapper around the whole snippet is removed. Tags appearing partway
+ * through the code are left alone, since those are the author's own.
+ *
+ * @param string $code Snippet code as provided.
+ * @param string $type Snippet type: php, css, js or html.
+ *
+ * @return string Code with any surrounding wrapper markup removed.
+ */
+function normalize_snippet_code( string $code, string $type ): string {
+	// A markdown fence around the whole snippet, as copied from a chat window.
+	// The closing fence only goes when an opening one was there: on its own it
+	// is the author's content, as in an HTML snippet ending in backticks.
+	$code = preg_replace( '/\A\s*```[a-z]*[ \t]*\R/i', '', $code, 1, $fenced );
+
+	if ( $fenced ) {
+		$code = preg_replace( '/\R\s*```\s*\z/', '', $code );
+	}
+
+	switch ( $type ) {
+		case 'php':
+			// `php` is matched as a whole word so that `<?phpinfo()` is not
+			// mistaken for an opening tag followed by `info()`.
+			$code = preg_replace( '/\A\s*<\?(?:php\b)?/i', '', $code );
+			$code = preg_replace( '/\?>\s*\z/', '', $code );
+			break;
+
+		case 'css':
+			$code = preg_replace( '/\A\s*<style\b[^>]*>/i', '', $code );
+			$code = preg_replace( '/<\/style\s*>\s*\z/i', '', $code );
+			break;
+
+		case 'js':
+			$code = preg_replace( '/\A\s*<script\b[^>]*>/i', '', $code );
+			$code = preg_replace( '/<\/script\s*>\s*\z/i', '', $code );
+			break;
+	}
+
+	// Drop the single line break left behind by an opening tag on its own line,
+	// so the stored code does not gain a blank first line each time.
+	return preg_replace( '/\A\R/', '', $code );
+}
+
+/**
  * Update a snippet entry given a list of fields.
  * Write operation.
  *
@@ -883,7 +1034,7 @@ function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?
 function update_snippet_fields( int $snippet_id, array $fields, ?bool $network = null ) {
 	global $wpdb;
 
-	$network = DB::validate_network_param( $network );
+	$network = validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
 	// Build a new snippet object for the validation.

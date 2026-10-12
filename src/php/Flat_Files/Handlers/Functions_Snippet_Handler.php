@@ -33,15 +33,7 @@ class Functions_Snippet_Handler implements Snippet_Type_Handler {
 	}
 
 	/**
-	 * Wrap functions snippets by adding a header that disallows direct access.
-	 *
-	 * The guard cannot simply be prepended. PHP requires `declare` and
-	 * `namespace` to come before any other statement, so a snippet opening with
-	 * either used to fatal on load with "Namespace declaration statement has to
-	 * be the very first statement" — taking down every page of the site, with
-	 * nothing written to the error log. The guard is inserted after that
-	 * prologue instead, and inside the braces when a namespace uses block
-	 * syntax, since no code may sit outside `namespace {}` blocks.
+	 * Wrap functions snippets by adding a header that disallows direct access, compatible with PHP namespaces.
 	 *
 	 * @param string $code Snippet PHP code.
 	 *

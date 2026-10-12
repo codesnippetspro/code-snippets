@@ -141,4 +141,19 @@ class Batch_Activation_Test extends UnitTestCase {
 		$this->assertTrue( $this->is_active( $first->id ) );
 		$this->assertTrue( $this->is_active( $second->id ) );
 	}
+
+	/**
+	 * The same function name in two namespaces is not a collision.
+	 *
+	 * @return void
+	 */
+	public function test_same_name_in_different_namespaces_activates_both(): void {
+		$alpha = $this->make_snippet( 'global', "namespace Batch\\Alpha;\nfunction batch_shared() { return 'a'; }" );
+		$beta  = $this->make_snippet( 'global', "namespace Batch\\Beta;\nfunction batch_shared() { return 'b'; }" );
+
+		activate_snippets( [ $alpha->id, $beta->id ] );
+
+		$this->assertTrue( $this->is_active( $alpha->id ) );
+		$this->assertTrue( $this->is_active( $beta->id ), 'a different namespace makes it a different function' );
+	}
 }

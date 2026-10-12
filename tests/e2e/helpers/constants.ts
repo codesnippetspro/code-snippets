@@ -23,20 +23,29 @@ export const SELECTORS = <const> {
 }
 
 export const TIMEOUTS = <const> {
+	VERY_SHORT: 2000,
+	SHORT: 5000,
+	MEDIUM: 10000,
 	DEFAULT: 30000,
-	SHORT: 5000
+	LONG: 60000,
+	VERY_LONG: 120000,
+	EXTRA_LONG: 180000
 }
 
 export const URLS = <const> {
+	FRONTEND: '/',
+	WP_ADMIN: '/wp-admin/',
+	WP_LOGIN: '/wp-login.php',
 	SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets',
-	COMMUNITY_CLOUD_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
+	CLOUD_COMMUNITY_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
+	CLOUD_LIBRARY_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-library',
+	BLUEPRINTS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=blueprints',
+	AI_AGENT_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=ai-agent',
 	ADD_SNIPPET_ADMIN: '/wp-admin/admin.php?page=add-snippet',
-	IMPORT_SNIPPETS_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
+	STATS_ADMIN: '/wp-admin/admin.php?page=code-snippets-stats',
+	IMPORT_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
 	SETTINGS_ADMIN: '/wp-admin/admin.php?page=snippets-settings',
-	WELCOME_SCREEN_ADMIN: '/wp-admin/admin.php?page=code-snippets-welcome',
-	ADD_SNIPPET: '/wp-admin/admin.php?page=add-snippet',
-	COMMUNITY_CLOUD: '/wp-admin/admin.php?page=snippets&subpage=cloud-community',
-	FRONTEND: '/'
+	WELCOME_ADMIN: '/wp-admin/admin.php?page=code-snippets-welcome'
 }
 
 export const MESSAGES = <const> {
@@ -48,7 +57,9 @@ export const MESSAGES = <const> {
 
 export const SNIPPET_TYPES = <const> {
 	PHP: 'Functions',
-	HTML: 'Content'
+	HTML: 'Content',
+	CSS: 'Styles',
+	JS: 'Scripts'
 }
 
 export const SNIPPET_LOCATIONS = <const> {
@@ -57,7 +68,9 @@ export const SNIPPET_LOCATIONS = <const> {
 	SITE_FOOTER: 'In site footer (end of <body>)',
 	IN_EDITOR: 'Where inserted in editor',
 	ADMIN_ONLY: 'Only run in administration area',
+	CSS_ADMIN_ONLY: 'Administration area',
 	FRONTEND_ONLY: 'Only run on site front-end',
+	CSS_FRONTEND_ONLY: 'Site front-end',
 	EVERYWHERE: 'Run everywhere'
 }
 

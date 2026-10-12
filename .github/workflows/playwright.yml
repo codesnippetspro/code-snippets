@@ -20,7 +20,9 @@ jobs:
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'default'
-      project-name: 'chromium-db-snippets'
+      # The right-to-left project runs after the default one on the same site;
+      # its own setup switches the test user's locale and its teardown restores it.
+      project-name: 'chromium-db-snippets chromium-rtl'
       multisite: ${{ inputs.multisite }}
 
   playwright-file-based-execution:

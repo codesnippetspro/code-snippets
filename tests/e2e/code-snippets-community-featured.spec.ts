@@ -3,8 +3,6 @@ import { TIMEOUTS, URLS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
-const REFRESH_DELAY = 3000
-
 const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
 	const saved = page
 		.waitForResponse(
@@ -25,7 +23,7 @@ const closePreviewIfOpen = async (page: Page) => {
 }
 
 const openCommunityCloud = async (page: Page) => {
-	await page.goto(URLS.COMMUNITY_CLOUD)
+	await page.goto(URLS.CLOUD_COMMUNITY_ADMIN)
 	await page.waitForLoadState('domcontentloaded')
 }
 
@@ -184,7 +182,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 			// Hold the refresh back so the card can be checked before it arrives.
 			if (1 < featuredRequests) {
-				await new Promise(resolve => setTimeout(resolve, REFRESH_DELAY))
+				await new Promise(resolve => setTimeout(resolve, TIMEOUTS.SHORT))
 			}
 
 			return route.fulfill({
@@ -262,7 +260,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 		const table = page.locator('.cloud-snippets-table')
 		await expect(table).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		const headerCheckbox = table.locator('thead').getByRole('checkbox', { name: 'Select all snippets' })
+		const headerCheckbox = table.locator('thead').getByRole('checkbox', { name: 'Select all downloadable snippets' })
 		const rowCheckbox = table.locator('tbody').getByRole('checkbox', { name: 'Select Mock Cloud Snippet' })
 
 		// The table owns the only select-all control; the toolbar checkbox is

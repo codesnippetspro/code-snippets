@@ -5,6 +5,8 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\Controller\Cloud_Search_Controller;
+use Code_Snippets\Integration\Evaluate_Functions;
+use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
 use function Code_Snippets\activate_snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
@@ -48,6 +50,7 @@ class Manage_Menu extends Admin_Menu {
 		new Manage_Menu_Bulk_Download();
 
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
+		add_filter( 'heartbeat_received', [ $this, 'refresh_run_once_nonce' ] );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_menu_css' ) );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
 	}
@@ -161,6 +164,7 @@ class Manage_Menu extends Admin_Menu {
 			'snippets'             => 'manage',
 			'add-snippet'          => 'edit',
 			'edit-snippet'         => 'edit',
+			'code-snippets-stats'  => 'stats',
 			'import-code-snippets' => 'import',
 			'snippets-settings'    => 'settings',
 		];
@@ -180,16 +184,73 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Query parameter that clears the record of which demos have been watched.
+	 */
+	public const DEMO_RESET_PARAM = 'demo-reset';
+
+	/**
+	 * Nonce action guarding the watched-demo reset.
+	 */
+	public const DEMO_RESET_NONCE = 'code_snippets_demo_reset';
+
+	/**
+	 * Build the address that puts the walkthrough tabs back to their "New" state.
+	 *
+	 * @return string
+	 */
+	public static function get_demo_reset_url(): string {
+		// Built raw rather than with wp_nonce_url(), which escapes the separator
+		// for markup: this address is meant to be pasted into the address bar.
+		return add_query_arg(
+			[
+				self::DEMO_RESET_PARAM => '1',
+				'_wpnonce'             => wp_create_nonce( self::DEMO_RESET_NONCE ),
+			],
+			code_snippets()->get_menu_url()
+		);
+	}
+
+	/**
+	 * Clear the watched-demo record when asked through the query string.
+	 *
+	 * This is deliberately not exposed in the settings screen: it exists to put
+	 * the walkthrough tabs back to their "New" state for a screenshot or a
+	 * walkthrough of the walkthroughs. Build the address with
+	 * {@see self::get_demo_reset_url()}, which signs it.
+	 *
+	 * @return void
+	 */
+	private function maybe_reset_demos(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified immediately below.
+		if ( ! isset( $_GET[ self::DEMO_RESET_PARAM ] ) ) {
+			return;
+		}
+
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, self::DEMO_RESET_NONCE ) || ! code_snippets()->current_user_can() ) {
+			return;
+		}
+
+		Demos_Seen_REST_Controller::reset_demos_seen();
+
+		// Redirect so a refresh does not repeat the reset, and the address bar
+		// is left clean.
+		wp_safe_redirect( remove_query_arg( [ self::DEMO_RESET_PARAM, '_wpnonce' ] ) );
+		exit;
+	}
+
+	/**
 	 * Nonce action guarding the run-once request.
 	 */
 	public const RUN_ONCE_NONCE = 'code_snippets_run_once';
 
 	/**
-	 * Run a single-use snippet, when asked to by the snippets list.
+	 * Run a single-use snippet, when asked by the snippets list.
 	 *
 	 * Activating the snippet is all that is required: single-use snippets are
 	 * executed and then deactivated again on the next page load, so redirecting
-	 * afterwards both runs the code and returns the snippet to its resting
+	 * afterward both runs the code and returns the snippet to its resting
 	 * state. This mirrors what the list table did before the snippets list
 	 * moved to the REST API, at which point the button was left pointing at a
 	 * URL that nothing handled.
@@ -232,7 +293,7 @@ class Manage_Menu extends Admin_Menu {
 
 		// Safe mode skips execution, so activating here would leave the snippet on
 		// without ever running it, behind a false success notice. Report it instead.
-		if ( \Code_Snippets\Integration\Evaluate_Functions::is_safe_mode_active() ) {
+		if ( Evaluate_Functions::is_safe_mode_active() ) {
 			wp_safe_redirect(
 				add_query_arg(
 					[ 'result' => 'run-once-safe-mode' ],
@@ -255,19 +316,46 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Send a fresh Run Once nonce with each Heartbeat, so a page left open past
+	 * the nonce lifetime can still run a snippet.
+	 *
+	 * @param mixed $response Heartbeat response.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function refresh_run_once_nonce( $response ): array {
+		$response = is_array( $response ) ? $response : [];
+
+		if ( code_snippets()->current_user_can() ) {
+			$response['code_snippets_run_once_nonce'] = wp_create_nonce( self::RUN_ONCE_NONCE );
+		}
+
+		return $response;
+	}
+
+	/**
 	 * Executed when the admin page is loaded.
 	 */
 	public function load() {
+		$this->maybe_reset_demos();
+
 		parent::load();
 
 		$this->handle_run_once();
 		$this->screen_options->load();
 
 		if ( $this->screen_options->is_upsell_view() ) {
+			$subpage = $this->screen_options->get_current_subpage();
+
+			if ( in_array( $subpage, [ 'cloud-library', 'blueprints', 'ai-agent' ], true ) ) {
+				$contextual_help = new Contextual_Help( $subpage );
+				$contextual_help->load();
+			}
+
 			return;
 		}
 
-		$contextual_help = new Contextual_Help( 'edit' );
+		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
 	}
 

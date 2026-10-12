@@ -1,11 +1,10 @@
 import { expect, test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { wpCli } from './helpers/wpCli'
+import { TIMEOUTS, URLS } from './helpers/constants'
 
 const QUICKNAV_PREFIX = 'E2E QuickNav'
 const QUICKNAV_PER_PAGE = 2
-const QUICKNAV_TEST_TIMEOUT_MS = 180000
-
 test.describe('Admin Bar Snippets QuickNav', () => {
 	let activeA: string
 	let activeB: string
@@ -15,7 +14,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 	let inactiveA: string
 
 	test.beforeAll(async () => {
-		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.EXTRA_LONG)
 		await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
 		await SnippetsTestHelper.cleanupSnippetsByPrefix(QUICKNAV_PREFIX)
 
@@ -40,7 +39,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 	})
 
 	test('Menu structure and pagination works', async ({ page }) => {
-		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.EXTRA_LONG)
 
 		const helper = new SnippetsTestHelper(page)
 		await helper.navigateToSnippetsAdmin()
@@ -88,7 +87,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		const errors: string[] = []
 		page.on('pageerror', error => errors.push(error.message))
 
-		await page.goto('/')
+		await page.goto(URLS.FRONTEND)
 
 		// The admin bar bundle is enqueued on the front end as well as in wp-admin,
 		// but `wp.i18n`, `wp.url` and `pagenow` are only present in wp-admin unless
@@ -99,7 +98,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 	})
 
 	test('Manage submenu contains status quick links', async ({ page }) => {
-		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.EXTRA_LONG)
 
 		const helper = new SnippetsTestHelper(page)
 		await helper.navigateToSnippetsAdmin()
@@ -117,7 +116,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 	})
 
 	test('QuickNav menu can be disabled via setting', async ({ page }) => {
-		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.EXTRA_LONG)
 
 		await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: false, perPage: QUICKNAV_PER_PAGE })
 
@@ -132,7 +131,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 	})
 
 	test('Safe Mode indicator appears only when Safe Mode is active', async ({ page }) => {
-		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.EXTRA_LONG)
 		const safeModeMuPluginPath = 'wp-content/mu-plugins/code-snippets-e2e-safe-mode.php'
 
 		const removeMuPlugin = async () => {
@@ -141,7 +140,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 
 		await removeMuPlugin()
 
-		await page.goto('/wp-admin/admin.php?page=snippets')
+		await page.goto(URLS.SNIPPETS_ADMIN)
 		await expect(page.locator('#wp-admin-bar-code-snippets-safe-mode')).toHaveCount(0)
 
 		try {
@@ -158,9 +157,9 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 				`
 			])
 
-			await page.goto('/wp-admin/admin.php?page=snippets')
+			await page.goto(URLS.SNIPPETS_ADMIN)
 			const safeModeNode = page.locator('#wp-admin-bar-code-snippets-safe-mode')
-			await expect(safeModeNode).toBeVisible({ timeout: 30000 })
+			await expect(safeModeNode).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
 			const safeModeLink = safeModeNode.locator('a').first()
 			await expect(safeModeLink).toHaveAttribute('href', 'https://snipco.de/safe-mode')
@@ -169,7 +168,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 			await removeMuPlugin()
 		}
 
-		await page.goto('/wp-admin/admin.php?page=snippets')
+		await page.goto(URLS.SNIPPETS_ADMIN)
 		await expect(page.locator('#wp-admin-bar-code-snippets-safe-mode')).toHaveCount(0)
 	})
 })

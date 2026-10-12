@@ -26,7 +26,7 @@ export const useSnippetView = (): UseSnippetView => {
 
 	const setSnippetView = useCallback((view: SnippetView) => {
 		setViewState(view)
-		api.post<{ view: SnippetView }, { view: SnippetView }>(`${REST_BASES.preferences}/snippet-view`, { view })
+		api.post<{ view: SnippetView }, { view: SnippetView }>(REST_BASES.preferences.snippetView, { view })
 			.catch(handleUnknownError)
 	}, [api])
 

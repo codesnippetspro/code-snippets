@@ -13,7 +13,7 @@ export const PriorityInput = () => {
 				{__('Priority', 'code-snippets')}
 			</label>
 
-			<Tooltip block end className="priority-input-tooltip">
+			<Tooltip inline end className="priority-input-tooltip">
 				{__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}
 			</Tooltip>
 

@@ -11,21 +11,21 @@ const AA_NORMAL_TEXT = 4.5
 const AA_GRAPHICAL = 3
 const DEFAULT_TEXT_COLOR = '#fff'
 
-const themeScss = readFileSync(
-	join(__dirname, '..', '..', 'src', 'css', 'common', '_theme.scss'),
+const badgesScss = readFileSync(
+	join(__dirname, '..', '..', 'src', 'css', 'common', '_badges.scss'),
 	'utf8'
 )
 
 const scssVariable = (name: string): string => {
-	const match = new RegExp(`^\\$${name}:\\s*(#[0-9a-fA-F]{3,8});`, 'm').exec(themeScss)
+	const match = new RegExp(`^\\$${name}:\\s*(#[0-9a-fA-F]{3,8});`, 'm').exec(badgesScss)
 	if (!match) {
-		throw new Error(`could not resolve $${name} in _theme.scss`)
+		throw new Error(`could not resolve $${name} in _badges.scss`)
 	}
 	return match[1]
 }
 
 const badgeColors = (name: string): [string, string] => {
-	const badgesMap = /\$badges:\s*\((?<entries>[\s\S]*?)\);/.exec(themeScss)?.groups?.entries
+	const badgesMap = /\$badges:\s*\((?<entries>[\s\S]*?)\);/.exec(badgesScss)?.groups?.entries
 	const entry = badgesMap
 		? new RegExp(`^\\s*${name}:\\s*([^,\\n]+)`, 'm').exec(badgesMap)?.[1].trim()
 		: undefined

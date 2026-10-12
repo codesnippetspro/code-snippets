@@ -110,6 +110,7 @@ class Basic_Cloud_Connection {
 	 * @return bool
 	 */
 	public function verify_rest_request( WP_REST_Request $request ): bool {
-		return $request->get_header( 'Access-Control' ) === $this->get_local_token();
+		$token = $this->get_local_token();
+		return '' !== $token && hash_equals( $token, (string) $request->get_header( 'Access-Control' ) );
 	}
 }

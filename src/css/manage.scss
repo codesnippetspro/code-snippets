@@ -1,8 +1,8 @@
+@use 'common/buttons';
 @use 'common/theme';
 @use 'common/badges';
 @use 'common/switch';
 @use 'common/tooltips';
-@use 'common/direction';
 @use 'common/select';
 @use 'common/modal';
 @use 'common/notices';
@@ -10,11 +10,19 @@
 @use 'common/toolbar';
 @use 'common/subnav';
 @use 'common/wp-admin';
+@use 'common/page-subtitle';
+@use 'manage/cloud-community';
+@use 'manage/cloud-library';
+@use 'manage/blueprints';
 @use 'common/page-header';
 @use 'common/kebab-menu';
+@use 'common/demo';
 @use 'manage/snippets-table';
-@use 'manage/cloud-community';
 @use 'manage/cloud-community-cards';
+@use 'manage/ai-agent';
+@use 'manage/ai-agent-demo';
+@use 'manage/cloud-library-demo';
+@use 'manage/blueprints-demo';
 
 .tablenav .tablenav-pages {
 	margin-block-end: 0;

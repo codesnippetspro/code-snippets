@@ -3,7 +3,7 @@
 
 // Match the active subnavigation tile so it blends into the admin canvas.
 body.wp-admin {
-	background: #f0f0f1;
+	background: var(--cs-color-surface-muted);
 }
 
 // Remove the WordPress core 10px top margin on the import and manage snippets containers
@@ -70,6 +70,8 @@ body.wp-admin {
 	// side. WP 7.0 keeps the chevron as a background image; clamping both paddings to 8px (as
 	// for text inputs) would let the arrow overlap the text, so the inline-end padding is wider.
 	select:not([class*='components-']) {
+		min-inline-size: 170px;
+		field-sizing: content;
 		min-block-size: var(--cs-control-height);
 		padding-block: 0;
 		padding-inline: 8px 24px;
@@ -103,12 +105,12 @@ body.wp-admin {
 		line-height: 2.5715;
 		font-size: 14px;
 		font-weight: 400;
-		background: #f6f7f7;
+		background: var(--cs-color-surface-subtle);
 		border-color: var(--cs-color-accent);
 		color: var(--cs-color-accent);
 
 		&:hover:not(:disabled) {
-			background: #f0f0f1;
+			background: var(--cs-color-surface-muted);
 			border-color: var(--cs-color-accent-hover);
 			color: var(--cs-color-accent-hover);
 		}
@@ -145,7 +147,7 @@ body.wp-admin {
 		&:focus:not(:disabled) {
 			background: var(--cs-color-accent-hover);
 			border-color: var(--cs-color-accent-hover);
-			box-shadow: 0 0 0 1px #fff, 0 0 0 3px var(--cs-color-accent);
+			box-shadow: 0 0 0 1px var(--cs-color-surface), 0 0 0 3px var(--cs-color-accent);
 			outline: 2px solid transparent;
 		}
 	}

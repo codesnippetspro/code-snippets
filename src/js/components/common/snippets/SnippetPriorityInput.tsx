@@ -21,7 +21,7 @@ export const SnippetPriorityInput: React.FC<SnippetPriorityInputProps> = ({ snip
 
 	const handleUpdate = () => {
 		// The kebab menu can focus this input on open, so a blur without a
-		// real change must not trigger a write.
+		// real change must not trigger a write action.
 		if (Number.isNaN(value) || value === snippet.priority) {
 			setValue(snippet.priority)
 			return

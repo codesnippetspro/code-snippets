@@ -1,30 +1,22 @@
-@use 'sass:color';
 @use 'common/theme';
 @use 'common/badges';
 @use 'common/toolbar';
 @use 'common/wp-admin';
+@use 'common/page-header';
 
-$breakpoint: 1060px;
-
-.code-snippets-welcome {
-	h1 {
-		font-size: 32px;
-		font-weight: 510;
-		line-height: 1.25;
-		color: #2c3337;
-		padding: 0;
-		margin-block: 50px 1rem;
-	}
+#code-snippets-welcome-container {
+	margin-block-start: 0;
 }
 
 .code-snippets-updates {
-	display: grid;
-	grid-template-columns: 2fr 1fr;
+	display: flex;
+	flex-direction: row;
 	gap: 20px;
 
 	> * {
-		background: #fff;
-		border-radius: 8px;
+		background: var(--cs-color-surface);
+		border: 1px solid var(--cs-color-border-subtle);
+		border-radius: var(--cs-card-radius);
 		padding: 32px;
 	}
 
@@ -33,7 +25,7 @@ $breakpoint: 1060px;
 		flex-flow: row;
 		justify-content: space-between;
 		align-items: center;
-		border-block-end: 1px solid #e2e2e4;
+		border-block-end: 1px solid var(--cs-color-border-subtle);
 		margin-block-end: 20px;
 		padding-block-end: 20px;
 	}
@@ -42,19 +34,24 @@ $breakpoint: 1060px;
 		font-size: 18px;
 		margin: 0;
 	}
+
+	@media (width <= 960px) {
+		flex-direction: column;
+	}
 }
 
 .code-snippets-hero {
 	display: flex;
 	flex-flow: column;
+	border: 1px solid var(--cs-color-border-subtle);
 
 	figure {
 		margin: 1em 0 0;
 		overflow: hidden;
-		border-radius: 0.5rem;
+		border-radius: var(--cs-card-radius);
 		position: relative;
 		block-size: auto;
-		background: #efefef;
+		background: var(--cs-color-surface-muted);
 		flex: 1;
 		text-align: center;
 
@@ -89,16 +86,17 @@ $breakpoint: 1060px;
 
 .code-snippets-card {
 	flex: 1;
-	background: #fff;
-	border-radius: 8px;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border-subtle);
+	border-radius: var(--cs-card-radius);
 	display: flex;
 	margin: 0;
 	flex-flow: column;
-	color: #2c3337;
+	color: var(--cs-color-text);
 
 	figure img {
-		border-start-start-radius: 8px;
-		border-start-end-radius: 8px;
+		border-start-start-radius: var(--cs-card-radius);
+		border-start-end-radius: var(--cs-card-radius);
 	}
 }
 
@@ -136,8 +134,8 @@ $breakpoint: 1060px;
 	}
 
 	.item-category {
-		color: white;
-		background: color.adjust(theme.$secondary, $lightness: -15%);
+		color: #fff;
+		background: color-mix(in srgb, var(--cs-color-secondary) 85%, #000 15%);
 		display: block;
 		font-size: 12px;
 		letter-spacing: 1px;
@@ -145,7 +143,7 @@ $breakpoint: 1060px;
 		text-transform: uppercase;
 		inline-size: fit-content;
 		padding: 3px 10px;
-		border-radius: 3px;
+		border-radius: 5px;
 		font-weight: bold;
 	}
 }
@@ -155,7 +153,7 @@ $breakpoint: 1060px;
 	line-height: 1.5;
 	overflow-y: scroll;
 	max-block-size: 500px;
-	color: #2c3337;
+	color: var(--cs-color-text);
 	padding-inline-end: 1em;
 
 	h3 {
@@ -190,20 +188,32 @@ $breakpoint: 1060px;
 		gap: 10px;
 	}
 
-	$icon-colors: (
-		lightbulb #f1c40f,
-		chart-line #85144b,
-		buddicons-replies #3d9970,
-		remove #ffbf00,
-		trash #c0c0c0,
-		shield #0074d9,
-		open-folder #5d2f27
-	);
+	.dashicons-lightbulb {
+		color: #f1c40f;
+	}
 
-	@each $icon, $color in $icon-colors {
-		.dashicons-#{$icon} {
-			color: $color;
-		}
+	.dashicons-chart-line {
+		color: #85144b;
+	}
+
+	.dashicons-buddicons-replies {
+		color: #3d9970;
+	}
+
+	.dashicons-remove {
+		color: #ffbf00;
+	}
+
+	.dashicons-trash {
+		color: #c0c0c0;
+	}
+
+	.dashicons-shield {
+		color: #0074d9;
+	}
+
+	.dashicons-open-folder {
+		color: #5d2f27;
 	}
 }
 
@@ -212,8 +222,8 @@ $breakpoint: 1060px;
 	inline-size: 0;
 	padding: 15px;
 	border: 6px solid #e7c0b3;
-	border-inline-end-color: theme.$secondary;
-	border-radius: 22px;
+	border-inline-end-color: var(--cs-color-secondary);
+	border-radius: 50%;
 	animation: loading-rotate 1s infinite linear;
 	position: absolute;
 	inset-inline-start: 47%;

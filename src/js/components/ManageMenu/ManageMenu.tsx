@@ -3,10 +3,8 @@ import { __ } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
 import { fetchConstQueryParam, fetchQueryParam, updateQueryParams } from '../../utils/urls'
 import { DismissibleNotice, type NoticeType } from '../common/Notice'
-import { SUBPAGES, Toolbar } from '../common/Toolbar'
-import { UpsellPage } from '../common/UpsellDialog'
-import { CommunityCloud } from './CommunityCloud/CommunityCloud'
-import { SnippetsTable } from './SnippetsTable'
+import { Toolbar } from '../common/Toolbar'
+import { SUBPAGES, SUBPAGE_ENTRIES, type SubpageName } from './subpages'
 
 const repositionTableOptionsSettings = () => {
 	const screenOptionsForm = document.getElementById('adv-settings')
@@ -40,7 +38,7 @@ const getNotice = (result: string): { text: string, type: NoticeType } | undefin
 
 		case 'run-once-safe-mode':
 			return {
-				text: __('Safe mode is active, so the snippet was not run.', 'code-snippets'),
+				text: __('Snippet execution is disabled on this site, so the snippet was not run.', 'code-snippets'),
 				type: 'warning'
 			}
 
@@ -69,21 +67,13 @@ const PageNotices = () => {
 }
 
 interface PageContentParams {
-	subpage: typeof SUBPAGES[number]
+	subpage: SubpageName
 }
 
 const PageContent: React.FC<PageContentParams> = ({ subpage }) => {
-	switch (subpage) {
-		case 'snippets':
-			return <SnippetsTable />
+	const { Component } = SUBPAGE_ENTRIES[subpage]
 
-		case 'cloud-community':
-			return <CommunityCloud />
-
-		case 'blueprints':
-		case 'cloud-library':
-			return <UpsellPage />
-	}
+	return <Component />
 }
 
 export const ManageMenu = () => {

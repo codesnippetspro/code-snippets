@@ -400,7 +400,7 @@ class REST_API_Snippets_Permissions_Test extends UnitTestCase {
 
 		$this->assert_forbidden_or_unauthorised(
 			$response,
-			"Expected forged network={$value} to be blocked."
+			"Expected forged network=$value to be blocked."
 		);
 	}
 
@@ -440,7 +440,7 @@ class REST_API_Snippets_Permissions_Test extends UnitTestCase {
 		$this->assertSame(
 			200,
 			$response->get_status(),
-			"Expected network={$value} to be treated as site-scoped and allowed."
+			"Expected network=$value to be treated as site-scoped and allowed."
 		);
 	}
 

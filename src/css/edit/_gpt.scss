@@ -3,15 +3,6 @@
 		min-inline-size: 550px;
 	}
 
-	.action-buttons {
-		display: flex;
-		justify-content: flex-end;
-	}
-
-	.components-button.is-secondary {
-		box-shadow: none;
-	}
-
 	.banner {
 		margin-inline: 0;
 	}
@@ -23,7 +14,7 @@
 	gap: 5px;
 
 	.dashicons-warning {
-		color: #b32d2e;
+		color: var(--cs-color-error);
 	}
 
 	.snippet-tags-container &,
@@ -77,7 +68,7 @@
 		}
 
 		.remove {
-			color: #b32d2e;
+			color: var(--cs-color-error);
 		}
 
 		.action {
@@ -91,21 +82,9 @@
 	}
 }
 
-.cloud-connect-modal {
-	.icons-group {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		.dashicons {
-			inline-size: 50px;
-			block-size: 50px;
-			font-size: 50px;
-		}
-	}
-
-	.action-buttons {
-		display: flex;
-		justify-content: flex-end;
-	}
+// The tags field sits in the lower form area, not the sidebar. Its help text
+// takes the component's own grey, 4.05:1 on this surface, from an injected
+// single-class rule; two classes outrank it and the muted token clears 4.5:1.
+.snippet-tags-container .components-form-token-field__help {
+	color: var(--cs-color-text-muted);
 }

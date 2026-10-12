@@ -36,7 +36,7 @@
 			border: none;
 			background: none;
 			font: inherit;
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			cursor: pointer;
 			text-align: start;
 			overflow: hidden;
@@ -48,9 +48,9 @@
 			}
 
 			&:focus-visible {
-				outline: 2px solid theme.$accent;
+				outline: 2px solid var(--cs-color-accent);
 				outline-offset: 2px;
-				border-radius: 2px;
+				border-radius: 5px;
 			}
 		}
 	}
@@ -62,9 +62,11 @@
 		gap: 16px;
 		font-size: 14px;
 		line-height: 1.5;
+		border-block-end: 1px solid var(--cs-color-border-subtle);
+		padding-block-end: 16px;
 
 		.cloud-snippet-tags {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 		}
 
 		.snippet-card-modified {
@@ -82,24 +84,22 @@
 		margin: 0;
 		font-size: 14px;
 		line-height: 1.5;
-		color: #646970;
-		border-block-start: 1px solid #dcdcde;
-		padding-block-start: 16px;
+		color: var(--cs-color-text-muted);
 	}
 
 	.cloud-snippet-author {
 		margin: 0;
 		font-size: 14px;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 
 		a {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 		}
 	}
 
 	footer {
 		.dashicons-warning {
-			color: #b32d2e;
+			color: var(--cs-color-error);
 		}
 
 		.cloud-snippet-update svg {
@@ -125,14 +125,14 @@
 // Pro-only actions use the same quiet outline treatment in card and table views.
 .cloud-pro-button.button {
 	background-color: transparent;
-	border-color: theme.$accent;
-	color: theme.$accent;
+	border-color: var(--cs-color-accent);
+	color: var(--cs-color-accent);
 
 	&:hover,
 	&:focus {
-		background-color: #eff5f9;
-		border-color: theme.$accent;
-		color: theme.$accent;
+		background-color: var(--cs-color-surface-info);
+		border-color: var(--cs-color-accent);
+		color: var(--cs-color-accent);
 	}
 }
 

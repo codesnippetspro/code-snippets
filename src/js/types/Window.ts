@@ -2,6 +2,8 @@ import type { SnippetSchema } from './schema/SnippetSchema'
 import type { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
+import type { FeedbackConfig } from './Feedback'
+import type { StatsChartViews, StatsSummary } from './Stats'
 import type { Snippet } from './Snippet'
 import type { SnippetView } from './SnippetView'
 import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './vendor/WordPressCodeEditor'
@@ -20,6 +22,7 @@ declare global {
 				) => void
 			}
 		}
+		codeSnippetsErrors?: string[]
 		readonly pagenow?: string
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
@@ -33,11 +36,15 @@ declare global {
 			hideUpsell: boolean
 			isCloudConnected: boolean
 			snippetView: SnippetView
+			statsChartViews: StatsChartViews
+			demosSeen?: string[]
 			restAPI: {
 				base: string
 				snippets: string
 				recentlyActive: string
-				preferences: string
+				snippetView: string
+				statsView: string
+				demosSeen: string
 				importPlugins: string
 				importFiles: string
 				nonce: string
@@ -51,10 +58,12 @@ declare global {
 				manage: string
 				addNew: string
 				edit: string
+				stats: string
 				welcome: string
 				import: string
 				settings: string | null
 				cloud: string
+				demoReset: string
 			}
 			banner: {
 				key: string
@@ -82,6 +91,9 @@ declare global {
 			runOnceNonce?: string
 			supportsZipDownloads: boolean
 			editorTheme: string
+			aiDemo?: {
+				siteName: string
+			}
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: SnippetSchema
@@ -111,5 +123,7 @@ declare global {
 			features: ImageLinkSchema[]
 			partners: ImageLinkSchema[]
 		}
+		readonly CODE_SNIPPETS_STATS?: StatsSummary
+		readonly CODE_SNIPPETS_FEEDBACK?: FeedbackConfig
 	}
 }

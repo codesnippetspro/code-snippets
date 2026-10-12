@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n'
 import '../../entries/editor'
 
 const parseSelect = (select: HTMLSelectElement) => select.options[select.selectedIndex].value
@@ -10,6 +11,10 @@ const initialiseCodeMirror = () => {
 
 	if (textarea && codeEditor) {
 		window.code_snippets_editor_preview = codeEditor.initialize(textarea)
+
+		// CodeMirror's own input is unlabelled; name it so the preview reads as what it is.
+		window.code_snippets_editor_preview.codemirror.getInputField().setAttribute('aria-label', __('Code editor preview', 'code-snippets'))
+
 		return window.code_snippets_editor_preview.codemirror
 	}
 

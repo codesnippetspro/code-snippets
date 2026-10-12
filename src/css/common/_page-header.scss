@@ -9,23 +9,15 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 	gap: 16px 24px;
-	margin-block: 8px 16px;
-
-	h1,
-	h2 {
-		margin: 0;
-		padding: 0;
-		font-size: 26px;
-		font-weight: 510;
-		line-height: 1.25;
-	}
+	margin-block: 0.5rem 16px;
 
 	h1 {
-		color: #1d2327;
-	}
-
-	h2 {
-		color: theme.$control-text;
+		margin: 0;
+		padding: 0;
+		font-size: 24px;
+		font-weight: 500;
+		line-height: 1.25;
+		color: var(--cs-color-text);
 	}
 }
 
@@ -43,10 +35,10 @@
 	margin-block: 0 16px;
 	font-size: 14px;
 	line-height: 1.5;
-	color: #646970;
+	color: var(--cs-color-text-muted);
 
 	a {
-		color: theme.$accent;
+		color: var(--cs-color-accent);
 		text-decoration: underline;
 	}
 }

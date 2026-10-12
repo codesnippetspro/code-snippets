@@ -40,3 +40,10 @@ tmp
 /.env
 .superpowers/
 docs/superpowers/
+/docs/
+
+# Local dev only (wp-env mu-plugin mappings, staging access)
+/dev/
+
+# Local wp-env overrides — may contain credentials, never commit
+.wp-env.override.json

@@ -52,7 +52,7 @@ class Autoloader_Prefixes_Test extends UnitTestCase {
 		$leftovers     = [];
 
 		foreach ( array_keys( $prefixes ) as $namespace ) {
-			if ( false === strpos( $namespace, $vendor_prefix ) &&
+			if ( 0 !== strpos( $namespace, $vendor_prefix ) &&
 			     isset( $prefixes[ $vendor_prefix . $namespace ] ) &&
 			     ! empty( $prefixes[ $namespace ] ) ) {
 				$leftovers[] = $namespace;

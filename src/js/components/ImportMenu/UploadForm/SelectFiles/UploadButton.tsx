@@ -48,7 +48,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ isUploading, setIsUp
 		}
 
 		api.post<FileParseResponse, FormData>(
-			`${REST_BASES.importFiles}/parse`,
+			`${REST_BASES.import.files}/parse`,
 			formData,
 			{ headers: { 'Content-Type': 'multipart/form-data' } })
 			.then(({ snippets, message, warnings }) => {

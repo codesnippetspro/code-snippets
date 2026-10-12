@@ -6,8 +6,8 @@
 	align-items: center;
 	padding: 12px;
 	gap: 10px;
-	background: #fff;
-	border: 1px solid #ccc;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border);
 	border-radius: 5px;
 
 	p {
@@ -19,13 +19,13 @@
 	}
 
 	.button-primary {
-		background-color: theme.$secondary;
+		background-color: var(--cs-color-secondary);
 		border: 0;
 		font-weight: bold;
 		margin-inline-start: auto;
 
 		&:hover, &:focus {
-			background-color: #0ca0a9;
+			background-color: var(--cs-color-primary-hover);
 		}
 	}
 
@@ -33,7 +33,7 @@
 		text-decoration: none;
 		font-weight: normal;
 		padding: 0;
-		color: #646970;
+		color: var(--cs-color-text-muted);
 		line-height: 1;
 		border: none;
 	}
@@ -46,7 +46,7 @@
 		margin: 0;
 
 		span {
-			color: #d46f4d;
+			color: var(--cs-color-secondary);
 		}
 	}
 
@@ -82,14 +82,14 @@
 		inline-size: 24px;
 		block-size: 24px;
 		border-radius: 50%;
-		background-color: #0ca0a9;
+		background-color: var(--cs-color-primary-hover);
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	}
 
 	.button.button-large {
-		background-color: #d46f4d;
+		background-color: var(--cs-color-secondary);
 		padding-block: 15px;
 		padding-inline: 20px;
 		font-size: 16px;
@@ -101,9 +101,9 @@
 		// Matches the specificity of the native-control override in _wp-admin.scss
 		// (.wrap .button-primary:not(.button-link):hover:not(:disabled)) so this
 		// upsell-specific hover styling isn't overridden by the shared button rule.
-		&:hover:not(.button-link, :disabled) {
-			background-color: #0ca0a9;
-			border-color: #0ca0a9;
+		&:is(:hover, :focus):not(.button-link, :disabled) {
+			background-color: var(--cs-color-primary-hover);
+			border-color: var(--cs-color-primary-hover);
 		}
 	}
 }
@@ -121,13 +121,13 @@
 	line-height: 1.5;
 	background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
 	box-shadow: 0 4px 80px rgb(0 0 0 / 10%);
-	border-radius: 8px;
+	border-radius: 5px;
 }
 
 // Bleed the upsell to the full width of the admin content area and fill the
 // remaining viewport height, so it reads as a full page rather than a small
 // boxed card floating in the subpage. 168px accounts for the WP admin bar
-// (32px) plus the plugin toolbar ($toolbar-block-size, 136px in _toolbar.scss).
+// (32px) plus the plugin toolbar (136px).
 .code-snippets-upsell-page {
 	box-sizing: border-box;
 	margin-inline-start: -22px;

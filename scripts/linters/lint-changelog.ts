@@ -60,17 +60,12 @@ const collapseBlankLines = (lines: string[]): string[] => {
 	return out
 }
 
-/** Remove blank lines before the first content line. */
 const stripLeadingBlanks = (lines: string[]): string[] => {
 	let i = 0
 	while (i < lines.length && '' === lines[i].trim()) {i += 1}
 	return lines.slice(i)
 }
 
-/**
- * Drop blank lines that sit between two list items. Bullets accumulate stray
- * blank lines over successive edits; consecutive items should be contiguous.
- */
 const removeBlanksBetweenListItems = (lines: string[]): string[] => {
 	const isItem = (l: string): boolean => /^\s*[*-] /.test(l)
 	const out: string[] = []

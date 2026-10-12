@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Admin\Menus;
 
+use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Client\Welcome_Client;
 use function Code_Snippets\code_snippets;
 use const Code_Snippets\PLUGIN_FILE;
@@ -44,6 +45,18 @@ class Welcome_Menu extends Admin_Menu {
 	 */
 	public function render() {
 		echo '<div id="code-snippets-welcome-container" class="wrap"></div>';
+	}
+
+	/**
+	 * Load the contextual help tabs.
+	 *
+	 * @return void
+	 */
+	public function load() {
+		parent::load();
+
+		$contextual_help = new Contextual_Help( 'welcome' );
+		$contextual_help->load();
 	}
 
 	/**

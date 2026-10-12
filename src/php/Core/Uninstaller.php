@@ -9,6 +9,11 @@
 
 namespace Code_Snippets\Core;
 
+use Code_Snippets\Admin\Feedback_Panel;
+use Code_Snippets\Client\Feedback_Client;
+use Code_Snippets\Model\Feedback_Connection;
+use function Code_Snippets\flush_versioned_cache_groups;
+
 /**
  * Uninstaller class.
  *
@@ -70,16 +75,22 @@ class Uninstaller {
 
 		// Shed cached snippet objects before dropping the recorded cache version,
 		// otherwise a same-version reinstall can read data this uninstall removed.
-		\Code_Snippets\flush_versioned_cache_groups( (string) get_option( 'code_snippets_cache_version', '' ) );
+		flush_versioned_cache_groups( (string) get_option( 'code_snippets_cache_version', '' ) );
 		delete_option( 'code_snippets_cache_version' );
 		delete_option( 'recently_active_snippets' );
 		delete_option( 'recently_activated_snippets' );
 		delete_option( 'code_snippets_settings' );
+		delete_option( 'code_snippets_stats' );
+		delete_option( 'code_snippets_demos_seen' );
 
 		delete_option( 'code_snippets_cloud_settings' );
 		delete_transient( 'code_snippets_cloud_links' );
 		delete_transient( 'cs_codevault_snippets' );
 		delete_transient( 'cs_local_to_cloud_map' );
+
+		delete_option( Feedback_Connection::CREDENTIALS_OPTION );
+		delete_transient( Feedback_Panel::SUMMARY_TRANSIENT );
+		delete_transient( Feedback_Client::REGISTRATION_FAILURE_TRANSIENT );
 	}
 
 	/**

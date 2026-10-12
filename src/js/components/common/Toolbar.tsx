@@ -2,7 +2,10 @@ import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useMemo, useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
-import { buildUrl } from '../../utils/urls'
+import { buildUrl, fetchConstQueryParam } from '../../utils/urls'
+import { SUBPAGES, SUBPAGE_ENTRIES, type SubpageName } from '../ManageMenu/subpages'
+import { hasSeenDemo } from './demo/useDemoSeen'
+import { AiAgentIcon } from './icons/AiAgentIcon'
 import { BlueprintIcon } from './icons/BlueprintIcon'
 import { CommunityIcon } from './icons/CommunityIcon'
 import { LibraryIcon } from './icons/LibraryIcon'
@@ -11,9 +14,18 @@ import { SnippetsIcon } from './icons/SnippetsIcon'
 import { UpsellDialog } from './UpsellDialog'
 import type { SVGProps } from 'react'
 
-export const SUBPAGES = ['snippets', 'blueprints', 'cloud-community', 'cloud-library'] as const
-
 const searchParams = new URLSearchParams(window.location.search)
+
+const managePageSlug = window.CODE_SNIPPETS?.urls.manage
+	? new URL(window.CODE_SNIPPETS.urls.manage).searchParams.get('page')
+	: null
+
+// The manage screen resolves an absent or unrecognised `subpage` to the first subpage, so
+// mirror that fallback here — comparing against the raw param would leave every lower-nav
+// tab inactive on the default Snippets view, which is where the page opens.
+const activeSubpage = searchParams.get('page') === managePageSlug
+	? fetchConstQueryParam('subpage', SUBPAGES) ?? SUBPAGES[0]
+	: null
 
 interface UpperNavItemProps {
 	name: string
@@ -40,23 +52,11 @@ const UpperNavItem = ({ name, url, label }: UpperNavItemProps) => {
 }
 const UpperNavItems = () =>
 	<>
-		<UpperNavItem
-			name="docs"
-			url="https://codesnippets.pro/docs"
-			label={__('Docs', 'code-snippets')}
-		/>
-
-		<UpperNavItem
-			name="cloud"
-			url="https://codesnippets.cloud/"
-			label={__('Cloud Dashboard', 'code-snippets')}
-		/>
-
-		{window.CODE_SNIPPETS?.urls.welcome && (
+		{window.CODE_SNIPPETS?.urls.stats && (
 			<UpperNavItem
-				name="welcome"
-				url={window.CODE_SNIPPETS.urls.welcome}
-				label={__("What's New", 'code-snippets')}
+				name="stats"
+				url={window.CODE_SNIPPETS.urls.stats}
+				label={__('Stats', 'code-snippets')}
 			/>)}
 
 		{window.CODE_SNIPPETS?.urls.import && (
@@ -65,6 +65,25 @@ const UpperNavItems = () =>
 				url={window.CODE_SNIPPETS.urls.import}
 				label={_x('Import', 'snippets', 'code-snippets')}
 			/>)}
+
+		{window.CODE_SNIPPETS?.urls.welcome && (
+			<UpperNavItem
+				name="welcome"
+				url={window.CODE_SNIPPETS.urls.welcome}
+				label={__("What's New", 'code-snippets')}
+			/>)}
+
+		<UpperNavItem
+			name="docs"
+			url="https://codesnippets.pro/docs"
+			label={__('Docs', 'code-snippets')}
+		/>
+
+		<UpperNavItem
+			name="cloud"
+			url={window.CODE_SNIPPETS?.urls.cloud ?? 'https://codesnippets.cloud'}
+			label={__('Cloud Dashboard', 'code-snippets')}
+		/>
 
 	</>
 
@@ -124,23 +143,46 @@ const UpperNav: React.FC = () => {
 }
 
 interface SubpageItemProps {
-	subpage: typeof SUBPAGES[number]
+	subpage: SubpageName
 	label: string
 	Icon: React.FC<SVGProps<SVGSVGElement>>
-	isPro?: boolean
 }
 
-const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon, isPro }) =>
-	<li>
-		<a
-			href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: subpage })}
-			className={classnames(`${subpage}-link`, { 'active-link': subpage === searchParams.get('subpage') })}
-		>
-			<Icon aria-hidden="true" />
-			<span className="toolbar-nav-label">{label}</span>
-			{isPro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
-		</a>
-	</li>
+const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon }) => {
+	const { demo, isPro } = SUBPAGE_ENTRIES[subpage]
+	const isNew = 'announce' === demo && !hasSeenDemo(subpage)
+
+	return (
+		<li>
+			<a
+				href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: subpage })}
+				className={classnames(`${subpage}-link`, { 'active-link': subpage === activeSubpage })}
+			>
+				<Icon aria-hidden="true" />
+				<span className="toolbar-nav-label">{label}</span>
+				{demo && (isNew
+					? <span className="new-chip">{__('New', 'code-snippets')}</span>
+					: <span className="demo-chip">{__('Demo', 'code-snippets')}</span>)}
+				{isPro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+			</a>
+		</li>
+	)
+}
+
+const SettingsItem = () =>
+	window.CODE_SNIPPETS?.urls.settings
+		? <li>
+			<a
+				href={window.CODE_SNIPPETS.urls.settings}
+				className={classnames('settings-link', {
+					'active-link': 'snippets-settings' === searchParams.get('page')
+				})}
+			>
+				<SettingsIcon aria-hidden="true" />
+				<span className="toolbar-nav-label">{__('Settings', 'code-snippets')}</span>
+			</a>
+		</li>
+		: null
 
 const LowerNav = () =>
 	<div className="code-snippets-toolbar-lower">
@@ -169,7 +211,6 @@ const LowerNav = () =>
 					subpage="cloud-library"
 					label={__('Cloud Library', 'code-snippets')}
 					Icon={LibraryIcon}
-					isPro
 				/>
 
 				{!isLicensed() && (
@@ -177,16 +218,15 @@ const LowerNav = () =>
 						subpage="blueprints"
 						label={__('Blueprints', 'code-snippets')}
 						Icon={BlueprintIcon}
-						isPro
 					/>)}
 
-				{window.CODE_SNIPPETS?.urls.settings && (
-					<li className="toolbar-end-item">
-						<a href={window.CODE_SNIPPETS.urls.settings} className="settings-link">
-							<SettingsIcon aria-hidden="true" />
-							<span className="toolbar-nav-label">{__('Settings', 'code-snippets')}</span>
-						</a>
-					</li>)}
+				<SubpageItem
+					subpage="ai-agent"
+					label={__('AI Agent', 'code-snippets')}
+					Icon={AiAgentIcon}
+				/>
+
+				<SettingsItem />
 			</ul>
 		</nav>
 	</div>

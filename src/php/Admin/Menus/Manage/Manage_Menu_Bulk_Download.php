@@ -43,7 +43,7 @@ class Manage_Menu_Bulk_Download {
 			);
 		}
 
-		$snippets_json = wp_unslash( filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '' );
+		$snippets_json = wp_unslash( filter_input( INPUT_POST, 'snippets' ) ?? '' );
 		$snippets = $this->resolve_snippets( $snippets_json );
 
 		if ( $snippets instanceof WP_Error ) {

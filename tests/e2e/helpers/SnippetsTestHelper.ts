@@ -13,8 +13,6 @@ const RANDOM_SLICE_END = 7
 const CLICK_RETRIES = 3
 const SAVE_CONFIRM_RETRIES = 3
 const AT_LEAST_ONE = 1
-const SAVE_SETTLE_TIMEOUT_MS = 10000
-
 const getErrorMessage = (error: unknown): string => {
 	if (error instanceof Error) {
 		return error.message
@@ -32,6 +30,9 @@ export interface SnippetFormOptions {
 export interface CreateSnippetCliOptions {
 	name: string;
 	active: boolean;
+	conditionId?: number;
+	desc?: string;
+	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
 
@@ -77,7 +78,7 @@ export class SnippetsTestHelper {
 		await wpCli(['eval', php])
 	}
 
-	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<void> {
+	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<number> {
 		const type = options.type ?? 'php'
 		let scope = 'global'
 		switch (type) {
@@ -100,16 +101,18 @@ export class SnippetsTestHelper {
 		const php = `
 			$snippet = new \\Code_Snippets\\Model\\Snippet([
 				'name' => ${JSON.stringify(options.name)},
-				'desc' => '',
+				'desc' => ${JSON.stringify(options.desc ?? '')},
 				'code' => ${JSON.stringify(code)},
 				'scope' => ${JSON.stringify(scope)},
 				'active' => ${options.active ? 'true' : 'false'},
-				'tags' => [],
+				'condition_id' => ${options.conditionId ?? 0},
+				'tags' => ${JSON.stringify(options.tags ?? [])},
 			]);
-			\\Code_Snippets\\save_snippet($snippet);
+			$snippet = \\Code_Snippets\\save_snippet($snippet);
+			echo $snippet->id;
 		`
 
-		await wpCli(['eval', php])
+		return Number(await wpCli(['eval', php]))
 	}
 
 	static async cleanupSnippetsByPrefix(prefix: string): Promise<void> {
@@ -343,7 +346,7 @@ export class SnippetsTestHelper {
 			await this.clickButton(name)
 
 			const settled = await this.page.locator(SELECTORS.SAVE_SETTLED_NOTICE).first()
-				.waitFor({ state: 'visible', timeout: SAVE_SETTLE_TIMEOUT_MS })
+				.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM })
 				.then(() => true)
 				.catch(() => false)
 
@@ -618,12 +621,47 @@ export class SnippetsTestHelper {
 	}
 
 	/**
+	 * Normalize a CSS color value to rgb() format for reliable comparison.
+	 * Converts hex (#rrggbb, #rgb) to rgb(r, g, b) and passes rgb() values through.
+	 */
+	private normalizeColor(value: string): string {
+		const hex = value.trim()
+
+		// Match #rrggbb or #rgb
+		const fullHex = /^#(?<r>[0-9a-f]{2})(?<g>[0-9a-f]{2})(?<b>[0-9a-f]{2})$/i.exec(hex)
+		if (fullHex?.groups) {
+			const { r, g, b } = fullHex.groups
+			return `rgb(${parseInt(r, 16)}, ${parseInt(g, 16)}, ${parseInt(b, 16)})`
+		}
+
+		const shortHex = /^#(?<r>[0-9a-f])(?<g>[0-9a-f])(?<b>[0-9a-f])$/i.exec(hex)
+		if (shortHex?.groups) {
+			const { r, g, b } = shortHex.groups
+			return `rgb(${parseInt(r + r, 16)}, ${parseInt(g + g, 16)}, ${parseInt(b + b, 16)})`
+		}
+
+		return value
+	}
+
+	/**
+	 * Check whether a CSS property name refers to a color property.
+	 */
+	private isColorProperty(property: string): boolean {
+		return /color|background|border|outline|shadow/i.test(property)
+	}
+
+	/**
 	 * Verify that CSS styles are applied to an element
 	 */
 	async verifyStylesApplied(selector: string, expectedStyles: Partial<CSSStyleDeclaration>): Promise<void> {
 		for (const [property, expectedValue] of Object.entries(expectedStyles)) {
 			const actualValue = await this.getComputedStyle(selector, <keyof CSSStyleDeclaration> property)
-			expect(actualValue).toBe(expectedValue)
+
+			if ('string' === typeof expectedValue && 'string' === typeof actualValue && this.isColorProperty(property)) {
+				expect(this.normalizeColor(actualValue)).toBe(this.normalizeColor(expectedValue))
+			} else {
+				expect(actualValue).toBe(expectedValue)
+			}
 		}
 	}
 
@@ -633,7 +671,12 @@ export class SnippetsTestHelper {
 	async verifyStylesNotApplied(selector: string, unexpectedStyles: Partial<CSSStyleDeclaration>): Promise<void> {
 		for (const [property, unexpectedValue] of Object.entries(unexpectedStyles)) {
 			const actualValue = await this.getComputedStyle(selector, <keyof CSSStyleDeclaration> property)
-			expect(actualValue).not.toBe(unexpectedValue)
+
+			if ('string' === typeof unexpectedValue && 'string' === typeof actualValue && this.isColorProperty(property)) {
+				expect(this.normalizeColor(actualValue)).not.toBe(this.normalizeColor(unexpectedValue))
+			} else {
+				expect(actualValue).not.toBe(unexpectedValue)
+			}
 		}
 	}
 

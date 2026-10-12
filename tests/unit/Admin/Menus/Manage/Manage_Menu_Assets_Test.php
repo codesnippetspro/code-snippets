@@ -5,8 +5,6 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Admin\Menus\Admin_Menu;
 use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;
-use Code_Snippets\UnitTestCase;
-use WP_UnitTest_Factory;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
@@ -63,6 +61,36 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * The AI Agent demo receives the site name it personalizes its snippet with.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_localizes_ai_demo_site_name_on_ai_agent_view(): void {
+		$_REQUEST['subpage'] = 'ai-agent';
+
+		$this->enqueue_assets();
+		$localized = $this->get_localized_data();
+
+		$this->assertArrayHasKey( 'aiDemo', $localized );
+		$this->assertSame( get_bloginfo( 'name' ), $localized['aiDemo']['siteName'] );
+		$this->assertArrayNotHasKey( 'snippetsList', $localized );
+	}
+
+	/**
+	 * Other subpages do not carry the AI Agent demo payload.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_omits_ai_demo_data_on_other_views(): void {
+		$this->enqueue_assets();
+		$this->assertArrayNotHasKey( 'aiDemo', $this->get_localized_data() );
+
+		$_REQUEST['subpage'] = 'cloud-community';
+		$this->enqueue_assets();
+		$this->assertArrayNotHasKey( 'aiDemo', $this->get_localized_data() );
+	}
+
+	/**
 	 * Preview assets exclude the full editing dependencies.
 	 *
 	 * @return void
@@ -74,12 +102,12 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 
 		$this->enqueue_assets();
 
-		$this->assertTrue( wp_script_is( 'code-editor', 'enqueued' ) );
-		$this->assertTrue( wp_style_is( 'code-editor', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'htmlhint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'csslint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'jshint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'code-snippets-code-editor', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( 'code-editor' ) );
+		$this->assertTrue( wp_style_is( 'code-editor' ) );
+		$this->assertFalse( wp_script_is( 'htmlhint' ) );
+		$this->assertFalse( wp_script_is( 'csslint' ) );
+		$this->assertFalse( wp_script_is( 'jshint' ) );
+		$this->assertFalse( wp_script_is( 'code-snippets-code-editor' ) );
 	}
 
 	/**
@@ -250,11 +278,11 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 
 		$this->enqueue_assets();
 
-		$this->assertTrue( wp_script_is( 'code-editor', 'enqueued' ) );
-		$this->assertTrue( wp_style_is( 'code-editor', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'htmlhint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'csslint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'jshint', 'enqueued' ) );
-		$this->assertFalse( wp_script_is( 'code-snippets-code-editor', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( 'code-editor' ) );
+		$this->assertTrue( wp_style_is( 'code-editor' ) );
+		$this->assertFalse( wp_script_is( 'htmlhint' ) );
+		$this->assertFalse( wp_script_is( 'csslint' ) );
+		$this->assertFalse( wp_script_is( 'jshint' ) );
+		$this->assertFalse( wp_script_is( 'code-snippets-code-editor' ) );
 	}
 }

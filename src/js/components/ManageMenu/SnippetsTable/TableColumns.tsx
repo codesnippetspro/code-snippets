@@ -1,12 +1,13 @@
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import React, { Fragment } from 'react'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { getRunOnceNonce } from '../../../utils/restAPI'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { SnippetPriorityInput } from '../../common/snippets/SnippetPriorityInput'
@@ -22,16 +23,30 @@ interface ColumnProps {
 	snippet: Snippet
 }
 
+const runOnceUrl = (snippet: Snippet, nonce: string): string =>
+	buildUrl(window.location.href, {
+		action: 'run-once',
+		snippet: snippet.id,
+		network: snippet.network ? 'true' : 'false',
+		_wpnonce: nonce
+	})
+
+// The rendered link carries the nonce from page load. Before any navigation
+// starts, whether a click, a middle-click or "open in new tab", the href is
+// rebuilt from the nonce the Heartbeat has refreshed since, so a page left open
+// still works.
 const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
 	<a
 		className="snippet-execution-button"
 		title={__('Run Once', 'code-snippets')}
-		href={buildUrl(window.location.href, {
-			action: 'run-once',
-			snippet: snippet.id,
-			network: snippet.network ? 'true' : 'false',
-			_wpnonce: window.CODE_SNIPPETS_MANAGE?.runOnceNonce ?? ''
-		})}
+		href={runOnceUrl(snippet, window.CODE_SNIPPETS_MANAGE?.runOnceNonce ?? '')}
+		onMouseDown={event => {
+			event.currentTarget.href = runOnceUrl(snippet, getRunOnceNonce())
+		}}
+		onClick={event => {
+			event.preventDefault()
+			window.location.assign(runOnceUrl(snippet, getRunOnceNonce()))
+		}}
 	>
 		<span className="screen-reader-text">{__('Run Once', 'code-snippets')}</span>
 		<span aria-hidden="true">&nbsp;</span>
@@ -101,7 +116,7 @@ export const SnippetExtraIcons: React.FC<ColumnProps> = ({ snippet }) =>
 	</div>
 
 export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
-	<>
+	<span className="snippet-name-group">
 		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
 			? <a
 				href={getSnippetEditUrl(snippet)}
@@ -115,7 +130,7 @@ export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
 			</span>}
 
 		{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
-	</>
+	</span>
 
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
@@ -159,11 +174,47 @@ export const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 		</span>
 		: <>&#8212;</>
 
+export const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) =>
+	<SnippetPriorityInput snippet={snippet} />
+
+export const getAuthorDisplayName = (snippet: Snippet): string =>
+	(snippet.updatedBy ?? snippet.createdBy)?.displayName ?? ''
+
+const AuthorColumn: React.FC<ColumnProps> = ({ snippet }) => {
+	const creator = snippet.createdBy
+	const updater = snippet.updatedBy
+	const primary = updater ?? creator
+
+	if (!primary) {
+		return <span className="snippet-author is-unknown">&#8212;</span>
+	}
+
+	const tooltip = creator && updater && creator.id !== updater.id
+		? sprintf(__('Created by %1$s · Last edited by %2$s', 'code-snippets'), creator.displayName, updater.displayName)
+		: creator
+			? sprintf(__('Created by %s', 'code-snippets'), creator.displayName)
+			: sprintf(__('Last edited by %s', 'code-snippets'), primary.displayName)
+
+	return (
+		<span className="snippet-author" title={tooltip}>
+			{primary.avatarUrl &&
+				<img className="snippet-author__avatar" src={primary.avatarUrl} alt="" width={20} height={20} />}
+			<span className="snippet-author__name">{primary.displayName}</span>
+		</span>
+	)
+}
+
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
 		title: <span className="screen-reader-text">{__('Activate', 'code-snippets')}</span>,
 		render: snippet => <ActivateColumn snippet={snippet} />
+	},
+	{
+		id: 'id',
+		title: __('ID', 'code-snippets'),
+		sortedValue: snippet => snippet.id,
+		render: snippet => snippet.id
 	},
 	{
 		id: 'name',
@@ -199,6 +250,12 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 		title: __('Priority', 'code-snippets'),
 		sortedValue: snippet => snippet.priority,
 		render: snippet => <SnippetPriorityInput snippet={snippet} />
+	},
+	{
+		id: 'author',
+		title: __('Author', 'code-snippets'),
+		sortedValue: snippet => getAuthorDisplayName(snippet).toLowerCase(),
+		render: snippet => <AuthorColumn snippet={snippet} />
 	}
 ]
 

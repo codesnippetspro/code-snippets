@@ -1,21 +1,17 @@
-@use 'theme';
 @use 'upsell';
 
-$toolbar-block-size: 136px;
-$wpcontent-inline-start-indent: 20px;
-
 #wpbody {
-	padding-block-start: $toolbar-block-size;
+	padding-block-start: var(--cs-toolbar-block-size);
 }
 
 .code-snippets-toolbar {
-	color: #2c3337;
-	background: #fff;
+	color: var(--cs-color-text);
+	background: var(--cs-color-surface);
 	font-family: 'SF Pro', sans-serif;
-	margin-inline-start: -$wpcontent-inline-start-indent - 2;
+	margin-inline-start: calc(-1 * var(--cs-wpcontent-inline-start-indent) - 2px);
 	position: absolute;
-	inline-size: calc(100% + $wpcontent-inline-start-indent);
-	block-size: $toolbar-block-size;
+	inline-size: calc(100% + var(--cs-wpcontent-inline-start-indent));
+	block-size: var(--cs-toolbar-block-size);
 	inset-block-start: 0;
 	display: flex;
 	flex-direction: column;
@@ -52,12 +48,6 @@ $wpcontent-inline-start-indent: 20px;
 		}
 	}
 
-	h1 {
-		font-size: 18px;
-		font-weight: 700;
-		line-height: 1.5;
-	}
-
 	ul {
 		display: flex;
 		gap: 22px;
@@ -67,6 +57,17 @@ $wpcontent-inline-start-indent: 20px;
 	a {
 		color: inherit;
 		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var(--cs-color-accent);
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--cs-color-accent);
+			outline-offset: 6px;
+		}
 	}
 
 	@media (width <= 480px) {
@@ -87,7 +88,7 @@ $wpcontent-inline-start-indent: 20px;
 }
 
 .code-snippets-toolbar-lower {
-	border-block-end: 1px solid #e2e2e4;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
 	block-size: 60px;
 	box-sizing: border-box;
 
@@ -103,17 +104,23 @@ $wpcontent-inline-start-indent: 20px;
 
 	li {
 		display: flex;
+
+		&:last-of-type {
+			margin-inline-start: auto;
+		}
 	}
 
 	// Items fill the 60px band; the active tab is indicated by accent colour on
-	// its icon and label, with no underline.
+	// its icon and label plus a 3px accent underline, reserved on every item as a
+	// transparent border so activating a tab never shifts the row.
+	// stylelint-disable-next-line no-descending-specificity
 	li a {
 		display: flex;
 		margin: 0;
 		block-size: 100%;
 		padding-block: 0;
 		padding-inline: 24px;
-		color: #2c3337;
+		color: var(--cs-color-text);
 		gap: 12px;
 		align-items: center;
 		font-size: 16px;
@@ -130,14 +137,16 @@ $wpcontent-inline-start-indent: 20px;
 		}
 
 		&.active-link, &:hover, &:focus, &:active {
-			color: theme.$accent;
+			color: var(--cs-color-accent);
 			z-index: 1;
-			border-color: theme.$accent;
+			border-color: var(--cs-color-accent);
+			box-shadow: none;
 		}
-	}
 
-	li:not(.toolbar-end-item) + li.toolbar-end-item {
-		margin-inline-start: auto;
+		&:focus-visible {
+			outline: 2px solid var(--cs-color-accent);
+			outline-offset: -2px;
+		}
 	}
 
 	// Narrow widths: centre each item's label directly beneath its icon and
@@ -156,7 +165,9 @@ $wpcontent-inline-start-indent: 20px;
 			font-size: 13px;
 			text-align: center;
 
-			.pro-chip {
+			.pro-chip,
+			.new-chip,
+			.demo-chip {
 				position: absolute;
 				inset-block-start: 7px;
 				inset-inline-end: 4px;
@@ -168,23 +179,7 @@ $wpcontent-inline-start-indent: 20px;
 		}
 	}
 
-	// On narrow screens Settings remains available through the WordPress submenu.
-	// The remaining primary destinations fill the toolbar evenly rather than
-	// becoming a second horizontally-scrolling navigation row.
 	@media (width <= 782px) {
-		li.toolbar-end-item {
-			display: none;
-		}
-
-		li:not(.toolbar-end-item) {
-			flex: 1 1 0;
-			min-inline-size: 0;
-		}
-
-		li:not(.toolbar-end-item) + li.toolbar-end-item {
-			margin-inline-start: 0;
-		}
-
 		li a {
 			inline-size: 100%;
 			padding-inline: 8px;
@@ -197,14 +192,15 @@ $wpcontent-inline-start-indent: 20px;
 .code-snippets-toolbar-upper li a:hover,
 .code-snippets-toolbar-upper li a:focus,
 .code-snippets-toolbar-upper li a:active {
-	color: theme.$accent;
+	color: var(--cs-color-accent);
 }
 
 .code-snippets-toolbar-lower .pro-chip,
+.code-snippets-toolbar-lower .demo-chip,
 .nav-tab .pro-chip,
 .snippet-type-link .pro-chip {
-	color: theme.$accent;
-	background: #eff5f9;
+	color: var(--cs-color-accent);
+	background: var(--cs-color-surface-info);
 	border: 1px solid rgb(34 113 177 / 10%);
 	text-transform: uppercase;
 	border-radius: 999px;
@@ -218,8 +214,28 @@ $wpcontent-inline-start-indent: 20px;
 }
 
 
-.code-snippets-toolbar-lower .pro-chip {
+.code-snippets-toolbar-lower .pro-chip,
+.code-snippets-toolbar-lower .demo-chip {
 	font-size: 12px;
+}
+
+// Deliberately warm, so it reads as "new here" rather than as another locked
+// Pro destination alongside the blue pro chips.
+.code-snippets-toolbar-lower .new-chip {
+	color: #fff;
+	background: linear-gradient(135deg, var(--cs-color-secondary) 0%, #e2953f 100%);
+	border: 1px solid rgb(0 0 0 / 5%);
+	text-transform: uppercase;
+	border-radius: 999px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 5px 10px;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	line-height: 1;
 }
 
 .nav-tab .pro-chip,
@@ -228,7 +244,25 @@ $wpcontent-inline-start-indent: 20px;
 }
 
 .code-snippets-return-link {
-	float: inline-end;
+	display: inline-flex;
+	float: none;
+	align-items: center;
+	min-block-size: 36px;
+	margin-block: 32px 20px;
+	padding-inline: 12px;
+	border-color: var(--cs-color-accent);
+	background: transparent;
+	color: var(--cs-color-accent);
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		border-color: var(--cs-color-accent-hover);
+		background: transparent;
+		color: var(--cs-color-accent-hover);
+	}
 }
 
 .code-snippets-toolbar-upper .toolbar-more-item {
@@ -262,8 +296,8 @@ $wpcontent-inline-start-indent: 20px;
 	block-size: auto;
 	margin: 0;
 	padding: 8px;
-	background: #fff;
-	border: 1px solid theme.$control-border;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border);
 	box-shadow: 0 3px 8px rgb(0 0 0 / 15%);
 }
 
@@ -282,13 +316,17 @@ $wpcontent-inline-start-indent: 20px;
 
 .code-snippets-toolbar-upper .toolbar-more-menu a:hover,
 .code-snippets-toolbar-upper .toolbar-more-menu a:focus {
-	background: #f6f7f7;
+	background: var(--cs-color-surface-subtle);
 }
 
 @media (width <= 960px) {
 	.code-snippets-toolbar-upper {
 		gap: 12px;
 		padding-inline: 16px;
+	}
+
+	.code-snippets-toolbar-upper ul {
+		gap: 0;
 	}
 
 	.code-snippets-toolbar-upper .logo {
@@ -329,5 +367,72 @@ $wpcontent-inline-start-indent: 20px;
 @media (width <= 640px) {
 	.code-snippets-toolbar-upper .logo div {
 		display: none;
+	}
+}
+
+.wp-core-ui .code-snippets-toolbar-upper .button.cloud-connected-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: 8px;
+	text-transform: uppercase;
+	background: #f6f7f7;
+	color: #646970;
+	font-size: 12px;
+	font-weight: bold;
+	border: none;
+	min-block-size: 3.5em;
+	min-inline-size: 12.5em;
+}
+
+.cloud-disconnect-confirmation-modal .components-modal__children-container {
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	font-size: 16px;
+	gap: 1em;
+	min-inline-size: 512px;
+
+	h1 {
+		font-size: 28px;
+		margin-block: 0;
+	}
+
+	p {
+		color: #646970;
+		font-size: inherit;
+		max-inline-size: 22em;
+		text-align: center;
+	}
+
+	a.button {
+		font-size: inherit;
+		background-color: var(--cs-color-secondary);
+	}
+
+	.button-link {
+		color: var(--cs-color-secondary);
+		border: none;
+	}
+}
+
+// Slot that adopts the WordPress Screen Options / Help tabs so they appear
+// directly below the toolbar instead of above the page content.
+.snippets-screen-meta-slot {
+	#screen-meta-links {
+		float: none;
+		display: flex;
+		justify-content: flex-end;
+		margin: 0;
+		border-color: var(--cs-color-border-subtle);
+
+		.show-settings {
+			border-color: var(--cs-color-border-subtle);
+		}
+	}
+
+	#screen-meta {
+		margin: 0;
 	}
 }

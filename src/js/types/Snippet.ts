@@ -16,6 +16,14 @@ export interface Snippet {
 	readonly lastActive?: number
 	readonly code_error?: readonly [string, number] | null
 	readonly code_error_trace?: string | null
+	readonly createdBy?: SnippetAuthor | null
+	readonly updatedBy?: SnippetAuthor | null
+}
+
+export interface SnippetAuthor {
+	readonly id: number
+	readonly displayName: string
+	readonly avatarUrl: string
 }
 
 export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js', 'cond']

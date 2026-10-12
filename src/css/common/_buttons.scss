@@ -1,0 +1,32 @@
+// A `<Button link>` renders as `.button.button-link` so it stays a real button
+// for assistive tech, but it should read as inline text. WordPress 7.0 restyled
+// `.wp-core-ui .button` to carry a border and radius, and its `.button-link`
+// rules clear the background and padding but not the border — so a link-styled
+// button draws a box around itself. The list table neutralises this for row
+// actions; this covers everywhere else (modals, forms, sidebars). Specificity is
+// one class above WP's own rule so it wins without `!important`.
+.wp-core-ui .button.button-link {
+	border: 0;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	block-size: auto;
+	min-block-size: 0;
+	padding: 0;
+	line-height: inherit;
+	font-weight: 400;
+
+	// Keep a visible focus ring for keyboard users — the point is to remove the
+	// resting box, not the focus affordance.
+	&:focus-visible {
+		outline: 1px solid currentcolor;
+		outline-offset: 2px;
+	}
+
+	&:hover:not(:disabled),
+	&:active:not(:disabled) {
+		border: 0;
+		background: none;
+		box-shadow: none;
+	}
+}

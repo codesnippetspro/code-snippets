@@ -2,9 +2,11 @@
 
 namespace Code_Snippets\Admin\Menus;
 
+use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Settings\Settings_Fields;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\are_settings_unified;
+use function Code_Snippets\Settings\do_settings_fields_with_headings;
 use function Code_Snippets\Utils\enqueue_code_editor;
 use function Code_Snippets\Utils\get_editor_themes;
 use const Code_Snippets\PLUGIN_FILE;
@@ -37,6 +39,35 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Register the settings menu.
+	 *
+	 * Deliberately bypasses the snippet view-permission gate applied by the
+	 * parent. The settings page is already restricted to the core capability
+	 * (`manage_options` via `get_cap()`), so it stays admin-only regardless —
+	 * but it must always remain reachable so an administrator who restricts
+	 * their own role's snippet permissions can never lock themselves out of the
+	 * Permissions tab needed to undo it.
+	 */
+	public function register() {
+		$this->add_menu( $this->slug, $this->label, $this->title );
+	}
+
+	/**
+	 * The settings page is configuration territory (it includes the Permissions
+	 * tab itself), so it must remain restricted to full administrators — never
+	 * the broader snippet access capability that can be granted to other roles.
+	 * This is also what keeps an administrator from ever losing access to the
+	 * Permissions tab needed to undo a misconfiguration.
+	 *
+	 * @return string
+	 */
+	protected function menu_cap(): string {
+		return is_multisite() && ( is_network_admin() || ! code_snippets()->is_subsite_menu_enabled() )
+			? 'manage_network_options'
+			: 'manage_options';
+	}
+
+	/**
 	 * Executed when the admin page is loaded
 	 */
 	public function load() {
@@ -50,6 +81,9 @@ class Settings_Menu extends Admin_Menu {
 				exit;
 			}
 		}
+
+		$contextual_help = new Contextual_Help( 'settings' );
+		$contextual_help->load();
 	}
 
 	/**
@@ -175,16 +209,22 @@ class Settings_Menu extends Admin_Menu {
 	 *
 	 * @return string
 	 */
-	public function get_current_section( string $default_section = 'general' ): string {
+	public function get_current_section( string $default_section = '' ): string {
 		$sections = $this->get_sections();
 
 		if ( ! $sections ) {
 			return $default_section;
 		}
 
+		// Fall back to the first registered tab. Naming a specific section here
+		// meant the page rendered empty whenever that section stopped existing.
+		$fallback = $default_section && isset( $sections[ $default_section ] )
+			? $default_section
+			: (string) array_key_first( $sections );
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is matched to registered sections.
-		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default_section;
-		return isset( $sections[ $active_tab ] ) ? $active_tab : $default_section;
+		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $fallback;
+		return isset( $sections[ $active_tab ] ) ? $active_tab : $fallback;
 	}
 
 	/**
@@ -304,7 +344,7 @@ class Settings_Menu extends Admin_Menu {
 
 			printf( '<div class="settings-section %s-settings"><table class="form-table">', esc_attr( $section['id'] ) );
 
-			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
+			do_settings_fields_with_headings( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table></div>';
 		}
 	}

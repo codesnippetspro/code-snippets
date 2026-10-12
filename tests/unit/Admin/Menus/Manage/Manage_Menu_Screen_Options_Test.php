@@ -47,6 +47,20 @@ class Manage_Menu_Screen_Options_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * The optional ID column stays hidden until a user enables it.
+	 *
+	 * @return void
+	 */
+	public function test_default_hidden_columns_include_id(): void {
+		$options = new Manage_Menu_Screen_Options();
+		$screen  = get_current_screen();
+
+		$this->assertSame( [ 'id' ], $options->get_default_hidden_columns( [], $screen ) );
+		$this->assertSame( [ 'type', 'id' ], $options->get_default_hidden_columns( [ 'type' ], $screen ) );
+		$this->assertSame( [ 'type' ], $options->get_default_hidden_columns( [ 'type' ], \WP_Screen::get( 'dashboard' ) ) );
+	}
+
+	/**
 	 * The manage screen renders a truncation toggle.
 	 *
 	 * @return void
@@ -72,6 +86,48 @@ class Manage_Menu_Screen_Options_Test extends AdminUnitTestCase {
 		$this->assertSame( '', $options->render( '' ) );
 		$this->assertTrue( $options->is_cloud_community_view() );
 		$this->assertFalse( $options->is_manage_table_view() );
+	}
+
+	/**
+	 * The explicit snippets subpage renders the Manage table.
+	 *
+	 * @return void
+	 */
+	public function test_explicit_snippets_subpage_is_the_manage_table_view(): void {
+		$_REQUEST['subpage'] = 'snippets';
+		$options = new Manage_Menu_Screen_Options();
+
+		$this->assertTrue( $options->is_manage_table_view() );
+		$this->assertFalse( $options->is_upsell_view() );
+	}
+
+	/**
+	 * The AI Agent demo is detected as its own view, and keeps the upsell
+	 * treatment that strips Screen Options and Help tabs from the page.
+	 *
+	 * @return void
+	 */
+	public function test_ai_agent_demo_view_detection(): void {
+		$_REQUEST['subpage'] = 'ai-agent';
+		$options = new Manage_Menu_Screen_Options();
+
+		$this->assertTrue( $options->is_ai_agent_view() );
+		$this->assertTrue( $options->is_upsell_view() );
+		$this->assertFalse( $options->is_manage_table_view() );
+		$this->assertFalse( $options->is_cloud_community_view() );
+	}
+
+	/**
+	 * Other subpages are not mistaken for the AI Agent demo.
+	 *
+	 * @return void
+	 */
+	public function test_ai_agent_view_excludes_other_subpages(): void {
+		$options = new Manage_Menu_Screen_Options();
+		$this->assertFalse( $options->is_ai_agent_view() );
+
+		$_REQUEST['subpage'] = 'cloud-community';
+		$this->assertFalse( $options->is_ai_agent_view() );
 	}
 
 	/**

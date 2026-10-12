@@ -3,7 +3,6 @@
 namespace Code_Snippets\REST_API;
 
 use WP_REST_Request;
-use function Code_Snippets\code_snippets;
 use const Code_Snippets\REST_API_NAMESPACE;
 
 /**

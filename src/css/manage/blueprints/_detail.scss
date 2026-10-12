@@ -1,0 +1,50 @@
+.blueprint-detail {
+	inline-size: 100%;
+	max-inline-size: 100%;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	margin-block: 24px 32px;
+
+	&__header {
+		background: #fff;
+		border: 1px solid var(--cs-color-border);
+		border-block-end: none;
+		border-radius: var(--cs-card-radius) var(--cs-card-radius) 0 0;
+		padding: 24px 12px;
+
+		&-title-row {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		p {
+			color: var(--cs-color-text-muted);
+			font-size: 14px;
+			line-height: 1.5;
+			margin: 0;
+			max-inline-size: 100%;
+		}
+
+		p.blueprint-detail__intro {
+			margin-block-start: 12px;
+			white-space: pre-line;
+		}
+
+		.docs-link {
+			background: none;
+			border: none;
+			box-shadow: none;
+			color: var(--cs-color-accent);
+			flex-shrink: 0;
+			font-size: 14px;
+			padding: 0;
+			margin-block-start: 12px;
+			text-decoration: underline;
+			line-height: 1;
+		}
+	}
+}

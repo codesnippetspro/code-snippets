@@ -1,6 +1,6 @@
 import { SNIPPET_TYPE_SCOPES } from '../../types/Snippet'
 import { isNetworkAdmin } from '../screen'
-import type { Snippet, SnippetScope } from '../../types/Snippet'
+import type { Snippet, SnippetAuthor, SnippetScope } from '../../types/Snippet'
 
 const TUPLE_SIZE = 2
 
@@ -32,12 +32,25 @@ const isCodeError = (value: unknown): value is readonly [string, number] =>
 	Array.isArray(value) && TUPLE_SIZE === value.length &&
 	'string' === typeof value[0] && 'number' === typeof value[1]
 
+const parseSnippetAuthor = (value: unknown): SnippetAuthor | null => {
+	if (!value || 'object' !== typeof value) {
+		return null
+	}
+
+	const author = <Record<string, unknown>>value
+	return {
+		id: Number(author.id ?? 0),
+		displayName: 'string' === typeof author.display_name ? author.display_name : '',
+		avatarUrl: 'string' === typeof author.avatar_url ? author.avatar_url : ''
+	}
+}
+
 export const isValidScope = (scope: unknown): scope is SnippetScope =>
 	'string' === typeof scope && Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
 		typeScopes.some(typeScope => typeScope === scope))
 
 export const parseSnippetObject = (fields: unknown): Snippet => {
-	const result: { -readonly [F in keyof Snippet]: Snippet[F] } = { ...defaults, tags: [] }
+	const result: Snippet = { ...defaults, tags: [], conditions: {} }
 
 	if ('object' !== typeof fields || null === fields) {
 		return result
@@ -64,5 +77,7 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		...'code_error_trace' in fields &&
 		('string' === typeof fields.code_error_trace || null === fields.code_error_trace) && { code_error_trace: fields.code_error_trace },
 		...'last_active' in fields && { lastActive: Number(fields.last_active) },
+		...'created_by' in fields && { createdBy: parseSnippetAuthor(fields.created_by) },
+		...'updated_by' in fields && { updatedBy: parseSnippetAuthor(fields.updated_by) },
 	}
 }

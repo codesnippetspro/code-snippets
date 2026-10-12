@@ -13,7 +13,7 @@ WP_VERSION=${5-latest}
 SKIP_DB_CREATE=${6-false}
 
 TMPDIR=${TMPDIR-/tmp}
-TMPDIR=$(echo $TMPDIR | sed -e "s/\/$//")
+TMPDIR=$(echo "$TMPDIR" | sed -e "s/\/$//")
 WP_TESTS_DIR=${WP_TESTS_DIR-$TMPDIR/wordpress-tests-lib}
 WP_CORE_DIR=${WP_CORE_DIR-$TMPDIR/wordpress/}
 
@@ -42,33 +42,33 @@ set -ex
 
 install_wp() {
 
-	if [ -d $WP_CORE_DIR ]; then
+	if [ -d "$WP_CORE_DIR" ]; then
 		return;
 	fi
 
-	mkdir -p $WP_CORE_DIR
+	mkdir -p "$WP_CORE_DIR"
 
 	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
-		mkdir -p $TMPDIR/wordpress-trunk
-		rm -rf $TMPDIR/wordpress-trunk/*
-		svn export --quiet https://core.svn.wordpress.org/trunk $TMPDIR/wordpress-trunk/wordpress
-		mv $TMPDIR/wordpress-trunk/wordpress/* $WP_CORE_DIR
+		mkdir -p "$TMPDIR/wordpress-trunk"
+		rm -rf "$TMPDIR"/wordpress-trunk/*
+		svn export --quiet https://core.svn.wordpress.org/trunk "$TMPDIR/wordpress-trunk/wordpress"
+		mv "$TMPDIR"/wordpress-trunk/wordpress/* "$WP_CORE_DIR"
 	else
 		if [ $WP_VERSION == 'latest' ]; then
 			local ARCHIVE_NAME='latest'
 		elif [[ $WP_VERSION =~ [0-9]+\.[0-9]+ ]]; then
 			# https serves multiple offers, whereas http serves single.
-			download https://wordpress.org/wordpress-$WP_VERSION.tar.gz  $TMPDIR/wordpress.tar.gz
+			download "https://wordpress.org/wordpress-$WP_VERSION.tar.gz" "$TMPDIR/wordpress.tar.gz"
 			ARCHIVE_NAME="wordpress-$WP_VERSION"
 		fi
 
-		if [ ! -f $TMPDIR/wordpress.tar.gz ]; then
-			download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  $TMPDIR/wordpress.tar.gz
+		if [ ! -f "$TMPDIR/wordpress.tar.gz" ]; then
+			download "https://wordpress.org/${ARCHIVE_NAME}.tar.gz" "$TMPDIR/wordpress.tar.gz"
 		fi
-		tar --strip-components=1 -zxmf $TMPDIR/wordpress.tar.gz -C $WP_CORE_DIR
+		tar --strip-components=1 -zxmf "$TMPDIR/wordpress.tar.gz" -C "$WP_CORE_DIR"
 	fi
 
-	download https://raw.githubusercontent.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
+	download https://raw.githubusercontent.com/markoheijnen/wp-mysqli/master/db.php "$WP_CORE_DIR/wp-content/db.php"
 }
 
 install_test_suite() {
@@ -80,11 +80,11 @@ install_test_suite() {
 	fi
 
 	# set up testing suite if it doesn't yet exist
-	if [ ! -d $WP_TESTS_DIR ]; then
+	if [ ! -d "$WP_TESTS_DIR" ]; then
 		local WP_TESTS_VERSION="${WP_TESTS_TAG#tags/}"
 		case "$WP_TESTS_VERSION" in *.*.*) ;; *.*) WP_TESTS_VERSION="$WP_TESTS_VERSION.0" ;; esac
-		mkdir -p $WP_TESTS_DIR
-		rm -rf $WP_TESTS_DIR/{includes,data}
+		mkdir -p "$WP_TESTS_DIR"
+		rm -rf "$WP_TESTS_DIR"/{includes,data}
 		download "https://github.com/WordPress/wordpress-develop/archive/refs/tags/${WP_TESTS_VERSION}.tar.gz" "$TMPDIR/wp-develop.tar.gz"
 		rm -rf "$TMPDIR/wp-develop"
 		mkdir -p "$TMPDIR/wp-develop"
@@ -94,12 +94,15 @@ install_test_suite() {
 	fi
 
 	if [ ! -f "$WP_TESTS_DIR/wp-tests-config.php" ]; then
-		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
+		download "https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php" "$WP_TESTS_DIR"/wp-tests-config.php
 		# remove all forward slashes in the end
-		WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
+		WP_CORE_DIR=$(echo "$WP_CORE_DIR" | sed "s:/\+$::")
+		# sed reads '&' and '\' in the replacement as syntax, so a path containing either
+		# would be written to the config mangled.
+		WP_CORE_DIR_ESCAPED=$(printf '%s' "$WP_CORE_DIR" | sed -e 's:[\\&]:\\&:g')
 		# Support both older (/src/) and current (/wordpress/) sample config templates.
-		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s:dirname( __FILE__ ) . '/wordpress/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR_ESCAPED/':" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s:dirname( __FILE__ ) . '/wordpress/':'$WP_CORE_DIR_ESCAPED/':" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php

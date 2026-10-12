@@ -56,7 +56,7 @@ const makeMigrationRequest = async (api: RestAPI, importer: string, request: Imp
 		throw new Error(__('Please select an importer.', 'code-snippets'))
 	}
 
-	const response = await api.post<ImportResponse, ImportRequest>(`${REST_BASES.importPlugins}/${importer}/import`, request)
+	const response = await api.post<ImportResponse, ImportRequest>(`${REST_BASES.import.plugins}/${importer}/import`, request)
 
 	if (1 > response.imported.length) {
 		throw new Error(__('No snippets were imported.', 'code-snippets'))
@@ -121,13 +121,13 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 
 	useEffect(() => {
 		fetchImporters(() => api
-			.get<Record<string, Importer>>(REST_BASES.importPlugins)
+			.get<Record<string, Importer>>(REST_BASES.import.plugins)
 			.then(response => Object.values(response)))
 	}, [api, fetchImporters])
 
 	useEffect(() => {
 		if (selectedImporter) {
-			fetchSnippets(() => api.get<ImportableSnippet[]>(`${REST_BASES.importPlugins}/${selectedImporter}`))
+			fetchSnippets(() => api.get<ImportableSnippet[]>(`${REST_BASES.import.plugins}/${selectedImporter}`))
 		}
 	}, [api, selectedImporter, fetchSnippets])
 

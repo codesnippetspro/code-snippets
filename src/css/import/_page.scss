@@ -1,8 +1,10 @@
+@use '../common/theme';
+
 .wrap > h2:first-of-type {
 	font-size: 32px;
 	font-weight: 510;
 	line-height: 1.25;
-	color: #2c3337;
+	color: var(--cs-color-text);
 	margin-block: 24px 16px;
 	padding: 0;
 }

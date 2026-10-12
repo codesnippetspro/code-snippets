@@ -5,6 +5,7 @@ namespace Code_Snippets\Admin\Menus\Manage;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\get_snippet_author;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\Settings\get_setting;
 use function Code_Snippets\Utils\enqueue_code_preview_editor;
@@ -113,6 +114,9 @@ class Manage_Menu_Assets {
 				function ( Snippet $snippet ) {
 					$fields = $snippet->get_fields();
 					$fields['code'] = '';
+					$fields['created_by'] = get_snippet_author( (int) ( $snippet->created_by ?? 0 ) );
+					$fields['updated_by'] = get_snippet_author( (int) ( $snippet->updated_by ?? 0 ) );
+
 					// Match the REST response: a UTC value with no offset is read
 					// as local time by the browser.
 					$fields['modified'] = $snippet->modified_iso;
@@ -127,6 +131,14 @@ class Manage_Menu_Assets {
 			if ( $inline_limit > 0 ) {
 				$localized['snippetsList'] = array_slice( $snippets, 0, $inline_limit );
 			}
+		}
+
+		if ( $this->screen_options->is_ai_agent_view() ) {
+			// The AI Agent demo writes the site name into the snippet it builds,
+			// so the walkthrough reads as though it were written for this site.
+			$localized['aiDemo'] = [
+				'siteName' => get_bloginfo( 'name' ),
+			];
 		}
 
 		wp_localize_script( self::JS_HANDLE, 'CODE_SNIPPETS_MANAGE', $localized );

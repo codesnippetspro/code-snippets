@@ -9,15 +9,11 @@ Tool-specific configuration lives in dedicated locations:
 - **Cursor:** `.cursor/rules/*.mdc`
 - **Claude:** `claude.md`
 
----
-
 ## Project Overview
 
 **Code Snippets** is a WordPress plugin that lets site owners manage and execute PHP, HTML, CSS, and JavaScript code
 snippets through a graphical interface — replacing the need to edit `functions.php` or maintain multiple single-purpose
 plugins.
-
----
 
 ## Repository Structure
 
@@ -50,14 +46,12 @@ plugins.
 │   ├── dist/               # Webpack output (built assets, not committed)
 │   ├── vendor/             # Composer dependencies
 │   └── composer.json       # PHP dependency management
+├── .github/                # CI workflows, issue templates, Copilot instructions
+├── assets/                 # WordPress.org screenshots, icons, and banners
 ├── config/                 # Webpack and PostCSS configuration
 ├── scripts/                # Release, versioning, and linter scripts
-├── tests/                  # PHPUnit suites, Playwright E2E specs
-├── assets/                 # WordPress.org screenshots, icons, and banners
-└── .github/                # CI workflows, issue templates, Copilot instructions
+└── tests/                  # PHPUnit suites, Playwright E2E specs
 ```
-
----
 
 ## Tech Stack
 
@@ -75,8 +69,6 @@ plugins.
 | WP dev env    | `@wordpress/env` / `wp-env` (`npx wp-env start`)               |
 | Pre-commit    | Husky + lint-staged (auto-fix on commit)                       |
 | PHP deps      | Composer with Imposter (namespace-prefixing)                   |
-
----
 
 ## Coding Standards
 
@@ -107,6 +99,7 @@ plugins.
   `defined('ABSPATH') || exit;`; do not add guards to autoloaded class files.
 - Use `wp_die()` for fatal admin errors; never `die()` or `exit` with user-facing output.
 - In `src/php/Plugin.php` (and Core bootstrap), rely on `autoload.php`; avoid manual `require_once` chains.
+- Delete plugin-owned options, transients, and other persisted state during uninstall.
 - Avoid creating custom database tables. Prefer WordPress-native storage: `wp_options` for settings/flags, transients
   for cached/temporary data, or hidden custom post types for structured content. Custom tables require manual schema
   management, migration, and uninstall logic — only justify them when native storage genuinely cannot meet the
@@ -138,6 +131,8 @@ plugins.
 - **Translator comments**: Place `// translators:` comments on the line immediately before the translatable string,
   not before the enclosing JSX expression.
 - **Headings**: Admin screens render a single `h1`; section headings within a page start at `h2`.
+- **Section names**: Give meaningful sections an accessible name: use `aria-labelledby` for an existing visible
+  heading and `aria-label` only when no visible heading exists.
 - **Component composition**: Separate components when doing so clarifies responsibility or enables reuse. Use JSX for
   markup rather than `createElement` in utility functions.
 - Do not create 'index.ts' barrel files for components or hooks; import them directly to avoid circular dependencies and
@@ -148,6 +143,14 @@ plugins.
 ### SCSS
 
 - Use logical CSS properties (e.g., `margin-inline-start` not `margin-left`) — enforced by stylelint.
+- Use CSS variables (`var(--cs-*)`) for themeable runtime values instead of SASS variables. Define shared runtime tokens
+  under `:root` in `src/css/common/_theme.scss`.
+- Keep SASS variables and maps for compile-time generation only, such as selector generators, mixins, and SASS color
+  operations that cannot operate on runtime `var()` values.
+- For custom interactive controls, show keyboard focus with `:focus-visible` using `outline: 2px solid var(--cs-color-accent)`.
+  A `:focus` rule may clear inherited box shadows, but must not remove the visible keyboard-focus indicator.
+- Reuse an existing semantic `--cs-*` token before adding one. Do not add a `var()` fallback unless it is deliberately
+  required, and use shared card and control radius tokens for repeated radii.
 
 ### Code Organization
 
@@ -155,8 +158,6 @@ plugins.
   or clearer testing; avoid single-use and pass-through abstractions.
 - Maintain a direct mapping between source classes and their test files; split source classes and tests only when doing
   so creates a meaningful separation or clearer testing boundary.
-
----
 
 ## Architecture Patterns
 
@@ -171,8 +172,6 @@ plugins.
   before changing any default behaviour that may be preference-driven.
 - **Safe mode** — `src/php/Core/load.php` boots a recovery path when safe mode is active; any change to snippet
   execution must preserve this path.
-
----
 
 ## Branching & Git Workflow
 
@@ -208,13 +207,11 @@ plugins.
 - On the public repository, do not disclose premium (Pro) decisions, features, or roadmap, and avoid
   unnecessary references to private repositories, issues, or cross-edition work.
 
----
-
 ## Development Commands
 
 ```bash
 # Install dependencies
-npm install                  # Node deps + Husky hooks
+npm install                  # Node deps
 composer -d src install      # PHP deps (or: npm run bundle)
 
 # WordPress environment
@@ -254,8 +251,6 @@ npm run version-rc           # Pre-release release candidate
 npm run version              # Final release
 ```
 
----
-
 ## Security Checklist
 
 Apply to every change:
@@ -268,18 +263,18 @@ Apply to every change:
 - Apply `rel="noopener noreferrer"` to every `target="_blank"` link.
 - Use `$wpdb->prepare()` for every dynamic SQL value.
 - Any feature fetching remote content must document its trust model.
-
----
+- State-changing query-string actions must use an action-specific nonce, sanitize inputs, verify capability, and
+  redirect to a URL without the action parameters.
 
 ## Testing Requirements
 
 - **Unit tests** (PHPUnit) — required for all PHP logic changes.
 - **Integration tests** (PHPUnit) — required when changing DB schema, REST endpoints, or hook behaviour.
 - **E2E tests** (Playwright) — required for changes affecting snippet create/edit/execute flows.
+- **E2E assertions** — prefer roles, accessible names, and states over structural selectors. For viewport geometry,
+  use only a documented tolerance for unavoidable browser sub-pixel rounding.
 - **Minimum requirements** - Tests must be compatible with the minimum supported PHP 7.4 and WordPress 5.5.
 - **Build** - Generated build artifacts (`src/dist/`, Composer autoload maps) must be regenerated when source changes.
-
----
 
 ## Do Not
 

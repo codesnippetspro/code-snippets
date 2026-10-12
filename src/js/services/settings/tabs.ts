@@ -19,11 +19,12 @@ const selectTab = (tabsWrapper: Element, tab: Element, section: string) => {
 	}
 }
 
-// Refresh the editor preview if we're viewing the editor section.
-const refreshEditorPreview = (section: string) => {
-	if ('editor' === section) {
-		window.code_snippets_editor_preview?.codemirror.refresh()
-	}
+// Refresh the editor preview whenever tabs change. CodeMirror measures itself
+// as zero-height while its container is hidden, so it has to be told to
+// remeasure once the section holding it becomes visible. Keying this to a
+// specific section name meant the preview rendered blank if that name changed.
+const refreshEditorPreview = () => {
+	window.code_snippets_editor_preview?.codemirror.refresh()
 }
 
 // Update the http referer value so that any redirections lead back to this tab.
@@ -71,14 +72,16 @@ export const handleSettingsTabs = () => {
 
 	for (const tab of tabs) {
 		tab.addEventListener('click', event => {
-			event.preventDefault()
 			const section = tab.getAttribute('data-section')
 
-			if (section) {
-				selectTab(tabsWrapper, tab, section)
-				refreshEditorPreview(section)
-				updateHttpReferer(section)
+			if (!section || !document.querySelector(`.settings-section.${section}-settings`)) {
+				return
 			}
+
+			event.preventDefault()
+			selectTab(tabsWrapper, tab, section)
+			refreshEditorPreview()
+			updateHttpReferer(section)
 		})
 	}
 }

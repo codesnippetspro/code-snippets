@@ -12,8 +12,17 @@ const ASSERT_TIMEOUT_SECONDS = 30
 
 const MILLISECONDS_IN_SECOND = 1000
 
+// Overridable so the suite can be pointed at a second environment, which wp-env gives a
+// different port when one is already running. An empty value is treated as unset: Playwright
+// resolves relative paths against baseURL, and an empty base cannot be resolved against.
+const DEFAULT_BASE_URL = 'http://localhost:8888'
+const configuredBaseUrl = process.env.WP_E2E_BASE_URL?.trim() ?? ''
+const baseURL = '' === configuredBaseUrl ? DEFAULT_BASE_URL : configuredBaseUrl
+
 const baseTestsDir = join(__dirname, '..', '..', 'tests')
 const storageState =  join(baseTestsDir, 'e2e/.auth/user.json')
+const rtlSpecs = /rtl-layout\.spec\.ts/
+const rtlStorageState = join(baseTestsDir, 'e2e/.auth/rtl-user.json')
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -38,7 +47,7 @@ export default defineConfig({
 			['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
 		],
 	use: {
-		baseURL: 'http://localhost:8888',
+		baseURL,
 		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
 		video: 'retain-on-failure'
@@ -66,7 +75,7 @@ export default defineConfig({
 				storageState
 			},
 			dependencies: ['setup'],
-			testIgnore: /.*\.setup\.ts/
+			testIgnore: [/.*\.setup\.ts/, /.*\.teardown\.ts/, rtlSpecs]
 		},
 
 		{
@@ -76,7 +85,31 @@ export default defineConfig({
 				storageState
 			},
 			dependencies: ['setup', 'flat-files-setup'],
-			testIgnore: /.*\.setup\.ts/
+			testIgnore: [/.*\.setup\.ts/, /.*\.teardown\.ts/, rtlSpecs]
+		},
+
+		// The RTL specs sign in as a user of their own on a right-to-left locale
+		// and keep that session apart, so the other projects never see the site
+		// mirrored whatever order Playwright runs them in.
+		{
+			name: 'rtl-setup',
+			testMatch: /rtl\.setup\.ts/,
+			use: { ...devices['Desktop Chrome'] },
+			dependencies: ['setup']
+		},
+		{
+			name: 'rtl-teardown',
+			testMatch: /rtl\.teardown\.ts/
+		},
+		{
+			name: 'chromium-rtl',
+			testMatch: rtlSpecs,
+			use: {
+				...devices['Desktop Chrome'],
+				storageState: rtlStorageState
+			},
+			dependencies: ['rtl-setup'],
+			teardown: 'rtl-teardown'
 		}
 	],
 

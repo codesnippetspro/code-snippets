@@ -35,10 +35,20 @@ const SEARCH_PARAM_VARS: Record<keyof CloudSearchParams, string> = {
 	category: 'category'
 }
 
+const SEARCH_METHODS = ['term', 'codevault', 'ai'] as const
+
+export type CloudSearchMethod = typeof SEARCH_METHODS[number]
+
+const isSearchMethod = (value: unknown): value is CloudSearchMethod =>
+	SEARCH_METHODS.some(method => method === value)
+
+export const parseSearchMethod = (value: unknown): CloudSearchMethod =>
+	isSearchMethod(value) ? value : 'term'
+
 export interface CloudSearchParams {
 	page: number
 	query: string
-	method: 'term' | 'codevault'
+	method: CloudSearchMethod
 	type: string
 	status: number
 	category: string
@@ -70,7 +80,7 @@ const fetchSearchQueryParams = (): CloudSearchParams => {
 		type,
 		query,
 		status: Number(status),
-		method: 'codevault' === method ? 'codevault' : 'term',
+		method: parseSearchMethod(method),
 		category
 	}
 }
@@ -93,6 +103,7 @@ const buildSearchUrl = (
 	buildUrl(baseUrl, {
 		query,
 		searchByCodevault: 'codevault' === method ? true : undefined,
+		searchMethod: 'ai' === method ? 'ai' : undefined,
 		per_page: SNIPPETS_PER_PAGE,
 		type: type || undefined,
 		category: category || undefined,

@@ -2,8 +2,6 @@
 
 namespace Code_Snippets;
 
-use WP_UnitTestCase;
-
 /**
  * Retrieve the configured directory where WordPress PHPUnit tests are stored.
  *
