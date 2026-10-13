@@ -67,6 +67,59 @@ class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 	}
 
 	/**
+	 * REST API URLs are left unchanged when safe mode is requested.
+	 *
+	 * The route, or index.php with plain permalinks, is appended to the home URL,
+	 * so a query var added there would end up in front of it and break every request.
+	 *
+	 * @dataProvider data_permalink_structures
+	 *
+	 * @param string $structure Permalink structure.
+	 *
+	 * @return void
+	 */
+	public function test_rest_urls_are_unchanged_in_safe_mode( string $structure ): void {
+		$_REQUEST['snippets-safe-mode'] = '1';
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$this->set_permalink_structure( $structure );
+		$expected = rest_url( 'code-snippets/v1/snippets/5' );
+
+		new Evaluate_Functions( code_snippets()->db );
+
+		$this->assertSame( $expected, rest_url( 'code-snippets/v1/snippets/5' ) );
+	}
+
+	/**
+	 * Permalink structures, covering each way rest_url() builds a URL.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function data_permalink_structures(): array {
+		return [
+			'plain permalinks'  => [ '' ],
+			'pretty permalinks' => [ '/%postname%/' ],
+			'index permalinks'  => [ '/index.php/%postname%/' ],
+		];
+	}
+
+	/**
+	 * Other site and admin URLs still carry the safe mode query var.
+	 *
+	 * @return void
+	 */
+	public function test_site_and_admin_urls_carry_the_safe_mode_query_var(): void {
+		$_REQUEST['snippets-safe-mode'] = '1';
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$this->set_permalink_structure( '/%postname%/' );
+
+		new Evaluate_Functions( code_snippets()->db );
+
+		$this->assertStringContainsString( 'snippets-safe-mode=1', home_url( '/sample-page/' ) );
+		$this->assertStringContainsString( 'snippets-safe-mode=1', home_url( '/guides/' . rest_get_url_prefix() . '/help/' ) );
+		$this->assertStringContainsString( 'snippets-safe-mode=1', admin_url( 'admin.php?page=snippets' ) );
+	}
+
+	/**
 	 * The URL callback tolerates a non-string from an earlier callback.
 	 *
 	 * @return void
@@ -75,6 +128,7 @@ class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 		$evaluate = new Evaluate_Functions( code_snippets()->db );
 
 		$this->assertIsString( $evaluate->add_safe_mode_query_var( null ) );
+		$this->assertIsString( $evaluate->add_safe_mode_query_var_to_home_url( null, null, 'rest' ) );
 	}
 
 	/**

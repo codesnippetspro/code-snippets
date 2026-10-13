@@ -74,6 +74,12 @@ const buildRequestUrl = (status: PaginationStatus, page: number): string => {
 		url.searchParams.set('network', '1')
 	}
 
+	const safeMode = new URLSearchParams(window.location.search).get('snippets-safe-mode')
+
+	if (safeMode) {
+		url.searchParams.set('snippets-safe-mode', safeMode)
+	}
+
 	for (const excluded of config.excludeTypes) {
 		url.searchParams.append('exclude_types[]', excluded)
 	}

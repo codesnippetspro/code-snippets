@@ -133,6 +133,24 @@ export const addQueryArg = ({ url, name, value }: QueryArg): string => {
 }
 
 /**
+ * Carry the per-page safe mode flag on to REST requests.
+ *
+ * The server cannot add the flag to the localized REST URLs, as with pretty
+ * permalinks it would bury the route in the query string. Without it, the
+ * request that deactivates or deletes a broken snippet would still run that
+ * snippet, and fail with it.
+ */
+export const applySafeMode = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	const safeMode = new URLSearchParams(window.location.search).get('snippets-safe-mode')
+
+	if (safeMode && config.url) {
+		config.url = addQueryArg({ url: config.url, name: 'snippets-safe-mode', value: safeMode })
+	}
+
+	return config
+}
+
+/**
  * A WordPress core REST route (`wp/v2/…`) with its query arguments, built so it
  * works whether or not the site has pretty permalinks: without them the REST
  * base already carries a query string, so arguments must be appended with `&`.
