@@ -194,13 +194,6 @@ const LowerNav = () =>
 					Icon={SnippetsIcon}
 				/>
 
-				{isLicensed() && (
-					<SubpageItem
-						subpage="blueprints"
-						label={__('Blueprints', 'code-snippets')}
-						Icon={BlueprintIcon}
-					/>)}
-
 				<SubpageItem
 					subpage="cloud-community"
 					label={__('Cloud Community', 'code-snippets')}
@@ -213,12 +206,11 @@ const LowerNav = () =>
 					Icon={LibraryIcon}
 				/>
 
-				{!isLicensed() && (
-					<SubpageItem
-						subpage="blueprints"
-						label={__('Blueprints', 'code-snippets')}
-						Icon={BlueprintIcon}
-					/>)}
+				<SubpageItem
+					subpage="blueprints"
+					label={__('Blueprints', 'code-snippets')}
+					Icon={BlueprintIcon}
+				/>
 
 				<SubpageItem
 					subpage="ai-agent"
