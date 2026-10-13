@@ -4,7 +4,7 @@ import { useSubmitSnippet } from '../../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../../utils/errors'
 import { isMacOS } from '../../../../utils/screen'
 import { getSnippetType } from '../../../../utils/snippets/snippets'
-import { stripWrapperTags } from '../../../../utils/snippets/tags'
+import { findTypeMismatch, stripWrapperTags } from '../../../../utils/snippets/tags'
 import { useSnippetForm } from '../WithSnippetFormContext'
 import { Button } from '../../../common/Button'
 import { ExpandIcon } from '../../../common/icons/ExpandIcon'
@@ -62,6 +62,9 @@ export interface CodeEditorProps {
  * for its language. Those are removed here rather than silently on save, so the
  * editor shows what will actually be stored and does not flag an error for
  * markup we were going to strip anyway.
+ *
+ * Code wrapped in the tags for a different language is left as it is, with a
+ * warning, as it would otherwise save without error and then never run.
  */
 const handleEditorChanges = (
 	instance: CodeMirror.Editor,
@@ -78,10 +81,17 @@ const handleEditorChanges = (
 			return { ...previous, code: value }
 		}
 
-		const { code, removed } = stripWrapperTags(value, getSnippetType(previous))
+		const type = getSnippetType(previous)
+		const { code, removed } = stripWrapperTags(value, type)
+		const mismatch = findTypeMismatch(code, type)
 
 		if (removed) {
 			instance.setValue(code)
+		}
+
+		if (mismatch) {
+			setCurrentNotice(['warning', mismatch])
+		} else if (removed) {
 			setCurrentNotice(['updated', sprintf(
 				/* translators: %s: markup that was removed, such as "opening PHP tag". */
 				__('Removed the %s from the pasted code. Snippets do not need them.', 'code-snippets'),
