@@ -135,9 +135,12 @@ export const useApplyBulkAction = (
 
 			case 'trash':
 			case 'delete':
+			case 'restore':
 				await applyAndRefresh(
 					allSnippets.filter(snippet => selected.has(snippet.id)),
-					snippet => api.delete({ id: snippet.id, network: snippet.network }),
+					snippet => 'restore' === action
+						? api.restore({ id: snippet.id, network: snippet.network })
+						: api.delete({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 				break
 

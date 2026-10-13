@@ -174,6 +174,20 @@ test.describe('Code Snippets Preview Modal', () => {
 			.toBeCloseTo(CONTROL_HEIGHT, 0)
 	})
 
+	test('keeps keyboard focus inside the preview dialog', async ({ page }) => {
+		await openPreviewEditor(page)
+		const modal = page.locator('.code-snippets-preview-modal')
+		const containsFocusedElement = () => modal.evaluate(element => element.contains(document.activeElement))
+
+		await modal.getByRole('button', { name: 'Close' }).focus()
+		await page.keyboard.press('Shift+Tab')
+		await expect.poll(containsFocusedElement).toBe(true)
+
+		await modal.getByRole('button').last().focus()
+		await page.keyboard.press('Tab')
+		await expect.poll(containsFocusedElement).toBe(true)
+	})
+
 	for (const keypress of <const> ['Tab', 'Shift+Tab']) {
 		test(`${keypress} leaves the preview editor`, async ({ page }) => {
 			const editor = await openPreviewEditor(page)
