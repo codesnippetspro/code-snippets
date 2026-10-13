@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.10.2
+Stable tag: 4.0.0
 Requires at least: 5.5
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -105,6 +105,87 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 4.0.0 (2026-10-12) =
+
+__Added__
+
+* Stats page for viewing snippet totals and various snippet breakdowns.
+* AI Agent for building snippets from a description: it proposes a plan you can refine or approve before any code is
+  written, and can revise the snippets it created. (PRO)
+* Snippet revisions, with a history of past versions, a side-by-side diff against the current code, and one-click
+  restore. (PRO)
+* Display conditions for controlling where and when a snippet runs, without writing the checks by hand. (PRO)
+* Per-role snippet permissions, so you can decide which roles may view, edit, activate, or delete snippets. (PRO)
+* Blueprints for setting up a site from a saved collection of snippets and settings. (PRO)
+* Flat file storage, for keeping snippets as files so they can be version-controlled alongside the rest of a site. (PRO)
+* "Ran on this page" tracking, showing which snippets actually executed on the page you are viewing. (PRO)
+* Natural-language search in Community Cloud, so you can describe what you need instead of guessing keywords. (PRO)
+* Snippet deployment from Code Snippets Cloud to connected sites, including deploying several snippets under one shared
+  display condition. (PRO)
+* Installing a cloud bundle onto a connected site as a standalone plugin. (PRO)
+* Updating Code Snippets Pro on a connected site from the cloud dashboard. (PRO)
+* Drift detection, which reports when a snippet on the site no longer matches the copy stored in the cloud. (PRO)
+* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent
+  experience across plugin screens. (PRO)
+* Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud. (PRO)
+* Snippet preview modal for viewing snippet code from the snippets table without opening the editor. (PRO)
+* Automatic hiding of unrelated admin notices from other plugins on Code Snippets screens. (PRO)
+* Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from
+  the WordPress admin bar. (PRO)
+* Snippet locking to help prevent accidental edits or deletion of important snippets. Props
+  to https://github.com/mgiannopoulos24. (PRO)
+* Improved screen options on the main snippets table, including controls for visible columns and truncating long snippet
+  names or descriptions. (PRO)
+* Bulk actions and bulk code download support in the redesigned snippets table. (PRO)
+* Featured snippets and improved browsing in Community Cloud. (PRO)
+* WordPress modern theme admin styling compatibility. (PRO)
+* Clearer accessibility labels, headings, tab markup, table checkboxes, sort buttons, copy buttons, and drag-and-drop
+  upload controls. (PRO)
+* Feedback reporter for sending bug reports, feature requests and general feedback from the plugin screens, with an
+  optional summary of the site environment so the team can reproduce the problem. (PRO)
+
+__Changed__
+
+* Redesigned the main snippets table with improved search, filtering, sorting, pagination, row actions, and bulk
+  selection. (PRO)
+* Improved the snippet import and migration experience, including clearer file upload handling and third-party plugin
+  migration flows. (PRO)
+* Improved snippet error handling so activation failures, validation errors, and stack traces are easier to understand.
+  (PRO)
+* Improved Community Cloud search and filtering, including server-side filters, better result loading, and clearer empty
+  states. (PRO)
+* Updated the welcome screen, toolbar, import screen, and cloud screens to match the new admin experience. (PRO)
+* Updated internal plugin architecture to a cleaner PSR-4 structure for better long-term maintainability. (PRO)
+* Improved accessibility across the snippets table, import screen, migration flow, Community Cloud, welcome screen,
+  toolbar, dialogs, tooltips, and code editor. (PRO)
+* Improved colour contrast and reduced-motion support across admin screens. (PRO)
+* Faster loading of large code vaults, which are now fetched a page at a time instead of all at once. (PRO)
+
+__Fixed__
+
+* Fixed AI conversations from one connected site being visible from another. (PRO)
+* Fixed a snippet list stored in Code Snippets Cloud being emptied when the site was temporarily unable to read its own
+  snippets. (PRO)
+* Fixed REST API server error responses on missing snippets. (PRO)
+* Fixed redundant frontend logic, improving overall performance. (PRO)
+* Fixed Community Cloud search results and pagination to respect WordPress screen options. (PRO)
+* Fixed snippet saving and activation feedback to improve validation and runtime error display. (PRO)
+* Fixed downloaded Community Cloud snippets appearing as not downloaded after a page reload. (PRO)
+* Fixed network snippet lookups using the wrong database table on multisite. (PRO)
+* Fixed the inactive snippets count including trashed snippets. (PRO)
+* Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
+* Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
+  (PRO)
+* Fixed a fatal error in the Elementor editor on Elementor versions older than 3.19.
+* Fixed snippet descriptions staying truncated after the "Truncate long snippet names and descriptions" screen option
+  was switched off.
+* Fixed saving, activating or deactivating a snippet reporting its previous state, which could leave a deactivated
+  snippet running under file-based execution.
+* Fixed the snippet editor reporting a save as failed and undelivered when no response was received, which it cannot
+  determine.
+* Fixed translations being loaded too early, with a notice from WordPress, when posts were queried while plugins were
+  still loading.
 
 = 3.10.2 (2026-09-01) =
 
