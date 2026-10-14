@@ -60,6 +60,32 @@ class Version_Switch {
 	public static function init(): void {
 		add_action( 'wp_ajax_code_snippets_switch_version', [ __CLASS__, 'ajax_switch_version' ] );
 		add_action( 'wp_ajax_code_snippets_refresh_versions', [ __CLASS__, 'ajax_refresh_versions' ] );
+		add_filter( 'code_snippets_settings_tab_contents', [ __CLASS__, 'hide_refresh_when_unavailable' ] );
+	}
+
+	/**
+	 * Drop the refresh button from the settings screen while versions cannot be
+	 * listed, since the unavailable notice already says what to do instead.
+	 *
+	 * @param array<string, array<int, array{0: string, 1: string}>> $contents Settings tab contents.
+	 *
+	 * @return array<string, array<int, array{0: string, 1: string}>>
+	 */
+	public static function hide_refresh_when_unavailable( array $contents ): array {
+		if ( empty( $contents['advanced'] ) || self::is_available() ) {
+			return $contents;
+		}
+
+		$contents['advanced'] = array_values(
+			array_filter(
+				$contents['advanced'],
+				function ( array $entry ): bool {
+					return [ 'version-switch', 'refresh_versions' ] !== $entry;
+				}
+			)
+		);
+
+		return $contents;
 	}
 
 	/**
