@@ -42,7 +42,7 @@ class Evaluate_Functions {
 		// The capability is checked in the callback instead, which never runs
 		// before URLs are being generated.
 		if ( $this->is_safe_mode_query_var_set() ) {
-			add_filter( 'home_url', [ $this, 'add_safe_mode_query_var' ] );
+			add_filter( 'home_url', [ $this, 'add_safe_mode_query_var_to_home_url' ], 10, 3 );
 			add_filter( 'admin_url', [ $this, 'add_safe_mode_query_var' ] );
 		}
 	}
@@ -84,6 +84,28 @@ class Evaluate_Functions {
 		return $this->is_safe_mode_requested() ?
 			add_query_arg( 'snippets-safe-mode', true, $url ) :
 			$url;
+	}
+
+	/**
+	 * Inject the safe mode query var into home URLs, leaving REST API URLs alone.
+	 *
+	 * REST URLs are built on the home URL, so a query string added here would end
+	 * up in front of the route, or of index.php with plain permalinks, and REST
+	 * requests would miss their endpoint. The admin scripts carry safe mode on to
+	 * their REST requests themselves.
+	 *
+	 * @param mixed $url         Original URL, from an unknown earlier callback.
+	 * @param mixed $path        Path relative to the home URL.
+	 * @param mixed $orig_scheme Scheme requested for the URL, 'rest' when built by rest_url().
+	 *
+	 * @return string Modified URL.
+	 */
+	public function add_safe_mode_query_var_to_home_url( $url, $path = '', $orig_scheme = null ): string {
+		if ( 'rest' === $orig_scheme ) {
+			return is_string( $url ) ? $url : '';
+		}
+
+		return $this->add_safe_mode_query_var( $url );
 	}
 
 	/**
