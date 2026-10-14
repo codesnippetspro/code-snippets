@@ -63,7 +63,7 @@ export const Notices: React.FC<NoticesProps> = ({ placement }) => {
 		{showCurrentNotice && currentNotice
 			? <DismissibleNotice
 				className={`${currentNotice[0]} code-snippets-notice`}
-				type={'error' === currentNotice[0] ? 'error' : undefined}
+				type={'updated' === currentNotice[0] ? undefined : currentNotice[0]}
 				onDismiss={() => setCurrentNotice(undefined)}
 			>
 				<p>{renderNoticeLine(currentNotice[1])}</p>
