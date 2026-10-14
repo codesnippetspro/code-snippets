@@ -23,6 +23,7 @@
     ],
     "ts-node": {
         "files": true,
+        "transpileOnly": true,
         "require": [
             "tsconfig-paths/register"
         ]
