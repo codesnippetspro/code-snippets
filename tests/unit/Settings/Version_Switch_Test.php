@@ -480,6 +480,7 @@ class Version_Switch_Test extends UnitTestCase {
 		$this->assertSame( [], $this->installer->installed );
 		$this->assertFalse( get_transient( self::PROGRESS_KEY ) );
 		$this->assertFalse( get_transient( $this->source->get_cache_key() ) );
+		$this->assertSame( 'version_source_package_error', Version_Switch::get_last_error_code() );
 	}
 
 	/**
@@ -647,6 +648,63 @@ class Version_Switch_Test extends UnitTestCase {
 	}
 
 	/**
+	 * The warning sits inside the switcher, above the button, and is marked
+	 * inline so WordPress does not move it to the top of the screen.
+	 *
+	 * @return void
+	 */
+	public function test_warning_renders_inline_above_the_switch_button(): void {
+		$this->register_test_services();
+		$this->seed_catalogue( '3.9.2' );
+
+		$output = $this->render_version_switch_field();
+
+		$this->assertMatchesRegularExpression( '/id="version-switch-warning" class="[^"]*\\binline\\b/', $output );
+		$this->assertLessThan( strpos( $output, 'id="switch-version-btn"' ), strpos( $output, 'id="version-switch-warning"' ) );
+	}
+
+	/**
+	 * A version the source warns about carries that warning on its option, and
+	 * other versions carry none.
+	 *
+	 * @return void
+	 */
+	public function test_source_switch_warning_is_attached_to_its_version(): void {
+		$this->register_test_services();
+		$this->seed_catalogue( '3.9.2' );
+		$this->source->switch_warnings = [ '3.9.2' => 'Switching back needs another route.' ];
+
+		$this->assertMatchesRegularExpression(
+			'/value="3\\.9\\.2"\\s+data-warning="Switching back needs another route\\."/',
+			$this->render_version_switch_field()
+		);
+
+		$this->source->switch_warnings = [];
+		$this->assertStringNotContainsString( 'data-warning=', $this->render_version_switch_field() );
+	}
+
+	/**
+	 * The refresh button is dropped while the source is unavailable, and kept
+	 * otherwise.
+	 *
+	 * @return void
+	 */
+	public function test_refresh_button_is_hidden_while_the_source_is_unavailable(): void {
+		$this->register_test_services();
+
+		$contents = [ 'advanced' => [ [ 'version-switch', 'version_switcher' ], [ 'version-switch', 'refresh_versions' ] ] ];
+
+		$this->assertSame( $contents, Version_Switch::hide_refresh_when_unavailable( $contents ) );
+
+		$this->source->available = false;
+
+		$this->assertSame(
+			[ [ 'version-switch', 'version_switcher' ] ],
+			Version_Switch::hide_refresh_when_unavailable( $contents )['advanced']
+		);
+	}
+
+	/**
 	 * The message behind a failed request is kept alongside its code, and a
 	 * successful fetch clears both.
 	 *
@@ -808,6 +866,7 @@ class Version_Switch_Test extends UnitTestCase {
 		$this->assertTrue( $source->is_available() );
 		$this->assertSame( self::WP_ORG_CACHE_KEY, $source->get_cache_key() );
 		$this->assertSame( '', $source->get_floor_notice( '3.6.0' ) );
+		$this->assertSame( '', $source->get_switch_warning( [ 'version' => '3.0.0' ] ) );
 
 		$source->report_installed_version( '3.9.2' );
 
