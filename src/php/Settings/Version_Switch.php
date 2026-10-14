@@ -154,14 +154,7 @@ class Version_Switch {
 		$result = $source->fetch_catalogue();
 
 		if ( is_wp_error( $result ) ) {
-			set_transient(
-				self::ERROR_KEY,
-				[
-					'code'    => $result->get_error_code(),
-					'message' => $result->get_error_message(),
-				],
-				self::ERROR_CACHE_DURATION
-			);
+			self::record_error( $result );
 			return $empty;
 		}
 
@@ -174,6 +167,28 @@ class Version_Switch {
 		set_transient( $source->get_cache_key(), $catalogue, self::VERSION_CACHE_DURATION );
 
 		return $catalogue;
+	}
+
+	/**
+	 * Remember why the last request to the source failed.
+	 *
+	 * A source reads the code back through get_last_error_code() to decide
+	 * whether it is still available, so a package request refused for the same
+	 * reason as a catalogue request has to be recorded the same way.
+	 *
+	 * @param WP_Error $error Failure returned by the source.
+	 *
+	 * @return void
+	 */
+	private static function record_error( WP_Error $error ): void {
+		set_transient(
+			self::ERROR_KEY,
+			[
+				'code'    => $error->get_error_code(),
+				'message' => $error->get_error_message(),
+			],
+			self::ERROR_CACHE_DURATION
+		);
 	}
 
 	/**
@@ -386,6 +401,7 @@ class Version_Switch {
 
 		if ( is_wp_error( $package ) ) {
 			delete_transient( self::PROGRESS_KEY );
+			self::record_error( $package );
 
 			// The cached catalogue is stale when the source no longer recognises a
 			// version it listed, so discard it and let the next render refetch.
