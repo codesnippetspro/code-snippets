@@ -42,9 +42,17 @@ const bindDropdown = (
 	currentVersion: string
 ): void => {
 	const warningNotice = document.getElementById('version-switch-warning')
+	const targetWarning = document.getElementById('version-switch-target-warning')
 
 	dropdown.addEventListener('change', () => {
 		const selectedVersion = dropdown.value
+		const selectedWarning = dropdown.selectedOptions.item(0)?.dataset.warning ?? ''
+
+		if (targetWarning) {
+			targetWarning.textContent = selectedWarning
+			targetWarning.hidden = !selectedWarning
+		}
+
 		if (!button) {
 			return
 		}
@@ -142,7 +150,7 @@ const bindRefresh = (
 		void (async (): Promise<void> => {
 			const original = btn.textContent ?? ''
 			btn.disabled = true
-			btn.textContent = i18n?.error ?? ''
+			btn.textContent = i18n?.refreshing ?? ''
 
 			try {
 				await postForm({
@@ -169,7 +177,7 @@ export const initVersionSwitch = (): void => {
 	const config = window.code_snippets_version_switch
 
 	if (!config) {
-		throw Error('version switch config missing')
+		return
 	}
 
 	const button = <HTMLButtonElement | null> document.getElementById('switch-version-btn')
