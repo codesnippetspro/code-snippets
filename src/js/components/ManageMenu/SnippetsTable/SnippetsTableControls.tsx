@@ -1,10 +1,14 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
-import React, { Fragment, useId, useMemo } from 'react'
+import React, { Fragment, useId, useMemo, useState } from 'react'
 import { useRestAPI } from '../../../hooks/useRestAPI'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
+import { downloadBulkSnippetExportFile } from '../../../utils/files'
+import { isNetworkAdmin } from '../../../utils/screen'
 import { REST_BASES } from '../../../utils/restAPI'
 import { buildUrl } from '../../../utils/urls'
+import { Button } from '../../common/Button'
 import { SubmitButton } from '../../common/SubmitButton'
 import { SearchArea } from './SnippetsTableSearch'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
@@ -128,7 +132,36 @@ export const SnippetsTableNavigation: React.FC<SnippetsTableNavigationProps> = (
 		{'top' === which && <SearchArea />}
 	</>
 
+const ExportAllButton: React.FC = () => {
+	const snippetsApi = useSnippetsAPI()
+	const [isExporting, setIsExporting] = useState(false)
+
+	const handleExportAll = async (): Promise<void> => {
+		setIsExporting(true)
+
+		try {
+			const snippets = await snippetsApi.fetchAll(isNetworkAdmin())
+			downloadBulkSnippetExportFile(snippets)
+		} catch (error: unknown) {
+			handleUnknownError(error)
+		} finally {
+			setIsExporting(false)
+		}
+	}
+
+	return <div className="alignright actions">
+		<Button
+			secondary
+			disabled={isExporting}
+			onClick={() => void handleExportAll()}
+		>
+			{isExporting ? __('Exporting…', 'code-snippets') : __('Export All', 'code-snippets')}
+		</Button>
+	</div>
+}
+
 export const SnippetsTableToolbar = () =>
 	<div className="snippets-table-toolbar">
 		<SnippetStatusCounts />
+		<ExportAllButton />
 	</div>

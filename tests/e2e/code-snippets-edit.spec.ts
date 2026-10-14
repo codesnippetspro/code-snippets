@@ -166,4 +166,39 @@ test.describe('Code Snippets Admin', () => {
 		await helper.deleteSnippetFromList(snippetName)
 		await helper.expectElementCount(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`, 0)
 	})
+
+	test('Shows the snippet ID with a copy control in the editor sidebar', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.createSnippet({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+
+		// OpenSnippet() navigates table rows, so leave the table view active even if
+		// an earlier test persisted the card view preference.
+		await helper.navigateToSnippetsAdmin()
+		await page.getByRole('button', { name: 'Table view' }).click().catch(() => undefined)
+
+		await helper.openSnippet(snippetName)
+
+		const idField = page.locator('.snippet-editor-sidebar-settings .inline-form-field').filter({ hasText: 'ID' })
+		await expect(idField).toBeVisible()
+
+		// The ID shown in the editor must match the ID in the editor URL.
+		const urlId = new URL(page.url()).searchParams.get('id')
+		expect(urlId).toBeTruthy()
+
+		await expect(page.locator('.snippet-id-value')).toHaveText(String(urlId))
+
+		// Grant clipboard permission so the copy control can write to the clipboard.
+		await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+
+		await idField.getByRole('button', { name: 'Copy' }).click()
+		await expect(idField.getByRole('button', { name: 'Copy' })).toBeVisible()
+
+		const clipboardText = await page.evaluate(() => navigator.clipboard.readText())
+		expect(clipboardText).toBe(String(urlId))
+
+		await helper.cleanupSnippet(snippetName)
+	})
 })
