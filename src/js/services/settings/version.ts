@@ -150,7 +150,7 @@ const bindRefresh = (
 		void (async (): Promise<void> => {
 			const original = btn.textContent ?? ''
 			btn.disabled = true
-			btn.textContent = i18n?.error ?? ''
+			btn.textContent = i18n?.refreshing ?? ''
 
 			try {
 				await postForm({
