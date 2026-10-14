@@ -84,6 +84,18 @@ interface Version_Source {
 	public function get_floor_notice( string $floor ): string;
 
 	/**
+	 * Warn about a consequence of switching to a particular version, beyond the
+	 * general warning every switch carries.
+	 *
+	 * Shown when the version is selected. An empty string shows nothing extra.
+	 *
+	 * @param array<string, mixed> $version_info Catalogue entry for the version.
+	 *
+	 * @return string
+	 */
+	public function get_switch_warning( array $version_info ): string;
+
+	/**
 	 * Obtain the package for a version.
 	 *
 	 * `package` is either a local file path or a download URL — the installer

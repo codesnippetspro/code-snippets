@@ -42,9 +42,17 @@ const bindDropdown = (
 	currentVersion: string
 ): void => {
 	const warningNotice = document.getElementById('version-switch-warning')
+	const targetWarning = document.getElementById('version-switch-target-warning')
 
 	dropdown.addEventListener('change', () => {
 		const selectedVersion = dropdown.value
+		const selectedWarning = dropdown.selectedOptions.item(0)?.dataset.warning ?? ''
+
+		if (targetWarning) {
+			targetWarning.textContent = selectedWarning
+			targetWarning.hidden = !selectedWarning
+		}
+
 		if (!button) {
 			return
 		}

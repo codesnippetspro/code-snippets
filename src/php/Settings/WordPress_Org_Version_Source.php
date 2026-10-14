@@ -121,6 +121,18 @@ class WordPress_Org_Version_Source implements Version_Source {
 	}
 
 	/**
+	 * Warn about switching to a particular version. Every WordPress.org build can
+	 * switch versions from this screen, so none needs a warning of its own.
+	 *
+	 * @param array<string, mixed> $version_info Catalogue entry for the version.
+	 *
+	 * @return string
+	 */
+	public function get_switch_warning( array $version_info ): string {
+		return '';
+	}
+
+	/**
 	 * Obtain the package for a version.
 	 *
 	 * The catalogue entry already carries the download URL, which the installer

@@ -528,8 +528,14 @@ class Version_Switch {
 				</label>
 				<select id="target_version" name="target_version">
 					<option value=""><?php esc_html_e( 'Select a version…', 'code-snippets' ); ?></option>
-					<?php foreach ( $available_versions as $version_info ) { ?>
+					<?php
+					foreach ( $available_versions as $version_info ) {
+						$switch_warning = self::get_source()->get_switch_warning( $version_info );
+						?>
 						<option value="<?php echo esc_attr( $version_info['version'] ); ?>"
+							<?php if ( $switch_warning ) { ?>
+								data-warning="<?php echo esc_attr( $switch_warning ); ?>"
+							<?php } ?>
 							<?php selected( $version_info['version'], $current_version ); ?>>
 							<?php echo esc_html( self::describe_version( $version_info, $current_version ) ); ?>
 						</option>
@@ -723,6 +729,7 @@ class Version_Switch {
 				<?php esc_html_e( 'Switching versions may cause compatibility issues. Always backup your site before switching versions.', 'code-snippets' ); ?>
 			</p>
 			<p><?php esc_html_e( 'Beta and release candidate builds are not recommended for production sites.', 'code-snippets' ); ?></p>
+			<p id="version-switch-target-warning" hidden></p>
 		</div>
 		<?php
 	}

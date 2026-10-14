@@ -44,6 +44,13 @@ class Recording_Version_Source implements Version_Source {
 	];
 
 	/**
+	 * Switch warnings keyed by the version they are shown for.
+	 *
+	 * @var array<string, string>
+	 */
+	public array $switch_warnings = [];
+
+	/**
 	 * Number of times the catalogue was fetched.
 	 *
 	 * @var int
@@ -116,6 +123,17 @@ class Recording_Version_Source implements Version_Source {
 	 */
 	public function get_floor_notice( string $floor ): string {
 		return 'Versions before ' . $floor . ' are not installable.';
+	}
+
+	/**
+	 * Warn about switching to a particular version.
+	 *
+	 * @param array<string, mixed> $version_info Catalogue entry for the version.
+	 *
+	 * @return string
+	 */
+	public function get_switch_warning( array $version_info ): string {
+		return $this->switch_warnings[ (string) $version_info['version'] ] ?? '';
 	}
 
 	/**
