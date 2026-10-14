@@ -94,7 +94,6 @@ class Settings_Layout {
 				[ 'permissions', 'role_capabilities' ],
 				[ 'version-switch', 'version_switcher' ],
 				[ 'version-switch', 'refresh_versions' ],
-				[ 'version-switch', 'version_warning' ],
 				[ 'debug', 'reset_caches' ],
 				[ 'debug', 'database_update' ],
 				[ 'general', 'complete_uninstall' ],

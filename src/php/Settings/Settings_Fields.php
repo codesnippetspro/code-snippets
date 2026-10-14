@@ -152,11 +152,6 @@ class Settings_Fields {
 				'type'            => 'callback',
 				'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_refresh_versions_field' ],
 			],
-			'version_warning'  => [
-				'name'            => '',
-				'type'            => 'callback',
-				'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_version_switch_warning' ],
-			],
 		];
 
 		$this->fields['general'] = [

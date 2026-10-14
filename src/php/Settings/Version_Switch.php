@@ -541,6 +541,8 @@ class Version_Switch {
 				<p class="description"><?php echo esc_html( $floor_notice ); ?></p>
 			<?php } ?>
 
+			<?php self::render_version_switch_warning(); ?>
+
 			<p>
 				<button type="button" id="switch-version-btn" class="button button-secondary" disabled>
 					<?php esc_html_e( 'Switch Version', 'code-snippets' ); ?>
@@ -706,13 +708,16 @@ class Version_Switch {
 	}
 
 	/**
-	 * Render warning notice.
+	 * Render the warning shown once a different version is selected.
+	 *
+	 * The `inline` class keeps WordPress from moving the notice to the top of the
+	 * screen, away from the switcher it refers to.
 	 *
 	 * @return void
 	 */
-	public static function render_version_switch_warning(): void {
+	private static function render_version_switch_warning(): void {
 		?>
-		<div id="version-switch-warning" class="notice code-snippets-notice notice-warning hidden" role="region">
+		<div id="version-switch-warning" class="notice code-snippets-notice notice-warning inline hidden" role="region">
 			<p>
 				<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
 				<?php esc_html_e( 'Switching versions may cause compatibility issues. Always backup your site before switching versions.', 'code-snippets' ); ?>
