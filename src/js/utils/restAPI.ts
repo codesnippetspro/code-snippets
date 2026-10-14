@@ -16,7 +16,7 @@ export const REST_BASES = {
 	},
 	preferences: {
 		snippetView: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippetView),
-		insights: normalizeUrl(window.CODE_SNIPPETS?.restAPI.insightsView),
+		stats: normalizeUrl(window.CODE_SNIPPETS?.restAPI.statsView),
 		demosSeen: normalizeUrl(window.CODE_SNIPPETS?.restAPI.demosSeen),
 	},
 	cloud: {

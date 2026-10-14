@@ -66,8 +66,8 @@ class Contextual_Help {
 				$this->load_ai_agent_help();
 				break;
 
-			case 'insights':
-				$this->load_insights_help();
+			case 'stats':
+				$this->load_stats_help();
 				break;
 
 			case 'import':
@@ -288,21 +288,21 @@ class Contextual_Help {
 	}
 
 	/**
-	 * Register and handle the help tabs for the Insights admin page.
+	 * Register and handle the help tabs for the Stats admin page.
 	 */
-	private function load_insights_help() {
+	private function load_stats_help() {
 		$this->add_help_tab(
 			'overview',
 			__( 'Overview', 'code-snippets' ),
 			[
 				$this->get_intro_text() .
-				__( 'Here you can view snippets statistics, and get insights how the snippets are being used on this website.', 'code-snippets' ),
+				__( 'Here you can view snippet statistics and see how snippets are used on this website.', 'code-snippets' ),
 			]
 		);
 
 		$this->add_help_tab(
-			'insights',
-			__( 'Insights', 'code-snippets' ),
+			'stats',
+			__( 'Stats', 'code-snippets' ),
 			__( 'Get detailed information about your snippets usage, including which snippets types are being most used, their activation status, where they are located, and more.', 'code-snippets' )
 		);
 	}

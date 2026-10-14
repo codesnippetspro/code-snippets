@@ -42,7 +42,7 @@ export const URLS = <const> {
 	BLUEPRINTS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=blueprints',
 	AI_AGENT_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=ai-agent',
 	ADD_SNIPPET_ADMIN: '/wp-admin/admin.php?page=add-snippet',
-	INSIGHTS_ADMIN: '/wp-admin/admin.php?page=code-snippets-insights',
+	STATS_ADMIN: '/wp-admin/admin.php?page=code-snippets-stats',
 	IMPORT_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
 	SETTINGS_ADMIN: '/wp-admin/admin.php?page=snippets-settings',
 	WELCOME_ADMIN: '/wp-admin/admin.php?page=code-snippets-welcome'

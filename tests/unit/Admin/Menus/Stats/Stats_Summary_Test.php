@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Admin\Menus\Insights;
+namespace Code_Snippets\Admin\Menus\Stats;
 
 use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;
@@ -10,9 +10,9 @@ use function Code_Snippets\save_snippet;
 use function Code_Snippets\trash_snippet;
 
 /**
- * Tests for the Insights summary aggregation.
+ * Tests for the Stats summary aggregation.
  */
-class Insights_Summary_Test extends AdminUnitTestCase {
+class Stats_Summary_Test extends AdminUnitTestCase {
 
 	/**
 	 * An empty library has no insight chart entries.
@@ -20,7 +20,7 @@ class Insights_Summary_Test extends AdminUnitTestCase {
 	 * @return void
 	 */
 	public function test_summary_is_empty_when_no_snippets_are_saved(): void {
-		$summary = ( new Insights_Summary() )->get();
+		$summary = ( new Stats_Summary() )->get();
 
 		$this->assertSame( 0, $summary['active'] );
 		$this->assertSame( 0, $summary['inactive'] );
@@ -84,7 +84,7 @@ class Insights_Summary_Test extends AdminUnitTestCase {
 		$this->assertInstanceOf( Snippet::class, $trashed );
 		trash_snippet( $trashed->id );
 
-		$summary = ( new Insights_Summary() )->get();
+		$summary = ( new Stats_Summary() )->get();
 
 		$this->assertSame( [ 'Shared', 'Alpha', 'Beta' ], array_keys( $summary['tagCounts'] ) );
 		$this->assertSame(
@@ -133,7 +133,7 @@ class Insights_Summary_Test extends AdminUnitTestCase {
 		add_filter( 'code_snippets/get_snippets', $filter );
 
 		try {
-			$summary = ( new Insights_Summary() )->get();
+			$summary = ( new Stats_Summary() )->get();
 
 			$this->assertSame( 1, $summary['active'] );
 			$this->assertSame( 0, $summary['inactive'] );
@@ -162,7 +162,7 @@ class Insights_Summary_Test extends AdminUnitTestCase {
 			]
 		);
 
-		$summary = ( new Insights_Summary() )->get();
+		$summary = ( new Stats_Summary() )->get();
 
 		$this->assertSame( 1, $summary['active'] );
 		$this->assertArrayNotHasKey( 'unknown-scope', $summary['locationCounts'] );
@@ -255,7 +255,7 @@ class Insights_Summary_Test extends AdminUnitTestCase {
 		$this->assertInstanceOf( Snippet::class, $trashed );
 		trash_snippet( $trashed->id );
 
-		$summary = ( new Insights_Summary() )->get();
+		$summary = ( new Stats_Summary() )->get();
 
 		$this->assertSame( 4, $summary['active'] );
 		$this->assertSame( 3, $summary['inactive'] );

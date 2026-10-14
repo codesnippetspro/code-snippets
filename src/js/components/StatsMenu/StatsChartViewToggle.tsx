@@ -1,20 +1,20 @@
 import { __, sprintf } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React from 'react'
-import type { InsightsChartView } from '../../types/Insights'
+import type { StatsChartView } from '../../types/Stats'
 
-interface ViewToggleButtonProps<View extends InsightsChartView> extends InsightsChartViewToggleProps<View> {
+interface ViewToggleButtonProps<View extends StatsChartView> extends StatsChartViewToggleProps<View> {
 	icon: string
 	label: string
 	currentView: View
 }
 
-const ViewToggleButton = <View extends InsightsChartView,>(
+const ViewToggleButton = <View extends StatsChartView,>(
 	{ icon, title, label, view, setView, currentView }: ViewToggleButtonProps<View>
 ) =>
 	<button
 		type="button"
-		className={classnames('insights-chart-view-toggle-option', { 'active-view': currentView === view })}
+		className={classnames('stats-chart-view-toggle-option', { 'active-view': currentView === view })}
 		aria-pressed={currentView === view}
 		title={title}
 		onClick={() => setView(view)}
@@ -23,14 +23,14 @@ const ViewToggleButton = <View extends InsightsChartView,>(
 		<span className="screen-reader-text">{label}</span>
 	</button>
 
-export interface InsightsChartViewToggleProps<View extends InsightsChartView> {
+export interface StatsChartViewToggleProps<View extends StatsChartView> {
 	title: string
 	view: View
 	setView: (view: View) => void
 	views: readonly View[]
 }
 
-const VIEW_OPTIONS: Readonly<Record<InsightsChartView, { icon: string, label: string, title: string }>> = {
+const VIEW_OPTIONS: Readonly<Record<StatsChartView, { icon: string, label: string, title: string }>> = {
 	pie: {
 		icon: 'chart-pie',
 		label: __('Chart view', 'code-snippets'),
@@ -48,11 +48,11 @@ const VIEW_OPTIONS: Readonly<Record<InsightsChartView, { icon: string, label: st
 	}
 }
 
-export const InsightsChartViewToggle = <View extends InsightsChartView,>(
-	{ title, view, setView, views }: InsightsChartViewToggleProps<View>
+export const StatsChartViewToggle = <View extends StatsChartView,>(
+	{ title, view, setView, views }: StatsChartViewToggleProps<View>
 ) =>
 	<div
-		className="insights-chart-view-toggle"
+		className="stats-chart-view-toggle"
 		role="group"
 		aria-label={sprintf(__('%s chart view', 'code-snippets'), title)}
 	>

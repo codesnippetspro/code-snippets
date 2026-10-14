@@ -1,18 +1,18 @@
 <?php
 
-namespace Code_Snippets\Admin\Menus\Insights;
+namespace Code_Snippets\Admin\Menus\Stats;
 
 use Code_Snippets\AdminUnitTestCase;
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\save_snippet;
 
 /**
- * Tests for the Insights menu assets and localized data.
+ * Tests for the Stats menu assets and localized data.
  */
-class Insights_Menu_Test extends AdminUnitTestCase {
+class Stats_Menu_Test extends AdminUnitTestCase {
 
 	/**
-	 * The Insights payload contains summary data but not snippet source code.
+	 * The Stats payload contains summary data but not snippet source code.
 	 *
 	 * @return void
 	 */
@@ -28,10 +28,10 @@ class Insights_Menu_Test extends AdminUnitTestCase {
 			)
 		);
 
-		( new Insights_Menu() )->enqueue_assets();
+		( new Stats_Menu() )->enqueue_assets();
 
-		$data = wp_scripts()->get_data( 'code-snippets-insights', 'data' );
-		$prefix = 'var CODE_SNIPPETS_INSIGHTS = ';
+		$data = wp_scripts()->get_data( 'code-snippets-stats', 'data' );
+		$prefix = 'var CODE_SNIPPETS_STATS = ';
 		$offset = is_string( $data ) ? strrpos( $data, $prefix ) : false;
 
 		$this->assertNotFalse( $offset );

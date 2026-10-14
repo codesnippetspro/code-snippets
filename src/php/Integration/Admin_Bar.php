@@ -327,9 +327,9 @@ class Admin_Bar {
 
 		$wp_admin_bar->add_node(
 			[
-				'id'     => self::ROOT_NODE_ID . '-insights',
-				'title'  => esc_html_x( 'Insights', 'snippets', 'code-snippets' ),
-				'href'   => $plugin->get_menu_url( 'insights' ),
+				'id'     => self::ROOT_NODE_ID . '-stats',
+				'title'  => esc_html_x( 'Stats', 'snippets', 'code-snippets' ),
+				'href'   => $plugin->get_menu_url( 'stats' ),
 				'parent' => self::ROOT_NODE_ID,
 			]
 		);

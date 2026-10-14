@@ -29,7 +29,7 @@ export const jsWebpackConfig: Configuration = {
 		'feedback': `${SOURCE_DIR}/feedback.ts`,
 		'feedback-capture': `${SOURCE_DIR}/feedback-capture.ts`,
 		'import': `${SOURCE_DIR}/import.ts`,
-		'insights': `${SOURCE_DIR}/insights.ts`,
+		'stats': `${SOURCE_DIR}/stats.ts`,
 		'manage': `${SOURCE_DIR}/manage.ts`,
 		'mce': `${SOURCE_DIR}/mce.ts`,
 		'prism': `${SOURCE_DIR}/prism.ts`,

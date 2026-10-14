@@ -52,11 +52,11 @@ const UpperNavItem = ({ name, url, label }: UpperNavItemProps) => {
 }
 const UpperNavItems = () =>
 	<>
-		{window.CODE_SNIPPETS?.urls.insights && (
+		{window.CODE_SNIPPETS?.urls.stats && (
 			<UpperNavItem
-				name="insights"
-				url={window.CODE_SNIPPETS.urls.insights}
-				label={__('Insights', 'code-snippets')}
+				name="stats"
+				url={window.CODE_SNIPPETS.urls.stats}
+				label={__('Stats', 'code-snippets')}
 			/>)}
 
 		{window.CODE_SNIPPETS?.urls.import && (
@@ -194,13 +194,6 @@ const LowerNav = () =>
 					Icon={SnippetsIcon}
 				/>
 
-				{isLicensed() && (
-					<SubpageItem
-						subpage="blueprints"
-						label={__('Blueprints', 'code-snippets')}
-						Icon={BlueprintIcon}
-					/>)}
-
 				<SubpageItem
 					subpage="cloud-community"
 					label={__('Cloud Community', 'code-snippets')}
@@ -213,12 +206,11 @@ const LowerNav = () =>
 					Icon={LibraryIcon}
 				/>
 
-				{!isLicensed() && (
-					<SubpageItem
-						subpage="blueprints"
-						label={__('Blueprints', 'code-snippets')}
-						Icon={BlueprintIcon}
-					/>)}
+				<SubpageItem
+					subpage="blueprints"
+					label={__('Blueprints', 'code-snippets')}
+					Icon={BlueprintIcon}
+				/>
 
 				<SubpageItem
 					subpage="ai-agent"

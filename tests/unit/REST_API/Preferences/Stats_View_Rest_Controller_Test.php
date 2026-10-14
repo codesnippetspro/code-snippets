@@ -16,14 +16,14 @@ use WP_UnitTest_Factory;
  *
  * @group rest-api
  */
-class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
+class Stats_View_Rest_Controller_Test extends AdminUnitTestCase {
 
 	/**
-	 * REST API endpoint for the Insights chart view preferences.
+	 * REST API endpoint for the Stats chart view preferences.
 	 *
 	 * @var string
 	 */
-	protected string $endpoint = '/code-snippets/v1/preferences/insights-chart-views';
+	protected string $endpoint = '/code-snippets/v1/preferences/stats-chart-views';
 	/**
 	 * Editor user ID (no snippet capabilities).
 	 *
@@ -51,7 +51,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
-		delete_option( Insights_View_Rest_Controller::OPTION_NAME );
+		delete_option( Stats_View_Rest_Controller::OPTION_NAME );
 	}
 
 	/**
@@ -73,22 +73,22 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 	}
 
 	/**
-	 * With no saved preference, Insights uses its intended default chart views.
+	 * With no saved preference, Stats uses its intended default chart views.
 	 */
-	public function test_insights_chart_views_default_to_the_expected_mix() {
+	public function test_stats_chart_views_default_to_the_expected_mix() {
 		$response = $this->dispatch( 'GET' );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame(
-			[ 'views' => Insights_View_Rest_Controller::DEFAULT_VIEWS ],
+			[ 'views' => Stats_View_Rest_Controller::DEFAULT_VIEWS ],
 			$response->get_data()
 		);
 	}
 
 	/**
-	 * Updating every Insights chart view persists the complete preference map.
+	 * Updating every Stats chart view persists the complete preference map.
 	 */
-	public function test_insights_chart_views_update_persists() {
+	public function test_stats_chart_views_update_persists() {
 		$views = [
 			'type'       => 'pie',
 			'activation' => 'bar',
@@ -100,14 +100,14 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( [ 'views' => $views ], $response->get_data() );
-		$this->assertSame( $views, get_option( Insights_View_Rest_Controller::OPTION_NAME ) );
-		$this->assertSame( $views, Insights_View_Rest_Controller::get_insights_chart_views() );
+		$this->assertSame( $views, get_option( Stats_View_Rest_Controller::OPTION_NAME ) );
+		$this->assertSame( $views, Stats_View_Rest_Controller::get_stats_chart_views() );
 	}
 
 	/**
 	 * Missing chart keys and invalid view names cannot replace the saved preference.
 	 */
-	public function test_invalid_insights_chart_views_are_rejected() {
+	public function test_invalid_stats_chart_views_are_rejected() {
 		$response = $this->dispatch(
 			'POST',
 			[
@@ -122,8 +122,8 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 
 		foreach (
 			[
-				array_merge( Insights_View_Rest_Controller::DEFAULT_VIEWS, [ 'type' => 'cloud' ] ),
-				array_merge( Insights_View_Rest_Controller::DEFAULT_VIEWS, [ 'tags' => 'pie' ] ),
+				array_merge( Stats_View_Rest_Controller::DEFAULT_VIEWS, [ 'type' => 'cloud' ] ),
+				array_merge( Stats_View_Rest_Controller::DEFAULT_VIEWS, [ 'tags' => 'pie' ] ),
 			] as $views
 		) {
 			$response = $this->dispatch( 'POST', [ 'views' => $views ] );
@@ -131,14 +131,14 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 			$this->assertSame( 400, $response->get_status() );
 		}
 
-		$this->assertFalse( get_option( Insights_View_Rest_Controller::OPTION_NAME ) );
+		$this->assertFalse( get_option( Stats_View_Rest_Controller::OPTION_NAME ) );
 	}
 
 	/**
 	 * Partially saved preferences are normalized without losing the supported defaults.
 	 */
-	public function test_incomplete_stored_insights_chart_views_are_normalized() {
-		update_option( Insights_View_Rest_Controller::OPTION_NAME, [ 'type' => 'pie' ] );
+	public function test_incomplete_stored_stats_chart_views_are_normalized() {
+		update_option( Stats_View_Rest_Controller::OPTION_NAME, [ 'type' => 'pie' ] );
 
 		$this->assertSame(
 			[
@@ -148,7 +148,7 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 				'location'   => 'bar',
 				'tags'       => 'bar',
 			],
-			Insights_View_Rest_Controller::get_insights_chart_views()
+			Stats_View_Rest_Controller::get_stats_chart_views()
 		);
 	}
 
@@ -163,9 +163,9 @@ class Insights_View_Rest_Controller_Test extends AdminUnitTestCase {
 
 		$response = $this->dispatch(
 			'POST',
-			[ 'views' => Insights_View_Rest_Controller::DEFAULT_VIEWS ]
+			[ 'views' => Stats_View_Rest_Controller::DEFAULT_VIEWS ]
 		);
 		$this->assertContains( $response->get_status(), [ 401, 403 ] );
-		$this->assertFalse( get_option( Insights_View_Rest_Controller::OPTION_NAME ) );
+		$this->assertFalse( get_option( Stats_View_Rest_Controller::OPTION_NAME ) );
 	}
 }
