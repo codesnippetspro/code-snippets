@@ -65,6 +65,7 @@ class Manage_Menu_Screen_Options {
 				'id'       => __( 'ID', 'code-snippets' ),
 				'name'     => __( 'Name', 'code-snippets' ),
 				'type'     => __( 'Type', 'code-snippets' ),
+				'location' => __( 'Location', 'code-snippets' ),
 				'desc'     => __( 'Description', 'code-snippets' ),
 				'tags'     => __( 'Tags', 'code-snippets' ),
 				'date'     => __( 'Modified', 'code-snippets' ),
