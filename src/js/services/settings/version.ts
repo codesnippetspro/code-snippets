@@ -176,8 +176,6 @@ export const initVersionSwitch = (): void => {
 	const currentVersion = getCurrentVersion()
 	const config = window.code_snippets_version_switch
 
-	// The switcher renders as a notice with no controls when the site cannot list
-	// versions, and the script is still enqueued.
 	if (!config) {
 		return
 	}
