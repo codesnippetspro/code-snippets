@@ -107,6 +107,21 @@ export const applyRestNonce = (config: InternalAxiosRequestConfig): InternalAxio
 	return config
 }
 
+/**
+ * Give every read a unique address.
+ *
+ * Page caches and proxies key a stored response on its URL, and some replay it
+ * whatever the response headers say. The screens re-read the same route after
+ * each change, so a replayed response shows state from before the change.
+ */
+export const applyCacheBuster = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	if ('get' === config.method?.toLowerCase()) {
+		config.params = { ...<Record<string, unknown> | undefined>config.params, _: Date.now() }
+	}
+
+	return config
+}
+
 export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
 	headers: {
 		'Access-Control': window.CODE_SNIPPETS?.restAPI.cloud.token
