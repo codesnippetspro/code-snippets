@@ -28,7 +28,7 @@ export const wpCli = async (args: string[], options: WpCliOptions = {}): Promise
 		const { stdout } = await execFileAsync('docker', [
 			'exec',
 			'-u',
-			'root',
+			'www-data',
 			'-w',
 			'/var/www/html',
 			dockerContainer,

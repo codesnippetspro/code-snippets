@@ -143,7 +143,7 @@ test.describe('Stats screen', () => {
 			active: false,
 			type: 'js'
 		})
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		await page.goto(URLS.STATS_ADMIN)
 		const activationPie = page.locator('[data-stats-chart="activation"] .stats-pie-chart')
 		const conditionsChart = page.locator('[data-stats-chart="conditions"]')
 
@@ -171,6 +171,35 @@ test.describe('Stats screen', () => {
 		await expect(withoutConditions.locator('strong')).toHaveText('4')
 	})
 
+	test('shows snippet scope counts in the location chart', async ({ page }) => {
+		await SnippetsTestHelper.createSnippetViaCli({ name: 'Stats Global One', active: true })
+		await SnippetsTestHelper.createSnippetViaCli({ name: 'Stats Global Two', active: true })
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Stats Admin Scope',
+			active: true,
+			scope: 'admin'
+		})
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: 'Stats Front-end Scope',
+			active: true,
+			scope: 'front-end'
+		})
+
+		await page.goto(URLS.STATS_ADMIN)
+		const locationChart = page.locator('[data-stats-chart="location"]')
+
+		for (const [label, count] of [
+			['Run everywhere', '2'],
+			['Only run in administration area', '1'],
+			['Only run on site front-end', '1']
+		]) {
+			const entry = locationChart.locator('li').filter({ hasText: label })
+
+			await expect(entry).toHaveCount(1)
+			await expect(entry.locator('strong')).toHaveText(count)
+		}
+	})
+
 	test('switches used tags between bar and cloud views', async ({ page }) => {
 		await SnippetsTestHelper.createSnippetViaCli({
 			name: 'Stats Shared and Alpha Tags',
@@ -183,7 +212,7 @@ test.describe('Stats screen', () => {
 			tags: ['Shared']
 		})
 
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		await page.goto(URLS.STATS_ADMIN)
 		const tagsChart = page.locator('[data-stats-chart="tags"]')
 
 		await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible()
@@ -219,7 +248,7 @@ test.describe('Stats screen', () => {
 			tags: ['sample']
 		})
 
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		await page.goto(URLS.STATS_ADMIN)
 
 		const manageUrl = (query: string) => new URL(`${URLS.SNIPPETS_ADMIN}${query}`, baseURL).toString()
 
@@ -264,7 +293,7 @@ test.describe('Stats screen', () => {
 			active: true,
 			tags: ['chart-link']
 		})
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		await page.goto(URLS.STATS_ADMIN)
 		await page.locator('[data-stats-chart="tags"]').getByRole('link', { name: 'chart-link' }).click()
 
 		await expect(page).toHaveURL(/page=snippets.*tag=chart-link/)
@@ -323,7 +352,7 @@ test.describe('Stats screen', () => {
 	})
 
 	test('restores a chart view when saving the preference fails', async ({ page }) => {
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		await page.goto(URLS.STATS_ADMIN)
 		const conditionsChart = page.locator('[data-stats-chart="conditions"]')
 
 		await expect(conditionsChart).toHaveAttribute('data-view', 'pie')
@@ -338,7 +367,7 @@ test.describe('Stats screen', () => {
 	})
 
 	test('keeps the latest chart views when an earlier save fails', async ({ page }) => {
-		await page.goto(URLS.SNIPPETS_ADMIN.replace('page=snippets', 'page=code-snippets-stats'))
+		await page.goto(URLS.STATS_ADMIN)
 		const typeChart = page.locator('[data-stats-chart="type"]')
 		const activationChart = page.locator('[data-stats-chart="activation"]')
 		let rejectFirstRequest: (() => void) | undefined
