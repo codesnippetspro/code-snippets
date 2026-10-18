@@ -1,0 +1,225 @@
+.search-results-page {
+	color: var(--cs-color-text);
+
+	mark {
+		border-radius: 2px;
+		background: var(--cs-color-highlight);
+		color: inherit;
+	}
+
+	.snippets-page-header {
+		justify-content: flex-start;
+		align-items: baseline;
+		gap: 12px;
+	}
+}
+
+.search-results-total {
+	color: var(--cs-color-text-muted);
+	font-size: 14px;
+}
+
+.search-results-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 20px;
+	align-items: center;
+	margin-block: 4px 16px;
+	padding: 0;
+	border: 0;
+
+	legend {
+		float: inline-start;
+		margin-inline-end: 4px;
+		padding: 0;
+		color: var(--cs-color-text-secondary);
+		font-weight: 600;
+	}
+}
+
+.search-results-page .universal-search-cloud-notice {
+	margin-block: 0 16px;
+	margin-inline: 0;
+}
+
+.search-results-upsell {
+	max-inline-size: 720px;
+}
+
+.search-results-ai-intro {
+	margin-block: 0 16px;
+	color: var(--cs-color-text-secondary);
+}
+
+.search-results-main {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.search-results-group {
+	overflow: hidden;
+	border: 1px solid var(--cs-color-border-subtle);
+	border-radius: var(--cs-card-radius);
+	background: var(--cs-color-surface);
+}
+
+.search-results-group-heading {
+	display: flex;
+	gap: 8px;
+	align-items: baseline;
+	margin: 0;
+	padding-block: 18px 14px;
+	padding-inline: 24px;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.search-results-count {
+	color: var(--cs-color-text-muted);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.search-results-list {
+	margin: 0;
+}
+
+.search-result {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+	margin: 0;
+	padding-block: 16px;
+	padding-inline: 24px;
+
+	& + & {
+		border-block-start: 1px solid var(--cs-color-border-subtle);
+	}
+
+	.badge {
+		flex: none;
+		min-inline-size: 52px;
+		margin-block-start: 1px;
+	}
+
+	.row-actions {
+		padding-block-start: 2px;
+		color: var(--cs-color-text-subtle);
+	}
+
+	.button-link {
+		font-size: 13px;
+	}
+
+	.dashicons-external {
+		inline-size: 14px;
+		block-size: 14px;
+		margin-inline-start: 2px;
+		font-size: 14px;
+		vertical-align: text-bottom;
+	}
+}
+
+.search-result-body {
+	flex: 1;
+	min-inline-size: 0;
+}
+
+.search-result-title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.search-result-title a,
+.search-result .row-actions a,
+.search-result .row-actions .button-link {
+	text-decoration: none;
+}
+
+.search-result-description {
+	margin-block: 2px 0;
+	color: var(--cs-color-text-secondary);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.search-result-aside {
+	flex: none;
+	display: flex;
+	gap: 14px;
+	align-items: center;
+	max-inline-size: 40%;
+	min-block-size: 28px;
+}
+
+.search-result-path {
+	overflow: hidden;
+	color: var(--cs-color-text-subtle);
+	font-size: 13px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.search-results-page .search-result-code-button {
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
+	white-space: nowrap;
+
+	.dashicons {
+		inline-size: 16px;
+		block-size: 16px;
+		font-size: 16px;
+	}
+}
+
+.search-result-error {
+	margin-inline-start: 8px;
+	color: var(--cs-color-error);
+}
+
+.search-results-empty,
+.search-results-pending {
+	margin: 0;
+	padding: 24px;
+	border: 1px solid var(--cs-color-border-subtle);
+	border-radius: var(--cs-card-radius);
+	background: var(--cs-color-surface);
+	color: var(--cs-color-text-muted);
+	font-size: 14px;
+}
+
+.search-results-pending {
+	padding-block: 16px;
+	font-size: 13px;
+	animation: universal-search-pulse 1.2s infinite;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+.search-results-truncated {
+	margin: 0;
+	padding-block: 12px;
+	padding-inline: 24px;
+	border-block-start: 1px solid var(--cs-color-border-subtle);
+	background: var(--cs-color-surface-subtle);
+	color: var(--cs-color-text-muted);
+	font-size: 12px;
+}
+
+@media (width <= 782px) {
+	.search-result {
+		flex-wrap: wrap;
+	}
+
+	.search-result-aside {
+		max-inline-size: none;
+		padding-inline-start: 68px;
+	}
+}

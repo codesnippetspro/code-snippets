@@ -22,13 +22,46 @@ export interface CloudSnippetDownloadButtonProps {
 	snippet: CloudSnippetSchema
 }
 
-export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProps> = ({ snippet, onDownloaded }) => {
+export interface CloudSnippetDownload {
+	isDownloading: boolean
+	/** The local copy of the snippet, once it has one. */
+	localSnippetId: number | null | undefined
+	errorMessage: string | undefined
+	download: VoidFunction
+}
+
+export const useCloudSnippetDownload = ({ snippet, onDownloaded }: CloudSnippetDownloadButtonProps): CloudSnippetDownload => {
 	const { api } = useRestAPI()
 	const { downloadRecords, updateDownloadRecord } = useCloudSnippetDownloads()
 	const [errorMessage, setErrorMessage] = useState<string>()
-	const [isUpsellOpen, setIsUpsellOpen] = useState(false)
 	const { isDownloading = false, localId } = downloadRecords[snippet.id] ?? {}
-	const localSnippetId = snippet.local_id ?? localId
+
+	const download = () => {
+		updateDownloadRecord(snippet.id, { isDownloading: true })
+		setErrorMessage(undefined)
+
+		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)
+			.then(response => {
+				updateDownloadRecord(snippet.id, { localId: response.snippet_id })
+				onDownloaded?.()
+			})
+			.catch((error: unknown) => {
+				setErrorMessage('string' === typeof error
+					? error
+					: __('An error occurred while trying to download the snippet.', 'code-snippets'))
+			})
+			.finally(() => updateDownloadRecord(snippet.id, { isDownloading: false }))
+	}
+
+	// A cloud snippet with no local copy reports an ID of zero rather than leaving it out.
+	const localSnippetId = 0 === snippet.local_id ? localId : snippet.local_id ?? localId
+
+	return { isDownloading, localSnippetId, errorMessage, download }
+}
+
+export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProps> = ({ snippet, onDownloaded }) => {
+	const { isDownloading, localSnippetId, errorMessage, download } = useCloudSnippetDownload({ snippet, onDownloaded })
+	const [isUpsellOpen, setIsUpsellOpen] = useState(false)
 
 	if (localSnippetId) {
 		return (
@@ -49,29 +82,12 @@ export const CloudSnippetDownloadButton: React.FC<CloudSnippetDownloadButtonProp
 		)
 	}
 
-	const handleDownload = () => {
-		updateDownloadRecord(snippet.id, { isDownloading: true })
-		setErrorMessage(undefined)
-
-		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud.snippets}/${snippet.id}/download`)
-			.then(response => {
-				updateDownloadRecord(snippet.id, { localId: response.snippet_id })
-				onDownloaded?.()
-			})
-			.catch((error: unknown) => {
-				setErrorMessage('string' === typeof error
-					? error
-					: __('An error occurred while trying to download the snippet.', 'code-snippets'))
-			})
-			.finally(() => updateDownloadRecord(snippet.id, { isDownloading: false }))
-	}
-
 	return (
 		<>
 			{isDownloading && <Spinner />}
 			{errorMessage && <ErrorTooltip message={errorMessage} />}
 
-			<Button primary onClick={handleDownload} disabled={isDownloading}>
+			<Button primary onClick={download} disabled={isDownloading}>
 				{__('Download', 'code-snippets')}
 			</Button>
 		</>

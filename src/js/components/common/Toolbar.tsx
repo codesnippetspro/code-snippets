@@ -11,6 +11,7 @@ import { CommunityIcon } from './icons/CommunityIcon'
 import { LibraryIcon } from './icons/LibraryIcon'
 import { SettingsIcon } from './icons/SettingsIcon'
 import { SnippetsIcon } from './icons/SnippetsIcon'
+import { UniversalSearch } from './UniversalSearch/UniversalSearch'
 import { UpsellDialog } from './UpsellDialog'
 import type { SVGProps } from 'react'
 
@@ -114,6 +115,8 @@ const UpperNav: React.FC = () => {
 
 				<div>{__('Code Snippets', 'code-snippets')}</div>
 			</div>
+
+			<UniversalSearch />
 
 			<nav aria-label={__('Main links', 'code-snippets')}>
 				<ul>

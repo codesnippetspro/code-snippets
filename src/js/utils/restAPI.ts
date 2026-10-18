@@ -21,7 +21,8 @@ export const REST_BASES = {
 	},
 	cloud: {
 		snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloud.snippets),
-	}
+	},
+	search: normalizeUrl(window.CODE_SNIPPETS?.restAPI.search)
 }
 
 /** Verbs that hosts and firewalls commonly reject outright. */
