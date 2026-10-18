@@ -348,11 +348,22 @@ $collapse-width: 1160px;
 		font-weight: 600;
 	}
 
+	// Matches the upgrade modal's gradient, with even spacing above and below so
+	// it sits centred in the space between the results and the footer.
 	&.is-upsell {
 		justify-content: flex-start;
-		border-style: solid;
-		border-color: var(--cs-color-border-subtle);
-		background: var(--cs-color-surface-subtle);
+		margin-block: 12px;
+		padding-block: 12px;
+		padding-inline: 14px;
+		border: 1px solid rgb(212 111 77 / 18%);
+		border-radius: 8px;
+		background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
+		color: #1c3f41;
+		font-weight: 500;
+
+		.badge {
+			flex: none;
+		}
 
 		> span:not(.badge) {
 			flex: 1;
@@ -394,6 +405,23 @@ $collapse-width: 1160px;
 
 	&:hover {
 		color: var(--cs-color-accent-hover);
+	}
+}
+
+// The upgrade link reads as a button, in the toolbar's Upgrade gradient.
+.code-snippets-toolbar-upper .universal-search-cloud-notice.is-upsell a {
+	padding-block: 6px;
+	padding-inline: 12px;
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--cs-color-secondary) 0%, #e2953f 100%);
+	color: #fff;
+	line-height: 1;
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		color: #fff;
+		filter: brightness(1.05);
 	}
 }
 
