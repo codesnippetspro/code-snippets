@@ -23,11 +23,13 @@ import type { SearchGroup, SearchItem, SearchSource } from '../../../types/Searc
 
 type SearchScope = 'all' | SearchSource
 
-/** Identifies the option that runs an AI search, which is listed after the results. */
-const AI_OPTION = 'ai-search'
-
 const SNIPPETS_LIMIT = 3
 const GROUP_LIMIT = 2
+
+// AI searches only the community, and waits for typing to settle for longer, as each search asks more of the cloud.
+const AI_SOURCES: readonly SearchSource[] = ['community']
+const AI_LIMIT = 3
+const AI_DELAY_MS = 600
 
 // How many results are fetched for each source, which is as many as a group can list.
 const RESULTS_PER_SOURCE = 50
@@ -143,62 +145,41 @@ const SearchOption: React.FC<SearchOptionProps> = ({ id, item, term, isActive, o
 	)
 }
 
-interface AiSearchOptionProps {
-	id: string
-	term: string
-	isActive: boolean
-	onActivate: VoidFunction
-}
-
-/**
- * Offers to search the cloud with AI, which finds snippets by what they do
- * rather than by the words in them.
- */
-const AiSearchOption: React.FC<AiSearchOptionProps> = ({ id, term, isActive, onActivate }) =>
-	<a
-		id={id}
-		role="option"
-		aria-selected={isActive}
-		tabIndex={-1}
-		className={classnames('universal-search-option', 'universal-search-ai-option', { 'is-active': isActive })}
-		href={getSearchPageUrl({ query: term, source: AI_SEARCH_TAB })}
-		onMouseMove={onActivate}
-	>
-		<Badge name="ai">{__('AI', 'code-snippets')}</Badge>
-
-		<span className="universal-search-option-text">
-			<span className="universal-search-option-title">
-				{// translators: %s: search query.
-					sprintf(__('Search with AI for “%s”', 'code-snippets'), term)}
-			</span>
-			<span className="universal-search-option-description">
-				{__('Describe what you need and find matching snippets shared by the community.', 'code-snippets')}
-			</span>
-		</span>
-	</a>
-
 interface SearchGroupListProps {
 	group: SearchGroup
 	items: SearchItem[]
 	term: string
+	/** Heading shown in place of the source's name. */
+	label?: React.ReactNode
+	/** Where the group's full list of results is, when not the source's own tab. */
+	viewAllUrl?: string
 	activeId: string | undefined
 	getOptionId: (item: SearchItem) => string
 	setActiveId: (id: string) => void
 }
 
-const SearchGroupList: React.FC<SearchGroupListProps> = ({ group, items, term, activeId, getOptionId, setActiveId }) => {
+const SearchGroupList: React.FC<SearchGroupListProps> = ({
+	group,
+	items,
+	term,
+	label,
+	viewAllUrl,
+	activeId,
+	getOptionId,
+	setActiveId
+}) => {
 	const headingId = useId()
 
 	return (
 		<div role="group" aria-labelledby={headingId}>
 			<div className="universal-search-group-header" role="presentation">
 				<span id={headingId}>
-					{SEARCH_SOURCE_LABELS[group.source]}
+					{label ?? SEARCH_SOURCE_LABELS[group.source]}
 					<span className="universal-search-count">{group.total.toLocaleString()}</span>
 				</span>
 
 				{group.total > items.length && (
-					<a href={getSearchPageUrl({ query: term, source: group.source })}>
+					<a href={viewAllUrl ?? getSearchPageUrl({ query: term, source: group.source })}>
 						{// translators: %s: number of search results.
 							sprintf(__('View all %s', 'code-snippets'), group.total.toLocaleString())}
 					</a>)}
@@ -249,7 +230,8 @@ interface SearchDropdownProps {
 	activeId: string | undefined
 	getOptionId: (item: SearchItem) => string
 	setActiveId: (id: string | undefined) => void
-	aiOptionId: string | undefined
+	aiGroup: VisibleGroup | undefined
+	isAiLoading: boolean
 }
 
 const SearchDropdown: React.FC<SearchDropdownProps> = ({
@@ -267,7 +249,8 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 	activeId,
 	getOptionId,
 	setActiveId,
-	aiOptionId
+	aiGroup,
+	isAiLoading
 }) =>
 	<div className="universal-search-dropdown" hidden={hidden} onMouseLeave={() => setActiveId(undefined)}>
 		{0 < total && <ScopeChips groups={groups} total={total} scope={scope} setScope={setScope} />}
@@ -277,7 +260,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 				{__('Snippets and settings could not be searched. Please try again.', 'code-snippets')}
 			</p>)}
 
-		{!hasFailed && 0 === total && !isLoading && (
+		{!hasFailed && 0 === total && !aiGroup && !isLoading && !isAiLoading && (
 			<p className="universal-search-empty">
 				{// translators: %s: search query.
 					sprintf(__('No results for “%s”.', 'code-snippets'), term)}
@@ -307,13 +290,24 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 					<span>{label}</span>
 				</div>)}
 
-			{aiOptionId && (
-				<AiSearchOption
-					id={aiOptionId}
+			{aiGroup && (
+				<SearchGroupList
+					group={aiGroup.group}
+					items={aiGroup.items}
 					term={term}
-					isActive={AI_OPTION === activeId}
-					onActivate={() => setActiveId(AI_OPTION)}
+					label={<><Badge name="ai" small>{__('AI', 'code-snippets')}</Badge>{__('AI results', 'code-snippets')}</>}
+					viewAllUrl={getSearchPageUrl({ query: term, source: AI_SEARCH_TAB })}
+					activeId={activeId}
+					getOptionId={getOptionId}
+					setActiveId={setActiveId}
 				/>)}
+
+			{isAiLoading && (
+				<div className="universal-search-pending" role="presentation">
+					<span className="universal-search-pending-badge"></span>
+					<span className="universal-search-pending-bar"></span>
+					<span>{__('Searching with AI…', 'code-snippets')}</span>
+				</div>)}
 		</div>
 
 		<CloudSearchNotice />
@@ -433,20 +427,36 @@ const SearchBar = () => {
 		useUniversalSearch({ query, perSource: RESULTS_PER_SOURCE, enabled: isOpen })
 
 	const scope = groups.some(group => group.source === selectedScope) ? selectedScope : 'all'
+	const isAiScope = 'all' === scope || 'community' === scope
+
+	// The AI search runs alongside the keyword search, so its results arrive without being asked for.
+	const aiSearch = useUniversalSearch({
+		query,
+		perSource: RESULTS_PER_SOURCE,
+		sources: AI_SOURCES,
+		method: 'ai',
+		delay: AI_DELAY_MS,
+		enabled: isOpen && isAiScope
+	})
+
+	// Its results are listed after the keyword results, once those are in, so they do not
+	// jump down the list. They may repeat a keyword result, so their ids are kept apart.
+	const isLocalLoading = loadingSources.some(isLocalSearchSource)
+	const aiGroup: VisibleGroup | undefined = isAiScope && !isLocalLoading && aiSearch.groups[0]
+		? {
+			group: aiSearch.groups[0],
+			items: aiSearch.groups[0].items.slice(0, AI_LIMIT).map(item => ({ ...item, id: `ai-${item.id}` }))
+		}
+		: undefined
+	const isAiLoading = isAiScope && 0 < aiSearch.loadingSources.length
+
 	const visibleGroups = getVisibleGroups(groups, scope)
-	const options = visibleGroups.flatMap(({ items }) => items)
+	const options = [...visibleGroups, ...aiGroup ? [aiGroup] : []].flatMap(({ items }) => items)
 	const activeItem = options.find(item => item.id === selectedId)
+	const activeId = activeItem?.id
 	const isDropdownOpen = isOpen && isSearchable
 	const getOptionId = (item: SearchItem) => `${baseId}-${item.id}`
-
-	// AI searches only the community, so it is not offered while another source is in scope. It waits
-	// for the local results, so the option does not move down the list as they arrive.
-	const hasAiOption = ('all' === scope || 'community' === scope) &&
-		!loadingSources.some(isLocalSearchSource)
-	const aiOptionId = hasAiOption ? `${baseId}-${AI_OPTION}` : undefined
-	const optionIds = [...options.map(item => item.id), ...hasAiOption ? [AI_OPTION] : []]
-	const activeId = activeItem?.id ?? (hasAiOption && AI_OPTION === selectedId ? AI_OPTION : undefined)
-	const activeOptionId = AI_OPTION === activeId ? aiOptionId : activeItem && getOptionId(activeItem)
+	const activeOptionId = activeItem && getOptionId(activeItem)
 
 	const pendingLabels = loadingSources
 		.filter(source => 'all' === scope || source === scope)
@@ -477,15 +487,13 @@ const SearchBar = () => {
 	}, [isExpanded])
 
 	const moveSelection = (step: number) => {
-		if (0 < optionIds.length) {
-			const activeIndex = activeId ? optionIds.indexOf(activeId) : -1
+		if (0 < options.length) {
+			const activeIndex = activeItem ? options.indexOf(activeItem) : -1
 			const start = -1 === activeIndex && 0 > step ? 0 : activeIndex
-			const nextId = optionIds[(start + step + optionIds.length) % optionIds.length]
-			const nextItem = options.find(item => item.id === nextId)
+			const nextItem = options[(start + step + options.length) % options.length]
 
-			setSelectedId(nextId)
-			document.getElementById(nextItem ? getOptionId(nextItem) : `${baseId}-${AI_OPTION}`)
-				?.scrollIntoView({ block: 'nearest' })
+			setSelectedId(nextItem.id)
+			document.getElementById(getOptionId(nextItem))?.scrollIntoView({ block: 'nearest' })
 		}
 	}
 
@@ -503,8 +511,6 @@ const SearchBar = () => {
 
 				if (isDropdownOpen && activeItem) {
 					openSearchItem(activeItem, term)
-				} else if (isDropdownOpen && AI_OPTION === activeId) {
-					window.location.assign(getSearchPageUrl({ query: term, source: AI_SEARCH_TAB }))
 				} else if (isSearchable) {
 					window.location.assign(getSearchPageUrl({ query: term, source: getScopeSource(scope) }))
 				}
@@ -565,7 +571,7 @@ const SearchBar = () => {
 			<div className="screen-reader-text" aria-live="polite" aria-atomic="true">
 				{isDropdownOpen && !hasFailed && (0 < loadingSources.length
 					? pendingLabels.join(' ') || __('Searching…', 'code-snippets')
-					: formatResultCount(total))}
+					: formatResultCount(total + (aiGroup?.group.total ?? 0)))}
 			</div>
 
 			<SearchDropdown
@@ -583,7 +589,8 @@ const SearchBar = () => {
 				activeId={activeId}
 				getOptionId={getOptionId}
 				setActiveId={setSelectedId}
-				aiOptionId={aiOptionId}
+				aiGroup={aiGroup}
+				isAiLoading={isAiLoading}
 			/>
 		</div>
 	)

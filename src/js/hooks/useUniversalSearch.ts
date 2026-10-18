@@ -23,6 +23,8 @@ export interface UseUniversalSearchProps {
 	sources?: readonly SearchSource[]
 	/** How the cloud is searched. */
 	method?: SearchMethod
+	/** How long typing must pause, in milliseconds, before a search is sent. */
+	delay?: number
 }
 
 export interface UniversalSearch {
@@ -120,7 +122,8 @@ export const useUniversalSearch = ({
 	enabled = true,
 	excerpts = true,
 	sources = SEARCH_SOURCES,
-	method = 'term'
+	method = 'term',
+	delay = DEBOUNCE_MS
 }: UseUniversalSearchProps): UniversalSearch => {
 	const { axiosInstance } = useRestAPI()
 	const [state, setState] = useState<SearchState>({ requestKey: '', loaded: [], groups: {}, hasFailed: false })
@@ -165,13 +168,13 @@ export const useUniversalSearch = ({
 					})
 				})
 			}
-		}, DEBOUNCE_MS)
+		}, delay)
 
 		return () => {
 			clearTimeout(timeout)
 			controller.abort()
 		}
-	}, [axiosInstance, requestKey, term, fieldList, perSource, excerpts, sourceList, method])
+	}, [axiosInstance, requestKey, term, fieldList, perSource, excerpts, sourceList, method, delay])
 
 	return useMemo(() => {
 		if (!requestKey) {
