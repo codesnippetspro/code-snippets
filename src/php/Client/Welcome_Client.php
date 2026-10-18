@@ -74,6 +74,16 @@ class Welcome_Client {
 	}
 
 	/**
+	 * Retrieve the welcome page data that is already cached, without fetching it.
+	 *
+	 * @return array<string, mixed> Cached data, or an empty array when nothing is cached.
+	 */
+	public static function get_cached_data(): array {
+		$stored_data = get_transient( self::CACHE_KEY );
+		return is_array( $stored_data ) ? $stored_data : [];
+	}
+
+	/**
 	 * Purge the welcome data cache.
 	 *
 	 * @return void
@@ -225,6 +235,17 @@ class Welcome_Client {
 	 * @return void
 	 */
 	protected function build_changelog_data() {
+		$this->welcome_data['changelog'] = self::read_changelog();
+	}
+
+	/**
+	 * Read the latest releases from the plugin's changelog file.
+	 *
+	 * The file ships with the plugin, so this never makes a remote request.
+	 *
+	 * @return array<int, array{version: string, date: string, entries: array<string, array<string, string[]>>}>
+	 */
+	public static function read_changelog(): array {
 		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 		$filesystem = new WP_Filesystem_Direct( null );
@@ -240,7 +261,7 @@ class Welcome_Client {
 		}
 
 		if ( ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
-			return;
+			return [];
 		}
 
 		$changelog_contents = $filesystem->get_contents( $changelog_dir . $changelog_filename );
@@ -301,7 +322,7 @@ class Welcome_Client {
 			];
 		}
 
-		$this->welcome_data['changelog'] = $changelog;
+		return $changelog;
 	}
 
 	/**

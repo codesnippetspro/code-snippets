@@ -7,8 +7,11 @@
 
 namespace Code_Snippets\Settings;
 
+use Code_Snippets\Client\Docs_Client;
 use Code_Snippets\Client\Welcome_Client;
 use Code_Snippets\Controller\Cloud_Search_Controller;
+use Code_Snippets\Search\Search_Index;
+use Code_Snippets\Search\Universal_Search;
 use function add_action;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\flush_versioned_cache_groups;
@@ -133,8 +136,9 @@ function do_settings_fields_with_headings( string $page, string $section ): void
 		}
 
 		$class = empty( $field['args']['class'] ) ? '' : ' class="' . esc_attr( $field['args']['class'] ) . '"';
+		$anchor = ' id="' . esc_attr( Search_Index::SETTING_ANCHOR_PREFIX . $field['id'] ) . '"';
 
-		echo '<tr' . $class . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
+		echo '<tr' . $anchor . $class . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
 
 		// A field with no title, such as a notice rendered by a callback, spans
 		// the row rather than leaving an empty header cell for a screen reader.
@@ -390,6 +394,8 @@ function process_settings_actions( array $input ): ?array {
 	if ( isset( $input['debug']['reset_caches'] ) ) {
 		Welcome_Client::clear_cache();
 		Cloud_Search_Controller::clear_caches();
+		Docs_Client::clear_cache();
+		Universal_Search::clear_caches();
 		clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
 
 		if ( is_multisite() ) {
