@@ -24,7 +24,7 @@ const AI_RESULT_NAME = 'Hide the toolbar from clients'
 
 /**
  * Answer the community searches in the browser, so the tests never wait on Code Snippets Cloud.
- * An AI search finds one snippet, and a keyword search finds none.
+ * An AI search finds one snippet when asked about the toolbar, and a keyword search finds none.
  */
 const mockCommunitySearch = (page: Page, methods: (string | null)[] = []) =>
 	page.route(isCommunitySearch, route => {
@@ -36,7 +36,7 @@ const mockCommunitySearch = (page: Page, methods: (string | null)[] = []) =>
 			contentType: 'application/json',
 			body: JSON.stringify({
 				query: url.searchParams.get('q'),
-				groups: 'ai' === method
+				groups: 'ai' === method && url.searchParams.get('q')?.includes('toolbar')
 					? [{
 						source: 'community',
 						total: 1,
@@ -146,18 +146,20 @@ test.describe('Universal search', () => {
 		await expect(resultsList(page).getByRole('group', { name: /^Cloud Library/ })).toHaveCount(0)
 	})
 
-	test('the last option searches the cloud with AI', async ({ page }) => {
+	test('AI results are listed last without being asked for', async ({ page }) => {
+		const methods: (string | null)[] = []
+		await page.unrouteAll()
+		await mockCommunitySearch(page, methods)
 		await page.goto(URLS.SNIPPETS_ADMIN)
 
-		await searchField(page).fill('Marigold')
-		const aiOption = resultsList(page).getByRole('option', { name: /^AI Search with AI for “Marigold”/ })
+		await searchField(page).fill('hide the toolbar')
+		const aiGroup = resultsList(page).getByRole('group', { name: /^AI\s*AI results/ })
+		const aiOption = aiGroup.getByRole('option', { name: new RegExp(AI_RESULT_NAME) })
 		await expect(aiOption).toBeVisible()
+		expect(methods).toContain('ai')
 
 		await searchField(page).press('ArrowUp')
 		await expect(aiOption).toHaveAttribute('aria-selected', 'true')
-
-		await searchField(page).press('Enter')
-		await expect(page).toHaveURL(/subpage=search&s=Marigold&source=ai/)
 	})
 
 	test('the AI tab of the results page lists what the AI search found', async ({ page }) => {
@@ -259,8 +261,7 @@ test.describe('Universal search', () => {
 		await searchField(page).fill('zzqxjv-no-such-thing')
 
 		await expect(page.getByText('No results for “zzqxjv-no-such-thing”.')).toBeVisible()
-		await expect(resultsList(page).getByRole('option')).toHaveCount(1)
-		await expect(resultsList(page).getByRole('option')).toContainText('Search with AI for “zzqxjv-no-such-thing”')
+		await expect(resultsList(page).getByRole('option')).toHaveCount(0)
 	})
 
 	test('Enter without a selection opens the full results page', async ({ page }) => {
@@ -295,7 +296,7 @@ test.describe('Universal search', () => {
 	test('a code match can be shown from the results page', async ({ page }) => {
 		await page.goto(`${URLS.SNIPPETS_ADMIN}&subpage=search&s=${encodeURIComponent(`// ${SNIPPET_NAME}`)}`)
 
-		const button = page.getByRole('region', { name: /^Snippets/ }).getByRole('button', { name: /^Line 1/ })
+		const button = page.getByRole('region', { name: /^Snippets/ }).getByRole('button', { name: /^Found in – Line 1/ })
 		await button.click()
 
 		await expect(button).toHaveAttribute('aria-expanded', 'true')
