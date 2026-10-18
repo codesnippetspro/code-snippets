@@ -43,7 +43,9 @@
 }
 
 .search-results-upsell {
-	max-inline-size: 720px;
+	box-sizing: border-box;
+	inline-size: 100%;
+	max-inline-size: none;
 }
 
 .search-results-ai-intro {
@@ -98,9 +100,10 @@
 		border-block-start: 1px solid var(--cs-color-border-subtle);
 	}
 
+	// Wide enough for the longest type label, so the type column lines up across rows.
 	.badge {
 		flex: none;
-		min-inline-size: 52px;
+		min-inline-size: 72px;
 		margin-block-start: 1px;
 	}
 
@@ -140,41 +143,87 @@
 	text-decoration: none;
 }
 
+// Long descriptions are clipped to three lines so results stay scannable.
 .search-result-description {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
 	margin-block: 2px 0;
 	color: var(--cs-color-text-secondary);
 	font-size: 13px;
 	line-height: 1.5;
 }
 
-.search-result-aside {
-	flex: none;
-	display: flex;
-	gap: 14px;
-	align-items: center;
-	max-inline-size: 40%;
-	min-block-size: 28px;
-}
-
-.search-result-path {
-	overflow: hidden;
-	color: var(--cs-color-text-subtle);
-	font-size: 13px;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.search-results-page .search-result-code-button {
+// A compact bar under the description rather than a button, opening the
+// matched line of code in a preview.
+.search-result-code-bar {
 	display: inline-flex;
-	gap: 4px;
+	gap: 6px;
 	align-items: center;
-	white-space: nowrap;
+	margin-block-start: 8px;
+	padding-block: 4px;
+	padding-inline: 8px 10px;
+	border: 1px solid var(--cs-color-border-subtle);
+	border-radius: 4px;
+	background: var(--cs-color-surface-subtle);
+	color: var(--cs-color-text-secondary);
+	font: inherit;
+	font-size: 12px;
+	line-height: 1.5;
+	cursor: pointer;
 
 	.dashicons {
 		inline-size: 16px;
 		block-size: 16px;
 		font-size: 16px;
 	}
+
+	.search-result-code-bar-open {
+		color: var(--cs-color-text-subtle);
+	}
+
+	&:hover,
+	&[aria-expanded='true'] {
+		border-color: var(--cs-color-accent);
+		color: var(--cs-color-accent);
+
+		.search-result-code-bar-open {
+			color: inherit;
+		}
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: 1px;
+	}
+}
+
+// Each result reads as a row of the snippets table: switch, details, type, actions.
+.search-result-switch {
+	flex: none;
+	display: flex;
+	inline-size: 36px;
+	min-block-size: 21px;
+	align-items: center;
+}
+
+.search-result .search-result-actions {
+	flex: none;
+	min-inline-size: 110px;
+	max-inline-size: 260px;
+	padding-block-start: 0;
+	text-align: end;
+	line-height: 21px;
+}
+
+// Where a result is found: a settings tab, a docs category, or who shared a cloud snippet.
+.search-result-meta {
+	margin-block: 4px 0;
+	color: var(--cs-color-text-subtle);
+	font-size: 12px;
+	line-height: 1.5;
 }
 
 .search-result-error {
@@ -218,8 +267,10 @@
 		flex-wrap: wrap;
 	}
 
-	.search-result-aside {
+	.search-result .search-result-actions {
+		inline-size: 100%;
 		max-inline-size: none;
-		padding-inline-start: 68px;
+		padding-inline-start: 52px;
+		text-align: start;
 	}
 }

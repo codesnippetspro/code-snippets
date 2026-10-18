@@ -71,7 +71,7 @@ const getPendingLabels = (loadingSources: SearchSource[], filter: SourceFilter):
 const countResults = (groups: SearchGroup[]): number =>
 	groups.reduce((total, group) => total + group.total, 0)
 
-interface CodeMatchButtonProps {
+interface CodeMatchBarProps {
 	code: SearchCodeExcerpt
 	term: string
 }
@@ -79,7 +79,7 @@ interface CodeMatchButtonProps {
 /**
  * Shows the line of code a result matched on, in the same preview as the search bar.
  */
-const CodeMatchButton: React.FC<CodeMatchButtonProps> = ({ code, term }) => {
+const CodeMatchBar: React.FC<CodeMatchBarProps> = ({ code, term }) => {
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null)
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -88,7 +88,7 @@ const CodeMatchButton: React.FC<CodeMatchButtonProps> = ({ code, term }) => {
 			<button
 				ref={setAnchor}
 				type="button"
-				className="button button-small search-result-code-button"
+				className="search-result-code-bar"
 				aria-expanded={isOpen}
 				onClick={() => setIsOpen(!isOpen)}
 				onBlur={() => setIsOpen(false)}
@@ -99,12 +99,15 @@ const CodeMatchButton: React.FC<CodeMatchButtonProps> = ({ code, term }) => {
 				}}
 			>
 				<span className="dashicons dashicons-editor-code" aria-hidden="true"></span>
-				{// translators: %s: line number.
-					sprintf(__('Line %s', 'code-snippets'), code.line.toLocaleString())}
+				<span>
+					{// translators: %s: line number.
+						sprintf(__('Found in – Line %s', 'code-snippets'), code.line.toLocaleString())}
+				</span>
+				<span className="dashicons dashicons-visibility search-result-code-bar-open" aria-hidden="true"></span>
 				<span className="screen-reader-text">{code.text}</span>
 			</button>
 
-			{isOpen && anchor && <SearchCodePreview code={code} term={term} anchor={anchor} placement="bottom-end" />}
+			{isOpen && anchor && <SearchCodePreview code={code} term={term} anchor={anchor} placement="bottom-start" />}
 		</>
 	)
 }
@@ -122,9 +125,14 @@ const SearchResult: React.FC<SearchResultProps> = ({ item, term, fields }) => {
 	// Only the fields being matched in are highlighted, so a highlight always marks a match.
 	const highlightIn = (field: SearchField) => fields.includes(field) ? term : ''
 
+	// Every result shares the snippets table's row layout: switch, details, type, actions. Only
+	// local snippets can be switched on, so the other rows leave that column empty to stay aligned.
 	return (
 		<li className="search-result">
-			<SearchItemBadge type={item.type} />
+			<div className="search-result-switch">
+				{item.snippet && 'cond' !== item.type && (
+					<SnippetActivationSwitch item={item} summary={item.snippet} isActive={isActive} setIsActive={setIsActive} />)}
+			</div>
 
 			<div className="search-result-body">
 				<h3 className="search-result-title">
@@ -140,18 +148,16 @@ const SearchResult: React.FC<SearchResultProps> = ({ item, term, fields }) => {
 						<Highlight text={item.description} term={highlightIn('description')} />
 					</p>)}
 
-				<div className="row-actions visible">
-					<SearchResultActions item={item} />
-				</div>
+				{/* A local snippet's path is only its type, which the badge already shows. */}
+				{!item.snippet && item.path && <p className="search-result-meta">{item.path}</p>}
+
+				{item.code && <CodeMatchBar code={item.code} term={highlightIn('code')} />}
 			</div>
 
-			<div className="search-result-aside">
-				{item.path && <span className="search-result-path">{item.path}</span>}
+			<SearchItemBadge type={item.type} />
 
-				{item.code && <CodeMatchButton code={item.code} term={highlightIn('code')} />}
-
-				{item.snippet && 'cond' !== item.type && (
-					<SnippetActivationSwitch item={item} summary={item.snippet} isActive={isActive} setIsActive={setIsActive} />)}
+			<div className="row-actions visible search-result-actions">
+				<SearchResultActions item={item} />
 			</div>
 		</li>
 	)
