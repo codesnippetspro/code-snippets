@@ -52,6 +52,7 @@ declare global {
 					token: string
 					snippets: string
 				}
+				search: string
 			}
 			urls: {
 				plugin: string
@@ -63,6 +64,7 @@ declare global {
 				import: string
 				settings: string | null
 				cloud: string
+				connectCloud?: string
 				demoReset: string
 			}
 			banner: {

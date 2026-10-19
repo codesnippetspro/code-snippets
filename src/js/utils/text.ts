@@ -37,3 +37,32 @@ export const stripTags = (text: string): string => {
 
 	return (document.body.textContent ?? '').replace(/\s+/g, ' ').trim()
 }
+
+export interface TextPart {
+	text: string
+	highlighted: boolean
+}
+
+const escapeRegExp = (text: string): string =>
+	text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/**
+ * Split text into runs, marking those that match a word of the search term.
+ */
+export const splitHighlights = (text: string, term: string): TextPart[] => {
+	// Longer words are tried first, so a word is not cut short by another that it begins with.
+	const words = [...new Set(term.trim().split(/\s+/).filter(Boolean))]
+		.sort((a, b) => b.length - a.length)
+
+	if (!text || 0 === words.length) {
+		return text ? [{ text, highlighted: false }] : []
+	}
+
+	const alternatives = words.map(escapeRegExp).join('|')
+	const wholeMatch = new RegExp(`^(?:${alternatives})$`, 'iu')
+
+	// Splitting on a capturing group keeps the matches in the list.
+	return text.split(new RegExp(`(${alternatives})`, 'giu'))
+		.filter(Boolean)
+		.map(part => ({ text: part, highlighted: wholeMatch.test(part) }))
+}

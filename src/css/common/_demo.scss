@@ -77,6 +77,18 @@
 	}
 }
 
+.wp-core-ui .button.demo-callout__close {
+	position: absolute;
+	inset-block-start: 8px;
+	inset-inline-end: 8px;
+	color: var(--cs-color-text-secondary);
+	text-decoration: none;
+
+	&:hover:not(:disabled) {
+		color: var(--cs-color-text);
+	}
+}
+
 .demo-callout__step {
 	display: block;
 	margin-block-end: 6px;

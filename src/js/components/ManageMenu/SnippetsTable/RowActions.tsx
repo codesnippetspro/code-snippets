@@ -35,7 +35,7 @@ const PreviewButton: React.FC<RowActionsProps> = ({ snippet }) => {
 	)
 }
 
-interface SnippetActionButtonProps {
+export interface SnippetActionButtonProps {
 	action: () => Promise<unknown>
 	label: ReactNode
 	workingLabel?: string
@@ -45,7 +45,7 @@ interface SnippetActionButtonProps {
 
 enum SnippetActionStatus { Ready, Working, Errored }
 
-const SnippetActionButton: React.FC<SnippetActionButtonProps> = ({ action, label, workingLabel, failedLabel, className }) => {
+export const SnippetActionButton: React.FC<SnippetActionButtonProps> = ({ action, label, workingLabel, failedLabel, className }) => {
 	const [status, setStatus] = useState(SnippetActionStatus.Ready)
 
 	return (

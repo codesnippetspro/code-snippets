@@ -86,3 +86,19 @@ export const buildUrl = (
 
 	return addQueryArgs(base, processedArgs)
 }
+
+/**
+ * Bring the element named by the URL fragment into view.
+ *
+ * Screens rendered by React do not exist yet when the browser looks for the
+ * fragment on load, so the jump to it, and its `:target` styling, are lost.
+ * Navigating to the same fragment again once the screen has rendered restores
+ * both, without adding a history entry.
+ */
+export const revealLocationHash = (): void => {
+	const { hash } = window.location
+
+	if (1 < hash.length && document.getElementById(decodeURIComponent(hash.slice(1)))) {
+		window.location.replace(hash)
+	}
+}
