@@ -17,6 +17,20 @@ const searchField = (page: Page) =>
 const resultsList = (page: Page) =>
 	page.getByRole('listbox', { name: 'Search results' })
 
+// The upgrade prompts only show without a licence, which a Pro test site has.
+const forceLicenseState = (page: Page, isLicensed: boolean) =>
+	page.addInitScript(licensed => {
+		let value: { isLicensed?: boolean } | undefined
+
+		Object.defineProperty(window, 'CODE_SNIPPETS', {
+			configurable: true,
+			get: () => value,
+			set: (incoming: { isLicensed?: boolean } | undefined) => {
+				value = incoming ? { ...incoming, isLicensed: licensed } : incoming
+			}
+		})
+	}, isLicensed)
+
 const isCommunitySearch = (url: URL): boolean =>
 	decodeURIComponent(url.href).includes('code-snippets/v1/search') && 'community' === url.searchParams.get('sources')
 
@@ -135,6 +149,7 @@ test.describe('Universal search', () => {
 	})
 
 	test('without Pro, searching the Cloud Library is offered as an upgrade', async ({ page }) => {
+		await forceLicenseState(page, false)
 		await page.goto(URLS.SNIPPETS_ADMIN)
 
 		await searchField(page).fill('Marigold')
@@ -199,6 +214,7 @@ test.describe('Universal search', () => {
 	})
 
 	test('without Pro, the Cloud Library tab of the results page offers an upgrade', async ({ page }) => {
+		await forceLicenseState(page, false)
 		await page.goto(`${URLS.SNIPPETS_ADMIN}&subpage=search&s=Marigold&source=cloud`)
 
 		const tab = page.getByRole('navigation', { name: 'Search result sources' }).getByRole('button', { name: /^Cloud Library/ })
