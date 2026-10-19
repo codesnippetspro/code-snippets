@@ -130,4 +130,43 @@ class Edit_Menu_Test extends AdminUnitTestCase {
 		$this->assertContains( $registered, $menu->get_hooknames() );
 		$this->assertNotFalse( has_action( 'load-' . $registered, [ $menu, 'load' ] ), 'the load hook is bound to the same name' );
 	}
+
+	/**
+	 * The edit screen has a title for the admin header.
+	 *
+	 * WordPress looks a page's title up in the admin menu, where the edit page is
+	 * not registered, and the admin header passes the result to strip_tags().
+	 *
+	 * @return void
+	 */
+	public function test_edit_screen_has_a_title(): void {
+		global $title, $pagenow, $plugin_page;
+
+		$edit_slug = code_snippets()->get_menu_slug( 'edit' );
+		$_GET['page'] = $edit_slug;
+		$_GET['id'] = '11';
+
+		$menu = new Edit_Menu();
+		$menu->register();
+
+		$load_hook = 'load-' . $menu->get_hookname();
+		remove_action( $load_hook, [ $menu, 'load' ] );
+
+		$previous_pagenow = $pagenow;
+
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- the title lookup reads the current page from these globals.
+		$pagenow = 'admin.php';
+		$plugin_page = $edit_slug;
+		$title = null;
+
+		try {
+			do_action( $load_hook );
+			$this->assertSame( $menu->title, get_admin_page_title() );
+		} finally {
+			$pagenow = $previous_pagenow;
+			$plugin_page = null;
+			$title = null;
+		}
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+	}
 }

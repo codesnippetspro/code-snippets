@@ -27,6 +27,7 @@ use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
 use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
 use Code_Snippets\REST_API\Preferences\Stats_View_Rest_Controller;
 use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
+use Code_Snippets\REST_API\REST_Cache_Bypass;
 use Code_Snippets\REST_API\Search\Search_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
@@ -157,6 +158,8 @@ class Plugin {
 	 */
 	public function init_rest_api() {
 		$cloud_search = new Cloud_Search_Controller( $this->cloud_connection );
+
+		new REST_Cache_Bypass();
 
 		new Snippets_REST_Controller();
 		new Recently_Active_REST_Controller();

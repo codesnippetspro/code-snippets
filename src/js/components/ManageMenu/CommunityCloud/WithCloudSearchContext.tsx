@@ -91,7 +91,7 @@ const updateSearchQueryParams = (params: CloudSearchParams) => {
 		[SEARCH_PARAM_VARS.type]: params.type || undefined,
 		[SEARCH_PARAM_VARS.query]: params.query || undefined,
 		[SEARCH_PARAM_VARS.status]: params.status || undefined,
-		[SEARCH_PARAM_VARS.method]: 'codevault' === params.method ? 'codevault' : undefined,
+		[SEARCH_PARAM_VARS.method]: 'term' === params.method ? undefined : params.method,
 		[SEARCH_PARAM_VARS.category]: params.category || undefined
 	})
 }
