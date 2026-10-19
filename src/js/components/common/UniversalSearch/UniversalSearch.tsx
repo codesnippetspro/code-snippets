@@ -440,12 +440,17 @@ const SearchBar = () => {
 	})
 
 	// Its results are listed after the keyword results, once those are in, so they do not
-	// jump down the list. They may repeat a keyword result, so their ids are kept apart.
+	// jump down the list. They may repeat a keyword result, so their ids are kept apart, and
+	// those not on this site lead to the AI tab, as a keyword search may not find them.
 	const isLocalLoading = loadingSources.some(isLocalSearchSource)
 	const aiGroup: VisibleGroup | undefined = isAiScope && !isLocalLoading && aiSearch.groups[0]
 		? {
 			group: aiSearch.groups[0],
-			items: aiSearch.groups[0].items.slice(0, AI_LIMIT).map(item => ({ ...item, id: `ai-${item.id}` }))
+			items: aiSearch.groups[0].items.slice(0, AI_LIMIT).map(item => ({
+				...item,
+				id: `ai-${item.id}`,
+				url: item.url || getSearchPageUrl({ query: term, source: AI_SEARCH_TAB })
+			}))
 		}
 		: undefined
 	const isAiLoading = isAiScope && 0 < aiSearch.loadingSources.length

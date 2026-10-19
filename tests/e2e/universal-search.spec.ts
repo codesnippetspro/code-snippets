@@ -162,6 +162,24 @@ test.describe('Universal search', () => {
 		await expect(aiOption).toHaveAttribute('aria-selected', 'true')
 	})
 
+	test('an AI result not on this site opens the AI tab of the results page', async ({ page }) => {
+		await page.goto(URLS.SNIPPETS_ADMIN)
+
+		await searchField(page).fill('hide the toolbar')
+		const aiOption = resultsList(page)
+			.getByRole('group', { name: /^AI\s*AI results/ })
+			.getByRole('option', { name: new RegExp(AI_RESULT_NAME) })
+		await expect(aiOption).toHaveAttribute('href', /[?&]source=ai(?:&|$)/)
+
+		await searchField(page).press('ArrowUp')
+		await expect(aiOption).toHaveAttribute('aria-selected', 'true')
+		await searchField(page).press('Enter')
+
+		await expect(page).toHaveURL(/subpage=search.*[?&]source=ai(?:&|$)/)
+		await expect(page.getByRole('region', { name: /^Cloud Community/ }).getByRole('heading', { name: AI_RESULT_NAME }))
+			.toBeVisible()
+	})
+
 	test('the AI tab of the results page lists what the AI search found', async ({ page }) => {
 		const methods: (string | null)[] = []
 		await page.unrouteAll()
