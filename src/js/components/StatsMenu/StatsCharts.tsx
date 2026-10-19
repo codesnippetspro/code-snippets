@@ -142,6 +142,7 @@ export const StatsChart = <Chart extends StatsConfigurableChartKey,>({
 	views
 }: StatsChartProps<Chart>) =>
 	<section
+		id={`stats-chart-${chart}`}
 		className="stats-chart-card"
 		data-stats-chart={chart}
 		data-view={view}
@@ -163,7 +164,7 @@ export interface TotalsStatsChartProps extends StatsChartEntry {
 }
 
 export const TotalsStatsChart: React.FC<TotalsStatsChartProps> = ({ chart, count, label }) =>
-	<section className="stats-chart-card" data-stats-chart={chart} aria-label={label}>
+	<section id={`stats-chart-${chart}`} className="stats-chart-card" data-stats-chart={chart} aria-label={label}>
 		<div className="stats-number-chart">
 			<strong className="stats-number-chart-value">{count}</strong>
 			<span className="stats-number-chart-label">{label}</span>

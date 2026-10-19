@@ -131,6 +131,12 @@ class Cloud_Snippets extends Model {
 		}
 
 		$result = new Cloud_Snippets();
+
+		// An error reply puts its details under `data`, where they would otherwise be read as snippets.
+		if ( false === ( $response['success'] ?? null ) ) {
+			return $result;
+		}
+
 		$snippets_data = $response['snippets'] ?? $response['data'] ?? null;
 
 		if ( is_array( $snippets_data ) ) {

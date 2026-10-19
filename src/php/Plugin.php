@@ -6,6 +6,7 @@ use Code_Snippets\Admin\Bootstrap_Admin;
 use Code_Snippets\Admin\Feedback_Error_Capture;
 use Code_Snippets\Admin\Feedback_Panel;
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
+use Code_Snippets\Client\Docs_Client;
 use Code_Snippets\Client\Feedback_Client;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
@@ -27,8 +28,10 @@ use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
 use Code_Snippets\REST_API\Preferences\Stats_View_Rest_Controller;
 use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
 use Code_Snippets\REST_API\REST_Cache_Bypass;
+use Code_Snippets\REST_API\Search\Search_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
+use Code_Snippets\Search\Universal_Search;
 use function Code_Snippets\Settings\are_settings_unified;
 
 /**
@@ -171,6 +174,8 @@ class Plugin {
 		new Cloud_Snippets_REST_Controller( $cloud_search );
 
 		new Feedback_REST_Controller( new Feedback_Client( new Feedback_Connection() ) );
+
+		new Search_REST_Controller( new Universal_Search( $cloud_search, new Docs_Client() ) );
 	}
 
 	/**
@@ -390,6 +395,7 @@ class Plugin {
 						'token'    => $this->cloud_connection->get_local_token(),
 						'snippets' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
 					],
+					'search'         => esc_url_raw( rest_url( Search_REST_Controller::get_base_route() ) ),
 				],
 				'urls'               => [
 					'plugin'    => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),

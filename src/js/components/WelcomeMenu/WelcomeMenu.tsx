@@ -1,5 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { revealLocationHash } from '../../utils/urls'
 import { ScreenMetaSlot } from '../common/ScreenMetaSlot'
 import { Toolbar } from '../common/Toolbar'
 import { Changelog } from './Changelog'
@@ -44,7 +45,7 @@ interface PartnersProps {
 
 const Partners: React.FC<PartnersProps> = ({ partners }) =>
 	<>
-		<h2>{__('Exclusive deals from our partners', 'code-snippets')}</h2>
+		<h2 id="partner-deals">{__('Exclusive deals from our partners', 'code-snippets')}</h2>
 		<ul className="code-snippets-partners">
 			{partners.map(({ title, follow_url, image_url }) =>
 				<li key={title} className="code-snippets-card">
@@ -76,7 +77,7 @@ interface ArticlesProps {
 
 const Articles: React.FC<ArticlesProps> = ({ articles }) =>
 	<>
-		<h2>{__('Helpful articles', 'code-snippets')}</h2>
+		<h2 id="helpful-articles">{__('Helpful articles', 'code-snippets')}</h2>
 		<ul className="code-snippets-articles">
 			{articles.map(({ title, follow_url, image_url, description, category }) =>
 				<li key={title} className="code-snippets-card">
@@ -98,26 +99,31 @@ const Articles: React.FC<ArticlesProps> = ({ articles }) =>
 		</ul>
 	</>
 
-export const WelcomeMenu = () =>
-	<>
-		<Toolbar />
+export const WelcomeMenu = () => {
+	useEffect(revealLocationHash, [])
 
-		<ScreenMetaSlot />
+	return (
+		<>
+			<Toolbar />
 
-		<div className="snippets-page-header">
-			<h1>{__('Resources and Updates', 'code-snippets')}</h1>
-		</div>
+			<ScreenMetaSlot />
 
-		<hr className="wp-header-end" />
-
-		<div className="code-snippets-welcome">
-
-			<div className="code-snippets-updates">
-				<HeroImage />
-				<Changelog />
+			<div className="snippets-page-header">
+				<h1>{__('Resources and Updates', 'code-snippets')}</h1>
 			</div>
 
-			{DATA?.features && <Articles articles={DATA.features} />}
-			{DATA?.partners && <Partners partners={DATA.partners} />}
-		</div>
-	</>
+			<hr className="wp-header-end" />
+
+			<div className="code-snippets-welcome">
+
+				<div className="code-snippets-updates">
+					<HeroImage />
+					<Changelog />
+				</div>
+
+				{DATA?.features && <Articles articles={DATA.features} />}
+				{DATA?.partners && <Partners partners={DATA.partners} />}
+			</div>
+		</>
+	)
+}
