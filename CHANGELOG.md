@@ -74,7 +74,8 @@
   snippet running under file-based execution.
 * Fixed the snippet editor reporting a save as failed and undelivered when no response was received, which it cannot
   determine.
-* Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user.
+* Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user,
+  and breaking REST API URLs. Safe mode is now carried on admin links only.
 
 ## [3.10.2] (2026-09-01)
 
