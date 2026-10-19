@@ -134,6 +134,13 @@ class Upgrader {
 			$role->remove_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );
 		}
 
+		// The version switcher caches its catalogue under a key belonging to the
+		// source that produced it. A site whose source changed across this upgrade
+		// would otherwise keep serving the previous source's list until it expired.
+		if ( version_compare( $prev_version, '4.0.0', '<' ) ) {
+			delete_transient( 'code_snippets_available_versions' );
+		}
+
 		if ( false === $prev_version ) {
 			add_action( 'init', [ $this, 'create_sample_content' ] );
 		}

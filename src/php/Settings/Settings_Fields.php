@@ -86,7 +86,7 @@ class Settings_Fields {
 			'reset_caches'    => [
 				'name' => __( 'Reset Caches', 'code-snippets' ),
 				'type' => 'action',
-				'desc' => __( 'Use this button to manually clear snippets caches. Worth doing before switching to an older version of the plugin, if your site uses a persistent object cache.', 'code-snippets' ),
+				'desc' => __( 'Use this button to manually clear snippets caches and refetch the list of plugin versions available to install. Worth doing before switching to an older version of the plugin, if your site uses a persistent object cache.', 'code-snippets' ),
 			],
 		];
 
@@ -100,11 +100,6 @@ class Settings_Fields {
 				'name'            => __( 'Refresh Versions', 'code-snippets' ),
 				'type'            => 'callback',
 				'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_refresh_versions_field' ],
-			],
-			'version_warning'  => [
-				'name'            => '',
-				'type'            => 'callback',
-				'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_version_switch_warning' ],
 			],
 		];
 

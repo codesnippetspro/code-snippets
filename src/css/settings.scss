@@ -196,15 +196,11 @@ body.js {
 		margin-block-start: 20px !important;
 		padding: 12px 16px;
 		border-inline-start: 4px solid var(--cs-color-warning);
-		background: var(--cs-color-surface-subtle);
+		background: var(--cs-color-surface-warning);
 
 		p {
 			margin: 0;
-			color: #8f6914;
-
-			strong {
-				color: #8f6914;
-			}
+			color: var(--cs-color-text);
 		}
 	}
 
