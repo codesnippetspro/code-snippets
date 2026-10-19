@@ -71,6 +71,7 @@ class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 	 *
 	 * WooCommerce does this: its REST authentication runs on determine_current_user
 	 * and calls home_url() to work out whether the request is for one of its routes.
+	 * An admin URL is built as well, as that is the one safe mode still filters.
 	 *
 	 * @param int|false $user_id Resolved user, from an unknown earlier callback.
 	 *
@@ -81,6 +82,7 @@ class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 
 		if ( $this->resolution_count < self::RESOLUTION_LIMIT ) {
 			$this->resolved_url = home_url( '/' );
+			admin_url( '/' );
 		}
 
 		return false === $this->user_to_resolve ? $user_id : $this->user_to_resolve;
@@ -184,60 +186,39 @@ class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 	}
 
 	/**
-	 * A URL built during resolution comes back untouched.
-	 *
-	 * The user the request will turn out to belong to is not known while that
-	 * URL is being built, so safe mode cannot yet be part of it, even when the
-	 * user being resolved does hold the capability.
+	 * Site URLs are left alone, as callers append paths to them and a query var
+	 * in the middle breaks the result.
 	 *
 	 * @return void
 	 */
-	public function test_url_built_during_user_resolution_is_unchanged(): void {
+	public function test_site_urls_do_not_carry_the_query_var(): void {
 		$_REQUEST['snippets-safe-mode'] = '1';
-		$this->user_to_resolve = $this->factory()->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
 
 		$evaluate = new Evaluate_Functions( code_snippets()->db );
 
-		add_filter( 'determine_current_user', [ $this, 'resolve_user_through_a_url' ], 15 );
-		$this->require_user_resolution();
-
-		$evaluate->disable_snippet_execution( true );
-
-		$this->assertIsString( $this->resolved_url );
-		$this->assertStringNotContainsString( 'snippets-safe-mode', $this->resolved_url );
+		$this->assertFalse( has_filter( 'home_url', [ $evaluate, 'add_safe_mode_query_var' ] ) );
+		$this->assertStringNotContainsString( 'snippets-safe-mode', home_url( '/' ) );
+		$this->assertStringNotContainsString( 'snippets-safe-mode', rest_url( 'code-snippets/v1/snippets' ) );
 	}
 
 	/**
-	 * Safe mode still reaches the URLs an administrator follows.
+	 * Safe mode is carried on to the admin URLs of a request that asked for it.
+	 *
+	 * Whether snippets are then skipped depends on the capability, which is
+	 * checked where they are evaluated rather than for every URL built.
 	 *
 	 * @return void
 	 */
-	public function test_query_var_is_added_for_a_user_with_the_capability(): void {
+	public function test_query_var_is_added_to_admin_urls(): void {
 		$_REQUEST['snippets-safe-mode'] = '1';
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( 0 );
 
 		$evaluate = new Evaluate_Functions( code_snippets()->db );
 
 		$this->assertStringContainsString(
 			'snippets-safe-mode=1',
 			$evaluate->add_safe_mode_query_var( 'https://example.org/wp-admin/' )
-		);
-	}
-
-	/**
-	 * Safe mode stays out of the URLs a visitor without the capability follows.
-	 *
-	 * @return void
-	 */
-	public function test_query_var_is_not_added_for_a_user_without_the_capability(): void {
-		$_REQUEST['snippets-safe-mode'] = '1';
-		wp_set_current_user( 0 );
-
-		$evaluate = new Evaluate_Functions( code_snippets()->db );
-
-		$this->assertSame(
-			'https://example.org/',
-			$evaluate->add_safe_mode_query_var( 'https://example.org/' )
 		);
 	}
 }

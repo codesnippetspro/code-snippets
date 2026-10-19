@@ -39,10 +39,9 @@ class Evaluate_Functions {
 		// plugins are still being included, which is before WordPress loads
 		// pluggable.php, so a capability check at this point would call an
 		// undefined wp_get_current_user() and take the whole request down.
-		// The capability is checked in the callback instead, which never runs
-		// before URLs are being generated.
+		// Site URLs are left alone: callers append paths to them, REST URLs
+		// among them, and a query var in the middle breaks the result.
 		if ( $this->is_safe_mode_query_var_set() ) {
-			add_filter( 'home_url', [ $this, 'add_safe_mode_query_var' ] );
 			add_filter( 'admin_url', [ $this, 'add_safe_mode_query_var' ] );
 		}
 	}
@@ -68,28 +67,7 @@ class Evaluate_Functions {
 	 * @return bool
 	 */
 	public function is_safe_mode_requested(): bool {
-		static $resolving = false;
-
-		if ( ! $this->is_safe_mode_query_var_set() ) {
-			return false;
-		}
-
-		// Asking for a capability makes WordPress resolve the current user,
-		// which runs third-party callbacks on determine_current_user. One that
-		// builds a URL arrives back here before that resolution has finished,
-		// and answering it again would restart it, recursing until the request
-		// ran out of memory. No user is known yet at that point, so it is no.
-		if ( $resolving ) {
-			return false;
-		}
-
-		$resolving = true;
-
-		try {
-			return code_snippets()->current_user_can();
-		} finally {
-			$resolving = false;
-		}
+		return $this->is_safe_mode_query_var_set() && code_snippets()->current_user_can();
 	}
 
 	/**
@@ -102,17 +80,11 @@ class Evaluate_Functions {
 	public function add_safe_mode_query_var( $url ): string {
 		$url = is_string( $url ) ? $url : '';
 
-		// A URL built before WordPress has settled on a user belongs to that
-		// resolution rather than to anything a visitor follows, so it is left
-		// alone. Safe mode links are generated while a page renders, which is
-		// long after this point.
-		if ( ! did_action( 'set_current_user' ) ) {
-			return $url;
-		}
-
-		return $this->is_safe_mode_requested() ?
-			add_query_arg( 'snippets-safe-mode', true, $url ) :
-			$url;
+		// No capability is checked here: doing so resolves the current user,
+		// and a plugin that builds a URL while that is under way would arrive
+		// back here and restart it. Snippets are only skipped for a user with
+		// the capability, which is checked where they are evaluated.
+		return add_query_arg( 'snippets-safe-mode', true, $url );
 	}
 
 	/**
