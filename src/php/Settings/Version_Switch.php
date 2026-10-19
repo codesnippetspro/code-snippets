@@ -46,13 +46,6 @@ class Version_Switch {
 	private const PROGRESS_TIMEOUT = 5 * MINUTE_IN_SECONDS;
 
 	/**
-	 * Source supplying the available versions.
-	 *
-	 * @var Version_Source|null
-	 */
-	private static ?Version_Source $source = null;
-
-	/**
 	 * Initialise class.
 	 *
 	 * @return void
@@ -94,18 +87,14 @@ class Version_Switch {
 	 * @return Version_Source
 	 */
 	public static function get_source(): Version_Source {
-		if ( null === self::$source ) {
-			/**
-			 * Filters the source the version switcher lists versions from.
-			 *
-			 * @param Version_Source $source Default source.
-			 */
-			$source = apply_filters( 'code_snippets_version_source', new WordPress_Org_Version_Source() );
+		/**
+		 * Filters the source the version switcher lists versions from.
+		 *
+		 * @param Version_Source $source Default source.
+		 */
+		$source = apply_filters( 'code_snippets_version_source', new WordPress_Org_Version_Source() );
 
-			self::$source = $source instanceof Version_Source ? $source : new WordPress_Org_Version_Source();
-		}
-
-		return self::$source;
+		return $source instanceof Version_Source ? $source : new WordPress_Org_Version_Source();
 	}
 
 	/**
@@ -122,15 +111,6 @@ class Version_Switch {
 		$installer = apply_filters( 'code_snippets_package_installer', new Upgrader_Package_Installer() );
 
 		return $installer instanceof Package_Installer ? $installer : new Upgrader_Package_Installer();
-	}
-
-	/**
-	 * Discard the memoised source, so the next call resolves the filter again.
-	 *
-	 * @return void
-	 */
-	public static function reset_source(): void {
-		self::$source = null;
 	}
 
 	/**

@@ -72,8 +72,6 @@ class Version_Switch_Test extends UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
-
-		Version_Switch::reset_source();
 		Version_Switch::clear_version_caches();
 		delete_transient( self::WP_ORG_CACHE_KEY );
 
@@ -102,7 +100,6 @@ class Version_Switch_Test extends UnitTestCase {
 		$this->installer = null;
 
 		delete_transient( self::WP_ORG_CACHE_KEY );
-		Version_Switch::reset_source();
 
 		parent::tear_down();
 	}
@@ -166,8 +163,6 @@ class Version_Switch_Test extends UnitTestCase {
 
 		$this->registered_filters[] = [ 'code_snippets_version_source', $supply_source ];
 		$this->registered_filters[] = [ 'code_snippets_package_installer', $supply_installer ];
-
-		Version_Switch::reset_source();
 	}
 
 	/**
@@ -250,10 +245,29 @@ class Version_Switch_Test extends UnitTestCase {
 		}
 
 		$this->registered_filters = [];
-		Version_Switch::reset_source();
 
 		$this->assertInstanceOf( WordPress_Org_Version_Source::class, Version_Switch::get_source() );
 		$this->assertInstanceOf( Upgrader_Package_Installer::class, Version_Switch::get_installer() );
+	}
+
+	/**
+	 * A source registered after the switcher was first used still takes effect,
+	 * as an edition may add its filter later in the request than the first lookup.
+	 *
+	 * @return void
+	 */
+	public function test_a_source_registered_after_first_use_is_honoured(): void {
+		$this->assertInstanceOf( WordPress_Org_Version_Source::class, Version_Switch::get_source() );
+
+		$source = new Recording_Version_Source();
+		$supply_source = function () use ( $source ) {
+			return $source;
+		};
+
+		add_filter( 'code_snippets_version_source', $supply_source );
+		$this->registered_filters[] = [ 'code_snippets_version_source', $supply_source ];
+
+		$this->assertSame( $source, Version_Switch::get_source() );
 	}
 
 	/**
@@ -271,7 +285,6 @@ class Version_Switch_Test extends UnitTestCase {
 		add_filter( 'code_snippets_package_installer', $strip, 99 );
 		$this->registered_filters[] = [ 'code_snippets_version_source', $strip ];
 		$this->registered_filters[] = [ 'code_snippets_package_installer', $strip ];
-		Version_Switch::reset_source();
 
 		$this->assertInstanceOf( WordPress_Org_Version_Source::class, Version_Switch::get_source() );
 		$this->assertInstanceOf( Upgrader_Package_Installer::class, Version_Switch::get_installer() );
