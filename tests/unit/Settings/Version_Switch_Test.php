@@ -818,6 +818,30 @@ class Version_Switch_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Clearing the caches also removes a catalogue cached by the default source,
+	 * which a site keeps after another source takes over.
+	 *
+	 * @return void
+	 */
+	public function test_clearing_caches_removes_the_default_source_catalogue(): void {
+		$this->register_test_services();
+		$this->seed_catalogue( '3.9.2' );
+		set_transient(
+			self::WP_ORG_CACHE_KEY,
+			[
+				'versions' => [],
+				'floor'    => '',
+			],
+			HOUR_IN_SECONDS
+		);
+
+		Version_Switch::clear_version_caches();
+
+		$this->assertFalse( get_transient( $this->source->get_cache_key() ) );
+		$this->assertFalse( get_transient( self::WP_ORG_CACHE_KEY ) );
+	}
+
+	/**
 	 * A source that reports no floor has nothing to explain, so the floor notice
 	 * is not rendered at all.
 	 *

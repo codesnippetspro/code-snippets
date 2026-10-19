@@ -284,6 +284,7 @@ class Version_Switch {
 	 */
 	public static function clear_version_caches(): void {
 		delete_transient( self::get_source()->get_cache_key() );
+		delete_transient( ( new WordPress_Org_Version_Source() )->get_cache_key() );
 		delete_transient( self::PROGRESS_KEY );
 		delete_transient( self::ERROR_KEY );
 	}
