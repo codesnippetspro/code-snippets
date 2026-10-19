@@ -81,6 +81,8 @@
 * Fixed admin screens waiting on remote requests for as long as the site's default timeout allows when the Code
   Snippets service or WordPress.org is slow or unreachable: these requests now give up after 5 seconds, or 3 seconds
   for the welcome content.
+* Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user,
+  and breaking REST API URLs. Safe mode is now carried on admin links only.
 
 ## [3.10.2] (2026-09-01)
 
