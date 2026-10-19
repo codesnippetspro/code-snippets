@@ -248,10 +248,21 @@ final class Search_Query {
 	 * @return string
 	 */
 	public function excerpt( string $text ): string {
+		return $this->excerpts ? $this->shorten( $text ) : wp_check_invalid_utf8( $text, true );
+	}
+
+	/**
+	 * Shorten text to a single excerpt length, keeping the first match in view.
+	 *
+	 * @param string $text Plain text.
+	 *
+	 * @return string
+	 */
+	private function shorten( string $text ): string {
 		// Invalid UTF-8 would make the match unfindable and the excerpt start at the beginning.
 		$text = wp_check_invalid_utf8( $text, true );
 
-		if ( ! $this->excerpts || mb_strlen( $text ) <= self::EXCERPT_LENGTH ) {
+		if ( mb_strlen( $text ) <= self::EXCERPT_LENGTH ) {
 			return $text;
 		}
 
@@ -302,7 +313,7 @@ final class Search_Query {
 				$best_count = $count;
 				$best = [
 					'line'   => $index + 1,
-					'text'   => $this->excerpt( trim( $line ) ),
+					'text'   => $this->shorten( trim( $line ) ),
 					'before' => self::context_line( $lines[ $index - 1 ] ?? '' ),
 					'after'  => self::context_line( $lines[ $index + 1 ] ?? '' ),
 				];

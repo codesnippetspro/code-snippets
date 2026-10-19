@@ -180,4 +180,17 @@ class Search_Query_Test extends UnitTestCase {
 
 		$this->assertNull( ( new Search_Query( 'missing' ) )->find_code_line( $code ) );
 	}
+
+	/**
+	 * A long line of code is shortened around the match even when excerpts are turned off.
+	 *
+	 * @return void
+	 */
+	public function test_long_code_line_is_shortened_without_excerpts() {
+		$line = str_repeat( '.a{color:red}', 200 ) . '.needle{color:blue}' . str_repeat( '.b{color:red}', 200 );
+		$found = ( new Search_Query( 'needle', Search_Query::FIELDS, false ) )->find_code_line( $line );
+
+		$this->assertStringContainsString( 'needle', $found['text'] );
+		$this->assertLessThan( 200, mb_strlen( $found['text'] ) );
+	}
 }
