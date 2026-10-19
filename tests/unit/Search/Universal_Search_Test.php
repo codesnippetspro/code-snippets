@@ -34,6 +34,13 @@ class Universal_Search_Test extends AdminUnitTestCase {
 	private array $search_methods = [];
 
 	/**
+	 * Local identifier the mocked cloud reports for its snippet, if any.
+	 *
+	 * @var int|null
+	 */
+	private ?int $cloud_local_id = null;
+
+	/**
 	 * Set up fixtures before any tests run.
 	 *
 	 * @param WP_UnitTest_Factory $factory Factory object.
@@ -54,6 +61,7 @@ class Universal_Search_Test extends AdminUnitTestCase {
 		parent::set_up();
 
 		$this->search_methods = [];
+		$this->cloud_local_id = null;
 		Universal_Search::clear_caches();
 
 		add_filter( 'pre_http_request', [ $this, 'mock_cloud_request' ], 10, 3 );
@@ -131,6 +139,7 @@ class Universal_Search_Test extends AdminUnitTestCase {
 			'code'        => '#wpadminbar { background: red; }',
 			'scope'       => 'admin-css',
 			'codevault'   => 'jlewis',
+			'local_id'    => $this->cloud_local_id,
 		];
 
 		return [
@@ -399,6 +408,20 @@ class Universal_Search_Test extends AdminUnitTestCase {
 
 		$this->assertSame( $local->id, $item['cloud']['local_id'] );
 		$this->assertStringContainsString( 'id=' . $local->id, $item['url'] );
+	}
+
+	/**
+	 * Whether a community snippet is on this site is decided here, not by the identifier the cloud reports.
+	 *
+	 * @return void
+	 */
+	public function test_community_snippet_ignores_the_local_id_reported_by_the_cloud() {
+		$this->cloud_local_id = 999;
+
+		$item = $this->search_source( 'admin bar', 'community' )[0];
+
+		$this->assertNull( $item['cloud']['local_id'] );
+		$this->assertSame( '', $item['url'] );
 	}
 
 	/**

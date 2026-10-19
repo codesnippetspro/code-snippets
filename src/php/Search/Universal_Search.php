@@ -583,7 +583,7 @@ class Universal_Search {
 		}
 
 		foreach ( $cloud_snippets as $cloud_snippet ) {
-			$cloud_snippet->local_id = $cloud_snippet->local_id ? $cloud_snippet->local_id : $local_ids[ $cloud_snippet->id ] ?? null;
+			$cloud_snippet->local_id = $local_ids[ $cloud_snippet->id ] ?? null;
 		}
 
 		return $cloud_snippets;
