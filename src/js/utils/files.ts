@@ -1,9 +1,8 @@
+import { TIMEOUTS } from '../../../tests/e2e/helpers/constants'
 import { getSnippetType } from './snippets/snippets'
 import type { SnippetsExport } from '../types/schema/SnippetsExport'
 import type { Snippet } from '../types/Snippet'
 
-const SECOND_IN_MS = 1000
-const TIMEOUT_SECONDS = 40
 const JSON_INDENT_SPACES = 2
 const EXPORT_FILENAME = 'snippets'
 const EXPORT_GENERATOR = 'Code Snippets'
@@ -24,7 +23,7 @@ export const downloadAsFile = (content: BlobPart, filename: string, type: string
 	link.download = filename
 	link.href = URL.createObjectURL(new Blob([content], { type }))
 
-	setTimeout(() => URL.revokeObjectURL(link.href), TIMEOUT_SECONDS * SECOND_IN_MS)
+	setTimeout(() => URL.revokeObjectURL(link.href), TIMEOUTS.DEFAULT)
 
 	// Some browsers (notably headless Chromium) can ignore programmatic clicks on detached anchors.
 	// Appending the link to the DOM before clicking improves reliability.

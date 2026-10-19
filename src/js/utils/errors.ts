@@ -54,8 +54,8 @@ export const describeRequestError = (error: unknown): string => {
 
 	if (!error.response) {
 		return __(
-			'No response came back, so this could not be confirmed. The change may already have been saved — ' +
-			'check in another tab before trying again.',
+			'No response came back, so this could not be confirmed. The change may already be saved, ' +
+			'so check in another tab before trying again.',
 			'code-snippets'
 		)
 	}

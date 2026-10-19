@@ -52,7 +52,7 @@ export const getRefinementPrompt = (siteName: string): string =>
 		siteName
 	)
 
-export const DEMO_REFINEMENT_REPLY = __('Done — the banner now greets visitors by name and uses a warmer gradient.', 'code-snippets')
+export const DEMO_REFINEMENT_REPLY = __('Done. The banner now greets visitors by name and uses a warmer gradient.', 'code-snippets')
 
 /**
  * Escape a value for embedding inside a single-quoted PHP string literal.

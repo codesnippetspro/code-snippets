@@ -1,8 +1,9 @@
 # Changelog
 
-## [4.0.0] (UPCOMING)
+## [4.0.0] (2026-10-12)
 
 ### Added
+* Stats page for viewing snippet totals and various snippet breakdowns.
 * AI Agent for building snippets from a description: it proposes a plan you can refine or approve before any code is
   written, and can revise the snippets it created. (PRO)
 * Snippet revisions, with a history of past versions, a side-by-side diff against the current code, and one-click
@@ -74,6 +75,9 @@
   snippet running under file-based execution.
 * Fixed the snippet editor reporting a save as failed and undelivered when no response was received, which it cannot
   determine.
+* Fixed translations being loaded too early, with a notice from WordPress, when posts were queried while plugins were
+  still loading.
+* Fixed a long unbroken line of code widening the snippet editor page and pushing the sidebar out of view.
 * Fixed admin screens waiting on remote requests for as long as the site's default timeout allows when the Code
   Snippets service or WordPress.org is slow or unreachable: these requests now give up after 5 seconds, or 3 seconds
   for the welcome content.
