@@ -63,6 +63,17 @@ test.describe('Blueprints demo', () => {
 		await expect(generated.locator('.badge.php-badge')).toBeVisible()
 	})
 
+	test('the callout close button exits the walkthrough mid-demo', async ({ page }) => {
+		await page.setViewportSize({ width: 1600, height: 900 })
+		await page.goto(URLS.BLUEPRINTS_ADMIN)
+		await page.locator('.demo-play').click()
+
+		await page.getByRole('button', { name: 'Exit demo' }).click()
+
+		await expect(page.locator('.demo-upsell')).toBeVisible()
+		await expect(page.locator('.demo-callout')).toHaveCount(0)
+	})
+
 	test('sections become browsable once the walkthrough finishes', async ({ page }) => {
 		await page.goto(URLS.BLUEPRINTS_ADMIN)
 

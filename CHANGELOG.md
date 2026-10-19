@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.0.0] (UPCOMING)
+## [4.0.0] (2026-10-12)
 
 ### Added
 * Stats page for viewing snippet totals and various snippet breakdowns.

@@ -102,7 +102,7 @@ const BlueprintsDemoPage: React.FC = () => {
 			<div className="blueprints-demo">
 				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
 
-				<DemoCallout callout={getCallout(stage)} />
+				<DemoCallout callout={getCallout(stage)} onClose={skip} />
 
 				<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
 
@@ -124,11 +124,11 @@ const BlueprintsDemoPage: React.FC = () => {
 				{showGenerated && <GeneratedNotice ref={generatedRef} />}
 
 				{isFinished && <DemoUpsell
-					title={__('That was a demo — Blueprints build the code for you', 'code-snippets')}
+					title={__('That was a demo: Blueprints build the code for you', 'code-snippets')}
 					onReplay={replay}
 				>
 					<p>{__('The whole walkthrough was scripted and ran inside this plugin. No code was generated and nothing was saved.', 'code-snippets')}</p>
-					<p>{__('Code Snippets Pro ships blueprints for shortcodes, post types, taxonomies, settings pages, and more — fill in the form and it writes the snippet for you.', 'code-snippets')}</p>
+					<p>{__('Code Snippets Pro ships blueprints for shortcodes, post types, taxonomies, settings pages, and more. Fill in the form and it writes the snippet for you.', 'code-snippets')}</p>
 				</DemoUpsell>}
 			</div>
 		</>
