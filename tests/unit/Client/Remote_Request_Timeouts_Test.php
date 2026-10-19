@@ -38,6 +38,8 @@ class Remote_Request_Timeouts_Test extends UnitTestCase {
 		delete_transient( 'code_snippets_welcome_data' );
 		delete_transient( 'code_snippets_available_versions' );
 
+		// A raised default shows which requests set no limit of their own.
+		add_filter( 'http_request_timeout', [ $this, 'raise_default_timeout' ] );
 		add_filter( 'pre_http_request', [ $this, 'capture_request' ], 10, 2 );
 	}
 
@@ -47,11 +49,21 @@ class Remote_Request_Timeouts_Test extends UnitTestCase {
 	 * @return void
 	 */
 	public function tear_down() {
+		remove_filter( 'http_request_timeout', [ $this, 'raise_default_timeout' ] );
 		remove_filter( 'pre_http_request', [ $this, 'capture_request' ], 10 );
 		delete_transient( 'code_snippets_welcome_data' );
 		delete_transient( 'code_snippets_available_versions' );
 
 		parent::tear_down();
+	}
+
+	/**
+	 * Raise the default request timeout above every limit set by the plugin.
+	 *
+	 * @return int
+	 */
+	public function raise_default_timeout(): int {
+		return 30;
 	}
 
 	/**
@@ -112,7 +124,7 @@ class Remote_Request_Timeouts_Test extends UnitTestCase {
 	public function test_cloud_snippet_request_is_bounded(): void {
 		( new Cloud_Public_Client( new Basic_Cloud_Connection() ) )->get_cloud_snippet( 1 );
 
-		$this->assert_requests_waited_for( 10, 'a cloud snippet' );
+		$this->assert_requests_waited_for( 5, 'a cloud snippet' );
 	}
 
 	/**
@@ -123,7 +135,7 @@ class Remote_Request_Timeouts_Test extends UnitTestCase {
 	public function test_cloud_snippet_revision_request_is_bounded(): void {
 		( new Cloud_Public_Client( new Basic_Cloud_Connection() ) )->get_cloud_snippet_revision( '1' );
 
-		$this->assert_requests_waited_for( 10, "a cloud snippet's revision" );
+		$this->assert_requests_waited_for( 5, "a cloud snippet's revision" );
 	}
 
 	/**
@@ -134,7 +146,7 @@ class Remote_Request_Timeouts_Test extends UnitTestCase {
 	public function test_featured_snippets_request_is_bounded(): void {
 		( new Cloud_Public_Client( new Basic_Cloud_Connection() ) )->get_featured_snippets( 1, 10, [] );
 
-		$this->assert_requests_waited_for( 10, 'featured cloud snippets' );
+		$this->assert_requests_waited_for( 5, 'featured cloud snippets' );
 	}
 
 	/**
@@ -157,6 +169,6 @@ class Remote_Request_Timeouts_Test extends UnitTestCase {
 	public function test_available_versions_request_is_bounded(): void {
 		Version_Switch::get_available_versions();
 
-		$this->assert_requests_waited_for( 10, 'the list of available versions' );
+		$this->assert_requests_waited_for( 5, 'the list of available versions' );
 	}
 }

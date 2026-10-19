@@ -24,12 +24,12 @@ class Version_Switch {
 	/**
 	 * Seconds to wait for the WordPress.org plugin API.
 	 *
-	 * Requested while the settings screen renders, so the wait is bounded here
-	 * rather than left to the default.
+	 * Requested while the settings screen renders, so it gives up before the
+	 * screen stalls, whatever the site's default timeout.
 	 *
 	 * @var int
 	 */
-	private const REQUEST_TIMEOUT = 10;
+	private const REQUEST_TIMEOUT = 5;
 
 	/**
 	 * Transient key used to indicate when a version switch is currently taking place.
