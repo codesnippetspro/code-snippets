@@ -380,7 +380,8 @@ class Universal_Search {
 
 		$can_read_code = self::can_read_code();
 		$edit_url = code_snippets()->get_menu_url( 'edit', $network ? 'network' : 'admin' );
-		$network_edit_url = code_snippets()->get_menu_url( 'edit', 'network' );
+		// Shared network snippets can only be edited by those who manage the network, as in the snippets table.
+		$network_edit_url = current_user_can( code_snippets()->get_network_cap_name() ) ? code_snippets()->get_menu_url( 'edit', 'network' ) : '';
 		$type_labels = self::get_type_labels();
 		$items = [];
 
@@ -407,6 +408,7 @@ class Universal_Search {
 
 			// Shared network snippets live in their own table, so their IDs can repeat those of this site.
 			$is_shared = $snippet->shared_network && ! $network;
+			$snippet_edit_url = $is_shared ? $network_edit_url : $edit_url;
 
 			$item = [
 				'id'          => $is_shared ? "snippets-network-$snippet->id" : "snippets-$snippet->id",
@@ -414,7 +416,7 @@ class Universal_Search {
 				'type'        => $snippet->type,
 				'title'       => $snippet->display_name,
 				'description' => $query->excerpt( $description ),
-				'url'         => add_query_arg( 'id', $snippet->id, $is_shared ? $network_edit_url : $edit_url ),
+				'url'         => $snippet_edit_url ? add_query_arg( 'id', $snippet->id, $snippet_edit_url ) : '',
 				'path'        => $type_labels[ $snippet->type ] ?? '',
 				'matched'     => $matched,
 				'snippet'     => [

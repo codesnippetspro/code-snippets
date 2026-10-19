@@ -53,8 +53,9 @@ interface SnippetActionsProps {
 	summary: SearchSnippetSummary
 }
 
+// As in the snippets table, a shared network snippet can only be opened by those who manage the network.
 const SnippetActions: React.FC<SnippetActionsProps> = ({ item, summary }) =>
-	joinActions([
+	summary.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap ? null : joinActions([
 		<a key="edit" href={item.url}>
 			{summary.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
 		</a>,

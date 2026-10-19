@@ -425,6 +425,42 @@ class Universal_Search_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * A shared network snippet only links to the network editor for users who can manage the network.
+	 *
+	 * @return void
+	 */
+	public function test_shared_network_snippet_links_only_for_network_managers() {
+		if ( ! is_multisite() ) {
+			$this->markTestSkipped( 'Sharing with subsites only exists on multisite installs.' );
+		}
+
+		$shared = save_snippet(
+			new Snippet(
+				[
+					'name'           => 'Shared admin bar colour',
+					'code'           => '#wpadminbar { background: green; }',
+					'scope'          => 'admin-css',
+					'network'        => true,
+					'shared_network' => true,
+				]
+			)
+		);
+
+		$find_shared = fn() => array_values(
+			array_filter(
+				$this->search_source( 'shared admin bar', 'snippets' ),
+				fn( array $item ) => "snippets-network-$shared->id" === $item['id']
+			)
+		);
+
+		$this->assertSame( '', $find_shared()[0]['url'] );
+
+		grant_super_admin( self::$admin_user_id );
+		$this->assertStringContainsString( 'id=' . $shared->id, $find_shared()[0]['url'] );
+		revoke_super_admin( self::$admin_user_id );
+	}
+
+	/**
 	 * An AI search is sent to the cloud as one, and keeps results that share no words with the question.
 	 *
 	 * @return void
