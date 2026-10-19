@@ -432,6 +432,12 @@ class Version_Switch {
 					// translators: %s: reason the installation failed.
 					__( 'Failed to switch versions: %s', 'code-snippets' ),
 					$install_result->get_error_message()
+				),
+				sprintf(
+					'target=%s, code=%s, messages=%s',
+					$target_version,
+					$install_result->get_error_code(),
+					implode( ' | ', $install_result->get_error_messages() )
 				)
 			);
 		}

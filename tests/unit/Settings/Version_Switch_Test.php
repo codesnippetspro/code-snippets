@@ -207,6 +207,26 @@ class Version_Switch_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Run a callback with the PHP error log written to a temporary file.
+	 *
+	 * @param callable $callback Code that may write to the error log.
+	 *
+	 * @return string What was written to the log.
+	 */
+	private function capture_error_log( callable $callback ): string {
+		$log_file = tempnam( get_temp_dir(), 'cs-log' );
+		$previous_log = ini_set( 'error_log', $log_file ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+
+		try {
+			$callback();
+			return (string) file_get_contents( $log_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		} finally {
+			ini_set( 'error_log', (string) $previous_log ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+			wp_delete_file( $log_file );
+		}
+	}
+
+	/**
 	 * Capture the markup the version switcher field renders.
 	 *
 	 * @return string
@@ -516,13 +536,46 @@ class Version_Switch_Test extends UnitTestCase {
 
 		$this->installer->result = new WP_Error( 'package_install_failed', 'The package could not be installed.' );
 
-		$result = Version_Switch::handle_version_switch( '3.9.2' );
+		$result = [];
+		$this->capture_error_log(
+			function () use ( &$result ) {
+				$result = Version_Switch::handle_version_switch( '3.9.2' );
+			}
+		);
 
 		$this->assertFalse( $result['success'] );
 		$this->assertSame( [ $package_path ], $this->installer->installed );
 		$this->assertFileDoesNotExist( $package_path );
 		$this->assertFalse( get_transient( self::PROGRESS_KEY ) );
 		$this->assertSame( [], $this->source->reported );
+	}
+
+	/**
+	 * A failed install is written to the server log with the version and the
+	 * installer's reason, so it can be diagnosed after the browser message is gone.
+	 *
+	 * @return void
+	 */
+	public function test_failed_install_is_logged_with_its_reason(): void {
+		$this->register_test_services();
+		$this->authorise();
+		$this->seed_catalogue( '3.9.2' );
+
+		$this->source->package = [
+			'package' => 'https://example.org/code-snippets.3.9.2.zip',
+			'cleanup' => false,
+		];
+
+		$this->installer->result = new WP_Error( 'package_install_failed', 'Could not create the plugin directory.' );
+
+		$logged = $this->capture_error_log(
+			function () {
+				Version_Switch::handle_version_switch( '3.9.2' );
+			}
+		);
+
+		$this->assertStringContainsString( '3.9.2', $logged );
+		$this->assertStringContainsString( 'Could not create the plugin directory.', $logged );
 	}
 
 	/**
