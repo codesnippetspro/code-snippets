@@ -218,19 +218,12 @@ class Version_Switch {
 	/**
 	 * Retrieve the code of the last catalogue request failure.
 	 *
-	 * Sites upgrading mid-cache still hold the previous shape — a bare code —
-	 * for up to ERROR_CACHE_DURATION.
-	 *
 	 * @return string
 	 */
 	public static function get_last_error_code(): string {
 		$error = get_transient( self::ERROR_KEY );
 
-		if ( is_array( $error ) ) {
-			return isset( $error['code'] ) ? (string) $error['code'] : '';
-		}
-
-		return is_string( $error ) ? $error : '';
+		return is_array( $error ) && isset( $error['code'] ) ? (string) $error['code'] : '';
 	}
 
 	/**

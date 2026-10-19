@@ -818,19 +818,6 @@ class Version_Switch_Test extends UnitTestCase {
 	}
 
 	/**
-	 * A site still holding the previous transient shape — a bare error code —
-	 * reports that code rather than a mangled one.
-	 *
-	 * @return void
-	 */
-	public function test_last_error_code_tolerates_the_previous_transient_shape(): void {
-		set_transient( self::ERROR_KEY, 'version_source_request_error', MINUTE_IN_SECONDS );
-
-		$this->assertSame( 'version_source_request_error', Version_Switch::get_last_error_code() );
-		$this->assertSame( '', Version_Switch::get_last_error_message() );
-	}
-
-	/**
 	 * Clearing the caches also removes a catalogue cached by the default source,
 	 * which a site keeps after another source takes over.
 	 *
