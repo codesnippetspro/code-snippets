@@ -74,8 +74,9 @@
   snippet running under file-based execution.
 * Fixed the snippet editor reporting a save as failed and undelivered when no response was received, which it cannot
   determine.
-* Fixed admin screens waiting on remote requests for longer than intended when the Code Snippets service is slow or
-  unreachable.
+* Fixed admin screens waiting on remote requests for as long as the site's default timeout allows when the Code
+  Snippets service or WordPress.org is slow or unreachable: these requests now give up after 5 seconds, or 3 seconds
+  for the welcome content.
 
 ## [3.10.2] (2026-09-01)
 
