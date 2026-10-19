@@ -1,5 +1,33 @@
 # Changelog
 
+## [4.1.0] (UPCOMING)
+
+### Added
+* Universal search in the plugin header, for finding snippets and their code, settings, stats, the welcome screen,
+  documentation and Community Cloud snippets from one field, with keyboard navigation and a full results page.
+* Labels in the version switcher marking the current, latest, beta and release candidate builds, and the WordPress
+  version each was tested up to.
+
+### Changed
+* The version switch warning now notes that beta and release candidate builds are not recommended for production sites.
+* Resetting caches now fetches the list of available plugin versions again, and reports how many were found or why none
+  could be listed.
+
+### Fixed
+* Fixed the snippets list showing an out-of-date state on sites with a page cache, as the plugin's REST API responses
+  were being cached.
+* Fixed the Search with AI option missing from the Community Cloud search method menu. (PRO)
+* Fixed the share with subsites setting not being applied when a network snippet was saved on multisite.
+* Fixed a PHP deprecation notice and a missing browser tab title on the Edit Snippet screen.
+* Fixed a long unbroken line of code widening the snippet editor page and pushing the sidebar out of view.
+* Fixed admin screens waiting on remote requests for as long as the site's default timeout allows when the Code
+  Snippets service or WordPress.org is slow or unreachable: these requests now give up after 5 seconds, or 3 seconds
+  for the welcome content.
+* Fixed version switch messages being hidden by the admin notice filter, and showing markup from the response as HTML.
+* Fixed the version list refresh reporting success when the versions could not be fetched.
+* Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user,
+  and breaking REST API URLs. Safe mode is now carried on admin links only.
+
 ## [4.0.0] (2026-10-12)
 
 ### Added
@@ -77,12 +105,6 @@
   determine.
 * Fixed translations being loaded too early, with a notice from WordPress, when posts were queried while plugins were
   still loading.
-* Fixed a long unbroken line of code widening the snippet editor page and pushing the sidebar out of view.
-* Fixed admin screens waiting on remote requests for as long as the site's default timeout allows when the Code
-  Snippets service or WordPress.org is slow or unreachable: these requests now give up after 5 seconds, or 3 seconds
-  for the welcome content.
-* Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user,
-  and breaking REST API URLs. Safe mode is now carried on admin links only.
 
 ## [3.10.2] (2026-09-01)
 
