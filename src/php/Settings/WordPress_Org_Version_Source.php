@@ -21,6 +21,16 @@ class WordPress_Org_Version_Source implements Version_Source {
 	private const API_ENDPOINT = 'https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&slug=code-snippets';
 
 	/**
+	 * Seconds to wait for the WordPress.org plugin API.
+	 *
+	 * Requested while the settings screen renders, so it gives up before the
+	 * screen stalls, whatever the site's default timeout.
+	 *
+	 * @var int
+	 */
+	private const REQUEST_TIMEOUT = 5;
+
+	/**
 	 * Transient key under which this source's catalogue is cached.
 	 *
 	 * @return string
@@ -66,7 +76,10 @@ class WordPress_Org_Version_Source implements Version_Source {
 	 * @return array{versions: array<int, array<string, mixed>>, floor: string}|WP_Error
 	 */
 	public function fetch_catalogue() {
-		$response = wp_remote_get( self::API_ENDPOINT );
+		$response = wp_remote_get(
+			self::API_ENDPOINT,
+			[ 'timeout' => self::REQUEST_TIMEOUT ]
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(

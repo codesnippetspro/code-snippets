@@ -10,8 +10,10 @@
 namespace Code_Snippets\Core;
 
 use Code_Snippets\Admin\Feedback_Panel;
+use Code_Snippets\Client\Docs_Client;
 use Code_Snippets\Client\Feedback_Client;
 use Code_Snippets\Model\Feedback_Connection;
+use Code_Snippets\Search\Universal_Search;
 use Code_Snippets\Settings\Version_Switch;
 use function Code_Snippets\flush_versioned_cache_groups;
 
@@ -88,6 +90,9 @@ class Uninstaller {
 		delete_transient( 'code_snippets_cloud_links' );
 		delete_transient( 'cs_codevault_snippets' );
 		delete_transient( 'cs_local_to_cloud_map' );
+
+		Docs_Client::clear_cache();
+		Universal_Search::clear_caches();
 
 		delete_option( Feedback_Connection::CREDENTIALS_OPTION );
 		delete_transient( Feedback_Panel::SUMMARY_TRANSIENT );

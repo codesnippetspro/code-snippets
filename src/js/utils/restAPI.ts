@@ -21,7 +21,8 @@ export const REST_BASES = {
 	},
 	cloud: {
 		snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloud.snippets),
-	}
+	},
+	search: normalizeUrl(window.CODE_SNIPPETS?.restAPI.search)
 }
 
 /** Verbs that hosts and firewalls commonly reject outright. */
@@ -102,6 +103,21 @@ export const listenForNonceRefresh = () => {
 export const applyRestNonce = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
 	if (restNonce) {
 		config.headers.set('X-WP-Nonce', restNonce)
+	}
+
+	return config
+}
+
+/**
+ * Give every read a unique address.
+ *
+ * Page caches and proxies key a stored response on its URL, and some replay it
+ * whatever the response headers say. The screens re-read the same route after
+ * each change, so a replayed response shows state from before the change.
+ */
+export const applyCacheBuster = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	if ('get' === config.method?.toLowerCase()) {
+		config.params = { ...<Record<string, unknown> | undefined>config.params, _: Date.now() }
 	}
 
 	return config

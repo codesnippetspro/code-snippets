@@ -115,7 +115,23 @@ class Edit_Menu extends Admin_Menu {
 
 		if ( $hook ) {
 			add_action( 'load-' . $hook, array( $this, 'load' ) );
+			add_action( 'load-' . $hook, array( $this, 'set_page_title' ) );
 		}
+	}
+
+	/**
+	 * Give the edit screen its title.
+	 *
+	 * WordPress looks a page's title up in the admin menu, where this page is not
+	 * registered, and the admin header requires one.
+	 *
+	 * @return void
+	 */
+	public function set_page_title(): void {
+		global $title;
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- the admin header reads the page title from this global.
+		$title = $this->title;
 	}
 
 	/**

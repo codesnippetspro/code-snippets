@@ -1,4 +1,5 @@
 @use 'upsell';
+@use 'universal-search';
 
 #wpbody {
 	padding-block-start: var(--cs-toolbar-block-size);
@@ -25,6 +26,7 @@
 
 .code-snippets-toolbar-upper {
 	justify-content: space-between;
+	gap: 28px;
 	block-size: 76px;
 	box-sizing: border-box;
 	padding-block: 16px;
