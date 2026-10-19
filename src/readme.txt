@@ -1,7 +1,7 @@
 === Code Snippets ===
 Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, carolinaop, tallblokeuk
 Donate link: https://codesnippets.pro
-Tags: code, snippets, multisite, php, css
+Tags: code, snippets, php, functions, multisite
 License: GPL-2.0-or-later
 License URI: license.txt
 Stable tag: 4.0.0
@@ -9,100 +9,181 @@ Requires at least: 5.5
 Tested up to: 7.1
 Requires PHP: 7.4
 
-An easy, clean, and simple way to enhance your site with code snippets.
+Manage custom WordPress code in one dashboard. Create PHP and HTML snippets, preview code, track snippet totals and reuse code across sites.
 
 == Description ==
 
-**✂ Code Snippets** provides an effortless way to enhance your WordPress site.
+**Code Snippets** gives you a dedicated WordPress dashboard for creating, organising and managing custom code. Add PHP functionality and reusable HTML content, choose where PHP snippets run, and activate or deactivate snippets individually.
 
-**🚀 Upgrade to Code Snippets Pro** for complete CSS, JavaScript, Gutenberg, Elementor and cloud synchronisation integrations. **[Elevate your snippets experience now!](https://codesnippets.pro/pricing)**
+Find snippets with search, tags and filters, switch between table and card views, and preview code without opening the editor. Lock important snippets to help prevent accidental changes, and use the Stats overview to see snippet totals and breakdowns.
 
-Say goodbye to the hassle of tweaking your theme's `functions.php` file and downloading endless plugins – Code Snippets simplifies the process!
+**Want AI-assisted code creation and advanced controls?** [Code Snippets Pro](https://codesnippets.pro/pricing/) adds the AI Agent, snippet revisions, visual display conditions, CSS and JavaScript snippets, and connected Cloud workflows.
 
-A snippet is like a mini-plugin for your WordPress site, providing added functionality without the clutter.
+Your snippets stay separate from your theme files. Browse Community Cloud for shared snippets, and use import and export to reuse your code across sites.
 
-Unlike other solutions that involve dumping code into your `functions.php` file, Code Snippets offers an intuitive graphical interface for seamless integration and real-time execution. Managing snippets is as easy as activating and deactivating plugins, only without the bloat and overhead.
+Code Snippets has been available on WordPress.org since 2012 and is active on 1 million+ WordPress installations.
 
-**🎥 Watch a quick overview by Imran Siddiq:**
+= Included in the free plugin =
 
-https://youtu.be/uzND-wdSCMQ
+* **PHP snippets without editing theme files.** Add custom functions and WordPress hooks from your dashboard.
+* **Reusable HTML content.** Create content snippets and insert them into posts and pages with shortcodes.
+* **Control where PHP runs.** Choose everywhere, administration only or front end only. Run-once snippets are available for manually confirmed one-time tasks.
+* **A built-in code editor.** Work with syntax highlighting, code checking and adjustable editor preferences.
+* **Organised snippet management.** Use names, descriptions, tags, search, filters, sorting and bulk actions. Browse in table or card view, preview code without opening the editor, and lock important snippets to help prevent accidental edits or deletion.
+* **Stats overview.** View snippet totals, active and inactive counts, and breakdowns by type, run location and tags.
+* **Import and export.** Move snippets between sites using export files, or export PHP snippets as a PHP file for use without the plugin.
+* **Community Cloud browsing.** Search community-shared snippets from inside WordPress and download supported snippet types.
+* **Optional file-based execution.** Execute supported snippets from generated files instead of evaluating their code from the database.
+* **Multisite support.** Manage network-wide snippets and separate snippets for individual sites.
+* **Safe Mode and feedback tools.** Use Safe Mode to troubleshoot snippet-related failures. An optional feedback reporter can be enabled in settings.
 
-☁️ Each copy of Code Snippets includes full integration with the community-powered [Code Snippets Cloud](https://codesnippets.cloud/) platform, providing easy access to hundreds of tweaks and enhancements ready to power-up any WordPress site.
+PHP snippets execute code on your site. Only use code you trust, review it before activation and keep a current backup. Safe Mode helps with recovery; it does not make every snippet safe or guarantee that every error can be prevented.
 
-**🌐 Connect with us:**
+= Watch the Code Snippets 4.0 walkthrough =
 
-* [Support Forum](https://wordpress.org/support/plugin/code-snippets)
-* [Facebook Community](https://facebook.com/groups/codesnippetsplugin)
-* [Discord Community](https://snipco.de/discord)
-* [GitHub Repository](https://github.com/codesnippetspro/code-snippets)
+See the plugin in use, including features from both the free and Pro editions. The Pro features listed below require the relevant Pro access.
 
-🌟 Like our plugin? Find it useful? Please consider sharing your experience by [leaving a review on WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets). Your feedback is instrumental to shaping our future growth!
+https://www.youtube.com/watch?v=q-QT9PXw2eQ
 
-🌍 We'd like to thank the wonderful people who have helped contribute translations to allow Code Snippets to be used in different languages. [You can find a full list here](https://github.com/codesnippetspro/code-snippets/blob/core/CREDITS.md#translators).
+= Community-powered Code Snippets Cloud =
+
+Browse the community-powered [Code Snippets Cloud](https://codesnippets.cloud/) library from inside WordPress. Search user-shared snippets, preview their code and download snippet types supported by your edition.
+
+A Cloud account is not required to create and run local PHP and HTML snippets. Personal Cloud library, synchronisation and deployment workflows require a connected account and the relevant Pro access.
+
+= Code Snippets Pro =
+
+[Code Snippets Pro](https://codesnippets.pro/pricing/) extends the free plugin with additional code types, editing tools and connected workflows:
+
+* **CSS and JavaScript snippets**, with dedicated integration for Gutenberg and Elementor.
+* **AI Agent.** Describe the functionality you need, review and refine a proposed plan, then approve code generation. Review the generated snippets before activating them.
+* **Snippet revisions.** Compare a previous version with the current code and restore an earlier revision.
+* **Display conditions.** Define where and when snippets run through a visual condition editor.
+* **Form-based Blueprints.** Generate PHP code for common tasks such as custom post types, taxonomies, shortcodes, settings pages and extra user profile fields.
+* **Role-based permissions.** Control access to viewing, creating, editing and deleting snippets.
+* **Ran on this page.** See which snippets executed or produced output on the current request through the admin bar.
+* **Performance and security insights.** Optional PHP execution-time tracking and advisory checks for potentially risky code patterns. These checks are not a security audit or a guarantee that code is safe.
+* **Connected Cloud workflows.** Manage your personal Cloud library, synchronise snippets and deploy snippets to connected sites, with drift reporting when site and Cloud copies differ.
+
+Cloud-connected Pro features require the appropriate licence and a connected Code Snippets Cloud account. Local PHP and HTML snippets do not require a Cloud account. The free plugin includes interactive demos of selected Pro workflows; using the full tools requires Pro access.
+
+[Compare Free and Pro](https://codesnippets.pro/pricing/)
+
+= Documentation and community =
+
+* [Documentation](https://codesnippets.pro/docs/)
+* [WordPress.org support forum](https://wordpress.org/support/plugin/code-snippets/)
+* [Facebook community](https://www.facebook.com/groups/codesnippetsplugin/)
+* [Discord community](https://snipco.de/discord)
+* [Source code and feature requests](https://github.com/codesnippetspro/code-snippets)
+
+= Share your experience =
+
+Find Code Snippets useful? [Leave a review on WordPress.org](https://wordpress.org/support/plugin/code-snippets/reviews/) to share your experience and help others decide whether the plugin suits their needs.
+
+= Translation Credits =
+
+Thank you to everyone who helps make Code Snippets available in different languages. See the [translation contributors](https://github.com/codesnippetspro/code-snippets/blob/core/CREDITS.md#translators) or [contribute a translation](https://translate.wordpress.org/projects/wp-plugins/code-snippets/).
 
 == Installation ==
 
 = Automatic Installation =
 
-1. Log into your WordPress admin
-2. Click __Plugins__
-
-3. Click __Add New__
-
-4. Search for __Code Snippets__
-
-5. Click __Install Now__ under "Code Snippets"
-6. Activate the plugin
+1. Open **Plugins > Add New** and search for **Code Snippets**.
+2. Click **Install Now**, then **Activate**.
+3. Open the **Snippets** menu to add or manage your code.
 
 = Manual Installation =
 
-1. Download the plugin
-2. Extract the contents of the zip file
-3. Upload the contents of the zip file to the `wp-content/plugins/` folder of your WordPress installation
-4. Activate the Code Snippets plugin from 'Plugins' page.
+1. Download and unzip the plugin.
+2. Upload the `code-snippets` directory to `wp-content/plugins/`.
+3. Activate **Code Snippets** from the **Plugins** screen.
 
-Network Activating Code Snippets through the Network Dashboard will enable a special interface for running snippets across the entire network.
+= Multisite Installation =
+
+Network activate the plugin to manage network-wide snippets from Network Admin. Individual sites can also have their own snippets. Network snippets must be activated or shared with the appropriate settings; simply creating a network snippet does not make it run everywhere.
 
 == Frequently Asked Questions ==
 
-A full list of our Frequently Asked Questions can be found at [codesnippets.pro](https://codesnippets.pro/docs/faq/).
+= How can I recover my site if a snippet causes an error? =
 
-= How can I recover my site if it is crashed by a buggy snippet? =
-You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: <https://codesnippets.pro/doc/safe-mode/>.
+Use Code Snippets Safe Mode to prevent snippet execution while you investigate the problem. Follow the [Safe Mode instructions](https://codesnippets.pro/doc/safe-mode/) for the appropriate recovery method, then fix or deactivate the affected snippet.
 
-= Will I lose my snippets if I change the theme or upgrade WordPress? =
-No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
+= Will I lose my snippets if I change theme or update WordPress? =
+
+Snippets are stored separately from your theme in the WordPress database, so changing theme or updating WordPress does not remove them. Code that depends on a particular theme or plugin may still need updating when that dependency changes.
 
 = Can the plugin be completely uninstalled? =
-If you enable the 'Complete Uninstall' option on the plugin settings page, Code Snippets will clean up all of its data when deleted through the WordPress 'Plugins' menu. This includes all stored snippets. If you would like to preserve the snippets, ensure they are exported first.
 
-= Can I copy snippets that I have created to another WordPress site? =
-Yes! You can individually export a single snippet using the link below the snippet name on the 'Manage Snippets' page or bulk export multiple snippets using the 'Bulk Actions' feature. Snippets can later be imported using the 'Import Snippets' page by uploading the export file.
+Enable **Complete Uninstall** under **Snippets > Settings > Advanced** before deleting the plugin through WordPress's Plugins screen if you want stored snippets and plugin settings removed. Export snippets you want to keep first. Leave Complete Uninstall disabled if you want to retain your snippet data when deleting the plugin.
 
-= Can I export my snippets to PHP for a site where I'm not using the Code Snippets plugin? =
-Yes. Click the checkboxes next to the snippets you want to export, and then choose **Export to PHP** from the Bulk Actions menu and click Apply. The generated PHP file will contain the exported snippets' code, as well as their name and description in comments.
+= Can I copy snippets to another site? =
 
-= Can I run network-wide snippets on a multisite installation? =
-You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
+Yes. Export a single snippet or select several snippets and use the export bulk action. Import the resulting file through the Snippets import screen on the other site.
 
-= Where are the snippets stored in my WordPress database? =
-Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what your table prefix is set to.
+= Can I export snippets to PHP for a site without Code Snippets? =
 
-= Where can I go for help or suggest new features? =
-You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/codesnippetspro/code-snippets).
+Yes. Select the PHP snippets, choose **Export to PHP** from the bulk actions and apply it. The generated file contains the exported code, with snippet names and descriptions in comments. Review the file before including it in a theme or plugin.
 
-= How can I help contribute to the development of the Code Snippets plugin? =
-The best way to do this is to fork the [repository on GitHub](https://github.com/codesnippetspro/code-snippets) and send a pull request.
+= Can I run snippets across a multisite network? =
 
-= How can I report security bugs found in this plugin? =
-You can report security bugs found in the source code of this plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/code-snippets). The Patchstack team will assist with verification, triage, and notification of security vulnerabilities.
+Yes. Network activation provides a network-level Snippets screen. Activate a network snippet to run it across the network, subject to its execution scope. Individual sites can also have separate snippets, and shared network snippets can be enabled per site where configured.
+
+= Where are snippets stored in the database? =
+
+Local snippets use the site's table prefix followed by `snippets`, for example `wp_snippets` on a single site or `wp_2_snippets` on a subsite. Network snippets use the network's base prefix followed by `ms_snippets`, for example `wp_ms_snippets`. Your actual prefix may differ.
+
+When optional file-based execution is enabled, the plugin also creates files used to execute snippets. Continue managing those snippets through the plugin.
+
+= Where can I get help or request a feature? =
+
+Use the [documentation](https://codesnippets.pro/docs/) or [WordPress.org support forum](https://wordpress.org/support/plugin/code-snippets/) for help. Report bugs and suggest improvements on [GitHub](https://github.com/codesnippetspro/code-snippets/issues), or discuss ideas in the [Facebook](https://www.facebook.com/groups/codesnippetsplugin/) and [Discord](https://snipco.de/discord) communities.
+
+= How can I contribute? =
+
+Code Snippets is developed on [GitHub](https://github.com/codesnippetspro/code-snippets). Bug reports, pull requests and [translations](https://translate.wordpress.org/projects/wp-plugins/code-snippets/) are welcome.
+
+= How do I report a security issue? =
+
+Report suspected security vulnerabilities privately through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/code-snippets). Do not disclose vulnerability details in a public GitHub issue or support topic.
+
+= What is new in Code Snippets 4.0? =
+
+The free 4.0 release adds the Stats overview and fixes issues with snippet saving feedback, description truncation, Elementor compatibility and translation loading.
+
+The free plugin also includes table and card views, code preview, HTML content snippets and optional file-based execution.
+
+Pro 4.0 adds the AI Agent and snippet revisions, alongside its additional code types, conditions, permissions, Blueprints and connected Cloud tools. See the Pro section above for the current feature split.
+
+= Can I add HTML, CSS and JavaScript snippets? =
+
+The free plugin supports PHP snippets and HTML content snippets. Dedicated CSS and JavaScript snippet types, plus the additional Gutenberg and Elementor integrations, are available in Pro.
+
+= Do I need a Cloud account? =
+
+No account is required to create and run local PHP and HTML snippets. Community Cloud provides access to shared snippets from within the plugin. Personal Cloud library, synchronisation and connected Pro workflows require an account and the relevant Pro access.
+
+= Will I need to recreate my existing snippets after updating? =
+
+No. Updating the plugin does not require you to recreate your stored snippets. Back up your site and test your custom code when updating WordPress, your theme or other plugins. Compatibility still depends on the code you use and its dependencies.
+
+= Can I switch to an earlier plugin version? =
+
+Users with permission to update plugins can open **Snippets > Settings > Advanced** and use **Switch Version** to choose an available version. Use **Refresh Versions** if the list needs updating. Back up your site and export important snippets before switching versions.
 
 == Screenshots ==
 
-1. Managing existing snippets
-2. Adding a new snippet
-3. Editing a snippet
-4. Importing snippets from an export file
+1. Managing local snippets in table view.
+2. Creating a PHP snippet in the code editor.
+3. Browsing local snippets in card view.
+4. Stats overview with snippet totals and breakdowns.
+5. Browsing Community Cloud snippets, with Pro-only items clearly marked.
+6. Importing snippet export files with duplicate-handling options.
+
+== Upgrade Notice ==
+
+= 4.0.0 =
+Adds the Stats overview and fixes saving feedback, description display, Elementor compatibility and translation notices. Back up your site before updating.
 
 == Changelog ==
 
@@ -110,73 +191,19 @@ You can report security bugs found in the source code of this plugin through the
 
 __Added__
 
-* Stats page for viewing snippet totals and various snippet breakdowns.
-* AI Agent for building snippets from a description: it proposes a plan you can refine or approve before any code is
-  written, and can revise the snippets it created. (PRO)
-* Snippet revisions, with a history of past versions, a side-by-side diff against the current code, and one-click
-  restore. (PRO)
-* Display conditions for controlling where and when a snippet runs, without writing the checks by hand. (PRO)
-* Per-role snippet permissions, so you can decide which roles may view, edit, activate, or delete snippets. (PRO)
-* Blueprints for setting up a site from a saved collection of snippets and settings. (PRO)
-* Flat file storage, for keeping snippets as files so they can be version-controlled alongside the rest of a site. (PRO)
-* "Ran on this page" tracking, showing which snippets actually executed on the page you are viewing. (PRO)
-* Natural-language search in Community Cloud, so you can describe what you need instead of guessing keywords. (PRO)
-* Snippet deployment from Code Snippets Cloud to connected sites, including deploying several snippets under one shared
-  display condition. (PRO)
-* Installing a cloud bundle onto a connected site as a standalone plugin. (PRO)
-* Updating Code Snippets Pro on a connected site from the cloud dashboard. (PRO)
-* Drift detection, which reports when a snippet on the site no longer matches the copy stored in the cloud. (PRO)
-* New admin interface for managing snippets, with a cleaner layout, faster interactions, and a more consistent
-  experience across plugin screens. (PRO)
-* Card view for browsing snippets, with a view switcher on the snippets table and Community Cloud. (PRO)
-* Snippet preview modal for viewing snippet code from the snippets table without opening the editor. (PRO)
-* Automatic hiding of unrelated admin notices from other plugins on Code Snippets screens. (PRO)
-* Admin bar snippet drawer, based on the Deckerweb Snippets workflow, for quick access to snippets and Safe Mode from
-  the WordPress admin bar. (PRO)
-* Snippet locking to help prevent accidental edits or deletion of important snippets. Props
-  to https://github.com/mgiannopoulos24. (PRO)
-* Improved screen options on the main snippets table, including controls for visible columns and truncating long snippet
-  names or descriptions. (PRO)
-* Bulk actions and bulk code download support in the redesigned snippets table. (PRO)
-* Featured snippets and improved browsing in Community Cloud. (PRO)
-* WordPress modern theme admin styling compatibility. (PRO)
-* Clearer accessibility labels, headings, tab markup, table checkboxes, sort buttons, copy buttons, and drag-and-drop
-  upload controls. (PRO)
-* Feedback reporter for sending bug reports, feature requests and general feedback from the plugin screens, with an
-  optional summary of the site environment so the team can reproduce the problem. (PRO)
-
-__Changed__
-
-* Redesigned the main snippets table with improved search, filtering, sorting, pagination, row actions, and bulk
-  selection. (PRO)
-* Improved the snippet import and migration experience, including clearer file upload handling and third-party plugin
-  migration flows. (PRO)
-* Improved snippet error handling so activation failures, validation errors, and stack traces are easier to understand.
-  (PRO)
-* Improved Community Cloud search and filtering, including server-side filters, better result loading, and clearer empty
-  states. (PRO)
-* Updated the welcome screen, toolbar, import screen, and cloud screens to match the new admin experience. (PRO)
-* Updated internal plugin architecture to a cleaner PSR-4 structure for better long-term maintainability. (PRO)
-* Improved accessibility across the snippets table, import screen, migration flow, Community Cloud, welcome screen,
-  toolbar, dialogs, tooltips, and code editor. (PRO)
-* Improved colour contrast and reduced-motion support across admin screens. (PRO)
-* Faster loading of large code vaults, which are now fetched a page at a time instead of all at once. (PRO)
+* Stats page for viewing snippet totals and breakdowns by type, run location and tags.
+* Optional feedback reporter for sending bug reports, feature requests and general feedback from plugin screens.
+* Interactive demos of the AI Agent, Blueprints and Cloud Library in the free plugin. The full tools require Pro access.
+* AI Agent for building snippets from a description, with a plan to review and refine before code generation. (PRO)
+* Snippet revisions, with a history of past versions, a side-by-side comparison and restoration of an earlier revision. (PRO)
+* Role-based permissions for viewing, creating, editing and deleting snippets. (PRO)
+* "Ran on this page" tracking for snippets that executed or produced output on the current request. (PRO)
+* Optional PHP execution-time tracking and advisory checks for potentially risky code patterns. These checks do not certify code as safe. (PRO)
+* Support for deploying snippets from Code Snippets Cloud to connected sites, including linking multiple snippets to one shared display condition. Requires a connected Cloud account and the appropriate Pro access. (PRO)
+* Support for Cloud drift detection through site snippet inventory and code hashes. Requires a connected Cloud account and the appropriate Pro access. (PRO)
 
 __Fixed__
 
-* Fixed AI conversations from one connected site being visible from another. (PRO)
-* Fixed a snippet list stored in Code Snippets Cloud being emptied when the site was temporarily unable to read its own
-  snippets. (PRO)
-* Fixed REST API server error responses on missing snippets. (PRO)
-* Fixed redundant frontend logic, improving overall performance. (PRO)
-* Fixed Community Cloud search results and pagination to respect WordPress screen options. (PRO)
-* Fixed snippet saving and activation feedback to improve validation and runtime error display. (PRO)
-* Fixed downloaded Community Cloud snippets appearing as not downloaded after a page reload. (PRO)
-* Fixed network snippet lookups using the wrong database table on multisite. (PRO)
-* Fixed the inactive snippets count including trashed snippets. (PRO)
-* Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
-* Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
-  (PRO)
 * Fixed a fatal error in the Elementor editor on Elementor versions older than 3.19.
 * Fixed snippet descriptions staying truncated after the "Truncate long snippet names and descriptions" screen option
   was switched off.
