@@ -260,6 +260,17 @@ class Version_Switch {
 	}
 
 	/**
+	 * Explain why versions could not be listed after a refresh.
+	 *
+	 * @return string Reason the source is unavailable or its request failed, or an empty string when neither.
+	 */
+	public static function get_refresh_failure(): string {
+		$source = self::get_source();
+
+		return $source->is_available() ? self::get_last_error_message() : $source->get_unavailable_notice()['message'];
+	}
+
+	/**
 	 * Retrieve the current plugin version.
 	 *
 	 * @return string
@@ -696,6 +707,11 @@ class Version_Switch {
 		}
 
 		self::refresh_available_versions();
+		$failure = self::get_refresh_failure();
+
+		if ( $failure ) {
+			wp_send_json_error( [ 'message' => $failure ] );
+		}
 
 		wp_send_json_success( [ 'message' => __( 'Available versions updated successfully.', 'code-snippets' ) ] );
 	}

@@ -227,6 +227,19 @@ class Version_Switch_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Retrieve the notice added by the most recent cache reset.
+	 *
+	 * @return array{type: string, message: string}
+	 */
+	private function get_reset_caches_notice(): array {
+		$notices = wp_list_filter( get_settings_errors( OPTION_NAME ), [ 'code' => 'snippet_caches_reset' ] );
+
+		$this->assertNotEmpty( $notices, 'resetting caches should add a notice' );
+
+		return end( $notices );
+	}
+
+	/**
 	 * Capture the markup the version switcher field renders.
 	 *
 	 * @return string
@@ -839,6 +852,40 @@ class Version_Switch_Test extends UnitTestCase {
 
 		$this->assertFalse( get_transient( $this->source->get_cache_key() ) );
 		$this->assertFalse( get_transient( self::WP_ORG_CACHE_KEY ) );
+	}
+
+	/**
+	 * Resetting the caches reports why versions could not be fetched again,
+	 * rather than reporting success with none available.
+	 *
+	 * @return void
+	 */
+	public function test_reset_caches_reports_a_failed_refresh(): void {
+		$this->register_test_services();
+		$this->source->catalogue = new WP_Error( 'version_source_request_error', 'The version service is down.' );
+
+		process_settings_actions( [ 'debug' => [ 'reset_caches' => '1' ] ] );
+
+		$notice = $this->get_reset_caches_notice();
+		$this->assertSame( 'error', $notice['type'] );
+		$this->assertStringContainsString( 'The version service is down.', $notice['message'] );
+	}
+
+	/**
+	 * Resetting the caches with no source available explains why rather than
+	 * reporting none to install.
+	 *
+	 * @return void
+	 */
+	public function test_reset_caches_reports_an_unavailable_source(): void {
+		$this->register_test_services();
+		$this->source->available = false;
+
+		process_settings_actions( [ 'debug' => [ 'reset_caches' => '1' ] ] );
+
+		$notice = $this->get_reset_caches_notice();
+		$this->assertSame( 'error', $notice['type'] );
+		$this->assertStringContainsString( Version_Switch::get_unavailable_notice()['message'], $notice['message'] );
 	}
 
 	/**
