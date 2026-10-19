@@ -383,7 +383,7 @@ function update_shared_network_snippets( array $snippets ): bool {
 	}
 
 	$existing_shared_ids = get_site_option( 'shared_network_snippets', [] );
-	$updated_shared_ids = array_values( array_diff( array_merge( $existing_shared_ids, $shared_ids ), $unshared_ids ) );
+	$updated_shared_ids = array_values( array_unique( array_diff( array_merge( $existing_shared_ids, $shared_ids ), $unshared_ids ) ) );
 
 	if ( $existing_shared_ids === $updated_shared_ids ) {
 		return false;
@@ -393,21 +393,30 @@ function update_shared_network_snippets( array $snippets ): bool {
 
 	// Deactivate the snippet on all sites if necessary.
 	if ( $unshared_ids ) {
-		$sites = get_sites( [ 'fields' => 'ids' ] );
+		// Every site, not the first hundred that get_sites() returns by default:
+		// one left out would keep running a snippet that is no longer shared.
+		$sites = get_sites(
+			[
+				'fields' => 'ids',
+				'number' => 0,
+			]
+		);
 
 		foreach ( $sites as $site ) {
 			switch_to_blog( $site );
 			$active_shared_ids = get_option( 'active_shared_network_snippets' );
 
 			if ( is_array( $active_shared_ids ) ) {
-				$active_shared_ids = array_diff( $active_shared_ids, $unshared_ids );
+				$active_shared_ids = array_values( array_diff( $active_shared_ids, $unshared_ids ) );
 				update_option( 'active_shared_network_snippets', $active_shared_ids );
 			}
 
 			clean_active_snippets_cache( code_snippets()->db->ms_table );
-		}
 
-		restore_current_blog();
+			// Each switch is undone before the next, as one restore only steps
+			// back a single switch and would leave the request on another site.
+			restore_current_blog();
+		}
 	}
 
 	return true;
@@ -807,6 +816,7 @@ function save_snippet( $snippet ): ?Snippet {
 
 		$snippet->id = $wpdb->insert_id;
 		$updated = get_snippet( $snippet->id, $snippet->network );
+		$updated->shared_network = $snippet->shared_network;
 		$updated->code_error = $snippet->code_error;
 		$updated->code_error_trace = $snippet->code_error_trace;
 		do_action( 'code_snippets/create_snippet', $updated, $table );
@@ -828,6 +838,7 @@ function save_snippet( $snippet ): ?Snippet {
 		clean_snippets_cache( $table );
 
 		$updated = get_snippet( $snippet->id, $snippet->network );
+		$updated->shared_network = $snippet->shared_network;
 		$updated->code_error = $snippet->code_error;
 		$updated->code_error_trace = $snippet->code_error_trace;
 
