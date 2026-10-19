@@ -1,9 +1,10 @@
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
+import { useRestAPI } from '../../hooks/useRestAPI'
 import { REST_BASES } from '../../utils/restAPI'
+import { isLicensed } from '../../utils/screen'
 import { SNIPPET_SCOPE_DESCRIPTIONS } from '../../utils/snippets/snippets'
 import { buildUrl } from '../../utils/urls'
-import { useRestAPI } from '../../hooks/useRestAPI'
 import { StatsChart, TotalsStatsChart } from './StatsCharts'
 import type { StatsChartEntry, StatsChartPreferencesSchema, StatsChartViews, StatsConfigurableChartKey, StatsSummary } from '../../types/Stats'
 import type { SnippetCodeScope, SnippetType } from '../../types/Snippet'
@@ -94,16 +95,26 @@ const ActivationStatusChart: React.FC<ConfigurableChartProps<'activation'>> = ({
 		setView={setView}
 	/>
 
-const ConditionUsageChart: React.FC<ConfigurableChartProps<'conditions'>> = ({ summary, view, setView }) =>
-	<StatsChart
-		chart="conditions"
-		title={__('Condition usage', 'code-snippets')}
-		entries={summary.conditionCounts}
-		colors={STATS_CONDITION_COLORS}
-		views={['pie', 'bar']}
-		view={view}
-		setView={setView}
-	/>
+const ConditionUsageChart: React.FC<ConfigurableChartProps<'conditions'>> = ({ summary, view, setView }) => {
+	const licensed = isLicensed()
+
+	return (
+		<div className={`stats-chart-lock${licensed ? '' : ' is-locked'}`}>
+			<StatsChart
+				chart="conditions"
+				title={__('Condition usage', 'code-snippets')}
+				entries={summary.conditionCounts}
+				colors={STATS_CONDITION_COLORS}
+				views={['pie', 'bar']}
+				view={view}
+				setView={setView}
+				overlay={!licensed && <a className="stats-lock-link button button-primary" href="https://codesnippets.pro/pricing/">
+					{__('Go Pro', 'code-snippets')}
+				</a>}
+			/>
+		</div>
+	)
+}
 
 const LocationChart = ({ summary, view, setView }: ConfigurableChartProps<'location'>) => {
 	const entries: Record<string, StatsChartEntry> = Object.fromEntries(
