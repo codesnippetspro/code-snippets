@@ -11,6 +11,7 @@ import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { SnippetLocationInput } from '../SnippetForm/fields/SnippetLocationInput'
 import { Notices } from '../SnippetForm/page/Notices'
 import { ShortcodeInfo } from './actions/ShortcodeInfo'
+import { SnippetIdInfo } from './actions/SnippetIdInfo'
 import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
 import { ExportButtons } from './actions/ExportButtons'
 import { SubmitButtons } from './actions/SubmitButtons'
@@ -50,6 +51,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 				<div className="snippet-editor-sidebar-settings">
 					<ConditionModalButton setIsModalOpen={setIsUpgradeDialogOpen} />
 					<SnippetLocationInput />
+					<SnippetIdInfo />
 					<ShortcodeInfo />
 					<PriorityInput />
 				</div>

@@ -23,6 +23,7 @@ export const BULK_ACTIONS: ListTableAction<SnippetsTableAction>[] = [
 
 export const TRASHED_BULK_ACTIONS: ListTableAction<SnippetsTableAction>[] = [
 	{ key: 'restore', label: __('Restore', 'code-snippets') },
+	{ key: 'export', label: __('Export', 'code-snippets') },
 	{ key: 'delete', label: __('Delete Permanently', 'code-snippets') }
 ]
 
