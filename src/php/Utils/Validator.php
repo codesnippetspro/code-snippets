@@ -117,6 +117,25 @@ class Validator {
 	}
 
 	/**
+	 * Line of the snippet the pointer has reached.
+	 *
+	 * Single-character tokens carry no line number, so the nearest earlier token
+	 * that does is used. The code is parsed with an opening tag on a line of its
+	 * own, which is not part of the snippet.
+	 *
+	 * @return int
+	 */
+	private function current_line(): int {
+		for ( $index = min( $this->current, $this->length - 1 ); $index >= 0; $index-- ) {
+			if ( is_array( $this->tokens[ $index ] ) ) {
+				return max( 1, (int) $this->tokens[ $index ][2] - 1 );
+			}
+		}
+
+		return 1;
+	}
+
+	/**
 	 * Move the pointer to the next token, if there is one.
 	 *
 	 * If the first argument is provided, only move the pointer if the tokens match.
@@ -305,7 +324,7 @@ class Validator {
 			if ( $this->end() ) {
 				return array(
 					'message' => __( 'Parse error: syntax error, unexpected end of snippet.', 'code-snippets' ),
-					'line'    => $token[2],
+					'line'    => $this->current_line(),
 				);
 			}
 
@@ -334,7 +353,7 @@ class Validator {
 
 					return array(
 						'message' => sprintf( $message, $token[1] ),
-						'line'    => $token[2],
+						'line'    => $this->current_line(),
 					);
 				}
 			}
@@ -368,7 +387,7 @@ class Validator {
 			if ( $depth > 0 ) {
 				return array(
 					'message' => __( 'Parse error: syntax error, unexpected end of snippet.', 'code-snippets' ),
-					'line'    => $token[2],
+					'line'    => $this->current_line(),
 				);
 			}
 		}
