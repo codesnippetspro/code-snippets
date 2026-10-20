@@ -203,19 +203,12 @@ function register_plugin_settings() {
 	// Register settings fields. The tab a field appears under comes from the
 	// layout, while the section it saves into stays exactly as it was.
 	$definitions = Settings_Fields::get_field_definitions();
-	$descriptions = Settings_Layout::get_descriptions();
 	$headings = Settings_Layout::get_group_headings();
 
 	foreach ( get_settings_sections() as $tab_id => $tab_name ) {
 		foreach ( Settings_Layout::get_visible_fields( $tab_id, $current_settings ) as $entry ) {
 			list( $section_id, $field_id ) = $entry;
-			$field = $definitions[ $section_id ][ $field_id ];
-
-			// Reword the settings whose description names the control without
-			// saying what it buys you.
-			if ( isset( $descriptions[ $field_id ] ) ) {
-				$field['desc'] = $descriptions[ $field_id ];
-			}
+			$field = Settings_Layout::apply_description( $definitions[ $section_id ][ $field_id ], $field_id );
 
 			$field_object = new Setting_Field( $section_id, $field_id, $field );
 

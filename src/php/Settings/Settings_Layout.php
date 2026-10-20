@@ -212,4 +212,35 @@ class Settings_Layout {
 			'reset_caches'               => __( 'Clears stored snippet data and refetches the list of plugin versions available to install. Worth doing before switching to an older version of the plugin.', 'code-snippets' ),
 		];
 	}
+
+	/**
+	 * Apply the replacement description, if any, to a field definition.
+	 *
+	 * A checkbox already reads its own label aloud and shows it beside the box, so
+	 * its replacement takes the place of the label rather than repeating it below.
+	 * A link the old label carried is kept.
+	 *
+	 * @param array<string, mixed> $field    Field definition.
+	 * @param string               $field_id Field identifier.
+	 *
+	 * @return array<string, mixed> Field definition with the description applied.
+	 */
+	public static function apply_description( array $field, string $field_id ): array {
+		$descriptions = self::get_descriptions();
+
+		if ( ! isset( $descriptions[ $field_id ] ) ) {
+			return $field;
+		}
+
+		if ( 'checkbox' === ( $field['type'] ?? '' ) ) {
+			$link = preg_match( '/<a\s[^>]*>.*?<\/a>/s', (string) ( $field['label'] ?? '' ), $matches ) ? ' ' . $matches[0] : '';
+
+			$field['label'] = $descriptions[ $field_id ] . $link;
+			$field['desc'] = '';
+		} else {
+			$field['desc'] = $descriptions[ $field_id ];
+		}
+
+		return $field;
+	}
 }
