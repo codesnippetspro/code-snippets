@@ -48,6 +48,7 @@ input[type='number'] {
 }
 
 .CodeMirror {
+	box-sizing: border-box;
 	max-inline-size: 800px;
 	inline-size: 100%;
 	padding-inline-end: 1em;
