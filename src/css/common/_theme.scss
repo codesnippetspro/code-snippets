@@ -44,6 +44,13 @@
 	--cs-direction-multiplier: 1; // LTR = 1, RTL = -1
 }
 
+// WordPress halves the content area's start padding on narrow screens.
+@media (width <= 782px) {
+	:root {
+		--cs-wpcontent-inline-start-indent: 10px;
+	}
+}
+
 html[dir="rtl"],
 body.rtl {
 	--cs-direction-multiplier: -1;

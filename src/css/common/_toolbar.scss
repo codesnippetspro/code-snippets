@@ -182,6 +182,10 @@
 	}
 
 	@media (width <= 782px) {
+		nav {
+			overflow-x: auto;
+		}
+
 		li a {
 			inline-size: 100%;
 			padding-inline: 8px;
@@ -436,5 +440,17 @@
 
 	#screen-meta {
 		margin: 0;
+	}
+}
+
+// On the narrowest screens WordPress makes room for its 46px admin bar by
+// padding the body rather than the page, so the toolbar has to clear it itself.
+@media (width <= 600px) {
+	#wpbody {
+		padding-block-start: calc(var(--cs-toolbar-block-size) + 46px);
+	}
+
+	.code-snippets-toolbar {
+		inset-block-start: 46px;
 	}
 }

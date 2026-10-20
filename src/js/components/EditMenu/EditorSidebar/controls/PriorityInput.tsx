@@ -19,6 +19,8 @@ export const PriorityInput = () => {
 
 			<input
 				type="number"
+				min={0}
+				max={32767}
 				id={priorityId}
 				name="snippet_priority"
 				value={snippet.priority}

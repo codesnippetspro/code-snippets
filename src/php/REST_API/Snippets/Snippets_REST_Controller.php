@@ -533,6 +533,9 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function create_item( $request ) {
 		$snippet = $this->prepare_item_for_database( $request );
+
+		// An ID in the body names no snippet to create; saving it would overwrite that snippet.
+		$snippet->id = 0;
 		$result = save_snippet( $snippet );
 
 		return $result
@@ -591,6 +594,14 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 				'rest_cannot_delete',
 				__( 'The snippet could not be found.', 'code-snippets' ),
 				[ 'status' => 404 ]
+			);
+		}
+
+		if ( $snippet->locked ) {
+			return new WP_Error(
+				'rest_snippet_locked',
+				__( 'This snippet is locked. Unlock it before trashing or deleting it.', 'code-snippets' ),
+				[ 'status' => 409 ]
 			);
 		}
 
@@ -891,6 +902,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 				'scope'            => [
 					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
 					'type'        => 'string',
+					'enum'        => Snippet::get_all_scopes(),
 				],
 				'condition_id'     => [
 					'description' => esc_html__( 'Identifier of condition linked to this snippet.', 'code-snippets' ),

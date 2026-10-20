@@ -33,6 +33,7 @@ declare global {
 		readonly CODE_SNIPPETS?: {
 			debug: boolean
 			isLicensed: boolean
+			safeModeRequested: boolean
 			hideUpsell: boolean
 			isCloudConnected: boolean
 			snippetView: SnippetView

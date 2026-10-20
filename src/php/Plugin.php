@@ -376,6 +376,7 @@ class Plugin {
 			[
 				'debug'              => defined( 'WP_DEBUG' ) && WP_DEBUG,
 				'isLicensed'         => $this->licensing->is_licensed(),
+				'safeModeRequested'  => Evaluate_Functions::is_safe_mode_query_var_set() && $this->current_user_can(),
 				'isCloudConnected'   => $this->cloud_connection->is_authenticated(),
 				'hideUpsell'         => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'snippetView'        => Snippet_View_REST_Controller::get_snippet_view(),

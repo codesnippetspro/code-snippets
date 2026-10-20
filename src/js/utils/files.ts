@@ -41,7 +41,11 @@ export const downloadSnippetExportFile = (
 	{ id, name, scope }: Snippet,
 	type?: keyof typeof MIME_INFO
 ) => {
-	const sanitizedName = name.toLowerCase().replace(/[^\w-]+/g, '-').trim()
+	const sanitizedName = name
+		.normalize('NFC')
+		.toLowerCase()
+		.replace(/[^\p{L}\p{M}\p{N}_-]+/gu, '-')
+		.replace(/^-+|-+$/g, '')
 	const title = '' === sanitizedName ? `snippet-${id}` : sanitizedName
 
 	if ('string' === typeof content) {
