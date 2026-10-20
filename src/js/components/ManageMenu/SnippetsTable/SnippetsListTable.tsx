@@ -1,9 +1,11 @@
-import { __ } from '@wordpress/i18n'
+import { __, _n, sprintf } from '@wordpress/i18n'
 import React, { useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
+import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { ListTable } from '../../common/ListTable'
+import { DismissibleNotice } from '../../common/Notice'
 import { SnippetViewToggle } from '../../common/SnippetViewToggle'
 import { SnippetsCardGrid } from './SnippetsCardGrid'
 import { SnippetsTableNavigation, SnippetsTableToolbar } from './SnippetsTableControls'
@@ -178,6 +180,88 @@ export interface SnippetsListTableProps {
 	setSnippetView: (view: SnippetView) => void
 }
 
+type ApplyBulkAction = ReturnType<typeof useApplyBulkAction>
+
+/**
+ * Hold a permanent bulk delete until it is confirmed, and count what it deleted.
+ */
+const useConfirmedBulkDelete = (applyBulkAction: ApplyBulkAction) => {
+	const [pendingDelete, setPendingDelete] = useState<Set<Snippet['id']>>()
+	const [deletedCount, setDeletedCount] = useState<number>()
+
+	const doAction = async (action: SnippetsTableAction | undefined, selected: Set<Snippet['id']>): Promise<void> => {
+		if ('delete' === action) {
+			setPendingDelete(selected)
+		} else {
+			await applyBulkAction(action, selected)
+		}
+	}
+
+	const confirmDelete = () => {
+		const selected = pendingDelete
+		setPendingDelete(undefined)
+
+		if (selected) {
+			void applyBulkAction('delete', selected).then(count => setDeletedCount(count ?? 0))
+		}
+	}
+
+	return {
+		doAction,
+		pendingDelete,
+		cancelDelete: () => setPendingDelete(undefined),
+		confirmDelete,
+		deletedCount,
+		dismissDeleted: () => setDeletedCount(undefined)
+	}
+}
+
+interface BulkDeleteFeedbackProps {
+	pendingDelete: Set<Snippet['id']> | undefined
+	cancelDelete: VoidFunction
+	confirmDelete: VoidFunction
+	deletedCount: number | undefined
+	dismissDeleted: VoidFunction
+}
+
+const BulkDeleteFeedback: React.FC<BulkDeleteFeedbackProps> = ({
+	pendingDelete,
+	cancelDelete,
+	confirmDelete,
+	deletedCount,
+	dismissDeleted
+}) =>
+	<>
+		{undefined !== deletedCount &&
+			<DismissibleNotice type="success" onDismiss={dismissDeleted}>
+				<p>
+					{sprintf(
+						// translators: %d: number of snippets.
+						_n('%d snippet permanently deleted.', '%d snippets permanently deleted.', deletedCount, 'code-snippets'),
+						deletedCount
+					)}
+				</p>
+			</DismissibleNotice>}
+
+		<ConfirmDialog
+			open={undefined !== pendingDelete}
+			title={__('Are you sure?', 'code-snippets')}
+			confirmLabel={__('Delete', 'code-snippets')}
+			confirmButtonClassName="is-destructive"
+			onCancel={cancelDelete}
+			onConfirm={confirmDelete}
+		>
+			<p>
+				{sprintf(
+					// translators: %d: number of snippets.
+					_n('%d snippet will be permanently deleted.', '%d snippets will be permanently deleted.', pendingDelete?.size ?? 0, 'code-snippets'),
+					pendingDelete?.size ?? 0
+				)}
+			</p>
+			<p>{__('This action cannot be undone.', 'code-snippets')}</p>
+		</ConfirmDialog>
+	</>
+
 export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({
 	snippetView,
 	setSnippetView
@@ -191,6 +275,7 @@ export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({
 		[snippetsByStatus, currentStatus]
 	)
 	const applyBulkAction = useApplyBulkAction(currentSnippets)
+	const { doAction, pendingDelete, cancelDelete, confirmDelete, deletedCount, dismissDeleted } = useConfirmedBulkDelete(applyBulkAction)
 
 	useEffect(() => {
 		if (INDEX_STATUS !== currentStatus && !snippetsByStatus.has(currentStatus)) {
@@ -205,13 +290,21 @@ export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({
 		<>
 			<SnippetsTableToolbar />
 
+			<BulkDeleteFeedback
+				pendingDelete={pendingDelete}
+				cancelDelete={cancelDelete}
+				confirmDelete={confirmDelete}
+				deletedCount={deletedCount}
+				dismissDeleted={dismissDeleted}
+			/>
+
 			<div className="snippets-list-view">
 				<SnippetsView
 					snippetView={snippetView}
 					setSnippetView={setSnippetView}
 					snippets={currentSnippets}
 					actions={'trashed' === currentStatus ? TRASHED_BULK_ACTIONS : BULK_ACTIONS}
-					doAction={applyBulkAction}
+					doAction={doAction}
 					extraTableNav={extraTableNav}
 					hiddenColumns={hiddenColumns}
 					truncateRowValues={truncateRowValues}
