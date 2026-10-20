@@ -73,6 +73,7 @@
 .above-snippet-code {
 	margin-block: 0 15px;
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	margin-inline: 0;
 	gap: 8px;
