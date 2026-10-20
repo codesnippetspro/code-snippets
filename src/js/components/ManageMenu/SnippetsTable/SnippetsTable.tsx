@@ -63,6 +63,12 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, count }) => {
 }
 
 
+const getUrlWithoutSafeMode = (): string => {
+	const url = new URL(window.location.href)
+	url.searchParams.delete('snippets-safe-mode')
+	return url.toString()
+}
+
 const SafeModeNotice = () =>
 	window.CODE_SNIPPETS_MANAGE?.isSafeModeActive
 		? <Notice type="error">
@@ -70,12 +76,21 @@ const SafeModeNotice = () =>
 				<strong>{__('Warning:', 'code-snippets')}</strong>{'\n'}
 				{__('Safe mode is active and snippets will not execute!', 'code-snippets')}{'\n'}
 
-				{createInterpolateElement(
-					__('Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> file to turn off safe mode.', 'code-snippets'),
-					{
-						code: <code />
-					}
-				)}{'\n'}
+				{window.CODE_SNIPPETS?.safeModeRequested
+					? createInterpolateElement(
+						__('It was turned on for this visit with <code>snippets-safe-mode</code> in the address. <a>Leave safe mode</a>.', 'code-snippets'),
+						{
+							code: <code />,
+							// eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+							a: <a href={getUrlWithoutSafeMode()} />
+						}
+					)
+					: createInterpolateElement(
+						__('Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> file to turn off safe mode.', 'code-snippets'),
+						{
+							code: <code />
+						}
+					)}{'\n'}
 
 				<a href="https://codesnippets.pro/doc/safe-mode" target="_blank" rel="noreferrer">
 					{__('Read more', 'code-snippets')}

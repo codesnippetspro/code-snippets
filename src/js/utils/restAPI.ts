@@ -123,6 +123,21 @@ export const applyCacheBuster = (config: InternalAxiosRequestConfig): InternalAx
 	return config
 }
 
+/**
+ * Carry safe mode through to the REST API when the page was opened in it.
+ *
+ * Safe mode is requested per request. Without the flag, a call from a screen
+ * opened in safe mode runs every snippet, including the one that made safe
+ * mode necessary, and fails the same way the rest of the site does.
+ */
+export const applySafeMode = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	if (window.CODE_SNIPPETS?.safeModeRequested) {
+		config.params = { ...<Record<string, unknown> | undefined>config.params, 'snippets-safe-mode': 1 }
+	}
+
+	return config
+}
+
 export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
 	headers: {
 		'Access-Control': window.CODE_SNIPPETS?.restAPI.cloud.token

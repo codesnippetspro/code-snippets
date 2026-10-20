@@ -6,6 +6,7 @@ import {
 	applyCacheBuster,
 	applyMethodOverride,
 	applyRestNonce,
+	applySafeMode,
 	listenForNonceRefresh
 } from '../utils/restAPI'
 import type { PropsWithChildren } from 'react'
@@ -69,6 +70,7 @@ export const WithRestAPIContext: React.FC<PropsWithChildren> = ({ children }) =>
 		instance.interceptors.request.use(applyRestNonce)
 		instance.interceptors.request.use(applyMethodOverride)
 		instance.interceptors.request.use(applyCacheBuster)
+		instance.interceptors.request.use(applySafeMode)
 		listenForNonceRefresh()
 		return instance
 	}, [])

@@ -41,7 +41,7 @@ class Evaluate_Functions {
 		// undefined wp_get_current_user() and take the whole request down.
 		// Site URLs are left alone: callers append paths to them, REST URLs
 		// among them, and a query var in the middle breaks the result.
-		if ( $this->is_safe_mode_query_var_set() ) {
+		if ( self::is_safe_mode_query_var_set() ) {
 			add_filter( 'admin_url', [ $this, 'add_safe_mode_query_var' ] );
 		}
 	}
@@ -53,7 +53,7 @@ class Evaluate_Functions {
 	 *
 	 * @return bool
 	 */
-	public function is_safe_mode_query_var_set(): bool {
+	public static function is_safe_mode_query_var_set(): bool {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return ! empty( $_REQUEST['snippets-safe-mode'] );
 	}
@@ -67,7 +67,7 @@ class Evaluate_Functions {
 	 * @return bool
 	 */
 	public function is_safe_mode_requested(): bool {
-		return $this->is_safe_mode_query_var_set() && code_snippets()->current_user_can();
+		return self::is_safe_mode_query_var_set() && code_snippets()->current_user_can();
 	}
 
 	/**
