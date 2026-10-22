@@ -115,26 +115,16 @@ const requestGroups = ({
 		.then(response => response.data.groups)
 		.catch(() => undefined)
 
-export const useUniversalSearch = ({
-	query,
-	fields = SEARCH_FIELDS,
-	perSource,
-	enabled = true,
-	excerpts = true,
-	sources = SEARCH_SOURCES,
-	method = 'term',
-	delay = DEBOUNCE_MS
-}: UseUniversalSearchProps): UniversalSearch => {
-	const { axiosInstance } = useRestAPI()
-	const [state, setState] = useState<SearchState>({ requestKey: '', loaded: [], groups: {}, hasFailed: false })
+interface SearchStateProps extends Omit<SearchRequest, 'sources' | 'signal'> {
+	requestKey: string
+	sourceList: string
+	delay: number
+}
 
-	const term = query.trim()
-	const fieldList = fields.join(',')
-	const sourceList = sources.join(',')
-	const isSearchable = SEARCH_MIN_LENGTH <= term.length && '' !== fieldList
-	const requestKey = enabled && isSearchable
-		? `${term}|${fieldList}|${perSource}|${excerpts}|${sourceList}|${method}`
-		: ''
+const useSearchState = ({
+	axiosInstance, requestKey, sourceList, term, fieldList, perSource, excerpts, method, delay
+}: SearchStateProps) => {
+	const [state, setState] = useState<SearchState>({ requestKey: '', loaded: [], groups: {}, hasFailed: false })
 
 	useEffect(() => {
 		if (!requestKey) {
@@ -175,6 +165,31 @@ export const useUniversalSearch = ({
 			controller.abort()
 		}
 	}, [axiosInstance, requestKey, term, fieldList, perSource, excerpts, sourceList, method, delay])
+
+	return state
+}
+
+export const useUniversalSearch = ({
+	query,
+	fields = SEARCH_FIELDS,
+	perSource,
+	enabled = true,
+	excerpts = true,
+	sources = SEARCH_SOURCES,
+	method = 'term',
+	delay = DEBOUNCE_MS
+}: UseUniversalSearchProps): UniversalSearch => {
+	const { axiosInstance } = useRestAPI()
+
+	const term = query.trim()
+	const fieldList = fields.join(',')
+	const sourceList = sources.join(',')
+	const isSearchable = SEARCH_MIN_LENGTH <= term.length && '' !== fieldList
+	const requestKey = enabled && isSearchable
+		? `${term}|${fieldList}|${perSource}|${excerpts}|${sourceList}|${method}`
+		: ''
+
+	const state = useSearchState({ axiosInstance, requestKey, sourceList, term, fieldList, perSource, excerpts, method, delay })
 
 	return useMemo(() => {
 		if (!requestKey) {
