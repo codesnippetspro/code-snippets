@@ -41,6 +41,8 @@ export const URLS = <const> {
 	CLOUD_LIBRARY_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-library',
 	BLUEPRINTS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=blueprints',
 	AI_AGENT_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=ai-agent',
+	UNIFIED_SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=unified-snippets',
+	PREVIEW_DEMO_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=preview',
 	ADD_SNIPPET_ADMIN: '/wp-admin/admin.php?page=add-snippet',
 	STATS_ADMIN: '/wp-admin/admin.php?page=code-snippets-stats',
 	IMPORT_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',

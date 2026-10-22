@@ -75,6 +75,16 @@
 	@media (width <= 1400px) {
 		display: none;
 	}
+
+	// A docked callout has a column of its own, so it stays visible at any width.
+	// It keeps its stacking order so the spotlight's dimming never covers it.
+	&.is-docked {
+		position: relative;
+		inset: auto;
+		display: block;
+		inline-size: auto;
+		box-shadow: none;
+	}
 }
 
 .wp-core-ui .button.demo-callout__close {

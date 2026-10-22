@@ -4,7 +4,7 @@ import { handleUnknownError } from '../../../utils/errors'
 import { REST_BASES } from '../../../utils/restAPI'
 import type { SubpageName } from '../../ManageMenu/subpages'
 
-export type DemoName = 'ai-agent' | 'blueprints'
+export type DemoName = 'ai-agent' | 'blueprints' | 'unified-snippets'
 
 // Widened to any subpage so the toolbar can ask about a tab without first
 // narrowing it: a tab with no recorded demo simply never appears in the list.

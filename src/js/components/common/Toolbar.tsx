@@ -12,6 +12,7 @@ import { LibraryIcon } from './icons/LibraryIcon'
 import { SearchIcon } from './icons/SearchIcon'
 import { SettingsIcon } from './icons/SettingsIcon'
 import { SnippetsIcon } from './icons/SnippetsIcon'
+import { UnifiedSnippetsIcon } from './icons/UnifiedSnippetsIcon'
 import { UniversalSearch } from './UniversalSearch/UniversalSearch'
 import { UpsellDialog } from './UpsellDialog'
 import type { SVGProps } from 'react'
@@ -228,6 +229,12 @@ const LowerNav = () =>
 					subpage="ai-agent"
 					label={__('AI Agent', 'code-snippets')}
 					Icon={AiAgentIcon}
+				/>
+
+				<SubpageItem
+					subpage="unified-snippets"
+					label={__('Unified Snippets', 'code-snippets')}
+					Icon={UnifiedSnippetsIcon}
 				/>
 
 				<SettingsItem />

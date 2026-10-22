@@ -66,6 +66,14 @@ class Contextual_Help {
 				$this->load_ai_agent_help();
 				break;
 
+			case 'unified-snippets':
+				$this->load_unified_snippets_help();
+				break;
+
+			case 'preview':
+				$this->load_preview_help();
+				break;
+
 			case 'stats':
 				$this->load_stats_help();
 				break;
@@ -283,6 +291,44 @@ class Contextual_Help {
 			[
 				__( 'New snippets are added inactive, so you can review the code before it runs on your site.', 'code-snippets' ),
 				__( 'Activate each snippet only after confirming that it does what you expect.', 'code-snippets' ),
+			]
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the Unified Snippets demo page.
+	 */
+	private function load_unified_snippets_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text(),
+				__( 'Unified Snippets finds custom code stored outside Code Snippets, such as in themes, the Customizer, plugins, page content and page builders.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'importing-code',
+			__( 'Importing Code', 'code-snippets' ),
+			[
+				__( 'Each item shows where it was found. Import items individually or in bulk; imported snippets are switched off until you activate them.', 'code-snippets' ),
+				__( 'Items that cannot safely run as a snippet are listed as view only.', 'code-snippets' ),
+			]
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the snippet preview demo page.
+	 */
+	private function load_preview_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text(),
+				__( 'Preview tests a PHP, CSS, JavaScript or HTML snippet on a real page or admin screen before it is saved or activated.', 'code-snippets' ),
+				__( 'The preview is private to the person testing it, and visitors are not shown the draft.', 'code-snippets' ),
 			]
 		);
 	}

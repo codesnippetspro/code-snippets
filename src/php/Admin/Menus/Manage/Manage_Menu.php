@@ -347,7 +347,7 @@ class Manage_Menu extends Admin_Menu {
 		if ( $this->screen_options->is_upsell_view() ) {
 			$subpage = $this->screen_options->get_current_subpage();
 
-			if ( in_array( $subpage, [ 'cloud-library', 'blueprints', 'ai-agent' ], true ) ) {
+			if ( in_array( $subpage, [ 'cloud-library', 'blueprints', 'ai-agent', 'unified-snippets', 'preview' ], true ) ) {
 				$contextual_help = new Contextual_Help( $subpage );
 				$contextual_help->load();
 			}
