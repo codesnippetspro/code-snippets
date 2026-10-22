@@ -234,6 +234,56 @@ interface SearchDropdownProps {
 	isAiLoading: boolean
 }
 
+type SearchDropdownResultsProps = Pick<SearchDropdownProps,
+	'listboxId' | 'term' | 'visibleGroups' | 'pendingLabels' | 'activeId' | 'getOptionId' | 'setActiveId' | 'aiGroup' | 'isAiLoading'>
+
+const SearchDropdownResults: React.FC<SearchDropdownResultsProps> = ({
+	listboxId, term, visibleGroups, pendingLabels, activeId, getOptionId, setActiveId, aiGroup, isAiLoading
+}) =>
+	<div
+		id={listboxId}
+		role="listbox"
+		className="universal-search-results"
+		aria-label={__('Search results', 'code-snippets')}
+	>
+		{visibleGroups.map(({ group, items }) =>
+			<SearchGroupList
+				key={group.source}
+				group={group}
+				items={items}
+				term={term}
+				activeId={activeId}
+				getOptionId={getOptionId}
+				setActiveId={setActiveId}
+			/>)}
+
+		{pendingLabels.map(label =>
+			<div key={label} className="universal-search-pending" role="presentation">
+				<span className="universal-search-pending-badge"></span>
+				<span className="universal-search-pending-bar"></span>
+				<span>{label}</span>
+			</div>)}
+
+		{aiGroup && (
+			<SearchGroupList
+				group={aiGroup.group}
+				items={aiGroup.items}
+				term={term}
+				label={<><Badge name="ai" small>{__('AI', 'code-snippets')}</Badge>{__('AI results', 'code-snippets')}</>}
+				viewAllUrl={getSearchPageUrl({ query: term, source: AI_SEARCH_TAB })}
+				activeId={activeId}
+				getOptionId={getOptionId}
+				setActiveId={setActiveId}
+			/>)}
+
+		{isAiLoading && (
+			<div className="universal-search-pending" role="presentation">
+				<span className="universal-search-pending-badge"></span>
+				<span className="universal-search-pending-bar"></span>
+				<span>{__('Searching with AI…', 'code-snippets')}</span>
+			</div>)}
+	</div>
+
 const SearchDropdown: React.FC<SearchDropdownProps> = ({
 	listboxId,
 	hidden,
@@ -266,49 +316,15 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 					sprintf(__('No results for “%s”.', 'code-snippets'), term)}
 			</p>)}
 
-		<div
-			id={listboxId}
-			role="listbox"
-			className="universal-search-results"
-			aria-label={__('Search results', 'code-snippets')}
-		>
-			{visibleGroups.map(({ group, items }) =>
-				<SearchGroupList
-					key={group.source}
-					group={group}
-					items={items}
-					term={term}
-					activeId={activeId}
-					getOptionId={getOptionId}
-					setActiveId={setActiveId}
-				/>)}
-
-			{pendingLabels.map(label =>
-				<div key={label} className="universal-search-pending" role="presentation">
-					<span className="universal-search-pending-badge"></span>
-					<span className="universal-search-pending-bar"></span>
-					<span>{label}</span>
-				</div>)}
-
-			{aiGroup && (
-				<SearchGroupList
-					group={aiGroup.group}
-					items={aiGroup.items}
-					term={term}
-					label={<><Badge name="ai" small>{__('AI', 'code-snippets')}</Badge>{__('AI results', 'code-snippets')}</>}
-					viewAllUrl={getSearchPageUrl({ query: term, source: AI_SEARCH_TAB })}
-					activeId={activeId}
-					getOptionId={getOptionId}
-					setActiveId={setActiveId}
-				/>)}
-
-			{isAiLoading && (
-				<div className="universal-search-pending" role="presentation">
-					<span className="universal-search-pending-badge"></span>
-					<span className="universal-search-pending-bar"></span>
-					<span>{__('Searching with AI…', 'code-snippets')}</span>
-				</div>)}
-		</div>
+		<SearchDropdownResults {...{ listboxId,
+			term,
+			visibleGroups,
+			pendingLabels,
+			activeId,
+			getOptionId,
+			setActiveId,
+			aiGroup,
+			isAiLoading }} />
 
 		<CloudSearchNotice />
 
@@ -412,16 +428,13 @@ const useDocumentListeners = ({ wrapperRef, onShortcut, onPointerDownOutside }: 
 
 const isSearchPage = 'search' === fetchQueryParam('subpage')
 
-const SearchBar = () => {
-	const [query, setQuery] = useState(() => isSearchPage ? fetchQueryParam('s') ?? '' : '')
-	const [isOpen, setIsOpen] = useState(false)
-	const [isExpanded, setIsExpanded] = useState(false)
-	const [selectedScope, setSelectedScope] = useState<SearchScope>('all')
-	const [selectedId, setSelectedId] = useState<string>()
-	const wrapperRef = useRef<HTMLDivElement>(null)
-	const inputRef = useRef<HTMLInputElement>(null)
-	const baseId = useId()
+interface SearchBarDataProps {
+	query: string
+	isOpen: boolean
+	selectedScope: SearchScope
+}
 
+const useSearchBarData = ({ query, isOpen, selectedScope }: SearchBarDataProps) => {
 	// The search page lists the results itself, so the bar only searches once the user opens it.
 	const { term, isSearchable, groups, loadingSources, total, hasFailed } =
 		useUniversalSearch({ query, perSource: RESULTS_PER_SOURCE, enabled: isOpen })
@@ -457,40 +470,34 @@ const SearchBar = () => {
 
 	const visibleGroups = getVisibleGroups(groups, scope)
 	const options = [...visibleGroups, ...aiGroup ? [aiGroup] : []].flatMap(({ items }) => items)
-	const activeItem = options.find(item => item.id === selectedId)
-	const activeId = activeItem?.id
-	const isDropdownOpen = isOpen && isSearchable
-	const getOptionId = (item: SearchItem) => `${baseId}-${item.id}`
-	const activeOptionId = activeItem && getOptionId(activeItem)
 
 	const pendingLabels = loadingSources
 		.filter(source => 'all' === scope || source === scope)
 		.flatMap(source => SEARCH_LOADING_LABELS[source] ?? [])
 
-	const close = () => {
-		setIsOpen(false)
-		setSelectedId(undefined)
+	return {
+		term, isSearchable, groups, loadingSources, total, hasFailed, scope, aiGroup, isAiLoading, visibleGroups, options, pendingLabels
 	}
+}
 
-	useDocumentListeners({
-		wrapperRef,
-		onShortcut: () => {
-			setIsExpanded(true)
-			inputRef.current?.focus()
-		},
-		onPointerDownOutside: () => {
-			close()
-			setIsExpanded(false)
-		}
-	})
+interface SearchKeyboardProps {
+	options: SearchItem[]
+	activeItem: SearchItem | undefined
+	getOptionId: (item: SearchItem) => string
+	setSelectedId: (id: string) => void
+	setIsOpen: (open: boolean) => void
+	setIsExpanded: (expanded: boolean) => void
+	isDropdownOpen: boolean
+	isSearchable: boolean
+	term: string
+	scope: SearchScope
+	close: VoidFunction
+}
 
-	// The field is hidden while collapsed, so it can only take focus once expanding has rendered it.
-	useEffect(() => {
-		if (isExpanded) {
-			inputRef.current?.focus()
-		}
-	}, [isExpanded])
-
+const getSearchKeyDownHandler = ({
+	options, activeItem, getOptionId, setSelectedId, setIsOpen, setIsExpanded,
+	isDropdownOpen, isSearchable, term, scope, close
+}: SearchKeyboardProps): React.KeyboardEventHandler<HTMLInputElement> => {
 	const moveSelection = (step: number) => {
 		if (0 < options.length) {
 			const activeIndex = activeItem ? options.indexOf(activeItem) : -1
@@ -502,7 +509,7 @@ const SearchBar = () => {
 		}
 	}
 
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+	return (event: React.KeyboardEvent<HTMLInputElement>) => {
 		switch (event.key) {
 			case 'ArrowDown':
 			case 'ArrowUp':
@@ -533,6 +540,122 @@ const SearchBar = () => {
 				break
 		}
 	}
+}
+
+interface SearchFocusProps {
+	wrapperRef: React.RefObject<HTMLDivElement>
+	inputRef: React.RefObject<HTMLInputElement>
+	isExpanded: boolean
+	setIsExpanded: (expanded: boolean) => void
+	close: VoidFunction
+}
+
+const useSearchFocus = ({ wrapperRef, inputRef, isExpanded, setIsExpanded, close }: SearchFocusProps) => {
+	useDocumentListeners({
+		wrapperRef,
+		onShortcut: () => {
+			setIsExpanded(true)
+			inputRef.current?.focus()
+		},
+		onPointerDownOutside: () => {
+			close()
+			setIsExpanded(false)
+		}
+	})
+
+	// The field is hidden while collapsed, so it can only take focus once expanding has rendered it.
+	useEffect(() => {
+		if (isExpanded) {
+			inputRef.current?.focus()
+		}
+	}, [isExpanded, inputRef])
+}
+
+const useSearchBar = () => {
+	const [query, setQuery] = useState(() => isSearchPage ? fetchQueryParam('s') ?? '' : '')
+	const [isOpen, setIsOpen] = useState(false)
+	const [isExpanded, setIsExpanded] = useState(false)
+	const [selectedScope, setSelectedScope] = useState<SearchScope>('all')
+	const [selectedId, setSelectedId] = useState<string>()
+	const wrapperRef = useRef<HTMLDivElement>(null)
+	const inputRef = useRef<HTMLInputElement>(null)
+	const baseId = useId()
+
+	const data = useSearchBarData({ query, isOpen, selectedScope })
+	const { isSearchable, options } = data
+	const activeItem = options.find(item => item.id === selectedId)
+	const isDropdownOpen = isOpen && isSearchable
+	const getOptionId = (item: SearchItem) => `${baseId}-${item.id}`
+	const activeOptionId = activeItem && getOptionId(activeItem)
+
+	const close = () => {
+		setIsOpen(false)
+		setSelectedId(undefined)
+	}
+
+	useSearchFocus({ wrapperRef, inputRef, isExpanded, setIsExpanded, close })
+
+	const handleKeyDown = getSearchKeyDownHandler({
+		...data,
+		activeItem,
+		getOptionId,
+		setSelectedId,
+		setIsOpen,
+		setIsExpanded,
+		isDropdownOpen,
+		close
+	})
+
+	return {
+		data,
+		wrapperRef,
+		inputRef,
+		baseId,
+		isExpanded,
+		setIsExpanded,
+		isDropdownOpen,
+		activeOptionId,
+		query,
+		setQuery,
+		setSelectedId,
+		setIsOpen,
+		handleKeyDown,
+		close,
+		setSelectedScope,
+		activeId: activeItem?.id,
+		getOptionId
+	}
+}
+
+const SearchBarField: React.FC<Pick<ReturnType<typeof useSearchBar>,
+	'inputRef' | 'query' | 'isDropdownOpen' | 'baseId' | 'activeOptionId' | 'setQuery' | 'setSelectedId' |
+	'setIsOpen' | 'handleKeyDown' | 'close' | 'setIsExpanded'>> = ({
+	inputRef, query, isDropdownOpen, baseId, activeOptionId, setQuery, setSelectedId,
+	setIsOpen, handleKeyDown, close, setIsExpanded
+}) =>
+	<SearchField
+		inputRef={inputRef}
+		query={query}
+		isExpanded={isDropdownOpen}
+		listboxId={`${baseId}-results`}
+		activeOptionId={isDropdownOpen ? activeOptionId : undefined}
+		onChange={value => {
+			setQuery(value)
+			setSelectedId(undefined)
+			setIsOpen(true)
+		}}
+		onFocus={() => setIsOpen(true)}
+		onKeyDown={handleKeyDown}
+		onCollapse={() => {
+			close()
+			setIsExpanded(false)
+		}}
+	/>
+
+const SearchBarView: React.FC<ReturnType<typeof useSearchBar>> = props => {
+	const { data, wrapperRef, baseId, isExpanded, setIsExpanded, isDropdownOpen,
+		close, setSelectedScope, activeId, getOptionId, setSelectedId } = props
+	const { term, groups, loadingSources, total, hasFailed, scope, aiGroup, isAiLoading, visibleGroups, pendingLabels } = data
 
 	return (
 		<div
@@ -553,24 +676,7 @@ const SearchBar = () => {
 				<span className="dashicons dashicons-search" aria-hidden="true"></span>
 			</button>
 
-			<SearchField
-				inputRef={inputRef}
-				query={query}
-				isExpanded={isDropdownOpen}
-				listboxId={`${baseId}-results`}
-				activeOptionId={isDropdownOpen ? activeOptionId : undefined}
-				onChange={value => {
-					setQuery(value)
-					setSelectedId(undefined)
-					setIsOpen(true)
-				}}
-				onFocus={() => setIsOpen(true)}
-				onKeyDown={handleKeyDown}
-				onCollapse={() => {
-					close()
-					setIsExpanded(false)
-				}}
-			/>
+			<SearchBarField {...props} />
 
 			{/* The bar is on every screen, so its announcements carry no status role that would compete with the screen's own. */}
 			<div className="screen-reader-text" aria-live="polite" aria-atomic="true">
@@ -600,6 +706,8 @@ const SearchBar = () => {
 		</div>
 	)
 }
+
+const SearchBar = () => <SearchBarView {...useSearchBar()} />
 
 export const UniversalSearch = () =>
 	REST_BASES.search

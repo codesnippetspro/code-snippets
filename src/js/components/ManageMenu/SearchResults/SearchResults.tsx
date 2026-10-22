@@ -298,6 +298,52 @@ const AiSearchIntro = () =>
 		{__('AI search finds community snippets by what they do, so describe what you need in your own words.', 'code-snippets')}
 	</p>
 
+interface TabCountProps {
+	tab: SubnavTab<SourceFilter>
+	search: UniversalSearch
+	aiSearch: UniversalSearch
+	isAiTab: boolean
+}
+
+const getTabCount = ({ tab, search, aiSearch, isAiTab }: TabCountProps): number | undefined => {
+	if (AI_SEARCH_TAB === tab.name) {
+		return isAiTab && 0 === aiSearch.loadingSources.length ? aiSearch.total : undefined
+	}
+
+	if (isLockedTab(tab.name)) {
+		return undefined
+	}
+
+	if ('all' === tab.name) {
+		return 0 === search.loadingSources.length ? search.total : undefined
+	}
+
+	return search.loadingSources.includes(tab.name)
+		? undefined
+		: search.groups.find(group => group.source === tab.name)?.total ?? 0
+}
+
+interface SearchResultsHeaderProps {
+	search: UniversalSearch
+	filter: SourceFilter
+	shownSearch: UniversalSearch
+	isAiTab: boolean
+	visibleGroups: SearchGroup[]
+}
+
+const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({ search, filter, shownSearch, isAiTab, visibleGroups }) =>
+	<div className="snippets-page-header">
+		<h1>
+			{search.isSearchable
+				// translators: %s: search query.
+				? sprintf(__('Search results for “%s”', 'code-snippets'), search.term)
+				: __('Search', 'code-snippets')}
+		</h1>
+
+		{search.isSearchable && !isLockedTab(filter) && !isPending(shownSearch.loadingSources, isAiTab ? 'all' : filter) && (
+			<span className="search-results-total">{formatResultCount(countResults(visibleGroups))}</span>)}
+	</div>
+
 const SearchResultsPage = () => {
 	const [query] = useState(() => fetchQueryParam('s') ?? '')
 	const [tabs] = useState(getSourceTabs)
@@ -322,24 +368,6 @@ const SearchResultsPage = () => {
 		? aiSearch.groups
 		: search.groups.filter(group => 'all' === filter || group.source === filter)
 
-	const getTabCount = (tab: SubnavTab<SourceFilter>): number | undefined => {
-		if (AI_SEARCH_TAB === tab.name) {
-			return isAiTab && 0 === aiSearch.loadingSources.length ? aiSearch.total : undefined
-		}
-
-		if (isLockedTab(tab.name)) {
-			return undefined
-		}
-
-		if ('all' === tab.name) {
-			return 0 === search.loadingSources.length ? search.total : undefined
-		}
-
-		return search.loadingSources.includes(tab.name)
-			? undefined
-			: search.groups.find(group => group.source === tab.name)?.total ?? 0
-	}
-
 	return (
 		<div className="search-results-page">
 			<SubnavTabs
@@ -348,23 +376,13 @@ const SearchResultsPage = () => {
 				tabs={tabs}
 				currentTab={currentTab}
 				setCurrentTab={setCurrentTab}
-				getTabCount={search.isSearchable ? getTabCount : undefined}
+				getTabCount={search.isSearchable ? tab => getTabCount({ tab, search, aiSearch, isAiTab }) : undefined}
 				queryParamName={SOURCE_QUERY_PARAM}
 			/>
 
 			<ScreenMetaSlot />
 
-			<div className="snippets-page-header">
-				<h1>
-					{search.isSearchable
-						// translators: %s: search query.
-						? sprintf(__('Search results for “%s”', 'code-snippets'), search.term)
-						: __('Search', 'code-snippets')}
-				</h1>
-
-				{search.isSearchable && !isLockedTab(filter) && !isPending(shownSearch.loadingSources, isAiTab ? 'all' : filter) && (
-					<span className="search-results-total">{formatResultCount(countResults(visibleGroups))}</span>)}
-			</div>
+			<SearchResultsHeader {...{ search, filter, shownSearch, isAiTab, visibleGroups }} />
 
 			<hr className="wp-header-end" />
 
