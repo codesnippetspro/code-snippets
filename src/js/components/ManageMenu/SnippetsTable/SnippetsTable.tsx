@@ -133,6 +133,7 @@ const SnippetsTableInner = () => {
 	const { currentType } = useSnippetsFilters()
 	const { getCount } = useSnippetTypeCounts()
 	const { atStart, atEnd, scrollRef } = useHorizontalScrollOverflow()
+	const isUpsell = !!currentType && !isLicensed() && isProType(currentType)
 
 	return (
 		<>
@@ -154,24 +155,27 @@ const SnippetsTableInner = () => {
 				</nav>
 			</div>
 
-			<ScreenMetaSlot />
+			<ScreenMetaSlot hidden={isUpsell} />
 
-			<div className="snippets-page-header">
-				<h1>{sprintf(
-					// translators: %s: label of the currently selected snippet type.
-					__('Local Snippets: %s', 'code-snippets'),
-					currentType ? SNIPPET_TYPE_LABELS[currentType] : __('All Snippets', 'code-snippets')
-				)}</h1>
-				<a href={getSnippetAddNewUrl(currentType)} className="button button-primary">
-					{__('Add Snippet', 'code-snippets')}
-				</a>
-			</div>
+			{!isUpsell && (
+				<>
+					<div className="snippets-page-header">
+						<h1>{sprintf(
+							// translators: %s: label of the currently selected snippet type.
+							__('Local Snippets: %s', 'code-snippets'),
+							currentType ? SNIPPET_TYPE_LABELS[currentType] : __('All Snippets', 'code-snippets')
+						)}</h1>
+						<a href={getSnippetAddNewUrl(currentType)} className="button button-primary">
+							{__('Add Snippet', 'code-snippets')}
+						</a>
+					</div>
 
-			<hr className="wp-header-end" />
+					<hr className="wp-header-end" />
+				</>)}
 
 			<SafeModeNotice />
 
-			{currentType && !isLicensed() && isProType(currentType)
+			{isUpsell
 				? <UpsellPage />
 				: <WithFilteredSnippetsContext>
 					<SnippetsListTable snippetView={snippetView} setSnippetView={setSnippetView} />
