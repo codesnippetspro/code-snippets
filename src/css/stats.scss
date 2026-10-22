@@ -15,6 +15,7 @@
 }
 
 .stats-chart-card {
+	block-size: 100%;
 	min-block-size: 220px;
 	box-sizing: border-box;
 	border: 1px solid var(--cs-color-border-subtle);
