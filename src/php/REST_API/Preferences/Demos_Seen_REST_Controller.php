@@ -45,7 +45,7 @@ final class Demos_Seen_REST_Controller extends Preference_REST_Controller {
 	/**
 	 * Feature demos whose completion is recorded.
 	 */
-	public const DEMOS = [ 'ai-agent', 'blueprints' ];
+	public const DEMOS = [ 'ai-agent', 'blueprints', 'unified-snippets' ];
 
 	/**
 	 * Retrieve the feature demos that have been watched through to the end.

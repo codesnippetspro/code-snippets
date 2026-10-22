@@ -1,0 +1,371 @@
+@use 'sass:list';
+@use 'sass:map';
+@use '../common/theme';
+
+// The Unified Snippets walkthrough is drawn with the same classes as the Pro
+// screen it demonstrates, so this mirrors that screen's styling for the parts
+// the demo shows. Every rule is scoped to the demo, so it never reaches the
+// real screen when both are built together.
+
+@keyframes unified-snippets-demo-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.unified-snippets-demo {
+	.unified-snippets-empty,
+	.unified-snippets-results {
+		animation: unified-snippets-demo-fade-in 0.3s ease-out both;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
+	}
+
+	.unified-snippets-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		max-inline-size: 640px;
+		margin-block: 40px;
+		margin-inline: auto;
+		padding-block: 40px 32px;
+		padding-inline: 40px;
+		text-align: center;
+		background: var(--cs-color-surface);
+		border: 1px solid var(--cs-color-border-subtle);
+		border-radius: var(--cs-card-radius);
+		box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
+
+		@media screen and (width <= 600px) {
+			margin-block: 16px;
+			padding-inline: 20px;
+		}
+
+		.unified-snippets-empty__title {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 12px;
+			margin: 0;
+			padding: 0;
+			font-size: 23px;
+			font-weight: 600;
+			line-height: 1.3;
+			color: var(--cs-color-text);
+		}
+
+		.unified-snippets-empty__logo {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			inline-size: 56px;
+			block-size: 56px;
+			border-radius: 50%;
+			color: var(--cs-color-accent);
+			background: var(--cs-color-accent-subtle);
+
+			svg {
+				inline-size: 28px;
+				block-size: 28px;
+			}
+		}
+
+		.unified-snippets-empty__description {
+			margin: 0;
+			font-size: 14px;
+			line-height: 1.6;
+			color: var(--cs-color-text-secondary);
+		}
+
+		.button.button-large {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			min-inline-size: 240px;
+			min-block-size: 48px;
+			line-height: 46px;
+			margin-block-start: 8px;
+			padding-inline: 32px;
+			font-size: 16px;
+			font-weight: 600;
+
+			@media screen and (width <= 600px) {
+				inline-size: 100%;
+				min-inline-size: 0;
+			}
+
+			.components-spinner {
+				margin: 0;
+				inline-size: 16px;
+				block-size: 16px;
+
+				circle {
+					stroke: rgb(255 255 255 / 35%);
+				}
+
+				path {
+					stroke: var(--cs-color-surface);
+				}
+			}
+
+			&[aria-busy='true']:disabled {
+				color: var(--cs-color-surface) !important;
+				background: var(--cs-color-accent) !important;
+				border-color: var(--cs-color-accent) !important;
+				cursor: progress;
+			}
+		}
+
+		.unified-snippets-empty__status {
+			min-block-size: 1.5em;
+			margin: 0;
+			font-size: 13px;
+			color: var(--cs-color-text-muted);
+		}
+	}
+
+	.unified-snippets-demo-scanned {
+		display: flex;
+		justify-content: flex-end;
+		margin-block: 0 12px;
+	}
+
+	.unified-snippets-last-scanned {
+		font-size: 12px;
+		color: var(--cs-color-text-secondary);
+	}
+
+	.unified-snippets-stats {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 16px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			display: flex;
+			margin: 0;
+		}
+	}
+
+	.unified-snippets-stat {
+		--cs-card-stripe: var(--cs-color-border);
+
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+		padding-block: 22px;
+		padding-inline: 24px 20px;
+		color: var(--cs-color-text);
+		background: var(--cs-color-surface);
+		border: 1px solid var(--cs-color-border-subtle);
+		border-inline-start: 4px solid var(--cs-card-stripe);
+		border-radius: var(--cs-card-radius);
+
+		@each $type in php, html, css, js {
+			&.is-#{$type} {
+				--cs-card-stripe: #{list.nth(map.get(theme.$badges, $type), 1)};
+			}
+		}
+
+		&.is-view-only {
+			--cs-card-stripe: var(--cs-color-text-muted);
+		}
+	}
+
+	.unified-snippets-stat__count {
+		font-size: 44px;
+		font-weight: 600;
+		line-height: 1.1;
+	}
+
+	.unified-snippets-stat__label {
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.unified-snippets-stat__detail {
+		font-size: 13px;
+		color: var(--cs-color-text-secondary);
+	}
+
+	.unified-snippets-items {
+		margin-block-start: 24px;
+
+		.tablenav.top {
+			block-size: auto;
+			margin-block-end: 8px;
+		}
+
+		.unified-snippets-demo-bulk {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 0;
+		}
+	}
+
+	.unified-snippets-row__evidence {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin-block-start: 2px;
+	}
+
+	.unified-snippets-chip {
+		font-size: 11px;
+		font-weight: 600;
+		padding-block: 2px;
+		padding-inline: 8px;
+		border-radius: 999px;
+		background: var(--cs-color-surface-muted);
+		color: var(--cs-color-text-secondary);
+		white-space: nowrap;
+
+		&.is-running {
+			background: #edfaef;
+			color: var(--cs-color-success-text);
+		}
+
+		&.is-inactive {
+			background: #fcf0f1;
+			color: #b32d2e;
+		}
+	}
+
+	// Shaped like the type badges, in colours none of them use.
+	.unified-snippets-status-badge {
+		color: #fff;
+		white-space: nowrap;
+
+		&.is-ready {
+			background-color: #1f7a3a;
+		}
+
+		&.is-imported {
+			background-color: #3c4a5c;
+		}
+
+		&.is-view-only {
+			background-color: #646970;
+		}
+	}
+
+	.unified-snippets-row__imported {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: var(--cs-color-success-text);
+		font-weight: 600;
+		animation: demo-fade-in 0.35s ease;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
+	}
+
+	.unified-snippets-item-name {
+		display: block;
+		overflow-wrap: anywhere;
+	}
+
+	.unified-snippets-item-source {
+		display: block;
+		margin-block: 2px 4px;
+		font-size: 13px;
+		color: var(--cs-color-text-secondary);
+	}
+
+	.unified-snippets-item-path {
+		display: block;
+		margin-block-start: 4px;
+		padding: 2px 6px;
+		font-size: 12px;
+		word-break: break-all;
+	}
+
+	.unified-snippets-item-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 8px 12px;
+
+		.button.button-small .components-spinner {
+			margin-block: 0;
+			margin-inline: 0 6px;
+			inline-size: 12px;
+			block-size: 12px;
+		}
+	}
+
+	.unified-snippets-table {
+		thead th,
+		thead td {
+			vertical-align: middle;
+		}
+
+		tbody td,
+		tbody th {
+			vertical-align: top;
+			padding-block: 16px;
+			padding-inline: 14px;
+		}
+
+		tbody .check-column {
+			padding-block-start: 16px;
+			padding-inline: 10px 0;
+		}
+
+		@media screen and (width > 782px) {
+			table-layout: fixed;
+
+			.column-name {
+				inline-size: 22%;
+			}
+
+			.column-status {
+				inline-size: 150px;
+			}
+
+			.column-type {
+				inline-size: 80px;
+			}
+
+			.column-actions {
+				inline-size: 200px;
+			}
+		}
+
+		tr.is-view-only {
+			color: var(--cs-color-text-secondary);
+		}
+
+		// Picks out the column the walkthrough is describing at the "where it came from" step.
+		&.is-highlighting-sources td.column-source {
+			background: var(--cs-color-highlight);
+			transition: background 0.2s ease;
+
+			@media (prefers-reduced-motion: reduce) {
+				transition: none;
+			}
+		}
+	}
+
+	.unified-snippets-demo__closing {
+		margin-block-start: 48px;
+	}
+}

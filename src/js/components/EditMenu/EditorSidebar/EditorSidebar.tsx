@@ -18,6 +18,7 @@ import { ActivationSwitch } from './controls/ActivationSwitch'
 import { LockControl } from './controls/LockControl'
 import { PriorityInput } from './controls/PriorityInput'
 import { RTLControl } from './controls/RTLControl'
+import { SnippetPreviewDemoLink } from './preview/SnippetPreviewDemoLink'
 import type { Dispatch, SetStateAction } from 'react'
 
 export interface EditorSidebarProps {
@@ -53,6 +54,8 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 					<ShortcodeInfo />
 					<PriorityInput />
 				</div>
+
+				<SnippetPreviewDemoLink />
 
 				{!!snippet.id && (
 					<div className="row-actions visible inline-form-field">

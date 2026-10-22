@@ -1,5 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
+import classnames from 'classnames'
 import { Button } from '../Button'
 
 export interface CalloutContent {
@@ -16,12 +17,19 @@ export interface CalloutContent {
  * commentary is hidden from assistive technology rather than repeating it. The
  * close button stays exposed, since it is the walkthrough's exit.
  */
-export const DemoCallout: React.FC<{ callout?: CalloutContent, onClose: VoidFunction }> = ({ callout, onClose }) =>
+export interface DemoCalloutProps {
+	callout?: CalloutContent
+	onClose: VoidFunction
+	/** Sit in the page's own flow, beside the walkthrough, rather than floating over it. */
+	docked?: boolean
+}
+
+export const DemoCallout: React.FC<DemoCalloutProps> = ({ callout, onClose, docked = false }) =>
 	callout
 		// Keyed on the content rather than the stage: consecutive stages can
 		// share a callout, and remounting between them replays the entrance
 		// animation as a flicker.
-		? <aside key={callout.title} className="demo-callout">
+		? <aside key={callout.title} className={classnames('demo-callout', { 'is-docked': docked })}>
 			<Button small link className="demo-callout__close" onClick={onClose} aria-label={__('Exit demo', 'code-snippets')}>
 				<span className="dashicons dashicons-no-alt" aria-hidden="true"></span>
 			</Button>

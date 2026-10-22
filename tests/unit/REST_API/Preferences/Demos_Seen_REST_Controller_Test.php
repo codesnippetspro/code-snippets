@@ -104,6 +104,16 @@ class Demos_Seen_REST_Controller_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * The Unified Snippets walkthrough is recorded alongside the others.
+	 */
+	public function test_unified_snippets_demo_is_recorded() {
+		$this->dispatch( 'POST', [ 'demo' => 'unified-snippets' ] );
+		$this->dispatch( 'POST', [ 'demo' => 'ai-agent' ] );
+
+		$this->assertSame( [ 'ai-agent', 'unified-snippets' ], Demos_Seen_REST_Controller::get_demos_seen() );
+	}
+
+	/**
 	 * Unrecognised demo names are rejected.
 	 */
 	public function test_unknown_demo_is_rejected() {

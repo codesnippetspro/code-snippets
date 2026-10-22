@@ -97,6 +97,10 @@ declare global {
 			aiDemo?: {
 				siteName: string
 			}
+			previewDemo?: {
+				siteName: string
+				homeUrl: string
+			}
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: SnippetSchema

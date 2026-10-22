@@ -2,11 +2,22 @@ import { AiAgentDemo } from './AiAgentDemo/AiAgentDemo'
 import { BlueprintsDemo } from './BlueprintsDemo/BlueprintsDemo'
 import { CloudLibraryDemo } from './CloudLibraryDemo/CloudLibraryDemo'
 import { CommunityCloud } from './CommunityCloud/CommunityCloud'
+import { PreviewDemo } from './PreviewDemo/PreviewDemo'
 import { SearchResults } from './SearchResults/SearchResults'
 import { SnippetsTable } from './SnippetsTable'
+import { UnifiedSnippetsDemo } from './UnifiedSnippetsDemo/UnifiedSnippetsDemo'
 import type React from 'react'
 
-export const SUBPAGES = ['snippets', 'blueprints', 'cloud-community', 'cloud-library', 'ai-agent', 'search'] as const
+export const SUBPAGES = [
+	'snippets',
+	'blueprints',
+	'cloud-community',
+	'cloud-library',
+	'ai-agent',
+	'unified-snippets',
+	'preview',
+	'search'
+] as const
 
 export type SubpageName = typeof SUBPAGES[number]
 
@@ -39,5 +50,7 @@ export const SUBPAGE_ENTRIES: Record<SubpageName, Subpage> = {
 	'cloud-community': { Component: CommunityCloud },
 	'cloud-library': { Component: CloudLibraryDemo, demo: 'quiet' },
 	'ai-agent': { Component: AiAgentDemo, demo: 'announce' },
+	'unified-snippets': { Component: UnifiedSnippetsDemo, demo: 'announce' },
+	'preview': { Component: PreviewDemo, demo: 'quiet' },
 	'search': { Component: SearchResults },
 }
