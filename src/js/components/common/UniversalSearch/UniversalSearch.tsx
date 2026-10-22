@@ -6,19 +6,7 @@ import { isLocalSearchSource, useUniversalSearch } from '../../../hooks/useUnive
 import { REST_BASES } from '../../../utils/restAPI'
 import { fetchQueryParam } from '../../../utils/urls'
 import { Badge } from '../Badge'
-import {
-	AI_SEARCH_TAB,
-	CloudSearchNotice,
-	Highlight,
-	SEARCH_LOADING_LABELS,
-	SEARCH_SOURCE_LABELS,
-	SearchCodePreview,
-	SearchItemBadge,
-	formatResultCount,
-	getSearchItemUrl,
-	getSearchPageUrl,
-	opensInNewTab
-} from './SearchResultParts'
+import { AI_SEARCH_TAB, CloudSearchNotice, Highlight, SEARCH_LOADING_LABELS, SEARCH_SOURCE_LABELS, SearchCodePreview, SearchItemBadge, formatResultCount, getSearchItemUrl, getSearchPageUrl, opensInNewTab } from './SearchResultParts'
 import type { SearchGroup, SearchItem, SearchSource } from '../../../types/Search'
 
 type SearchScope = 'all' | SearchSource

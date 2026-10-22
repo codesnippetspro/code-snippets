@@ -1,11 +1,19 @@
+import { SubnavTab } from '../components/common/SubnavTabs'
+import { AI_SEARCH_TAB } from '../components/common/UniversalSearch/SearchResultParts'
 import type { CloudSnippetSchema } from './schema/CloudSnippetSchema'
 import type { SnippetScope, SnippetType } from './Snippet'
+
+export interface SearchTab extends SubnavTab<SearchSourceFilter> {
+	locked: boolean
+}
 
 export const SEARCH_LOCAL_SOURCES = <const> ['snippets', 'settings', 'stats', 'welcome']
 
 export const SEARCH_SOURCES = <const> [...SEARCH_LOCAL_SOURCES, 'docs', 'cloud', 'community']
 
 export type SearchSource = typeof SEARCH_SOURCES[number]
+
+export type SearchSourceFilter = 'all' | SearchSource | typeof AI_SEARCH_TAB
 
 /** Sources that are only searched with a Pro licence. */
 export const SEARCH_PRO_SOURCES: readonly SearchSource[] = ['cloud']
