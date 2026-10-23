@@ -17,6 +17,12 @@ Manage custom WordPress code in one dashboard. Create PHP and HTML snippets, pre
 
 Find snippets with search, tags and filters, switch between table and card views, and preview code without opening the editor. Lock important snippets to help prevent accidental changes, and use the Stats overview to see snippet totals and breakdowns.
 
+= Watch the Code Snippets 4.0 walkthrough =
+
+See the plugin in use, including features from both the free and Pro editions. The Pro features listed below require the relevant Pro access.
+
+https://www.youtube.com/watch?v=q-QT9PXw2eQ
+
 **Want AI-assisted code creation and advanced controls?** [Code Snippets Pro](https://codesnippets.pro/pricing/) adds the AI Agent, snippet revisions, visual display conditions, CSS and JavaScript snippets, and connected Cloud workflows.
 
 Your snippets stay separate from your theme files. Browse Community Cloud for shared snippets, and use import and export to reuse your code across sites.
@@ -38,12 +44,6 @@ Code Snippets has been available on WordPress.org since 2012 and is active on 1 
 * **Safe Mode and feedback tools.** Use Safe Mode to troubleshoot snippet-related failures. An optional feedback reporter can be enabled in settings.
 
 PHP snippets execute code on your site. Only use code you trust, review it before activation and keep a current backup. Safe Mode helps with recovery; it does not make every snippet safe or guarantee that every error can be prevented.
-
-= Watch the Code Snippets 4.0 walkthrough =
-
-See the plugin in use, including features from both the free and Pro editions. The Pro features listed below require the relevant Pro access.
-
-https://www.youtube.com/watch?v=q-QT9PXw2eQ
 
 = Community-powered Code Snippets Cloud =
 
