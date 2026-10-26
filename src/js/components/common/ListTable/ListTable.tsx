@@ -42,7 +42,8 @@ export interface ListTableRowsProps<T, K extends Key> {
 }
 
 export interface ListTablePaginationProps {
-	totalPages?: number
+	/** Items on each page; every item is on one page when omitted. */
+	itemsPerPage?: number
 	pageSearchParam?: string
 }
 
@@ -78,17 +79,11 @@ export const sortTableItems = <T, >(
 
 const pageItems = <T, >(
 	items: T[],
-	{ currentPage, totalPages }: { currentPage: number; totalPages?: number }
-): T[] => {
-	if (totalPages) {
-		const itemsPerPage = Math.ceil(items.length / totalPages)
-		const start = (currentPage - 1) * itemsPerPage
-		const end = start + itemsPerPage
-		return items.slice(start, end)
-	} else {
-		return items
-	}
-}
+	{ currentPage, itemsPerPage }: { currentPage: number; itemsPerPage?: number }
+): T[] =>
+	itemsPerPage
+		? items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+		: items
 
 const getVisibleSelected = <T, K extends Key>(
 	visibleItems: T[],
@@ -137,7 +132,7 @@ export interface ListTableProps<T, K extends Key, A extends string> extends List
 export const ListTable = <T, K extends Key, A extends string = never>({
 	items,
 	getKey,
-	totalPages,
+	itemsPerPage,
 	pageSearchParam = 'paged',
 	initialSort,
 	...tableProps
@@ -154,9 +149,11 @@ export const ListTable = <T, K extends Key, A extends string = never>({
 		() => initialSort?.direction ?? 'asc'
 	)
 
+	const totalPages = itemsPerPage ? Math.ceil(items.length / itemsPerPage) : undefined
+
 	const visibleItems: T[] = useMemo(
-		() => pageItems(sortTableItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
-		[items, sortColumn, sortDirection, currentPage, totalPages])
+		() => pageItems(sortTableItems(items, sortColumn, sortDirection), { currentPage, itemsPerPage }),
+		[items, sortColumn, sortDirection, currentPage, itemsPerPage])
 
 	return (
 		<PartialDataListTable
@@ -178,6 +175,7 @@ export interface PartialDataListTableProps<T, K extends Key, A extends string>
 	ListTableNavProps<K, A> {
 	sortColumn: ListTableColumn<T> | undefined
 	totalItems: number
+	totalPages?: number
 	currentPage: number
 	visibleItems: T[]
 	beforeTable?: ReactNode
