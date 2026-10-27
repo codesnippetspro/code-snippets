@@ -38,7 +38,7 @@ export const SnippetPriorityInput: React.FC<SnippetPriorityInputProps> = ({ snip
 	}
 
 	return (
-		<form onSubmit={event => {
+		<form aria-label={__('Snippet priority', 'code-snippets')} onSubmit={event => {
 			event.preventDefault()
 			handleUpdate()
 		}}>

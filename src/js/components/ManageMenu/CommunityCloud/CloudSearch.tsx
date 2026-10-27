@@ -30,7 +30,7 @@ const SearchBox = () => {
 	}
 
 	return (
-		<form className="cloud-search-form" onSubmit={handleSubmit}>
+		<form aria-label={__('Search Cloud Library', 'code-snippets')} className="cloud-search-form" onSubmit={handleSubmit}>
 			<label htmlFor={searchMethodId} className="screen-reader-text">
 				{__('Search method', 'code-snippets')}
 			</label>

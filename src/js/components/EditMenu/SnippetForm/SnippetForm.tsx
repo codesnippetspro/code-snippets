@@ -123,7 +123,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 
 	return (
 		<>
-			<form id="snippet-form" method="post" onSubmit={handleSubmit} className={className}>
+			<form aria-labelledby="snippet-form-heading" id="snippet-form" method="post" onSubmit={handleSubmit} className={className}>
 				{children}
 			</form>
 

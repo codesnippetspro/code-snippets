@@ -87,7 +87,7 @@ export const getDemoFoundItems = (): DemoFoundItem[] => [
 		key: 'newsletter-form',
 		name: __('Newsletter sign-up form', 'code-snippets'),
 		code: [
-			'<form class="newsletter" action="/subscribe" method="post">',
+			'<form aria-label="Newsletter sign-up" class="newsletter" action="/subscribe" method="post">',
 			'\t<label for="newsletter-email">Get our weekly tips</label>',
 			'\t<input id="newsletter-email" type="email" name="email" required>',
 			'\t<button type="submit">Subscribe</button>',

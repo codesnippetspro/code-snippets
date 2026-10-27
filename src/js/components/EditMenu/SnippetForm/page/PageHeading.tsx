@@ -32,7 +32,7 @@ export const PageHeading: React.FC = () => {
 				<h1>
 					{snippet.id
 						? <>
-							{`${getPageHeading(snippet)} `}
+							<span id="snippet-form-heading">{getPageHeading(snippet)}</span>{' '}
 
 							<a
 								href={window.CODE_SNIPPETS?.urls.addNew}
@@ -52,7 +52,7 @@ export const PageHeading: React.FC = () => {
 								{_x('Add New', 'snippet', 'code-snippets')}
 							</a>
 						</>
-						: getAddNewHeading(snippet)}
+						: <span id="snippet-form-heading">{getAddNewHeading(snippet)}</span>}
 
 					{OPTIONS?.pageTitleActions && Object.entries(OPTIONS.pageTitleActions).map(([label, url]) =>
 						<>
