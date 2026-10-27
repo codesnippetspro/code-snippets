@@ -391,8 +391,8 @@ class Universal_Search {
 			}
 
 			// A condition stores its rules as JSON, which is not code anyone searches for.
-			$code = $can_read_code && ! $snippet->is_condition() ? (string) $snippet->code : '';
-			$description = Search_Query::plain_text( (string) $snippet->desc );
+			$code = $can_read_code && ! $snippet->is_condition() ? $snippet->code : '';
+			$description = Search_Query::plain_text( $snippet->desc );
 
 			$matched = $query->matched_fields(
 				[
@@ -422,10 +422,10 @@ class Universal_Search {
 				'snippet'     => [
 					'id'             => $snippet->id,
 					'scope'          => $snippet->scope,
-					'active'         => (bool) $snippet->active,
-					'locked'         => (bool) $snippet->locked,
-					'network'        => (bool) $snippet->network,
-					'shared_network' => (bool) $snippet->shared_network,
+					'active'         => $snippet->active,
+					'locked'         => $snippet->locked,
+					'network'        => $snippet->network,
+					'shared_network' => $snippet->shared_network,
 				],
 			];
 
@@ -632,13 +632,13 @@ class Universal_Search {
 		$items = [];
 
 		foreach ( $cloud_snippets as $cloud_snippet ) {
-			$type = Snippet::get_type_from_scope( (string) $cloud_snippet->scope );
-			$description = Search_Query::plain_text( (string) $cloud_snippet->description );
-			$code = $can_read_code && 'cond' !== $type ? (string) $cloud_snippet->code : '';
+			$type = Snippet::get_type_from_scope( $cloud_snippet->scope );
+			$description = Search_Query::plain_text( $cloud_snippet->description );
+			$code = $can_read_code && 'cond' !== $type ? $cloud_snippet->code : '';
 
 			$matched = $query->matched_fields(
 				[
-					'title'       => (string) $cloud_snippet->name,
+					'title'       => $cloud_snippet->name,
 					'description' => $description,
 					'code'        => $code,
 				]
@@ -652,7 +652,7 @@ class Universal_Search {
 				'id'          => "$source-$cloud_snippet->id",
 				'source'      => $source,
 				'type'        => $type,
-				'title'       => (string) $cloud_snippet->name,
+				'title'       => $cloud_snippet->name,
 				'description' => $query->excerpt( $description ),
 				'url'         => $cloud_snippet->local_id ? add_query_arg( 'id', $cloud_snippet->local_id, $edit_url ) : '',
 				'path'        => self::get_cloud_snippet_path( $cloud_snippet, $source ),

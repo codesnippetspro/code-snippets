@@ -15,7 +15,7 @@ export type SearchSource = typeof SEARCH_SOURCES[number]
 
 export type SearchSourceFilter = 'all' | SearchSource | typeof AI_SEARCH_TAB
 
-/** Sources that are only searched with a Pro licence. */
+/** Sources that are only searched with a Pro license. */
 export const SEARCH_PRO_SOURCES: readonly SearchSource[] = ['cloud']
 
 /** How the cloud is searched: by keyword, or with AI, which matches by meaning. */

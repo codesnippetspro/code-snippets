@@ -165,7 +165,7 @@ export const addQueryArg = ({ url, name, value }: QueryArg): string => {
 
 /**
  * A WordPress core REST route (`wp/v2/…`) with its query arguments, built so it
- * works whether or not the site has pretty permalinks: without them the REST
+ * works whether the site has pretty permalinks: without them the REST
  * base already carries a query string, so arguments must be appended with `&`.
  */
 export const buildWpRestUrl = (route: string, args: UrlQueryArgs = {}): string =>

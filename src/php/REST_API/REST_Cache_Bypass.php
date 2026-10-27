@@ -2,8 +2,10 @@
 
 namespace Code_Snippets\REST_API;
 
+use WP_Error;
 use WP_HTTP_Response;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 use const Code_Snippets\REST_API_NAMESPACE;
 
@@ -48,13 +50,13 @@ class REST_Cache_Bypass {
 	/**
 	 * Mark the response to a request for one of this plugin's routes as uncacheable.
 	 *
-	 * @param WP_HTTP_Response $response Response about to be served.
-	 * @param WP_REST_Server   $server   REST server instance.
-	 * @param WP_REST_Request  $request  Request the response answers.
+	 * @param WP_REST_Response|WP_Error $response Response about to be served.
+	 * @param WP_REST_Server            $_server  REST server instance.
+	 * @param WP_REST_Request|WP_Error  $request  Request the response answers.
 	 *
-	 * @return WP_HTTP_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
-	public function bypass_cache( $response, $server, $request ) {
+	public function bypass_cache( $response, WP_REST_Server $_server, $request ) {
 		if ( ! $response instanceof WP_HTTP_Response || ! $request instanceof WP_REST_Request ) {
 			return $response;
 		}

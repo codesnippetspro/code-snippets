@@ -27,12 +27,12 @@ export interface Subpage {
 	/**
 	 * Marks a walkthrough tab. An 'announce' tab advertises itself as new until
 	 * its walkthrough has been watched, which only a tab with a recorded demo
-	 * can do; a 'quiet' tab is only ever labelled as a demo.
+	 * can do; a 'quiet' tab is only ever labeled as a demo.
 	 */
 	demo?: 'announce' | 'quiet'
 
 	/**
-	 * Marks a premium tab, which is chipped as such without a licence.
+	 * Marks a premium tab, which is chipped as such without a license.
 	 */
 	isPro?: boolean
 }

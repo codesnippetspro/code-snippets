@@ -13,7 +13,7 @@ import type {
 /** Most captured errors to attach to a report. */
 const MAX_JS_ERRORS = 10
 
-/** Shortest title that summarises anything. */
+/** Shortest title that summarizes anything. */
 const MIN_TITLE_LENGTH = 8
 
 /** Shortest free-text answer that describes anything. */

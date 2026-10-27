@@ -3,7 +3,7 @@ import type { SnippetScope, SnippetType } from '../../../types/Snippet'
 export type DemoLanguage = 'php' | 'javascript' | 'css' | 'html'
 
 /**
- * Map a demo plan language to the snippet type used for badge colours and
+ * Map a demo plan language to the snippet type used for badge colors and
  * Prism highlighting (the all-snippets page uses `js`, not `javascript`).
  */
 export const languageToSnippetType = (language: DemoLanguage): SnippetType =>

@@ -54,7 +54,7 @@ export const isLocalSearchSource = (source: SearchSource): boolean =>
 
 /**
  * Whether a source can be searched on this site. The Cloud Library needs both a
- * Pro licence and a connection to Code Snippets Cloud.
+ * Pro license and a connection to Code Snippets Cloud.
  */
 export const isSearchSourceAvailable = (source: SearchSource): boolean =>
 	!SEARCH_PRO_SOURCES.includes(source) || isLicensed() && isCloudConnected()

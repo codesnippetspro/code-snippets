@@ -4,13 +4,13 @@ import { hasReached } from './types'
 import type { DemoTimeline, DemoTimelineState } from '../../common/demo/useDemoTimeline'
 import type { DemoStage } from './types'
 
-/** The colour the page loads with, before the draft is edited. */
+/** The color the page loads with, before the draft is edited. */
 export const SAVED_COLOR = '#dbeafe'
 
-/** The colour the walkthrough types into the draft. */
+/** The color the walkthrough types into the draft. */
 export const DRAFT_COLOR = '#fde68a'
 
-/** Milliseconds between keystrokes while the colour is retyped. */
+/** Milliseconds between keystrokes while the color is retyped. */
 const KEYSTROKE_INTERVAL = 140
 
 /** Pause after the last keystroke, before the preview is refreshed. */

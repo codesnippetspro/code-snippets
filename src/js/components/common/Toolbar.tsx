@@ -23,7 +23,7 @@ const managePageSlug = window.CODE_SNIPPETS?.urls.manage
 	? new URL(window.CODE_SNIPPETS.urls.manage).searchParams.get('page')
 	: null
 
-// The manage screen resolves an absent or unrecognised `subpage` to the first subpage, so
+// The manage screen resolves an absent or unrecognized `subpage` to the first subpage, so
 // mirror that fallback here — comparing against the raw param would leave every lower-nav
 // tab inactive on the default Snippets view, which is where the page opens.
 const activeSubpage = searchParams.get('page') === managePageSlug

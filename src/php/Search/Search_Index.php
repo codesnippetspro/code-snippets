@@ -117,7 +117,7 @@ final class Search_Index {
 					'title'       => (string) $field['name'],
 					'description' => self::describe_setting( $field ),
 					'url'         => add_query_arg( 'section', $tab_id, $settings_url ) . '#' . self::SETTING_ANCHOR_PREFIX . $field_id,
-					'path'        => self::build_path( $settings_label, (string) $tab_label ),
+					'path'        => self::build_path( $settings_label, $tab_label ),
 				];
 			}
 		}

@@ -7,7 +7,7 @@ export const handleUnknownError = (error: unknown) => {
 
 /**
  * Whether a rejection came from the caller aborting the request rather than
- * from a failure — axios rejects cancelled requests with no response attached,
+ * from a failure — axios rejects canceled requests with no response attached,
  * so these must not be surfaced to the user as errors.
  */
 export const isAbortError = (error: unknown): boolean =>

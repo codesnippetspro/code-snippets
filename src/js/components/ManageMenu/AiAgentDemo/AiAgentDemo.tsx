@@ -74,7 +74,7 @@ const AiAgentDemoPage: React.FC = () => {
 		markSeen()
 
 		// The closing panel sits below the agent, so bring it into view rather
-		// than leaving the walkthrough to end off screen.
+		// than leaving the walkthrough to end off-screen.
 		upsellRef.current?.scrollIntoView({
 			behavior: reducedMotion ? 'auto' : 'smooth',
 			block: 'end'

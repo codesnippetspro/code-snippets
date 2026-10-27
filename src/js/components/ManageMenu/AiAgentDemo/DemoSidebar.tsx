@@ -33,7 +33,7 @@ interface DemoStatus {
 }
 
 /**
- * How the conversation the walkthrough is having would be labelled in the
+ * How the conversation the walkthrough is having would be labeled in the
  * history rail at each point of the script.
  */
 const currentStatus = (stage: DemoStage): DemoStatus => {

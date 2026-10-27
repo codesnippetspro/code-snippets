@@ -74,7 +74,7 @@ interface DemoPreviewSiteProps {
 }
 
 /**
- * A mock browser tab showing the site with the draft applied. Only the colour
+ * A mock browser tab showing the site with the draft applied. Only the color
  * changes; the page is drawn here and nothing on the real site is touched.
  */
 export const DemoPreviewSite: React.FC<DemoPreviewSiteProps> = ({ stage, typedColor, pageColor }) => {
