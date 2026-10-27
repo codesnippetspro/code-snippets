@@ -10,31 +10,15 @@ import { buildUrl, fetchQueryParam } from '../../../utils/urls'
 import { WithCloudSnippetDownloadsContext } from '../../common/cloud/WithCloudSnippetDownloadsContext'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { SubnavTabs, getTabFromQuery } from '../../common/SubnavTabs'
-import {
-	AI_SEARCH_TAB,
-	CloudSearchNotice,
-	Highlight,
-	PRICING_URL,
-	SEARCH_LOADING_LABELS,
-	SEARCH_SOURCE_LABELS,
-	SearchCodePreview,
-	SearchItemBadge,
-	formatResultCount,
-	getSearchItemUrl,
-	opensInNewTab
-} from '../../common/UniversalSearch/SearchResultParts'
-import { SearchResultActions, SnippetActivationSwitch } from './SearchResultActions'
+import { AI_SEARCH_TAB, CloudSearchNotice, PRICING_URL, SEARCH_LOADING_LABELS, SEARCH_SOURCE_LABELS, formatResultCount } from '../../common/UniversalSearch/SearchResultParts'
+import { SearchResult } from './SearchResult'
+import type { ReactNode } from 'react'
 import type { UniversalSearch } from '../../../hooks/useUniversalSearch'
-import type { SearchCodeExcerpt, SearchField, SearchGroup, SearchItem, SearchSource } from '../../../types/Search'
-import type { SubnavTab } from '../../common/SubnavTabs'
-
-type SourceFilter = 'all' | SearchSource | typeof AI_SEARCH_TAB
-
-const SOURCE_QUERY_PARAM = 'source'
+import type { SearchField, SearchGroup, SearchSource, SearchTab } from '../../../types/Search'
 
 const RESULTS_PER_SOURCE = 50
 
-const AI_SOURCES: readonly SearchSource[] = ['community']
+const SOURCE_QUERY_PARAM = 'source'
 
 const FIELD_LABELS: Record<SearchField, string> = {
 	title: __('Title', 'code-snippets'),
@@ -42,126 +26,35 @@ const FIELD_LABELS: Record<SearchField, string> = {
 	code: __('Code', 'code-snippets')
 }
 
-/**
- * A Pro source is listed without a licence only to show what it offers, which
- * is left out when upgrade prompts are turned off.
- */
-const isSourceListed = (source: SearchSource): boolean =>
-	isSearchSourceAvailable(source) || SEARCH_PRO_SOURCES.includes(source) && shouldShowUpsell()
-
-const getSourceTabs = (): SubnavTab<SourceFilter>[] => [
-	{ name: 'all', label: __('All results', 'code-snippets') },
-	...SEARCH_SOURCES
-		.filter(isSourceListed)
-		.map(source => ({ name: source, label: SEARCH_SOURCE_LABELS[source], pro: SEARCH_PRO_SOURCES.includes(source) })),
-	{ name: AI_SEARCH_TAB, label: __('Search with AI', 'code-snippets') }
-]
-
-const isLockedTab = (filter: SourceFilter): boolean =>
-	'all' !== filter && AI_SEARCH_TAB !== filter && SEARCH_PRO_SOURCES.includes(filter) && !isLicensed()
-
-const isPending = (loadingSources: SearchSource[], filter: SourceFilter): boolean =>
-	loadingSources.some(source => 'all' === filter || source === filter)
-
-const getPendingLabels = (loadingSources: SearchSource[], filter: SourceFilter): string[] =>
-	loadingSources
-		.filter(source => 'all' === filter || source === filter)
-		.flatMap(source => SEARCH_LOADING_LABELS[source] ?? [])
+const isPending = (loadingSources: SearchSource[], currentTab: SearchTab): boolean =>
+	'all' === currentTab.name
+		? 1 < loadingSources.length
+		: 'ai' !== currentTab.name && loadingSources.includes(currentTab.name)
 
 const countResults = (groups: SearchGroup[]): number =>
 	groups.reduce((total, group) => total + group.total, 0)
 
-interface CodeMatchBarProps {
-	code: SearchCodeExcerpt
-	term: string
-}
-
-/**
- * Shows the line of code a result matched on, in the same preview as the search bar.
- */
-const CodeMatchBar: React.FC<CodeMatchBarProps> = ({ code, term }) => {
-	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null)
-	const [isOpen, setIsOpen] = useState(false)
-
-	return (
-		<>
-			<button
-				ref={setAnchor}
-				type="button"
-				className="search-result-code-bar"
-				aria-expanded={isOpen}
-				onClick={() => setIsOpen(!isOpen)}
-				onBlur={() => setIsOpen(false)}
-				onKeyDown={event => {
-					if ('Escape' === event.key) {
-						setIsOpen(false)
-					}
-				}}
-			>
-				<span className="dashicons dashicons-editor-code" aria-hidden="true"></span>
-				<span>
-					{// translators: %s: line number.
-						sprintf(__('Found in – Line %s', 'code-snippets'), code.line.toLocaleString())}
-				</span>
-				<span className="dashicons dashicons-visibility search-result-code-bar-open" aria-hidden="true"></span>
-				<span className="screen-reader-text">{code.text}</span>
-			</button>
-
-			{isOpen && anchor && <SearchCodePreview code={code} term={term} anchor={anchor} placement="bottom-start" />}
-		</>
-	)
-}
-
-interface SearchResultProps {
-	item: SearchItem
-	term: string
-	fields: readonly SearchField[]
-}
-
-const SearchResult: React.FC<SearchResultProps> = ({ item, term, fields }) => {
-	const [isActive, setIsActive] = useState(item.snippet?.active ?? false)
-	const url = getSearchItemUrl(item, term)
-
-	// Only the fields being matched in are highlighted, so a highlight always marks a match.
-	const highlightIn = (field: SearchField) => fields.includes(field) ? term : ''
-
-	// Every result shares the snippets table's row layout: switch, details, type, actions. Only
-	// local snippets can be switched on, so the other rows leave that column empty to stay aligned.
-	return (
-		<li className="search-result">
-			<div className="search-result-switch">
-				{item.snippet && 'cond' !== item.type && (
-					<SnippetActivationSwitch item={item} summary={item.snippet} isActive={isActive} setIsActive={setIsActive} />)}
-			</div>
-
-			<div className="search-result-body">
-				<h3 className="search-result-title">
-					{item.url
-						? <a href={url} {...opensInNewTab(item) && { target: '_blank', rel: 'noopener noreferrer' }}>
-							<Highlight text={item.title} term={highlightIn('title')} />
-						</a>
-						: <Highlight text={item.title} term={highlightIn('title')} />}
-				</h3>
-
-				{item.description && (
-					<p className="search-result-description">
-						<Highlight text={item.description} term={highlightIn('description')} />
-					</p>)}
-
-				{/* A local snippet's path is only its type, which the badge already shows. */}
-				{!item.snippet && item.path && <p className="search-result-meta">{item.path}</p>}
-
-				{item.code && <CodeMatchBar code={item.code} term={highlightIn('code')} />}
-			</div>
-
-			<SearchItemBadge type={item.type} />
-
-			<div className="row-actions visible search-result-actions">
-				<SearchResultActions item={item} />
-			</div>
-		</li>
-	)
-}
+const TABS: SearchTab[] = [
+	{
+		name: 'all',
+		label: __('All results', 'code-snippets'),
+		locked: false
+	},
+	...SEARCH_SOURCES
+		.filter(source =>
+			isSearchSourceAvailable(source) || SEARCH_PRO_SOURCES.includes(source) && shouldShowUpsell())
+		.map(name => ({
+			name,
+			label: SEARCH_SOURCE_LABELS[name],
+			pro: SEARCH_PRO_SOURCES.includes(name),
+			locked: SEARCH_PRO_SOURCES.includes(name) && !isLicensed()
+		})),
+	{
+		name: AI_SEARCH_TAB,
+		label: __('Search with AI', 'code-snippets'),
+		locked: false
+	}
+]
 
 interface SearchResultGroupProps {
 	group: SearchGroup
@@ -180,7 +73,8 @@ const SearchResultGroup: React.FC<SearchResultGroupProps> = ({ group, term, fiel
 			</h2>
 
 			<ul className="search-results-list">
-				{group.items.map(item => <SearchResult key={item.id} item={item} term={term} fields={fields} />)}
+				{group.items.map(item =>
+					<SearchResult key={item.id} item={item} term={term} fields={fields} />)}
 			</ul>
 
 			{group.total > group.items.length && (
@@ -215,16 +109,45 @@ const FieldFilters: React.FC<FieldFiltersProps> = ({ fields, setFields }) =>
 			/>)}
 	</fieldset>
 
+const getSearchResultMessage = (
+	{ isSearchable, hasFailed, loadingSources }: UniversalSearch,
+	fields: readonly SearchField[],
+	visibleGroups: SearchGroup[],
+	currentTab: SearchTab
+): ReactNode | undefined => {
+	if (!isSearchable) {
+		return 0 < fields.length
+			? __('Type at least two characters in the search bar above to search snippets, settings, docs and cloud.', 'code-snippets')
+			: __('Choose at least one place to match in.', 'code-snippets')
+	}
+
+	if (hasFailed) {
+		return __('Snippets and settings could not be searched. Reload the page to try again.', 'code-snippets')
+	}
+
+	if (0 === visibleGroups.length && !isPending(loadingSources, currentTab)) {
+		return __('Nothing matched. Try a different term or another source.', 'code-snippets')
+	}
+
+	return undefined
+}
+
 interface SearchResultsListProps {
 	search: UniversalSearch
-	filter: SourceFilter
+	currentTab: SearchTab
 	fields: readonly SearchField[]
 }
 
-const SearchResultsList: React.FC<SearchResultsListProps> = ({ search, filter, fields }) => {
+const SearchResultsList: React.FC<SearchResultsListProps> = ({ search, currentTab, fields }) => {
 	const { term, isSearchable, groups, loadingSources, hasFailed } = search
-	const visibleGroups = groups.filter(group => 'all' === filter || group.source === filter)
-	const pendingLabels = getPendingLabels(loadingSources, filter)
+
+	const visibleGroups = 'all' === currentTab.name ? groups : groups.filter(group => group.source === currentTab.name)
+
+	const pendingLabels = loadingSources
+		.filter(source => 'all' === currentTab.name || source === currentTab.name)
+		.flatMap(source => SEARCH_LOADING_LABELS[source] ?? [])
+
+	const message = getSearchResultMessage(search, fields, visibleGroups, currentTab)
 
 	return (
 		<div className="search-results-main">
@@ -234,22 +157,7 @@ const SearchResultsList: React.FC<SearchResultsListProps> = ({ search, filter, f
 					: formatResultCount(countResults(visibleGroups)))}
 			</div>
 
-			{!isSearchable && (
-				<p className="search-results-empty">
-					{0 < fields.length
-						? __('Type at least two characters in the search bar above to search snippets, settings, docs and cloud.', 'code-snippets')
-						: __('Choose at least one place to match in.', 'code-snippets')}
-				</p>)}
-
-			{hasFailed && (
-				<p className="search-results-empty">
-					{__('Snippets and settings could not be searched. Reload the page to try again.', 'code-snippets')}
-				</p>)}
-
-			{isSearchable && !hasFailed && 0 === visibleGroups.length && !isPending(loadingSources, filter) && (
-				<p className="search-results-empty">
-					{__('Nothing matched. Try a different term or another source.', 'code-snippets')}
-				</p>)}
+			{message && <p className="search-results-empty">{message}</p>}
 
 			{visibleGroups.map(group =>
 				<SearchResultGroup key={group.source} group={group} term={term} fields={fields} />)}
@@ -293,24 +201,50 @@ const CloudLibraryUpsell: React.FC<CloudLibraryUpsellProps> = ({ query }) =>
 		</div>
 	</div>
 
-const AiSearchIntro = () =>
-	<p className="search-results-ai-intro">
-		{__('AI search finds community snippets by what they do, so describe what you need in your own words.', 'code-snippets')}
-	</p>
-
-interface TabCountProps {
-	tab: SubnavTab<SourceFilter>
+interface AiSearchTabProps {
+	isLocked: boolean
 	search: UniversalSearch
-	aiSearch: UniversalSearch
-	isAiTab: boolean
 }
 
-const getTabCount = ({ tab, search, aiSearch, isAiTab }: TabCountProps): number | undefined => {
+const AiSearchTab = ({ isLocked, search }: AiSearchTabProps) =>
+	<>
+		<p className="search-results-ai-intro">
+			{__('AI search finds community snippets by what they do – describe what you need in your own words.', 'code-snippets')}
+		</p>
+
+		{!isLocked && <SearchResultsList search={search} currentTab={TABS[0]} fields={SEARCH_FIELDS} />}
+	</>
+
+interface SearchTabProps {
+	search: UniversalSearch
+	fields: readonly SearchField[]
+	setFields: (fields: readonly SearchField[]) => void
+	currentTab: SearchTab
+}
+
+const SearchTab = ({ currentTab, search, fields, setFields }: SearchTabProps) =>
+	currentTab.locked
+		? null
+		: <>
+			<FieldFilters fields={fields} setFields={setFields} />
+
+			{'all' === currentTab.name && isLicensed() && <CloudSearchNotice />}
+
+			<SearchResultsList search={search} currentTab={currentTab} fields={fields} />
+		</>
+
+interface TabCountProps {
+	tab: SearchTab
+	search: UniversalSearch
+	aiSearch: UniversalSearch
+}
+
+const getTabCount = ({ tab, search, aiSearch }: TabCountProps): number | undefined => {
 	if (AI_SEARCH_TAB === tab.name) {
-		return isAiTab && 0 === aiSearch.loadingSources.length ? aiSearch.total : undefined
+		return 0 === aiSearch.loadingSources.length ? aiSearch.total : undefined
 	}
 
-	if (isLockedTab(tab.name)) {
+	if (tab.locked) {
 		return undefined
 	}
 
@@ -325,13 +259,12 @@ const getTabCount = ({ tab, search, aiSearch, isAiTab }: TabCountProps): number 
 
 interface SearchResultsHeaderProps {
 	search: UniversalSearch
-	filter: SourceFilter
+	currentTab: SearchTab
 	shownSearch: UniversalSearch
-	isAiTab: boolean
 	visibleGroups: SearchGroup[]
 }
 
-const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({ search, filter, shownSearch, isAiTab, visibleGroups }) =>
+const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({ search, currentTab, shownSearch, visibleGroups }) =>
 	<div className="snippets-page-header">
 		<h1>
 			{search.isSearchable
@@ -340,17 +273,17 @@ const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({ search, filte
 				: __('Search', 'code-snippets')}
 		</h1>
 
-		{search.isSearchable && !isLockedTab(filter) && !isPending(shownSearch.loadingSources, isAiTab ? 'all' : filter) && (
+		{search.isSearchable && !currentTab.locked &&
+			!isPending(shownSearch.loadingSources, currentTab.name === AI_SEARCH_TAB ? TABS[0] : currentTab) && (
 			<span className="search-results-total">{formatResultCount(countResults(visibleGroups))}</span>)}
 	</div>
 
 const SearchResultsPage = () => {
-	const [query] = useState(() => fetchQueryParam('s') ?? '')
-	const [tabs] = useState(getSourceTabs)
-	const [currentTab, setCurrentTab] = useState(() => getTabFromQuery(tabs, SOURCE_QUERY_PARAM))
+	const query = fetchQueryParam('s') ?? ''
+
+	const [currentTab, setCurrentTab] = useState(() => getTabFromQuery(TABS, SOURCE_QUERY_PARAM))
 	const [fields, setFields] = useState<readonly SearchField[]>(SEARCH_FIELDS)
-	const filter = currentTab.name
-	const isAiTab = AI_SEARCH_TAB === filter
+
 	const search = useUniversalSearch({ query, fields, perSource: RESULTS_PER_SOURCE, excerpts: false })
 
 	// An AI search takes longer and asks more of the cloud, so it only runs once its tab is opened.
@@ -358,49 +291,39 @@ const SearchResultsPage = () => {
 		query,
 		perSource: RESULTS_PER_SOURCE,
 		excerpts: false,
-		sources: AI_SOURCES,
+		sources: ['community'],
 		method: 'ai',
-		enabled: isAiTab
+		enabled: AI_SEARCH_TAB === currentTab.name
 	})
 
-	const shownSearch = isAiTab ? aiSearch : search
-	const visibleGroups = isAiTab
+	const shownSearch = AI_SEARCH_TAB === currentTab.name ? aiSearch : search
+	const visibleGroups = AI_SEARCH_TAB === currentTab.name
 		? aiSearch.groups
-		: search.groups.filter(group => 'all' === filter || group.source === filter)
+		: search.groups.filter(group => 'all' === currentTab.name || group.source === currentTab.name)
 
 	return (
 		<div className="search-results-page">
 			<SubnavTabs
 				className="search-results-nav"
 				ariaLabel={__('Search result sources', 'code-snippets')}
-				tabs={tabs}
+				tabs={TABS}
 				currentTab={currentTab}
 				setCurrentTab={setCurrentTab}
-				getTabCount={search.isSearchable ? tab => getTabCount({ tab, search, aiSearch, isAiTab }) : undefined}
+				getTabCount={search.isSearchable ? tab => getTabCount({ tab, search, aiSearch }) : undefined}
 				queryParamName={SOURCE_QUERY_PARAM}
 			/>
 
 			<ScreenMetaSlot />
 
-			<SearchResultsHeader {...{ search, filter, shownSearch, isAiTab, visibleGroups }} />
+			<SearchResultsHeader {...{ search, currentTab, shownSearch, visibleGroups }} />
 
 			<hr className="wp-header-end" />
 
-			{isLockedTab(filter) && <CloudLibraryUpsell query={query} />}
+			{currentTab.locked && <CloudLibraryUpsell query={query} />}
 
-			{isAiTab && <AiSearchIntro />}
-
-			{!isAiTab && !isLockedTab(filter) && <>
-				<FieldFilters fields={fields} setFields={setFields} />
-				{'all' === filter && isLicensed() && <CloudSearchNotice />}
-			</>}
-
-			{!isLockedTab(filter) && (
-				<SearchResultsList
-					search={shownSearch}
-					filter={isAiTab ? 'all' : filter}
-					fields={isAiTab ? SEARCH_FIELDS : fields}
-				/>)}
+			{AI_SEARCH_TAB === currentTab.name
+				? <AiSearchTab search={aiSearch} isLocked={currentTab.locked} />
+				: <SearchTab search={search} currentTab={currentTab} fields={fields} setFields={setFields} />}
 		</div>
 	)
 }
