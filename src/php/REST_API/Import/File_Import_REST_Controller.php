@@ -3,6 +3,7 @@
 namespace Code_Snippets\REST_API\Import;
 
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\REST_API\Network_Scope;
 use Code_Snippets\REST_API\REST_Controller;
 use DOMDocument;
 use WP_Error;
@@ -17,6 +18,8 @@ use function Code_Snippets\save_snippet;
  * Manages the import of code snippets from uploaded files via REST API.
  */
 class File_Import_REST_Controller extends REST_Controller {
+	use Network_Scope;
+
 
 	/**
 	 * Current API version.
@@ -79,7 +82,32 @@ class File_Import_REST_Controller extends REST_Controller {
 	 * @return bool
 	 */
 	public function permission_callback( WP_REST_Request $request ): bool {
-		return code_snippets()->current_user_can();
+		return $this->is_network_scoped_request( $request ) || $this->has_shared_network_snippets( $request )
+			? code_snippets()->user_can_manage_network_snippets()
+			: code_snippets()->current_user_can();
+	}
+
+	/**
+	 * Determine whether any snippet in the request is marked as a shared network snippet.
+	 *
+	 * @param WP_REST_Request $request Incoming HTTP request.
+	 *
+	 * @return bool
+	 */
+	private function has_shared_network_snippets( WP_REST_Request $request ): bool {
+		$snippets = $request->get_param( 'snippets' );
+
+		if ( ! is_multisite() || ! is_array( $snippets ) ) {
+			return false;
+		}
+
+		foreach ( $snippets as $snippet ) {
+			if ( is_array( $snippet ) && ! empty( $snippet['shared_network'] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
