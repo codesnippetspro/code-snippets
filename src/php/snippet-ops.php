@@ -801,6 +801,11 @@ function save_snippet( $snippet ): ?Snippet {
 	if ( 0 === $snippet->id ) {
 		$data['created_by'] = $author_id;
 		$result = $wpdb->insert( $table, $data, '%s' );
+
+		if ( false === $result && Core\DB::upgrade_after_unknown_column( $table ) ) {
+			$result = $wpdb->insert( $table, $data, '%s' );
+		}
+
 		if ( false === $result ) {
 			return null;
 		}
@@ -818,8 +823,17 @@ function save_snippet( $snippet ): ?Snippet {
 		// Otherwise, update the snippet data.
 		$existing = get_snippet( $snippet->id, $snippet->network );
 
+		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
+
+		if ( false === $result && Core\DB::upgrade_after_unknown_column( $table ) ) {
+			$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
+		}
+
+		if ( false === $result ) {
+			return null;
+		}
+
 		set_snippet_locked( $snippet->id, $snippet->locked, $snippet->network );
-		$wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
 
 		// The row has changed, so the cached list no longer describes it. It is
 		// dropped before the snippet is read back, because everything below —
