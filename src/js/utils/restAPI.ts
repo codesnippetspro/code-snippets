@@ -1,20 +1,172 @@
 import { trimTrailingChar } from './text'
-import type { AxiosRequestConfig } from 'axios'
+import { buildUrl } from './urls'
+import type { UrlQueryArgs } from './urls'
+import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios'
 
 const normalizeUrl = (url: string | undefined) =>
 	trimTrailingChar(url ?? '', '/')
 
 export const REST_BASES = {
+	base: normalizeUrl(window.CODE_SNIPPETS?.restAPI.base),
 	snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippets),
-	cloud: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloud),
 	recentlyActive: normalizeUrl(window.CODE_SNIPPETS?.restAPI.recentlyActive),
-	importPlugins: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importPlugins),
-	importFiles: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importFiles)
+	import: {
+		plugins: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importPlugins),
+		files: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importFiles),
+	},
+	preferences: {
+		snippetView: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippetView),
+		stats: normalizeUrl(window.CODE_SNIPPETS?.restAPI.statsView),
+		demosSeen: normalizeUrl(window.CODE_SNIPPETS?.restAPI.demosSeen),
+	},
+	cloud: {
+		snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloud.snippets),
+	},
+	search: normalizeUrl(window.CODE_SNIPPETS?.restAPI.search)
+}
+
+/** Verbs that hosts and firewalls commonly reject outright. */
+const OVERRIDDEN_METHODS = ['delete', 'put', 'patch']
+
+/**
+ * Send write requests as POST, naming the intended verb in a header.
+ *
+ * Plenty of hosts allow only GET and POST, so a DELETE never reaches
+ * WordPress: the request is rejected upstream, and the browser reports a 403 —
+ * or a severed connection — that no amount of correct authentication can fix.
+ * The REST server reads `X-HTTP-Method-Override` on a POST and dispatches the
+ * route exactly as it would have, so this changes nothing WordPress sees while
+ * letting the request through.
+ */
+export const applyMethodOverride = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	const method = config.method?.toLowerCase()
+
+	if (!method || !OVERRIDDEN_METHODS.includes(method)) {
+		return config
+	}
+
+	config.headers.set('X-HTTP-Method-Override', method.toUpperCase())
+	config.method = 'post'
+
+	return config
+}
+
+/**
+ * The REST nonce to authenticate the next request with.
+ *
+ * Held in a variable rather than baked into the axios config, because the value
+ * the page was rendered with does not stay valid. A nonce expires with the
+ * session, and the snippet editor is a screen people leave open for a long
+ * time. Once it lapsed, every save failed with a 403 and the only cure was
+ * reloading the page, which loses whatever was being written.
+ *
+ * The feedback reporter mounts on screens that do not enqueue the main
+ * `CODE_SNIPPETS` object, so it carries a nonce of its own to fall back on.
+ */
+let restNonce = window.CODE_SNIPPETS?.restAPI.nonce ?? window.CODE_SNIPPETS_FEEDBACK?.nonce
+let runOnceNonce = window.CODE_SNIPPETS_MANAGE?.runOnceNonce
+
+/** The Run Once nonce as last refreshed by the Heartbeat, or the one rendered with the page. */
+export const getRunOnceNonce = (): string => runOnceNonce ?? ''
+
+/**
+ * Keep the REST nonce current for as long as the page is open.
+ *
+ * WordPress already sends a freshly minted nonce with every Heartbeat response,
+ * from `wp_refresh_heartbeat_nonces()`. Core applies it to `wpApiSettings`,
+ * which our screens do not enqueue, so the value went unused. Listening for the
+ * tick ourselves means an editor left open stays able to save.
+ */
+export const listenForNonceRefresh = () => {
+	// Heartbeat also fires the tick through the hooks API, which avoids
+	// depending on jQuery being present and typed.
+	window.wp.hooks?.addAction(
+		'heartbeat.tick',
+		'code-snippets/refresh-rest-nonce',
+		(data: { rest_nonce?: string, code_snippets_run_once_nonce?: string }) => {
+			if (data.rest_nonce) {
+				restNonce = data.rest_nonce
+			}
+
+			if (data.code_snippets_run_once_nonce) {
+				runOnceNonce = data.code_snippets_run_once_nonce
+			}
+		}
+	)
+}
+
+/**
+ * Attach the current nonce to an outgoing request.
+ *
+ * Read per request, so that a nonce refreshed since page load is actually used.
+ */
+export const applyRestNonce = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	if (restNonce) {
+		config.headers.set('X-WP-Nonce', restNonce)
+	}
+
+	return config
+}
+
+/**
+ * Give every read a unique address.
+ *
+ * Page caches and proxies key a stored response on its URL, and some replay it
+ * whatever the response headers say. The screens re-read the same route after
+ * each change, so a replayed response shows state from before the change.
+ */
+export const applyCacheBuster = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	if ('get' === config.method?.toLowerCase()) {
+		config.params = { ...<Record<string, unknown> | undefined>config.params, _: Date.now() }
+	}
+
+	return config
+}
+
+/**
+ * Carry safe mode through to the REST API when the page was opened in it.
+ *
+ * Safe mode is requested per request. Without the flag, a call from a screen
+ * opened in safe mode runs every snippet, including the one that made safe
+ * mode necessary, and fails the same way the rest of the site does.
+ */
+export const applySafeMode = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	if (window.CODE_SNIPPETS?.safeModeRequested) {
+		config.params = { ...<Record<string, unknown> | undefined>config.params, 'snippets-safe-mode': 1 }
+	}
+
+	return config
 }
 
 export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
 	headers: {
-		'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce,
-		'Access-Control': window.CODE_SNIPPETS?.restAPI.localToken
+		'Access-Control': window.CODE_SNIPPETS?.restAPI.cloud.token
 	}
 }
+
+export interface QueryArg {
+	url: string
+	name: string
+	value: string
+}
+
+/**
+ * Add a query parameter to a REST URL.
+ *
+ * Concatenation is not enough: with plain permalinks a REST URL already carries the route
+ * in a query string, so a second `?` would bury the parameter inside the route instead of
+ * adding one.
+ */
+export const addQueryArg = ({ url, name, value }: QueryArg): string => {
+	const parsed = new URL(url, window.location.origin)
+	parsed.searchParams.set(name, value)
+	return parsed.toString()
+}
+
+/**
+ * A WordPress core REST route (`wp/v2/…`) with its query arguments, built so it
+ * works whether or not the site has pretty permalinks: without them the REST
+ * base already carries a query string, so arguments must be appended with `&`.
+ */
+export const buildWpRestUrl = (route: string, args: UrlQueryArgs = {}): string =>
+	buildUrl(`${REST_BASES.base}/wp/v2/${route}`, args)

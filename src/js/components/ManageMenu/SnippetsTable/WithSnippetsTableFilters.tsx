@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { createContextHook } from '../../../utils/bootstrap'
-import { fetchQueryParam, updateQueryParam } from '../../../utils/urls'
+import { fetchQueryParam, updateQueryParams } from '../../../utils/urls'
 import type { SnippetType } from '../../../types/Snippet'
 import type { PropsWithChildren } from 'react'
 
@@ -73,22 +73,22 @@ export const WithSnippetsTableFilters: React.FC<PropsWithChildren> = ({ children
 
 		setCurrentType: useCallback(type => {
 			setCurrentType(type)
-			updateQueryParam('type', type)
+			updateQueryParams({ type })
 		}, []),
 
 		setCurrentStatus: useCallback(status => {
 			setCurrentStatus(status)
-			updateQueryParam('status', INDEX_STATUS === status ? '' : status)
+			updateQueryParams({ status: INDEX_STATUS === status ? '' : status })
 		}, []),
 
 		setCurrentTag: useCallback(tag => {
 			setTag(tag)
-			updateQueryParam('tag', tag)
+			updateQueryParams({ tag })
 		}, []),
 
 		setSearchQuery: useCallback(query => {
 			setSearch(query)
-			updateQueryParam('s', query)
+			updateQueryParams({ s: query })
 		}, [])
 	}
 

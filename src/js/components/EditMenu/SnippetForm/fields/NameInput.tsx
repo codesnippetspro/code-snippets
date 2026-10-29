@@ -8,9 +8,10 @@ export const NameInput: React.FC = () => {
 	return (
 		<div id="titlediv">
 			<div id="titlewrap">
-				<label htmlFor="title" className="screen-reader-text">
-					{__('Name', 'code-snippets')}
+				<label htmlFor="title" className="screen-reader-text" id="snippet-title-label">
+					{__('Snippet Name', 'code-snippets')}
 				</label>
+
 				<input
 					id="title"
 					type="text"
@@ -18,6 +19,7 @@ export const NameInput: React.FC = () => {
 					autoComplete="off"
 					value={snippet.name}
 					disabled={isReadOnly}
+					aria-labelledby="snippet-title-label"
 					placeholder={__('Enter snippet title', 'code-snippets')}
 					onChange={event =>
 						setSnippet(previous => ({ ...previous, name: event.target.value }))}

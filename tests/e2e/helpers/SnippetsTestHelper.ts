@@ -1,13 +1,5 @@
 import { expect } from '@playwright/test'
-import {
-	BUTTONS,
-	MESSAGES,
-	SELECTORS,
-	SNIPPET_LOCATIONS,
-	SNIPPET_TYPES,
-	TIMEOUTS,
-	URLS
-} from './constants'
+import { BUTTONS, MESSAGES, SELECTORS, SNIPPET_LOCATIONS, SNIPPET_TYPES, TIMEOUTS, URLS } from './constants'
 import { wpCli } from './wpCli'
 import type { Page } from '@playwright/test'
 
@@ -19,8 +11,8 @@ const RANDOM_RADIX = 36
 const RANDOM_SLICE_START = 2
 const RANDOM_SLICE_END = 7
 const CLICK_RETRIES = 3
+const SAVE_CONFIRM_RETRIES = 3
 const AT_LEAST_ONE = 1
-
 const getErrorMessage = (error: unknown): string => {
 	if (error instanceof Error) {
 		return error.message
@@ -29,15 +21,18 @@ const getErrorMessage = (error: unknown): string => {
 }
 
 export interface SnippetFormOptions {
-	name: string;
-	code: string;
-	type?: keyof typeof SNIPPET_TYPES;
-	location?: keyof typeof SNIPPET_LOCATIONS;
+	name: string
+	code: string
+	type?: keyof typeof SNIPPET_TYPES
+	location?: keyof typeof SNIPPET_LOCATIONS
 }
 
 export interface CreateSnippetCliOptions {
 	name: string;
 	active: boolean;
+	conditionId?: number;
+	desc?: string;
+	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
 
@@ -57,6 +52,10 @@ export class SnippetsTestHelper {
 		`
 
 		await wpCli(['eval', php])
+	}
+
+	static async setListOrder(order: string): Promise<void> {
+		await wpCli(['eval', `\\Code_Snippets\\Settings\\update_setting('general', 'list_order', '${order}');`])
 	}
 
 	static async setSnippetsPerPage(perPage: number): Promise<void> {
@@ -79,7 +78,7 @@ export class SnippetsTestHelper {
 		await wpCli(['eval', php])
 	}
 
-	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<void> {
+	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<number> {
 		const type = options.type ?? 'php'
 		let scope = 'global'
 		switch (type) {
@@ -102,16 +101,18 @@ export class SnippetsTestHelper {
 		const php = `
 			$snippet = new \\Code_Snippets\\Model\\Snippet([
 				'name' => ${JSON.stringify(options.name)},
-				'desc' => '',
+				'desc' => ${JSON.stringify(options.desc ?? '')},
 				'code' => ${JSON.stringify(code)},
 				'scope' => ${JSON.stringify(scope)},
 				'active' => ${options.active ? 'true' : 'false'},
-				'tags' => [],
+				'condition_id' => ${options.conditionId ?? 0},
+				'tags' => ${JSON.stringify(options.tags ?? [])},
 			]);
-			\\Code_Snippets\\save_snippet($snippet);
+			$snippet = \\Code_Snippets\\save_snippet($snippet);
+			echo $snippet->id;
 		`
 
-		await wpCli(['eval', php])
+		return Number(await wpCli(['eval', php]))
 	}
 
 	static async cleanupSnippetsByPrefix(prefix: string): Promise<void> {
@@ -137,9 +138,17 @@ export class SnippetsTestHelper {
 		await wpCli(['eval', php])
 	}
 
-	private async clickButton(name: RegExp, options: { force?: boolean } = {}): Promise<void> {
-		const force = options.force ?? true
+	static async isProLicensed(): Promise<boolean> {
+		try {
+			const output = await wpCli(['snippet', 'license-status', '--format=json'])
+			const status = <{ is_licensed?: string }>JSON.parse(output)
+			return 'Yes' === status.is_licensed
+		} catch {
+			return false
+		}
+	}
 
+	private async clickButton(name: RegExp, options: { force?: boolean } = {}): Promise<void> {
 		for (let attempt = 0; CLICK_RETRIES > attempt; attempt++) {
 			try {
 				const buttons = this.page.getByRole('button', { name })
@@ -151,12 +160,12 @@ export class SnippetsTestHelper {
 					if (!visible && 0 !== count) {
 						continue
 					}
-					await candidate.click({ timeout: TIMEOUTS.DEFAULT, force })
+					await candidate.click({ timeout: TIMEOUTS.SHORT, force: options.force })
 					return
 				}
 
 				// Fallback: attempt to click the first match even if not considered "visible".
-				await buttons.first().click({ timeout: TIMEOUTS.DEFAULT, force })
+				await buttons.first().click({ timeout: TIMEOUTS.SHORT, force: options.force })
 				return
 			} catch (error: unknown) {
 				const message = getErrorMessage(error)
@@ -170,6 +179,8 @@ export class SnippetsTestHelper {
 	}
 
 	private async setCodeMirrorValue(value: string): Promise<void> {
+		await this.page.locator('.CodeMirror').first().waitFor({ state: 'visible', timeout: TIMEOUTS.DEFAULT })
+
 		const didSetViaApi = await this.page
 			.evaluate(newValue => {
 				const wrapper = document.querySelector<HTMLElement>('.CodeMirror')
@@ -209,9 +220,9 @@ export class SnippetsTestHelper {
 	private async selectSnippetLocation(location: keyof typeof SNIPPET_LOCATIONS): Promise<void> {
 		const locationLabel = SNIPPET_LOCATIONS[location]
 
-		const combobox = this.page.getByRole('combobox', { name: /location/i }).first()
-		await expect(combobox).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-		await combobox.click()
+		const locationSelect = this.page.locator(SELECTORS.LOCATION_SELECT)
+		await expect(locationSelect).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await locationSelect.click()
 
 		const listbox = this.page.getByRole('listbox').first()
 		await expect(listbox).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
@@ -223,10 +234,22 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Navigate to the Code Snippets admin page
-   */
+	 * Navigate to the Code Snippets admin page.
+	 *
+	 * The snippet view preference persists server-side per user, so an earlier
+	 * card-view test can leave the manage page rendering cards. Callers of this
+	 * helper expect the table, so switch back whenever cards are active.
+	 */
 	async navigateToSnippetsAdmin(): Promise<void> {
 		await this.page.goto(URLS.SNIPPETS_ADMIN)
+
+		const viewToggle = this.page.getByRole('button', { name: 'Table view' })
+		await viewToggle.waitFor({ timeout: TIMEOUTS.DEFAULT })
+
+		if (0 === await this.page.locator(SELECTORS.SNIPPETS_TABLE).count()) {
+			await viewToggle.click()
+		}
+
 		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
 	}
 
@@ -246,28 +269,27 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Click the "Add New" button to start creating a snippet
-   */
+	 * Click the "Add New" button to start creating a snippet
+	 */
 	async clickAddNewSnippet(): Promise<void> {
-		await this.page.goto(URLS.ADD_SNIPPET)
+		await this.page.goto(URLS.ADD_SNIPPET_ADMIN)
 		await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**
-   * Fill the snippet form with the provided options
-   */
+	 * Fill the snippet form with the provided options
+	 */
 	async fillSnippetForm(options: SnippetFormOptions): Promise<void> {
 		await this.page.waitForSelector(SELECTORS.TITLE_INPUT)
 		await this.page.fill(SELECTORS.TITLE_INPUT, options.name)
 
 		if (options.type && 'PHP' !== options.type) {
-			const snippetTypeInput = this.page.locator(SELECTORS.SNIPPET_TYPE_SELECT)
-			await snippetTypeInput.click()
+			const snippetTypeSelect = this.page.locator(SELECTORS.SNIPPET_TYPE_SELECT)
+			await snippetTypeSelect.click()
 
 			// React Select renders options in a listbox; scope the click to options to avoid matching
 			// other UI strings like "Skip to main content".
-			const listboxId = await snippetTypeInput.getAttribute('aria-controls')
-			const listbox = listboxId ? this.page.locator(`#${listboxId}`) : this.page.getByRole('listbox')
+			const listbox = this.page.getByRole('listbox')
 			const optionLabel = SNIPPET_TYPES[options.type]
 
 			await listbox.getByRole('option', { name: new RegExp(escapeRegExp(optionLabel), 'i') }).click()
@@ -282,13 +304,13 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Save the snippet with the specified action
-   */
+	 * Save the snippet with the specified action
+	 */
 	async saveSnippet(action: 'save' | 'save_and_activate' | 'save_and_deactivate' = 'save'): Promise<void> {
 		if ('save_and_activate' === action) {
 			const activateButton = this.page.locator(BUTTONS.SAVE_AND_ACTIVATE).first()
 			if (await activateButton.isVisible().catch(() => false)) {
-				await this.clickButton(/^Save and Activate$/i)
+				await this.clickSaveAndConfirm(/^Save and Activate$/i)
 				return
 			}
 
@@ -297,7 +319,7 @@ export class SnippetsTestHelper {
 			if (await inactiveToggle.isVisible().catch(() => false)) {
 				await inactiveToggle.click({ timeout: TIMEOUTS.DEFAULT, force: true })
 			}
-			await this.clickButton(/^Save Snippet$/i)
+			await this.clickSaveAndConfirm(/^Save Snippet$/i)
 			return
 		}
 
@@ -312,23 +334,46 @@ export class SnippetsTestHelper {
 					await statusToggle.click({ timeout: TIMEOUTS.DEFAULT, force: true })
 				}
 			}
-			await this.clickButton(/^Save Snippet$/i)
+			await this.clickSaveAndConfirm(/^Save Snippet$/i)
 			return
 		}
 
-		await this.clickButton(/^Save Snippet$/i)
+		await this.clickSaveAndConfirm(/^Save Snippet$/i)
+	}
+
+	private async clickSaveAndConfirm(name: RegExp): Promise<void> {
+		for (let attempt = 0; SAVE_CONFIRM_RETRIES > attempt; attempt++) {
+			await this.clickButton(name)
+
+			const settled = await this.page.locator(SELECTORS.SAVE_SETTLED_NOTICE).first()
+				.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM })
+				.then(() => true)
+				.catch(() => false)
+
+			if (settled) {
+				return
+			}
+
+			const buttonStillPresent = await this.page.getByRole('button', { name }).first()
+				.isVisible()
+				.catch(() => false)
+
+			if (!buttonStillPresent) {
+				return
+			}
+		}
 	}
 
 	/**
    * Expect a success message with the specified text
    */
-	async expectSuccessMessage(expectedMessage: string): Promise<void> {
+	async expectSuccessMessage(expectedMessage: string | RegExp): Promise<void> {
 		await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE)).toContainText(expectedMessage)
 	}
 
 	/**
-   * Open an existing snippet by name
-   */
+	 * Open an existing snippet by name
+	 */
 	async openSnippet(snippetName: string): Promise<void> {
 		await this.page.goto(URLS.SNIPPETS_ADMIN)
 		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
@@ -342,8 +387,8 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Delete a snippet (assumes you're already on the snippet edit page)
-   */
+	 * Delete a snippet (assumes you're already on the snippet edit page)
+	 */
 	async deleteSnippet(): Promise<void> {
 		await this.page.locator(BUTTONS.DELETE).first().click()
 
@@ -374,9 +419,7 @@ export class SnippetsTestHelper {
 		await this.navigateToSnippetsAdmin()
 		await this.filterSnippetsByName(snippetName)
 
-		const row = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
 
 		const rowVisible = await row
 			.waitFor({ state: 'visible', timeout: TIMEOUTS.SHORT })
@@ -403,9 +446,7 @@ export class SnippetsTestHelper {
 		await trashedLink.click()
 		await expect(this.page).toHaveURL(/status=trashed/, { timeout: TIMEOUTS.DEFAULT })
 
-		const trashedRow = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const trashedRow = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
 
 		const trashedVisible = await trashedRow
 			.waitFor({ state: 'visible', timeout: TIMEOUTS.SHORT })
@@ -432,14 +473,6 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Check if a snippet exists on the snippets list page
-   */
-	async snippetExists(snippetName: string): Promise<boolean> {
-		const count = await this.page.locator(`text=${snippetName}`).count()
-		return 0 < count
-	}
-
-	/**
    * Clean up all snippets by name (navigate to admin, find snippets, delete them)
    */
 	async cleanupSnippet(snippetName: string): Promise<void> {
@@ -453,8 +486,8 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Verify the current URL contains the snippets admin page
-   */
+	 * Verify the current URL contains the snippets admin page
+	 */
 	async expectToBeOnSnippetsAdminPage(): Promise<void> {
 		const currentUrl = this.page.url()
 		expect(currentUrl).toContain('page=snippets')
@@ -462,44 +495,72 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Expect an element to be visible
-   */
-	async expectElementVisible(selector: string): Promise<void> {
-		await expect(this.page.locator(selector)).toBeVisible()
-	}
-
-	/**
-   * Expect an element to not be visible
-   */
-	async expectElementNotVisible(selector: string): Promise<void> {
-		await expect(this.page.locator(selector)).not.toBeVisible()
-	}
-
-	/**
-   * Expect an element to have a specific count
-   */
+	 * Expect an element to have a specific count
+	 */
 	async expectElementCount(selector: string, expectedCount: number): Promise<void> {
 		const count = await this.page.locator(selector).count()
 		expect(count).toBe(expectedCount)
 	}
 
 	/**
-   * Expect text to be visible on the page
-   */
+	 * Expect text to be visible on the page
+	 */
 	async expectTextVisible(text: string): Promise<void> {
 		await expect(this.page.locator(`text=${text}`)).toBeVisible()
 	}
 
 	/**
-   * Expect text to not be visible on the page
-   */
+	 * Expect text to not be visible on the page
+	 */
 	async expectTextNotVisible(text: string): Promise<void> {
 		await expect(this.page.locator('body')).not.toContainText(text)
 	}
 
+	async expectTextBeforeElement(text: string, selector: string): Promise<void> {
+		const precedes = await this.page.evaluate(
+			({ text, selector }) => {
+				const node = Array.from(document.querySelectorAll('p')).find(
+					paragraph => paragraph.textContent?.includes(text)
+				)
+
+				const reference = document.querySelector(selector)
+
+				if (!node || !reference) {
+					return null
+				}
+
+				return !!(reference.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_PRECEDING)
+			},
+			{ text, selector }
+		)
+
+		expect(precedes).toBe(true)
+	}
+
+	async expectTextAfterElement(text: string, selector: string): Promise<void> {
+		const follows = await this.page.evaluate(
+			({ text, selector }) => {
+				const node = Array.from(document.querySelectorAll('p')).find(
+					paragraph => paragraph.textContent?.includes(text)
+				)
+
+				const reference = document.querySelector(selector)
+
+				if (!node || !reference) {
+					return null
+				}
+
+				return !!(reference.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING)
+			},
+			{ text, selector }
+		)
+
+		expect(follows).toBe(true)
+	}
+
 	/**
-   * Create a complete snippet with save and activate
-   */
+	 * Create a complete snippet with save and activate
+	 */
 	async createAndActivateSnippet(options: SnippetFormOptions): Promise<void> {
 		await this.clickAddNewSnippet()
 		await this.fillSnippetForm(options)
@@ -509,30 +570,138 @@ export class SnippetsTestHelper {
 		// Ensure activation is actually persisted by toggling from the list screen.
 		await this.navigateToSnippetsAdmin()
 		await this.filterSnippetsByName(options.name)
-		const row = this.page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${options.name}"))`)
-			.first()
+		const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: options.name }).first()
 		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
 		const toggleCell = row.locator('td').first()
-		const toggleCheckbox = toggleCell.getByRole('checkbox').first()
+		const toggleSwitch = toggleCell.getByRole('switch').first()
+		await expect(toggleSwitch).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		const isChecked = await toggleCheckbox.isChecked().catch(() => false)
+		const isChecked = await toggleSwitch.isChecked().catch(() => false)
 		if (!isChecked) {
-			await toggleCheckbox.click({ timeout: TIMEOUTS.DEFAULT, force: true })
-			await expect(toggleCheckbox).toBeChecked({ timeout: TIMEOUTS.DEFAULT })
+			await toggleSwitch.click({ timeout: TIMEOUTS.DEFAULT, force: true })
+			await expect(toggleSwitch).toBeChecked({ timeout: TIMEOUTS.DEFAULT })
 		}
 
-		await expect(toggleCell).toContainText(/Deactivate/i, { timeout: TIMEOUTS.DEFAULT })
+		await expect(toggleSwitch).toHaveAccessibleName(/Deactivate/i, { timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**
-   * Create a snippet without activating
-   */
+	 * Create a snippet without activating
+	 */
 	async createSnippet(options: SnippetFormOptions): Promise<void> {
 		await this.clickAddNewSnippet()
 		await this.fillSnippetForm(options)
 		await this.saveSnippet('save')
 		await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
+	}
+
+	// CSS Testing Helpers
+
+	/**
+	 * Create a test DOM element for CSS testing
+	 */
+	async createTestElement(className: string, textContent = 'Test Element'): Promise<void> {
+		await this.page.evaluate(({ className, textContent }: { className: string; textContent: string }) => {
+			const testElement = document.createElement('div')
+			testElement.className = className
+			testElement.textContent = textContent
+			document.body.appendChild(testElement)
+		}, { className, textContent })
+	}
+
+	/**
+	 * Get computed CSS style property from an element
+	 */
+	async getComputedStyle(selector: string, property: keyof CSSStyleDeclaration) {
+		return await this.page.locator(selector).evaluate(
+			(element, prop) => window.getComputedStyle(element)[prop],
+			property
+		)
+	}
+
+	/**
+	 * Normalize a CSS color value to rgb() format for reliable comparison.
+	 * Converts hex (#rrggbb, #rgb) to rgb(r, g, b) and passes rgb() values through.
+	 */
+	private normalizeColor(value: string): string {
+		const hex = value.trim()
+
+		// Match #rrggbb or #rgb
+		const fullHex = /^#(?<r>[0-9a-f]{2})(?<g>[0-9a-f]{2})(?<b>[0-9a-f]{2})$/i.exec(hex)
+		if (fullHex?.groups) {
+			const { r, g, b } = fullHex.groups
+			return `rgb(${parseInt(r, 16)}, ${parseInt(g, 16)}, ${parseInt(b, 16)})`
+		}
+
+		const shortHex = /^#(?<r>[0-9a-f])(?<g>[0-9a-f])(?<b>[0-9a-f])$/i.exec(hex)
+		if (shortHex?.groups) {
+			const { r, g, b } = shortHex.groups
+			return `rgb(${parseInt(r + r, 16)}, ${parseInt(g + g, 16)}, ${parseInt(b + b, 16)})`
+		}
+
+		return value
+	}
+
+	/**
+	 * Check whether a CSS property name refers to a color property.
+	 */
+	private isColorProperty(property: string): boolean {
+		return /color|background|border|outline|shadow/i.test(property)
+	}
+
+	/**
+	 * Verify that CSS styles are applied to an element
+	 */
+	async verifyStylesApplied(selector: string, expectedStyles: Partial<CSSStyleDeclaration>): Promise<void> {
+		for (const [property, expectedValue] of Object.entries(expectedStyles)) {
+			const actualValue = await this.getComputedStyle(selector, <keyof CSSStyleDeclaration> property)
+
+			if ('string' === typeof expectedValue && 'string' === typeof actualValue && this.isColorProperty(property)) {
+				expect(this.normalizeColor(actualValue)).toBe(this.normalizeColor(expectedValue))
+			} else {
+				expect(actualValue).toBe(expectedValue)
+			}
+		}
+	}
+
+	/**
+	 * Verify that CSS styles are NOT applied to an element
+	 */
+	async verifyStylesNotApplied(selector: string, unexpectedStyles: Partial<CSSStyleDeclaration>): Promise<void> {
+		for (const [property, unexpectedValue] of Object.entries(unexpectedStyles)) {
+			const actualValue = await this.getComputedStyle(selector, <keyof CSSStyleDeclaration> property)
+
+			if ('string' === typeof unexpectedValue && 'string' === typeof actualValue && this.isColorProperty(property)) {
+				expect(this.normalizeColor(actualValue)).not.toBe(this.normalizeColor(unexpectedValue))
+			} else {
+				expect(actualValue).not.toBe(unexpectedValue)
+			}
+		}
+	}
+
+	// JavaScript Testing Helpers
+
+	/**
+	 * Verify that a global variable has the expected value
+	 */
+	async verifyGlobalVariable(variableName: keyof Window, expectedValue: unknown): Promise<void> {
+		const actualValue = await this.page.evaluate<typeof expectedValue, keyof Window>(
+			varName => window[varName],
+			variableName
+		)
+		expect(actualValue).toBe(expectedValue)
+	}
+
+	/**
+	 * Verify that a global function returns the expected result
+	 */
+	async verifyGlobalFunction(functionName: keyof Window, expectedResult: unknown): Promise<void> {
+		const result = await this.page.evaluate<typeof expectedResult, keyof Window>(
+			funcName => (<(() => unknown) | undefined> window[funcName])?.(),
+			functionName
+		)
+
+		expect(result).toBe(expectedResult)
 	}
 }

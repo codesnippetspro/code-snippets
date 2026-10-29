@@ -2,18 +2,21 @@
 
 namespace Code_Snippets\Model;
 
+use WP_REST_Response;
+
 /**
  * A list of snippets as retrieved from the cloud API.
  *
  * @since   3.4.0
  * @package Code_Snippets
  *
- * @property Cloud_Snippet $snippets        List of snippet items for the current page.
- * @property int           $page            Page of data that this data belongs to.
- * @property int           $total_pages     Total number of available pages of items.
- * @property int           $total_snippets  Total number of available snippet items.
- * @property array         $cloud_id_rev    An array of all cloud snippet IDs and their revision numbers.
- * @property bool          $success         If the request has any results.
+ * @property Cloud_Snippet[]      $snippets          List of snippet items for the current page.
+ * @property int                  $page              Page of data that this data belongs to.
+ * @property int                  $per_page          Number of items requested per page.
+ * @property int                  $total_pages       Total number of available pages of items.
+ * @property int                  $total_snippets    Total number of available snippet items.
+ * @property array<int, int>      $cloud_id_rev      An array of all cloud snippet IDs and their revision numbers.
+ * @property array<string, array> $available_filters An array of available filters that can be applied to the collection.
  */
 class Cloud_Snippets extends Model {
 
@@ -23,11 +26,13 @@ class Cloud_Snippets extends Model {
 	 * @var array<string, mixed>
 	 */
 	protected static array $default_values = [
-		'snippets'       => [],
-		'total_snippets' => 0,
-		'total_pages'    => 0,
-		'page'           => 0,
-		'cloud_id_rev'   => [],
+		'snippets'          => [],
+		'total_snippets'    => 0,
+		'total_pages'       => 0,
+		'page'              => 0,
+		'per_page'          => 0,
+		'cloud_id_rev'      => [],
+		'available_filters' => [],
 	];
 
 	/**
@@ -42,16 +47,6 @@ class Cloud_Snippets extends Model {
 		'cloud_id_rev' => 'cloud_id_rev',
 	];
 
-
-	/**
-	 * Class constructor.
-	 *
-	 * @param Cloud_Snippet $initial_data Initial data.
-	 */
-	public function __construct( $initial_data = null ) {
-		parent::__construct( $this->normalize_cloud_api( $initial_data ) );
-	}
-
 	/**
 	 * Prepare a value before it is stored.
 	 *
@@ -63,6 +58,7 @@ class Cloud_Snippets extends Model {
 	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
 			case 'page':
+			case 'per_page':
 			case 'total_pages':
 			case 'total_snippets':
 				return absint( $value );
@@ -92,25 +88,107 @@ class Cloud_Snippets extends Model {
 	}
 
 	/**
-	 * Normalize payloads returned by the cloud API into the shape expected by this class.
+	 * Unpack meta values from API response.
 	 *
-	 * @param mixed $initial_data Raw data passed into the constructor.
+	 * @param array $meta Response meta data.
 	 *
-	 * @return mixed Normalized data array or original value when no normalization is required.
+	 * @return void
 	 */
-	private function normalize_cloud_api( $initial_data ) {
-		// pagination metadata is nested under a 'meta' key.
-		if ( is_array( $initial_data ) && isset( $initial_data['meta'] ) ) {
-			$meta = $initial_data['meta'];
-			$normalized = [];
-			$normalized['snippets'] = $initial_data['data'] ?? $initial_data['snippets'] ?? [];
-			$normalized['total_snippets'] = isset( $meta['total'] ) ? (int) $meta['total'] : 0;
-			$normalized['total_pages'] = isset( $meta['total_pages'] ) ? (int) $meta['total_pages'] : 0;
-			$normalized['page'] = isset( $meta['page'] ) ? max( 0, (int) $meta['page'] - 1 ) : 0;
-			$normalized['cloud_id_rev'] = $initial_data['cloud_id_rev'] ?? [];
-			$initial_data = $normalized;
+	public function unpack_api_meta( array $meta ) {
+		if ( isset( $meta['total'] ) && is_numeric( $meta['total'] ) ) {
+			$this->total_snippets = $meta['total'];
 		}
 
-		return $initial_data;
+		if ( isset( $meta['total_pages'] ) && is_numeric( $meta['total_pages'] ) ) {
+			$this->total_pages = $meta['total_pages'];
+		}
+
+		if ( isset( $meta['page'] ) && is_numeric( $meta['page'] ) ) {
+			$this->page = max( 0, (int) $meta['page'] - 1 );
+		}
+
+		if ( isset( $meta['per_page'] ) && is_numeric( $meta['per_page'] ) ) {
+			$this->per_page = $meta['per_page'];
+		}
+	}
+
+	/**
+	 * Normalize payloads returned by the cloud API into the shape expected by this class.
+	 *
+	 * @param array|null $response    Response data as returned from API.
+	 * @param int|null   $page_number Page number requested, if applicible.
+	 * @param int|null   $per_page    Page size requested, if applicible.
+	 *
+	 * @return Cloud_Snippets Constructed cloud snippets object from response data.
+	 */
+	public static function unpack_api_response(
+		?array $response,
+		?int $page_number = null,
+		?int $per_page = null
+	): ?Cloud_Snippets {
+		if ( ! $response ) {
+			return null;
+		}
+
+		$result = new Cloud_Snippets();
+
+		// An error reply puts its details under `data`, where they would otherwise be read as snippets.
+		if ( false === ( $response['success'] ?? null ) ) {
+			return $result;
+		}
+
+		$snippets_data = $response['snippets'] ?? $response['data'] ?? null;
+
+		if ( is_array( $snippets_data ) ) {
+			$result->snippets = array_map(
+				fn( $snippet_data ) => new Cloud_Snippet( $snippet_data ),
+				$snippets_data
+			);
+		}
+
+		$result->cloud_id_rev = $response['cloud_id_rev'] ?? [];
+		$result->available_filters = $response['available_filters'] ?? [];
+
+		if ( isset( $response['meta'] ) && is_array( $response['meta'] ) ) {
+			$result->unpack_api_meta( $response['meta'] );
+		}
+
+		if ( ! is_null( $page_number ) ) {
+			$result->page = $page_number;
+		}
+
+		// The requested size, not the reported one: callers compare it against a
+		// later request to decide whether cached data still covers what is asked
+		// for, and older cloud builds omit `per_page` from the meta block.
+		if ( ! is_null( $per_page ) ) {
+			$result->per_page = $per_page;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Transform the data stored into this class into a REST API response.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function to_rest_response(): WP_REST_Response {
+		$response = rest_ensure_response(
+			[
+				'snippets'          => array_map(
+					fn( Cloud_Snippet $snippet ) => $snippet->get_fields(),
+					$this->snippets
+				),
+				'page'              => $this->page,
+				'total_pages'       => $this->total_pages,
+				'total_snippets'    => $this->total_snippets,
+				'available_filters' => $this->available_filters,
+			]
+		);
+
+		$response->header( 'X-WP-Total', $this->total_snippets );
+		$response->header( 'X-WP-TotalPages', $this->total_pages );
+
+		return $response;
 	}
 }

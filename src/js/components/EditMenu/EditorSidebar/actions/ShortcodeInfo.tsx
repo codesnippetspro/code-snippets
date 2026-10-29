@@ -107,18 +107,18 @@ const ModalContent = () => {
 				<CopyToClipboardButton primary text={shortcodeTag} />
 			</p>
 
-			<p>
-				<h4>{__('Shortcode Options', 'code-snippets')}</h4>
+			<h2>{__('Shortcode Options', 'code-snippets')}</h2>
 
-				<CheckboxList
-					options={['php', 'format', 'shortcodes']}
-					checked={options}
-					disabled={isReadOnly}
-					setChecked={setOptions}
-					optionLabels={OPTION_LABELS}
-					optionDescriptions={OPTION_DESCRIPTIONS}
-				/>
-			</p>
+			<hr className="wp-header-end" />
+
+			<CheckboxList
+				options={['php', 'format', 'shortcodes']}
+				checked={options}
+				disabled={isReadOnly}
+				setChecked={setOptions}
+				optionLabels={OPTION_LABELS}
+				optionDescriptions={OPTION_DESCRIPTIONS}
+			/>
 		</>
 	)
 }
@@ -129,7 +129,8 @@ export const ShortcodeInfo: React.FC = () => {
 
 	return 'content' === snippet.scope && snippet.id
 		? <div className="inline-form-field">
-			<h4>{__('Shortcode', 'code-snippets')}</h4>
+			<strong>{__('Shortcode', 'code-snippets')}</strong>
+
 			<Button onClick={() => setIsModalOpen(true)} disabled={isReadOnly}>
 				{__('See options', 'code-snippets')}
 			</Button>

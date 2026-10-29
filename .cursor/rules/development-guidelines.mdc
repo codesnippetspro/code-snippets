@@ -1,0 +1,53 @@
+---
+description: Planning, file organization, testing, typing, clean code, and code quality guidelines
+alwaysApply: true
+---
+
+# Development Guidelines
+
+## Planning
+
+- Always plan the code before writing it
+- Think about how the new code will:
+  - Fit into the existing codebase
+  - Interact with other parts of the codebase
+  - Handle errors and edge cases
+  - Be used by the frontend
+  - Be used by the users or by the developers
+
+## File Organization
+
+- Keep files focused on a single responsibility or closely related functionality
+- Treat file length as a signal; split only for reuse, meaningful separation, or clearer testing
+- Avoid single-use helper files and pass-through abstractions
+- Use clear directory structure to organize related files
+
+## Testing Requirements
+
+- Follow the testing requirements in `AGENTS.md`
+- Follow existing testing patterns and conventions in the codebase
+- Ensure tests are deterministic and properly isolated
+
+## Typing
+
+- Always use proper TypeScript types for all variables, parameters, and return values
+- Avoid using `any` type unless absolutely necessary
+- Try finding existing types / defined package types, and re-use them or build on top of them instead of creating new ones
+- For functions with 3+ parameters, use types for better maintainability
+
+## Clean Code
+
+- Write clean, readable, and maintainable code
+- Keep functions small and focused
+- Use descriptive and clear variable, function, and class names that explain their purpose
+- Prefer self-documenting code with meaningful names over excessive comments
+- Add comments only when needed to explain complex business logic or non-obvious decisions
+- Avoid redundant or obvious comments that just restate what the code does
+
+## Code Quality
+
+- Don't Repeat Yourself (DRY): Identify and refactor duplicated code
+- Single Responsibility Principle (SRP): Ensure each module/function has one responsibility
+- Separation of Concerns: Ensure different concerns are handled in separate modules/components
+- Meaningful Names: Verify that names are descriptive and adhere to conventions
+- Parameter Handling: Avoid redundant parameter extraction; keep parameters close to the logic where they are used

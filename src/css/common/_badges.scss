@@ -1,13 +1,12 @@
 @use 'sass:map';
 @use 'sass:list';
-@use 'sass:color';
 @use 'theme';
 
 .badge {
 	font-size: 12px;
 	font-weight: 700;
 	text-transform: uppercase;
-	border-radius: 3px;
+	border-radius: 5px;
 	text-align: center;
 	min-inline-size: 43px;
 	min-block-size: 24px;
@@ -35,7 +34,7 @@
 }
 
 .network-shared {
-	color: #2271b1; 
+	color: var(--cs-color-accent);
 	font-size: 22px;
 	inline-size: 100%;
 	cursor: help;
@@ -52,9 +51,9 @@
 .wp-core-ui .button.nav-tab-button {
 	margin-inline-start: 0.5em;
 	float: inline-end;
-	color: #a7aaad;
-	background: #f6f7f7;
-	border-color: #f6f7f7;
+	color: var(--cs-color-text-disabled);
+	background: var(--cs-color-surface-subtle);
+	border-color: var(--cs-color-surface-subtle);
 	align-self: center;
 	display: flex;
 	justify-content: center;
@@ -67,7 +66,33 @@
 	color: #666;
 }
 
-@each $name, $colors in theme.$badges {
+/* format: background-color [color] */
+$badges: (
+	// php/html/cond darkened for WCAG AA — at least 4.5:1 against white 12px
+	// bold text; php reuses the accent token, html/cond keep hue at reduced lightness.
+	php: #2271b1,
+	html: #cd4510,
+	css: #9b59b6,
+	js: #f7d67a #1c1f20,
+	cond: #22826f,
+	core: #0ca0a9,
+	pro: #f7e8e3 #df9279,
+	revisions: #50575e,
+	ai: #dfc5ef #6e249c,
+	cloud: #009fb4,
+	bundles: #50575e,
+	cloud_search: #d27c00,
+	private: #f7e6be #a27813,
+	public: #dbebf7 #2271b1,
+	success: #d3e8d1 #447340,
+	failure: #fad7c1 #a24b16,
+	info: #d2e6f4 #2b71a3,
+	neutral: #f6f7f7 #646970,
+	neutralDark: #e2e5e5 #6c7e7e,
+	special: #dfc5ef #6e249c
+);
+
+@each $name, $colors in $badges {
 	$text-color: #fff;
 	$background-color: list.nth($colors, 1);
 
@@ -82,16 +107,19 @@
 		background-color: $background-color;
 	}
 
-	.badge.#{$name}-badge:hover {
+	a.badge.#{$name}-badge:hover,
+	button.badge.#{$name}-badge:hover {
 		color: $text-color;
-		background-color: color.adjust($background-color, $lightness: -5%);
+		background-color: color-mix(in srgb, $background-color 95%, #000 5%);
 	}
 }
 
+// #646970 (WP gray-50) keeps white badge text at 5.5:1 so locked/unlicensed
+// states stay WCAG AA without hover; #a7aaad was 2.3:1.
 .nav-tab-inactive .badge,
 .inverted-badges .badge {
 	color: #fff;
-	background-color: #a7aaad;
+	background-color: #646970;
 	border-color: #fff !important;
 
 	.dashicons {
@@ -100,7 +128,7 @@
 }
 
 .nav-tab-inactive {
-	$colors: map.get(theme.$badges, 'pro');
+	$colors: map.get($badges, 'pro');
 	$text-color: list.nth($colors, 2);
 	$background-color: list.nth($colors, 1);
 
@@ -122,3 +150,30 @@
 		}
 	}
 }
+
+// Override WordPress' .wp-core-ui .button .dashicons { line-height: 1.9 } —
+// inside a button the inflated line-box would shift the glyph below the
+// badge's bottom border. Placed at end-of-file so it follows all other
+// .dashicons rules in source order (no-descending-specificity).
+.wp-core-ui .button .badge .dashicons {
+	line-height: 1;
+}
+
+// Pro badge consolidated to the navigation pro-chip style: a light accent pill
+// in every context, overriding the badge colour map and the inverted/nav-tab
+// variants (whose white !important border must be beaten here). This is a
+// deliberate final override, so it intentionally follows higher-specificity
+// context rules above.
+/* stylelint-disable no-descending-specificity */
+.badge.pro-badge,
+.inverted-badges .badge.pro-badge,
+.nav-tab-inactive .badge.pro-badge {
+	color: var(--cs-color-accent);
+	background-color: var(--cs-color-surface-info);
+	border: 1px solid rgb(34 113 177 / 10%) !important;
+	border-radius: 999px;
+	padding-block: 3px;
+	padding-inline: 10px;
+	line-height: normal;
+}
+/* stylelint-enable no-descending-specificity */

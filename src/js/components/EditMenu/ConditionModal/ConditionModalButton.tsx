@@ -9,25 +9,27 @@ import { useSnippetForm } from '../SnippetForm/WithSnippetFormContext'
 import type { Dispatch, SetStateAction } from 'react'
 
 export interface ConditionModalButtonProps {
-	setIsDialogOpen: Dispatch<SetStateAction<boolean>>
+	setIsModalOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setIsDialogOpen }) => {
+export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setIsModalOpen }) => {
 	const { snippet, isReadOnly } = useSnippetForm()
 
 	const hasCondition = 0 !== snippet.conditionId
 
 	return (
-		<div className={classnames('conditions-editor-open block-form-field', hasCondition ? 'has-condition' : 'no-condition')}>
+		<div className={classnames(
+			'conditions-editor-open block-form-field',
+			hasCondition ? 'has-condition' : 'no-condition'
+		)}>
 			{isCondition(snippet) ? null
 				: <>
-					<h4>
-						{__('Conditions', 'code-snippets')}
-						<Badge name="beta" small>{__('beta', 'code-snippets')}</Badge>
+					<div className="conditions-editor-header">
+						<strong>{__('Conditions', 'code-snippets')}</strong>
 						{!isLicensed() && <Badge name="pro" small>{__('Pro', 'code-snippets')}</Badge>}
-					</h4>
+					</div>
 
-					<Button large disabled={isReadOnly} onClick={() => setIsDialogOpen(true)}>
+					<Button large disabled={isReadOnly} onClick={() => setIsModalOpen(true)}>
 						<Badge name="cond" small />
 						{hasCondition
 							? __('Edit Conditions', 'code-snippets')

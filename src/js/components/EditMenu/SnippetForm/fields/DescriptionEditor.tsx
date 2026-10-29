@@ -63,6 +63,7 @@ const DescriptionEditorTextarea: React.FC = () => {
 	return (
 		<textarea
 			id={EDITOR_ID}
+			aria-label={__('Snippet description', 'code-snippets')}
 			className="wp-editor-area"
 			onChange={event => handleChange(event.target.value)}
 			autoComplete="off"
@@ -77,11 +78,9 @@ const DescriptionEditorTextarea: React.FC = () => {
 export const DescriptionEditor: React.FC = () =>
 	window.CODE_SNIPPETS_EDIT?.enableDescription
 		? <div className="snippet-description-container">
-			<h2>
-				<label htmlFor={EDITOR_ID}>
-					{__('Description', 'code-snippets')}
-				</label>
-			</h2>
+			<label htmlFor={EDITOR_ID}>
+				{__('Description', 'code-snippets')}
+			</label>
 
 			<DescriptionEditorTextarea />
 		</div>

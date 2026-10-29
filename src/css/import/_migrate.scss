@@ -1,3 +1,4 @@
+@use '../common/theme';
 
 .importer-selector-card {
 	h2 {
@@ -13,13 +14,13 @@
 
 	p {
 		margin: 10px 0 0;
-		color: #666;
+		color: var(--cs-color-text-muted);
 		font-size: 14px;
 	}
 }
 
 .import-options-card {
-	h2 {
+	h3 {
 		margin: 0 0 1em;
 	}
 
@@ -30,7 +31,7 @@
 		cursor: pointer;
 
 		.description {
-			color: #666;
+			color: var(--cs-color-text-muted);
 			font-size: 0.9em;
 		}
 	}
@@ -55,6 +56,10 @@
 
 
 .import-section-status {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+
 	.error, .success {
 		border-radius: 50%;
 		inline-size: 24px;
@@ -66,21 +71,21 @@
 		margin-block-start: 2px;
 
 		span {
-			color: white;
+			color: #fff;
 			font-size: 14px;
 			font-weight: bold;
 		}
 	}
 
 	.success {
-		background-color: #00a32a;
+		background-color: var(--cs-color-success);
 	}
 
 	.error {
-		background-color: #d63638;
+		background-color: var(--cs-color-error);
 	}
 
-	h3 {
+	h4 {
 		margin: 0 0 8px;
 		font-size: 16px;
 		font-weight: 600;
@@ -88,11 +93,11 @@
 
 	p {
 		margin: 0;
-		color: #666;
+		color: var(--cs-color-text-muted);
 	}
 
 	a {
-		color: #2271b1;
+		color: var(--cs-color-accent);
 		text-decoration: none;
 	}
 }
@@ -101,7 +106,7 @@
 	.card-inner {
 		text-align: center;
 		padding: 40px 20px;
-		color: #666;
+		color: var(--cs-color-text-muted);
 
 		p {
 			margin: 0;
@@ -114,10 +119,10 @@
 		margin-block-end: 16px;
 	}
 
-	h3 {
+	h4 {
 		margin: 0 0 8px;
 		font-size: 18px;
-		color: #333;
+		color: var(--cs-color-text-muted);
 	}
 
 }
@@ -129,7 +134,7 @@
 		align-items: center;
 		margin-block-end: 10px;
 
-		h2 {
+		h3 {
 			margin: 0;
 		}
 
@@ -142,8 +147,4 @@
 		text-align: end;
 		inline-size: 50px;
 	}
-}
-
-.migrate-form-container {
-	max-inline-size: 800px;
 }

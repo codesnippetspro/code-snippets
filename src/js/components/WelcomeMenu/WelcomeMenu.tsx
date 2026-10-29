@@ -1,5 +1,7 @@
-import { __ } from '@wordpress/i18n'
-import React, { useState } from 'react'
+import { __, sprintf } from '@wordpress/i18n'
+import React, { useEffect, useState } from 'react'
+import { revealLocationHash } from '../../utils/urls'
+import { ScreenMetaSlot } from '../common/ScreenMetaSlot'
 import { Toolbar } from '../common/Toolbar'
 import { Changelog } from './Changelog'
 import type { ImageLinkSchema } from '../../types/schema/WelcomeSchema'
@@ -11,7 +13,7 @@ const HeroImage = () => {
 
 	return (
 		<div className="code-snippets-hero">
-			<header>
+			<div className="code-snippets-header-wrapper">
 				<h2>{DATA?.hero.name}</h2>
 				<a
 					className="button button-primary button-large"
@@ -20,10 +22,13 @@ const HeroImage = () => {
 					rel="noopener noreferrer"
 				>
 					{__('Read more', 'code-snippets')}
+					<span className="screen-reader-text">
+						{__('(opens in a new tab)', 'code-snippets')}
+					</span>
 				</a>
-			</header>
+			</div>
 			<figure>
-				{!isImageLoaded && <div className="code-snippets-loading-spinner"></div>}
+				{!isImageLoaded && <div className="code-snippets-loading-spinner" aria-hidden="true"></div>}
 				<img
 					src={DATA?.hero.image_url}
 					alt={__('Latest news image', 'code-snippets')}
@@ -40,21 +45,30 @@ interface PartnersProps {
 
 const Partners: React.FC<PartnersProps> = ({ partners }) =>
 	<>
-		<h1>{__('Exclusive deals from our partners', 'code-snippets')}</h1>
-		<section className="code-snippets-partners">
+		<h2 id="partner-deals">{__('Exclusive deals from our partners', 'code-snippets')}</h2>
+		<ul className="code-snippets-partners">
 			{partners.map(({ title, follow_url, image_url }) =>
-				<article key={title} className="code-snippets-card">
+				<li key={title} className="code-snippets-card">
 					<figure>
 						<img src={image_url} alt={__('Partner image', 'code-snippets')} />
 					</figure>
-					<header>
+					<div className="code-snippets-header-wrapper">
 						<h3>{title}</h3>
-						<a href={follow_url} target="_blank" rel="noopener noreferrer">
+						<a
+							href={follow_url}
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={sprintf(
+								/* translators: %s: partner name. */
+								__('Visit %s (opens in a new tab)', 'code-snippets'),
+								title
+							)}
+						>
 							{__('Visit', 'code-snippets')}
 						</a>
-					</header>
-				</article>)}
-		</section>
+					</div>
+				</li>)}
+		</ul>
 	</>
 
 interface ArticlesProps {
@@ -63,37 +77,53 @@ interface ArticlesProps {
 
 const Articles: React.FC<ArticlesProps> = ({ articles }) =>
 	<>
-		<h1>{__('Helpful articles', 'code-snippets')}</h1>
-		<section className="code-snippets-articles">
+		<h2 id="helpful-articles">{__('Helpful articles', 'code-snippets')}</h2>
+		<ul className="code-snippets-articles">
 			{articles.map(({ title, follow_url, image_url, description, category }) =>
-				<article key={title} className="code-snippets-card">
+				<li key={title} className="code-snippets-card">
 					<figure>
 						<img src={image_url} alt={__('Feature image', 'code-snippets')} />
 					</figure>
-					<header>
+					<div className="code-snippets-header-wrapper">
 						<p className="item-category">{category}</p>
-						<h2>{title}</h2>
+						<h3>{title}</h3>
 						<p className="item-description">{description}</p>
 						<a href={follow_url} className="button button-secondary" target="_blank" rel="noopener noreferrer">
 							{__('Read more', 'code-snippets')}
+							<span className="screen-reader-text">
+								{__('(opens in a new tab)', 'code-snippets')}
+							</span>
 						</a>
-					</header>
-				</article>)}
-		</section>
+					</div>
+				</li>)}
+		</ul>
 	</>
 
-export const WelcomeMenu = () =>
-	<>
-		<Toolbar />
-		<div className="code-snippets-welcome">
-			<h1>{__('Resources and Updates', 'code-snippets')}</h1>
+export const WelcomeMenu = () => {
+	useEffect(revealLocationHash, [])
 
-			<div className="code-snippets-updates">
-				<HeroImage />
-				<Changelog />
+	return (
+		<>
+			<Toolbar />
+
+			<ScreenMetaSlot />
+
+			<div className="snippets-page-header">
+				<h1>{__('Resources and Updates', 'code-snippets')}</h1>
 			</div>
 
-			{DATA?.features && <Articles articles={DATA.features} />}
-			{DATA?.partners && <Partners partners={DATA.partners} />}
-		</div>
-	</>
+			<hr className="wp-header-end" />
+
+			<div className="code-snippets-welcome">
+
+				<div className="code-snippets-updates">
+					<HeroImage />
+					<Changelog />
+				</div>
+
+				{DATA?.features && <Articles articles={DATA.features} />}
+				{DATA?.partners && <Partners partners={DATA.partners} />}
+			</div>
+		</>
+	)
+}

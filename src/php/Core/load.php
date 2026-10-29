@@ -1,6 +1,6 @@
 <?php
 /**
- * Initialise and load the plugin under the proper namespace.
+ * Initialize and load the plugin under the proper namespace.
  *
  * @package Code_Snippets
  */
@@ -32,11 +32,20 @@ const PLUGIN_VERSION = CODE_SNIPPETS_VERSION;
 const PLUGIN_FILE = CODE_SNIPPETS_FILE;
 
 /**
- * Name of the group used for caching data.
+ * Base name of the group used for caching data.
  *
  * @var string
  */
-const CACHE_GROUP = 'code_snippets';
+const CACHE_GROUP_BASE = 'code_snippets';
+
+/**
+ * Name of the group used for caching data.
+ *
+ * Scoped to the plugin version, so data cached by one version is never read by another.
+ *
+ * @var string
+ */
+const CACHE_GROUP = CACHE_GROUP_BASE . '_' . PLUGIN_VERSION;
 
 /**
  * Namespace used for REST API endpoints.
@@ -49,8 +58,7 @@ const REST_API_NAMESPACE = 'code-snippets/v';
  * Load the Composer autoloader.
  *
  * After loading, remove any PSR-4 namespace mappings that do not start with our vendor prefix but have a corresponding
- * prefixed version, as these are not removed by Imposter and would cause collisions with other plugins that use the same
- * libraries.
+ * prefixed version. These are not removed by Imposter and would cause collisions with other plugins that use the same libraries.
  *
  * @var ClassLoader $autoloader Composer autoloader instance.
  */
@@ -59,7 +67,9 @@ $autoloader = require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 if ( $autoloader instanceof ClassLoader ) {
 	$vendor_prefix = __NAMESPACE__ . '\\Vendor\\';
 
-	foreach ( $autoloader->getPrefixesPsr4() as $namespace => $paths ) {
+	$prefixes = $autoloader->getPrefixesPsr4();
+
+	foreach ( $prefixes as $namespace => $paths ) {
 		// Remove any non-Code_Snippets namespace that has a corresponding prefixed version.
 		if ( false === strpos( $namespace, $vendor_prefix ) ) {
 			if ( isset( $prefixes[ $vendor_prefix . $namespace ] ) ) {

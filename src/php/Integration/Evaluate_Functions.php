@@ -35,33 +35,56 @@ class Evaluate_Functions {
 		add_action( 'plugins_loaded', [ $this, 'evaluate_early' ], 1 );
 		add_filter( 'code_snippets/execute_snippets', [ $this, 'disable_snippet_execution' ], 5 );
 
-		if ( $this->is_safe_mode_requested() ) {
-			add_filter( 'home_url', [ $this, 'add_safe_mode_query_var' ] );
+		// Only the query var is inspected here. This constructor runs while
+		// plugins are still being included, which is before WordPress loads
+		// pluggable.php, so a capability check at this point would call an
+		// undefined wp_get_current_user() and take the whole request down.
+		// Site URLs are left alone: callers append paths to them, REST URLs
+		// among them, and a query var in the middle breaks the result.
+		if ( self::is_safe_mode_query_var_set() ) {
 			add_filter( 'admin_url', [ $this, 'add_safe_mode_query_var' ] );
 		}
 	}
 
 	/**
+	 * Check whether the safe mode query var is present on this request.
+	 *
+	 * Safe to call at any point, as it reads nothing but the request.
+	 *
+	 * @return bool
+	 */
+	public static function is_safe_mode_query_var_set(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return ! empty( $_REQUEST['snippets-safe-mode'] );
+	}
+
+	/**
 	 * Check if safe mode has been requested via query var.
+	 *
+	 * Performs a capability check, so must not be called before pluggable
+	 * functions are available.
 	 *
 	 * @return bool
 	 */
 	public function is_safe_mode_requested(): bool {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return ! empty( $_REQUEST['snippets-safe-mode'] ) && code_snippets()->current_user_can();
+		return self::is_safe_mode_query_var_set() && code_snippets()->current_user_can();
 	}
 
 	/**
 	 * Inject the safe mode query var into URLs
 	 *
-	 * @param string $url Original URL.
+	 * @param mixed $url Original URL, from an unknown earlier callback.
 	 *
 	 * @return string Modified URL.
 	 */
-	public function add_safe_mode_query_var( string $url ): string {
-		return $this->is_safe_mode_requested() ?
-			add_query_arg( 'snippets-safe-mode', true, $url ) :
-			$url;
+	public function add_safe_mode_query_var( $url ): string {
+		$url = is_string( $url ) ? $url : '';
+
+		// No capability is checked here: doing so resolves the current user,
+		// and a plugin that builds a URL while that is under way would arrive
+		// back here and restart it. Snippets are only skipped for a user with
+		// the capability, which is checked where they are evaluated.
+		return add_query_arg( 'snippets-safe-mode', true, $url );
 	}
 
 	/**
@@ -101,7 +124,7 @@ class Evaluate_Functions {
 	 *
 	 * @noinspection PhpUndefinedConstantInspection
 	 */
-	public function is_safe_mode_active(): bool {
+	public static function is_safe_mode_active(): bool {
 		return ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ||
 		       ! apply_filters( 'code_snippets/execute_snippets', true );
 	}
@@ -109,11 +132,12 @@ class Evaluate_Functions {
 	/**
 	 * Disable snippet execution if the necessary query var is set.
 	 *
-	 * @param bool $execute_snippets Current filter value.
+	 * @param mixed $execute_snippets Current filter value, from an unknown
+	 *                                earlier callback.
 	 *
 	 * @return bool New filter value.
 	 */
-	public function disable_snippet_execution( bool $execute_snippets ): bool {
+	public function disable_snippet_execution( $execute_snippets ): bool {
 		return $execute_snippets && ! $this->is_safe_mode_requested();
 	}
 
@@ -154,15 +178,15 @@ class Evaluate_Functions {
 	}
 
 	/**
-	 * Evaluate a snippet stored in a flat file.
+	 * Evaluate a snippet.
 	 *
-	 * @param array      $snippet      Snippet data.
-	 * @param string     $file_path    Path to the snippet file.
-	 * @param array|null $edit_snippet Data of snippet currently being edited, if applicable.
+	 * @param array       $snippet      Snippet data.
+	 * @param string|null $file_path    Path to the snippet file, or null if executing from the database.
+	 * @param array|null  $edit_snippet Data of snippet currently being edited, if applicable.
 	 *
 	 * @return void
 	 */
-	private function evaluate_snippet_flat_file( array $snippet, string $file_path, ?array $edit_snippet = null ) {
+	private function evaluate_snippet( array $snippet, ?string $file_path, ?array $edit_snippet ) {
 		$snippet_id = $snippet['id'];
 		$code = $snippet['code'];
 		$table_name = $snippet['table'];
@@ -177,7 +201,11 @@ class Evaluate_Functions {
 		}
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
-			execute_snippet_from_flat_file( $code, $file_path, $snippet_id );
+			if ( is_null( $file_path ) ) {
+				execute_snippet( $code, $snippet_id );
+			} else {
+				execute_snippet_from_flat_file( $code, $file_path, $snippet_id );
+			}
 		}
 	}
 
@@ -187,7 +215,7 @@ class Evaluate_Functions {
 	 * @return bool True if snippets were evaluated, false if safe mode is active.
 	 */
 	public function evaluate_early(): bool {
-		if ( $this->is_safe_mode_active() ) {
+		if ( self::is_safe_mode_active() ) {
 			return false;
 		}
 
@@ -209,18 +237,8 @@ class Evaluate_Functions {
 		$edit_snippet = $this->get_currently_editing_snippet();
 
 		foreach ( $active_snippets as $snippet ) {
-			$snippet_id = $snippet['id'];
-			$code = $snippet['code'];
-			$table_name = $snippet['table'];
-
-			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
-			if ( 'single-use' === $snippet['scope'] ) {
-				$this->quick_deactivate_snippet( $snippet_id, $table_name );
-			}
-
-			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-			     ( is_null( $edit_snippet ) || $edit_snippet['id'] !== $snippet_id || $edit_snippet['table'] !== $table_name ) ) {
-				execute_snippet( $code, $snippet_id );
+			if ( 'condition' !== $snippet['scope'] ) {
+				$this->evaluate_snippet( $snippet, null, $edit_snippet );
 			}
 		}
 
@@ -239,11 +257,13 @@ class Evaluate_Functions {
 		$edit_snippet = $this->get_currently_editing_snippet();
 
 		foreach ( $snippets as $snippet ) {
-			$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
-			$base_path = Snippet_Files::get_base_dir( $table_name, $type );
-			$file = $base_path . '/' . $snippet['id'] . '.' . $type;
+			if ( 'condition' !== $snippet['scope'] ) {
+				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
+				$base_path = Snippet_Files::get_base_dir( $table_name, $type );
+				$file = $base_path . '/' . $snippet['id'] . '.' . $type;
 
-			$this->evaluate_snippet_flat_file( $snippet, $file, $edit_snippet );
+				$this->evaluate_snippet( $snippet, $file, $edit_snippet );
+			}
 		}
 
 		return true;

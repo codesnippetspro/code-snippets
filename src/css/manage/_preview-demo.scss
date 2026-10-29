@@ -1,0 +1,392 @@
+// The snippet preview walkthrough: a mock browser tab showing the site with a
+// draft applied, a floating code box, and the log the real preview pins to the
+// page it is testing.
+
+// The preview takes the width the page has, with the commentary in a column
+// of its own beside it rather than floating over the mock site.
+.preview-demo__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) var(--cs-sidebar-width);
+	align-items: start;
+	gap: 24px;
+
+	@media screen and (width <= 1100px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.preview-demo__aside {
+	position: sticky;
+	inset-block-start: 52px;
+
+	// Sticky positioning starts a stacking context, so the column itself is
+	// lifted above the spotlight for the commentary inside it to stay undimmed.
+	z-index: 100;
+}
+
+.preview-demo-browser {
+	display: flex;
+	flex-direction: column;
+
+	// Fills the screen below the page header, so the whole mock page, its code
+	// box and its log are in view at once.
+	block-size: max(520px, calc(100vh - 340px));
+	overflow: hidden;
+	border: 1px solid var(--cs-color-border);
+	border-radius: var(--cs-card-radius);
+	background: var(--cs-color-surface);
+	box-shadow: 0 6px 24px rgb(0 0 0 / 10%);
+}
+
+.preview-demo-browser__bar {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding-block: 10px;
+	padding-inline: 14px;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
+	background: var(--cs-color-surface-muted);
+}
+
+.preview-demo-browser__dots {
+	display: inline-flex;
+	gap: 6px;
+
+	i {
+		inline-size: 10px;
+		block-size: 10px;
+		border-radius: 50%;
+		background: var(--cs-color-border);
+	}
+}
+
+.preview-demo-browser__address {
+	flex: 1;
+	min-inline-size: 0;
+	overflow: hidden;
+	padding-block: 4px;
+	padding-inline: 12px;
+	border-radius: 999px;
+	background: var(--cs-color-surface);
+	color: var(--cs-color-text-secondary);
+	font-size: 12px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.preview-demo-site {
+	position: relative;
+	flex: 1;
+	padding-block: 0 190px;
+	padding-inline: 40px;
+	color: #1d2327;
+	transition: background-color 1.2s ease;
+
+	@media screen and (width <= 782px) {
+		padding-inline: 16px;
+		padding-block-end: 320px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		transition: none;
+	}
+}
+
+.preview-demo-site__notice {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-block: 0;
+	margin-inline: -40px;
+	padding-block: 8px;
+	padding-inline: 40px;
+	background: #1d2327;
+	color: #fff;
+	font-size: 12px;
+
+	@media screen and (width <= 782px) {
+		margin-inline: -16px;
+		padding-inline: 16px;
+	}
+
+	.dashicons {
+		inline-size: 16px;
+		block-size: 16px;
+		font-size: 16px;
+	}
+}
+
+.preview-demo-site__header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding-block: 18px;
+	border-block-end: 1px solid rgb(0 0 0 / 10%);
+}
+
+.preview-demo-site__name {
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.preview-demo-site__nav {
+	display: flex;
+	gap: 20px;
+	font-size: 14px;
+}
+
+.preview-demo-site__hero {
+	max-inline-size: 560px;
+	padding-block: 32px 24px;
+
+	h2 {
+		margin-block: 0 12px;
+		font-size: 28px;
+		line-height: 1.2;
+	}
+
+	p {
+		margin: 0;
+		font-size: 16px;
+		color: #3c434a;
+	}
+}
+
+.preview-demo-site__cards {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 20px;
+
+	span {
+		block-size: 64px;
+		border-radius: var(--cs-card-radius);
+		background: rgb(255 255 255 / 65%);
+		box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+	}
+}
+
+.preview-demo-code {
+	position: absolute;
+	inset-block-end: 24px;
+	inset-inline-start: 24px;
+	z-index: 2;
+	inline-size: min(340px, calc(100% - 48px));
+	overflow: hidden;
+	border-radius: var(--cs-card-radius);
+	background: #1e1e1e;
+	box-shadow: 0 10px 30px rgb(0 0 0 / 30%);
+	color: #d4d4d4;
+	animation: preview-demo-rise 0.35s ease both;
+}
+
+.preview-demo-code__header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-block: 8px;
+	padding-inline: 12px;
+	background: #2d2d2d;
+	font-size: 12px;
+
+	.small-badge {
+		margin: 0;
+	}
+}
+
+.preview-demo-code__title {
+	flex: 1;
+	font-weight: 600;
+	color: #fff;
+}
+
+.preview-demo-code__state {
+	padding-block: 1px;
+	padding-inline: 8px;
+	border-radius: 999px;
+	background: rgb(255 255 255 / 12%);
+	font-size: 11px;
+}
+
+.preview-demo-code__body {
+	margin: 0;
+	padding-block: 14px;
+	padding-inline: 16px;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 14px;
+	line-height: 1.6;
+	tab-size: 4;
+	white-space: pre;
+}
+
+.preview-demo-code__selector {
+	color: #d7ba7d;
+}
+
+.preview-demo-code__property {
+	color: #9cdcfe;
+}
+
+.preview-demo-code__value {
+	display: inline-flex;
+	align-items: center;
+	color: #ce9178;
+}
+
+.preview-demo-code__swatch {
+	inline-size: 11px;
+	block-size: 11px;
+	margin-inline-end: 6px;
+	border: 1px solid rgb(255 255 255 / 50%);
+	border-radius: 2px;
+}
+
+.preview-demo-code__caret {
+	inline-size: 2px;
+	block-size: 1.1em;
+	margin-inline-start: 1px;
+	background: #fff;
+	animation: preview-demo-caret 1s steps(1) infinite;
+}
+
+@keyframes preview-demo-caret {
+	50% {
+		opacity: 0;
+	}
+}
+
+.preview-demo-log {
+	position: absolute;
+	inset-block-end: 24px;
+	inset-inline-end: 24px;
+	z-index: 2;
+	inline-size: min(380px, calc(100% - 48px));
+	overflow: hidden;
+	border: 1px solid rgb(0 0 0 / 15%);
+	border-radius: var(--cs-card-radius);
+	background: #fff;
+	box-shadow: 0 6px 24px rgb(0 0 0 / 12%);
+	font-size: 12px;
+	animation: preview-demo-rise 0.35s ease both;
+
+	@media screen and (width <= 782px) {
+		inset-block-end: 200px;
+		inset-inline-start: 24px;
+	}
+}
+
+.preview-demo-log__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding-block: 10px;
+	padding-inline: 12px;
+	background: var(--cs-color-surface-subtle);
+}
+
+.preview-demo-log__title {
+	font-weight: 600;
+}
+
+.preview-demo-log__badges {
+	display: flex;
+	gap: 8px;
+}
+
+.preview-demo-log__badge {
+	padding-block: 2px;
+	padding-inline: 8px;
+	border-radius: 999px;
+	font-weight: 600;
+
+	&.is-error {
+		background: #ffe5e5;
+		color: #8a0000;
+	}
+
+	&.is-warning {
+		background: #fff4cc;
+		color: #6a4b00;
+	}
+}
+
+.preview-demo-log__body {
+	margin: 0;
+	padding-block: 10px;
+	padding-inline: 12px;
+	color: var(--cs-color-text-secondary);
+}
+
+// Always rendered, so the overlay fades in and out rather than popping.
+.preview-demo-site__updating {
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	background: rgb(255 255 255 / 75%);
+	font-size: 16px;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease, visibility 0.2s ease;
+
+	&.is-visible {
+		opacity: 1;
+		visibility: visible;
+	}
+}
+
+.preview-demo-site__spinner {
+	inline-size: 32px;
+	block-size: 32px;
+	box-sizing: border-box;
+	border: 3px solid var(--cs-color-border);
+	border-block-start-color: var(--cs-color-accent);
+	border-radius: 50%;
+	animation: preview-demo-spin 0.8s linear infinite;
+}
+
+@keyframes preview-demo-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes preview-demo-rise {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.preview-demo-code,
+	.preview-demo-log,
+	.preview-demo-code__caret {
+		animation: none;
+	}
+
+	.preview-demo-site__updating {
+		transition: none;
+	}
+
+	.preview-demo-site__spinner {
+		animation-duration: 2.4s;
+	}
+}
+
+.preview-demo__closing .demo-upsell__actions {
+	flex-direction: column;
+	align-items: stretch;
+}

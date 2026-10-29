@@ -56,7 +56,7 @@ class Import_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Enqueue assets for the import menu.
+	 * Empty implementation for enqueue_assets.
 	 *
 	 * @return void
 	 */
@@ -67,6 +67,7 @@ class Import_Menu extends Admin_Menu {
 			[
 				'react',
 				'react-dom',
+				'react-jsx-runtime',
 				'wp-i18n',
 				'wp-components',
 			],
@@ -90,6 +91,6 @@ class Import_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		echo '<div id="import-container"></div>';
+		echo '<div id="import-container" class="wrap"></div>';
 	}
 }

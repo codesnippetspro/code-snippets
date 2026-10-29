@@ -1,62 +1,85 @@
 import React, { useState } from 'react'
-import { __ } from '@wordpress/i18n'
-import classnames from 'classnames'
+import { __, sprintf } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
+import { useSnippetView } from '../../../hooks/useSnippetView'
 import { isLicensed } from '../../../utils/screen'
-import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
-import { UpsellDialog } from '../../common/UpsellDialog'
-import { WithCloudSearchContext } from './WithCloudSearchContext'
+import { updateQueryParams } from '../../../utils/urls'
+import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
+import { SubnavTabs, getTabFromQuery } from '../../common/SubnavTabs'
+import { WithCloudSnippetDownloadsContext } from '../../common/cloud/WithCloudSnippetDownloadsContext'
+import { UpsellPage } from '../../common/UpsellDialog'
+import { WithCloudSearchContext, useCloudSearch } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
+import type { SubnavTab } from '../../common/SubnavTabs'
 
-const TABS = ['snippets', 'bundles'] as const
-type TabName = typeof TABS[number]
+const TAB_QUERY_PARAM = 'tab'
 
-const TAB_LABELS: Record<TabName, string> = {
-	snippets: __('Code Snippets', 'code-snippets'),
-	bundles: __('Bundles', 'code-snippets')
-}
+const TABS: SubnavTab<'snippets' | 'bundles'>[] = [
+	{
+		name: 'snippets',
+		label: __('Snippets', 'code-snippets')
+	},
+	{
+		name: 'bundles',
+		label: __('Bundles', 'code-snippets'),
+		pro: true
+	}
+]
 
-const PRO_TABS: TabName[] = ['bundles']
-
-export const CommunityCloud = () => {
-	const [currentTab, setCurrentTab] = useState(() => fetchQueryParam('tab') as TabName | null ?? TABS[0])
-	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
+const CommunityCloudInner = () => {
+	const [currentTab, setCurrentTab] = useState(() => getTabFromQuery(TABS, TAB_QUERY_PARAM))
+	const { snippetView, setSnippetView } = useSnippetView()
+	const { searchResults } = useCloudSearch()
 
 	return (
-		<div className="wrap">
-			<h1>{__('Community Cloud', 'code-snippets')}</h1>
+		<>
+			<SubnavTabs
+				className="community-cloud-nav"
+				ariaLabel={__('Community Cloud types', 'code-snippets')}
+				tabs={TABS}
+				getTabCount={tab => 'snippets' === tab.name ? searchResults?.totalItems : undefined}
+				currentTab={currentTab}
+				setCurrentTab={tab => {
+					updateQueryParams({ [TAB_QUERY_PARAM]: tab.name })
+					setCurrentTab(tab)
+				}}
+			/>
 
-			<h2 className="nav-tab-wrapper">
-				{TABS.map(tab =>
-					<a
-						key={tab}
-						href={buildUrl(window.location.href, { type: tab })}
-						className={classnames('nav-tab', `${tab}-tab`, { 'nav-tab-active': tab === currentTab })}
-						onClick={event => {
-							event.preventDefault()
+			<ScreenMetaSlot hidden={'bundles' === currentTab.name} />
 
-							if (PRO_TABS.includes(tab) && !isLicensed()) {
-								setIsUpsellDialogOpen(true)
-							} else {
-								updateQueryParam('tab', tab)
-								setCurrentTab(tab)
-							}
-						}}
-					>
-						{TAB_LABELS[tab]}
-						{PRO_TABS.includes(tab) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
-					</a>)}
-			</h2>
+			{(!currentTab.pro || isLicensed()) && (
+				<>
+					<div className="snippets-page-header">
+						<h1>{
+							// translators: %s: label of the currently selected community cloud tab.
+							sprintf(__('Community Cloud: %s', 'code-snippets'), currentTab.label)}</h1>
+					</div>
 
-			{'snippets' === currentTab
-				? <WithRestAPIContext>
-					<WithCloudSearchContext>
-						<CloudSearch />
-					</WithCloudSearchContext>
-				</WithRestAPIContext>
-				: null}
+					<hr className="wp-header-end" />
 
-			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
-		</div>
+					<p className="snippets-page-description">
+						{__('Search the community cloud and download user-shared snippets directly to your site.', 'code-snippets')}
+					</p>
+				</>)}
+
+			{(() => {
+				switch (currentTab.name) {
+					case 'snippets':
+						return <CloudSearch snippetView={snippetView} setSnippetView={setSnippetView} />
+
+					case 'bundles':
+						return <UpsellPage />
+				}
+			})()}
+		</>
 	)
 }
+
+export const CommunityCloud = () =>
+	<WithRestAPIContext>
+		<WithCloudSnippetDownloadsContext>
+			<WithCloudSearchContext>
+				<CommunityCloudInner />
+			</WithCloudSearchContext>
+		</WithCloudSnippetDownloadsContext>
+	</WithRestAPIContext>

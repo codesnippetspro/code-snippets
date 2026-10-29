@@ -95,7 +95,11 @@ export class Linter {
 
 			this.visit(program)
 		} catch (error) {
-			console.error(error)
+			// The parser can fail outright on code that is still being typed, even with
+			// errors suppressed. The next change lints again, so this is not an error.
+			if (window.CODE_SNIPPETS?.debug) {
+				console.debug(error)
+			}
 		}
 	}
 

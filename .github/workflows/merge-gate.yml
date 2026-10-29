@@ -1,0 +1,32 @@
+name: "(Pull Request): Merge Gate"
+
+# Re-evaluates the Release Checklist on pull-request events that change the gate's
+# inputs (checkbox edits, label changes). The gate itself defers while the test
+# suites are still running, so this never races them; the after-tests verdict is
+# posted by the release-gate jobs in the test workflows.
+
+on:
+  pull_request:
+    types: [opened, edited, labeled, unlabeled, synchronize]
+
+permissions:
+  contents: read
+  statuses: write
+
+concurrency:
+  group: merge-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gate action
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/actions/release-gate
+
+      - name: Release Checklist
+        uses: ./.github/actions/release-gate
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

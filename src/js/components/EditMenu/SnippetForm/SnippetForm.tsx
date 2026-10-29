@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
@@ -9,6 +9,7 @@ import { handleUnknownError } from '../../../utils/errors'
 import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
+import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { Toolbar } from '../../common/Toolbar'
 import { UpsellBanner } from '../../common/UpsellBanner'
 import { UpsellDialog } from '../../common/UpsellDialog'
@@ -96,7 +97,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 							.replace(__('Create New Condition', 'code-snippets'), __('Edit Condition', 'code-snippets'))
 
 						const newUrl = buildUrl(window.CODE_SNIPPETS.urls.edit, { id: response.id })
-						window.history.pushState({}, document.title, newUrl)
+						window.history.replaceState({}, document.title, newUrl)
 					}
 				}
 			})
@@ -122,11 +123,13 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 
 	return (
 		<>
-			<form id="snippet-form" method="post" onSubmit={handleSubmit} className={className}>
+			<form aria-labelledby="snippet-form-heading" id="snippet-form" method="post" onSubmit={handleSubmit} className={className}>
 				{children}
 			</form>
 
-			<ConfirmSubmitDialog {...{ doSubmit, submitAction, setSubmitAction, validationWarning, setValidationWarning }} />
+			<ConfirmSubmitDialog
+				{...{ doSubmit, submitAction, setSubmitAction, validationWarning, setValidationWarning }}
+			/>
 		</>
 	)
 }
@@ -141,18 +144,66 @@ const ConditionsEditor: React.FC = () => {
 		: null
 }
 
+const useReloadOnPopState = (isDirty: boolean) => {
+	const currentUrl = useRef(window.location.href)
+	const skipNextUnloadPrompt = useRef(false)
+
+	useEffect(() => {
+		currentUrl.current = window.location.href
+	})
+
+	useEffect(() => {
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			if (skipNextUnloadPrompt.current) {
+				skipNextUnloadPrompt.current = false
+				return
+			}
+
+			event.preventDefault()
+			// Required by Chrome and Edge versions before 119.
+			// eslint-disable-next-line @typescript-eslint/no-deprecated
+			event.returnValue = true
+		}
+
+		if (isDirty) {
+			window.addEventListener('beforeunload', handleBeforeUnload)
+		}
+
+		return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+	}, [isDirty])
+
+	useEffect(() => {
+		const handlePopState = () => {
+			if (isDirty && !window.confirm(
+				__('You have unsaved changes. Leave this page and discard them?', 'code-snippets')
+			)) {
+				window.history.pushState({}, document.title, currentUrl.current)
+				return
+			}
+
+			skipNextUnloadPrompt.current = isDirty
+			window.location.reload()
+		}
+
+		window.addEventListener('popstate', handlePopState)
+		return () => window.removeEventListener('popstate', handlePopState)
+	}, [isDirty])
+}
+
 const EditFormWrap: React.FC = () => {
-	const { snippet, isReadOnly } = useSnippetForm()
+	const { snippet, isReadOnly, isDirty } = useSnippetForm()
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
+	useReloadOnPopState(isDirty)
+
 	return (
-		<div className="wrap">
+		<>
 			<PageHeading />
 			<Notices placement="above-form" />
 
 			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
-				<main className="snippet-form-upper">
+				<div className="snippet-form-upper">
 					<div className="snippet-name-wrapper">
 						<NameInput />
 						<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
@@ -160,7 +211,7 @@ const EditFormWrap: React.FC = () => {
 
 					<CodeEditor {...{ isExpanded, setIsExpanded }} />
 					<ConditionsEditor />
-				</main>
+				</div>
 
 				<div className="snippet-form-lower">
 					<UpsellBanner />
@@ -172,7 +223,7 @@ const EditFormWrap: React.FC = () => {
 			</EditForm>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
-		</div>
+		</>
 	)
 }
 
@@ -180,8 +231,11 @@ export const SnippetForm: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsAPIContext>
 			<WithSnippetsListContext>
-				<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
+				<WithSnippetFormContext
+					initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}
+				>
 					<Toolbar />
+					<ScreenMetaSlot />
 					<EditFormWrap />
 				</WithSnippetFormContext>
 			</WithSnippetsListContext>

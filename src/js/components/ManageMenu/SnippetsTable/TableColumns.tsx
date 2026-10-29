@@ -1,22 +1,21 @@
-import classnames from 'classnames'
-import React, { Fragment, useState } from 'react'
-import { __, sprintf } from '@wordpress/i18n'
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
+import { __, sprintf } from '@wordpress/i18n'
+import React, { Fragment } from 'react'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
-import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { createSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { getRunOnceNonce } from '../../../utils/restAPI'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
-import { Button } from '../../common/Button'
-import { DeleteButton } from '../../common/DeleteButton'
+import { SnippetPriorityInput } from '../../common/snippets/SnippetPriorityInput'
 import { Tooltip } from '../../common/Tooltip'
-import { useSnippetsFilters } from './WithSnippetsTableFilters'
+import { RowActions } from './RowActions'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import type { ReactNode } from 'react'
+import { useSnippetsFilters } from './WithSnippetsTableFilters'
+import type { Key } from 'react'
 import type { Snippet } from '../../../types/Snippet'
 import type { ListTableColumn } from '../../common/ListTable'
 
@@ -24,10 +23,64 @@ interface ColumnProps {
 	snippet: Snippet
 }
 
-const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
+const runOnceUrl = (snippet: Snippet, nonce: string): string =>
+	buildUrl(window.location.href, {
+		action: 'run-once',
+		snippet: snippet.id,
+		network: snippet.network ? 'true' : 'false',
+		_wpnonce: nonce
+	})
+
+// The rendered link carries the nonce from page load. Before any navigation
+// starts, whether a click, a middle-click or "open in new tab", the href is
+// rebuilt from the nonce the Heartbeat has refreshed since, so a page left open
+// still works.
+const RunOnceButton: React.FC<ColumnProps> = ({ snippet }) =>
+	<a
+		className="snippet-execution-button"
+		title={__('Run Once', 'code-snippets')}
+		href={runOnceUrl(snippet, window.CODE_SNIPPETS_MANAGE?.runOnceNonce ?? '')}
+		onMouseDown={event => {
+			event.currentTarget.href = runOnceUrl(snippet, getRunOnceNonce())
+		}}
+		onClick={event => {
+			event.preventDefault()
+			window.location.assign(runOnceUrl(snippet, getRunOnceNonce()))
+		}}
+	>
+		<span className="screen-reader-text">{__('Run Once', 'code-snippets')}</span>
+		<span aria-hidden="true">&nbsp;</span>
+	</a>
+
+const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
 	const { activate, deactivate } = useSnippetsAPI()
-	const { activeByCondition } = useFilteredSnippets()
 	const { refreshSnippetsList } = useSnippetsList()
+
+	const actionText = snippet.network && !snippet.shared_network
+		? snippet.active ? __('Network Deactivate', 'code-snippets') : __('Network Activate', 'code-snippets')
+		: snippet.active ? __('Deactivate', 'code-snippets') : __('Activate', 'code-snippets')
+
+	return (
+		<input
+			id={`snippet-${snippet.id}-switch`}
+			type="checkbox"
+			role="switch"
+			checked={snippet.active}
+			aria-checked={snippet.active}
+			className="switch"
+			title={actionText}
+			aria-label={actionText}
+			onChange={() => {
+				(snippet.active ? deactivate(snippet) : activate(snippet))
+					.then(refreshSnippetsList)
+					.catch(handleUnknownError)
+			}}
+		/>
+	)
+}
+
+export const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
+	const { activeByCondition } = useFilteredSnippets()
 
 	if (snippet.trashed) {
 		return ''
@@ -35,15 +88,7 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 
 	switch (snippet.scope) {
 		case 'single-use':
-			return (
-				<a
-					className="snippet-execution-button"
-					title={__('Run Once', 'code-snippets')}
-					href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
-				>
-					&nbsp;
-				</a>
-			)
+			return <RunOnceButton snippet={snippet} />
 
 		case 'condition':
 			return (
@@ -52,131 +97,49 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 				</a>
 			)
 
-		default: {
-			const actionText = snippet.network && !snippet.shared_network
-				? snippet.active ? __('Network Deactivate', 'code-snippets') : __('Network Activate', 'code-snippets')
-				: snippet.active ? __('Deactivate', 'code-snippets') : __('Activate', 'code-snippets')
-
-			return (
-				<>
-					<label className="screen-reader-text" htmlFor={`snippet-${snippet.id}-switch`}>
-						{actionText}
-					</label>
-
-					<input
-						id={`snippet-${snippet.id}-switch`}
-						type="checkbox"
-						checked={snippet.active}
-						className="switch"
-						title={actionText}
-						onChange={() => {
-							(snippet.active ? deactivate(snippet) : activate(snippet))
-								.then(refreshSnippetsList)
-								.catch(handleUnknownError)
-						}}
-					/>
-				</>
-			)
-		}
+		default:
+			return <ActivationSwitch snippet={snippet} />
 	}
 }
 
-const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
-	const api = useSnippetsAPI()
-	const { refreshSnippetsList } = useSnippetsList()
+export const SnippetExtraIcons: React.FC<ColumnProps> = ({ snippet }) =>
+	<div className="extra-icons">
+		{snippet.locked && (
+			<Tooltip
+				inline
+				end
+				label={__('About snippet lock', 'code-snippets')}
+				icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}
+			>
+				{__('This snippet is locked and cannot be modified.', 'code-snippets')}
+			</Tooltip>)}
+	</div>
 
-	const Edit = !snippet.trashed && (() =>
-		<a href={getSnippetEditUrl(snippet)}>
-			{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
-		</a>)
+export const SnippetName: React.FC<ColumnProps> = ({ snippet }) =>
+	<span className="snippet-name-group">
+		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
+			? <a
+				href={getSnippetEditUrl(snippet)}
+				className="snippet-name"
+				title={getSnippetDisplayName(snippet)}
+			>
+				{getSnippetDisplayName(snippet)}
+			</a>
+			: <span className="snippet-name" title={getSnippetDisplayName(snippet)}>
+				{getSnippetDisplayName(snippet)}
+			</span>}
 
-	const Clone = !snippet.trashed && (() =>
-		<Button link onClick={() => {
-			api.create(createSnippetObject({
-				...snippet,
-				id: 0,
-				active: false,
-				// translators: %s: snippet title.
-				name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
-			}))
-				.then(refreshSnippetsList)
-				.catch(handleUnknownError)
-		}}>
-			{__('Clone', 'code-snippets')}
-		</Button>)
-
-	const Export = () =>
-		<Button link onClick={() => {
-			api.export(snippet)
-				.then(response => downloadSnippetExportFile(response, snippet))
-				.catch(handleUnknownError)
-		}}>
-			{__('Export', 'code-snippets')}
-		</Button>
-
-	const Restore = snippet.trashed && (() =>
-		<Button link onClick={() => {
-			api.restore(snippet)
-				.then(refreshSnippetsList)
-				.catch(handleUnknownError)
-		}}>
-			{__('Restore', 'code-snippets')}
-		</Button>)
-
-	const Delete = (!snippet.locked || snippet.trashed) && (() =>
-		<DeleteButton link className="delete" snippet={snippet} onSuccess={refreshSnippetsList} />)
-
-	return (
-		<>
-			{[Edit, Clone, Restore, Export, Delete]
-				.filter(Action => false !== Action)
-				.reduce<ReactNode>(
-					(Actions, Action) =>
-						null === Actions ? <Action /> : <>{Actions} | <Action /></>,
-					null)}
-		</>
-	)
-}
-
-const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
-	if (!isNetworkAdmin() && snippet.network && !snippet.shared_network) {
-		return (
-			<div className="row-actions visible">
-				{snippet.active
-					? <span className="network-active">{__('Network Active', 'code-snippets')}</span>
-					: <span className="network-only">{__('Network Only', 'code-snippets')}</span>}
-			</div>
-		)
-	}
-
-	if (snippet.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap) {
-		return undefined
-	}
-
-	return (
-		<div className={classnames('row-actions', { visible: !snippet.trashed })}>
-			<ActionLinks snippet={snippet} />
-		</div>
-	)
-}
+		{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
+	</span>
 
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
-		{snippet.locked && (
-			<Tooltip inline end icon={<span className="dashicons dashicons-lock"></span>}>
-				{__('This snippet is locked and cannot be modified.', 'code-snippets')}
-			</Tooltip>)}
-
-		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
-			? <a href={getSnippetEditUrl(snippet)} className="snippet-name">{getSnippetDisplayName(snippet)}</a>
-			: getSnippetDisplayName(snippet)}
-
-		{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
-
+		<SnippetExtraIcons snippet={snippet} />
+		<SnippetName snippet={snippet} />
 		<RowActions snippet={snippet} />
 	</>
 
-const TypeColumn: React.FC<ColumnProps> = ({ snippet }) => {
+export const TypeColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	const { setCurrentType } = useSnippetsFilters()
 	const type = getSnippetType(snippet)
 
@@ -193,7 +156,7 @@ const TypeColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	)
 }
 
-const TagsColumn: React.FC<ColumnProps> = ({ snippet }) =>
+export const TagsColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	snippet.tags.map((tag, index) =>
 		<Fragment key={tag}>
 			<a key={tag} href={buildUrl(window.location.href, { tag })}>
@@ -202,7 +165,7 @@ const TagsColumn: React.FC<ColumnProps> = ({ snippet }) =>
 			{index < snippet.tags.length - 1 ? ', ' : ''}
 		</Fragment>)
 
-const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
+export const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	snippet.modified
 		? <span className="modified-column-content" title={snippet.modified}>
 			<time dateTime={snippet.modified}>
@@ -211,55 +174,47 @@ const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 		</span>
 		: <>&#8212;</>
 
-const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
-	const [value, setValue] = useState(snippet.priority)
-	const snippetsAPI = useSnippetsAPI()
-	const { refreshSnippetsList } = useSnippetsList()
-	const id = `snippet-${snippet.id}-priority`
+export const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) =>
+	<SnippetPriorityInput snippet={snippet} />
 
-	const handleUpdate = () => {
-		snippetsAPI.update({ ...snippet, priority: value })
-			.then(response => {
-				if (response.id === snippet.id) {
-					setValue(response.priority)
-				}
-			})
-			.then(refreshSnippetsList)
-			.catch(handleUnknownError)
+export const getAuthorDisplayName = (snippet: Snippet): string =>
+	(snippet.updatedBy ?? snippet.createdBy)?.displayName ?? ''
+
+const AuthorColumn: React.FC<ColumnProps> = ({ snippet }) => {
+	const creator = snippet.createdBy
+	const updater = snippet.updatedBy
+	const primary = updater ?? creator
+
+	if (!primary) {
+		return <span className="snippet-author is-unknown">&#8212;</span>
 	}
 
+	const tooltip = creator && updater && creator.id !== updater.id
+		? sprintf(__('Created by %1$s · Last edited by %2$s', 'code-snippets'), creator.displayName, updater.displayName)
+		: creator
+			? sprintf(__('Created by %s', 'code-snippets'), creator.displayName)
+			: sprintf(__('Last edited by %s', 'code-snippets'), primary.displayName)
+
 	return (
-		<form onSubmit={event => {
-			event.preventDefault()
-			handleUpdate()
-		}}>
-			<label htmlFor={id} className="screen-reader-text">{__('Snippet priority', 'code-snippets')}</label>
-			<input
-				id={id}
-				type="number"
-				className="snippet-priority"
-				value={value}
-				step="1"
-				onBlur={handleUpdate}
-				onChange={event => setValue(Number(event.target.value))}
-				disabled={snippet.locked || snippet.trashed}
-			/>
-		</form>
+		<span className="snippet-author" title={tooltip}>
+			{primary.avatarUrl &&
+				<img className="snippet-author__avatar" src={primary.avatarUrl} alt="" width={20} height={20} />}
+			<span className="snippet-author__name">{primary.displayName}</span>
+		</span>
 	)
 }
-
-const withHiddenState = (
-	column: ListTableColumn<Snippet>,
-	hiddenColumns: readonly string[]
-): ListTableColumn<Snippet> => ({
-	...column,
-	isHidden: hiddenColumns.includes(column.id.toString())
-})
 
 const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
+		title: <span className="screen-reader-text">{__('Activate', 'code-snippets')}</span>,
 		render: snippet => <ActivateColumn snippet={snippet} />
+	},
+	{
+		id: 'id',
+		title: __('ID', 'code-snippets'),
+		sortedValue: snippet => snippet.id,
+		render: snippet => snippet.id
 	},
 	{
 		id: 'name',
@@ -294,9 +249,15 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 		id: 'priority',
 		title: __('Priority', 'code-snippets'),
 		sortedValue: snippet => snippet.priority,
-		render: snippet => <PriorityColumn snippet={snippet} />
+		render: snippet => <SnippetPriorityInput snippet={snippet} />
+	},
+	{
+		id: 'author',
+		title: __('Author', 'code-snippets'),
+		sortedValue: snippet => getAuthorDisplayName(snippet).toLowerCase(),
+		render: snippet => <AuthorColumn snippet={snippet} />
 	}
 ]
 
-export const getTableColumns = (hiddenColumns: readonly string[] = []): ListTableColumn<Snippet>[] =>
-	baseTableColumns.map(column => withHiddenState(column, hiddenColumns))
+export const getTableColumns = (hiddenColumns: Set<Key>): ListTableColumn<Snippet>[] =>
+	baseTableColumns.map(column => ({ ...column, isHidden: hiddenColumns.has(column.id) }))

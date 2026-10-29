@@ -1,6 +1,7 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSnippetsAPI } from '../../../../hooks/useSnippetsAPI'
+import { getSnippetType } from '../../../../utils/snippets/snippets'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 import { downloadSnippetExportFile } from '../../../../utils/files'
 import { Button } from '../../../common/Button'
@@ -10,10 +11,12 @@ import type { Snippet } from '../../../../types/Snippet'
 interface ExportButtonProps {
 	name: string
 	label: string
+	icon: string
+	title?: string
 	makeRequest: (snippet: Snippet) => Promise<SnippetsExport | string>
 }
 
-const ExportButton: React.FC<ExportButtonProps> = ({ name, label, makeRequest }) => {
+const ExportButton: React.FC<ExportButtonProps> = ({ name, label, icon, title, makeRequest }) => {
 	const { snippet, isWorking, setIsWorking, handleRequestError } = useSnippetForm()
 
 	const handleClick = () => {
@@ -27,7 +30,8 @@ const ExportButton: React.FC<ExportButtonProps> = ({ name, label, makeRequest })
 	}
 
 	return (
-		<Button name={name} onClick={handleClick} disabled={isWorking}>
+		<Button name={name} onClick={handleClick} disabled={isWorking} title={title}>
+			<span className={`dashicons ${icon}`} aria-hidden="true" />
 			{label}
 		</Button>
 	)
@@ -35,22 +39,25 @@ const ExportButton: React.FC<ExportButtonProps> = ({ name, label, makeRequest })
 
 export const ExportButtons: React.FC = () => {
 	const api = useSnippetsAPI()
+	const { snippet } = useSnippetForm()
 
 	return (
 		<div className="snippet-export-buttons">
 			<ExportButton
 				name="export_snippet"
 				label={__('Export', 'code-snippets')}
+				icon="dashicons-upload"
+				title={__('Download snippet as JSON', 'code-snippets')}
 				makeRequest={api.export}
 			/>
 
-			{window.CODE_SNIPPETS_EDIT?.enableDownloads
-				? <ExportButton
+			{window.CODE_SNIPPETS_EDIT?.enableDownloads && 'cond' !== getSnippetType(snippet) && (
+				<ExportButton
 					name="export_snippet_code"
-					label={__('Download Code', 'code-snippets')}
+					label={__('Download', 'code-snippets')}
+					icon="dashicons-download"
 					makeRequest={api.exportCode}
-				/>
-				: null}
+				/>)}
 		</div>
 	)
 }

@@ -9,6 +9,7 @@ use Code_Snippets\Flat_Files\Interfaces\Snippet_Type_Handler;
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
+use function wp_hash;
 use const Code_Snippets\CACHE_GROUP;
 
 /**
@@ -106,7 +107,6 @@ class Snippet_Files {
 	 * Register WordPress hooks used by file-based execution.
 	 *
 	 * @return void
-	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
 	public function register_hooks(): void {
 		if ( ! $this->fs->is_writable( WP_CONTENT_DIR ) ) {
@@ -118,7 +118,7 @@ class Snippet_Files {
 			add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
 			add_action( 'code_snippets/trash_snippet', [ $this, 'delete_snippet' ], 10, 2 );
-			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 1 );
+			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ] );
 			add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
 			add_action( 'code_snippets/activate_snippets', [ $this, 'activate_snippets' ], 10, 2 );
 
@@ -126,8 +126,8 @@ class Snippet_Files {
 			add_action( 'add_option', [ $this, 'sync_active_shared_network_snippets_add' ], 10, 2 );
 		}
 
-		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ], 10, 1 );
-		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 1 );
+		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ] );
+		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ] );
 	}
 
 	/**
@@ -169,9 +169,9 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Synchronise a snippet with the filesystem storage.
+	 * Synchronize a snippet with the filesystem storage.
 	 *
-	 * @param Snippet $snippet Snippet to synchronise.
+	 * @param Snippet $snippet Snippet to synchronize.
 	 * @param string  $table   Database table snippet belongs to.
 	 *
 	 * @return void
@@ -405,7 +405,7 @@ class Snippet_Files {
 	 */
 	public static function get_hashed_table_name( string $table ): string {
 		// wp_hash() is pluggable and may not be available during early bootstrap.
-		return function_exists( 'wp_hash' ) ? \wp_hash( $table ) : md5( $table );
+		return function_exists( 'wp_hash' ) ? wp_hash( $table ) : md5( $table );
 	}
 
 	/**

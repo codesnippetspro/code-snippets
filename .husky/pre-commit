@@ -1,6 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# Run lint-staged (will autofix and stage fixed files).
-# Exit non-zero only if non-fixable problems remain.
-npx --no-install lint-staged

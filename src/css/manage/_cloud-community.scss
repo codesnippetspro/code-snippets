@@ -1,10 +1,50 @@
+@use '../common/notices';
+@use '../common/checkbox';
 @use '../common/theme';
-@use '../common/banners';
 
+.cloud-snippet-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--cs-color-text-muted);
+	font-size: 12px;
+	font-weight: 500;
+	white-space: nowrap;
+
+	&::before {
+		content: '';
+		block-size: 10px;
+		inline-size: 10px;
+		border-radius: 50%;
+		display: inline-block;
+	}
+
+	&-public::before {
+		background: var(--cs-cloud-status-public-color);
+	}
+
+	&-private::before {
+		background: var(--cs-cloud-status-private-color);
+	}
+
+	&-unverified::before {
+		background: var(--cs-cloud-status-unverified-color);
+	}
+
+	&-ai-verified::before {
+		background: var(--cs-cloud-status-ai-verified-color);
+	}
+
+	&-pro-verified::before {
+		background: var(--cs-cloud-status-pro-verified-color);
+	}
+}
+
+.bundle-share-code-form,
 .cloud-search-form {
 	display: flex;
 	gap: 8px;
-	margin-block: 31px 47px;
+	margin-block: 0 47px;
 	block-size: 54px;
 
 	> select {
@@ -30,121 +70,119 @@
 			inset-block-start: 25%;
 		}
 	}
+
+	button[type='submit'] {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		.components-spinner {
+			margin: 0;
+		}
+	}
 }
 
 .cloud-search {
-	@include banners.banners;
+	@include notices.notices('banner');
+
+	padding-block-start: 10px;
 
 	.banner {
 		justify-content: center;
 	}
 
-	.tablenav.top {
-		display: flex;
-		gap: 20px;
-		block-size: 40px;
-		margin-block-end: 31px;
-		align-items: center;
-
-		select {
-			inline-size: 245px;
-			block-size: 100%;
-		}
-
-		.tablenav-pages {
-			margin: 0;
-			margin-inline-start: auto;
-		}
-	}
 }
 
-.cloud-search-results {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
-	gap: 20px;
+.bundle-share-code-form {
+	max-inline-size: 60%;
 }
 
-.cloud-search-result {
-	background: #fff;
-	border: 1px solid #c3c4c7;
+.cloud-snippet-action-buttons {
 	display: flex;
-	flex-flow: column;
-	box-sizing: border-box;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
 
-	a {
-		text-decoration: none;
-	}
-
-	p:last-child {
-		margin-block-end: 0;
-	}
-
-	.cloud-snippet {
-		padding: 24px;
-	}
-
-	.cloud-snippet-meta {
-		display: flex;
-		gap: 16px;
-	}
-
-	$status-colors: (
-		public #64baba,
-		private #cc96fb,
-		unverified #ea835e,
-		ai-verified #1cabcf,
-		pro-verified #7cd68a,
-	);
-
-	.cloud-snippet-status {
-		text-transform: uppercase;
-		color: #646970;
-		font-size: 12px;
-		font-weight: 700;
-
-		&::before {
-			content: '';
-			block-size: 10px;
-			inline-size: 10px;
-			border-radius: 50%;
-			display: inline-block;
-			margin-inline-end: 8px;
-		}
-	}
-
-	@each $status, $color in $status-colors {
-		.cloud-snippet-status-#{$status}::before {
-			background: $color;
-		}
-	}
-
-	footer {
-		display: flex;
-		gap: 8px;
-		background: #f6f7f7;
-		margin-block-start: auto;
-		border-block-start: 1px solid #c3c4c7;
-		padding-inline: 24px;
-		padding-block: 12px;
-		align-items: center;
-
-		.dashicons-warning {
-			color: #b32d2e;
-		}
-
-		.cloud-snippet-status {
-			margin-inline-end: auto;
-		}
-	}
-
-	.cloud-snippet-votes {
-		.dashicons {
-			color: theme.$accent;
-			padding-inline-end: 8px;
-		}
+	// Keep the Download / Edit / Pro Only button a consistent width so
+	// rows line up regardless of which state the snippet is in.
+	.button-primary,
+	.cloud-pro-button,
+	.button:not(.button-primary) {
+		inline-size: 103px;
+		min-inline-size: 103px;
+		text-align: center;
+		justify-content: center;
 	}
 }
 
-.cloud-search-results .cloud-search-result footer > .components-spinner {
-	margin: 0;
+.cloud-snippets-table {
+	// Body rows inherit the shared table-cell padding so descriptions can grow
+	// naturally instead of being constrained to a fixed row height.
+	tbody td {
+		vertical-align: middle;
+	}
+
+	.check-column {
+		vertical-align: middle;
+
+		input[type='checkbox'] {
+			@include checkbox.canonical;
+		}
+	}
+
+	.column-name {
+		inline-size: 22%;
+	}
+
+	.column-desc {
+		inline-size: 30%;
+		min-inline-size: 18rem;
+	}
+
+	.column-type {
+		inline-size: 90px;
+	}
+
+	.column-status {
+		inline-size: 120px;
+	}
+
+	.column-actions {
+		inline-size: 234px;
+	}
+
+	.cloud-table-name-button {
+		background: none;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		font-size: inherit;
+		font-weight: 600;
+		color: var(--cs-color-accent);
+		text-decoration: none;
+		cursor: pointer;
+		text-align: start;
+
+		&:hover,
+		&:focus-visible {
+			color: #135e96;
+			text-decoration: underline;
+		}
+	}
+
+	// Clamp descriptions so every row stays the same height.
+	.cloud-table-description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
+	}
+}
+
+// Community bundles tab shares the same top padding as .cloud-search so the
+// two tabs' descriptions and inputs align (scoped so the My Library bundles
+// tab is unaffected).
+.community-bundles {
+	padding-block-start: 10px;
 }

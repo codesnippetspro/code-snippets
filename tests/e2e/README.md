@@ -11,13 +11,13 @@ End-to-end tests for Code Snippets using `@wordpress/env`.
 
 ```bash
 # Install dependencies
-npm install
+npm install && composer -d src install
 
-# Build plugin and install PHP dependencies
-npm run build && cd src && composer install && cd ..
+# Build plugin
+npm run build
 
 # Start WordPress environment
-npm run wp-env:start
+npx wp-env start
 
 # Run tests
 npm run test:playwright
@@ -26,12 +26,12 @@ npm run test:playwright
 ## Commands
 
 ```bash
-npm run wp-env:start              # Start WordPress
-npm run wp-env:stop               # Stop WordPress
-npm run wp-env:clean              # Clean environment
-npm run test:playwright           # Run tests
-npm run test:playwright:ui        # Run with UI
-npm run test:playwright:debug     # Debug mode
+npx wp-env start              # Start WordPress
+npx wp-env stop               # Stop WordPress
+npx wp-env clean all          # Clean environment
+npm run test:playwright       # Run tests
+npm run test:playwright:ui    # Run with UI
+npm run test:playwright:debug # Debug mode
 ```
 
 ## CI/CD
@@ -51,7 +51,7 @@ docker --version && docker ps
 **WordPress won't start:**
 ```bash
 lsof -i :8888  # Check port availability
-npm run wp-env:stop && npm run wp-env:start
+npx wp-env stop && npx wp-env start
 ```
 
 **Tests failing:**

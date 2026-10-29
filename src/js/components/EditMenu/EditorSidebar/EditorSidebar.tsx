@@ -1,11 +1,12 @@
 import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
+import { ConfirmDeleteDialog, useDeleteSnippet } from '../../common/snippets/ConfirmDeleteDialog'
 import { buildUrl } from '../../../utils/urls'
+import { Button } from '../../common/Button'
 import { useSnippetForm } from '../SnippetForm/WithSnippetFormContext'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { isCondition } from '../../../utils/snippets/snippets'
-import { DeleteButton } from '../../common/DeleteButton'
 import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { SnippetLocationInput } from '../SnippetForm/fields/SnippetLocationInput'
 import { Notices } from '../SnippetForm/page/Notices'
@@ -17,6 +18,7 @@ import { ActivationSwitch } from './controls/ActivationSwitch'
 import { LockControl } from './controls/LockControl'
 import { PriorityInput } from './controls/PriorityInput'
 import { RTLControl } from './controls/RTLControl'
+import { SnippetPreviewDemoLink } from './preview/SnippetPreviewDemoLink'
 import type { Dispatch, SetStateAction } from 'react'
 
 export interface EditorSidebarProps {
@@ -26,37 +28,46 @@ export interface EditorSidebarProps {
 export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialogOpen }) => {
 	const { snippet, isWorking, setIsWorking, handleRequestError } = useSnippetForm()
 
+	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
+		snippet,
+		setIsWorking,
+		onSuccess: () => {
+			window.location.replace(buildUrl(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))
+		},
+		onError: error => {
+			handleRequestError(error, __('Could not delete snippet.', 'code-snippets'))
+		}
+	})
+
 	return (
 		<div className="snippet-editor-sidebar">
 			<div className="box">
 				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
 
-				{isNetworkAdmin() ? <MultisiteSharingSettings /> : null}
+				{isNetworkAdmin() && <MultisiteSharingSettings />}
 
-				{isRTL() ? <RTLControl /> : null}
+				{isRTL() && <RTLControl />}
 
-				<ConditionModalButton setIsDialogOpen={setIsUpgradeDialogOpen} />
-				<SnippetLocationInput />
-				<ShortcodeInfo />
-				<PriorityInput />
+				<div className="snippet-editor-sidebar-settings">
+					<ConditionModalButton setIsModalOpen={setIsUpgradeDialogOpen} />
+					<SnippetLocationInput />
+					<ShortcodeInfo />
+					<PriorityInput />
+				</div>
 
-				{snippet.id ? <LockControl /> : null}
+				<SnippetPreviewDemoLink />
 
-				{snippet.id
-					? <div className="row-actions visible inline-form-field">
+				{!!snippet.id && (
+					<div className="row-actions visible inline-form-field">
 						<ExportButtons />
-						<DeleteButton
-							snippet={snippet}
-							disabled={isWorking || snippet.locked}
-							setIsWorking={setIsWorking}
-							onSuccess={() => {
-								window.location.replace(buildUrl(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))
-							}}
-							onError={error => {
-								handleRequestError(error, __('Could not delete snippet.', 'code-snippets'))
-							}}
-						/>
-					</div> : null}
+
+						<Button className="delete-button" onClick={() => void requestDelete()} disabled={isWorking || snippet.locked}>
+							<span className="dashicons dashicons-trash" aria-hidden="true" />
+							{snippet.trashed ? __('Delete Permanently', 'code-snippets') : __('Trash', 'code-snippets')}
+						</Button>
+
+						<LockControl />
+					</div>)}
 			</div>
 
 			<p className="submit">
@@ -65,6 +76,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 			</p>
 
 			<Notices placement="sidebar" />
+			<ConfirmDeleteDialog {...deleteDialogProps} />
 		</div>
 	)
 }

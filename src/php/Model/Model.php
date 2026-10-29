@@ -12,7 +12,7 @@ use WP_Exception;
 abstract class Model {
 
 	/**
-	 * List of data fields keyed to their current values. Will be initialised with default values.
+	 * List of data fields keyed to their current values. Will be initialized with default values.
 	 *
 	 * @var array<string, mixed>
 	 */
@@ -50,7 +50,7 @@ abstract class Model {
 	 */
 	public function set_fields( $data ) {
 		// Only accept arrays or objects.
-		if ( ! $data || is_string( $data ) ) {
+		if ( ! is_array( $data ) && ! is_object( $data ) ) {
 			return;
 		}
 
@@ -91,7 +91,11 @@ abstract class Model {
 		return array_filter(
 			$this->get_fields(),
 			function ( $value, $field ) {
-				return $value && $value !== static::$default_values[ $field ];
+				// The field list includes aliases, which have no entry of their own
+				// in the defaults. Compare against the field an alias resolves to,
+				// so reading a snippet built from alias keys does not warn.
+				$default = static::$default_values[ static::resolve_field_name( $field ) ] ?? null;
+				return $value && $value !== $default;
 			},
 			ARRAY_FILTER_USE_BOTH
 		);

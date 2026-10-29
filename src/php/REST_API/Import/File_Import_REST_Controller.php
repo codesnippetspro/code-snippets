@@ -9,6 +9,7 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 
@@ -68,6 +69,17 @@ class File_Import_REST_Controller extends REST_Controller {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Determine whether the request has permission to import snippets.
+	 *
+	 * @param WP_REST_Request $request Incoming HTTP request.
+	 *
+	 * @return bool
+	 */
+	public function permission_callback( WP_REST_Request $request ): bool {
+		return code_snippets()->current_user_can();
 	}
 
 	/**
@@ -172,6 +184,18 @@ class File_Import_REST_Controller extends REST_Controller {
 			'total_count' => count( $all_snippets ),
 			'message'     => sprintf( $message, count( $all_snippets ) ),
 		];
+
+		// Conditions are referenced by their ID on the site the snippet came from,
+		// which means nothing here, so they are left behind.
+		foreach ( $all_snippets as $snippet_data ) {
+			if ( absint( $snippet_data['condition_id'] ?? $snippet_data['conditionId'] ?? 0 ) ) {
+				$errors[] = sprintf(
+					/* translators: %s: snippet name */
+					__( '"%s" was limited by a condition on the site it came from. Conditions are not imported, so once activated it will run wherever its location allows.', 'code-snippets' ),
+					$snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' )
+				);
+			}
+		}
 
 		if ( ! empty( $errors ) ) {
 			$response['warnings'] = $errors;
@@ -293,15 +317,9 @@ class File_Import_REST_Controller extends REST_Controller {
 		$data = json_decode( $raw_data, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			return new WP_Error(
-				'invalid_json',
-				sprintf(
-				/* translators: %1$s: file name, %2$s: error message */
-					__( 'Invalid JSON in file %1$s: %2$s', 'code-snippets' ),
-					$file_name,
-					json_last_error_msg()
-				)
-			);
+			/* translators: %1$s: file name, %2$s: error message */
+			$message = sprintf( __( 'Invalid JSON in file %1$s: %2$s', 'code-snippets' ), $file_name, json_last_error_msg() );
+			return new WP_Error( 'invalid_json', $message );
 		}
 
 		if ( ! isset( $data['snippets'] ) || ! is_array( $data['snippets'] ) ) {
@@ -310,23 +328,29 @@ class File_Import_REST_Controller extends REST_Controller {
 			return new WP_Error( 'no_snippets_in_file', sprintf( $message, $file_name ) );
 		}
 
-		$snippets = [];
-		foreach ( $data['snippets'] as $snippet_data ) {
-			$snippet_data['source_file'] = $file_name;
+		$results = [];
 
+		foreach ( $data['snippets'] as $snippet_data ) {
+			if ( ! is_array( $snippet_data ) ) {
+				continue;
+			}
+
+			$snippet_data['source_file'] = $file_name;
 			$snippet_data['table_data'] = [
 				'id'          => $snippet_data['id'] ?? uniqid(),
 				'title'       => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
 				'scope'       => $snippet_data['scope'] ?? 'global',
-				'tags'        => is_array( $snippet_data['tags'] ?? [] ) ? implode( ', ', $snippet_data['tags'] ) : '',
+				'tags'        => is_array( $snippet_data['tags'] ?? null )
+					? implode( ', ', $snippet_data['tags'] )
+					: '',
 				'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
 				'type'        => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
 			];
 
-			$snippets[] = $snippet_data;
+			$results[] = $snippet_data;
 		}
 
-		return $snippets;
+		return $results;
 	}
 
 	/**

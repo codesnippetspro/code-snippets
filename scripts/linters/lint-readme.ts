@@ -20,7 +20,7 @@
  *     Screenshots, Changelog, Upgrade Notice
  *
  * Changelog section (inside readme.txt)
- *   - Version sub-headers: = X.Y.Z (YYYY-MM-DD) =
+ *   - Version sub-headers: = X.Y.Z (YYYY-MM-DD) = or an uppercase status token, e.g. = X.Y.Z (UPCOMING) =
  *   - Change-type labels: __Added__, __Changed__, __Fixed__, __Removed__,
  *     __Deprecated__, __Security__
  *     (### headings and **Bold** variants are demoted / normalised)
@@ -28,8 +28,10 @@
  * Lists
  *   - Items start with "* " (not "- ")
  *   - No trailing whitespace
+ *   - No blank lines between consecutive list items
  *
  * Spacing
+ *   - No leading blank lines before the plugin header
  *   - Exactly 1 blank line before every == section (not the very first)
  *   - Exactly 1 blank line after every == section heading
  *   - Exactly 1 blank line before every = sub-section (not right after == heading)
@@ -51,7 +53,7 @@ const CLI_ARGS_START_INDEX = 2
 const SUBSECTION_TITLECASE_MAX_WORDS = 2
 const LIST_MARKER_LENGTH = 2
 
-const RE_DATE_SRC = '\\d{4}-\\d{2}-\\d{2}'
+const RE_DATE_SRC = '(?:\\d{4}-\\d{2}-\\d{2}|[A-Z][A-Z0-9-]*)'
 const RE_VERSION_SRC = '\\d+\\.\\d+(?:\\.\\d+)*(?:-[a-zA-Z0-9.]+)?'
 
 /** Known == Section == names (canonical capitalisation). */
@@ -62,7 +64,7 @@ const KNOWN_SECTIONS: Record<string, string> = {
 	'faq': 'Frequently Asked Questions',
 	'screenshots': 'Screenshots',
 	'changelog': 'Changelog',
-	'upgrade notice': 'Upgrade Notice',
+	'upgrade notice': 'Upgrade Notice'
 }
 
 const titleCase = (s: string): string =>
@@ -89,9 +91,39 @@ const collapseBlankLines = (lines: string[]): string[] => {
 	let prevBlank = false
 	for (const l of lines) {
 		const blank = '' === l.trim()
-		if (blank && prevBlank) {continue}
+		if (blank && prevBlank) {
+			continue
+		}
 		out.push(l)
 		prevBlank = blank
+	}
+	return out
+}
+
+const stripLeadingBlanks = (lines: string[]): string[] => {
+	let i = 0
+	while (i < lines.length && '' === lines[i].trim()) {
+		i += 1
+	}
+	return lines.slice(i)
+}
+
+const removeBlanksBetweenListItems = (lines: string[]): string[] => {
+	const isItem = (l: string): boolean => /^\s*[*-] /.test(l)
+	const out: string[] = []
+	for (let i = 0; i < lines.length; i += 1) {
+		if ('' === lines[i].trim()) {
+			let j = i + 1
+			while (j < lines.length && '' === lines[j].trim()) {
+				j += 1
+			}
+			const prev = out[out.length - 1]
+			const next = j < lines.length ? lines[j] : ''
+			if (0 < out.length && isItem(prev) && isItem(next)) {
+				continue
+			}
+		}
+		out.push(lines[i])
 	}
 	return out
 }
@@ -119,15 +151,21 @@ const normaliseBlanksBefore = (
 
 		if (headingRe.test(line)) {
 			if (!suppressNext) {
-				while (0 < out.length && '' === out[out.length - 1].trim()) {out.pop()}
-				for (let b = 0; b < n; b += 1) {out.push('')}
+				while (0 < out.length && '' === out[out.length - 1].trim()) {
+					out.pop()
+				}
+				for (let b = 0; b < n; b += 1) {
+					out.push('')
+				}
 			}
 			out.push(line)
 			suppressNext = false
 			continue
 		}
 
-		if ('' !== line.trim()) {suppressNext = false}
+		if ('' !== line.trim()) {
+			suppressNext = false
+		}
 		out.push(line)
 	}
 	return out
@@ -142,8 +180,12 @@ const normaliseBlankAfter = (lines: string[], headingRe: RegExp): string[] => {
 		out.push(line)
 		if (headingRe.test(line)) {
 			i += 1
-			while (i < lines.length && '' === lines[i].trim()) {i += 1}
-			if (i < lines.length) {out.push('')}
+			while (i < lines.length && '' === lines[i].trim()) {
+				i += 1
+			}
+			if (i < lines.length) {
+				out.push('')
+			}
 			continue
 		}
 		i += 1
@@ -165,14 +207,21 @@ const normaliseBlankAfterInSection = (
 	let i = 0
 	while (i < lines.length) {
 		const line = lines[i]
-		if (sectionStartRe.test(line)) {inSection = true}
-		else if (/^== .+ ==$/.test(line)) {inSection = false}
+		if (sectionStartRe.test(line)) {
+			inSection = true
+		} else if (/^== .+ ==$/.test(line)) {
+			inSection = false
+		}
 
 		out.push(line)
 		if (inSection && headingRe.test(line)) {
 			i += 1
-			while (i < lines.length && '' === lines[i].trim()) {i += 1}
-			if (i < lines.length) {out.push('')}
+			while (i < lines.length && '' === lines[i].trim()) {
+				i += 1
+			}
+			if (i < lines.length) {
+				out.push('')
+			}
 			continue
 		}
 		i += 1
@@ -196,9 +245,13 @@ const normaliseHeaderFieldSpacing = (lines: string[]): string[] => {
 			inHeader = false
 			return line
 		}
-		if (!inHeader) {return line}
+		if (!inHeader) {
+			return line
+		}
 		const match = /^(?<key>[A-Za-z][A-Za-z ]+):\s*(?<value>.*)$/.exec(line)
-		if (match?.groups) {return `${match.groups.key.trim()}: ${match.groups.value.trim()}`}
+		if (match?.groups) {
+			return `${match.groups.key.trim()}: ${match.groups.value.trim()}`
+		}
 		return line
 	})
 }
@@ -208,9 +261,15 @@ const ensureBlankAfterLastHeaderField = (lines: string[]): string[] => {
 	let lastFieldIdx = -1
 
 	for (const [i, line] of lines.entries()) {
-		if (0 === i) {continue}
-		if (line.startsWith('== ')) {break}
-		if (FIELD_RE.test(line)) {lastFieldIdx = i}
+		if (0 === i) {
+			continue
+		}
+		if (line.startsWith('== ')) {
+			break
+		}
+		if (FIELD_RE.test(line)) {
+			lastFieldIdx = i
+		}
 	}
 
 	if (-1 !== lastFieldIdx && lastFieldIdx + 1 < lines.length) {
@@ -225,17 +284,23 @@ const ensureBlankAfterLastHeaderField = (lines: string[]): string[] => {
 const normaliseSectionHeadings = (lines: string[]): string[] =>
 	lines.map(line => {
 		const match = /^==\s+(?<name>.+?)\s+==$/.exec(line)
-		if (match?.groups) {return `== ${normaliseSectionName(match.groups.name)} ==`}
+		if (match?.groups) {
+			return `== ${normaliseSectionName(match.groups.name)} ==`
+		}
 		return line
 	})
 
 const normaliseSubSectionHeadings = (lines: string[]): string[] =>
 	lines.map(line => {
 		const match = /^=\s+(?<name>.+?)\s+=$/.exec(line)
-		if (!match?.groups) {return line}
+		if (!match?.groups) {
+			return line
+		}
 		const inner = match.groups.name.trim()
 		const ver = new RegExp(`^(?<ver>${RE_VERSION_SRC})\\s+\\((?<date>${RE_DATE_SRC})\\)$`).exec(inner)
-		if (ver?.groups) {return `= ${ver.groups.ver} (${ver.groups.date}) =`}
+		if (ver?.groups) {
+			return `= ${ver.groups.ver} (${ver.groups.date}) =`
+		}
 		return `= ${subsectionCase(inner)} =`
 	})
 
@@ -250,22 +315,30 @@ const normaliseChangelogChangeTypes = (lines: string[]): string[] => {
 			inChangelog = false
 			return line
 		}
-		if (!inChangelog) {return line}
+		if (!inChangelog) {
+			return line
+		}
 
 		const hashM = /^###\s+(?<type>\w+)\s*$/.exec(line)
 		if (hashM?.groups) {
-			const canonical = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === hashM.groups.type.toLowerCase())
-			if (canonical) {return `__${canonical}__`}
+			const canonical = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === hashM.groups?.type.toLowerCase())
+			if (canonical) {
+				return `__${canonical}__`
+			}
 		}
 		const boldM = /^\*\*(?<type>\w+)\*\*\s*$/.exec(line)
 		if (boldM?.groups) {
-			const canonical = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === boldM.groups.type.toLowerCase())
-			if (canonical) {return `__${canonical}__`}
+			const canonical = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === boldM.groups?.type.toLowerCase())
+			if (canonical) {
+				return `__${canonical}__`
+			}
 		}
 		const underM = /^__(?<type>\w+)__\s*$/.exec(line)
 		if (underM?.groups) {
-			const canonical = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === underM.groups.type.toLowerCase())
-			if (canonical) {return `__${canonical}__`}
+			const canonical = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === underM.groups?.type.toLowerCase())
+			if (canonical) {
+				return `__${canonical}__`
+			}
 		}
 		return line
 	})
@@ -291,7 +364,9 @@ const applySpacingRules = (lines: string[]): string[] => {
 
 const finaliseLines = (lines: string[]): string[] => {
 	const out = collapseBlankLines(lines)
-	while (0 < out.length && '' === out[out.length - 1]) {out.pop()}
+	while (0 < out.length && '' === out[out.length - 1]) {
+		out.pop()
+	}
 	out.push('')
 	return out
 }
@@ -300,6 +375,7 @@ export const lintReadme = (src: string): { fixed: string; errors: string[] } => 
 	const errors: string[] = []
 	let lines = src.split('\n')
 
+	lines = stripLeadingBlanks(lines)
 	lines = normalisePluginHeader(lines, errors)
 	lines = trimTrailing(lines)
 	lines = normaliseHeaderFieldSpacing(lines)
@@ -309,6 +385,7 @@ export const lintReadme = (src: string): { fixed: string; errors: string[] } => 
 	lines = normaliseChangelogChangeTypes(lines)
 	lines = normaliseListItems(lines)
 	lines = applySpacingRules(lines)
+	lines = removeBlanksBetweenListItems(lines)
 	lines = finaliseLines(lines)
 
 	return { fixed: lines.join('\n'), errors }
@@ -324,16 +401,24 @@ let anyProcessed = false
 
 for (const f of files) {
 	const abs = resolve(f)
-	if (!abs.endsWith('readme.txt')) {continue}
+	if (!abs.endsWith('readme.txt')) {
+		continue
+	}
 	anyProcessed = true
 
-	if (!existsSync(abs)) { console.error(`lint-readme: file not found – ${abs}`); anyErrors = true; continue }
+	if (!existsSync(abs)) {
+		console.error(`lint-readme: file not found – ${abs}`)
+		anyErrors = true
+		continue
+	}
 
 	const src = readFileSync(abs, 'utf8')
 	const { fixed, errors } = lintReadme(src)
 
 	errors.forEach(e => console.error(`  ✗ ${e}`))
-	if (0 < errors.length) {anyErrors = true}
+	if (0 < errors.length) {
+		anyErrors = true
+	}
 
 	if (fixed !== src) {
 		writeFileSync(abs, fixed, 'utf8')
@@ -343,5 +428,7 @@ for (const f of files) {
 	}
 }
 
-if (!anyProcessed) {process.exit(0)}
+if (!anyProcessed) {
+	process.exit(0)
+}
 process.exit(anyErrors ? 1 : 0)

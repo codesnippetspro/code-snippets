@@ -36,6 +36,9 @@
 		<exclude name="WordPress.PHP.DisallowShortTernary.Found" />
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
+
+		<!-- produces false positives -->
+		<exclude name="WordPress.Security.NonceVerification.Recommended" />
 	</rule>
 
 	<rule ref="PHPCompatibilityWP">

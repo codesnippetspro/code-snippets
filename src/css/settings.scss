@@ -1,11 +1,37 @@
+@use 'common/buttons';
+@use 'common/theme';
+@use 'common/checkbox';
 @use 'common/codemirror';
+@use 'common/subnav';
 @use 'common/toolbar';
+@use 'common/wp-admin';
+@use 'common/page-header';
 
-$sections: general, editor, debug, version-switch;
+.wrap.code-snippets-settings {
+	margin-block-start: 0;
+}
+
+.settings-section input[type='checkbox']:not(.switch) {
+	@include checkbox.canonical;
+
+	margin-inline-end: 8px;
+}
 
 p.submit {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-start;
+	gap: 14px;
+
+	.button-secondary {
+		background: transparent;
+	}
+}
+
+.settings-section .form-table th {
+	inline-size: 261px;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--cs-color-text);
 }
 
 .settings-section,
@@ -22,6 +48,7 @@ input[type='number'] {
 }
 
 .CodeMirror {
+	box-sizing: border-box;
 	max-inline-size: 800px;
 	inline-size: 100%;
 	padding-inline-end: 1em;
@@ -63,10 +90,17 @@ body.js {
 		display: none;
 	}
 
-	@each $section in $sections {
-		.wrap[data-active-tab=#{$section}] .#{$section}-settings {
-			display: block;
-		}
+	.wrap[data-active-tab='general'] .general-settings,
+	.wrap[data-active-tab='editor'] .editor-settings,
+	.wrap[data-active-tab='debug'] .debug-settings,
+	.wrap[data-active-tab='version-switch'] .version-switch-settings,
+	.wrap[data-active-tab='editing'] .editing-settings,
+	.wrap[data-active-tab='running'] .running-settings,
+	.wrap[data-active-tab='stats'] .stats-settings,
+	.wrap[data-active-tab='library'] .library-settings,
+	.wrap[data-active-tab='interface'] .interface-settings,
+	.wrap[data-active-tab='advanced'] .advanced-settings {
+		display: block;
 	}
 }
 
@@ -74,24 +108,25 @@ body.js {
 	display: inline-block;
 	padding-inline-end: 2em;
 	line-height: 2;
-	color: #aaa;
+	color: var(--cs-color-text-muted);
 }
 
 .license-status-valid {
-	color: #2ecc40;
+	color: var(--cs-color-success);
 }
 
 .license-status-expired {
-	color: #dc3232;
+	color: var(--cs-color-error);
 }
 
-.wrap[data-active-tab='license'] .submit {
+.wrap[data-active-tab='license'] .submit,
+.wrap[data-active-tab='account'] .submit {
 	display: none;
 }
 
 #code_snippets_remove_license {
-	color: #b32d2e;
-	border-color: #b32d2e;
+	color: var(--cs-color-error);
+	border-color: var(--cs-color-error);
 }
 
 #code_snippets_license_key {
@@ -111,18 +146,18 @@ body.js {
 }
 
 .cloud-error {
-	background: #e53935;
+	background: var(--cs-color-error);
 	color: #ffebee;
 }
 
 .cloud-success {
-	background: #43a047;
+	background: var(--cs-color-success);
 	color: #e8f5e9;
 }
 
 .refresh-success {
-	background: #2271b1;
-	color: #ffeb3b;
+	background: #2e7d4f;
+	color: #fff;
 }
 
 .cloud-settings tbody tr:nth-child(n+5) {
@@ -136,10 +171,10 @@ body.js {
 		font-size: 1.1em;
 		font-weight: bold;
 		color: #0073aa;
-		background: #f0f6fc;
+		background: var(--cs-color-surface-info);
 		padding: 2px 8px;
-		border-radius: 3px;
-		border: 1px solid #c3c4c7;
+		border-radius: 5px;
+		border: 1px solid var(--cs-color-border);
 	}
 
 	#target_version {
@@ -151,55 +186,49 @@ body.js {
 		&[disabled] {
 			opacity: 0.6;
 			cursor: not-allowed;
-			background-color: #f0f0f1 !important;
-			color: #a7aaad !important;
-			border-color: #dcdcde !important;
+			background-color: var(--cs-color-surface-muted) !important;
+			color: var(--cs-color-text-disabled) !important;
+			border-color: var(--cs-color-border-subtle) !important;
 		}
 	}
-	
+
 	// Warning box styling
 	#version-switch-warning {
 		margin-block-start: 20px !important;
 		padding: 12px 16px;
-		border-inline-start: 4px solid #dba617;
-		background: #fff8e5;
-		border-radius: 4px;
-		
+		border-inline-start: 4px solid var(--cs-color-warning);
+		background: var(--cs-color-surface-warning);
+
 		p {
 			margin: 0;
-			color: #8f6914;
-			
-			strong {
-				color: #8f6914;
-			}
+			color: var(--cs-color-text);
 		}
 	}
 
 	#version-switch-result {
 		margin-block-start: 12px;
-		
+
 		&.notice {
 			padding: 8px 12px;
-			border-radius: 4px;
 		}
 	}
 
 	.notice {
 		&.notice {
 			&-success {
-				border-inline-start-color: #00a32a;
+				border-inline-start-color: var(--cs-color-success);
 			}
 
 			&-error {
-				border-inline-start-color: #d63638;
+				border-inline-start-color: var(--cs-color-error);
 			}
 
 			&-warning {
-				border-inline-start-color: #dba617;
+				border-inline-start-color: var(--cs-color-warning);
 			}
 
 			&-info {
-				border-inline-start-color: #72aee6;
+				border-inline-start-color: var(--cs-color-info);
 			}
 		}
 	}
@@ -211,4 +240,85 @@ body.js {
 			inline-size: 180px;
 		}
 	}
+}
+
+#settings-sections-tabs {
+	margin: 0;
+	padding: 0;
+
+	ul {
+		display: flex;
+		align-items: stretch;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.snippet-type-link {
+		display: flex;
+		align-items: center;
+		min-block-size: 52px;
+		margin: 0;
+		padding-inline: 24px;
+		color: var(--cs-color-text-muted);
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.5;
+		border: 0;
+		border-inline-end: 1px solid var(--cs-color-border-subtle);
+		background: transparent;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: var(--cs-color-accent);
+		}
+
+		&.active-type,
+		&.active-type:hover,
+		&.active-type:focus {
+			color: var(--cs-color-accent);
+			background: var(--cs-color-surface-muted);
+		}
+	}
+}
+
+@media (width <= 782px) {
+	body.js {
+		.settings-section-title {
+			position: static;
+			inline-size: auto;
+			block-size: auto;
+			margin: 0 0 16px;
+			overflow: visible;
+			clip: auto;
+			clip-path: none;
+			font-size: 20px;
+			line-height: 1.3;
+		}
+
+		.settings-section {
+			display: block !important;
+			margin-block-end: 40px;
+		}
+
+		.wrap[data-active-tab='license'] .submit {
+			display: flex;
+		}
+	}
+}
+
+// Group headings inside a settings tab. Tabs are long enough that unbroken
+// rows are hard to scan, so related fields sit under a label.
+.settings-section .form-table .settings-group-heading th {
+	inline-size: auto;
+	padding-block: 26px 8px;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--cs-color-text);
+}
+
+.settings-section .form-table .settings-group-heading:first-child th {
+	padding-block-start: 4px;
 }

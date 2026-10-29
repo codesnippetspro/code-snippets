@@ -1,4 +1,3 @@
-@use 'sass:color';
 @use 'theme';
 
 .code-snippets-upsell-banner {
@@ -7,8 +6,8 @@
 	align-items: center;
 	padding: 12px;
 	gap: 10px;
-	background: #fff;
-	border: 1px solid #ccc;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border);
 	border-radius: 5px;
 
 	p {
@@ -20,13 +19,13 @@
 	}
 
 	.button-primary {
-		background-color: theme.$secondary;
+		background-color: var(--cs-color-secondary);
 		border: 0;
 		font-weight: bold;
 		margin-inline-start: auto;
 
 		&:hover, &:focus {
-			background-color: color.adjust(theme.$secondary, $lightness: -10%);
+			background-color: var(--cs-color-primary-hover);
 		}
 	}
 
@@ -34,61 +33,32 @@
 		text-decoration: none;
 		font-weight: normal;
 		padding: 0;
-		color: #a7aaad;
+		color: var(--cs-color-text-muted);
 		line-height: 1;
+		border: none;
 	}
 }
 
-.code-snippets-upsell-dialog {
-	background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
-	inline-size: 794px;
-	box-shadow: 0 4px 80px rgb(0 0 0 / 10%);
-	border-radius: 8px;
-	font-family: 'SF Pro', sans-serif;
-	color: #1c3f41;
-	line-height: 1.5;
-	max-block-size: unset;
-
-	.components-modal__content {
-		margin: 0;
-		padding-block: 48px;
-		padding-inline: 80px;
-	}
-
-	.components-modal__content > div:last-child {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		gap: 18px;
-		overflow: auto;
-	}
-
+.code-snippets-upsell-dialog,
+.wrap .code-snippets-upsell-page {
 	h1 {
 		font-size: 32px;
 		margin: 0;
 
 		span {
-			color: #d46f4d;
+			color: var(--cs-color-secondary);
 		}
 	}
 
 	p {
 		margin-block: 0;
 		margin-inline: 2em;
-	}
-
-	h1 + p {
 		font-size: 16px;
+		max-inline-size: 750px;
 	}
 
 	img {
 		inline-size: 82px;
-	}
-
-	h2 {
-		text-transform: uppercase;
-		font-size: 12px;
 	}
 
 	ul {
@@ -96,6 +66,7 @@
 		inline-size: 100%;
 		grid-auto-flow: column;
 		grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+		max-inline-size: 750px;
 	}
 
 	li {
@@ -111,14 +82,14 @@
 		inline-size: 24px;
 		block-size: 24px;
 		border-radius: 50%;
-		background-color: #0ca0a9;
+		background-color: var(--cs-color-primary-hover);
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	}
 
 	.button.button-large {
-		background-color: #d46f4d;
+		background-color: var(--cs-color-secondary);
 		padding-block: 15px;
 		padding-inline: 20px;
 		font-size: 16px;
@@ -127,8 +98,57 @@
 		margin-inline: auto;
 		border-color: currentcolor;
 
-		&:hover {
-			background-color: color.adjust(#d46f4d, $lightness: -10%);
+		// Matches the specificity of the native-control override in _wp-admin.scss
+		// (.wrap .button-primary:not(.button-link):hover:not(:disabled)) so this
+		// upsell-specific hover styling isn't overridden by the shared button rule.
+		&:is(:hover, :focus):not(.button-link, :disabled) {
+			background-color: var(--cs-color-primary-hover);
+			border-color: var(--cs-color-primary-hover);
 		}
 	}
+}
+
+.code-snippets-upsell-page,
+.code-snippets-upsell-dialog .components-modal__content {
+	margin: 0;
+	padding-block: 48px;
+	padding-inline: 80px;
+}
+
+.code-snippets-upsell-page,
+.code-snippets-upsell-dialog {
+	color: #1c3f41;
+	line-height: 1.5;
+	background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
+	box-shadow: 0 4px 80px rgb(0 0 0 / 10%);
+	border-radius: 5px;
+}
+
+// Bleed the upsell to the full width of the admin content area and fill the
+// remaining viewport height, so it reads as a full page rather than a small
+// boxed card floating in the subpage. 168px accounts for the WP admin bar
+// (32px) plus the plugin toolbar (136px).
+.code-snippets-upsell-page {
+	box-sizing: border-box;
+	margin-inline-start: -22px;
+	inline-size: calc(100% + 42px);
+	min-block-size: calc(100vh - 168px);
+	border-radius: 0;
+	justify-content: center;
+}
+
+.code-snippets-upsell-page,
+.code-snippets-upsell-dialog .components-modal__content > div:last-child  {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 18px;
+}
+
+.code-snippets-upsell-dialog {
+	max-block-size: unset;
+	font-family: 'SF Pro', sans-serif;
+	inline-size: 794px;
+	overflow: auto;
 }

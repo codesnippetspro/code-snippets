@@ -1,0 +1,37 @@
+---
+description: Core development workflow and critical thinking rules
+alwaysApply: true
+---
+
+# Core Development
+
+Read `AGENTS.md` at the repository root for full project standards, coding conventions, and architecture.
+
+## Critical Partner Mindset
+
+Do not affirm my statements or assume my conclusions are correct. Question assumptions, offer counterpoints, test reasoning. Prioritize truth over agreement.
+
+## Execution Sequence (always reply with "Applying rules X,Y,Z")
+
+1. SEARCH FIRST - Search the codebase until finding similar functionality or confirming none exists. Investigate deeply, be 100% sure before implementing.
+2. REUSE FIRST - Check existing functions/patterns/structure. Extend before creating new. Strive to smallest possible code changes.
+3. NO ASSUMPTIONS - Only use: files read, user messages, tool results. Missing info? Search then ask user.
+4. CHALLENGE IDEAS - If you see flaws/risks/better approaches, say so directly.
+5. BE HONEST - State what's needed/problematic, don't sugarcoat to please.
+6. SELF-CHECK - Periodically self-check rule compliance during long conversations.
+7. RULE REFRESH - Re-check this rules file every few messages to stay compliant.
+
+## Coding Standards
+
+- Plan before coding, explain reasoning for complex suggestions
+- Follow the code comment guidance in `AGENTS.md`
+- Keep imports alphabetically sorted
+- Keep code SOLID but simple - separation of concerns without over-engineering
+- Treat file length as a signal; split only for reuse, meaningful separation, or clearer testing
+- Follow the testing requirements in `AGENTS.md`. Use the AAA pattern.
+- Run `npm run lint` for lint check
+
+## Prohibited Actions
+
+- DO NOT WRITE DOCS UNLESS EXPLICITLY ASKED TO
+- NEVER run `npm run watch` command - assume dev servers always running

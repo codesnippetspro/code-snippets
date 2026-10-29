@@ -1,12 +1,4 @@
-$type-colors: (
-	css: #9b59b6,
-	js: #ffeb3b,
-	html: #ef6a36
-);
-
-.upload-form-container {
-	max-inline-size: 800px;
-}
+@use '../common/theme';
 
 .import-upload-card {
 	h2 {
@@ -27,31 +19,40 @@ $type-colors: (
 }
 
 .upload-drop-zone {
-	border: 2px dashed #ccd0d4;
-	border-radius: 4px;
+	border: 2px dashed var(--cs-color-border);
+	border-radius: var(--cs-card-radius);
 	padding: 40px 20px;
 	text-align: center;
 	cursor: pointer;
-	background-color: #fafafa;
-	margin-block-end: 20px;
+	background-color: var(--cs-color-surface-subtle);
 	transition: all 0.3s ease;
 	opacity: 1;
+	display: block;
+
+	@media (prefers-reduced-motion: reduce) {
+		transition-duration: 0.01s;
+	}
 
 	&.drag-over {
 		border-color: #0073aa;
-		background-color: #f0f6fc;
+		background-color: var(--cs-color-surface-info);
 	}
 
 	&.disabled {
 		cursor: not-allowed;
-		background-color: #f6f7f7;
+		background-color: var(--cs-color-surface-subtle);
 		opacity: 0.6;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: 2px;
 	}
 
 	.drop-zone-icon {
 		font-size: 48px;
-		margin-block-end: 10px;
-		color: #666;
+		margin-block-end: 20px;
+		color: var(--cs-color-text-muted);
 	}
 
 	p:first-of-type {
@@ -62,13 +63,31 @@ $type-colors: (
 
 	p:last-of-type {
 		margin: 0;
-		color: #666;
+		color: var(--cs-color-text-muted);
 		font-size: 14px;
 	}
+}
 
-	+ input[type='file'] {
-		display: none;
+.upload-drop-zone-wrapper {
+	position: relative;
+	margin-block-end: 20px;
+
+	&:focus-within .upload-drop-zone:not(.disabled) {
+		box-shadow: 0 0 0 2px var(--cs-color-surface), 0 0 0 4px var(--cs-color-accent);
 	}
+}
+
+.upload-drop-zone-file-input {
+	position: absolute;
+	inline-size: 1px;
+	block-size: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+	clip-path: inset(50%);
+	white-space: nowrap;
 }
 
 .import-result-display-card {
@@ -99,18 +118,24 @@ $type-colors: (
 		align-items: center;
 		justify-content: space-between;
 		padding: 8px 12px;
-		border: 1px solid #ddd;
-		border-radius: 4px;
+		border: 1px solid var(--cs-color-border-subtle);
+		border-radius: 5px;
 		background-color: #f9f9f9;
 	}
 
 	button {
 		background: none;
 		border: none;
-		color: #d63638;
+		color: var(--cs-color-error);
 		cursor: pointer;
 		font-size: 16px;
-		padding: 4px;
+		padding: 0 4px;
+
+		&:focus-visible {
+			outline: 2px solid var(--cs-color-accent);
+			outline-offset: 2px;
+			border-radius: 5px;
+		}
 	}
 
 	.selected-file-details {
@@ -128,7 +153,7 @@ $type-colors: (
 
 		.file-size {
 			font-size: 12px;
-			color: #666;
+			color: var(--cs-color-text-muted);
 		}
 	}
 }
@@ -171,7 +196,7 @@ $type-colors: (
 		flex: 1;
 	}
 
-	h3 {
+	h2 {
 		margin: 0 0 8px;
 		font-size: 16px;
 		font-weight: 600
@@ -179,26 +204,26 @@ $type-colors: (
 
 	p.import-result-message {
 		margin: 0 0 8px;
-		color: #666;
+		color: var(--cs-color-text-muted);
 	}
 
 	p.import-result-link {
 		margin: 0;
-		color: #666;
+		color: var(--cs-color-text-muted);
 
 		a {
-			color: #2271b1;
+			color: var(--cs-color-accent);
 			text-decoration: none;
 		}
 	}
 
-	p.import-result-warnings {
+	.import-result-warnings {
 		margin-block-start: 12px;
 
-		h4 {
+		h3 {
 			margin: 0 0 8px;
 			font-size: 14px;
-			color: #d63638;
+			color: var(--cs-color-error);
 		}
 
 		ul {
@@ -207,7 +232,7 @@ $type-colors: (
 		}
 
 		li {
-			color: #666;
+			color: var(--cs-color-text-muted);
 			font-size: 14px;
 		}
 	}
@@ -224,15 +249,15 @@ $type-colors: (
 	margin-block-start: 2px;
 
 	.import-result-success & {
-		background-color: #00a32a;
+		background-color: var(--cs-color-success);
 	}
 
 	.import-result-failure & {
-		background-color: #d63638;
+		background-color: var(--cs-color-error);
 	}
 
 	span {
-		color: white;
+		color: #fff;
 		font-size: 14px;
 		font-weight: bold;
 	}
@@ -252,13 +277,13 @@ $type-colors: (
 		align-items: center;
 		margin-block-end: 10px;
 
-		h3 {
+		h2 {
 			margin: 0;
 		}
 
 		p {
 			margin: 0.5em 0 1em;
-			color: #666;
+			color: var(--cs-color-text-muted);
 		}
 	}
 
@@ -280,7 +305,7 @@ $type-colors: (
 
 	td.column-name div {
 		font-size: 12px;
-		color: #666;
+		color: var(--cs-color-text-muted);
 		margin-block-start: 2px;
 	}
 
@@ -290,16 +315,22 @@ $type-colors: (
 
 		span {
 			background-color: #1d97c6;
-			color: white;
+			color: #fff;
 			padding: 3px 6px;
 			font-size: 10px;
 			text-transform: uppercase;
-			border-radius: 3px;
+			border-radius: 5px;
 
-			@each $type, $color in $type-colors {
-				@at-root .import-select-card .#{$type}-snippet & {
-					background-color: $color;
-				}
+			@at-root .import-select-card .html-snippet .column-type span {
+				background-color: #cd4510;
+			}
+
+			@at-root .import-select-card .js-snippet .column-type span {
+				background-color: #f7d67a;
+			}
+
+			@at-root .import-select-card .css-snippet .column-type span {
+				background-color: #9b59b6;
 			}
 		}
 	}

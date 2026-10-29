@@ -1,18 +1,30 @@
 import { addQueryArgs } from '@wordpress/url'
 
+export type UrlQueryArgs = Record<string, boolean | number | string | undefined | null>
+
 export const fetchQueryParam = (name: string): string | undefined => {
 	const urlParams = new URLSearchParams(window.location.search)
 	return urlParams.get(name) ?? undefined
 }
 
-export const updateQueryParam = (name: string, value?: string | number) => {
+export const fetchConstQueryParam = <T extends string>(name: string, values: readonly T[]): T | undefined => {
+	const isT = (value: string): value is T =>
+		(<readonly string[]> values).includes(value)
+
+	const value = fetchQueryParam(name)
+	return value && isT(value) ? value : undefined
+}
+
+export const updateQueryParams = (params: Record<string, string | number | undefined>) => {
 	if ('URLSearchParams' in window) {
 		const searchParams = new URLSearchParams(window.location.search)
 
-		if (value) {
-			searchParams.set(name, String(value))
-		} else {
-			searchParams.delete(name)
+		for (const [name, value] of Object.entries(params)) {
+			if (value) {
+				searchParams.set(name, String(value))
+			} else {
+				searchParams.delete(name)
+			}
 		}
 
 		const newUrl = window.location.toString().replace(window.location.search, `?${searchParams.toString()}`)
@@ -37,9 +49,30 @@ const normaliseQueryArg = (value: unknown): string | undefined => {
 	}
 }
 
+export const buildAdminUrl = (
+	queryArgs?: UrlQueryArgs,
+	preserveQueryArgs: string[] = []
+) => {
+	const searchParams = new URLSearchParams(window.location.search)
+
+	if (queryArgs) {
+		for (const queryArgName of ['page', ...preserveQueryArgs]) {
+			const value = searchParams.get(queryArgName)
+			if (value && queryArgs[queryArgName] === undefined) {
+				queryArgs[queryArgName] = value
+			}
+		}
+	}
+
+	return buildUrl(
+		`${window.location.origin}${window.location.pathname}`,
+		{ page: searchParams.get('page'), ...queryArgs }
+	)
+}
+
 export const buildUrl = (
 	base: string | undefined,
-	queryArgs: Record<string, boolean | number | string | undefined | null>
+	queryArgs: UrlQueryArgs
 ): string => {
 	const processedArgs: Record<string, string> = {}
 
@@ -52,4 +85,20 @@ export const buildUrl = (
 	}
 
 	return addQueryArgs(base, processedArgs)
+}
+
+/**
+ * Bring the element named by the URL fragment into view.
+ *
+ * Screens rendered by React do not exist yet when the browser looks for the
+ * fragment on load, so the jump to it, and its `:target` styling, are lost.
+ * Navigating to the same fragment again once the screen has rendered restores
+ * both, without adding a history entry.
+ */
+export const revealLocationHash = (): void => {
+	const { hash } = window.location
+
+	if (1 < hash.length && document.getElementById(decodeURIComponent(hash.slice(1)))) {
+		window.location.replace(hash)
+	}
 }

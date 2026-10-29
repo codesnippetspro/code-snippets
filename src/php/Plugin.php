@@ -3,7 +3,12 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
-use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\Admin\Feedback_Error_Capture;
+use Code_Snippets\Admin\Feedback_Panel;
+use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
+use Code_Snippets\Client\Docs_Client;
+use Code_Snippets\Client\Feedback_Client;
+use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
 use Code_Snippets\Core\Upgrader;
@@ -13,11 +18,21 @@ use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Integration\Promotions\Promotion_Manager;
 use Code_Snippets\Integration\Shortcodes;
+use Code_Snippets\Model\Basic_Cloud_Connection;
+use Code_Snippets\Model\Feedback_Connection;
 use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
+use Code_Snippets\REST_API\Feedback\Feedback_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
+use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
+use Code_Snippets\REST_API\Preferences\Stats_View_Rest_Controller;
+use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
+use Code_Snippets\REST_API\REST_Cache_Bypass;
+use Code_Snippets\REST_API\Search\Search_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
+use Code_Snippets\Search\Universal_Search;
+use function Code_Snippets\Settings\are_settings_unified;
 
 /**
  * The main plugin class
@@ -52,18 +67,11 @@ class Plugin {
 	public DB $db;
 
 	/**
-	 * Class for evaluating function snippets.
+	 * Class for managing shortcodes.
 	 *
-	 * @var Evaluate_Functions
+	 * @var Shortcodes
 	 */
-	public Evaluate_Functions $evaluate_functions;
-
-	/**
-	 * Class for evaluating content snippets.
-	 *
-	 * @var Evaluate_Content
-	 */
-	public Evaluate_Content $evaluate_content;
+	public Shortcodes $shortcodes;
 
 	/**
 	 * Administration area class
@@ -71,13 +79,6 @@ class Plugin {
 	 * @var Bootstrap_Admin
 	 */
 	public Bootstrap_Admin $admin;
-
-	/**
-	 * Class for managing cloud API actions.
-	 *
-	 * @var Cloud_API
-	 */
-	public Cloud_API $cloud_api;
 
 	/**
 	 * Handles licensing and plugin updates.
@@ -94,6 +95,13 @@ class Plugin {
 	public Flat_Files\Handler_Registry $snippet_handler_registry;
 
 	/**
+	 * Instance of connection to Code Snippets Cloud.
+	 *
+	 * @var Basic_Cloud_Connection
+	 */
+	public Basic_Cloud_Connection $cloud_connection;
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -105,45 +113,73 @@ class Plugin {
 	 * Load the plugin utilities.
 	 */
 	private function load_utilities() {
-		require_once __DIR__ . '/snippet-ops.php';
 		require_once __DIR__ . '/Utils/editor.php';
 		require_once __DIR__ . '/Utils/options.php';
 		require_once __DIR__ . '/Settings/settings.php';
+		require_once __DIR__ . '/snippet-ops.php';
 	}
 
 	/**
-	 * Initialise the plugin and load all necessary classes.
+	 * Initialize the plugin and load all necessary classes.
 	 */
 	public function load_plugin() {
 		$this->load_utilities();
 
 		$this->db = new DB();
-		$this->cloud_api = new Cloud_API();
 		$this->licensing = new Licensing();
-		$this->evaluate_content = new Evaluate_Content( $this->db );
-		$this->evaluate_functions = new Evaluate_Functions( $this->db );
+
+		$this->cloud_connection = new Basic_Cloud_Connection();
+
+		new Evaluate_Content( $this->db );
+		new Evaluate_Functions( $this->db );
+
+		$this->shortcodes = new Shortcodes();
 
 		if ( is_admin() ) {
 			$this->admin = new Bootstrap_Admin();
+			new Promotion_Manager();
+			new Feedback_Error_Capture( new Feedback_Panel() );
 		}
-
-		new Snippets_REST_Controller();
-		new Cloud_Snippets_REST_Controller( $this->cloud_api );
-		new Recently_Active_REST_Controller();
-		new Plugins_Import_REST_Controller();
-		new File_Import_REST_Controller();
 
 		new Shortcodes();
 		new MCE_Plugin();
 		new Upgrader( PLUGIN_VERSION, $this->db );
 		new Admin_Bar();
-		new Promotion_Manager();
 
 		$this->init_snippet_files();
+
+		add_action( 'rest_api_init', [ $this, 'init_rest_api' ], 1 );
 	}
 
 	/**
-	 * Initialises the snippet files component.
+	 * Load REST API controller classes when serving REST API requests.
+	 *
+	 * @return void
+	 */
+	public function init_rest_api() {
+		$cloud_search = new Cloud_Search_Controller( $this->cloud_connection );
+
+		new REST_Cache_Bypass();
+
+		new Snippets_REST_Controller();
+		new Recently_Active_REST_Controller();
+
+		new Snippet_View_REST_Controller();
+		new Stats_View_Rest_Controller();
+		new Demos_Seen_REST_Controller();
+
+		new Plugins_Import_REST_Controller();
+		new File_Import_REST_Controller();
+
+		new Cloud_Snippets_REST_Controller( $cloud_search );
+
+		new Feedback_REST_Controller( new Feedback_Client( new Feedback_Connection() ) );
+
+		new Search_REST_Controller( new Universal_Search( $cloud_search, new Docs_Client() ) );
+	}
+
+	/**
+	 * Initializes the snippet files component.
 	 *
 	 * @return void
 	 */
@@ -184,6 +220,7 @@ class Plugin {
 		$import = [ 'import', 'import-snippets', 'import-code-snippets' ];
 		$settings = [ 'settings', 'snippets-settings' ];
 		$cloud = [ 'cloud', 'cloud-snippets' ];
+		$stats = [ 'stats', 'code-snippets-stats' ];
 		$welcome = [ 'welcome', 'getting-started', 'code-snippets' ];
 
 		if ( in_array( $menu, $edit, true ) ) {
@@ -196,6 +233,8 @@ class Plugin {
 			return 'snippets-settings';
 		} elseif ( in_array( $menu, $cloud, true ) ) {
 			return 'snippets&subpage=cloud-community';
+		} elseif ( in_array( $menu, $stats, true ) ) {
+			return 'code-snippets-stats';
 		} elseif ( in_array( $menu, $welcome, true ) ) {
 			return 'code-snippets-welcome';
 		} else {
@@ -225,19 +264,26 @@ class Plugin {
 			$url = 'admin.php?page=' . $slug;
 		}
 
-		if ( 'network' === $context ) {
+		if ( 'snippets-settings' === $slug && are_settings_unified() ) {
 			return network_admin_url( $url );
-		} elseif ( 'admin' === $context ) {
-			return admin_url( $url );
-		} else {
-			return self_admin_url( $url );
+		}
+
+		switch ( $context ) {
+			case 'network':
+				return network_admin_url( $url );
+
+			case 'admin':
+				return admin_url( $url );
+
+			default:
+				return self_admin_url( $url );
 		}
 	}
 
 	/**
 	 * Allow redirecting to the Code Snippets site.
 	 *
-	 * @param array<string> $hosts Allowed hosts.
+	 * @param string[] $hosts Allowed hosts.
 	 *
 	 * @return array Modified allowed hosts.
 	 */
@@ -317,7 +363,7 @@ class Plugin {
 	}
 
 	/**
-	 * Localise a plugin script to provide the CODE_SNIPPETS object.
+	 * Localize a plugin script to provide the CODE_SNIPPETS object.
 	 *
 	 * @param string $handle Script handle.
 	 *
@@ -328,27 +374,43 @@ class Plugin {
 			$handle,
 			'CODE_SNIPPETS',
 			[
-				'debug'            => defined( 'WP_DEBUG' ) && WP_DEBUG,
-				'isLicensed'       => $this->licensing->is_licensed(),
-				'isCloudConnected' => Cloud_API::is_cloud_connection_available(),
-				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
-				'restAPI'          => [
+				'debug'              => defined( 'WP_DEBUG' ) && WP_DEBUG,
+				'isLicensed'         => $this->licensing->is_licensed(),
+				'safeModeRequested'  => Evaluate_Functions::is_safe_mode_query_var_set() && $this->current_user_can(),
+				'isCloudConnected'   => $this->cloud_connection->is_authenticated(),
+				'hideUpsell'         => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
+				'snippetView'        => Snippet_View_REST_Controller::get_snippet_view(),
+				'statsChartViews'    => Stats_View_Rest_Controller::get_stats_chart_views(),
+				'demosSeen'          => Demos_Seen_REST_Controller::get_demos_seen(),
+				'restAPI'            => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'cloud'          => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
 					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
+					'snippetView'    => esc_url_raw( rest_url( Snippet_View_REST_Controller::get_base_route() ) ),
+					'statsView'      => esc_url_raw( rest_url( Stats_View_Rest_Controller::get_base_route() ) ),
+					'demosSeen'      => esc_url_raw( rest_url( Demos_Seen_REST_Controller::get_base_route() ) ),
 					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
 					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),
-					'localToken'     => $this->cloud_api->get_local_token(),
+					'cloud'          => [
+						'token'    => $this->cloud_connection->get_local_token(),
+						'snippets' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
+					],
+					'search'         => esc_url_raw( rest_url( Search_REST_Controller::get_base_route() ) ),
 				],
-				'urls'             => [
-					'plugin'   => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
-					'manage'   => esc_url_raw( $this->get_menu_url() ),
-					'edit'     => esc_url_raw( $this->get_menu_url( 'edit' ) ),
-					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
-					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
-					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
+				'urls'               => [
+					'plugin'    => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
+					'manage'    => esc_url_raw( $this->get_menu_url() ),
+					'edit'      => esc_url_raw( $this->get_menu_url( 'edit' ) ),
+					'addNew'    => esc_url_raw( $this->get_menu_url( 'add' ) ),
+					'stats'     => esc_url_raw( $this->get_menu_url( 'stats' ) ),
+					'welcome'   => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
+					'import'    => esc_url_raw( $this->get_menu_url( 'import' ) ),
+					'cloud'     => esc_url_raw( $this->cloud_connection->get_base_url() ),
+					'demoReset' => esc_url_raw( Manage_Menu::get_demo_reset_url() ),
+					'settings'  => ! are_settings_unified() || is_super_admin()
+						? esc_url_raw( $this->get_menu_url( 'settings' ) )
+						: null,
 				],
 			]
 		);

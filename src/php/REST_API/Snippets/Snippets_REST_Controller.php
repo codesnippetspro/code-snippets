@@ -12,8 +12,11 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use function Code_Snippets\activate_snippet;
+use function Code_Snippets\clean_active_snippets_cache;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
 use function Code_Snippets\delete_snippet;
+use function Code_Snippets\get_snippet_author;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\restore_snippet;
@@ -162,7 +165,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => [ $this, 'activate_item' ],
-				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'permission_callback' => [ $this, 'toggle_item_permissions_check' ],
 				'schema'              => [ $this, 'get_item_schema' ],
 				'args'                => $network_args,
 			]
@@ -174,7 +177,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => [ $this, 'deactivate_item' ],
-				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'permission_callback' => [ $this, 'toggle_item_permissions_check' ],
 				'schema'              => [ $this, 'get_item_schema' ],
 				'args'                => $network_args,
 			]
@@ -203,6 +206,169 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 				'args'                => $network_args,
 			]
 		);
+	}
+
+	/**
+	 * Determine whether the request has permission to access snippets.
+	 *
+	 * @param WP_REST_Request $request Incoming HTTP request.
+	 *
+	 * @return bool
+	 */
+	public function permission_callback( WP_REST_Request $request ): bool {
+		return code_snippets()->current_user_can();
+	}
+
+	/**
+	 * Determine whether a request targets network-scoped snippets.
+	 *
+	 * Only the literal boolean `true` (or its common string/integer equivalents)
+	 * is treated as a network-scoped request. A missing or null `network` param
+	 * means "site-scoped", and must not be escalated to the network capability.
+	 *
+	 * @param WP_REST_Request|WP_Error $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	private function is_network_scoped_request( $request ): bool {
+		if ( ! is_multisite() || ! $request instanceof WP_REST_Request || ! $request->has_param( 'network' ) ) {
+			return false;
+		}
+
+		$network = $request->get_param( 'network' );
+
+		if ( is_bool( $network ) ) {
+			return $network;
+		}
+
+		if ( is_string( $network ) ) {
+			return ! in_array( strtolower( $network ), [ '0', 'false', 'no', '' ], true );
+		}
+
+		return (bool) $network;
+	}
+
+	/**
+	 * Verify the current user has permission for the scope implied by the request.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	private function check_request_capability( WP_REST_Request $request ): bool {
+		return $this->is_network_scoped_request( $request )
+			? code_snippets()->user_can_manage_network_snippets()
+			: code_snippets()->current_user_can();
+	}
+
+	/**
+	 * Determine whether the request targets a shared network snippet.
+	 *
+	 * Shared network snippets are stored network-wide but each site decides whether
+	 * to activate them via the per-site `active_shared_network_snippets` option. The
+	 * `id` route parameter is used to look up the snippet so the result reflects the
+	 * actual stored row rather than a value supplied in the request payload.
+	 *
+	 * @param WP_REST_Request|WP_Error $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	private function is_shared_network_snippet_request( $request ): bool {
+		if ( ! is_multisite() || ! $request instanceof WP_REST_Request ) {
+			return false;
+		}
+
+		$snippet_id = absint( $request->get_param( 'id' ) );
+
+		if ( ! $snippet_id ) {
+			return false;
+		}
+
+		$snippet = get_snippet( $snippet_id, true );
+		return $snippet->id && $snippet->shared_network;
+	}
+
+	/**
+	 * Check if a given request has access to get items.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function get_items_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to get a specific item.
+	 *
+	 * Shared network snippets are readable by any user who can manage snippets on
+	 * the current site, since the snippet is intentionally exposed to subsites.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function get_item_permissions_check( $request ): bool {
+		if ( $this->is_shared_network_snippet_request( $request ) ) {
+			return code_snippets()->current_user_can();
+		}
+
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to create items.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function create_item_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to update a specific item.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function update_item_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to delete a specific item.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function delete_item_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to toggle a snippet's activation.
+	 *
+	 * For shared network snippets the activation toggle only writes to the
+	 * per-site `active_shared_network_snippets` option, so the site capability
+	 * is sufficient. For all other snippets we keep the strict capability check
+	 * that prevents a subsite admin from forging `network=true` to operate on
+	 * exclusive network-scoped snippets.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function toggle_item_permissions_check( WP_REST_Request $request ): bool {
+		if ( $this->is_shared_network_snippet_request( $request ) ) {
+			return code_snippets()->current_user_can();
+		}
+
+		return $this->check_request_capability( $request );
 	}
 
 	/**
@@ -308,10 +474,10 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	/**
 	 * Retrieve and merge shared network snippets.
 	 *
-	 * @param array<Snippet> $all_snippets List of snippets to merge with.
-	 * @param bool|null      $network      Whether fetching network snippets.
+	 * @param Snippet[] $all_snippets List of snippets to merge with.
+	 * @param bool|null $network      Whether fetching network snippets.
 	 *
-	 * @return array<Snippet> Modified list of snippets.
+	 * @return Snippet[] Modified list of snippets.
 	 */
 	private function get_network_items( array $all_snippets, ?bool $network ): array {
 		if ( ! is_multisite() || $network ) {
@@ -350,7 +516,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			return new WP_Error(
 				'rest_cannot_get',
 				__( 'The snippet could not be found.', 'code-snippets' ),
-				[ 'status' => 500 ]
+				[ 'status' => 404 ]
 			);
 		}
 
@@ -367,6 +533,9 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function create_item( $request ) {
 		$snippet = $this->prepare_item_for_database( $request );
+
+		// An ID in the body names no snippet to create; saving it would overwrite that snippet.
+		$snippet->id = 0;
 		$result = save_snippet( $snippet );
 
 		return $result
@@ -418,9 +587,26 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function delete_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
+		$snippet = get_snippet( $item->id, $item->network );
 
-		if ( $item->trashed ) {
-			return delete_snippet( $item->id, $item->network )
+		if ( ! $snippet || ! $snippet->id ) {
+			return new WP_Error(
+				'rest_cannot_delete',
+				__( 'The snippet could not be found.', 'code-snippets' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		if ( $snippet->locked ) {
+			return new WP_Error(
+				'rest_snippet_locked',
+				__( 'This snippet is locked. Unlock it before trashing or deleting it.', 'code-snippets' ),
+				[ 'status' => 409 ]
+			);
+		}
+
+		if ( $snippet->trashed ) {
+			return delete_snippet( $snippet->id, $snippet->network )
 				? new WP_REST_Response( null, 204 )
 				: new WP_Error(
 					'rest_cannot_delete',
@@ -428,7 +614,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 					[ 'status' => 500 ]
 				);
 		} else {
-			return trash_snippet( $item->id, $item->network )
+			return trash_snippet( $snippet->id, $snippet->network )
 				? $this->get_item( $request )
 				: new WP_Error(
 					'rest_cannot_trash',
@@ -458,6 +644,31 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Fetch snippet using data from request.
+	 *
+	 * @param WP_REST_Request $request Request containing 'id' and 'network' parameters.
+	 *
+	 * @return Snippet|WP_Error
+	 */
+	private function get_requested_snippet( WP_REST_Request $request ) {
+		$id = $request->get_param( 'id' );
+
+		$snippet = $id && is_numeric( $id )
+			? get_snippet( $id, $request->get_param( 'network' ) )
+			: null;
+
+		if ( ! $snippet || ! $snippet->id ) {
+			return new WP_Error(
+				'rest_cannot_activate',
+				__( 'The snippet could not be found.', 'code-snippets' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		return $snippet;
+	}
+
+	/**
 	 * Activate one item in the collection.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
@@ -465,8 +676,19 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function activate_item( WP_REST_Request $request ) {
-		$item = $this->prepare_item_for_database( $request );
-		$result = activate_snippet( $item->id, $item->network );
+		$snippet = $this->get_requested_snippet( $request );
+
+		if ( is_wp_error( $snippet ) ) {
+			return rest_ensure_response( $snippet );
+		}
+
+		if ( $snippet->shared_network ) {
+			$this->set_shared_network_active( $snippet->id, true );
+			$snippet->active = true;
+			return rest_ensure_response( $snippet );
+		}
+
+		$result = activate_snippet( $snippet->id, $snippet->network );
 
 		return $result instanceof Snippet
 			? rest_ensure_response( $result )
@@ -485,8 +707,19 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function deactivate_item( WP_REST_Request $request ) {
-		$item = $this->prepare_item_for_database( $request );
-		$result = deactivate_snippet( $item->id, $item->network );
+		$snippet = $this->get_requested_snippet( $request );
+
+		if ( is_wp_error( $snippet ) ) {
+			return rest_ensure_response( $snippet );
+		}
+
+		if ( $snippet->shared_network ) {
+			$this->set_shared_network_active( $snippet->id, false );
+			$snippet->active = false;
+			return rest_ensure_response( $snippet );
+		}
+
+		$result = deactivate_snippet( $snippet->id, $snippet->network );
 
 		return $result instanceof Snippet
 			? rest_ensure_response( $result )
@@ -495,6 +728,35 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 				__( 'The snippet could not be deactivated.', 'code-snippets' ),
 				[ 'status' => 500 ]
 			);
+	}
+
+	/**
+	 * Toggle a shared network snippet's active state for the current site only.
+	 *
+	 * @param int  $snippet_id Snippet identifier.
+	 * @param bool $active     Whether the snippet should be active on the current site.
+	 *
+	 * @return void
+	 */
+	private function set_shared_network_active( int $snippet_id, bool $active ): void {
+		$active_shared_snippets = get_option( 'active_shared_network_snippets', [] );
+
+		if ( ! is_array( $active_shared_snippets ) ) {
+			$active_shared_snippets = [];
+		}
+
+		$already_active = in_array( $snippet_id, $active_shared_snippets, true );
+
+		if ( $active === $already_active ) {
+			return;
+		}
+
+		$active_shared_snippets = $active
+			? array_merge( $active_shared_snippets, [ $snippet_id ] )
+			: array_values( array_diff( $active_shared_snippets, [ $snippet_id ] ) );
+
+		update_option( 'active_shared_network_snippets', $active_shared_snippets );
+		clean_active_snippets_cache( code_snippets()->db->ms_table );
 	}
 
 	/**
@@ -570,11 +832,30 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 */
 	public function prepare_item_for_response( $item, $request ) {
 		$schema = $this->get_item_schema();
-		$response = [];
 
-		foreach ( array_keys( $schema['properties'] ) as $property ) {
-			$response[ $property ] = $item->$property;
-		}
+		$properties = array_keys( $schema['properties'] );
+
+		$response_data = array_map(
+			function ( $property ) use ( $item ) {
+				switch ( $property ) {
+					case 'created_by':
+						return get_snippet_author( $item->created_by );
+
+					case 'updated_by':
+						return get_snippet_author( $item->updated_by );
+
+					default:
+						return $item->$property;
+				}
+			},
+			$properties
+		);
+
+		$response = array_combine( $properties, $response_data );
+
+		// The schema declares this as a date-time, so send one: the stored value
+		// is UTC without an offset, which clients read as local time.
+		$response['modified'] = $item->modified_iso;
 
 		return rest_ensure_response( $response );
 	}
@@ -594,75 +875,77 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			'title'      => 'snippet',
 			'type'       => 'object',
 			'properties' => [
-				'id'             => [
+				'id'               => [
 					'description' => esc_html__( 'Unique identifier for the snippet.', 'code-snippets' ),
 					'type'        => 'integer',
 					'readonly'    => true,
 				],
-				'name'           => [
+				'name'             => [
 					'description' => esc_html__( 'Descriptive title for the snippet.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-				'desc'           => [
+				'desc'             => [
 					'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-				'code'           => [
+				'code'             => [
 					'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-				'tags'           => [
+				'tags'             => [
 					'description' => esc_html__( 'List of tag categories the snippet belongs to.', 'code-snippets' ),
 					'type'        => 'array',
 					'items'       => [
 						'type' => 'string',
 					],
 				],
-				'scope'          => [
+				'scope'            => [
 					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
 					'type'        => 'string',
+					'enum'        => Snippet::get_all_scopes(),
 				],
-				'condition_id'   => [
+				'condition_id'     => [
 					'description' => esc_html__( 'Identifier of condition linked to this snippet.', 'code-snippets' ),
 					'type'        => 'integer',
 				],
-				'active'         => [
+				'active'           => [
 					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
 					'type'        => 'boolean',
 				],
-				'trashed'        => [
+				'trashed'          => [
 					'description' => esc_html__( 'Whether the snippet is marked as deleted.', 'code-snippets' ),
 					'type'        => 'boolean',
+					'readonly'    => true,
 				],
-				'locked'         => [
+				'locked'           => [
 					'description' => esc_html__( 'Whether the snippet is locked from modification or deletion.', 'code-snippets' ),
 					'type'        => 'boolean',
 				],
-				'priority'       => [
+				'priority'         => [
 					'description' => esc_html__( 'Relative priority in which the snippet is executed.', 'code-snippets' ),
 					'type'        => 'integer',
 				],
-				'network'        => [
+				'network'          => [
 					'description' => esc_html__( 'Whether the snippet is network-wide instead of site-wide.', 'code-snippets' ),
 					'type'        => [ 'boolean', 'null' ],
 					'default'     => null,
 				],
-				'shared_network' => [
+				'shared_network'   => [
 					'description' => esc_html__( 'If a network snippet, whether can be activated on discrete sites instead of network-wide.', 'code-snippets' ),
 					'type'        => [ 'boolean', 'null' ],
 				],
-				'modified'       => [
+				'modified'         => [
 					'description' => esc_html__( 'Date and time when the snippet was last modified, in ISO format.', 'code-snippets' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'readonly'    => true,
 				],
-				'last_active'    => [
+				'last_active'      => [
 					'description' => esc_html__( 'Timestamp of when the snippet was last active, if available.', 'code-snippets' ),
 					'type'        => 'integer',
 					'readonly'    => true,
 				],
-				'code_error'     => [
+				'code_error'       => [
 					'description' => esc_html__( 'Error message if the snippet code could not be parsed.', 'code-snippets' ),
 					'type'        => [ 'array', 'null' ],
 					'items'       => [
@@ -674,6 +957,26 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 					'description' => esc_html__( 'Stack trace for the most recent snippet code error.', 'code-snippets' ),
 					'type'        => [ 'string', 'null' ],
 					'readonly'    => true,
+				],
+				'created_by'       => [
+					'description' => esc_html__( 'The snippet author.', 'code-snippets' ),
+					'type'        => [ 'object', 'null' ],
+					'readonly'    => true,
+					'properties'  => [
+						'id'           => [ 'type' => 'integer' ],
+						'display_name' => [ 'type' => 'string' ],
+						'avatar_url'   => [ 'type' => 'string' ],
+					],
+				],
+				'updated_by'       => [
+					'description' => esc_html__( 'The most recent editor.', 'code-snippets' ),
+					'type'        => [ 'object', 'null' ],
+					'readonly'    => true,
+					'properties'  => [
+						'id'           => [ 'type' => 'integer' ],
+						'display_name' => [ 'type' => 'string' ],
+						'avatar_url'   => [ 'type' => 'string' ],
+					],
 				],
 			],
 		];

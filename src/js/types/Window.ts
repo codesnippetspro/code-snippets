@@ -1,17 +1,29 @@
+import type { SnippetSchema } from './schema/SnippetSchema'
 import type { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
+import type { FeedbackConfig } from './Feedback'
+import type { StatsChartViews, StatsSummary } from './Stats'
 import type { Snippet } from './Snippet'
-import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
-import type { WordPressEditor } from './WordPressEditor'
+import type { SnippetView } from './SnippetView'
+import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './vendor/WordPressCodeEditor'
+import type { WordPressEditor } from './vendor/WordPressEditor'
 
 declare global {
 	interface Window {
 		readonly wp: {
 			readonly editor?: WordPressEditor
-			readonly codeEditor: WordPressCodeEditor
+			readonly codeEditor?: WordPressCodeEditor
+			readonly hooks?: {
+				addAction: (
+					hookName: string,
+					namespace: string,
+					callback: (data: { rest_nonce?: string }) => void
+				) => void
+			}
 		}
-		readonly pagenow: string
+		codeSnippetsErrors?: string[]
+		readonly pagenow?: string
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
 		readonly wpActiveEditor?: string
@@ -21,26 +33,40 @@ declare global {
 		readonly CODE_SNIPPETS?: {
 			debug: boolean
 			isLicensed: boolean
+			safeModeRequested: boolean
 			hideUpsell: boolean
+			isCloudConnected: boolean
+			snippetView: SnippetView
+			statsChartViews: StatsChartViews
+			demosSeen?: string[]
 			restAPI: {
 				base: string
 				snippets: string
 				recentlyActive: string
-				conditions: string
-				cloud: string
+				snippetView: string
+				statsView: string
+				demosSeen: string
 				importPlugins: string
 				importFiles: string
 				nonce: string
-				localToken: string
+				cloud: {
+					token: string
+					snippets: string
+				}
+				search: string
 			}
 			urls: {
 				plugin: string
 				manage: string
 				addNew: string
 				edit: string
+				stats: string
 				welcome: string
-				settings: string
-				connectCloud: string
+				import: string
+				settings: string | null
+				cloud: string
+				connectCloud?: string
+				demoReset: string
 			}
 			banner: {
 				key: string
@@ -55,18 +81,29 @@ declare global {
 			}
 		}
 		readonly CODE_SNIPPETS_MANAGE?: {
-			snippetsList: Snippet[]
+			snippetsList?: Snippet[]
 			hasNetworkCap: boolean
 			hiddenColumns: string[]
+			listOrder?: string
 			truncateRowValues: number | string
 			snippetsPerPage: number
+			typeCounts?: Record<string, number>
 			cloudSearchPerPage: number
 			isSafeModeActive: boolean
 			bulkDownloadNonce: string
+			runOnceNonce?: string
 			supportsZipDownloads: boolean
+			editorTheme: string
+			aiDemo?: {
+				siteName: string
+			}
+			previewDemo?: {
+				siteName: string
+				homeUrl: string
+			}
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
-			snippet: Snippet
+			snippet: SnippetSchema
 			pageTitleActions: Record<string, string>
 			isLicensed: boolean
 			enableDownloads: boolean
@@ -93,5 +130,7 @@ declare global {
 			features: ImageLinkSchema[]
 			partners: ImageLinkSchema[]
 		}
+		readonly CODE_SNIPPETS_STATS?: StatsSummary
+		readonly CODE_SNIPPETS_FEEDBACK?: FeedbackConfig
 	}
 }

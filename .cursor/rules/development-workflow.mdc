@@ -1,0 +1,54 @@
+---
+description: Development workflow guidelines for before, during, and after implementation
+alwaysApply: true
+---
+
+# Development Workflow
+
+## Before Starting Work
+
+1. **Search First**: Use codebase_search to find existing functionality
+2. **Understand Architecture**: Know if it's main repo or turbo-repo work
+3. **Check Dependencies**: Understand package relationships
+4. **Plan API Design**: Design interfaces before implementation
+5. **Sync Target Branch**: Fetch the target branch and verify it hasn't changed the files you plan to modify since you branched. If it has, read the new version before proceeding
+6. **Scope by Layer**: Plan separate PRs for independent layers (PHP vs JS/TS, backend vs frontend, features vs fixes). Smaller, layer-scoped PRs merge cleaner, review faster, and survive upstream changes
+
+## During Development
+
+1. **Follow Patterns**: Use existing patterns and conventions
+2. **Write Tests**: Follow the testing requirements in `AGENTS.md`
+3. **Type Safety**: Use TypeScript strictly
+4. **Document APIs**: Document all public interfaces
+
+## After Implementation
+
+1. **Run Tests**: Run and verify the merge gate required by `AGENTS.md` before release integration
+2. **Lint Code**: Fix any linting issues
+3. **Check Dependencies**: Verify no circular dependencies
+4. **Test Integration**: Verify with other packages
+
+## Performance Considerations
+
+### Bundle size
+
+- Monitor bundle size changes
+- Use dynamic imports for large components
+- Optimize images and assets
+- Remove unused dependencies
+
+### Runtime performance
+
+- Profile React components
+- Optimize re-renders
+- Use proper memoization
+- Monitor memory usage
+
+## Security Guidelines
+
+- Sanitize all user inputs
+- Validate data types and ranges
+- Use proper escaping
+- Check user permissions
+- Keep dependencies updated
+- Audit for vulnerabilities

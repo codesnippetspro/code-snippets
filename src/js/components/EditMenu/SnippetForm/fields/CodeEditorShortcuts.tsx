@@ -166,7 +166,7 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 
 	return shortcutKeys
 		? <div className="snippet-editor-help tooltip tooltip-inline tooltip-start">
-			<span className={`dashicons dashicons-editor-help cm-s-${editorTheme}`}></span>
+			<span className={`dashicons dashicons-editor-help cm-s-${editorTheme}`} aria-hidden="true"></span>
 
 			<div className="tooltip-content">
 				<table>

@@ -28,13 +28,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 		? <Modal
 			title={title}
 			onRequestClose={onCancel}
-			closeButtonLabel={cancelLabel}
+			closeButtonLabel={__('Close dialog', 'code-snippets')}
 			isDismissible={true}
-			onKeyDown={event => {
-				if ('Enter' === event.key) {
-					onConfirm?.()
-				}
-			}}
 		>
 			{children}
 			<Flex direction="row" justify="flex-end">

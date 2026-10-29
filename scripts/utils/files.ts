@@ -1,5 +1,5 @@
 import { mkdir, rm, stat } from 'fs/promises'
-import { createReadStream, createWriteStream } from 'fs'
+import { createReadStream, createWriteStream, readFileSync, writeFileSync } from 'fs'
 import { dirname, join } from 'path'
 import { glob } from 'glob'
 
@@ -28,4 +28,10 @@ export const copy = async (patterns: string[], dest: string, transform?: (filena
 			createReadStream(filename).pipe(out)
 		}
 	}
+}
+
+export const replaceInFile = (filename: string, transform: (contents: string) => string) => {
+	const file = resolve(filename)
+	const contents = readFileSync(file, 'utf8')
+	writeFileSync(file, transform(contents), 'utf8')
 }

@@ -21,7 +21,10 @@
         "source": "https://github.com/codesnippetspro/code-snippets"
     },
     "autoload": {
-        "files": ["php/Admin/Menus/Manage_Menu.php"],
+        "files": [
+            "php/Admin/Menus/Manage/Manage_Menu.php",
+            "php/Utils/requests.php"
+        ],
         "psr-4": {
           "Code_Snippets\\": "php/"
         }
@@ -30,6 +33,7 @@
         "php": ">=7.4",
         "ext-dom": "*",
         "ext-json": "*",
+        "ext-zip": "*",
         "composer/installers": "^2.3",
         "typisttech/imposter-plugin": "^0.6.2"
     },
@@ -54,5 +58,9 @@
         "imposter": {
             "namespace": "Code_Snippets\\Vendor"
         }
+    },
+    "scripts": {
+        "post-install-cmd": "@php ../scripts/composer-fix-autoload.php",
+        "post-update-cmd": "@php ../scripts/composer-fix-autoload.php"
     }
 }

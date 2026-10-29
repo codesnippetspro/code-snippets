@@ -1,0 +1,128 @@
+name: "(Release): Prepare"
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - custom
+        default: patch
+      custom_version:
+        description: 'Custom version (used when Release version = custom; leading v optional)'
+        required: false
+        type: string
+        default: ''
+      auto_changelog:
+        description: '(Copilot) auto-create changelog'
+        required: false
+        type: boolean
+        default: false
+  pull_request:
+    types: [labeled]
+
+concurrency:
+  group: prepare-release-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  validate-inputs:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate custom version
+        env:
+          VERSION_TYPE: ${{ github.event.inputs.version }}
+          CUSTOM_VERSION: ${{ github.event.inputs.custom_version }}
+        run: |
+          if [ "$VERSION_TYPE" = "custom" ]; then
+            cv="$(printf '%s' "$CUSTOM_VERSION" | tr -d '[:space:]')"
+            cv="${cv#v}"; cv="${cv#V}"
+            if [ -z "$cv" ]; then
+              echo "::error::Release version is 'custom' but Custom version is empty."
+              exit 1
+            fi
+            if ! printf '%s' "$cv" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$'; then
+              echo "::error::Custom version '$CUSTOM_VERSION' is not valid (expected X.Y.Z or X.Y.Z-prerelease, leading v optional)."
+              exit 1
+            fi
+            echo "::notice::Custom version '$cv' is valid."
+          fi
+
+  version:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate-inputs
+    uses: codesnippetspro/.github/.github/workflows/next_version.yml@main
+    with:
+      file_path: package.json
+      ref_name: ${{ github.ref_name }}
+      bump: ${{ github.event.inputs.version }}
+      custom_version: ${{ github.event.inputs.custom_version }}
+
+  create:
+    if: github.event_name == 'workflow_dispatch'
+    needs: version
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+    steps:
+      - name: Dispatch RC branch and pull request creation
+        run: |
+          gh workflow run changelog.yml \
+            --repo codesnippetspro/.github-private \
+            --ref main \
+            --field mode=create \
+            --field repo="${{ github.repository }}" \
+            --field branch="${{ github.ref_name }}" \
+            --field version="${{ needs.version.outputs.version }}" \
+            --field readme_path="./src/readme.txt" \
+            --field apply_changelog_label="${{ github.event.inputs.auto_changelog }}"
+          echo "::notice::Dispatched RC creation for v${{ needs.version.outputs.version }}"
+
+  generate:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.label.name == 'changelog'
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && startsWith(github.event.pull_request.head.ref, 'release/v')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+    steps:
+      - name: Authorize labeler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          actor='${{ github.event.sender.login }}'
+          perm=$(gh api "repos/${{ github.repository }}/collaborators/$actor/permission" --jq '.permission' 2>/dev/null || echo none)
+          echo "::notice::Labeler $actor has '$perm' permission"
+          case "$perm" in
+            admin|maintain|write) ;;
+            *) echo "::error::$actor lacks write permission; refusing changelog generation."; exit 1 ;;
+          esac
+
+      - name: Dispatch changelog generation
+        env:
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh workflow run changelog.yml \
+            --repo codesnippetspro/.github-private \
+            --ref main \
+            --field mode=generate \
+            --field repo="$REPO" \
+            --field branch="$BRANCH" \
+            --field pr_number="$PR_NUMBER" \
+            --field readme_path="./src/readme.txt"
+          echo "::notice::Dispatched changelog generation for PR #$PR_NUMBER"

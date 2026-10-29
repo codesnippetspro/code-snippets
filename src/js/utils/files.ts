@@ -1,9 +1,8 @@
+import { TIMEOUTS } from '../../../tests/e2e/helpers/constants'
 import { getSnippetType } from './snippets/snippets'
 import type { SnippetsExport } from '../types/schema/SnippetsExport'
 import type { Snippet } from '../types/Snippet'
 
-const SECOND_IN_MS = 1000
-const TIMEOUT_SECONDS = 40
 const JSON_INDENT_SPACES = 2
 const EXPORT_FILENAME = 'snippets'
 const EXPORT_GENERATOR = 'Code Snippets'
@@ -24,7 +23,7 @@ export const downloadAsFile = (content: BlobPart, filename: string, type: string
 	link.download = filename
 	link.href = URL.createObjectURL(new Blob([content], { type }))
 
-	setTimeout(() => URL.revokeObjectURL(link.href), TIMEOUT_SECONDS * SECOND_IN_MS)
+	setTimeout(() => URL.revokeObjectURL(link.href), TIMEOUTS.DEFAULT)
 
 	// Some browsers (notably headless Chromium) can ignore programmatic clicks on detached anchors.
 	// Appending the link to the DOM before clicking improves reliability.
@@ -42,7 +41,11 @@ export const downloadSnippetExportFile = (
 	{ id, name, scope }: Snippet,
 	type?: keyof typeof MIME_INFO
 ) => {
-	const sanitizedName = name.toLowerCase().replace(/[^\w-]+/g, '-').trim()
+	const sanitizedName = name
+		.normalize('NFC')
+		.toLowerCase()
+		.replace(/[^\p{L}\p{M}\p{N}_-]+/gu, '-')
+		.replace(/^-+|-+$/g, '')
 	const title = '' === sanitizedName ? `snippet-${id}` : sanitizedName
 
 	if ('string' === typeof content) {
@@ -100,8 +103,8 @@ const buildExportSnippet = ({
 	lastActive,
 	code_error,
 	code_error_trace
-}: Snippet): SnippetsExport['snippets'][number] => {
-	const exportSnippet: SnippetsExport['snippets'][number] = Object.fromEntries(
+}: Snippet): SnippetsExport['snippets'][number] =>
+	Object.fromEntries(
 		Object.entries({
 			id,
 			name,
@@ -122,9 +125,6 @@ const buildExportSnippet = ({
 			code_error_trace
 		}).filter(([field, value]) => !isDefaultExportValue(field, value))
 	)
-
-	return exportSnippet
-}
 
 export const downloadBulkSnippetExportFile = (snippets: readonly Snippet[]) => {
 	if (0 === snippets.length) {

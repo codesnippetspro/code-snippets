@@ -61,7 +61,11 @@ export const Notices: React.FC<NoticesProps> = ({ placement }) => {
 
 	return <>
 		{showCurrentNotice && currentNotice
-			? <DismissibleNotice className={`${currentNotice[0]} code-snippets-notice`} onDismiss={() => setCurrentNotice(undefined)}>
+			? <DismissibleNotice
+				className={`${currentNotice[0]} code-snippets-notice`}
+				type={'error' === currentNotice[0] ? 'error' : undefined}
+				onDismiss={() => setCurrentNotice(undefined)}
+			>
 				<p>{renderNoticeLine(currentNotice[1])}</p>
 				{currentNotice[DESCRIPTION_INDEX]
 					? <p>{renderNoticeLine(currentNotice[DESCRIPTION_INDEX])}</p>
@@ -75,6 +79,7 @@ export const Notices: React.FC<NoticesProps> = ({ placement }) => {
 		{showCodeErrorNotice && !currentNotice && snippet.code_error
 			? <DismissibleNotice
 				className="notice-error"
+				type="error"
 				onDismiss={() => setSnippet(previous => ({ ...previous, code_error: null, code_error_trace: null }))}
 			>
 				<p>

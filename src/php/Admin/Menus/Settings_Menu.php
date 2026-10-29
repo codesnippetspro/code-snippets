@@ -2,9 +2,11 @@
 
 namespace Code_Snippets\Admin\Menus;
 
+use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Settings\Settings_Fields;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\are_settings_unified;
+use function Code_Snippets\Settings\do_settings_fields_with_headings;
 use function Code_Snippets\Utils\enqueue_code_editor;
 use function Code_Snippets\Utils\get_editor_themes;
 use const Code_Snippets\PLUGIN_FILE;
@@ -14,9 +16,8 @@ use const Code_Snippets\Settings\OPTION_NAME;
 use const Code_Snippets\Settings\CACHE_KEY;
 
 /**
- * This class handles the settings admin menu
+ * This class handles the settings admin menu.
  *
- * @since   2.4.0
  * @package Code_Snippets
  */
 class Settings_Menu extends Admin_Menu {
@@ -27,7 +28,7 @@ class Settings_Menu extends Admin_Menu {
 	public const SETTINGS_PAGE = 'code-snippets';
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 */
 	public function __construct() {
 		parent::__construct(
@@ -35,6 +36,35 @@ class Settings_Menu extends Admin_Menu {
 			_x( 'Settings', 'menu label', 'code-snippets' ),
 			__( 'Snippets Settings', 'code-snippets' )
 		);
+	}
+
+	/**
+	 * Register the settings menu.
+	 *
+	 * Deliberately bypasses the snippet view-permission gate applied by the
+	 * parent. The settings page is already restricted to the core capability
+	 * (`manage_options` via `get_cap()`), so it stays admin-only regardless —
+	 * but it must always remain reachable so an administrator who restricts
+	 * their own role's snippet permissions can never lock themselves out of the
+	 * Permissions tab needed to undo it.
+	 */
+	public function register() {
+		$this->add_menu( $this->slug, $this->label, $this->title );
+	}
+
+	/**
+	 * The settings page is configuration territory (it includes the Permissions
+	 * tab itself), so it must remain restricted to full administrators — never
+	 * the broader snippet access capability that can be granted to other roles.
+	 * This is also what keeps an administrator from ever losing access to the
+	 * Permissions tab needed to undo a misconfiguration.
+	 *
+	 * @return string
+	 */
+	protected function menu_cap(): string {
+		return is_multisite() && ( is_network_admin() || ! code_snippets()->is_subsite_menu_enabled() )
+			? 'manage_network_options'
+			: 'manage_options';
 	}
 
 	/**
@@ -51,6 +81,9 @@ class Settings_Menu extends Admin_Menu {
 				exit;
 			}
 		}
+
+		$contextual_help = new Contextual_Help( 'settings' );
+		$contextual_help->load();
 	}
 
 	/**
@@ -63,14 +96,14 @@ class Settings_Menu extends Admin_Menu {
 		wp_enqueue_style(
 			$handle,
 			plugins_url( 'dist/settings.css', PLUGIN_FILE ),
-			self::$style_deps + [ 'code-editor' ],
+			array_merge( self::$style_deps, [ 'code-editor' ] ),
 			PLUGIN_VERSION
 		);
 
 		wp_enqueue_script(
 			$handle,
 			plugins_url( 'dist/settings.js', PLUGIN_FILE ),
-			self::$script_deps + [ 'code-snippets-code-editor' ],
+			array_merge( self::$script_deps, [ 'code-snippets-code-editor' ] ),
 			PLUGIN_VERSION,
 			true
 		);
@@ -176,16 +209,22 @@ class Settings_Menu extends Admin_Menu {
 	 *
 	 * @return string
 	 */
-	public function get_current_section( string $default_section = 'general' ): string {
+	public function get_current_section( string $default_section = '' ): string {
 		$sections = $this->get_sections();
 
 		if ( ! $sections ) {
 			return $default_section;
 		}
 
+		// Fall back to the first registered tab. Naming a specific section here
+		// meant the page rendered empty whenever that section stopped existing.
+		$fallback = $default_section && isset( $sections[ $default_section ] )
+			? $default_section
+			: (string) array_key_first( $sections );
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is matched to registered sections.
-		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default_section;
-		return isset( $sections[ $active_tab ] ) ? $active_tab : $default_section;
+		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $fallback;
+		return isset( $sections[ $active_tab ] ) ? $active_tab : $fallback;
 	}
 
 	/**
@@ -198,37 +237,45 @@ class Settings_Menu extends Admin_Menu {
 		$current_section = $this->get_current_section();
 
 		?>
-		<div class="code-snippets-settings wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
-			<h1>
-				<?php
-				esc_html_e( 'Settings', 'code-snippets' );
+		<div class="wrap code-snippets-settings" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
+			<?php $this->render_section_tabs(); ?>
 
-				if ( code_snippets()->is_compact_menu() ) {
-					$actions = [
-						_x( 'Manage', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url(),
-						_x( 'Add New', 'snippet', 'code-snippets' ) => code_snippets()->get_menu_url( 'add' ),
-						_X( 'Import', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url( 'import' ),
-					];
+			<div class="snippets-page-header">
+				<h1 id="snippets-settings-heading"><?php esc_html_e( 'Snippets Settings', 'code-snippets' ); ?></h1>
+			</div>
 
-					foreach ( $actions as $label => $url ) {
-						printf(
-							'<a href="%s" class="page-title-action">%s</a>',
-							esc_url( $url ),
-							esc_html( $label )
-						);
-					}
+			<?php
+			if ( code_snippets()->is_compact_menu() ) {
+				$actions = [
+					_x( 'Manage', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url(),
+					_x( 'Add New', 'snippet', 'code-snippets' ) => code_snippets()->get_menu_url( 'add' ),
+					_x( 'Import', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url( 'import' ),
+				];
+
+				echo '<p class="settings-page-actions">';
+
+				foreach ( $actions as $label => $url ) {
+					printf(
+						'<a href="%s" class="page-title-action">%s</a>',
+						esc_url( $url ),
+						esc_html( $label )
+					);
 				}
-				?>
-			</h1>
+
+				echo '</p>';
+			}
+			?>
+
+			<hr class="wp-header-end" />
 
 			<?php settings_errors( OPTION_NAME ); ?>
 
-			<form action="<?php echo esc_url( $update_url ); ?>" method="post">
+			<form aria-labelledby="snippets-settings-heading" action="<?php echo esc_url( $update_url ); ?>" method="post">
 				<input type="hidden" name="section" value="<?php echo esc_attr( $current_section ); ?>">
 				<?php
 
 				settings_fields( OPTION_GROUP );
-				$this->do_settings_tabs();
+				$this->render_settings_sections();
 				?>
 				<p class="submit">
 					<?php
@@ -248,25 +295,35 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Output snippet settings in tabs
+	 * Output the settings section subnavigation bar, styled to match the
+	 * subnavigation on the snippet management pages, followed by the slot
+	 * that adopts the Screen Options and Help tabs.
 	 */
-	protected function do_settings_tabs() {
+	protected function render_section_tabs() {
 		$sections = $this->get_sections();
 		$active_tab = $this->get_current_section();
 
-		echo '<h2 class="nav-tab-wrapper" id="settings-sections-tabs">';
+		echo '<div class="snippet-type-nav-wrapper settings-type-nav-wrapper"><nav class="snippet-type-nav settings-type-nav" id="settings-sections-tabs" aria-label="' . esc_attr__( 'Settings tabs', 'code-snippets' ) . '"><ul>';
 
 		foreach ( $sections as $section ) {
 			printf(
-				'<a class="nav-tab%s" data-section="%s" href="%s">%s</a>',
-				esc_attr( $active_tab ) === $section['id'] ? ' nav-tab-active' : '',
+				'<li><a class="snippet-type-link%s" data-section="%s" href="%s"><span>%s</span></a></li>',
+				esc_attr( $active_tab ) === $section['id'] ? ' active-type' : '',
 				esc_attr( $section['id'] ),
 				esc_url( add_query_arg( 'section', $section['id'] ) ),
 				esc_html( $section['title'] )
 			);
 		}
 
-		echo '</h2>';
+		echo '</ul></nav></div>';
+		echo '<div id="snippets-screen-meta-slot" class="snippets-screen-meta-slot"></div>';
+	}
+
+	/**
+	 * Output snippet settings sections.
+	 */
+	protected function render_settings_sections() {
+		$sections = $this->get_sections();
 
 		foreach ( $sections as $section ) {
 			if ( 'license' === $section['id'] ) {
@@ -287,7 +344,7 @@ class Settings_Menu extends Admin_Menu {
 
 			printf( '<div class="settings-section %s-settings"><table class="form-table">', esc_attr( $section['id'] ) );
 
-			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
+			do_settings_fields_with_headings( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table></div>';
 		}
 	}

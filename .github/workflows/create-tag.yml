@@ -1,4 +1,4 @@
-name: "(Tag): Create"
+name: "(Release): Create Tag"
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
       - pro-beta
 jobs:
   create-tag:
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'tag/v')
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/v')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main

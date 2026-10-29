@@ -6,6 +6,7 @@ use Code_Snippets\REST_API\REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\Utils\delete_self_option;
 use function Code_Snippets\Utils\get_self_option;
 
@@ -72,6 +73,17 @@ final class Recently_Active_REST_Controller extends REST_Controller {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Determine whether the request has permission to access snippets.
+	 *
+	 * @param WP_REST_Request $request Incoming HTTP request.
+	 *
+	 * @return bool
+	 */
+	public function permission_callback( WP_REST_Request $request ): bool {
+		return code_snippets()->current_user_can();
 	}
 
 	/**

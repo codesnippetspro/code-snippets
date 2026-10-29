@@ -31,7 +31,10 @@ use function Code_Snippets\Utils\get_self_option;
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
  * @property string|null            $code_error_trace   Stack trace captured when last testing snippet code.
  * @property int                    $revision           Revision or version number of snippet.
- * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
+ * @property int                    $cloud_id           The cloud ID of the snippet, if applicable.
+ * @property bool                   $is_cloud_owner     Whether the user is the owner of the cloud snippet, if applicable.
+ * @property int                    $created_by         User ID of the snippet's original author. 0 if unknown.
+ * @property int                    $updated_by         User ID of the last person to save the snippet. 0 if unknown.
  *
  * @property-read int               $last_active        Timestamp of when the snippet was last active, if available.
  * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
@@ -42,7 +45,9 @@ use function Code_Snippets\Utils\get_self_option;
  * @property-read string            $lang               The language that the snippet code is written in.
  * @property-read int               $modified_timestamp The last modification date in Unix timestamp format.
  * @property-read DateTime          $modified_local     The last modification date in the local timezone.
+ * @property-read DateTime          $modified_iso       The last modification date in ISO 8601 format.
  * @property-read bool              $is_pro             Whether the snippet type is pro-only.
+ * @property-read string            $cloud_id_owner     Cloud ownership information as a single value, if applicable.
  */
 class Snippet extends Model {
 
@@ -62,24 +67,27 @@ class Snippet extends Model {
 	 * @var array<string, mixed>
 	 */
 	protected static array $default_values = [
-		'id'             => 0,
-		'name'           => '',
-		'desc'           => '',
-		'code'           => '',
-		'tags'           => [],
-		'scope'          => 'global',
-		'condition_id'   => 0,
-		'active'         => false,
-		'trashed'        => false,
-		'locked'         => false,
-		'priority'       => 10,
-		'network'        => null,
-		'shared_network' => null,
-		'modified'       => null,
-		'code_error'     => null,
+		'id'               => 0,
+		'name'             => '',
+		'desc'             => '',
+		'code'             => '',
+		'tags'             => [],
+		'scope'            => 'global',
+		'condition_id'     => 0,
+		'active'           => false,
+		'trashed'          => false,
+		'locked'           => false,
+		'priority'         => 10,
+		'network'          => null,
+		'shared_network'   => null,
+		'modified'         => null,
+		'code_error'       => null,
 		'code_error_trace' => null,
-		'revision'       => 1,
-		'cloud_id'       => '',
+		'revision'         => 1,
+		'cloud_id'         => 0,
+		'is_cloud_owner'   => false,
+		'created_by'       => 0,
+		'updated_by'       => 0,
 	];
 
 	/**
@@ -103,9 +111,16 @@ class Snippet extends Model {
 	 */
 	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
-			case 'id':
 			case 'priority':
+				// Stored as a SMALLINT; negative priorities are not supported.
+				return max( 0, min( 32767, intval( $value ) ) );
+
+			case 'id':
 			case 'condition_id':
+			case 'cloud_id':
+			case 'revision':
+			case 'created_by':
+			case 'updated_by':
 				return absint( $value );
 
 			case 'tags':
@@ -120,6 +135,7 @@ class Snippet extends Model {
 				return 1 === intval( $value ) && ! $this->trashed && ! $this->is_condition();
 
 			case 'locked':
+			case 'is_cloud_owner':
 				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
@@ -163,6 +179,39 @@ class Snippet extends Model {
 		}
 
 		return true === $network;
+	}
+
+	/**
+	 * Set the 'cloud_id', and possibly the 'is_cloud_owner' fields.
+	 *
+	 * @param string|int $cloud_id Cloud identifier, possibly with cloud ownership information attached.
+	 *
+	 * @return int
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function prepare_cloud_id( $cloud_id ): int {
+		if ( is_numeric( $cloud_id ) ) {
+			return absint( $cloud_id );
+		}
+
+		if ( is_null( $cloud_id ) ) {
+			return 0;
+		}
+
+		$parts = explode( '_', $cloud_id );
+
+		$is_cloud_owner = isset( $parts[1] )
+			? filter_var( $parts[1], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE )
+			: null;
+
+		if ( ! is_null( $is_cloud_owner ) ) {
+			$this->is_cloud_owner = $is_cloud_owner;
+		}
+
+		return isset( $parts[0] ) && is_numeric( $parts[0] )
+			? absint( $parts[0] )
+			: $this->cloud_id;
 	}
 
 	/**
@@ -312,7 +361,7 @@ class Snippet extends Model {
 	public static function get_all_scopes(): array {
 		return array(
 			'global', 'admin', 'front-end', 'single-use',
-			'content', 'head-content', 'footer-content',
+			'content', 'head-content', 'body-content', 'footer-content',
 			'admin-css', 'site-css',
 			'site-head-js', 'site-footer-js',
 			'condition',
@@ -332,6 +381,7 @@ class Snippet extends Model {
 			'single-use'     => 'clock',
 			'content'        => 'shortcode',
 			'head-content'   => 'editor-code',
+			'body-content'   => 'editor-code',
 			'footer-content' => 'editor-code',
 			'admin-css'      => 'dashboard',
 			'site-css'       => 'admin-customizer',
@@ -361,6 +411,8 @@ class Snippet extends Model {
 				return __( 'Content', 'code-snippets' );
 			case 'head-content':
 				return __( 'Head content', 'code-snippets' );
+			case 'body-content':
+				return __( 'Body content', 'code-snippets' );
 			case 'footer-content':
 				return __( 'Footer content', 'code-snippets' );
 			case 'admin-css':
@@ -419,6 +471,24 @@ class Snippet extends Model {
 		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
 
 		return $datetime ? $datetime->getTimestamp() : 0;
+	}
+
+	/**
+	 * Retrieve the modification date as an ISO 8601 string, including the UTC
+	 * offset.
+	 *
+	 * `$modified` is stored as 'Y-m-d H:i:s' in UTC, which carries no offset, so
+	 * anything parsing it — a browser, in particular — is free to read it as
+	 * local time and land the snippet hours away from when it was really saved.
+	 * This is the form to hand to clients.
+	 *
+	 * @return string|null ISO 8601 date, or null if no modification date is set.
+	 * @noinspection PhpUnused
+	 */
+	protected function get_modified_iso(): ?string {
+		$timestamp = $this->get_modified_timestamp();
+
+		return $timestamp ? gmdate( 'c', $timestamp ) : null;
 	}
 
 	/**
@@ -493,10 +563,26 @@ class Snippet extends Model {
 	/**
 	 * Determine whether the current snippet type is pro-only.
 	 *
-	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @return bool
+	 *
+	 * @noinspection PhpUnused
 	 */
-	private function get_is_pro(): bool {
+	protected function get_is_pro(): bool {
 		return 'css' === $this->type || 'js' === $this->type || 'cond' === $this->type;
+	}
+
+	/**
+	 * Concatonate the 'cloud_id' and 'is_cloud_owner' fields to provide a single value representing the ownership
+	 * status of the cloud snippet, if applicable.
+	 *
+	 * @return string
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function get_cloud_id_owner(): string {
+		return $this->cloud_id
+			? sprintf( '%d_%d', $this->cloud_id, $this->is_cloud_owner ? '1' : '0' )
+			: '';
 	}
 
 	/**

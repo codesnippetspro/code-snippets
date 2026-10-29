@@ -1,3 +1,5 @@
+@use 'theme';
+
 .code-snippets-modal {
 	.components-modal__header {
 		padding-block-end: 24px;
@@ -7,7 +9,7 @@
 		padding: 0;
 		display: flex;
 		flex-flow: column;
-		background: #f6f7f7;
+		background: var(--cs-color-surface-subtle);
 		overflow: initial;
 		max-inline-size: 100%;
 	}
@@ -28,13 +30,13 @@
 	}
 
 	.modal-footer {
-		border-block-start: 1px solid #e2e2e4;
+		border-block-start: 1px solid var(--cs-color-border-subtle);
 		display: flex;
 		flex-flow: row-reverse;
 		justify-content: space-between;
 		align-items: center;
 		inset-block-end: 0;
-		background: #f6f7f7;
+		background: var(--cs-color-surface-subtle);
 		inline-size: 100%;
 		padding: 11px 19px;
 
@@ -51,3 +53,133 @@
 		}
 	}
 }
+
+.components-modal__frame.code-snippets-preview-modal {
+	min-inline-size: 520px;
+	min-block-size: 240px;
+	inline-size: var(--cs-preview-modal-inline-size);
+	max-block-size: 85vh;
+
+	@media (width <= 600px) {
+		min-inline-size: 90vw;
+	}
+
+	.components-modal__header {
+		border-block-end-color: #ddd;
+	}
+
+	.code-snippets-preview-modal__badge {
+		display: flex;
+		flex-shrink: 0;
+		margin-inline-end: 8px;
+	}
+
+	// Header and footer stay pinned; the CodeMirror editor is the only
+	// scroll region, scrolling long code both vertically and horizontally.
+	.components-modal__content {
+		display: flex;
+		flex-flow: column;
+		min-block-size: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+
+	// Newer Modal versions wrap children in an unstyled focus container.
+	.components-modal__header + div {
+		display: flex;
+		flex-flow: column;
+		flex: 1;
+		min-block-size: 0;
+		overflow: hidden;
+	}
+
+	.code-snippets-preview-modal__editor {
+		display: flex;
+		flex-flow: column;
+		flex: 1;
+		min-block-size: 0;
+
+		.CodeMirror {
+			flex: 1;
+			min-block-size: 0;
+			block-size: 100%;
+		}
+
+		textarea {
+			flex: 1;
+			min-block-size: 0;
+			inline-size: 100%;
+			resize: none;
+			font-family: monospace;
+		}
+	}
+
+	.code-snippets-preview-modal__footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		flex-shrink: 0;
+		gap: 16px;
+		padding: 11px 19px;
+		border-block-start: 1px solid var(--cs-color-border-subtle);
+		background: var(--cs-color-surface-subtle);
+	}
+
+	.code-snippets-preview-modal__priority {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 14px;
+		color: var(--cs-color-text-muted);
+
+		.code-snippets-preview-modal__priority-value {
+			font-weight: 600;
+			color: var(--cs-color-text);
+		}
+	}
+
+	.code-snippets-preview-modal__buttons {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px;
+
+		.button {
+			border-radius: 5px;
+			font-size: 14px;
+		}
+
+		.button-link.code-snippets-preview-modal__trash {
+			min-block-size: 38px;
+			padding-block: 0;
+			padding-inline: 16px;
+			border: 1px solid var(--cs-color-error);
+			border-radius: 5px;
+			background: var(--cs-color-surface-subtle);
+			line-height: 2.5715;
+			font-weight: 400;
+			color: var(--cs-color-error);
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				border-color: var(--cs-color-error);
+				background: var(--cs-color-surface-muted);
+				color: var(--cs-color-error);
+			}
+		}
+	}
+}
+
+.components-modal__content {
+	.action-buttons {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.components-button.is-secondary {
+		box-shadow: none;
+	}
+}
+

@@ -72,12 +72,13 @@ class Header_Footer_Code_Manager_Plugin_Importer extends Plugin_Importer {
 			$snippets = $wpdb->get_results( "SELECT * FROM `$table_name`", ARRAY_A );
 		}
 
-		foreach ( $snippets as $snippet ) {
+		foreach ( $snippets as &$snippet ) {
 			$snippet['table_data'] = [
-				'id'    => (int) $snippet->script_id,
-				'title' => $snippet->name,
+				'id'    => (int) ( $snippet['script_id'] ?? 0 ),
+				'title' => $snippet['name'] ?? '',
 			];
 		}
+		unset( $snippet );
 
 		return $snippets;
 	}

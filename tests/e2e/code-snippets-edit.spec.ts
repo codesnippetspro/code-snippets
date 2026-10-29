@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { MESSAGES, SELECTORS, TIMEOUTS } from './helpers/constants'
 
 test.describe('Code Snippets Admin', () => {
@@ -7,11 +7,49 @@ test.describe('Code Snippets Admin', () => {
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 		await helper.navigateToSnippetsAdmin()
 	})
 
 	test('Can access snippets admin page', async () => {
 		await helper.expectToBeOnSnippetsAdminPage()
+	})
+
+	test('A long unbroken line does not widen the editor page', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+
+		// Saved through the editor rather than WP-CLI. CI runs WP-CLI as root, and
+		// with file-based execution on, the first snippet saved that way leaves
+		// root-owned directories that the web server cannot write later snippets
+		// into, so every snippet saved after it silently never runs.
+		await helper.createSnippet({
+			name: snippetName,
+			code: `// ${'a'.repeat(4000)}`
+		})
+
+		try {
+			await helper.openSnippet(snippetName)
+
+			// Line wrapping is on by default, and the page widened regardless.
+			await expect(page.locator('.CodeMirror').first()).toHaveClass(/CodeMirror-wrap/)
+
+			// One pixel of tolerance covers sub-pixel rounding in layout.
+			const pageOverflow = await page.evaluate(() =>
+				document.documentElement.scrollWidth - document.documentElement.clientWidth)
+			expect(pageOverflow, 'the page should not scroll sideways').toBeLessThanOrEqual(1)
+
+			const sidebar = await page.locator('.snippet-editor-sidebar').boundingBox()
+
+			if (!sidebar) {
+				throw new Error('The editor sidebar is not laid out')
+			}
+
+			const viewportWidth = page.viewportSize()?.width ?? 0
+			expect(sidebar.x + sidebar.width, 'the sidebar should stay on screen')
+				.toBeLessThanOrEqual(viewportWidth + 1)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
 	})
 
 	test('Can add a new snippet', async () => {
@@ -63,21 +101,59 @@ test.describe('Code Snippets Admin', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
-	test('Edit menu shortcut keeps operable button semantics', async ({ page }) => {
+	test('Back navigation confirms before discarding unsaved changes', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.clickAddNewSnippet()
+		await helper.fillSnippetForm({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+		await helper.saveSnippet()
+		await expect(page).toHaveURL(/page=edit-snippet/)
+
+		const editedName = `${snippetName} edited`
+		await page.locator('#title').fill(editedName)
+		// Leaving the editor is confirmed either through the unsaved-changes prompt or
+		// the browser's own unload prompt, depending on how the editor was reached, so
+		// the prompt is answered without asserting which of the two it is.
+		page.once('dialog', dialog => dialog.dismiss())
+		await page.evaluate(() => window.history.back())
+
+		await expect(page).toHaveURL(/page=edit-snippet/)
+		await expect(page.locator('#title')).toHaveValue(editedName)
+
+		page.once('dialog', dialog => dialog.accept())
+		await page.evaluate(() => window.history.back())
+		await expect(page).not.toHaveURL(/page=edit-snippet/)
+
+		await helper.cleanupSnippet(snippetName)
+	})
+
+	test('Accepted in-page Back navigation shows one confirmation', async ({ page }) => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.createSnippet({
 			name: snippetName,
 			code: "add_filter('show_admin_bar', '__return_false');"
 		})
-
 		await helper.openSnippet(snippetName)
 
-		const editMenuLink = page.locator('#adminmenu a.code-snippets-edit-menu-link').first()
+		await page.locator('a.page-title-action').filter({ hasText: 'Add New' }).click()
+		await expect(page).toHaveURL(/page=add-snippet/)
+		await page.locator('#title').fill(`${snippetName} draft`)
 
-		await expect(editMenuLink).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-		await expect(editMenuLink).toHaveAttribute('role', 'button')
-		await expect(editMenuLink).toHaveAttribute('tabindex', '0')
-		await expect(editMenuLink).not.toHaveAttribute('aria-disabled', /true/)
+		const dialogs: { message: string, type: string }[] = []
+		page.on('dialog', async dialog => {
+			dialogs.push({ message: dialog.message(), type: dialog.type() })
+			await dialog.accept()
+		})
+
+		await page.evaluate(() => window.history.back())
+		await expect(page).toHaveURL(/page=edit-snippet/)
+		await expect(page.locator('#title')).toHaveValue(snippetName)
+
+		expect(dialogs).toHaveLength(1)
+		expect(dialogs[0].type).toBe('confirm')
+		expect(dialogs[0].message).toContain('unsaved changes')
 
 		await helper.cleanupSnippet(snippetName)
 	})
@@ -103,6 +179,7 @@ test.describe('Code Snippets Admin', () => {
 		await expect(traceDetails.locator('summary')).toContainText('View stack trace')
 
 		await helper.navigateToSnippetsAdmin()
+		await helper.filterSnippetsByName(snippetName)
 
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)

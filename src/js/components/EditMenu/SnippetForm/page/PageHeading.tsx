@@ -27,36 +27,42 @@ export const PageHeading: React.FC = () => {
 	const { snippet, updateSnippet, setCurrentNotice } = useSnippetForm()
 
 	return (
-		<h1>
-			{snippet.id
-				? <>
-					{`${getPageHeading(snippet)} `}
+		<>
+			<div className="snippets-page-header">
+				<h1>
+					{snippet.id
+						? <>
+							<span id="snippet-form-heading">{getPageHeading(snippet)}</span>{' '}
 
-					<a
-						href={window.CODE_SNIPPETS?.urls.addNew}
-						className="page-title-action"
-						onClick={event => {
-							event.preventDefault()
-							updateSnippet(({ scope }) => createSnippetObject({ scope }))
-							setCurrentNotice(undefined)
+							<a
+								href={window.CODE_SNIPPETS?.urls.addNew}
+								className="page-title-action"
+								onClick={event => {
+									event.preventDefault()
+									updateSnippet(({ scope }) => createSnippetObject({ scope }))
+									setCurrentNotice(undefined)
 
-							window.document.title = window.document.title
-								.replace(__('Edit Snippet', 'code-snippets'), getAddNewHeading(snippet))
-								.replace(__('Edit Condition', 'code-snippets'), getAddNewHeading(snippet))
+									window.document.title = window.document.title
+										.replace(__('Edit Snippet', 'code-snippets'), getAddNewHeading(snippet))
+										.replace(__('Edit Condition', 'code-snippets'), getAddNewHeading(snippet))
 
-							window.history.pushState({}, '', window.CODE_SNIPPETS?.urls.addNew)
-						}}
-					>
-						{_x('Add New', 'snippet', 'code-snippets')}
-					</a>
-				</>
-				: getAddNewHeading(snippet)}
+									window.history.pushState({}, '', window.CODE_SNIPPETS?.urls.addNew)
+								}}
+							>
+								{_x('Add New', 'snippet', 'code-snippets')}
+							</a>
+						</>
+						: <span id="snippet-form-heading">{getAddNewHeading(snippet)}</span>}
 
-			{OPTIONS?.pageTitleActions && Object.entries(OPTIONS.pageTitleActions).map(([label, url]) =>
-				<>
-					<a key={label} href={url} className="page-title-action">{label}</a>{' '}
-				</>
-			)}
-		</h1>
+					{OPTIONS?.pageTitleActions && Object.entries(OPTIONS.pageTitleActions).map(([label, url]) =>
+						<>
+							<a key={label} href={url} className="page-title-action">{label}</a>{' '}
+						</>
+					)}
+				</h1>
+			</div>
+
+			<hr className="wp-header-end" />
+		</>
 	)
 }

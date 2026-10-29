@@ -1,0 +1,68 @@
+@use '../theme';
+
+.tablenav {
+	margin: 16px 0;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	// The row gap only shows once controls wrap onto a second row (see the
+	// tablet collapse below, where the selection + pagination cluster drops to
+	// its own row); the 18px column gap spaces the left cluster on one line.
+	gap: 12px 18px;
+}
+
+/* WP 7.0 changes the default admin link colour to the modern blue. Pin the classic accent on active rows (names and
+   row-action links) so links keep their original colour; inactive rows are handled by the muted link-colors mixin,
+   and the trash button keeps its dark red from the `.delete` rules. */
+.wp-list-table .active-snippet a {
+	color: var(--cs-color-accent);
+
+	&:hover,
+	&:focus {
+		color: var(--cs-color-accent-hover);
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+	}
+}
+
+/* Status filter links (All | Active | Inactive | …): the current view reads as plain
+   body text while the remaining views are accent-coloured links; every count stays
+   in the body-text colour regardless of its link state. */
+/* stylelint-disable no-descending-specificity -- unrelated element; ordering is fine. */
+.subsubsub a.current {
+	color: var(--cs-color-text);
+}
+
+.subsubsub a:not(.current) {
+	color: var(--cs-color-accent);
+
+	&:hover,
+	&:focus {
+		color: var(--cs-color-accent-hover);
+		box-shadow: none;
+	}
+
+	&:focus {
+		outline: 2px solid var(--cs-color-accent);
+	}
+}
+
+.snippets-table-toolbar .subsubsub a .count {
+	color: var(--cs-color-text);
+}
+/* stylelint-enable no-descending-specificity */
+
+.wp-core-ui .button.clear-filters {
+	vertical-align: baseline;
+}
+
+.snippet-type-description {
+	border-block-end: 1px solid var(--cs-color-border);
+	margin: 0;
+	padding-block: 1em;
+	padding-inline: 0;
+}

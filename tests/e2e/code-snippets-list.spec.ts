@@ -1,17 +1,43 @@
 import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
-import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { SELECTORS } from './helpers/constants'
-import type { Page } from '@playwright/test'
+import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { SELECTORS, TIMEOUTS } from './helpers/constants'
+import type { Page, Route } from '@playwright/test'
+
+// The view preference saves through an optimistic background request, so wait
+// for it to persist before navigating or ending the test.
+const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
+	const saved = page
+		.waitForResponse(
+			response => response.url().includes('/snippet-view') && 'GET' !== response.request().method(),
+			{ timeout: TIMEOUTS.SHORT }
+		)
+		.catch(() => undefined)
+	await page.getByRole('button', { name: view }).click()
+	await saved
+}
+
+const MAXIMUM_COLUMN_ALIGNMENT_OFFSET = 0.5
+
+const snippetRowByName = (page: Page, snippetName: string) =>
+	page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+
+const clickRowAction = async (row: ReturnType<typeof snippetRowByName>, selector: string) => {
+	await expect(row).toBeVisible()
+	await row.hover()
+
+	const action = row.locator(selector).first()
+	await expect(action).toBeVisible()
+	await action.click()
+}
 
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
-	const EXPORT_TEST_TIMEOUT_MS = 60000
-
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 		await helper.navigateToSnippetsAdmin()
 
 		await helper.createAndActivateSnippet({
@@ -25,39 +51,155 @@ test.describe('Code Snippets List Page Actions', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
+	test('Filters snippets as the search query changes without a submit control', async ({ page }) => {
+		const search = page.getByRole('search')
+		const searchInput = search.getByRole('searchbox', { name: 'Search Snippets:' })
+		const snippetRow = page.getByRole('row', { name: new RegExp(snippetName) })
+
+		await searchInput.fill(snippetName)
+
+		await expect(snippetRow).toBeVisible()
+		await searchInput.fill(`${snippetName}-does-not-exist`)
+		await expect(snippetRow).toBeHidden()
+		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
+	})
+
+	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
+		await switchSnippetView(page, 'Card view')
+
+		try {
+			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: snippetName })
+			const trigger = card.getByRole('button', { name: `Actions for ${snippetName}` })
+			const popover = card.locator('.kebab-menu-popover')
+
+			await expect(card).toBeVisible()
+			await trigger.click()
+			await expect(popover).toBeVisible()
+			await popover.getByRole('button').last().focus()
+			await page.keyboard.press('Tab')
+
+			await expect(page.locator('#bulk-action-selector-bottom')).toBeFocused()
+			await expect(popover).toHaveCount(0)
+
+			await trigger.click()
+			await expect(popover).toBeVisible()
+			await popover.getByRole('button').first().focus()
+			await page.keyboard.press('Shift+Tab')
+
+			await expect(trigger).toBeFocused()
+			await expect(popover).toBeVisible()
+			await page.keyboard.press('Shift+Tab')
+
+			await expect(card.getByRole('link', { name: 'Edit' })).toBeFocused()
+			await expect(popover).toHaveCount(0)
+		} finally {
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+		}
+	})
+
+	test('Card view surfaces snippet insights in the card corner', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Snippet insights are available with a Pro licence.')
+
+		await switchSnippetView(page, 'Card view')
+
+		try {
+			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: snippetName })
+			const secureStatus = card.locator('.snippet-card-meta .snippet-secure-status')
+
+			await expect(card).toBeVisible()
+			await expect(secureStatus).toBeVisible()
+			await expect(secureStatus.locator('.tooltip-trigger')).toHaveAccessibleName('Secure snippet')
+
+			// A clean PHP snippet exposes security in the metadata row. Performance
+			// or finding data remains beside it when available.
+			const trigger = card.locator('.snippet-card-meta .cs-insights-trigger')
+
+			// The snippet name must survive alongside the status elements rather than
+			// being truncated away to nothing by a reserved gutter.
+			const nameWidth = await card.locator('.snippet-card-header h3').evaluate(el => el.clientWidth)
+			expect(nameWidth).toBeGreaterThan(100)
+
+			if (await trigger.count()) {
+				// The corner insights control opens the same modal as the table's
+				// Insights column.
+				const modal = page.locator('.cs-insights-modal')
+				await trigger.click()
+				await expect(modal).toBeVisible()
+
+				// Dismiss before cleanup: the modal's screen overlay swallows pointer
+				// events, so leaving it open makes the view switch below hang.
+				await page.keyboard.press('Escape')
+				await expect(modal).toHaveCount(0)
+			}
+		} finally {
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+		}
+	})
+
+	test('Card view omits the insights corner when a snippet has no data', async ({ page }) => {
+		const cssSnippetName = SnippetsTestHelper.makeUniqueSnippetName()
+
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: cssSnippetName,
+			active: false,
+			type: 'css'
+		})
+		await helper.navigateToSnippetsAdmin()
+		await switchSnippetView(page, 'Card view')
+
+		try {
+			const card = page.locator('.snippets-card-grid .code-snippets-card').filter({ hasText: cssSnippetName })
+
+			await expect(card).toBeVisible()
+
+			// The scanner only covers PHP, so there is nothing to show — and unlike
+			// the table column, the card renders no em-dash placeholder.
+			await expect(card.locator('.cs-insights-trigger')).toHaveCount(0)
+		} finally {
+			await switchSnippetView(page, 'Table view').catch(() => undefined)
+			await helper.cleanupSnippet(cssSnippetName)
+		}
+	})
+
 	test('Can toggle snippet activation from list page', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
 
 		const toggleCell = snippetRow.locator('td').first()
-		const toggleCheckbox = toggleCell.getByRole('checkbox').first()
+		const toggleSwitch = toggleCell.getByRole('switch').first()
+		await expect(toggleSwitch).toBeVisible()
 
-		const initialChecked = await toggleCheckbox.isChecked()
-		await expect(toggleCell).toContainText(initialChecked ? 'Deactivate' : 'Activate')
+		// Active rows draw an accent border on the checkbox cell, so the same width
+		// is reserved on every other row: without it, rows jump as they are toggled.
+		const rowCheckbox = snippetRow.locator('.check-column input[type="checkbox"]')
+		const checkboxInlineStart = async () => (await rowCheckbox.boundingBox())?.x ?? 0
+		const initialInlineStart = await checkboxInlineStart()
 
-		await toggleCheckbox.click({ force: true })
+		const initialChecked = await toggleSwitch.isChecked()
+		await expect(toggleSwitch).toHaveAccessibleName(initialChecked ? /Deactivate/i : /Activate/i)
+
+		await toggleSwitch.click({ force: true })
 		if (initialChecked) {
-			await expect(toggleCheckbox).not.toBeChecked()
+			await expect(toggleSwitch).not.toBeChecked()
 		} else {
-			await expect(toggleCheckbox).toBeChecked()
+			await expect(toggleSwitch).toBeChecked()
 		}
-		await expect(toggleCell).toContainText(!initialChecked ? 'Deactivate' : 'Activate')
+		await expect(toggleSwitch).toHaveAccessibleName(!initialChecked ? /Deactivate/i : /Activate/i)
+		expect(Math.abs(await checkboxInlineStart() - initialInlineStart))
+			.toBeLessThanOrEqual(MAXIMUM_COLUMN_ALIGNMENT_OFFSET)
 
-		await toggleCheckbox.click({ force: true })
+		await toggleSwitch.click({ force: true })
 		if (initialChecked) {
-			await expect(toggleCheckbox).toBeChecked()
+			await expect(toggleSwitch).toBeChecked()
 		} else {
-			await expect(toggleCheckbox).not.toBeChecked()
+			await expect(toggleSwitch).not.toBeChecked()
 		}
-		await expect(toggleCell).toContainText(initialChecked ? 'Deactivate' : 'Activate')
+		await expect(toggleSwitch).toHaveAccessibleName(initialChecked ? /Deactivate/i : /Activate/i)
 	})
 
 	test('Can access edit from list page', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
 
+		await expect(snippetRow).toBeVisible()
 		await snippetRow.locator(SELECTORS.SNIPPET_NAME_LINK).first().click()
 
 		await expect(page).toHaveURL(/page=edit-snippet/)
@@ -65,44 +207,91 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can clone snippet from list page', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
 
-		await snippetRow.locator(SELECTORS.CLONE_ACTION).click()
+		await clickRowAction(snippetRow, SELECTORS.CLONE_ACTION)
 
 		await expect(page).toHaveURL(/page=snippets/)
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
 		// Verify that a cloned snippet exists in the table (use table-scoped check to avoid admin bar matches)
-		const clonedRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName} [CLONE]"))`)
-			.first()
+		const clonedRow = snippetRowByName(page, `${snippetName} [CLONE]`)
 		await expect(clonedRow).toBeVisible()
 
 		// Clean up the clone by trashing it
-		await clonedRow.locator(SELECTORS.DELETE_ACTION).click()
+		await clickRowAction(clonedRow, SELECTORS.DELETE_ACTION)
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 	})
 
+	test('Can clone a snippet once from the preview modal', async ({ page }) => {
+		let createRequests = 0
+
+		const trackCreateRequest = async (route: Route) => {
+			const request = route.request()
+			const requestUrl = new URL(request.url())
+			const restRoute = requestUrl.searchParams.get('rest_route')
+			const isCreateRequest = 'POST' === request.method() && (
+				requestUrl.pathname.endsWith('/code-snippets/v1/snippets') ||
+				'/code-snippets/v1/snippets' === restRoute
+			)
+
+			if (isCreateRequest) {
+				createRequests += 1
+				await new Promise(resolve => setTimeout(resolve, TIMEOUTS.VERY_SHORT))
+			}
+
+			await route.continue()
+		}
+
+		await page.route('**/wp-json/code-snippets/v1/snippets*', trackCreateRequest)
+		await page.route(/\/index\.php\?rest_route=/, trackCreateRequest)
+
+		const snippetRow = snippetRowByName(page, snippetName)
+		await clickRowAction(snippetRow, SELECTORS.PREVIEW_ACTION)
+
+		const previewModal = page.getByRole('dialog', { name: snippetName })
+		const cloneButton = previewModal.getByRole('button', { name: 'Clone' })
+		await cloneButton.click()
+		await expect(cloneButton).toBeDisabled()
+		await cloneButton.click({ force: true })
+
+		await expect(previewModal).toBeHidden()
+		expect(createRequests).toBe(1)
+		await helper.cleanupSnippet(`${snippetName} [CLONE]`)
+	})
+
+	test('Can trash a snippet from the preview modal', async ({ page }) => {
+		const snippetRow = snippetRowByName(page, snippetName)
+		await clickRowAction(snippetRow, SELECTORS.PREVIEW_ACTION)
+
+		const previewModal = page.getByRole('dialog', { name: snippetName })
+		await previewModal.getByRole('button', { name: 'Trash' }).click()
+
+		const confirmDialog = page.getByRole('dialog', { name: 'Are you sure?' })
+		await confirmDialog.getByRole('button', { name: 'Trash' }).click()
+		await expect(previewModal).toBeHidden()
+
+		await page.locator('a[href*="status=trashed"]').first().click()
+		await expect(page).toHaveURL(/status=trashed/)
+		await expect(page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()).toBeVisible()
+	})
+
 	test('Can delete snippet from list page', async ({ page }) => {
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		const snippetRow = snippetRowByName(page, snippetName)
 
 		// Click "Trash" in row actions — in the new React UI, this moves to trash immediately (no dialog)
-		await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
+		await clickRowAction(snippetRow, SELECTORS.DELETE_ACTION)
 
 		// Some implementations show a confirmation modal that must be dismissed.
 		const confirmDialog = page.locator('[role="dialog"]').filter({ hasText: /Are you sure\\?/i })
 		const dialogVisible = await confirmDialog
-			.waitFor({ state: 'visible', timeout: 2000 })
+			.waitFor({ state: 'visible', timeout: TIMEOUTS.VERY_SHORT })
 			.then(() => true)
 			.catch(() => false)
 
 		if (dialogVisible) {
 			await confirmDialog.locator('button:has-text("Trash"), button:has-text("Delete")').first().click()
-			await confirmDialog.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => undefined)
+			await confirmDialog.waitFor({ state: 'hidden', timeout: TIMEOUTS.DEFAULT }).catch(() => undefined)
 		}
 
 		await expect(page).toHaveURL(/page=snippets/)
@@ -113,30 +302,31 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(trashedLink).toBeVisible()
 		await trashedLink.click()
 
-		await expect(page).toHaveURL(/status=trashed/, { timeout: 30000 })
+		await expect(page).toHaveURL(/status=trashed/, { timeout: TIMEOUTS.DEFAULT })
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
 		const trashedRow = page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()
-		await expect(trashedRow).toBeVisible({ timeout: 30000 })
+		await expect(trashedRow).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 		await expect(trashedRow).toContainText(/Restore/i)
 	})
 
 	test('Can export snippet from list page', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		test.setTimeout(TIMEOUTS.LONG)
+		const snippetRow = snippetRowByName(page, snippetName)
+		await expect(snippetRow).toBeVisible()
+		await snippetRow.hover()
+		await expect(snippetRow.locator(SELECTORS.EXPORT_ACTION).first()).toBeVisible()
 
 		const download = await Promise.all([
 			page.waitForEvent('download'),
-			snippetRow.locator(SELECTORS.EXPORT_ACTION).click()
+			snippetRow.locator(SELECTORS.EXPORT_ACTION).first().click()
 		]).then(([downloadEvent]) => downloadEvent)
 
 		expect(download.suggestedFilename()).toMatch(/\.json$/)
 	})
 
 	test('Can export multiple snippets from bulk actions', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName()
 
 		await helper.createAndActivateSnippet({
@@ -145,12 +335,11 @@ test.describe('Code Snippets List Page Actions', () => {
 		})
 		await helper.navigateToSnippetsAdmin()
 
-		const firstRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
-		const secondRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${secondSnippetName}"))`)
-			.first()
+		const firstRow = snippetRowByName(page, snippetName)
+		const secondRow = snippetRowByName(page, secondSnippetName)
+
+		await expect(firstRow).toBeVisible()
+		await expect(secondRow).toBeVisible()
 
 		await firstRow.locator('input[name="checked[]"]').check({ force: true })
 		await secondRow.locator('input[name="checked[]"]').check({ force: true })
@@ -167,10 +356,10 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can download a single snippet from bulk actions', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
-		const snippetRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
+		test.setTimeout(TIMEOUTS.LONG)
+		await helper.filterSnippetsByName(snippetName)
+		const snippetRow = snippetRowByName(page, snippetName)
+		await expect(snippetRow).toBeVisible()
 
 		await snippetRow.locator('input[name="checked[]"]').check({ force: true })
 		await page.locator('select[name="action"]').first().selectOption({ label: 'Download' })
@@ -184,7 +373,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can download multiple snippets from bulk actions as a zip archive', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Download CSS')
 
 		await SnippetsTestHelper.createSnippetViaCli({
@@ -194,12 +383,11 @@ test.describe('Code Snippets List Page Actions', () => {
 		})
 		await helper.navigateToSnippetsAdmin()
 
-		const firstRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
-			.first()
-		const secondRow = page
-			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${secondSnippetName}"))`)
-			.first()
+		const firstRow = snippetRowByName(page, snippetName)
+		const secondRow = snippetRowByName(page, secondSnippetName)
+
+		await expect(firstRow).toBeVisible()
+		await expect(secondRow).toBeVisible()
 
 		await firstRow.locator('input[name="checked[]"]').check({ force: true })
 		await secondRow.locator('input[name="checked[]"]').check({ force: true })
@@ -216,7 +404,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Bulk download stays scoped to the current page selection', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const bulkScopeBaseName = 'E2E Bulk Scope'
 		const firstScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
 		const secondScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
@@ -261,7 +449,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Bulk export stays scoped to the current page selection', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const bulkScopeBaseName = 'E2E Bulk Scope Export'
 		const firstScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
 		const secondScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
@@ -320,10 +508,13 @@ test.describe('Code Snippets List Page Actions', () => {
 test.describe('Manage table Screen Options', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
+	let unrelatedSnippetName: string | undefined
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Screen Options')
+		unrelatedSnippetName = undefined
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(DEFAULT_E2E_SNIPPET_BASE_NAME)
 		await helper.createAndActivateSnippet({
 			name: snippetName,
 			code: "add_filter('show_admin_bar', '__return_false');"
@@ -333,6 +524,9 @@ test.describe('Manage table Screen Options', () => {
 
 	test.afterEach(async () => {
 		await helper.cleanupSnippet(snippetName)
+		if (unrelatedSnippetName) {
+			await helper.cleanupSnippet(unrelatedSnippetName)
+		}
 	})
 
 	const openScreenOptions = async (page: Page) => {
@@ -364,6 +558,49 @@ test.describe('Manage table Screen Options', () => {
 		await expect(page.locator('.wp-list-table th.column-desc').first()).not.toHaveClass(/\bhidden\b/)
 	})
 
+	test('ID column visibility persists when enabled and supports ID search', async ({ page }) => {
+		const snippetRow = snippetRowByName(page, snippetName)
+		const editUrl = await snippetRow.locator('.snippet-name').getAttribute('href')
+		const snippetId = new URL(editUrl ?? '', page.url()).searchParams.get('id')
+
+		if (!snippetId) {
+			throw new Error('Created snippet does not have an edit URL with an ID')
+		}
+
+		unrelatedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E ID Search')
+		const unrelatedSnippetId = await SnippetsTestHelper.createSnippetViaCli({
+			name: unrelatedSnippetName,
+			active: false
+		})
+		expect(unrelatedSnippetId).not.toBe(Number(snippetId))
+
+		await openScreenOptions(page)
+
+		const idToggle = page.locator('#adv-settings input.hide-column-tog[value="id"]')
+		await expect(idToggle).toBeVisible()
+		await idToggle.uncheck()
+		await expect(page.locator('.wp-list-table th.column-id').first()).toHaveClass(/\bhidden\b/)
+
+		await idToggle.check()
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+
+		await helper.navigateToSnippetsAdmin()
+		await openScreenOptions(page)
+		await expect(idToggle).toBeChecked()
+		await expect(page.locator('.wp-list-table th.column-id').first()).not.toHaveClass(/\bhidden\b/)
+		await expect(snippetRowByName(page, snippetName).locator('.column-id')).toHaveText(snippetId)
+		await expect(snippetRowByName(page, unrelatedSnippetName)).toBeVisible()
+
+		await page.getByRole('searchbox', { name: 'Search Snippets:' }).fill(snippetId)
+		await expect(snippetRowByName(page, snippetName)).toBeVisible()
+		await expect(snippetRowByName(page, unrelatedSnippetName)).toBeHidden()
+
+		await idToggle.uncheck()
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+	})
+
 	test('Truncation toggle applies and removes the truncation class in real time', async ({ page }) => {
 		await openScreenOptions(page)
 
@@ -381,5 +618,102 @@ test.describe('Manage table Screen Options', () => {
 		// Re-enable and verify restoration.
 		await truncationToggle.check()
 		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeVisible()
+	})
+
+	test('Descriptions are only clamped while truncation is enabled', async ({ page }) => {
+		const longDescription =
+			'This description is deliberately long enough to wrap well past the two lines ' +
+			'that the table clamps it to while the truncation option is enabled, so that ' +
+			'switching the option off has something visible to reveal. '
+
+		unrelatedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Long Description')
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: unrelatedSnippetName,
+			active: false,
+			desc: longDescription.repeat(3)
+		})
+
+		await helper.navigateToSnippetsAdmin()
+
+		await openScreenOptions(page)
+		await page.locator('#adv-settings input.hide-column-tog[value="desc"]').check()
+
+		const description = snippetRowByName(page, unrelatedSnippetName).locator('.snippet-description-content')
+		await expect(description).toBeVisible()
+
+		const truncationToggle = page.locator('#snippets-table-truncate-row-values')
+
+		await truncationToggle.check()
+		await expect(description).toHaveCSS('-webkit-line-clamp', '2')
+
+		await truncationToggle.uncheck()
+		await expect(description).toHaveCSS('-webkit-line-clamp', 'none')
+
+		// The clamp is what hid the rest of the description, so without it the
+		// element has to be tall enough for all of its own content. One pixel of
+		// tolerance covers sub-pixel rounding in the browser's layout.
+		const hiddenOverflow = await description.evaluate(el => el.scrollHeight - el.clientHeight)
+		expect(hiddenOverflow).toBeLessThanOrEqual(1)
+
+		// Restore the default so later tests and the dev site are unaffected.
+		await truncationToggle.check()
+	})
+
+	test('Truncation preference survives Apply and a page reload', async ({ page }) => {
+		await openScreenOptions(page)
+		await page.locator('#snippets-table-truncate-row-values').uncheck()
+
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+
+		await helper.navigateToSnippetsAdmin()
+		await openScreenOptions(page)
+
+		await expect(page.locator('#snippets-table-truncate-row-values')).not.toBeChecked()
+		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeHidden()
+
+		// Restore the default so later tests and the dev site are unaffected.
+		await page.locator('#snippets-table-truncate-row-values').check()
+		await page.locator('#screen-options-apply').click()
+		await page.waitForLoadState('networkidle')
+	})
+})
+
+test.describe('Snippets list order setting', () => {
+	const PREFIX = 'E2E Order Test'
+	const names = ['E2E Order Test Alpha', 'E2E Order Test Zulu']
+
+	test.beforeAll(async () => {
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(PREFIX)
+		for (const name of names) {
+			await SnippetsTestHelper.createSnippetViaCli({ name, active: false, type: 'php' })
+		}
+	})
+
+	test.afterAll(async () => {
+		await SnippetsTestHelper.cleanupSnippetsByPrefix(PREFIX)
+		await SnippetsTestHelper.setListOrder('priority-asc')
+	})
+
+	const firstMatchingName = async (page: Page): Promise<string> => {
+		const rows = page.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK})`)
+		await rows.first().waitFor()
+		const all = await rows.locator(`a${SELECTORS.SNIPPET_NAME_LINK}`).allInnerTexts()
+		return all.find(name => name.startsWith(PREFIX)) ?? ''
+	}
+
+	// The setting describes itself as the default order for this screen, so it
+	// decides how the table opens. Sorting moved to the column headings during
+	// the admin rewrite and the setting was left reading nothing at all.
+	test('Snippets List Order decides the order the table opens in', async ({ page }) => {
+		const helper = new SnippetsTestHelper(page)
+
+		await SnippetsTestHelper.setListOrder('name-asc')
+		await helper.navigateToSnippetsAdmin()
+		expect(await firstMatchingName(page)).toBe('E2E Order Test Alpha')
+
+		await SnippetsTestHelper.setListOrder('name-desc')
+		await helper.navigateToSnippetsAdmin()
+		expect(await firstMatchingName(page)).toBe('E2E Order Test Zulu')
 	})
 })

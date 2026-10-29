@@ -1,7 +1,8 @@
 import React from 'react'
+import type { SVGProps } from 'react'
 
-export const MinimiseIcon = () =>
-	<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const MinimiseIcon: React.FC<SVGProps<SVGSVGElement>> = props =>
+	<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path d="M3.75 6.75H6.75V3.75" />
 		<path d="M2.25 2.25L6.75 6.75L2.25 2.25Z" />
 		<path d="M3.75 11.25H6.75V14.25" />

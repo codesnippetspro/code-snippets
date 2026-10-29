@@ -1,20 +1,18 @@
 @use 'upsell';
-
-$toolbar-block-size: 150px;
-$wpbody-block-indent: 20px;
+@use 'universal-search';
 
 #wpbody {
-	padding-block-start: $toolbar-block-size;
+	padding-block-start: var(--cs-toolbar-block-size);
 }
 
 .code-snippets-toolbar {
-	color: #2c3337;
-	background: #fff;
+	color: var(--cs-color-text);
+	background: var(--cs-color-surface);
 	font-family: 'SF Pro', sans-serif;
-	margin-inline-start: -$wpbody-block-indent;
+	margin-inline-start: calc(-1 * var(--cs-wpcontent-inline-start-indent) - 2px);
 	position: absolute;
-	inline-size: calc(100% + $wpbody-block-indent);
-	block-size: $toolbar-block-size;
+	inline-size: calc(100% + var(--cs-wpcontent-inline-start-indent));
+	block-size: var(--cs-toolbar-block-size);
 	inset-block-start: 0;
 	display: flex;
 	flex-direction: column;
@@ -28,8 +26,12 @@ $wpbody-block-indent: 20px;
 
 .code-snippets-toolbar-upper {
 	justify-content: space-between;
-	block-size: 77px;
-	padding-inline: 35px;
+	gap: 28px;
+	block-size: 76px;
+	box-sizing: border-box;
+	padding-block: 16px;
+	padding-inline: 24px;
+	border-block-end: 1px solid rgb(195 196 199 / 50%);
 	display: flex;
 	align-items: center;
 
@@ -41,12 +43,11 @@ $wpbody-block-indent: 20px;
 		img {
 			block-size: 42px;
 		}
-	}
 
-	h1 {
-		font-size: 18px;
-		font-weight: 700;
-		line-height: 1.5;
+		div {
+			font-size: 18px;
+			font-weight: 700;
+		}
 	}
 
 	ul {
@@ -58,40 +59,161 @@ $wpbody-block-indent: 20px;
 	a {
 		color: inherit;
 		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var(--cs-color-accent);
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--cs-color-accent);
+			outline-offset: 6px;
+		}
+	}
+
+	@media (width <= 480px) {
+		padding-inline: 10px;
+
+		.logo img {
+			block-size: 34px;
+		}
+
+		.logo div {
+			display: none;
+		}
+
+		.toolbar-upgrade-item .button {
+			padding-inline: 10px;
+		}
 	}
 }
 
 .code-snippets-toolbar-lower {
-	border: 1px solid #c3c4c7;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
+	block-size: 60px;
+	box-sizing: border-box;
+
+	nav,
+	ul {
+		block-size: 100%;
+	}
 
 	ul {
 		display: flex;
-		align-items: end;
+		align-items: stretch;
 	}
 
-	li a {
+	li {
 		display: flex;
-		margin: 0;
-		padding: 24px 24px 20px;
-		color: inherit;
-		gap: 12px;
-		align-items: center;
-		font-size: 16px;
-		text-decoration: none;
-		font-weight: bold;
-		box-sizing: border-box;
-		transition: border unset;
-		border-block-end: 4px solid transparent;
-		cursor: pointer;
 
-		&.active-link, &:hover, &:focus, &:active {
-			color: #2271b1;
-			border-block-end-color: currentcolor;
+		&:last-of-type {
+			margin-inline-start: auto;
 		}
 	}
 
-	li:last-of-type {
-		margin-inline-start: auto;
+	// Items fill the 60px band; the active tab is indicated by accent colour on
+	// its icon and label plus a 3px accent underline, reserved on every item as a
+	// transparent border so activating a tab never shifts the row.
+	// stylelint-disable-next-line no-descending-specificity
+	li a {
+		display: flex;
+		margin: 0;
+		block-size: 100%;
+		padding-block: 0;
+		padding-inline: 24px;
+		color: var(--cs-color-text);
+		gap: 12px;
+		align-items: center;
+		font-size: 16px;
+		font-weight: 600;
+		letter-spacing: -0.16px;
+		text-decoration: none;
+		box-sizing: border-box;
+		cursor: pointer;
+		border-block-end: 3px solid transparent;
+
+		svg {
+			inline-size: 26px;
+			block-size: 26px;
+		}
+
+		&.active-link, &:hover, &:focus, &:active {
+			color: var(--cs-color-accent);
+			z-index: 1;
+			border-color: var(--cs-color-accent);
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--cs-color-accent);
+			outline-offset: -2px;
+		}
+	}
+
+	// Mid widths: every demo tab carries a chip, so the row is tightened before
+	// it would overflow, keeping the full layout until the narrow one takes over.
+	@media (1200px < width <= 1680px) {
+		li a {
+			gap: 8px;
+			padding-inline: 12px;
+			font-size: 15px;
+
+			svg {
+				inline-size: 22px;
+				block-size: 22px;
+			}
+
+			.pro-chip,
+			.new-chip,
+			.demo-chip {
+				padding-block: 4px;
+				padding-inline: 7px;
+				font-size: 10px;
+			}
+		}
+	}
+
+	// Narrow widths: centre each item's label directly beneath its icon and
+	// shrink the type so the nav still fits on one row. The pro chip becomes a
+	// small badge pinned to the item's top corner, out of the flow so it never
+	// shifts the icon off-centre from its label. Below 782px the row scrolls
+	// sideways (see the mobile block below) rather than wrapping.
+	@media (width <= 1200px) {
+		li a {
+			position: relative;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 4px;
+			padding-inline: 14px;
+			font-size: 13px;
+			text-align: center;
+
+			.pro-chip,
+			.new-chip,
+			.demo-chip {
+				position: absolute;
+				inset-block-start: 7px;
+				inset-inline-end: 4px;
+				padding-block: 1px;
+				padding-inline: 5px;
+				font-size: 8px;
+				line-height: normal;
+			}
+		}
+	}
+
+	@media (width <= 782px) {
+		nav {
+			overflow-x: auto;
+		}
+
+		li a {
+			inline-size: 100%;
+			padding-inline: 8px;
+			white-space: normal;
+		}
 	}
 }
 
@@ -99,28 +221,259 @@ $wpbody-block-indent: 20px;
 .code-snippets-toolbar-upper li a:hover,
 .code-snippets-toolbar-upper li a:focus,
 .code-snippets-toolbar-upper li a:active {
-	color: #2271b1;
+	color: var(--cs-color-accent);
 }
 
 .code-snippets-toolbar-lower .pro-chip,
-.nav-tab .pro-chip {
-	color: #d46f4d;
+.code-snippets-toolbar-lower .demo-chip,
+.nav-tab .pro-chip,
+.snippet-type-link .pro-chip {
+	color: var(--cs-color-accent);
+	background: var(--cs-color-surface-info);
+	border: 1px solid rgb(34 113 177 / 10%);
 	text-transform: uppercase;
-	border: 2px solid currentcolor;
 	border-radius: 999px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	box-sizing: border-box;
-	padding: 3px 9px;
+	padding: 5px 12px;
+	font-weight: 700;
+	line-height: 1;
 }
 
 
-.code-snippets-toolbar-lower .pro-chip {
+.code-snippets-toolbar-lower .pro-chip,
+.code-snippets-toolbar-lower .demo-chip {
 	font-size: 12px;
 }
 
-.nav-tab .pro-chip {
+// Deliberately warm, so it reads as "new here" rather than as another locked
+// Pro destination alongside the blue pro chips.
+.code-snippets-toolbar-lower .new-chip {
+	color: #fff;
+	background: linear-gradient(135deg, var(--cs-color-secondary) 0%, #e2953f 100%);
+	border: 1px solid rgb(0 0 0 / 5%);
+	text-transform: uppercase;
+	border-radius: 999px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 5px 10px;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	line-height: 1;
+}
+
+.nav-tab .pro-chip,
+.snippet-type-link .pro-chip {
 	font-size: 10px;
-	padding: 0 6px;
+}
+
+.code-snippets-return-link {
+	display: inline-flex;
+	float: none;
+	align-items: center;
+	min-block-size: 36px;
+	margin-block: 32px 20px;
+	padding-inline: 12px;
+	border-color: var(--cs-color-accent);
+	background: transparent;
+	color: var(--cs-color-accent);
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		border-color: var(--cs-color-accent-hover);
+		background: transparent;
+		color: var(--cs-color-accent-hover);
+	}
+}
+
+.code-snippets-toolbar-upper .toolbar-more-item {
+	display: none;
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu {
+	position: relative;
+
+	.dashicons, .dashicons::before {
+		inline-size: 16px;
+		block-size: 16px;
+		font-size: 16px;
+	}
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu summary {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	cursor: pointer;
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu ul {
+	position: absolute;
+	inset-block-start: calc(100% + 8px);
+	inset-inline-end: 0;
+	z-index: 2;
+	display: grid;
+	min-inline-size: 180px;
+	block-size: auto;
+	margin: 0;
+	padding: 8px;
+	background: var(--cs-color-surface);
+	border: 1px solid var(--cs-color-border);
+	box-shadow: 0 3px 8px rgb(0 0 0 / 15%);
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu li {
+	margin: 0;
+}
+
+// The upper and lower toolbars are distinct navigation trees; keep this rule
+// after the lower-toolbar link state rules so the compact menu owns its hover state.
+// stylelint-disable-next-line no-descending-specificity
+.code-snippets-toolbar-upper .toolbar-more-menu a {
+	display: block;
+	padding: 8px;
+	white-space: nowrap;
+}
+
+.code-snippets-toolbar-upper .toolbar-more-menu a:hover,
+.code-snippets-toolbar-upper .toolbar-more-menu a:focus {
+	background: var(--cs-color-surface-subtle);
+}
+
+@media (width <= 960px) {
+	.code-snippets-toolbar-upper {
+		gap: 12px;
+		padding-inline: 16px;
+	}
+
+	.code-snippets-toolbar-upper ul {
+		gap: 0;
+	}
+
+	.code-snippets-toolbar-upper .logo {
+		flex: 0 1 auto;
+		min-inline-size: 0;
+	}
+
+	.code-snippets-toolbar-upper nav {
+		margin-inline-start: auto;
+	}
+
+	.code-snippets-toolbar-upper > nav > ul {
+		gap: 8px;
+	}
+
+	.code-snippets-toolbar-upper > nav > ul > li:not(.toolbar-upgrade-item, .toolbar-more-item) {
+		display: none;
+	}
+
+	.code-snippets-toolbar-upper .toolbar-more-item {
+		display: flex;
+	}
+
+	.code-snippets-toolbar-upper .toolbar-more-menu summary {
+		padding: 8px;
+		white-space: nowrap;
+	}
+
+	.code-snippets-toolbar-upper .toolbar-upgrade-item .button {
+		display: block;
+		max-inline-size: 180px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+@media (width <= 640px) {
+	.code-snippets-toolbar-upper .logo div {
+		display: none;
+	}
+}
+
+.wp-core-ui .code-snippets-toolbar-upper .button.cloud-connected-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: 8px;
+	text-transform: uppercase;
+	background: #f6f7f7;
+	color: #646970;
+	font-size: 12px;
+	font-weight: bold;
+	border: none;
+	min-block-size: 3.5em;
+	min-inline-size: 12.5em;
+}
+
+.cloud-disconnect-confirmation-modal .components-modal__children-container {
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	font-size: 16px;
+	gap: 1em;
+	min-inline-size: 512px;
+
+	h1 {
+		font-size: 28px;
+		margin-block: 0;
+	}
+
+	p {
+		color: #646970;
+		font-size: inherit;
+		max-inline-size: 22em;
+		text-align: center;
+	}
+
+	a.button {
+		font-size: inherit;
+		background-color: var(--cs-color-secondary);
+	}
+
+	.button-link {
+		color: var(--cs-color-secondary);
+		border: none;
+	}
+}
+
+// Slot that adopts the WordPress Screen Options / Help tabs so they appear
+// directly below the toolbar instead of above the page content.
+.snippets-screen-meta-slot {
+	#screen-meta-links {
+		float: none;
+		display: flex;
+		justify-content: flex-end;
+		margin: 0;
+		border-color: var(--cs-color-border-subtle);
+
+		.show-settings {
+			border-color: var(--cs-color-border-subtle);
+		}
+	}
+
+	#screen-meta {
+		margin: 0;
+	}
+}
+
+// On the narrowest screens WordPress makes room for its 46px admin bar by
+// padding the body rather than the page, so the toolbar has to clear it itself.
+@media (width <= 600px) {
+	#wpbody {
+		padding-block-start: calc(var(--cs-toolbar-block-size) + 46px);
+	}
+
+	.code-snippets-toolbar {
+		inset-block-start: 46px;
+	}
 }

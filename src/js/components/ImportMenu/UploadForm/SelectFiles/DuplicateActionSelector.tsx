@@ -35,8 +35,9 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 							value={action}
 							checked={action === value}
 							onChange={() => onChange(action)}
+							aria-labelledby={`duplicate-action-${action}-label`}
 						/>
-						<span>{ACTION_LABELS[action]}</span>
+						<span id={`duplicate-action-${action}-label`}>{ACTION_LABELS[action]}</span>
 					</label>)}
 			</div>
 		</fieldset>

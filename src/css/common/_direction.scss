@@ -1,8 +1,0 @@
-:root {
-	--cs-direction-multiplier: 1; // LTR = 1, RTL = -1
-}
-
-html[dir="rtl"],
-body.rtl {
-	--cs-direction-multiplier: -1;
-}

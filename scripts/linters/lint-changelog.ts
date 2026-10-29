@@ -24,8 +24,10 @@
  * Lists
  *   - Items start with "* " (not "- ")
  *   - No trailing whitespace
+ *   - No blank lines between consecutive list items
  *
  * Spacing
+ *   - No leading blank lines before the title
  *   - Exactly 1 blank line before every ## heading (not before the first one)
  *   - Exactly 1 blank line after every # and ## headings
  *   - No blank lines after ### headings
@@ -54,6 +56,28 @@ const collapseBlankLines = (lines: string[]): string[] => {
 		if (blank && prevBlank) {continue}
 		out.push(l)
 		prevBlank = blank
+	}
+	return out
+}
+
+const stripLeadingBlanks = (lines: string[]): string[] => {
+	let i = 0
+	while (i < lines.length && '' === lines[i].trim()) {i += 1}
+	return lines.slice(i)
+}
+
+const removeBlanksBetweenListItems = (lines: string[]): string[] => {
+	const isItem = (l: string): boolean => /^\s*[*-] /.test(l)
+	const out: string[] = []
+	for (let i = 0; i < lines.length; i += 1) {
+		if ('' === lines[i].trim()) {
+			let j = i + 1
+			while (j < lines.length && '' === lines[j].trim()) {j += 1}
+			const prev = out[out.length - 1]
+			const next = j < lines.length ? lines[j] : ''
+			if (0 < out.length && isItem(prev) && isItem(next)) {continue}
+		}
+		out.push(lines[i])
 	}
 	return out
 }
@@ -156,10 +180,10 @@ const promoteBoldChangeTypeLabels = (lines: string[]): string[] =>
 
 const normaliseReleaseHeaders = (lines: string[], errors: string[]): string[] =>
 	lines.map(line => {
-		const bracketed = /^## \[(?<ver>[^\]]+)\]\s*\((?<date>\d{4}-\d{2}-\d{2})\)/.exec(line)
+		const bracketed = /^## \[(?<ver>[^\]]+)\]\s*\((?<date>\d{4}-\d{2}-\d{2}|[A-Z][A-Z0-9-]*)\)/.exec(line)
 		if (bracketed?.groups) {return `## [${bracketed.groups.ver}] (${bracketed.groups.date})`}
 
-		const bracketedMissingClose = /^## \[(?<ver>[^\]]+)\]\s*\((?<date>\d{4}-\d{2}-\d{2})$/.exec(line)
+		const bracketedMissingClose = /^## \[(?<ver>[^\]]+)\]\s*\((?<date>\d{4}-\d{2}-\d{2}|[A-Z][A-Z0-9-]*)$/.exec(line)
 		if (bracketedMissingClose?.groups) {
 			return `## [${bracketedMissingClose.groups.ver}] (${bracketedMissingClose.groups.date})`
 		}
@@ -170,7 +194,7 @@ const normaliseReleaseHeaders = (lines: string[], errors: string[]): string[] =>
 			return line
 		}
 
-		const plain = /^## (?<ver>\d[^\s(]+)\s*(?:\((?<date>\d{4}-\d{2}-\d{2})\))?/.exec(line)
+		const plain = /^## (?<ver>\d[^\s(]+)\s*(?:\((?<date>\d{4}-\d{2}-\d{2}|[A-Z][A-Z0-9-]*)\))?/.exec(line)
 		if (!plain?.groups) {return line}
 		if (plain.groups.date) {return `## [${plain.groups.ver}] (${plain.groups.date})`}
 		errors.push(`CHANGELOG.md: Release header missing date: ${line}`)
@@ -257,6 +281,7 @@ export const lintChangelog = (src: string): { fixed: string; errors: string[] } 
 	const errors: string[] = []
 	let lines = src.split('\n')
 
+	lines = stripLeadingBlanks(lines)
 	lines = ensureTitle(lines, errors)
 	lines = trimTrailing(lines)
 	lines = promoteBoldChangeTypeLabels(lines)
@@ -265,6 +290,7 @@ export const lintChangelog = (src: string): { fixed: string; errors: string[] } 
 	lines = normaliseIndentedSubListItems(lines)
 	lines = normaliseTopLevelBulletMarkers(lines)
 	lines = applySpacingRules(lines)
+	lines = removeBlanksBetweenListItems(lines)
 	lines = finaliseLines(lines)
 
 	return { fixed: lines.join('\n'), errors }
