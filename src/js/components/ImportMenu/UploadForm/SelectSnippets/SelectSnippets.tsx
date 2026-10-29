@@ -76,7 +76,7 @@ const SelectSnippetsForm: React.FC<SelectSnippetsFormProps> = ({ availableSnippe
 	<>
 		<div className="tablenav top">
 			<div>
-				<h2>{// translators: %d: number of available snippets.
+				<h2 id="import-available-snippets-heading">{// translators: %d: number of available snippets.
 					sprintf(__('Available snippets (%d)', 'code-snippets'), availableSnippets.length)}</h2>
 				<p>{__('Select the snippets you would like to import.', 'code-snippets')}</p>
 			</div>
@@ -141,7 +141,7 @@ const SubmitForm: React.FC<SubmitFormProps> = ({ children, duplicateAction, setI
 		}
 	}
 
-	return <form onSubmit={handleImportSelected}>{children}</form>
+	return <form aria-labelledby="import-available-snippets-heading" onSubmit={handleImportSelected}>{children}</form>
 }
 
 export interface SelectSnippetsStepProps {

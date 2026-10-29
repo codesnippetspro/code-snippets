@@ -241,7 +241,7 @@ class Settings_Menu extends Admin_Menu {
 			<?php $this->render_section_tabs(); ?>
 
 			<div class="snippets-page-header">
-				<h1><?php esc_html_e( 'Snippets Settings', 'code-snippets' ); ?></h1>
+				<h1 id="snippets-settings-heading"><?php esc_html_e( 'Snippets Settings', 'code-snippets' ); ?></h1>
 			</div>
 
 			<?php
@@ -270,7 +270,7 @@ class Settings_Menu extends Admin_Menu {
 
 			<?php settings_errors( OPTION_NAME ); ?>
 
-			<form action="<?php echo esc_url( $update_url ); ?>" method="post">
+			<form aria-labelledby="snippets-settings-heading" action="<?php echo esc_url( $update_url ); ?>" method="post">
 				<input type="hidden" name="section" value="<?php echo esc_attr( $current_section ); ?>">
 				<?php
 

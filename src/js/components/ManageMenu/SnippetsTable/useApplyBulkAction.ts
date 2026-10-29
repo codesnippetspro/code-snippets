@@ -35,6 +35,7 @@ const submitBulkSnippetDownload = (snippets: readonly Snippet[]): Promise<void> 
 	}
 
 	const form = document.createElement('form')
+	form.setAttribute('aria-label', __('Download snippets', 'code-snippets'))
 
 	const appendHiddenField = (name: string, value: string) => {
 		const input = document.createElement('input')
