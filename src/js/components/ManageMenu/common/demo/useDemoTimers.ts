@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react'
 
-interface TimersState {
+export interface DemoTimersState {
 	addTimer: (handler: VoidFunction, timeout: number) => void
 	clearTimers: VoidFunction
 }
 
-export const useDemoTimers = (): TimersState => {
+export const useDemoTimers = (): DemoTimersState => {
 	const timers = useRef<number[]>([])
 
 	const addTimer = useCallback((handler: VoidFunction, timeout: number) => {

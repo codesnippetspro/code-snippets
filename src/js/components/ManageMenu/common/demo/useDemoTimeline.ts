@@ -1,11 +1,17 @@
 import { useCallback, useMemo, useState } from 'react'
-import { useDemoTimers } from './useDemoTimers'
+import type { DemoTimersState } from './useDemoTimers'
 
 /** Uniform pause between stages when the visitor has asked for reduced motion. */
 export const REDUCED_MOTION_DURATION = 250
 
-export const prefersReducedMotion = (): boolean =>
-	window.matchMedia('(prefers-reduced-motion: reduce)').matches
+export interface ReducedMotionState {
+	reducedMotion: boolean
+}
+
+export const useReducedMotion = (): ReducedMotionState =>
+	useMemo(() => ({
+		reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+	}), [])
 
 export interface DemoTimeline<S extends string> {
 	/** The stage the walkthrough rests in before it is played. */
@@ -33,7 +39,8 @@ export interface DemoTimelineState<S extends string> {
 
 export interface DemoTimelineProps<S extends string> {
 	timeline: DemoTimeline<S>
-	onAdvance?: (nextStage: S) => void
+	timers: DemoTimersState
+	onAdvance?: (nextStage: S, { reducedMotion }: { reducedMotion: boolean }) => void
 	onFinish?: VoidFunction
 	onReset?: VoidFunction
 	getDynamicDuration?: (nextStage: S) => number | undefined
@@ -47,19 +54,18 @@ export interface DemoTimelineProps<S extends string> {
  */
 export const useDemoTimeline = <S extends string>({
 	timeline: { idle, first, finished, followUp, durations, defaultDuration },
+	timers: { addTimer, clearTimers },
 	onAdvance,
 	onFinish,
 	onReset,
 	getDynamicDuration
 }: DemoTimelineProps<S>): DemoTimelineState<S> => {
-	const reducedMotion = useMemo(prefersReducedMotion, [])
-
-	const { addTimer, clearTimers } = useDemoTimers()
+	const { reducedMotion } = useReducedMotion()
 	const [stage, setStage] = useState<S>(idle)
 
 	const advance = useCallback((next: S) => {
 		setStage(next)
-		onAdvance?.(next)
+		onAdvance?.(next, { reducedMotion })
 
 		const upcoming = followUp[next]
 
