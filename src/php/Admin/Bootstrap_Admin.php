@@ -10,6 +10,7 @@ use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Admin\Menus\Settings_Menu;
 use Code_Snippets\Admin\Menus\Welcome_Menu;
 use Code_Snippets\Client\Welcome_Client;
+use Code_Snippets\Integration\Promotions\Promotion_Manager;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
@@ -30,14 +31,14 @@ class Bootstrap_Admin {
 	 *
 	 * @var Admin_Menu[]
 	 */
-	public array $menus = [];
+	private array $menus = [];
 
 	/**
 	 * Welcome_API class instance.
 	 *
 	 * @var Welcome_Client
 	 */
-	public Welcome_Client $welcome_client;
+	private Welcome_Client $welcome_client;
 
 	/**
 	 * Class constructor.
@@ -48,7 +49,9 @@ class Bootstrap_Admin {
 		}
 
 		$this->welcome_client = new Welcome_Client();
-		new Notice_Filter();
+		new Notice_Filter( $this );
+		new Promotion_Manager();
+		new Feedback_Error_Capture( new Feedback_Panel() );
 
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 
@@ -74,6 +77,26 @@ class Bootstrap_Admin {
 		}
 
 		$this->menus['welcome'] = new Welcome_Menu( $this->welcome_client );
+	}
+
+	/**
+	 * Retrieve list of registered admin menu classes.
+	 *
+	 * @return Admin_Menu[]
+	 */
+	public function get_menus(): array {
+		return $this->menus;
+	}
+
+	/**
+	 * Retrieve an admin menu class by name.
+	 *
+	 * @param string $menu_name
+	 *
+	 * @return Admin_Menu|null
+	 */
+	public function get_menu( string $menu_name ): ?Admin_Menu {
+		return $this->menus[ $menu_name ] ?? null;
 	}
 
 	/**

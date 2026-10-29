@@ -3,8 +3,6 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
-use Code_Snippets\Admin\Feedback_Error_Capture;
-use Code_Snippets\Admin\Feedback_Panel;
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Client\Docs_Client;
 use Code_Snippets\Client\Feedback_Client;
@@ -12,11 +10,11 @@ use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
 use Code_Snippets\Core\Upgrader;
+use Code_Snippets\Flat_Files\Handler_Registry;
 use Code_Snippets\Integration\Admin_Bar;
 use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
-use Code_Snippets\Integration\Promotions\Promotion_Manager;
 use Code_Snippets\Integration\Shortcodes;
 use Code_Snippets\Model\Basic_Cloud_Connection;
 use Code_Snippets\Model\Feedback_Connection;
@@ -42,24 +40,6 @@ use function Code_Snippets\Settings\are_settings_unified;
 class Plugin {
 
 	/**
-	 * Current plugin version number
-	 *
-	 * @deprecated Use the PLUGIN_VERSION constant instead.
-	 *
-	 * @var string
-	 */
-	public string $version = PLUGIN_VERSION;
-
-	/**
-	 * Filesystem path to the main plugin file
-	 *
-	 * @deprecated Use the PLUGIN_FILE constant instead.
-	 *
-	 * @var string
-	 */
-	public string $file = PLUGIN_FILE;
-
-	/**
 	 * Database class
 	 *
 	 * @var DB
@@ -67,32 +47,11 @@ class Plugin {
 	public DB $db;
 
 	/**
-	 * Class for managing shortcodes.
-	 *
-	 * @var Shortcodes
-	 */
-	public Shortcodes $shortcodes;
-
-	/**
-	 * Administration area class
-	 *
-	 * @var Bootstrap_Admin
-	 */
-	public Bootstrap_Admin $admin;
-
-	/**
 	 * Handles licensing and plugin updates.
 	 *
 	 * @var Licensing
 	 */
 	public Licensing $licensing;
-
-	/**
-	 * Handles snippet handler registration.
-	 *
-	 * @var Flat_Files\Handler_Registry
-	 */
-	public Flat_Files\Handler_Registry $snippet_handler_registry;
 
 	/**
 	 * Instance of connection to Code Snippets Cloud.
@@ -127,26 +86,21 @@ class Plugin {
 
 		$this->db = new DB();
 		$this->licensing = new Licensing();
-
 		$this->cloud_connection = new Basic_Cloud_Connection();
 
-		new Evaluate_Content( $this->db );
+		$file_handler_registry = $this->init_snippet_files();
+
+		new Evaluate_Content( $this->db, $file_handler_registry->get_handler( 'html' ) );
 		new Evaluate_Functions( $this->db );
 
-		$this->shortcodes = new Shortcodes();
-
 		if ( is_admin() ) {
-			$this->admin = new Bootstrap_Admin();
-			new Promotion_Manager();
-			new Feedback_Error_Capture( new Feedback_Panel() );
+			new Bootstrap_Admin();
 		}
 
-		new Shortcodes();
+		new Shortcodes( $file_handler_registry );
 		new MCE_Plugin();
 		new Upgrader( PLUGIN_VERSION, $this->db );
 		new Admin_Bar();
-
-		$this->init_snippet_files();
 
 		add_action( 'rest_api_init', [ $this, 'init_rest_api' ], 1 );
 	}
@@ -181,10 +135,10 @@ class Plugin {
 	/**
 	 * Initializes the snippet files component.
 	 *
-	 * @return void
+	 * @return Handler_Registry
 	 */
-	private function init_snippet_files() {
-		$this->snippet_handler_registry = new Flat_Files\Handler_Registry(
+	private function init_snippet_files(): Handler_Registry {
+		$handler_registry = new Flat_Files\Handler_Registry(
 			[
 				'php'  => new Flat_Files\Handlers\Functions_Snippet_Handler(),
 				'html' => new Flat_Files\Handlers\Content_Snippet_Handler(),
@@ -194,8 +148,10 @@ class Plugin {
 		$fs = new Flat_Files\WP_Filesystem_Adapter();
 		$config_repo = new Flat_Files\Flat_File_Config_Repository( $fs );
 
-		$snippet_files = new Flat_Files\Snippet_Files( $this->snippet_handler_registry, $fs, $config_repo );
+		$snippet_files = new Flat_Files\Snippet_Files( $handler_registry, $fs, $config_repo );
 		$snippet_files->register_hooks();
+
+		return $handler_registry;
 	}
 
 	/**
@@ -374,15 +330,15 @@ class Plugin {
 			$handle,
 			'CODE_SNIPPETS',
 			[
-				'debug'              => defined( 'WP_DEBUG' ) && WP_DEBUG,
-				'isLicensed'         => $this->licensing->is_licensed(),
-				'safeModeRequested'  => Evaluate_Functions::is_safe_mode_query_var_set() && $this->current_user_can(),
-				'isCloudConnected'   => $this->cloud_connection->is_authenticated(),
-				'hideUpsell'         => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
-				'snippetView'        => Snippet_View_REST_Controller::get_snippet_view(),
-				'statsChartViews'    => Stats_View_Rest_Controller::get_stats_chart_views(),
-				'demosSeen'          => Demos_Seen_REST_Controller::get_demos_seen(),
-				'restAPI'            => [
+				'debug'             => defined( 'WP_DEBUG' ) && WP_DEBUG,
+				'isLicensed'        => $this->licensing->is_licensed(),
+				'safeModeRequested' => Evaluate_Functions::is_safe_mode_query_var_set() && $this->current_user_can(),
+				'isCloudConnected'  => $this->cloud_connection->is_authenticated(),
+				'hideUpsell'        => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
+				'snippetView'       => Snippet_View_REST_Controller::get_snippet_view(),
+				'statsChartViews'   => Stats_View_Rest_Controller::get_stats_chart_views(),
+				'demosSeen'         => Demos_Seen_REST_Controller::get_demos_seen(),
+				'restAPI'           => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
@@ -398,7 +354,7 @@ class Plugin {
 					],
 					'search'         => esc_url_raw( rest_url( Search_REST_Controller::get_base_route() ) ),
 				],
-				'urls'               => [
+				'urls'              => [
 					'plugin'    => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
 					'manage'    => esc_url_raw( $this->get_menu_url() ),
 					'edit'      => esc_url_raw( $this->get_menu_url( 'edit' ) ),

@@ -3,6 +3,8 @@
 namespace Code_Snippets\Integration;
 
 use Code_Snippets\Core\DB;
+use Code_Snippets\Flat_Files\Handler_Registry;
+use Code_Snippets\Flat_Files\Interfaces\Snippet_Type_Handler;
 use Code_Snippets\Flat_Files\Snippet_Files;
 use function Code_Snippets\code_snippets;
 
@@ -21,6 +23,13 @@ class Evaluate_Content {
 	private DB $db;
 
 	/**
+	 * File handler for content snippets.
+	 *
+	 * @var Snippet_Type_Handler
+	 */
+	private Snippet_Type_Handler $file_handler;
+
+	/**
 	 * Cached list of active snippets, indexed by scope.
 	 *
 	 * @var ?array[]
@@ -30,10 +39,12 @@ class Evaluate_Content {
 	/**
 	 * Class constructor.
 	 *
-	 * @param DB $db Database class instance.
+	 * @param DB                   $db      Database class instance.
+	 * @param Snippet_Type_Handler $handler File handler for content snippets.
 	 */
-	public function __construct( DB $db ) {
+	public function __construct( DB $db, Snippet_Type_Handler $handler ) {
 		$this->db = $db;
+		$this->file_handler = $handler;
 		add_action( 'init', [ $this, 'init' ] );
 	}
 
@@ -130,9 +141,8 @@ class Evaluate_Content {
 	 * @return void
 	 */
 	private function populate_active_snippets_from_flat_files() {
-		$handler = code_snippets()->snippet_handler_registry->get_handler( 'html' );
-		$dir_name = $handler->get_dir_name();
-		$ext = $handler->get_file_extension();
+		$dir_name = $this->file_handler->get_dir_name();
+		$ext = $this->file_handler->get_file_extension();
 
 		$scopes = [ 'head-content', 'body-content', 'footer-content' ];
 		$all_snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, $dir_name );

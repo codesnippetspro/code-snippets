@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Integration;
 
+use Code_Snippets\Flat_Files\Handler_Registry;
 use WP_Post;
 use Code_Snippets\Flat_Files\Snippet_Files;
 use Code_Snippets\Model\Snippet;
@@ -29,9 +30,18 @@ class Shortcodes {
 	public const CONTENT_SHORTCODE = 'code_snippet';
 
 	/**
+	 * Instance of flat-file handler registry.
+	 *
+	 * @var Handler_Registry
+	 */
+	private Handler_Registry $file_handler_registry;
+
+	/**
 	 * Class constructor
 	 */
-	public function __construct() {
+	public function __construct( Handler_Registry $file_handler_registry ) {
+		$this->file_handler_registry = $file_handler_registry;
+
 		add_action( 'the_posts', [ $this, 'enqueue_highlighting' ] );
 
 		add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
@@ -121,7 +131,7 @@ class Shortcodes {
 	 * @return string Full file path for the snippet.
 	 */
 	private function build_snippet_flat_file_path( string $table_name, Snippet $snippet ): string {
-		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet->get_type() );
+		$handler = $this->file_handler_registry->get_handler( $snippet->get_type() );
 
 		return Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/' . $snippet->id . '.' . $handler->get_file_extension();
 	}
@@ -144,7 +154,7 @@ class Shortcodes {
 		}
 
 		$network = validate_network_param( $snippet->network );
-		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
+		$table_name = Snippet_Files::get_hashed_table_name( $this->db->get_table_name( $network ) );
 		$filepath = $this->build_snippet_flat_file_path( $table_name, $snippet );
 
 		return file_exists( $filepath )
@@ -227,7 +237,7 @@ class Shortcodes {
 
 		$validated_network = validate_network_param( $network );
 		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $validated_network ) );
-		$handler = code_snippets()->snippet_handler_registry->get_handler( 'html' );
+		$handler = $this->file_handler_registry->get_handler( 'html' );
 		$config_filepath = Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/index.php';
 
 		if ( file_exists( $config_filepath ) ) {

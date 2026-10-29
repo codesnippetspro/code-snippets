@@ -14,9 +14,19 @@ use function Code_Snippets\code_snippets;
 class Notice_Filter {
 
 	/**
-	 * Class constructor.
+	 * Instance of plugin admin class.
+	 *
+	 * @var Bootstrap_Admin
 	 */
-	public function __construct() {
+	private Bootstrap_Admin $admin;
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param Bootstrap_Admin $admin Instance of plugin admin class.
+	 */
+	public function __construct( Bootstrap_Admin $admin ) {
+		$this->admin = $admin;
 		add_action( 'current_screen', [ $this, 'register_filtering' ] );
 	}
 
@@ -66,11 +76,7 @@ class Notice_Filter {
 	 * @return bool
 	 */
 	private function is_code_snippets_screen( WP_Screen $screen ): bool {
-		if ( ! isset( code_snippets()->admin ) ) {
-			return false;
-		}
-
-		foreach ( code_snippets()->admin->menus as $menu ) {
+		foreach ( $this->admin->get_menus() as $menu ) {
 			foreach ( $menu->get_hooknames() as $hookname ) {
 				foreach ( [ $hookname, "$hookname-network" ] as $candidate ) {
 					if ( $screen->id === $candidate || $screen->base === $candidate ) {

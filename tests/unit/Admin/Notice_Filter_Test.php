@@ -3,8 +3,6 @@
 namespace Code_Snippets\Admin;
 
 use Code_Snippets\AdminUnitTestCase;
-use Code_Snippets\Controller\Cloud_Auth_Controller;
-use Code_Snippets\Model\Basic_Cloud_Connection;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -22,6 +20,13 @@ class Notice_Filter_Test extends AdminUnitTestCase {
 	private Notice_Filter $notice_filter;
 
 	/**
+	 * Instance of admin class.
+	 *
+	 * @var Bootstrap_Admin
+	 */
+	private Bootstrap_Admin $admin;
+
+	/**
 	 * Set up before each test.
 	 *
 	 * @return void
@@ -31,12 +36,12 @@ class Notice_Filter_Test extends AdminUnitTestCase {
 
 		set_current_screen( 'dashboard' );
 
-		code_snippets()->admin = new Bootstrap_Admin();
-		code_snippets()->admin->load_classes();
+		$this->admin = new Bootstrap_Admin();
+		$this->admin->load_classes();
 
-		set_current_screen( code_snippets()->admin->menus['manage']->get_hookname() );
+		set_current_screen( $this->admin->get_menu( 'manage' )->get_hookname() );
 
-		$this->notice_filter = new Notice_Filter();
+		$this->notice_filter = new Notice_Filter( $this->admin );
 	}
 
 	/**
@@ -72,8 +77,7 @@ class Notice_Filter_Test extends AdminUnitTestCase {
 	 * @return void
 	 */
 	public function test_registers_filtering_on_add_new_screen(): void {
-		$edit_menu = code_snippets()->admin->menus['edit'];
-		$hooknames = $edit_menu->get_hooknames();
+		$hooknames = $this->admin->get_menu( 'edit' )->get_hooknames();
 		set_current_screen( $hooknames[1] );
 
 		$this->notice_filter->register_filtering( get_current_screen() );
@@ -115,8 +119,7 @@ class Notice_Filter_Test extends AdminUnitTestCase {
 	public function test_registers_filtering_on_compact_menu_screen(): void {
 		add_filter( 'code_snippets_compact_menu', '__return_true' );
 
-		$manage_menu = code_snippets()->admin->menus['manage'];
-		$hooknames = $manage_menu->get_hooknames();
+		$hooknames = $this->admin->get_menu( 'manage' )->get_hooknames();
 		$compact_hookname = get_plugin_page_hookname( code_snippets()->get_menu_slug(), 'tools.php' );
 
 		$this->assertContains( $compact_hookname, $hooknames );
