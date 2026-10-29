@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n'
-import type { CalloutContent } from '../../common/demo/DemoCallout'
+import type { CalloutContent } from '../common/demo/DemoCallout'
 import type { DemoStage } from './types'
 
 /**

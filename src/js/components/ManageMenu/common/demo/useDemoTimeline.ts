@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useDemoTimers } from './useDemoTimers'
 
 /** Uniform pause between stages when the visitor has asked for reduced motion. */
 export const REDUCED_MOTION_DURATION = 250
@@ -30,59 +31,68 @@ export interface DemoTimelineState<S extends string> {
 	replay: VoidFunction
 }
 
+export interface DemoTimelineProps<S extends string> {
+	timeline: DemoTimeline<S>
+	onAdvance?: (nextStage: S) => void
+	onFinish?: VoidFunction
+	onReset?: VoidFunction
+	getDynamicDuration?: (nextStage: S) => number | undefined
+}
+
 /**
  * Drives a scripted walkthrough forwards through its stages on a timer.
  *
  * The timeline is read once per render and is expected to be a module-level
  * constant, so the driver's callbacks stay stable for the life of the page.
  */
-export const useDemoTimeline = <S extends string>(timeline: DemoTimeline<S>): DemoTimelineState<S> => {
-	const { idle, first, finished, followUp, durations, defaultDuration } = timeline
+export const useDemoTimeline = <S extends string>({
+	timeline: { idle, first, finished, followUp, durations, defaultDuration },
+	onAdvance,
+	onFinish,
+	onReset,
+	getDynamicDuration
+}: DemoTimelineProps<S>): DemoTimelineState<S> => {
 	const reducedMotion = useMemo(prefersReducedMotion, [])
 
+	const { addTimer, clearTimers } = useDemoTimers()
 	const [stage, setStage] = useState<S>(idle)
-	const timers = useRef<number[]>([])
-
-	const clearTimers = useCallback(() => {
-		timers.current.forEach(window.clearTimeout)
-		timers.current = []
-	}, [])
-
-	useEffect(() => () => {
-		timers.current.forEach(window.clearTimeout)
-	}, [])
 
 	const advance = useCallback((next: S) => {
 		setStage(next)
+		onAdvance?.(next)
 
 		const upcoming = followUp[next]
 
-		if (!upcoming) {
-			return
+		if (upcoming) {
+			const delay = reducedMotion
+				? REDUCED_MOTION_DURATION
+				: getDynamicDuration?.(upcoming) ?? durations[upcoming] ?? defaultDuration
+
+			addTimer(() => advance(upcoming), delay)
 		}
-
-		const delay = reducedMotion
-			? REDUCED_MOTION_DURATION
-			: durations[next] ?? defaultDuration
-
-		timers.current.push(window.setTimeout(() => advance(upcoming), delay))
-	}, [defaultDuration, durations, followUp, reducedMotion])
+	}, [defaultDuration, durations, followUp, reducedMotion, addTimer, onAdvance, getDynamicDuration])
 
 	const play = useCallback(() => {
 		clearTimers()
-		advance(first)
-	}, [advance, clearTimers, first])
+		addTimer(() => advance(first), 0)
+	}, [advance, addTimer, clearTimers, first])
+
+	const reset = useCallback(() => {
+		clearTimers()
+		onReset?.()
+		setStage(idle)
+	}, [clearTimers, onReset, setStage, idle])
 
 	const replay = useCallback(() => {
-		clearTimers()
-		setStage(idle)
-		timers.current.push(window.setTimeout(() => advance(first), REDUCED_MOTION_DURATION))
-	}, [advance, clearTimers, first, idle])
+		reset()
+		addTimer(() => advance(first), REDUCED_MOTION_DURATION)
+	}, [advance, reset, first, addTimer])
 
 	const skip = useCallback(() => {
 		clearTimers()
+		onFinish?.()
 		setStage(finished)
-	}, [clearTimers, finished])
+	}, [clearTimers, finished, onFinish])
 
 	return {
 		stage,

@@ -1,16 +1,16 @@
 import { humanTimeDiff } from '@wordpress/date'
 import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { getSnippetType } from '../../../utils/snippets/snippets'
-import { stripTags, truncateChars } from '../../../utils/text'
-import { Badge } from '../Badge'
-import { Button } from '../Button'
+import { getSnippetType } from '../../../../utils/snippets/snippets'
+import { stripTags, truncateChars } from '../../../../utils/text'
+import { Badge } from '../../../common/Badge'
+import { Button } from '../../../common/Button'
 import { SnippetCard } from '../snippets/SnippetCard'
 import { CloudSnippetPreviewModal } from '../snippets/SnippetPreviewModal'
 import { CloudStatusIndicator } from './CloudStatusBadge'
 import { CloudSnippetDownloadButton } from './CloudSnippetDownloadButton'
 import type { ReactNode } from 'react'
-import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
+import type { CloudSnippetSchema } from '../../../../types/schema/CloudSnippetSchema'
 
 export interface CloudSnippetAuthorProps {
 	codevaultSlug: string

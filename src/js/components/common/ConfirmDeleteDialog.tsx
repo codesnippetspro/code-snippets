@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
-import { ConfirmDialog } from '../ConfirmDialog'
-import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
-import type { Snippet } from '../../../types/Snippet'
+import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
+import { ConfirmDialog } from './ConfirmDialog'
+import type { Snippet } from '../../types/Snippet'
 
 const TrashActiveConfirmMessage = () =>
 	<>

@@ -1,5 +1,5 @@
-import { useDemoTimeline } from '../../common/demo/useDemoTimeline'
-import type { DemoTimeline, DemoTimelineState } from '../../common/demo/useDemoTimeline'
+import { useDemoTimeline } from '../common/demo/useDemoTimeline'
+import type { DemoTimeline, DemoTimelineState } from '../common/demo/useDemoTimeline'
 import type { DemoStage } from './types'
 
 /**
@@ -25,8 +25,5 @@ const TIMELINE: DemoTimeline<DemoStage> = {
 	},
 	defaultDuration: 3000
 }
-
-export type CloudLibraryDemoState = DemoTimelineState<DemoStage>
-
-export const useCloudLibraryDemo = (): CloudLibraryDemoState =>
-	useDemoTimeline(TIMELINE)
+export const useCloudLibraryDemo = (): DemoTimelineState<DemoStage> =>
+	useDemoTimeline({ timeline: TIMELINE })

@@ -1,12 +1,12 @@
 import { Popover } from '@wordpress/components'
 import { __, _n, sprintf } from '@wordpress/i18n'
 import React from 'react'
-import { isCloudConnected, isLicensed, shouldShowUpsell } from '../../../utils/screen'
-import { splitHighlights } from '../../../utils/text'
-import { buildUrl } from '../../../utils/urls'
-import { Badge } from '../Badge'
-import type { SearchCodeExcerpt, SearchItem, SearchItemType, SearchSource } from '../../../types/Search'
-import type { SnippetType } from '../../../types/Snippet'
+import { isCloudConnected, isLicensed, shouldShowUpsell } from '../../../../utils/screen'
+import { splitHighlights } from '../../../../utils/text'
+import { buildUrl } from '../../../../utils/urls'
+import { Badge } from '../../../common/Badge'
+import type { SearchCodeExcerpt, SearchItem, SearchItemType, SearchSource } from '../../../../types/Search'
+import type { SnippetType } from '../../../../types/Snippet'
 
 export const SEARCH_SOURCE_LABELS: Record<SearchSource, string> = {
 	snippets: __('Snippets', 'code-snippets'),

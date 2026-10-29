@@ -1,6 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { Button } from '../Button'
+import { Button } from '../../../common/Button'
 
 export interface DemoPageHeaderProps {
 	title: string

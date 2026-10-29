@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
-import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
-import { DemoSpotlight } from '../../common/demo/DemoSpotlight'
-import { DemoCallout } from '../../common/demo/DemoCallout'
-import { DemoUpsell } from '../../common/demo/DemoUpsell'
-import { useMarkDemoSeen } from '../../common/demo/useDemoSeen'
+import { DemoPageHeader } from '../common/demo/DemoPageHeader'
+import { DemoSpotlight } from '../common/demo/DemoSpotlight'
+import { DemoCallout } from '../common/demo/DemoCallout'
+import { DemoUpsell } from '../common/demo/DemoUpsell'
+import { useMarkDemoSeen } from '../common/demo/useDemoSeen'
 import { BlueprintFormPanel } from './BlueprintFormPanel'
 import { BlueprintSidebar } from './BlueprintSidebar'
 import { GeneratedNotice } from './GeneratedNotice'
@@ -14,6 +14,7 @@ import { getCallout } from './callouts'
 import { BLUEPRINT_DESCRIPTION, BLUEPRINT_TITLE, getSection } from './demoBlueprint'
 import { useBlueprintsDemo } from './useBlueprintsDemo'
 import { hasReached } from './types'
+import type { RefObject} from 'react'
 import type { DemoStage } from './types'
 
 /**
@@ -45,24 +46,67 @@ const BlueprintHeader: React.FC = () =>
 		</div>
 	</header>
 
-// eslint-disable-next-line max-lines-per-function -- the page reads as one sequence.
+interface BlueprintsDemoContentProps {
+	stage: DemoStage
+	onClose: VoidFunction
+	onReplay: VoidFunction
+	isFinished: boolean
+	activeSection: string
+	sectionsBrowsable: boolean
+	selectSection: (section: string) => void
+	isFading: boolean
+	generatedRef: RefObject<HTMLDivElement>
+}
+
+const BlueprintsDemoContent = ({
+	stage,
+	onClose,
+	isFinished,
+	onReplay,
+	generatedRef,
+	activeSection,
+	sectionsBrowsable,
+	selectSection,
+	isFading
+}: BlueprintsDemoContentProps) =>
+	<div className="blueprints-demo">
+		<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
+
+		<DemoCallout callout={getCallout(stage)} onClose={onClose} />
+
+		<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
+
+		<div className="blueprint-detail">
+			<BlueprintHeader />
+
+			<div className="blueprint-form-layout">
+				<BlueprintSidebar
+					activeSection={activeSection}
+					browsable={sectionsBrowsable}
+					generating={'generating' === stage}
+					onSelect={selectSection}
+				/>
+
+				<BlueprintFormPanel section={getSection(activeSection)} isFading={isFading} />
+			</div>
+		</div>
+
+		{hasReached(stage, 'generated') && <GeneratedNotice ref={generatedRef} />}
+
+		{isFinished && (
+			<DemoUpsell
+				title={__('That was a demo: Blueprints build the code for you', 'code-snippets')}
+				onReplay={onReplay}
+			>
+				<p>{__('The whole walkthrough was scripted and ran inside this plugin. No code was generated and nothing was saved.', 'code-snippets')}</p>
+				<p>{__('Code Snippets Pro ships blueprints for shortcodes, post types, taxonomies, settings pages, and more. Fill in the form and it writes the snippet for you.', 'code-snippets')}</p>
+			</DemoUpsell>)}
+	</div>
+
 const BlueprintsDemoPage: React.FC = () => {
-	const {
-		stage,
-		activeSection,
-		isFading,
-		sectionsBrowsable,
-		hasStarted,
-		isFinished,
-		reducedMotion,
-		selectSection,
-		play,
-		skip,
-		replay
-	} = useBlueprintsDemo()
+	const { stage, hasStarted, isFinished, reducedMotion, play, skip, replay, ...contentProps } = useBlueprintsDemo()
 
 	const generatedRef = useRef<HTMLDivElement>(null)
-	const showGenerated = hasReached(stage, 'generated')
 	const markSeen = useMarkDemoSeen('blueprints')
 
 	useEffect(() => {
@@ -99,38 +143,14 @@ const BlueprintsDemoPage: React.FC = () => {
 				onReplay={replay}
 			/>
 
-			<div className="blueprints-demo">
-				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
-
-				<DemoCallout callout={getCallout(stage)} onClose={skip} />
-
-				<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
-
-				<div className="blueprint-detail">
-					<BlueprintHeader />
-
-					<div className="blueprint-form-layout">
-						<BlueprintSidebar
-							activeSection={activeSection}
-							browsable={sectionsBrowsable}
-							generating={'generating' === stage}
-							onSelect={selectSection}
-						/>
-
-						<BlueprintFormPanel section={getSection(activeSection)} isFading={isFading} />
-					</div>
-				</div>
-
-				{showGenerated && <GeneratedNotice ref={generatedRef} />}
-
-				{isFinished && <DemoUpsell
-					title={__('That was a demo: Blueprints build the code for you', 'code-snippets')}
-					onReplay={replay}
-				>
-					<p>{__('The whole walkthrough was scripted and ran inside this plugin. No code was generated and nothing was saved.', 'code-snippets')}</p>
-					<p>{__('Code Snippets Pro ships blueprints for shortcodes, post types, taxonomies, settings pages, and more. Fill in the form and it writes the snippet for you.', 'code-snippets')}</p>
-				</DemoUpsell>}
-			</div>
+			<BlueprintsDemoContent
+				stage={stage}
+				onClose={skip}
+				onReplay={replay}
+				isFinished={isFinished}
+				generatedRef={generatedRef}
+				{...contentProps}
+			/>
 		</>
 	)
 }

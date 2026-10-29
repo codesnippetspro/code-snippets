@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
-import { Highlight, SearchCodePreview, SearchItemBadge, getSearchItemUrl, opensInNewTab } from '../../common/UniversalSearch/SearchResultParts'
+import { Highlight, SearchCodePreview, SearchItemBadge, getSearchItemUrl, opensInNewTab } from '../common/UniversalSearch/SearchResultParts'
 import { SearchResultActions, SnippetActivationSwitch } from './SearchResultActions'
 import type { SearchCodeExcerpt, SearchField, SearchItem } from '../../../types/Search'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { Button } from '../Button'
+import { Button } from '../../../common/Button'
 import type { ReactNode } from 'react'
 
 const PRICING_URL = 'https://codesnippets.pro/pricing/'

@@ -3,15 +3,16 @@ import { __ } from '@wordpress/i18n'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { ListTable } from '../../common/ListTable'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
-import { DemoCallout } from '../../common/demo/DemoCallout'
-import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
-import { DemoSpotlight } from '../../common/demo/DemoSpotlight'
-import { DemoUpsell } from '../../common/demo/DemoUpsell'
-import { PreviewModal } from '../../common/snippets/SnippetPreviewModal'
+import { DemoCallout } from '../common/demo/DemoCallout'
+import { DemoPageHeader } from '../common/demo/DemoPageHeader'
+import { DemoSpotlight } from '../common/demo/DemoSpotlight'
+import { DemoUpsell } from '../common/demo/DemoUpsell'
+import { PreviewModal } from '../common/snippets/SnippetPreviewModal'
 import { cloudLibraryDemoColumns } from './cloudLibraryDemoColumns'
 import { getCallout } from './callouts'
 import { FEATURED_SNIPPET_ID, getDemoCloudSnippets } from './demoCloudSnippets'
 import { useCloudLibraryDemo } from './useCloudLibraryDemo'
+import type { RefObject} from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { DemoStage } from './types'
 
@@ -33,10 +34,64 @@ const STAGE_ANNOUNCEMENTS: Partial<Record<DemoStage, string>> = {
 	finished: __('Demo complete.', 'code-snippets')
 }
 
-// eslint-disable-next-line max-lines-per-function -- the page reads as one sequence.
+interface DemoContentProps {
+	stage: DemoStage
+	onClose: VoidFunction
+	onReplay: VoidFunction
+	preview: CloudSnippetSchema | undefined
+	setPreview: (snippet: CloudSnippetSchema | undefined) => void
+	snippets: CloudSnippetSchema[]
+	upsellRef: RefObject<HTMLDivElement>
+	isFinished: boolean
+}
+
+const DemoContent = ({ stage, snippets, preview, setPreview, onClose, upsellRef, isFinished, onReplay }: DemoContentProps) => {
+	return (
+		<div className="cloud-library-demo">
+			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
+
+			<DemoCallout callout={getCallout(stage)} onClose={onClose} />
+
+			<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
+
+			<div className="cloud-library-snippets snippets-list-view">
+				<ListTable
+					fixed
+					striped
+					items={snippets}
+					columns={cloudLibraryDemoColumns({ stage, onPreview: setPreview })}
+					getKey={snippet => snippet.id}
+					rowClassName={snippet => FEATURED_SNIPPET_ID === snippet.id ? 'demo-featured-row' : ''}
+				/>
+			</div>
+
+			{isFinished && (
+				<div ref={upsellRef} className="cloud-library-demo__closing">
+					<DemoUpsell
+						title={__('That was a demo: your cloud travels with you', 'code-snippets')}
+						onReplay={onReplay}
+					>
+						<p>{__('The whole walkthrough was scripted and ran inside this plugin. These snippets are examples, and nothing was downloaded or saved.', 'code-snippets')}</p>
+						<p>{__('With Code Snippets Pro your Cloud Library is available on every site you connect, so a snippet written once can be reused everywhere and kept in sync.', 'code-snippets')}</p>
+					</DemoUpsell>
+				</div>)}
+
+			{preview && (
+				<PreviewModal
+					title={preview.name}
+					code={preview.code}
+					type={getSnippetType(preview)}
+					onRequestClose={() => setPreview(undefined)}
+				/>)}
+		</div>
+
+	)
+}
+
 export const CloudLibraryDemo: React.FC = () => {
 	const { stage, hasStarted, isFinished, reducedMotion, play, skip, replay } = useCloudLibraryDemo()
 
+	const upsellRef = useRef<HTMLDivElement>(null)
 	const snippets = useMemo(getDemoCloudSnippets, [])
 	const [preview, setPreview] = useState<CloudSnippetSchema>()
 
@@ -47,8 +102,6 @@ export const CloudLibraryDemo: React.FC = () => {
 	useEffect(() => {
 		setPreview('preview' === stage ? featured : undefined)
 	}, [featured, stage])
-
-	const upsellRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		if (isFinished) {
@@ -73,41 +126,16 @@ export const CloudLibraryDemo: React.FC = () => {
 				onReplay={replay}
 			/>
 
-			<div className="cloud-library-demo">
-				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
-
-				<DemoCallout callout={getCallout(stage)} onClose={skip} />
-
-				<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
-
-				<div className="cloud-library-snippets snippets-list-view">
-					<ListTable
-						fixed
-						striped
-						items={snippets}
-						columns={cloudLibraryDemoColumns({ stage, onPreview: setPreview })}
-						getKey={snippet => snippet.id}
-						rowClassName={snippet => FEATURED_SNIPPET_ID === snippet.id ? 'demo-featured-row' : ''}
-					/>
-				</div>
-
-				{isFinished && <div ref={upsellRef} className="cloud-library-demo__closing">
-					<DemoUpsell
-						title={__('That was a demo: your cloud travels with you', 'code-snippets')}
-						onReplay={replay}
-					>
-						<p>{__('The whole walkthrough was scripted and ran inside this plugin. These snippets are examples, and nothing was downloaded or saved.', 'code-snippets')}</p>
-						<p>{__('With Code Snippets Pro your Cloud Library is available on every site you connect, so a snippet written once can be reused everywhere and kept in sync.', 'code-snippets')}</p>
-					</DemoUpsell>
-				</div>}
-
-				{preview && <PreviewModal
-					title={preview.name}
-					code={preview.code}
-					type={getSnippetType(preview)}
-					onRequestClose={() => setPreview(undefined)}
-				/>}
-			</div>
+			<DemoContent
+				stage={stage}
+				snippets={snippets}
+				preview={preview}
+				onClose={skip}
+				onReplay={replay}
+				upsellRef={upsellRef}
+				setPreview={setPreview}
+				isFinished={isFinished}
+			/>
 		</>
 	)
 }

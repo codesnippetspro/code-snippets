@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { Spinner } from '@wordpress/components'
-import { useRestAPI } from '../../../hooks/useRestAPI'
-import { REST_BASES } from '../../../utils/restAPI'
-import { getSnippetEditUrl, isProSnippet } from '../../../utils/snippets/snippets'
-import { isLicensed } from '../../../utils/screen'
-import { Button } from '../Button'
-import { ErrorTooltip } from '../Tooltip'
-import { UpsellDialog } from '../UpsellDialog'
+import { useRestAPI } from '../../../../hooks/useRestAPI'
+import { REST_BASES } from '../../../../utils/restAPI'
+import { getSnippetEditUrl, isProSnippet } from '../../../../utils/snippets/snippets'
+import { isLicensed } from '../../../../utils/screen'
+import { Button } from '../../../common/Button'
+import { ErrorTooltip } from '../../../common/Tooltip'
+import { UpsellDialog } from '../../../common/UpsellDialog'
 import { useCloudSnippetDownloads } from './WithCloudSnippetDownloadsContext'
-import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
+import type { CloudSnippetSchema } from '../../../../types/schema/CloudSnippetSchema'
 
 export interface DownloadSnippetResponse {
 	success: boolean

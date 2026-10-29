@@ -1,7 +1,7 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
-import { Button } from '../Button'
+import { Button } from '../../../common/Button'
 
 export interface CalloutContent {
 	step: string

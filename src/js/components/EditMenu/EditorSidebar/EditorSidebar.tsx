@@ -1,7 +1,7 @@
 import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
-import { ConfirmDeleteDialog, useDeleteSnippet } from '../../common/snippets/ConfirmDeleteDialog'
+import { ConfirmDeleteDialog, useDeleteSnippet } from '../../common/ConfirmDeleteDialog'
 import { buildUrl } from '../../../utils/urls'
 import { Button } from '../../common/Button'
 import { useSnippetForm } from '../SnippetForm/WithSnippetFormContext'

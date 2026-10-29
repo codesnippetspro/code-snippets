@@ -50,7 +50,6 @@ export interface BlueprintsDemoState {
 	replay: VoidFunction
 }
 
-// eslint-disable-next-line max-lines-per-function -- the timeline driver and its teardown belong together.
 export const useBlueprintsDemo = (): BlueprintsDemoState => {
 	const reducedMotion = useMemo(prefersReducedMotion, [])
 

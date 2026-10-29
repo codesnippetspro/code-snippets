@@ -5,9 +5,9 @@ import { ScreenMetaSlot } from '../common/ScreenMetaSlot'
 import { Toolbar } from '../common/Toolbar'
 import { StatsDashboard } from './StatsDashboard'
 
-export const StatsMenu: React.FC = () => {
-	const summary = window.CODE_SNIPPETS_STATS
+const summary = window.CODE_SNIPPETS_STATS
 
+export const StatsMenu: React.FC = () => {
 	useEffect(revealLocationHash, [])
 
 	return (

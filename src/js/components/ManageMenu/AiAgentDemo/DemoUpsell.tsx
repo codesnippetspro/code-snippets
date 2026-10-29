@@ -1,6 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { DemoUpsell } from '../../common/demo/DemoUpsell'
+import { DemoUpsell } from '../common/demo/DemoUpsell'
 
 export const AiAgentDemoUpsell: React.FC<{ onReplay: VoidFunction }> = ({ onReplay }) =>
 	<DemoUpsell

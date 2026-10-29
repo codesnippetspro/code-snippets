@@ -5,19 +5,20 @@ import { Spinner } from '@wordpress/components'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { Button } from '../../common/Button'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
-import { DemoCallout } from '../../common/demo/DemoCallout'
-import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
-import { DemoSpotlight } from '../../common/demo/DemoSpotlight'
-import { DemoUpsell } from '../../common/demo/DemoUpsell'
-import { useDemoTimeline } from '../../common/demo/useDemoTimeline'
-import { useMarkDemoSeen } from '../../common/demo/useDemoSeen'
+import { DemoCallout } from '../common/demo/DemoCallout'
+import { DemoPageHeader } from '../common/demo/DemoPageHeader'
+import { DemoSpotlight } from '../common/demo/DemoSpotlight'
+import { DemoUpsell } from '../common/demo/DemoUpsell'
+import { useDemoTimeline } from '../common/demo/useDemoTimeline'
+import { useMarkDemoSeen } from '../common/demo/useDemoSeen'
 import { UnifiedSnippetsIcon } from '../../common/icons/UnifiedSnippetsIcon'
-import { PreviewModal } from '../../common/snippets/SnippetPreviewModal'
+import { PreviewModal } from '../common/snippets/SnippetPreviewModal'
 import { getCallout } from './callouts'
 import { DemoFoundItemsTable } from './DemoFoundItemsTable'
 import { getDemoFoundItems } from './demoFoundItems'
 import { hasReached, isImportable, previewTypeFor } from './types'
-import type { DemoTimeline } from '../../common/demo/useDemoTimeline'
+import type { RefObject} from 'react'
+import type { DemoTimeline } from '../common/demo/useDemoTimeline'
 import type { DemoCodeType, DemoFoundItem, DemoStage } from './types'
 
 const TIMELINE: DemoTimeline<DemoStage> = {
@@ -184,12 +185,56 @@ const Results: React.FC<ResultsProps> = ({ items, stage, onPreview }) =>
 		<DemoFoundItemsTable items={items} stage={stage} onPreview={onPreview} />
 	</div>
 
-// eslint-disable-next-line max-lines-per-function -- the page reads as one sequence.
+interface DemoContentProps {
+	stage: DemoStage
+	items: DemoFoundItem[]
+	onClose: VoidFunction
+	onReplay: VoidFunction
+	upsellRef: RefObject<HTMLDivElement>
+	isFinished: boolean
+}
+
+const DemoContent: React.FC<DemoContentProps> = ({ stage, items, onClose, onReplay, isFinished, upsellRef }) => {
+	const [preview, setPreview] = useState<DemoFoundItem>()
+
+	return (
+		<section className="unified-snippets unified-snippets-demo" aria-label={__('Unified Snippets demo', 'code-snippets')}>
+			<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
+
+			<DemoCallout callout={getCallout(stage)} onClose={onClose} />
+
+			<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
+
+			{hasReached(stage, 'results')
+				? <Results items={items} stage={stage} onPreview={setPreview} />
+				: <WelcomeCard stage={stage} />}
+
+			{isFinished && (
+				<div ref={upsellRef} className="unified-snippets-demo__closing">
+					<DemoUpsell
+						title={__('That was a demo: the real scan reads your site', 'code-snippets')}
+						onReplay={onReplay}
+					>
+						<p>{__('The whole walkthrough was scripted and ran inside this plugin. These finds are examples: your site was not scanned and nothing was imported.', 'code-snippets')}</p>
+						<p>{__('In Code Snippets Pro, Unified Snippets scans your own themes, Customizer, plugins, page content and page builders, then imports what you choose as inactive snippets, so you can manage all of your custom code in one place.', 'code-snippets')}</p>
+					</DemoUpsell>
+				</div>)}
+
+			{preview && (
+				<PreviewModal
+					title={preview.name}
+					code={preview.code}
+					type={previewTypeFor(preview.type)}
+					onRequestClose={() => setPreview(undefined)}
+				/>)}
+		</section>
+	)
+}
+
 const UnifiedSnippetsDemoPage: React.FC = () => {
 	const { stage, hasStarted, isFinished, reducedMotion, play, skip, replay } = useDemoTimeline(TIMELINE)
 
 	const items = useMemo(getDemoFoundItems, [])
-	const [preview, setPreview] = useState<DemoFoundItem>()
 
 	const markSeen = useMarkDemoSeen('unified-snippets')
 	const upsellRef = useRef<HTMLDivElement>(null)
@@ -221,34 +266,14 @@ const UnifiedSnippetsDemoPage: React.FC = () => {
 				onReplay={replay}
 			/>
 
-			<section className="unified-snippets unified-snippets-demo" aria-label={__('Unified Snippets demo', 'code-snippets')}>
-				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
-
-				<DemoCallout callout={getCallout(stage)} onClose={skip} />
-
-				<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
-
-				{hasReached(stage, 'results')
-					? <Results items={items} stage={stage} onPreview={setPreview} />
-					: <WelcomeCard stage={stage} />}
-
-				{isFinished && <div ref={upsellRef} className="unified-snippets-demo__closing">
-					<DemoUpsell
-						title={__('That was a demo: the real scan reads your site', 'code-snippets')}
-						onReplay={replay}
-					>
-						<p>{__('The whole walkthrough was scripted and ran inside this plugin. These finds are examples: your site was not scanned and nothing was imported.', 'code-snippets')}</p>
-						<p>{__('In Code Snippets Pro, Unified Snippets scans your own themes, Customizer, plugins, page content and page builders, then imports what you choose as inactive snippets, so you can manage all of your custom code in one place.', 'code-snippets')}</p>
-					</DemoUpsell>
-				</div>}
-
-				{preview && <PreviewModal
-					title={preview.name}
-					code={preview.code}
-					type={previewTypeFor(preview.type)}
-					onRequestClose={() => setPreview(undefined)}
-				/>}
-			</section>
+			<DemoContent
+				stage={stage}
+				items={items}
+				onClose={skip}
+				onReplay={replay}
+				upsellRef={upsellRef}
+				isFinished={isFinished}
+			/>
 		</>
 	)
 }

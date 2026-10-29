@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useDemoTimeline } from '../../common/demo/useDemoTimeline'
+import { useDemoTimeline } from '../common/demo/useDemoTimeline'
 import { hasReached } from './types'
-import type { DemoTimeline, DemoTimelineState } from '../../common/demo/useDemoTimeline'
+import type { DemoTimeline, DemoTimelineState } from '../common/demo/useDemoTimeline'
 import type { DemoStage } from './types'
 
 /** The color the page loads with, before the draft is edited. */

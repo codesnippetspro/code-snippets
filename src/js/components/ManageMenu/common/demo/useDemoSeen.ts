@@ -1,8 +1,8 @@
 import { useCallback, useRef } from 'react'
-import { useRestAPI } from '../../../hooks/useRestAPI'
-import { handleUnknownError } from '../../../utils/errors'
-import { REST_BASES } from '../../../utils/restAPI'
-import type { SubpageName } from '../../ManageMenu/subpages'
+import { useRestAPI } from '../../../../hooks/useRestAPI'
+import { handleUnknownError } from '../../../../utils/errors'
+import { REST_BASES } from '../../../../utils/restAPI'
+import type { SubpageName } from '../../subpages'
 
 export type DemoName = 'ai-agent' | 'blueprints' | 'unified-snippets'
 

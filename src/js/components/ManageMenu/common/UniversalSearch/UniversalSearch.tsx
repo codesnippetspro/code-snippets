@@ -1,13 +1,13 @@
 import { __, _n, sprintf } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useEffect, useId, useRef, useState } from 'react'
-import { WithRestAPIContext } from '../../../hooks/useRestAPI'
-import { isLocalSearchSource, useUniversalSearch } from '../../../hooks/useUniversalSearch'
-import { REST_BASES } from '../../../utils/restAPI'
-import { fetchQueryParam } from '../../../utils/urls'
-import { Badge } from '../Badge'
+import { WithRestAPIContext } from '../../../../hooks/useRestAPI'
+import { isLocalSearchSource, useUniversalSearch } from '../../../../hooks/useUniversalSearch'
+import { REST_BASES } from '../../../../utils/restAPI'
+import { fetchQueryParam } from '../../../../utils/urls'
+import { Badge } from '../../../common/Badge'
 import { AI_SEARCH_TAB, CloudSearchNotice, Highlight, SEARCH_LOADING_LABELS, SEARCH_SOURCE_LABELS, SearchCodePreview, SearchItemBadge, formatResultCount, getSearchItemUrl, getSearchPageUrl, opensInNewTab } from './SearchResultParts'
-import type { SearchGroup, SearchItem, SearchSource } from '../../../types/Search'
+import type { SearchGroup, SearchItem, SearchSource } from '../../../../types/Search'
 
 type SearchScope = 'all' | SearchSource
 

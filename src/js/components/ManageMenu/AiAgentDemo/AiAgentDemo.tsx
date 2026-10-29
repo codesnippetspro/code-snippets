@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
-import { DemoCallout } from '../../common/demo/DemoCallout'
-import { DemoPageHeader } from '../../common/demo/DemoPageHeader'
-import { DemoSpotlight } from '../../common/demo/DemoSpotlight'
-import { useMarkDemoSeen } from '../../common/demo/useDemoSeen'
+import { DemoCallout } from '../common/demo/DemoCallout'
+import { DemoPageHeader } from '../common/demo/DemoPageHeader'
+import { DemoSpotlight } from '../common/demo/DemoSpotlight'
+import { useMarkDemoSeen } from '../common/demo/useDemoSeen'
 import { getCallout } from './callouts'
 import { DemoPlanCard } from './DemoPlanCard'
 import { DemoPromptBox } from './DemoPromptBox'
@@ -16,7 +16,8 @@ import { AiAgentDemoUpsell } from './DemoUpsell'
 import { DEMO_EXAMPLES, DEMO_PROMPT, DEMO_REFINEMENT_REPLY } from './demoScript'
 import { useAiAgentDemo } from './useAiAgentDemo'
 import { hasReached } from './types'
-import type { DemoStage } from './types'
+import type { DemoSnippet, DemoStage } from './types'
+import type { RefObject } from 'react'
 
 /**
  * Only the steps that point at one particular thing are spotlit. Typing,
@@ -48,20 +49,114 @@ const STAGE_ANNOUNCEMENTS: Partial<Record<DemoStage, string>> = {
 	'finished': __('Demo complete.', 'code-snippets')
 }
 
-// eslint-disable-next-line max-lines-per-function -- the timeline reads as one sequence.
+interface AgentThreadProps {
+	stage: DemoStage
+	snippets: DemoSnippet[]
+	typedRefinement: string
+}
+
+const AgentThread = ({ stage, snippets, typedRefinement }: AgentThreadProps) =>
+	<div className="ai-agent-thread">
+		{hasReached(stage, 'prompt-sent') && <DemoMessage speaker="user">{DEMO_PROMPT}</DemoMessage>}
+
+		{'planning' === stage && (
+			<>
+				<DemoTransit label={__('Sending your prompt to Code Snippets Cloud.', 'code-snippets')} />
+				<DemoTyping label={__('Planning your snippets…', 'code-snippets')} />
+			</>)}
+
+		{hasReached(stage, 'plan-ready') && !hasReached(stage, 'building') && (
+			<DemoPlanCard accepted={'plan-accepted' === stage} />)}
+
+		{'building' === stage && (
+			<>
+				<DemoTransit label={__('Building the snippets in Code Snippets Cloud.', 'code-snippets')} />
+				<DemoTyping label={__('Building the code…', 'code-snippets')} />
+			</>)}
+
+		{hasReached(stage, 'result-ready') && (
+			<DemoResultCard
+				stage={stage}
+				snippets={snippets}
+				typedRefinement={typedRefinement}
+			/>)}
+
+		{'applying' === stage && <DemoTyping label={__('Applying your changes…', 'code-snippets')} />}
+
+		{hasReached(stage, 'saved') && <DemoMessage speaker="assistant">{DEMO_REFINEMENT_REPLY}</DemoMessage>}
+	</div>
+
+interface DemoContentProps extends AgentThreadProps {
+	stage: DemoStage
+	typedPrompt: string
+	promptSent: boolean
+	upsellRef: RefObject<HTMLDivElement>
+	onReplay: VoidFunction
+	onCancel: VoidFunction
+	isFinished: boolean
+}
+
+const DemoContent = ({
+	stage,
+	typedPrompt,
+	promptSent,
+	upsellRef,
+	onReplay,
+	onCancel,
+	isFinished,
+	...threadProps
+}: DemoContentProps) =>
+	<section className="ai-agent ai-agent-demo" aria-label={__('AI Agent demo', 'code-snippets')}>
+		<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
+
+		<DemoCallout callout={getCallout(stage)} onClose={onCancel} />
+
+		<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
+
+		<div className="ai-agent-layout">
+			<div className="ai-agent-layout__main">
+				{!promptSent && (
+					<div className="ai-agent-empty">
+						<p className="ai-agent-empty__eyebrow">{__('Start with these prompts', 'code-snippets')}</p>
+
+						<div className="ai-agent-empty__chips">
+							{DEMO_EXAMPLES.map(example =>
+								<button key={example} type="button" className="ai-agent-empty__chip" disabled>
+									{example}
+								</button>)}
+						</div>
+					</div>)}
+
+				<AgentThread {...threadProps} stage={stage} />
+
+				<DemoPromptBox
+					value={hasReached(stage, 'planning') ? '' : typedPrompt}
+					typing={'typing-prompt' === stage}
+					pressed={'prompt-sent' === stage}
+					disabled={promptSent}
+					submitLabel={__('Send', 'code-snippets')}
+					placeholder={__('Describe what you want to build…', 'code-snippets')}
+				/>
+			</div>
+
+			<div className="ai-agent-layout__sidebar">
+				<DemoSidebar stage={stage} />
+			</div>
+		</div>
+
+		{isFinished && (
+			<div
+				ref={upsellRef}
+				className="ai-agent-demo__closing"
+				role="region"
+				aria-label={__('AI Agent demo complete', 'code-snippets')}
+			>
+				<AiAgentDemoUpsell onReplay={onReplay} />
+			</div>)}
+	</section>
+
 const AiAgentDemoPage: React.FC = () => {
-	const {
-		stage,
-		typedPrompt,
-		typedRefinement,
-		snippets,
-		hasStarted,
-		isFinished,
-		reducedMotion,
-		play,
-		skip,
-		replay
-	} = useAiAgentDemo()
+	const { stage, typedPrompt, typedRefinement, snippets, hasStarted, isFinished, reducedMotion, play, skip, replay } = useAiAgentDemo()
 
 	const markSeen = useMarkDemoSeen('ai-agent')
 	const upsellRef = useRef<HTMLDivElement>(null)
@@ -81,8 +176,6 @@ const AiAgentDemoPage: React.FC = () => {
 		})
 	}, [isFinished, markSeen, reducedMotion])
 
-	const promptSent = hasReached(stage, 'prompt-sent')
-
 	return (
 		<>
 			<ScreenMetaSlot />
@@ -97,77 +190,17 @@ const AiAgentDemoPage: React.FC = () => {
 				onReplay={replay}
 			/>
 
-			<section className="ai-agent ai-agent-demo" aria-label={__('AI Agent demo', 'code-snippets')}>
-				<div className="screen-reader-text" aria-live="polite">{STAGE_ANNOUNCEMENTS[stage]}</div>
-
-				<DemoCallout callout={getCallout(stage)} onClose={skip} />
-
-				<DemoSpotlight {...STAGE_SPOTLIGHTS[stage]} />
-
-				<div className="ai-agent-layout">
-					<div className="ai-agent-layout__main">
-						{!promptSent && <div className="ai-agent-empty">
-							<p className="ai-agent-empty__eyebrow">{__('Start with these prompts', 'code-snippets')}</p>
-
-							<div className="ai-agent-empty__chips">
-								{DEMO_EXAMPLES.map(example =>
-									<button key={example} type="button" className="ai-agent-empty__chip" disabled>
-										{example}
-									</button>)}
-							</div>
-						</div>}
-
-						<div className="ai-agent-thread">
-							{hasReached(stage, 'prompt-sent') && <DemoMessage speaker="user">{DEMO_PROMPT}</DemoMessage>}
-
-							{'planning' === stage && <>
-								<DemoTransit label={__('Sending your prompt to Code Snippets Cloud.', 'code-snippets')} />
-								<DemoTyping label={__('Planning your snippets…', 'code-snippets')} />
-							</>}
-
-							{hasReached(stage, 'plan-ready') && !hasReached(stage, 'building') &&
-							<DemoPlanCard accepted={'plan-accepted' === stage} />}
-
-							{'building' === stage && <>
-								<DemoTransit label={__('Building the snippets in Code Snippets Cloud.', 'code-snippets')} />
-								<DemoTyping label={__('Building the code…', 'code-snippets')} />
-							</>}
-
-							{hasReached(stage, 'result-ready') && <DemoResultCard
-								stage={stage}
-								snippets={snippets}
-								typedRefinement={typedRefinement}
-							/>}
-
-							{'applying' === stage && <DemoTyping label={__('Applying your changes…', 'code-snippets')} />}
-
-							{hasReached(stage, 'saved') && <DemoMessage speaker="assistant">{DEMO_REFINEMENT_REPLY}</DemoMessage>}
-						</div>
-
-						<DemoPromptBox
-							value={hasReached(stage, 'planning') ? '' : typedPrompt}
-							typing={'typing-prompt' === stage}
-							pressed={'prompt-sent' === stage}
-							disabled={promptSent}
-							submitLabel={__('Send', 'code-snippets')}
-							placeholder={__('Describe what you want to build…', 'code-snippets')}
-						/>
-					</div>
-
-					<div className="ai-agent-layout__sidebar">
-						<DemoSidebar stage={stage} />
-					</div>
-				</div>
-
-				{isFinished && <div
-					ref={upsellRef}
-					className="ai-agent-demo__closing"
-					role="region"
-					aria-label={__('AI Agent demo complete', 'code-snippets')}
-				>
-					<AiAgentDemoUpsell onReplay={replay} />
-				</div>}
-			</section>
+			<DemoContent
+				stage={stage}
+				typedPrompt={typedPrompt}
+				typedRefinement={typedRefinement}
+				snippets={snippets}
+				promptSent={hasReached(stage, 'prompt-sent')}
+				upsellRef={upsellRef}
+				onReplay={replay}
+				onCancel={skip}
+				isFinished={isFinished}
+			/>
 		</>
 	)
 }

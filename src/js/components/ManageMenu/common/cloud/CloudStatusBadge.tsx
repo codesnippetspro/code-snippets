@@ -1,6 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
+import { CloudStatus } from '../../../../types/schema/CloudSnippetSchema'
 
 export const getCloudStatusLabel = (status: CloudStatus) => {
 	switch (status) {

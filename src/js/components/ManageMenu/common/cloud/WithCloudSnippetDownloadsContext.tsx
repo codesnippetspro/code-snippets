@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
-import { createContextHook } from '../../../utils/bootstrap'
+import { createContextHook } from '../../../../utils/bootstrap'
 import type { PropsWithChildren } from 'react'
-import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
+import type { CloudSnippetSchema } from '../../../../types/schema/CloudSnippetSchema'
 
 export interface CloudSnippetDownloadRecord {
 	isDownloading: boolean
