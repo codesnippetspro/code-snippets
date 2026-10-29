@@ -6,9 +6,6 @@ export interface FeedbackSuccessProps {
 	result: FeedbackReportResponse
 }
 
-/** Only a tracker link the plugin published is worth offering as one. */
-const isTrackerUrl = (url: string): boolean => url.startsWith('https://github.com/')
-
 export const FeedbackSuccess: React.FC<FeedbackSuccessProps> = ({ result }) =>
 	<div className="code-snippets-feedback-success">
 		<h3>{__('Report sent', 'code-snippets')}</h3>
@@ -18,7 +15,7 @@ export const FeedbackSuccess: React.FC<FeedbackSuccessProps> = ({ result }) =>
 				? sprintf(__('Reference %s.', 'code-snippets'), result.reference)
 				: __('The team will pick it up from here.', 'code-snippets')}
 			{' '}
-			{result.url && isTrackerUrl(result.url) &&
+			{result.url.startsWith('https://github.com/') &&
 				<a href={result.url} target="_blank" rel="noopener noreferrer">
 					{__('Track it on GitHub', 'code-snippets')}
 				</a>}

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import type { RefObject} from 'react'
 
-interface HorizontalScrollOverflow {
+export interface HorizontalScrollOverflow {
 	atStart: boolean
 	atEnd: boolean
-	scrollRef: React.RefObject<HTMLElement>
+	scrollRef: RefObject<HTMLElement>
 }
 
 const EDGE_TOLERANCE = 1

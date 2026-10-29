@@ -10,7 +10,7 @@ import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../
 import { getRunOnceNonce } from '../../../utils/restAPI'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
-import { SnippetPriorityInput } from '../common/snippets/SnippetPriorityInput'
+import { SnippetPriorityInput } from '../common/SnippetPriorityInput'
 import { Tooltip } from '../../common/Tooltip'
 import { RowActions } from './RowActions'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'

@@ -1,11 +1,11 @@
-import { AiAgentDemo } from './AiAgentDemo/AiAgentDemo'
-import { BlueprintsDemo } from './BlueprintsDemo/BlueprintsDemo'
-import { CloudLibraryDemo } from './CloudLibraryDemo/CloudLibraryDemo'
-import { CommunityCloud } from './CommunityCloud/CommunityCloud'
-import { PreviewDemo } from './PreviewDemo/PreviewDemo'
-import { SearchResults } from './SearchResults/SearchResults'
+import { AiAgentDemo } from './demo/AiAgentDemo/AiAgentDemo'
+import { BlueprintsDemo } from './demo/BlueprintsDemo/BlueprintsDemo'
+import { CloudLibraryDemo } from './demo/CloudLibraryDemo/CloudLibraryDemo'
+import { CommunityCloud } from './cloud/CommunityCloud/CommunityCloud'
+import { PreviewDemo } from './demo/PreviewDemo/PreviewDemo'
+import { SearchResults } from './search/SearchResults/SearchResults'
 import { SnippetsTable } from './SnippetsTable'
-import { UnifiedSnippetsDemo } from './UnifiedSnippetsDemo/UnifiedSnippetsDemo'
+import { UnifiedSnippetsDemo } from './demo/UnifiedSnippetsDemo/UnifiedSnippetsDemo'
 import type React from 'react'
 
 export const SUBPAGES = [

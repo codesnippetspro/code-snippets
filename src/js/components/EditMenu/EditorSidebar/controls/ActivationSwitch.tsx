@@ -1,7 +1,7 @@
 import React, { useId } from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
-import { SubmitSnippetAction, useSubmitSnippet } from '../../../../hooks/useSubmitSnippet'
+import { SubmitSnippetAction, useSubmitSnippet } from '../../useSubmitSnippet'
 import { handleUnknownError } from '../../../../utils/errors'
 
 export const ActivationSwitch = () => {

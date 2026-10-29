@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Modal } from '@wordpress/components'
 import { __, sprintf } from '@wordpress/i18n'
-import { useFeedbackReport } from '../../hooks/useFeedbackReport'
+import { useFeedbackReport } from './useFeedbackReport'
 import { FeedbackForm } from './FeedbackForm'
 import { FeedbackSuccess } from './FeedbackSuccess'
 import type { FeedbackConfig } from '../../types/Feedback'

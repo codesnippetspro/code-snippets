@@ -5,7 +5,6 @@ import type tinymce from 'tinymce'
 import type { FeedbackConfig } from './Feedback'
 import type { StatsChartViews, StatsSummary } from './Stats'
 import type { Snippet } from './Snippet'
-import type { SnippetView } from './SnippetView'
 import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './vendor/WordPressCodeEditor'
 import type { WordPressEditor } from './vendor/WordPressEditor'
 
@@ -36,7 +35,7 @@ declare global {
 			safeModeRequested: boolean
 			hideUpsell: boolean
 			isCloudConnected: boolean
-			snippetView: SnippetView
+			snippetView: string
 			statsChartViews: StatsChartViews
 			demosSeen?: string[]
 			restAPI: {

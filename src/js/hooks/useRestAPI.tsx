@@ -1,14 +1,7 @@
 import React, { useMemo } from 'react'
 import axios from 'axios'
 import { createContextHook } from '../utils/bootstrap'
-import {
-	REST_API_AXIOS_CONFIG,
-	applyCacheBuster,
-	applyMethodOverride,
-	applyRestNonce,
-	applySafeMode,
-	listenForNonceRefresh
-} from '../utils/restAPI'
+import { REST_API_AXIOS_CONFIG, applyCacheBuster, applyMethodOverride, applyRestNonce, applySafeMode, listenForNonceRefresh } from '../utils/restAPI'
 import type { PropsWithChildren } from 'react'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 

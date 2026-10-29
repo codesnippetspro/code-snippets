@@ -1,5 +1,5 @@
 import type { SubnavTab } from '../components/common/SubnavTabs'
-import type { AI_SEARCH_TAB } from '../components/ManageMenu/common/UniversalSearch/SearchResultParts'
+import type { AI_SEARCH_TAB } from '../components/ManageMenu/search/UniversalSearch/SearchResultParts'
 import type { CloudSnippetSchema } from './schema/CloudSnippetSchema'
 import type { SnippetScope, SnippetType } from './Snippet'
 

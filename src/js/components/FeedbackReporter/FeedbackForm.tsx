@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n'
 import { BugDetailFields } from './BugDetailFields'
 import { ReportSummaryFields } from './ReportSummaryFields'
 import { ReporterFields } from './ReporterFields'
-import type { FeedbackReport } from '../../hooks/useFeedbackReport'
+import type { FeedbackReport } from './useFeedbackReport'
 import type { FeedbackConfig, FeedbackDraft } from '../../types/Feedback'
 
 const TYPE_OPTIONS = [
