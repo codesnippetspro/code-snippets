@@ -377,14 +377,26 @@ function process_settings_actions( array $input ): ?array {
 	}
 
 	if ( isset( $input['debug']['database_update'] ) ) {
-		code_snippets()->db->create_or_upgrade_tables();
+		if ( code_snippets()->db->create_or_upgrade_tables() ) {
+			add_settings_error(
+				OPTION_NAME,
+				'database_update_done',
+				__( 'Successfully performed database table upgrade.', 'code-snippets' ),
+				'updated'
+			);
+		} else {
+			global $wpdb;
 
-		add_settings_error(
-			OPTION_NAME,
-			'database_update_done',
-			__( 'Successfully performed database table upgrade.', 'code-snippets' ),
-			'updated'
-		);
+			add_settings_error(
+				OPTION_NAME,
+				'database_update_failed',
+				sprintf(
+					/* translators: %s: database error message */
+					__( 'The database table upgrade did not complete: %s', 'code-snippets' ),
+					$wpdb->last_error
+				)
+			);
+		}
 	}
 
 	if ( isset( $input['debug']['reset_caches'] ) ) {
