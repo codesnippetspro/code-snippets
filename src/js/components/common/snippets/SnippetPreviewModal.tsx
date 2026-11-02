@@ -129,7 +129,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 			{ codemirror: getPreviewEditorSettings(type) }
 		)
 
-		editorRef.current = instance.codemirror as EditorFromTextArea
+		editorRef.current = instance.codemirror
 
 		// CodeMirror hides the labeled source textarea and creates an unlabelled
 		// internal input. The screenReaderLabel option only exists from CodeMirror
@@ -137,14 +137,14 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 		instance.codemirror.getInputField().setAttribute('aria-label', __('Snippet code preview', 'code-snippets'))
 
 		return () => {
-			editorRef.current = undefined;
-			(instance.codemirror as EditorFromTextArea).toTextArea()
+			editorRef.current = undefined
+			instance.codemirror.toTextArea()
 		}
 	}, [type])
 
 	// The editor is created as soon as the modal opens, but a snippet opened from
 	// the list arrives without its body and is fetched, so the code can turn up
-	// afterwards. Keep the editor showing whatever the current code is.
+	// afterward. Keep the editor showing whatever the current code is.
 	useEffect(() => {
 		const editor = editorRef.current
 
