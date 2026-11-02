@@ -211,6 +211,38 @@ interface ActionButtonProps {
 	setIsWorking: (isWorking: boolean) => void
 }
 
+interface TrashButtonProps extends ActionButtonProps {
+	setIsOpen: (isOpen: boolean) => void
+}
+
+const TrashButton = ({ snippet, isWorking, setIsWorking, setIsOpen }: TrashButtonProps) => {
+	const { refreshSnippetsList } = useSnippetsList()
+
+	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
+		snippet,
+		setIsWorking,
+		onSuccess: () => {
+			setIsOpen(false)
+			return refreshSnippetsList()
+		},
+		onError: handleUnknownError
+	})
+
+	return !snippet.locked && canModifySnippet(snippet) && (
+		<>
+			<Button
+				link
+				className="code-snippets-preview-modal__trash"
+				disabled={isWorking}
+				onClick={() => void requestDelete()}
+			>
+				{__('Trash', 'code-snippets')}
+			</Button>
+
+			<ConfirmDeleteDialog {...deleteDialogProps} />
+		</>)
+}
+
 interface CloneButtonProps extends ActionButtonProps {
 	setIsOpen: (isOpen: boolean) => void
 }
@@ -297,20 +329,10 @@ const useSnippetWithCode = (snippet: Snippet): Snippet => {
 
 export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippet: listSnippet, setIsOpen, extraActions }) => {
 	const snippet = useSnippetWithCode(listSnippet)
-	const { refreshSnippetsList } = useSnippetsList()
 	const { isWorking, setIsWorking } = useWorkingState()
-
-	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
-		snippet,
-		setIsWorking,
-		onSuccess: () => {
-			setIsOpen(false)
-			return refreshSnippetsList()
-		},
-		onError: handleUnknownError
-	})
-
 	const canModify = canModifySnippet(snippet)
+
+	const actionButtonProps: ActionButtonProps = { snippet, isWorking, setIsWorking }
 
 	return (
 		<PreviewModal
@@ -327,20 +349,11 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 							: __('Edit', 'code-snippets')}
 					</a>
 
-					{canModify && <CloneButton snippet={snippet} isWorking={isWorking} setIsWorking={setIsWorking} setIsOpen={setIsOpen} />}
+					{canModify && <CloneButton {...actionButtonProps} setIsOpen={setIsOpen} />}
 
-					<ExportButton snippet={snippet} isWorking={isWorking} setIsWorking={setIsWorking} />
+					<ExportButton {...actionButtonProps} />
 					<CopyCodeButton code={snippet.code} />
-
-					{!snippet.locked && canModify && (
-						<Button
-							link
-							className="code-snippets-preview-modal__trash"
-							disabled={isWorking}
-							onClick={() => void requestDelete()}
-						>
-							{__('Trash', 'code-snippets')}
-						</Button>)}
+					<TrashButton {...actionButtonProps} setIsOpen={setIsOpen} />
 				</div>
 
 				<div className="code-snippets-preview-modal__priority">
@@ -349,7 +362,6 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 				</div>
 
 				{extraActions?.(isWorking)}
-				<ConfirmDeleteDialog {...deleteDialogProps} />
 			</div>
 		</PreviewModal>
 	)
