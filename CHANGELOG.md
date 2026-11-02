@@ -27,6 +27,9 @@
 * Fixed the version list refresh reporting success when the versions could not be fetched.
 * Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user,
   and breaking REST API URLs. Safe mode is now carried on admin links only.
+* Fixed the snippets list showing only the first 100 snippets on sites with larger libraries, with the type counts
+  agreeing with that shortened list rather than the real total. The list no longer carries snippet code, making the
+  request far smaller, and the screen now reports a problem instead of presenting a partial list as complete.
 
 ## [4.0.0] (2026-10-12)
 

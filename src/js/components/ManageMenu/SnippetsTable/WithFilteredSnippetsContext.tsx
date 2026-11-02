@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { parseSnippetObject } from '../../../utils/snippets/objects'
 import { getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
@@ -48,8 +48,16 @@ export interface FilteredSnippetsContext {
 const [Context, useFilteredSnippets] = createContextHook<FilteredSnippetsContext>('useFilteredSnippets')
 
 export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ children }) => {
-	const { snippetsList } = useSnippetsList()
+	const { snippetsList, ensureSnippetCode } = useSnippetsList()
 	const { currentType, currentTag, searchLineNumber, searchQueryText } = useSnippetsFilters()
+
+	// The list is fetched without snippet code, so ask for it the moment a search
+	// could match against it. Until it arrives, code simply matches nothing.
+	useEffect(() => {
+		if (searchQueryText?.trim()) {
+			ensureSnippetCode()
+		}
+	}, [searchQueryText, ensureSnippetCode])
 
 	const snippets = useMemo(
 		() => snippetsList ?? window.CODE_SNIPPETS_MANAGE?.snippetsList?.map(parseSnippetObject) ?? [],

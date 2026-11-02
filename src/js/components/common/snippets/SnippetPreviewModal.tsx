@@ -116,6 +116,8 @@ export interface PreviewModalProps {
 
 export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, title, type, code, children }) => {
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
+	const editorRef = useRef<EditorFromTextArea>()
+	const contents = `${'php' === type ? '<?php\n\n' : ''}${code}`
 
 	useEffect(() => {
 		if (!textareaRef.current || !window.wp.codeEditor) {
@@ -127,15 +129,29 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 			{ codemirror: getPreviewEditorSettings(type) }
 		)
 
+		editorRef.current = instance.codemirror
+
 		// CodeMirror hides the labeled source textarea and creates an unlabelled
 		// internal input. The screenReaderLabel option only exists from CodeMirror
 		// 5.59, while WordPress 5.5 ships 5.29, so label the input directly.
 		instance.codemirror.getInputField().setAttribute('aria-label', __('Snippet code preview', 'code-snippets'))
 
 		return () => {
-			(instance.codemirror as EditorFromTextArea).toTextArea()
+			editorRef.current = undefined
+			instance.codemirror.toTextArea()
 		}
 	}, [type])
+
+	// The editor is created as soon as the modal opens, but a snippet opened from
+	// the list arrives without its body and is fetched, so the code can turn up
+	// afterward. Keep the editor showing whatever the current code is.
+	useEffect(() => {
+		const editor = editorRef.current
+
+		if (editor && editor.getValue() !== contents) {
+			editor.setValue(contents)
+		}
+	}, [contents])
 
 	return (
 		<Modal
@@ -153,7 +169,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 					ref={textareaRef}
 					readOnly
 					aria-label={__('Snippet code preview', 'code-snippets')}
-					defaultValue={`${'php' === type ? '<?php\n\n' : ''}${code}`}
+					defaultValue={contents}
 				/>
 			</div>
 			{children}
@@ -195,6 +211,38 @@ interface ActionButtonProps {
 	setIsWorking: (isWorking: boolean) => void
 }
 
+interface TrashButtonProps extends ActionButtonProps {
+	setIsOpen: (isOpen: boolean) => void
+}
+
+const TrashButton = ({ snippet, isWorking, setIsWorking, setIsOpen }: TrashButtonProps) => {
+	const { refreshSnippetsList } = useSnippetsList()
+
+	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
+		snippet,
+		setIsWorking,
+		onSuccess: () => {
+			setIsOpen(false)
+			return refreshSnippetsList()
+		},
+		onError: handleUnknownError
+	})
+
+	return !snippet.locked && canModifySnippet(snippet) && (
+		<>
+			<Button
+				link
+				className="code-snippets-preview-modal__trash"
+				disabled={isWorking}
+				onClick={() => void requestDelete()}
+			>
+				{__('Trash', 'code-snippets')}
+			</Button>
+
+			<ConfirmDeleteDialog {...deleteDialogProps} />
+		</>)
+}
+
 interface CloneButtonProps extends ActionButtonProps {
 	setIsOpen: (isOpen: boolean) => void
 }
@@ -206,7 +254,8 @@ const CloneButton: React.FC<CloneButtonProps> = ({ snippet, isWorking, setIsWork
 	const handleClone = () => {
 		setIsWorking(true)
 
-		api.create(cloneSnippetObject(snippet))
+		api.ensureCode(snippet)
+			.then(full => api.create(cloneSnippetObject(full)))
 			.then(refreshSnippetsList)
 			.then(() => setIsOpen(false))
 			.catch(handleUnknownError)
@@ -249,21 +298,41 @@ export interface SnippetPreviewModalProps {
 	extraActions?: (working: boolean) => ReactNode
 }
 
-export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippet, setIsOpen, extraActions }) => {
-	const { refreshSnippetsList } = useSnippetsList()
+/**
+ * The snippets list is fetched without code, so a snippet opened from it arrives
+ * with an empty body. Fetch that one snippet so the preview has something to show.
+ */
+const useSnippetWithCode = (snippet: Snippet): Snippet => {
+	const api = useSnippetsAPI()
+	const [resolved, setResolved] = useState(snippet)
+
+	useEffect(() => {
+		let cancelled = false
+
+		api.ensureCode(snippet)
+			.then(full => {
+				if (!cancelled) {
+					setResolved(full)
+				}
+			})
+			.catch(handleUnknownError)
+
+		return () => {
+			cancelled = true
+		}
+		// Refetching whenever the api object changes identity would loop; the snippet is what matters.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [snippet])
+
+	return resolved
+}
+
+export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippet: listSnippet, setIsOpen, extraActions }) => {
+	const snippet = useSnippetWithCode(listSnippet)
 	const { isWorking, setIsWorking } = useWorkingState()
-
-	const { requestDelete, deleteDialogProps } = useDeleteSnippet({
-		snippet,
-		setIsWorking,
-		onSuccess: () => {
-			setIsOpen(false)
-			return refreshSnippetsList()
-		},
-		onError: handleUnknownError
-	})
-
 	const canModify = canModifySnippet(snippet)
+
+	const actionButtonProps: ActionButtonProps = { snippet, isWorking, setIsWorking }
 
 	return (
 		<PreviewModal
@@ -280,20 +349,11 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 							: __('Edit', 'code-snippets')}
 					</a>
 
-					{canModify && <CloneButton snippet={snippet} isWorking={isWorking} setIsWorking={setIsWorking} setIsOpen={setIsOpen} />}
+					{canModify && <CloneButton {...actionButtonProps} setIsOpen={setIsOpen} />}
 
-					<ExportButton snippet={snippet} isWorking={isWorking} setIsWorking={setIsWorking} />
+					<ExportButton {...actionButtonProps} />
 					<CopyCodeButton code={snippet.code} />
-
-					{!snippet.locked && canModify && (
-						<Button
-							link
-							className="code-snippets-preview-modal__trash"
-							disabled={isWorking}
-							onClick={() => void requestDelete()}
-						>
-							{__('Trash', 'code-snippets')}
-						</Button>)}
+					<TrashButton {...actionButtonProps} setIsOpen={setIsOpen} />
 				</div>
 
 				<div className="code-snippets-preview-modal__priority">
@@ -302,7 +362,6 @@ export const SnippetPreviewModal: React.FC<SnippetPreviewModalProps> = ({ snippe
 				</div>
 
 				{extraActions?.(isWorking)}
-				<ConfirmDeleteDialog {...deleteDialogProps} />
 			</div>
 		</PreviewModal>
 	)

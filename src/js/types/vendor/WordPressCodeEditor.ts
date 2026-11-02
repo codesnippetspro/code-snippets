@@ -1,4 +1,4 @@
-import type { Editor, EditorConfiguration } from 'codemirror'
+import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
 
 export interface EditorOption {
 	name: string
@@ -7,7 +7,7 @@ export interface EditorOption {
 }
 
 export interface CodeEditorInstance {
-	codemirror: Editor
+	codemirror: EditorFromTextArea
 	settings: CodeEditorSettings
 }
 
