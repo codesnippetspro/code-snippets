@@ -45,6 +45,23 @@ const inspect = (): LayoutReport => {
 }
 
 test.describe('Right-to-left layout', () => {
+	test('switches the code editor direction', async ({ page }) => {
+		await page.goto(URLS.ADD_SNIPPET_ADMIN)
+		await page.waitForSelector('.CodeMirror')
+		const isRtl = 'rtl' === await page.locator('html').getAttribute('dir')
+		test.skip(!isRtl, 'The RTL locale is not available on this site, so there is nothing to check.')
+
+		const direction = page.getByRole('combobox', { name: 'Code Direction' })
+		const codeMirrorDirection = () => page.locator('.CodeMirror').evaluate(editor =>
+			(<{ CodeMirror: { getOption: (option: string) => string } }><unknown>editor).CodeMirror.getOption('direction'))
+
+		await direction.selectOption('rtl')
+		await expect.poll(codeMirrorDirection).toBe('rtl')
+
+		await direction.selectOption('ltr')
+		await expect.poll(codeMirrorDirection).toBe('ltr')
+	})
+
 	for (const { name, url, ready } of SCREENS) {
 		test(`${name} mirrors without spilling off the page`, async ({ page }) => {
 			await page.setViewportSize({ width: 1360, height: 900 })

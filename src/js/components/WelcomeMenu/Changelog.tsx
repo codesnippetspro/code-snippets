@@ -55,7 +55,7 @@ const ChangelogSection: React.FC<ChangelogSectionProps> = ({ section, entries })
 	</>
 
 export const Changelog = () =>
-	<div className="code-snippets-changelog">
+	<div id="latest-changes" className="code-snippets-changelog">
 		<div className="code-snippets-header-wrapper">
 			<h2>{__('Latest changes', 'code-snippets')}</h2>
 			<a

@@ -19,7 +19,7 @@ export interface SnippetsListContext {
 	listError: string | undefined
 	refreshSnippetsList: () => Promise<void>
 	/** Ask for snippet code, which the list omits. Only searching code contents needs it. */
-	ensureSnippetCode: () => void
+	ensureSnippetCode: VoidFunction
 }
 
 const [Context, useSnippetsList] = createContextHook<SnippetsListContext>('useSnippetsList')

@@ -132,6 +132,45 @@
 		}
 	}
 
+	// Named apart from the Pro preview controls, which take this place in the sidebar there.
+	.snippet-preview-demo {
+		gap: 12px;
+
+		.snippet-preview-demo__header {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.snippet-preview-demo__heading {
+			margin: 0;
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 600;
+		}
+
+		.snippet-preview-demo__description {
+			margin: 0;
+			color: var(--cs-color-text-secondary);
+		}
+
+		.button.snippet-preview-demo__button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			inline-size: 100%;
+			min-block-size: 48px;
+			border-color: var(--cs-color-accent);
+			background: transparent;
+
+			&:hover,
+			&:focus {
+				background: var(--cs-color-surface-subtle);
+			}
+		}
+	}
+
 	.inline-form-field.row-actions {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));

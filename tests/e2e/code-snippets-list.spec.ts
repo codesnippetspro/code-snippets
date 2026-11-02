@@ -1,14 +1,17 @@
 import { readFileSync } from 'fs'
 import { expect, test } from '@playwright/test'
 import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { SELECTORS } from './helpers/constants'
+import { SELECTORS, TIMEOUTS } from './helpers/constants'
 import type { Page, Route } from '@playwright/test'
 
 // The view preference saves through an optimistic background request, so wait
 // for it to persist before navigating or ending the test.
 const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
 	const saved = page
-		.waitForResponse(response => response.url().includes('/snippet-view') && 'GET' !== response.request().method(), { timeout: 5000 })
+		.waitForResponse(
+			response => response.url().includes('/snippet-view') && 'GET' !== response.request().method(),
+			{ timeout: TIMEOUTS.SHORT }
+		)
 		.catch(() => undefined)
 	await page.getByRole('button', { name: view }).click()
 	await saved
@@ -31,8 +34,6 @@ const clickRowAction = async (row: ReturnType<typeof snippetRowByName>, selector
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
-	const EXPORT_TEST_TIMEOUT_MS = 60000
-
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
 		snippetName = SnippetsTestHelper.makeUniqueSnippetName()
@@ -97,6 +98,8 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Card view surfaces snippet insights in the card corner', async ({ page }) => {
+		test.skip(!await SnippetsTestHelper.isProLicensed(), 'Snippet insights are available with a Pro licence.')
+
 		await switchSnippetView(page, 'Card view')
 
 		try {
@@ -234,7 +237,7 @@ test.describe('Code Snippets List Page Actions', () => {
 
 			if (isCreateRequest) {
 				createRequests += 1
-				await new Promise(resolve => setTimeout(resolve, 500))
+				await new Promise(resolve => setTimeout(resolve, TIMEOUTS.VERY_SHORT))
 			}
 
 			await route.continue()
@@ -282,13 +285,13 @@ test.describe('Code Snippets List Page Actions', () => {
 		// Some implementations show a confirmation modal that must be dismissed.
 		const confirmDialog = page.locator('[role="dialog"]').filter({ hasText: /Are you sure\\?/i })
 		const dialogVisible = await confirmDialog
-			.waitFor({ state: 'visible', timeout: 2000 })
+			.waitFor({ state: 'visible', timeout: TIMEOUTS.VERY_SHORT })
 			.then(() => true)
 			.catch(() => false)
 
 		if (dialogVisible) {
 			await confirmDialog.locator('button:has-text("Trash"), button:has-text("Delete")').first().click()
-			await confirmDialog.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => undefined)
+			await confirmDialog.waitFor({ state: 'hidden', timeout: TIMEOUTS.DEFAULT }).catch(() => undefined)
 		}
 
 		await expect(page).toHaveURL(/page=snippets/)
@@ -299,16 +302,16 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(trashedLink).toBeVisible()
 		await trashedLink.click()
 
-		await expect(page).toHaveURL(/status=trashed/, { timeout: 30000 })
+		await expect(page).toHaveURL(/status=trashed/, { timeout: TIMEOUTS.DEFAULT })
 		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
 		const trashedRow = page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()
-		await expect(trashedRow).toBeVisible({ timeout: 30000 })
+		await expect(trashedRow).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 		await expect(trashedRow).toContainText(/Restore/i)
 	})
 
 	test('Can export snippet from list page', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const snippetRow = snippetRowByName(page, snippetName)
 		await expect(snippetRow).toBeVisible()
 		await snippetRow.hover()
@@ -323,7 +326,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can export multiple snippets from bulk actions', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName()
 
 		await helper.createAndActivateSnippet({
@@ -353,7 +356,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can download a single snippet from bulk actions', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		await helper.filterSnippetsByName(snippetName)
 		const snippetRow = snippetRowByName(page, snippetName)
 		await expect(snippetRow).toBeVisible()
@@ -370,7 +373,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can download multiple snippets from bulk actions as a zip archive', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Download CSS')
 
 		await SnippetsTestHelper.createSnippetViaCli({
@@ -401,7 +404,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Bulk download stays scoped to the current page selection', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const bulkScopeBaseName = 'E2E Bulk Scope'
 		const firstScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
 		const secondScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
@@ -446,7 +449,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Bulk export stays scoped to the current page selection', async ({ page }) => {
-		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		test.setTimeout(TIMEOUTS.LONG)
 		const bulkScopeBaseName = 'E2E Bulk Scope Export'
 		const firstScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
 		const secondScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
@@ -615,6 +618,45 @@ test.describe('Manage table Screen Options', () => {
 		// Re-enable and verify restoration.
 		await truncationToggle.check()
 		await expect(page.locator('.wp-list-table.truncate-row-values')).toBeVisible()
+	})
+
+	test('Descriptions are only clamped while truncation is enabled', async ({ page }) => {
+		const longDescription =
+			'This description is deliberately long enough to wrap well past the two lines ' +
+			'that the table clamps it to while the truncation option is enabled, so that ' +
+			'switching the option off has something visible to reveal. '
+
+		unrelatedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Long Description')
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: unrelatedSnippetName,
+			active: false,
+			desc: longDescription.repeat(3)
+		})
+
+		await helper.navigateToSnippetsAdmin()
+
+		await openScreenOptions(page)
+		await page.locator('#adv-settings input.hide-column-tog[value="desc"]').check()
+
+		const description = snippetRowByName(page, unrelatedSnippetName).locator('.snippet-description-content')
+		await expect(description).toBeVisible()
+
+		const truncationToggle = page.locator('#snippets-table-truncate-row-values')
+
+		await truncationToggle.check()
+		await expect(description).toHaveCSS('-webkit-line-clamp', '2')
+
+		await truncationToggle.uncheck()
+		await expect(description).toHaveCSS('-webkit-line-clamp', 'none')
+
+		// The clamp is what hid the rest of the description, so without it the
+		// element has to be tall enough for all of its own content. One pixel of
+		// tolerance covers sub-pixel rounding in the browser's layout.
+		const hiddenOverflow = await description.evaluate(el => el.scrollHeight - el.clientHeight)
+		expect(hiddenOverflow).toBeLessThanOrEqual(1)
+
+		// Restore the default so later tests and the dev site are unaffected.
+		await truncationToggle.check()
 	})
 
 	test('Truncation preference survives Apply and a page reload', async ({ page }) => {

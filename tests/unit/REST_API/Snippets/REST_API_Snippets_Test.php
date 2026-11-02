@@ -8,6 +8,7 @@ use WP_REST_Request;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\save_snippet;
+use function Code_Snippets\set_snippet_locked;
 
 /**
  * Tests for the Snippets REST API endpoint.
@@ -370,5 +371,78 @@ class REST_API_Snippets_Test extends AdminUnitTestCase {
 		$this->assertArrayHasKey( 'code_error_trace', $response );
 		$this->assertIsString( $response['code_error_trace'] );
 		$this->assertNotSame( '', $response['code_error_trace'] );
+	}
+
+	/**
+	 * Creating a snippet never overwrites the one named by an ID in the body.
+	 *
+	 * @return void
+	 */
+	public function test_create_ignores_an_id_in_the_body(): void {
+		$existing = save_snippet(
+			new Snippet(
+				[
+					'name' => 'Existing',
+					'code' => '// existing',
+				]
+			)
+		);
+
+		$response = $this->make_mutating_request(
+			'POST',
+			"/{$this->namespace}/{$this->base_route}",
+			[
+				'id'   => $existing->id,
+				'name' => 'Created',
+				'code' => '// created',
+			]
+		);
+
+		$this->assertNotSame( $existing->id, $response['id'] );
+		$this->assertSame( 'Existing', get_snippet( $existing->id )->name );
+		$this->assertSame( '// existing', get_snippet( $existing->id )->code );
+	}
+
+	/**
+	 * A scope the plugin does not know is refused rather than stored as another.
+	 *
+	 * @return void
+	 */
+	public function test_create_rejects_an_unknown_scope(): void {
+		$response = $this->make_mutating_request(
+			'POST',
+			"/{$this->namespace}/{$this->base_route}",
+			[
+				'name'  => 'Unknown scope',
+				'code'  => '// code',
+				'scope' => 'nonsense-scope',
+			]
+		);
+
+		$this->assertSame( 'rest_invalid_param', $response['code'] );
+	}
+
+	/**
+	 * Deleting a locked snippet is refused as a conflict, with a reason.
+	 *
+	 * @return void
+	 */
+	public function test_deleting_a_locked_snippet_is_refused(): void {
+		$snippet = save_snippet(
+			new Snippet(
+				[
+					'name' => 'Locked',
+					'code' => '// locked',
+				]
+			)
+		);
+		set_snippet_locked( $snippet->id, true );
+
+		$response = rest_do_request( new WP_REST_Request( 'DELETE', "/{$this->namespace}/{$this->base_route}/{$snippet->id}" ) );
+
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertSame( 'rest_snippet_locked', $response->get_data()['code'] );
+		$this->assertNotNull( get_snippet( $snippet->id )->id );
+		$this->assertFalse( get_snippet( $snippet->id )->trashed );
 	}
 }

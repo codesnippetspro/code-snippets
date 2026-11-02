@@ -9,8 +9,8 @@ import type { FeedbackConfig, FeedbackDraft } from '../../types/Feedback'
 
 const TYPE_OPTIONS = [
 	{ label: __('Choose one…', 'code-snippets'), value: '' },
-	{ label: __('Bug — something is broken', 'code-snippets'), value: 'bug' },
-	{ label: __('Feature request — something is missing', 'code-snippets'), value: 'feature' },
+	{ label: __('Bug: something is broken', 'code-snippets'), value: 'bug' },
+	{ label: __('Feature request: something is missing', 'code-snippets'), value: 'feature' },
 	{ label: __('General feedback', 'code-snippets'), value: 'feedback' }
 ]
 

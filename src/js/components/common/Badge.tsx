@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import type { SnippetType } from '../../types/Snippet'
 
 export type BadgeName = SnippetType | 'core' | 'pro' | 'ai' | 'cloud' | 'bundles' | 'cloud_search' | 'beta'
+	| 'neutral'
 
 const badgeIcons: Partial<Record<BadgeName, string>> = {
 	cond: 'randomize',

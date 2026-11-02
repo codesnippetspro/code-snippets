@@ -67,4 +67,31 @@ class Validator_Test extends UnitTestCase {
 		$this->assertFalse( $validator->validate() );
 		$this->assertContains( 'acme\\helper', $validator->get_claimed_identifiers()[ T_FUNCTION ] );
 	}
+
+	/**
+	 * A syntax error is reported against the snippet line it is on.
+	 *
+	 * Warnings are converted to exceptions for this suite, so reading a line
+	 * number from a single-character token fails here.
+	 *
+	 * @return void
+	 */
+	public function test_unfinished_declaration_reports_its_line(): void {
+		$result = ( new Validator( "// first line\nfunction (" ) )->validate();
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 2, $result['line'] );
+	}
+
+	/**
+	 * A redeclaration is reported against the snippet line it is on.
+	 *
+	 * @return void
+	 */
+	public function test_redeclaration_reports_its_line(): void {
+		$result = ( new Validator( "\n\nfunction code_snippets_build_tags_array() {}" ) )->validate();
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 3, $result['line'] );
+	}
 }

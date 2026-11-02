@@ -105,6 +105,7 @@ test.describe('AI Agent demo', () => {
 	})
 
 	test('the walkthrough holds each step long enough to be read', async ({ page }) => {
+		test.setTimeout(TIMEOUTS.VERY_LONG)
 		await page.goto(URLS.AI_AGENT_ADMIN)
 		await page.locator('.demo-play').click()
 

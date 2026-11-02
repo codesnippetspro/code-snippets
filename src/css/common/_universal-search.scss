@@ -1,0 +1,523 @@
+@use 'theme';
+@use 'badges';
+
+// Below this width the header cannot fit the search field beside its links,
+// so the field collapses to a button that opens it over them.
+$collapse-width: 1160px;
+
+.universal-search {
+	position: relative;
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	min-inline-size: 0;
+	font-size: var(--cs-font-size-body);
+
+	mark {
+		background: var(--cs-color-highlight);
+		color: inherit;
+		border-radius: 2px;
+	}
+}
+
+.universal-search-field {
+	position: relative;
+	display: flex;
+	align-items: center;
+	inline-size: 100%;
+	max-inline-size: 500px;
+
+	> .dashicons-search {
+		position: absolute;
+		inset-inline-start: 10px;
+		color: var(--cs-color-text-muted);
+		pointer-events: none;
+	}
+
+	// The shared control styles in `_wp-admin.scss` set the border, radius and focus
+	// ring; this selector outranks them only to make room for the icon and key hint.
+	.code-snippets-toolbar & input.universal-search-input[type='search'] {
+		inline-size: 100%;
+		margin: 0;
+		padding-inline: 36px 40px;
+		background: var(--cs-color-surface);
+		line-height: normal;
+	}
+
+	&:focus-within > .dashicons-search {
+		color: var(--cs-color-accent);
+	}
+
+	kbd {
+		position: absolute;
+		inset-inline-end: 10px;
+		padding-block: 1px;
+		padding-inline: 6px;
+		border: 1px solid var(--cs-color-border);
+		border-radius: 3px;
+		background: none;
+		color: var(--cs-color-text-muted);
+		font-size: 11px;
+		line-height: 1.4;
+		pointer-events: none;
+	}
+}
+
+.universal-search-toggle,
+.universal-search-collapse {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	inline-size: var(--cs-control-height);
+	block-size: var(--cs-control-height);
+	padding: 0;
+	border: 0;
+	border-radius: var(--cs-control-radius);
+	background: none;
+	color: var(--cs-color-text);
+	cursor: pointer;
+
+	&:hover {
+		color: var(--cs-color-accent);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+	}
+}
+
+.universal-search-dropdown {
+	position: absolute;
+	inset-block-start: calc(100% + 8px);
+	inset-inline-start: 50%;
+	transform: translateX(calc(-50% * var(--cs-direction-multiplier)));
+	z-index: 1000;
+	display: flex;
+	flex-direction: column;
+	inline-size: 700px;
+	max-inline-size: calc(100vw - 48px);
+	overflow: hidden;
+	border: 1px solid var(--cs-color-border);
+	border-radius: var(--cs-card-radius);
+	background: var(--cs-color-surface);
+	box-shadow: 0 12px 32px rgb(0 0 0 / 16%);
+	color: var(--cs-color-text);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.universal-search-scopes {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	padding-block: 12px;
+	padding-inline: 16px;
+	border-block-end: 1px solid var(--cs-color-surface-muted);
+}
+
+.universal-search-scope {
+	display: flex;
+	gap: 5px;
+	padding-block: 3px;
+	padding-inline: 10px;
+	border: 1px solid var(--cs-color-border);
+	border-radius: 999px;
+	background: var(--cs-color-surface);
+	color: var(--cs-color-text);
+	font-size: 12px;
+	line-height: 1.5;
+	cursor: pointer;
+
+	&.is-active {
+		border-color: var(--cs-color-accent);
+		background: var(--cs-color-accent);
+		color: var(--cs-color-surface);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: 1px;
+	}
+
+	.universal-search-count {
+		opacity: 0.8;
+	}
+}
+
+.universal-search-results {
+	max-block-size: min(560px, calc(100vh - 260px));
+	overflow-y: auto;
+	padding-block-end: 6px;
+}
+
+.universal-search-group-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-block: 12px 4px;
+	padding-inline: 16px;
+	color: var(--cs-color-text-muted);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+
+	.universal-search-count {
+		margin-inline-start: 6px;
+		color: var(--cs-color-text-disabled);
+	}
+}
+
+.code-snippets-toolbar-upper .universal-search-option {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+	margin-block-start: -1px;
+	padding-block: 8px;
+	padding-inline: 16px;
+	border-block: 1px solid var(--cs-color-border-subtle);
+	color: var(--cs-color-text);
+	scroll-margin-block: 8px;
+
+	&.is-active,
+	&:hover {
+		background: var(--cs-color-surface-info);
+		color: var(--cs-color-text);
+	}
+
+	.badge {
+		flex: none;
+		min-block-size: 20px;
+		margin-block-start: 1px;
+		padding-inline: 6px;
+		font-size: 11px;
+	}
+}
+
+.universal-search-option-text {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-inline-size: 0;
+}
+
+.universal-search-option-title,
+.universal-search-option-description {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.universal-search-option-title {
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.universal-search-option-description {
+	color: var(--cs-color-text-muted);
+	font-size: 12.5px;
+}
+
+// The preview only shows what matched, so it never takes the pointer from the row beneath it.
+.universal-search-code-popover {
+	pointer-events: none;
+
+	.components-popover__content {
+		padding: 0;
+		overflow: hidden;
+		border-radius: var(--cs-control-radius);
+	}
+}
+
+.universal-search-code-preview {
+	display: grid;
+	max-inline-size: min(560px, 80vw);
+	padding-block: 6px;
+	background: var(--cs-color-surface-subtle);
+	color: var(--cs-color-text-secondary);
+	font-family: Menlo, Consolas, monospace;
+	font-size: 12px;
+	line-height: 1.7;
+
+	// The popover is rendered outside the search bar, so it needs its own highlight.
+	mark {
+		border-radius: 2px;
+		background: var(--cs-color-highlight);
+		color: inherit;
+	}
+}
+
+.universal-search-code-preview-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.universal-search-code-preview-line {
+	display: flex;
+	gap: 12px;
+	padding-inline: 12px;
+	white-space: pre;
+
+	&.is-context .universal-search-code-preview-text {
+		filter: blur(2.5px);
+		user-select: none;
+	}
+}
+
+.universal-search-code-preview-number {
+	flex: none;
+	min-inline-size: 2ch;
+	color: var(--cs-color-text-disabled);
+	text-align: end;
+	user-select: none;
+}
+
+.universal-search-pending {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	padding-block: 12px 8px;
+	padding-inline: 16px;
+	color: var(--cs-color-text-subtle);
+	font-size: 12px;
+	animation: universal-search-pulse 1.2s infinite;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+.universal-search-pending-badge,
+.universal-search-pending-bar {
+	background: var(--cs-color-surface-muted);
+}
+
+.universal-search-pending-badge {
+	inline-size: 44px;
+	block-size: 18px;
+	border-radius: 4px;
+}
+
+.universal-search-pending-bar {
+	flex: 1;
+	max-inline-size: 320px;
+	block-size: 10px;
+	border-radius: 5px;
+}
+
+@keyframes universal-search-pulse {
+	0%,
+	100% {
+		opacity: 0.45;
+	}
+
+	50% {
+		opacity: 1;
+	}
+}
+
+.universal-search-empty {
+	margin: 0;
+	padding-block: 28px;
+	padding-inline: 16px;
+	color: var(--cs-color-text-muted);
+	font-size: 14px;
+	text-align: center;
+}
+
+.universal-search-cloud-notice {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-block: 10px 4px;
+	margin-inline: 16px;
+	padding-block: 10px;
+	padding-inline: 12px;
+	border: 1px dashed var(--cs-color-border);
+	border-radius: 6px;
+	color: var(--cs-color-text-secondary);
+	font-size: 13px;
+	line-height: 1.5;
+
+	a {
+		flex: none;
+		font-weight: 600;
+	}
+
+	// Matches the upgrade modal's gradient, with even spacing above and below so
+	// it sits centred in the space between the results and the footer.
+	&.is-upsell {
+		justify-content: flex-start;
+		margin-block: 12px;
+		padding-block: 12px;
+		padding-inline: 14px;
+		border: 1px solid rgb(212 111 77 / 18%);
+		border-radius: 8px;
+		background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
+		color: #1c3f41;
+		font-weight: 500;
+
+		.badge {
+			flex: none;
+		}
+
+		> span:not(.badge) {
+			flex: 1;
+		}
+	}
+}
+
+.universal-search-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	padding-block: 9px;
+	padding-inline: 16px;
+	border-block-start: 1px solid var(--cs-color-border-subtle);
+	background: var(--cs-color-surface-subtle);
+	color: var(--cs-color-text-muted);
+	font-size: 12px;
+
+	a {
+		font-size: 13px;
+		font-weight: 600;
+	}
+}
+
+// The header's own link colours would otherwise apply inside the dropdown,
+// which is nested in it; these selectors outrank them.
+.code-snippets-toolbar-upper .universal-search-group-header a {
+	font-size: 12px;
+	font-weight: 500;
+	letter-spacing: 0;
+	text-transform: none;
+}
+
+.code-snippets-toolbar-upper .universal-search-group-header a,
+.code-snippets-toolbar-upper .universal-search-footer a,
+.code-snippets-toolbar-upper .universal-search-cloud-notice a {
+	color: var(--cs-color-accent);
+
+	&:hover {
+		color: var(--cs-color-accent-hover);
+	}
+}
+
+// The upgrade link reads as a button, in the toolbar's Upgrade gradient.
+.code-snippets-toolbar-upper .universal-search-cloud-notice.is-upsell a {
+	padding-block: 6px;
+	padding-inline: 12px;
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--cs-color-secondary) 0%, #e2953f 100%);
+	color: #fff;
+	line-height: 1;
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		color: #fff;
+		filter: brightness(1.05);
+	}
+}
+
+@media (width <= $collapse-width) {
+	.code-snippets-toolbar-upper {
+		position: relative;
+	}
+
+	.universal-search {
+		position: static;
+		flex: none;
+		margin-inline-start: auto;
+	}
+
+	.code-snippets-toolbar-upper .universal-search + nav {
+		margin-inline-start: 0;
+	}
+
+	.universal-search-toggle {
+		display: flex;
+	}
+
+	.universal-search-field {
+		display: none;
+	}
+
+	.universal-search.is-expanded {
+		.universal-search-field {
+			position: absolute;
+			inset-block-start: 50%;
+			inset-inline: 16px;
+			z-index: 3;
+			display: flex;
+			inline-size: auto;
+			max-inline-size: none;
+			transform: translateY(-50%);
+			background: var(--cs-color-surface);
+
+			input.universal-search-input {
+				padding-inline-end: 12px;
+			}
+
+			kbd {
+				display: none;
+			}
+		}
+
+		.universal-search-collapse {
+			display: flex;
+			flex: none;
+			margin-inline-start: 4px;
+		}
+
+		// The field now covers the header, so its backdrop hides the links beneath it.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: 2;
+			background: var(--cs-color-surface);
+		}
+	}
+
+	.universal-search-dropdown {
+		inset-block-start: calc(100% - 10px);
+		inset-inline: 16px;
+		inline-size: auto;
+		max-inline-size: none;
+		transform: none;
+	}
+}
+
+// Screens reached from a search result land on the element the result points
+// at, which is picked out briefly so it can be found on the page.
+.code-snippets-settings tr[id^='setting-']:target,
+.stats-chart-card:target,
+.code-snippets-welcome :target {
+	scroll-margin-block-start: 48px;
+	animation: universal-search-target 2.4s ease-out;
+
+	@media (prefers-reduced-motion: reduce) {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: 4px;
+		animation: none;
+	}
+}
+
+@keyframes universal-search-target {
+	0%,
+	60% {
+		background-color: var(--cs-color-highlight);
+		box-shadow: 0 0 0 6px var(--cs-color-highlight);
+	}
+
+	100% {
+		background-color: transparent;
+		box-shadow: 0 0 0 6px transparent;
+	}
+}

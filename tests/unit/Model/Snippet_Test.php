@@ -91,4 +91,16 @@ class Snippet_Test extends UnitTestCase {
 		$this->assertArrayHasKey( 'desc', $modified );
 		$this->assertSame( 'set through the alias', $modified['desc'] );
 	}
+
+	/**
+	 * Priority is kept within the range the database column stores.
+	 *
+	 * @return void
+	 */
+	public function test_priority_is_clamped_to_the_stored_range(): void {
+		$this->assertSame( 0, ( new Snippet( [ 'priority' => -5 ] ) )->priority );
+		$this->assertSame( 0, ( new Snippet( [ 'priority' => -99999999999 ] ) )->priority );
+		$this->assertSame( 32767, ( new Snippet( [ 'priority' => 99999999 ] ) )->priority );
+		$this->assertSame( 20, ( new Snippet( [ 'priority' => '20' ] ) )->priority );
+	}
 }

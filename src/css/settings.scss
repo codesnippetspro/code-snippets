@@ -48,6 +48,7 @@ input[type='number'] {
 }
 
 .CodeMirror {
+	box-sizing: border-box;
 	max-inline-size: 800px;
 	inline-size: 100%;
 	padding-inline-end: 1em;
@@ -95,7 +96,7 @@ body.js {
 	.wrap[data-active-tab='version-switch'] .version-switch-settings,
 	.wrap[data-active-tab='editing'] .editing-settings,
 	.wrap[data-active-tab='running'] .running-settings,
-	.wrap[data-active-tab='insights'] .insights-settings,
+	.wrap[data-active-tab='stats'] .stats-settings,
 	.wrap[data-active-tab='library'] .library-settings,
 	.wrap[data-active-tab='interface'] .interface-settings,
 	.wrap[data-active-tab='advanced'] .advanced-settings {
@@ -196,15 +197,11 @@ body.js {
 		margin-block-start: 20px !important;
 		padding: 12px 16px;
 		border-inline-start: 4px solid var(--cs-color-warning);
-		background: var(--cs-color-surface-subtle);
+		background: var(--cs-color-surface-warning);
 
 		p {
 			margin: 0;
-			color: #8f6914;
-
-			strong {
-				color: #8f6914;
-			}
+			color: var(--cs-color-text);
 		}
 	}
 

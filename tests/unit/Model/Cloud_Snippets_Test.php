@@ -146,6 +146,25 @@ class Cloud_Snippets_Test extends UnitTestCase {
 	}
 
 	/**
+	 * An error reply carries its details under `data`, which must not be read as snippets.
+	 *
+	 * @return void
+	 */
+	public function test_error_reply_yields_no_snippets(): void {
+		$result = Cloud_Snippets::unpack_api_response(
+			[
+				'success' => false,
+				'message' => 'Validation failed, please refer to the errors in the data object.',
+				'data'    => [ 's_method' => [ 'The selected s method is invalid.' ] ],
+			]
+		);
+
+		$this->assertInstanceOf( Cloud_Snippets::class, $result );
+		$this->assertSame( [], $result->snippets );
+		$this->assertSame( 0, $result->total_snippets );
+	}
+
+	/**
 	 * Passing null results in a null result.
 	 *
 	 * @return void

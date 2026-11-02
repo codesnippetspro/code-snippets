@@ -10,7 +10,7 @@ const CALLOUTS: Partial<Record<DemoStage, CalloutContent>> = {
 	general: {
 		step: __('Step 1 of 3', 'code-snippets'),
 		title: __('Name the shortcode', 'code-snippets'),
-		body: __('Every blueprint starts with the basics — the tag you type into a post, and the function that powers it.', 'code-snippets')
+		body: __('Every blueprint starts with the basics: the tag you type into a post, and the function that powers it.', 'code-snippets')
 	},
 	attributes: {
 		step: __('Step 2 of 3', 'code-snippets'),
@@ -25,7 +25,7 @@ const CALLOUTS: Partial<Record<DemoStage, CalloutContent>> = {
 	generating: {
 		step: __('Generating', 'code-snippets'),
 		title: __('Building the snippet', 'code-snippets'),
-		body: __('Pro turns the whole form into a finished, working snippet — no boilerplate to write yourself.', 'code-snippets')
+		body: __('Pro turns the whole form into a finished, working snippet, with no boilerplate for you to write.', 'code-snippets')
 	},
 	generated: {
 		step: __('Done', 'code-snippets'),

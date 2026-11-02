@@ -2,17 +2,15 @@ import { writeFileSync } from 'fs'
 import { expect, test as setup } from '@playwright/test'
 import { RTL_LOCALE, RTL_USER, rtlAuthFile, rtlCreatedMarker } from './helpers/rtlUser'
 import { wpCli } from './helpers/wpCli'
-import { URLS } from './helpers/constants'
+import { TIMEOUTS, URLS } from './helpers/constants'
 
 // The RTL specs sign in as a user of their own whose locale is right-to-left,
 // so the rest of the suite, which signs in as the usual admin, never sees the
 // site mirrored, whatever order the projects run in. The language pack is
 // fetched from wordpress.org when missing; if that is impossible (offline),
 // the specs notice the page is still left-to-right and skip themselves.
-const SETUP_TIMEOUT_MS = 180000
-
 setup('sign in as a right-to-left user', async ({ page }) => {
-	setup.setTimeout(SETUP_TIMEOUT_MS)
+	setup.setTimeout(TIMEOUTS.EXTRA_LONG)
 
 	try {
 		await wpCli(['language', 'core', 'install', RTL_LOCALE])
@@ -41,7 +39,7 @@ setup('sign in as a right-to-left user', async ({ page }) => {
 		page.waitForLoadState('domcontentloaded'),
 		page.click('#wp-submit')
 	])
-	await page.waitForSelector('#wpbody-content, #adminmenu', { timeout: 60000 })
+	await page.waitForSelector('#wpbody-content, #adminmenu', { timeout: TIMEOUTS.LONG })
 	await expect(page.locator('#adminmenu')).toBeVisible()
 
 	const dir = await page.evaluate(() => document.documentElement.getAttribute('dir'))

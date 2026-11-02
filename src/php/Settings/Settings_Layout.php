@@ -30,7 +30,7 @@ class Settings_Layout {
 		$tabs = [
 			'editing'   => __( 'Editing', 'code-snippets' ),
 			'running'   => __( 'Running', 'code-snippets' ),
-			'insights'  => __( 'Insights', 'code-snippets' ),
+			'stats'     => __( 'Stats', 'code-snippets' ),
 			'library'   => __( 'Library', 'code-snippets' ),
 			'interface' => __( 'Interface', 'code-snippets' ),
 			'advanced'  => __( 'Advanced', 'code-snippets' ),
@@ -72,7 +72,7 @@ class Settings_Layout {
 				[ 'general', 'minify_output' ],
 				[ 'general', 'activate_by_default' ],
 			],
-			'insights'  => [
+			'stats'     => [
 				[ 'general', 'enable_performance_tracker' ],
 				[ 'general', 'enable_security_scan' ],
 				[ 'general', 'rescan_all_snippets' ],
@@ -94,7 +94,6 @@ class Settings_Layout {
 				[ 'permissions', 'role_capabilities' ],
 				[ 'version-switch', 'version_switcher' ],
 				[ 'version-switch', 'refresh_versions' ],
-				[ 'version-switch', 'version_warning' ],
 				[ 'debug', 'reset_caches' ],
 				[ 'debug', 'database_update' ],
 				[ 'general', 'complete_uninstall' ],
@@ -174,7 +173,7 @@ class Settings_Layout {
 			'running'   => [
 				'enable_flat_files' => __( 'Execution', 'code-snippets' ),
 			],
-			'insights'  => [
+			'stats'     => [
 				'enable_performance_tracker' => __( 'Performance', 'code-snippets' ),
 				'enable_security_scan'       => __( 'Security', 'code-snippets' ),
 			],
@@ -210,7 +209,38 @@ class Settings_Layout {
 			'max_revisions'              => __( 'Saves a copy each time a snippet changes, so you can compare versions and roll back a bad edit.', 'code-snippets' ),
 			'preserve_on_delete'         => __( 'Keep the revision history after a snippet is deleted, so it can still be recovered.', 'code-snippets' ),
 			'enable_admin_bar'           => __( 'Jump to any snippet from anywhere in the admin, and see which ones ran on the page you are looking at.', 'code-snippets' ),
-			'reset_caches'               => __( 'Clears stored snippet data. Worth doing before switching to an older version of the plugin.', 'code-snippets' ),
+			'reset_caches'               => __( 'Clears stored snippet data and refetches the list of plugin versions available to install. Worth doing before switching to an older version of the plugin.', 'code-snippets' ),
 		];
+	}
+
+	/**
+	 * Apply the replacement description, if any, to a field definition.
+	 *
+	 * A checkbox already reads its own label aloud and shows it beside the box, so
+	 * its replacement takes the place of the label rather than repeating it below.
+	 * A link the old label carried is kept.
+	 *
+	 * @param array<string, mixed> $field    Field definition.
+	 * @param string               $field_id Field identifier.
+	 *
+	 * @return array<string, mixed> Field definition with the description applied.
+	 */
+	public static function apply_description( array $field, string $field_id ): array {
+		$descriptions = self::get_descriptions();
+
+		if ( ! isset( $descriptions[ $field_id ] ) ) {
+			return $field;
+		}
+
+		if ( 'checkbox' === ( $field['type'] ?? '' ) ) {
+			$link = preg_match( '/<a\s[^>]*>.*?<\/a>/s', (string) ( $field['label'] ?? '' ), $matches ) ? ' ' . $matches[0] : '';
+
+			$field['label'] = $descriptions[ $field_id ] . $link;
+			$field['desc'] = '';
+		} else {
+			$field['desc'] = $descriptions[ $field_id ];
+		}
+
+		return $field;
 	}
 }

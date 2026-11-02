@@ -6,6 +6,7 @@ use Code_Snippets\Admin\Bootstrap_Admin;
 use Code_Snippets\Admin\Feedback_Error_Capture;
 use Code_Snippets\Admin\Feedback_Panel;
 use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
+use Code_Snippets\Client\Docs_Client;
 use Code_Snippets\Client\Feedback_Client;
 use Code_Snippets\Controller\Cloud_Search_Controller;
 use Code_Snippets\Core\DB;
@@ -24,10 +25,13 @@ use Code_Snippets\REST_API\Feedback\Feedback_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
 use Code_Snippets\REST_API\Preferences\Demos_Seen_REST_Controller;
-use Code_Snippets\REST_API\Preferences\Insights_View_Rest_Controller;
+use Code_Snippets\REST_API\Preferences\Stats_View_Rest_Controller;
 use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
+use Code_Snippets\REST_API\REST_Cache_Bypass;
+use Code_Snippets\REST_API\Search\Search_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
+use Code_Snippets\Search\Universal_Search;
 use function Code_Snippets\Settings\are_settings_unified;
 
 /**
@@ -155,11 +159,13 @@ class Plugin {
 	public function init_rest_api() {
 		$cloud_search = new Cloud_Search_Controller( $this->cloud_connection );
 
+		new REST_Cache_Bypass();
+
 		new Snippets_REST_Controller();
 		new Recently_Active_REST_Controller();
 
 		new Snippet_View_REST_Controller();
-		new Insights_View_Rest_Controller();
+		new Stats_View_Rest_Controller();
 		new Demos_Seen_REST_Controller();
 
 		new Plugins_Import_REST_Controller();
@@ -168,6 +174,8 @@ class Plugin {
 		new Cloud_Snippets_REST_Controller( $cloud_search );
 
 		new Feedback_REST_Controller( new Feedback_Client( new Feedback_Connection() ) );
+
+		new Search_REST_Controller( new Universal_Search( $cloud_search, new Docs_Client() ) );
 	}
 
 	/**
@@ -212,7 +220,7 @@ class Plugin {
 		$import = [ 'import', 'import-snippets', 'import-code-snippets' ];
 		$settings = [ 'settings', 'snippets-settings' ];
 		$cloud = [ 'cloud', 'cloud-snippets' ];
-		$insights = [ 'insights', 'code-snippets-insights' ];
+		$stats = [ 'stats', 'code-snippets-stats' ];
 		$welcome = [ 'welcome', 'getting-started', 'code-snippets' ];
 
 		if ( in_array( $menu, $edit, true ) ) {
@@ -225,8 +233,8 @@ class Plugin {
 			return 'snippets-settings';
 		} elseif ( in_array( $menu, $cloud, true ) ) {
 			return 'snippets&subpage=cloud-community';
-		} elseif ( in_array( $menu, $insights, true ) ) {
-			return 'code-snippets-insights';
+		} elseif ( in_array( $menu, $stats, true ) ) {
+			return 'code-snippets-stats';
 		} elseif ( in_array( $menu, $welcome, true ) ) {
 			return 'code-snippets-welcome';
 		} else {
@@ -368,17 +376,18 @@ class Plugin {
 			[
 				'debug'              => defined( 'WP_DEBUG' ) && WP_DEBUG,
 				'isLicensed'         => $this->licensing->is_licensed(),
+				'safeModeRequested'  => Evaluate_Functions::is_safe_mode_query_var_set() && $this->current_user_can(),
 				'isCloudConnected'   => $this->cloud_connection->is_authenticated(),
 				'hideUpsell'         => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'snippetView'        => Snippet_View_REST_Controller::get_snippet_view(),
-				'insightsChartViews' => Insights_View_Rest_Controller::get_insights_chart_views(),
+				'statsChartViews'    => Stats_View_Rest_Controller::get_stats_chart_views(),
 				'demosSeen'          => Demos_Seen_REST_Controller::get_demos_seen(),
 				'restAPI'            => [
 					'base'           => esc_url_raw( rest_url() ),
 					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
 					'snippetView'    => esc_url_raw( rest_url( Snippet_View_REST_Controller::get_base_route() ) ),
-					'insightsView'   => esc_url_raw( rest_url( Insights_View_Rest_Controller::get_base_route() ) ),
+					'statsView'      => esc_url_raw( rest_url( Stats_View_Rest_Controller::get_base_route() ) ),
 					'demosSeen'      => esc_url_raw( rest_url( Demos_Seen_REST_Controller::get_base_route() ) ),
 					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
 					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
@@ -387,13 +396,14 @@ class Plugin {
 						'token'    => $this->cloud_connection->get_local_token(),
 						'snippets' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
 					],
+					'search'         => esc_url_raw( rest_url( Search_REST_Controller::get_base_route() ) ),
 				],
 				'urls'               => [
 					'plugin'    => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
 					'manage'    => esc_url_raw( $this->get_menu_url() ),
 					'edit'      => esc_url_raw( $this->get_menu_url( 'edit' ) ),
 					'addNew'    => esc_url_raw( $this->get_menu_url( 'add' ) ),
-					'insights'  => esc_url_raw( $this->get_menu_url( 'insights' ) ),
+					'stats'     => esc_url_raw( $this->get_menu_url( 'stats' ) ),
 					'welcome'   => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
 					'import'    => esc_url_raw( $this->get_menu_url( 'import' ) ),
 					'cloud'     => esc_url_raw( $this->cloud_connection->get_base_url() ),

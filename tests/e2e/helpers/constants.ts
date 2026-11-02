@@ -23,8 +23,13 @@ export const SELECTORS = <const> {
 }
 
 export const TIMEOUTS = <const> {
+	VERY_SHORT: 2000,
+	SHORT: 5000,
+	MEDIUM: 10000,
 	DEFAULT: 30000,
-	SHORT: 5000
+	LONG: 60000,
+	VERY_LONG: 120000,
+	EXTRA_LONG: 180000
 }
 
 export const URLS = <const> {
@@ -36,8 +41,10 @@ export const URLS = <const> {
 	CLOUD_LIBRARY_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=cloud-library',
 	BLUEPRINTS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=blueprints',
 	AI_AGENT_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=ai-agent',
+	UNIFIED_SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=unified-snippets',
+	PREVIEW_DEMO_ADMIN: '/wp-admin/admin.php?page=snippets&subpage=preview',
 	ADD_SNIPPET_ADMIN: '/wp-admin/admin.php?page=add-snippet',
-	INSIGHTS_ADMIN: '/wp-admin/admin.php?page=code-snippets-insights',
+	STATS_ADMIN: '/wp-admin/admin.php?page=code-snippets-stats',
 	IMPORT_ADMIN: '/wp-admin/admin.php?page=import-code-snippets',
 	SETTINGS_ADMIN: '/wp-admin/admin.php?page=snippets-settings',
 	WELCOME_ADMIN: '/wp-admin/admin.php?page=code-snippets-welcome'

@@ -9,8 +9,11 @@ import { AiAgentIcon } from './icons/AiAgentIcon'
 import { BlueprintIcon } from './icons/BlueprintIcon'
 import { CommunityIcon } from './icons/CommunityIcon'
 import { LibraryIcon } from './icons/LibraryIcon'
+import { SearchIcon } from './icons/SearchIcon'
 import { SettingsIcon } from './icons/SettingsIcon'
 import { SnippetsIcon } from './icons/SnippetsIcon'
+import { UnifiedSnippetsIcon } from './icons/UnifiedSnippetsIcon'
+import { UniversalSearch } from './UniversalSearch/UniversalSearch'
 import { UpsellDialog } from './UpsellDialog'
 import type { SVGProps } from 'react'
 
@@ -52,11 +55,11 @@ const UpperNavItem = ({ name, url, label }: UpperNavItemProps) => {
 }
 const UpperNavItems = () =>
 	<>
-		{window.CODE_SNIPPETS?.urls.insights && (
+		{window.CODE_SNIPPETS?.urls.stats && (
 			<UpperNavItem
-				name="insights"
-				url={window.CODE_SNIPPETS.urls.insights}
-				label={__('Insights', 'code-snippets')}
+				name="stats"
+				url={window.CODE_SNIPPETS.urls.stats}
+				label={__('Stats', 'code-snippets')}
 			/>)}
 
 		{window.CODE_SNIPPETS?.urls.import && (
@@ -114,6 +117,8 @@ const UpperNav: React.FC = () => {
 
 				<div>{__('Code Snippets', 'code-snippets')}</div>
 			</div>
+
+			<UniversalSearch />
 
 			<nav aria-label={__('Main links', 'code-snippets')}>
 				<ul>
@@ -188,18 +193,19 @@ const LowerNav = () =>
 	<div className="code-snippets-toolbar-lower">
 		<nav aria-label={__('Main features', 'code-snippets')}>
 			<ul>
+				{/* Search is reached from the search bar, so its tab only appears while it is open. */}
+				{'search' === activeSubpage && (
+					<SubpageItem
+						subpage="search"
+						label={__('Search', 'code-snippets')}
+						Icon={SearchIcon}
+					/>)}
+
 				<SubpageItem
 					subpage="snippets"
 					label={__('Snippets', 'code-snippets')}
 					Icon={SnippetsIcon}
 				/>
-
-				{isLicensed() && (
-					<SubpageItem
-						subpage="blueprints"
-						label={__('Blueprints', 'code-snippets')}
-						Icon={BlueprintIcon}
-					/>)}
 
 				<SubpageItem
 					subpage="cloud-community"
@@ -213,17 +219,22 @@ const LowerNav = () =>
 					Icon={LibraryIcon}
 				/>
 
-				{!isLicensed() && (
-					<SubpageItem
-						subpage="blueprints"
-						label={__('Blueprints', 'code-snippets')}
-						Icon={BlueprintIcon}
-					/>)}
+				<SubpageItem
+					subpage="blueprints"
+					label={__('Blueprints', 'code-snippets')}
+					Icon={BlueprintIcon}
+				/>
 
 				<SubpageItem
 					subpage="ai-agent"
 					label={__('AI Agent', 'code-snippets')}
 					Icon={AiAgentIcon}
+				/>
+
+				<SubpageItem
+					subpage="unified-snippets"
+					label={__('Unified Snippets', 'code-snippets')}
+					Icon={UnifiedSnippetsIcon}
 				/>
 
 				<SettingsItem />

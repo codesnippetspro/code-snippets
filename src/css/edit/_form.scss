@@ -90,7 +90,12 @@
 .snippet-form {
 	display: grid;
 	gap: var(--cs-sidebar-gap);
-	grid-template-columns: 1fr var(--cs-sidebar-width);
+
+	// The content column is bounded at zero rather than left as a bare 1fr,
+	// whose automatic minimum is its content width. A single long unbroken line
+	// of code would otherwise widen the track to fit, taking the sidebar off
+	// the side of the page with it.
+	grid-template-columns: minmax(0, 1fr) var(--cs-sidebar-width);
 	grid-template-areas: 'upper sidebar' 'lower sidebar';
 	transition: all 700ms;
 
@@ -115,6 +120,7 @@
 		display: flex;
 		flex-flow: column;
 		gap: 24px;
+		min-inline-size: 0;
 	}
 
 	.snippet-editor-sidebar {
@@ -134,7 +140,7 @@
 	}
 
 	@media (width <= 1024px) {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	h2, h3 {

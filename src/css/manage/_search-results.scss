@@ -1,0 +1,276 @@
+.search-results-page {
+	color: var(--cs-color-text);
+
+	mark {
+		border-radius: 2px;
+		background: var(--cs-color-highlight);
+		color: inherit;
+	}
+
+	.snippets-page-header {
+		justify-content: flex-start;
+		align-items: baseline;
+		gap: 12px;
+	}
+}
+
+.search-results-total {
+	color: var(--cs-color-text-muted);
+	font-size: 14px;
+}
+
+.search-results-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 20px;
+	align-items: center;
+	margin-block: 4px 16px;
+	padding: 0;
+	border: 0;
+
+	legend {
+		float: inline-start;
+		margin-inline-end: 4px;
+		padding: 0;
+		color: var(--cs-color-text-secondary);
+		font-weight: 600;
+	}
+}
+
+.search-results-page .universal-search-cloud-notice {
+	margin-block: 0 16px;
+	margin-inline: 0;
+}
+
+.search-results-upsell {
+	box-sizing: border-box;
+	inline-size: 100%;
+	max-inline-size: none;
+}
+
+.search-results-ai-intro {
+	margin-block: 0 16px;
+	color: var(--cs-color-text-secondary);
+}
+
+.search-results-main {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.search-results-group {
+	overflow: hidden;
+	border: 1px solid var(--cs-color-border-subtle);
+	border-radius: var(--cs-card-radius);
+	background: var(--cs-color-surface);
+}
+
+.search-results-group-heading {
+	display: flex;
+	gap: 8px;
+	align-items: baseline;
+	margin: 0;
+	padding-block: 18px 14px;
+	padding-inline: 24px;
+	border-block-end: 1px solid var(--cs-color-border-subtle);
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.search-results-count {
+	color: var(--cs-color-text-muted);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.search-results-list {
+	margin: 0;
+}
+
+.search-result {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+	margin: 0;
+	padding-block: 16px;
+	padding-inline: 24px;
+
+	& + & {
+		border-block-start: 1px solid var(--cs-color-border-subtle);
+	}
+
+	// Wide enough for the longest type label, so the type column lines up across rows.
+	.badge {
+		flex: none;
+		min-inline-size: 72px;
+		margin-block-start: 1px;
+	}
+
+	.row-actions {
+		padding-block-start: 2px;
+		color: var(--cs-color-text-subtle);
+	}
+
+	.button-link {
+		font-size: 13px;
+	}
+
+	.dashicons-external {
+		inline-size: 14px;
+		block-size: 14px;
+		margin-inline-start: 2px;
+		font-size: 14px;
+		vertical-align: text-bottom;
+	}
+}
+
+.search-result-body {
+	flex: 1;
+	min-inline-size: 0;
+}
+
+.search-result-title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.search-result-title a,
+.search-result .row-actions a,
+.search-result .row-actions .button-link {
+	text-decoration: none;
+}
+
+// Long descriptions are clipped to three lines so results stay scannable.
+.search-result-description {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+	margin-block: 2px 0;
+	color: var(--cs-color-text-secondary);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+// A compact bar under the description rather than a button, opening the
+// matched line of code in a preview.
+.search-result-code-bar {
+	display: inline-flex;
+	gap: 6px;
+	align-items: center;
+	margin-block-start: 8px;
+	padding-block: 4px;
+	padding-inline: 8px 10px;
+	border: 1px solid var(--cs-color-border-subtle);
+	border-radius: 4px;
+	background: var(--cs-color-surface-subtle);
+	color: var(--cs-color-text-secondary);
+	font: inherit;
+	font-size: 12px;
+	line-height: 1.5;
+	cursor: pointer;
+
+	.dashicons {
+		inline-size: 16px;
+		block-size: 16px;
+		font-size: 16px;
+	}
+
+	.search-result-code-bar-open {
+		color: var(--cs-color-text-subtle);
+	}
+
+	&:hover,
+	&[aria-expanded='true'] {
+		border-color: var(--cs-color-accent);
+		color: var(--cs-color-accent);
+
+		.search-result-code-bar-open {
+			color: inherit;
+		}
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: 1px;
+	}
+}
+
+// Each result reads as a row of the snippets table: switch, details, type, actions.
+.search-result-switch {
+	flex: none;
+	display: flex;
+	inline-size: 36px;
+	min-block-size: 21px;
+	align-items: center;
+}
+
+.search-result .search-result-actions {
+	flex: none;
+	min-inline-size: 110px;
+	max-inline-size: 260px;
+	padding-block-start: 0;
+	text-align: end;
+	line-height: 21px;
+}
+
+// Where a result is found: a settings tab, a docs category, or who shared a cloud snippet.
+.search-result-meta {
+	margin-block: 4px 0;
+	color: var(--cs-color-text-subtle);
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.search-result-error {
+	margin-inline-start: 8px;
+	color: var(--cs-color-error);
+}
+
+.search-results-empty,
+.search-results-pending {
+	margin: 0;
+	padding: 24px;
+	border: 1px solid var(--cs-color-border-subtle);
+	border-radius: var(--cs-card-radius);
+	background: var(--cs-color-surface);
+	color: var(--cs-color-text-muted);
+	font-size: 14px;
+}
+
+.search-results-pending {
+	padding-block: 16px;
+	font-size: 13px;
+	animation: universal-search-pulse 1.2s infinite;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+.search-results-truncated {
+	margin: 0;
+	padding-block: 12px;
+	padding-inline: 24px;
+	border-block-start: 1px solid var(--cs-color-border-subtle);
+	background: var(--cs-color-surface-subtle);
+	color: var(--cs-color-text-muted);
+	font-size: 12px;
+}
+
+@media (width <= 782px) {
+	.search-result {
+		flex-wrap: wrap;
+	}
+
+	.search-result .search-result-actions {
+		inline-size: 100%;
+		max-inline-size: none;
+		padding-inline-start: 52px;
+		text-align: start;
+	}
+}

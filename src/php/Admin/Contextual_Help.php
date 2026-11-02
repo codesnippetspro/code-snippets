@@ -66,8 +66,16 @@ class Contextual_Help {
 				$this->load_ai_agent_help();
 				break;
 
-			case 'insights':
-				$this->load_insights_help();
+			case 'unified-snippets':
+				$this->load_unified_snippets_help();
+				break;
+
+			case 'preview':
+				$this->load_preview_help();
+				break;
+
+			case 'stats':
+				$this->load_stats_help();
 				break;
 
 			case 'import':
@@ -288,21 +296,59 @@ class Contextual_Help {
 	}
 
 	/**
-	 * Register and handle the help tabs for the Insights admin page.
+	 * Register and handle the help tabs for the Unified Snippets demo page.
 	 */
-	private function load_insights_help() {
+	private function load_unified_snippets_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text(),
+				__( 'Unified Snippets finds custom code stored outside Code Snippets, such as in themes, the Customizer, plugins, page content and page builders.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'importing-code',
+			__( 'Importing Code', 'code-snippets' ),
+			[
+				__( 'Each item shows where it was found. Import items individually or in bulk; imported snippets are switched off until you activate them.', 'code-snippets' ),
+				__( 'Items that cannot safely run as a snippet are listed as view only.', 'code-snippets' ),
+			]
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the snippet preview demo page.
+	 */
+	private function load_preview_help() {
+		$this->add_help_tab(
+			'overview',
+			__( 'Overview', 'code-snippets' ),
+			[
+				$this->get_intro_text(),
+				__( 'Preview tests a PHP, CSS, JavaScript or HTML snippet on a real page or admin screen before it is saved or activated.', 'code-snippets' ),
+				__( 'The preview is private to the person testing it, and visitors are not shown the draft.', 'code-snippets' ),
+			]
+		);
+	}
+
+	/**
+	 * Register and handle the help tabs for the Stats admin page.
+	 */
+	private function load_stats_help() {
 		$this->add_help_tab(
 			'overview',
 			__( 'Overview', 'code-snippets' ),
 			[
 				$this->get_intro_text() .
-				__( 'Here you can view snippets statistics, and get insights how the snippets are being used on this website.', 'code-snippets' ),
+				__( 'Here you can view snippet statistics and see how snippets are used on this website.', 'code-snippets' ),
 			]
 		);
 
 		$this->add_help_tab(
-			'insights',
-			__( 'Insights', 'code-snippets' ),
+			'stats',
+			__( 'Stats', 'code-snippets' ),
 			__( 'Get detailed information about your snippets usage, including which snippets types are being most used, their activation status, where they are located, and more.', 'code-snippets' )
 		);
 	}

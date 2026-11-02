@@ -78,23 +78,36 @@ const submitBulkSnippetDownloadsIndividually = (snippets: readonly Snippet[]): P
 		Promise.resolve()
 	)
 
+/**
+ * Apply an action to each target in turn, then refresh the list.
+ *
+ * @returns The number of targets the action succeeded on.
+ */
 const applyAndRefresh = async (
 	targets: Snippet[],
 	action: (snippet: Snippet) => Promise<Snippet> | Promise<void>,
 	refresh: () => Promise<void>
-): Promise<void> => {
+): Promise<number> => {
+	let succeeded = 0
+
 	if (0 < targets.length) {
 		for (const snippet of targets) {
-			await action(snippet).catch(handleUnknownError)
+			await action(snippet)
+				.then(() => {
+					succeeded += 1
+				})
+				.catch(handleUnknownError)
 		}
 
 		await refresh()
 	}
+
+	return succeeded
 }
 
 export const useApplyBulkAction = (
 	allSnippets: Snippet[]
-): (action: SnippetsTableAction | undefined, selected: Set<Snippet['id']>) => Promise<void> => {
+): (action: SnippetsTableAction | undefined, selected: Set<Snippet['id']>) => Promise<number | undefined> => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
@@ -128,21 +141,23 @@ export const useApplyBulkAction = (
 			case 'download': {
 				const selectedSnippets = allSnippets.filter(snippet => selected.has(snippet.id))
 
-				return 1 < selectedSnippets.length && !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads
+				await (1 < selectedSnippets.length && !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads
 					? submitBulkSnippetDownloadsIndividually(selectedSnippets)
-					: submitBulkSnippetDownload(selectedSnippets)
+					: submitBulkSnippetDownload(selectedSnippets))
+				break
 			}
 
 			case 'trash':
 			case 'delete':
-				await applyAndRefresh(
+				return applyAndRefresh(
 					allSnippets.filter(snippet => selected.has(snippet.id)),
 					snippet => api.delete({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
-				break
 
 			case undefined:
 				break
 		}
+
+		return undefined
 	}
 }

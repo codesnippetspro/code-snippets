@@ -42,9 +42,17 @@ const bindDropdown = (
 	currentVersion: string
 ): void => {
 	const warningNotice = document.getElementById('version-switch-warning')
+	const targetWarning = document.getElementById('version-switch-target-warning')
 
 	dropdown.addEventListener('change', () => {
 		const selectedVersion = dropdown.value
+		const selectedWarning = dropdown.selectedOptions.item(0)?.dataset.warning ?? ''
+
+		if (targetWarning) {
+			targetWarning.textContent = selectedWarning
+			targetWarning.hidden = !selectedWarning
+		}
+
 		if (!button) {
 			return
 		}
@@ -60,6 +68,16 @@ const bindDropdown = (
 }
 
 const SUCCESS_RELOAD_MS = 3000
+
+const showResult = (result: HTMLElement, type: 'warning' | 'info' | 'success' | 'error', message = ''): void => {
+	const paragraph = document.createElement('p')
+	paragraph.textContent = message
+
+	// Admin notices without the plugin's own class are hidden on its screens.
+	result.className = `notice notice-${type} code-snippets-notice`
+	result.replaceChildren(paragraph)
+	result.style.display = ''
+}
 
 const postForm = async (data: Record<string, string>, config: VersionConfig): Promise<AjaxResponse> => {
 	const body = new URLSearchParams()
@@ -90,9 +108,7 @@ const bindSwitch = (
 		void (async (): Promise<void> => {
 			const targetVersion = dropdown.value
 			if (!targetVersion || targetVersion === currentVersion) {
-				result.className = 'notice notice-warning'
-				result.innerHTML = `<p>${i18n?.selectDifferent}</p>`
-				result.style.display = ''
+				showResult(result, 'warning', i18n?.selectDifferent)
 				return
 			}
 
@@ -100,9 +116,7 @@ const bindSwitch = (
 			const originalText = button.textContent ?? ''
 			button.textContent = i18n?.switching ?? ''
 
-			result.className = 'notice notice-info'
-			result.innerHTML = `<p>${i18n?.processing}</p>`
-			result.style.display = ''
+			showResult(result, 'info', i18n?.processing)
 
 			try {
 				const response = await postForm({
@@ -112,19 +126,16 @@ const bindSwitch = (
 				}, cfg)
 
 				if (response.success) {
-					result.className = 'notice notice-success'
-					result.innerHTML = `<p>${response.data?.message ?? ''}</p>`
+					showResult(result, 'success', response.data?.message ?? '')
 					setTimeout(() => window.location.reload(), SUCCESS_RELOAD_MS)
 					return
 				}
 
-				result.className = 'notice notice-error'
-				result.innerHTML = `<p>${response.data?.message ?? i18n?.error}</p>`
+				showResult(result, 'error', response.data?.message ?? i18n?.error)
 				button.disabled = false
 				button.textContent = originalText
 			} catch (_err) {
-				result.className = 'notice notice-error'
-				result.innerHTML = `<p>${i18n?.errorSwitch}</p>`
+				showResult(result, 'error', i18n?.errorSwitch)
 				button.disabled = false
 				button.textContent = originalText
 			}
@@ -142,7 +153,7 @@ const bindRefresh = (
 		void (async (): Promise<void> => {
 			const original = btn.textContent ?? ''
 			btn.disabled = true
-			btn.textContent = i18n?.error ?? ''
+			btn.textContent = i18n?.refreshing ?? ''
 
 			try {
 				await postForm({
@@ -169,7 +180,7 @@ export const initVersionSwitch = (): void => {
 	const config = window.code_snippets_version_switch
 
 	if (!config) {
-		throw Error('version switch config missing')
+		return
 	}
 
 	const button = <HTMLButtonElement | null> document.getElementById('switch-version-btn')

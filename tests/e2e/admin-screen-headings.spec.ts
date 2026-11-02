@@ -10,7 +10,7 @@ const SCREENS: { name: string; url: string }[] = [
 	{ name: 'Cloud Library', url: URLS.CLOUD_LIBRARY_ADMIN },
 	{ name: 'Blueprints', url: URLS.BLUEPRINTS_ADMIN },
 	{ name: 'AI Agent', url: URLS.AI_AGENT_ADMIN },
-	{ name: 'Insights', url: URLS.INSIGHTS_ADMIN },
+	{ name: 'Stats', url: URLS.STATS_ADMIN },
 	{ name: 'Import', url: URLS.IMPORT_ADMIN },
 	{ name: 'Settings', url: URLS.SETTINGS_ADMIN },
 	{ name: 'Welcome', url: URLS.WELCOME_ADMIN }

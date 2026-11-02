@@ -13,10 +13,6 @@ const selectTab = (tabsWrapper: Element, tab: Element, section: string) => {
 	document.querySelectorAll('.cloud-message').forEach(element => {
 		element.classList.add('hidden')
 	})
-
-	if ('version-switch' !== section) {
-		document.getElementById('version-switch-warning')?.classList.add('hidden')
-	}
 }
 
 // Refresh the editor preview whenever tabs change. CodeMirror measures itself

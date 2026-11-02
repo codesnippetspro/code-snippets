@@ -3,8 +3,6 @@ import { TIMEOUTS, URLS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
-const REFRESH_DELAY = 3000
-
 const switchSnippetView = async (page: Page, view: 'Card view' | 'Table view') => {
 	const saved = page
 		.waitForResponse(
@@ -32,6 +30,10 @@ const openCommunityCloud = async (page: Page) => {
 const isFeaturedRequest = (url: URL): boolean =>
 	url.pathname.includes('/cloud/snippets/featured') ||
 	true === url.searchParams.get('rest_route')?.includes('/cloud/snippets/featured')
+
+const isSearchRequest = (url: URL): boolean =>
+	url.pathname.endsWith('/cloud/snippets') ||
+	true === url.searchParams.get('rest_route')?.endsWith('/cloud/snippets')
 
 const isSnippetDownloadRequest = (url: URL): boolean =>
 	url.pathname.includes('/cloud/snippets/501/download') ||
@@ -141,6 +143,35 @@ test.describe('Community Cloud Featured Snippets', () => {
 		await expect(page.locator('.cloud-snippets-heading', { hasText: 'Featured Snippets' })).not.toBeVisible()
 	})
 
+	test('Searches with AI and keeps the method after a reload', async ({ page }) => {
+		const searchMethods: (string | null)[] = []
+
+		await page.route(isFeaturedRequest, route => route.fulfill({
+			contentType: 'application/json',
+			body: JSON.stringify(makeFeaturedResponse())
+		}))
+		await page.route(isSearchRequest, route => {
+			searchMethods.push(new URL(route.request().url()).searchParams.get('searchMethod'))
+			return route.fulfill({
+				contentType: 'application/json',
+				body: JSON.stringify(makeFeaturedResponse())
+			})
+		})
+		await openCommunityCloud(page)
+
+		const searchMethod = page.getByLabel('Search method')
+		await searchMethod.selectOption({ label: 'Search with AI' })
+		await page.locator('#cloud-search-query').fill('disable comments')
+		await page.locator('.cloud-search-form').getByRole('button', { name: /Search Cloud Library/i }).click()
+
+		await expect.poll(() => searchMethods).toEqual(['ai'])
+		await expect(page).toHaveURL(/[?&]by=ai(?:&|$)/)
+
+		await page.reload()
+		await expect(searchMethod).toHaveValue('ai')
+		await expect.poll(() => searchMethods).toEqual(['ai', 'ai'])
+	})
+
 	test('Announces loading and error states while featured snippets resolve', async ({ page }) => {
 		let releaseRequest: VoidFunction = () => undefined
 		const requestPending = new Promise<void>(resolve => {
@@ -184,7 +215,7 @@ test.describe('Community Cloud Featured Snippets', () => {
 
 			// Hold the refresh back so the card can be checked before it arrives.
 			if (1 < featuredRequests) {
-				await new Promise(resolve => setTimeout(resolve, REFRESH_DELAY))
+				await new Promise(resolve => setTimeout(resolve, TIMEOUTS.SHORT))
 			}
 
 			return route.fulfill({

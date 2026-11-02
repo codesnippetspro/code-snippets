@@ -141,6 +141,15 @@ class Manage_Menu_Assets {
 			];
 		}
 
+		if ( $this->screen_options->is_preview_demo_view() ) {
+			// The preview demo draws a mock of this site's front page, so it
+			// carries the site's own name and address.
+			$localized['previewDemo'] = [
+				'siteName' => get_bloginfo( 'name' ),
+				'homeUrl'  => home_url( '/' ),
+			];
+		}
+
 		wp_localize_script( self::JS_HANDLE, 'CODE_SNIPPETS_MANAGE', $localized );
 	}
 }

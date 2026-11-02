@@ -12,12 +12,12 @@ const STEPS: Record<string, CalloutContent> = {
 	ask: {
 		step: __('Step 1 of 5', 'code-snippets'),
 		title: __('Ask in plain English', 'code-snippets'),
-		body: __('No syntax to learn and no boilerplate to copy — describe what you want the site to do, and the agent works out what that means in code.', 'code-snippets')
+		body: __('No syntax to learn and no boilerplate to copy. Describe what you want the site to do, and the agent works out what that means in code.', 'code-snippets')
 	},
 	plan: {
 		step: __('Step 2 of 5', 'code-snippets'),
 		title: __('Sent for planning', 'code-snippets'),
-		body: __('Your request goes to Code Snippets Cloud, which works out what needs building — and whether that is one snippet or several — before writing anything.', 'code-snippets')
+		body: __('Your request goes to Code Snippets Cloud, which works out what needs building, whether that is one snippet or several, before writing anything.', 'code-snippets')
 	},
 	approve: {
 		step: __('Step 3 of 5', 'code-snippets'),

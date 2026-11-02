@@ -383,7 +383,7 @@ function update_shared_network_snippets( array $snippets ): bool {
 	}
 
 	$existing_shared_ids = get_site_option( 'shared_network_snippets', [] );
-	$updated_shared_ids = array_values( array_diff( array_merge( $existing_shared_ids, $shared_ids ), $unshared_ids ) );
+	$updated_shared_ids = array_values( array_unique( array_diff( array_merge( $existing_shared_ids, $shared_ids ), $unshared_ids ) ) );
 
 	if ( $existing_shared_ids === $updated_shared_ids ) {
 		return false;
@@ -393,21 +393,30 @@ function update_shared_network_snippets( array $snippets ): bool {
 
 	// Deactivate the snippet on all sites if necessary.
 	if ( $unshared_ids ) {
-		$sites = get_sites( [ 'fields' => 'ids' ] );
+		// Every site, not the first hundred that get_sites() returns by default:
+		// one left out would keep running a snippet that is no longer shared.
+		$sites = get_sites(
+			[
+				'fields' => 'ids',
+				'number' => 0,
+			]
+		);
 
 		foreach ( $sites as $site ) {
 			switch_to_blog( $site );
 			$active_shared_ids = get_option( 'active_shared_network_snippets' );
 
 			if ( is_array( $active_shared_ids ) ) {
-				$active_shared_ids = array_diff( $active_shared_ids, $unshared_ids );
+				$active_shared_ids = array_values( array_diff( $active_shared_ids, $unshared_ids ) );
 				update_option( 'active_shared_network_snippets', $active_shared_ids );
 			}
 
 			clean_active_snippets_cache( code_snippets()->db->ms_table );
-		}
 
-		restore_current_blog();
+			// Each switch is undone before the next, as one restore only steps
+			// back a single switch and would leave the request on another site.
+			restore_current_blog();
+		}
 	}
 
 	return true;
@@ -454,6 +463,11 @@ function activate_snippet( int $id, ?bool $network = null ) {
 	if ( ! $result ) {
 		return __( 'Could not activate snippet.', 'code-snippets' );
 	}
+
+	// Read back over a cleared cache, so what follows sees the snippet as
+	// active rather than as it was fetched for validation above.
+	clean_snippets_cache( $table_name );
+	$snippet = get_snippet( $id, $network );
 
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/activate_snippet', $snippet, $network );
@@ -527,6 +541,8 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 		return null;
 	}
 
+	clean_snippets_cache( $table_name );
+
 	update_shared_network_snippets( $valid_snippets );
 	do_action( 'code_snippets/activate_snippets', $valid_snippets, $table_name );
 	clean_snippets_cache( $table_name );
@@ -562,8 +578,12 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 		return null;
 	}
 
+	// Read back over a cleared cache, so the snippet is seen as inactive by
+	// everything below rather than as it stood before the write.
+	clean_snippets_cache( $table );
+	$snippet = get_snippet( $id, $network );
+
 	// Update the recently active list.
-	$snippet = get_snippet( $id );
 	$recently_active = get_self_option( $network, 'recently_active_snippets', [] );
 	$recently_active[ $id ] = time();
 	update_self_option( $network, 'recently_active_snippets', $recently_active );
@@ -605,8 +625,8 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	);
 
 	if ( $result ) {
-		do_action( 'code_snippets/delete_snippet', $snippet, $network );
 		clean_snippets_cache( $table );
+		do_action( 'code_snippets/delete_snippet', $snippet, $network );
 
 		$recently_active = get_self_option( $network, 'recently_active_snippets', [] );
 
@@ -644,8 +664,8 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 
 	$wpdb->update( $table, [ 'active' => '-1' ], [ 'id' => $id ], [ '%d' ] );
 
-	do_action( 'code_snippets/trash_snippet', $snippet, $network );
 	clean_snippets_cache( $table );
+	do_action( 'code_snippets/trash_snippet', $snippet, $network );
 
 	return true;
 }
@@ -669,8 +689,8 @@ function restore_snippet( int $id, ?bool $network = null ): bool {
 	$result = $wpdb->update( $table, [ 'active' => '0' ], [ 'id' => $id ], [ '%d' ] );
 
 	if ( $result ) {
-		do_action( 'code_snippets/restore_snippet', $id, $network );
 		clean_snippets_cache( $table );
+		do_action( 'code_snippets/restore_snippet', $id, $network );
 	}
 
 	return (bool) $result;
@@ -796,6 +816,7 @@ function save_snippet( $snippet ): ?Snippet {
 
 		$snippet->id = $wpdb->insert_id;
 		$updated = get_snippet( $snippet->id, $snippet->network );
+		$updated->shared_network = $snippet->shared_network;
 		$updated->code_error = $snippet->code_error;
 		$updated->code_error_trace = $snippet->code_error_trace;
 		do_action( 'code_snippets/create_snippet', $updated, $table );
@@ -810,7 +831,14 @@ function save_snippet( $snippet ): ?Snippet {
 		set_snippet_locked( $snippet->id, $snippet->locked, $snippet->network );
 		$wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
 
+		// The row has changed, so the cached list no longer describes it. It is
+		// dropped before the snippet is read back, because everything below —
+		// the value this returns and what its hooks are handed — has to be the
+		// saved snippet rather than the one that was there beforehand.
+		clean_snippets_cache( $table );
+
 		$updated = get_snippet( $snippet->id, $snippet->network );
+		$updated->shared_network = $snippet->shared_network;
 		$updated->code_error = $snippet->code_error;
 		$updated->code_error_trace = $snippet->code_error_trace;
 

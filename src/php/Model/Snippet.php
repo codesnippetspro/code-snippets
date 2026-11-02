@@ -111,8 +111,11 @@ class Snippet extends Model {
 	 */
 	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
-			case 'id':
 			case 'priority':
+				// Stored as a SMALLINT; negative priorities are not supported.
+				return max( 0, min( 32767, intval( $value ) ) );
+
+			case 'id':
 			case 'condition_id':
 			case 'cloud_id':
 			case 'revision':

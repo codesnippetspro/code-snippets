@@ -43,6 +43,17 @@ class Welcome_Client {
 	protected const CACHE_KEY = 'code_snippets_welcome_data';
 
 	/**
+	 * Seconds to wait for the remote welcome document.
+	 *
+	 * This is fetched while an admin screen is rendering, and nothing on the
+	 * screen depends on it, so it gives up sooner than a request the reader is
+	 * actually waiting on.
+	 *
+	 * @var int
+	 */
+	protected const REQUEST_TIMEOUT = 3;
+
+	/**
 	 * Data fetched from the remote API.
 	 *
 	 * @var array{
@@ -71,6 +82,16 @@ class Welcome_Client {
 			$this->build_changelog_data();
 			set_transient( self::CACHE_KEY, $this->welcome_data, DAY_IN_SECONDS * 2 );
 		}
+	}
+
+	/**
+	 * Retrieve the welcome page data that is already cached, without fetching it.
+	 *
+	 * @return array<string, mixed> Cached data, or an empty array when nothing is cached.
+	 */
+	public static function get_cached_data(): array {
+		$stored_data = get_transient( self::CACHE_KEY );
+		return is_array( $stored_data ) ? $stored_data : [];
 	}
 
 	/**
@@ -201,7 +222,10 @@ class Welcome_Client {
 	 * @return void
 	 */
 	protected function fetch_remote_welcome_data() {
-		$remote_welcome_data = wp_remote_get( self::WELCOME_JSON_URL );
+		$remote_welcome_data = wp_remote_get(
+			self::WELCOME_JSON_URL,
+			[ 'timeout' => self::REQUEST_TIMEOUT ]
+		);
 
 		if ( is_wp_error( $remote_welcome_data ) ) {
 			return;
@@ -225,6 +249,17 @@ class Welcome_Client {
 	 * @return void
 	 */
 	protected function build_changelog_data() {
+		$this->welcome_data['changelog'] = self::read_changelog();
+	}
+
+	/**
+	 * Read the latest releases from the plugin's changelog file.
+	 *
+	 * The file ships with the plugin, so this never makes a remote request.
+	 *
+	 * @return array<int, array{version: string, date: string, entries: array<string, array<string, string[]>>}>
+	 */
+	public static function read_changelog(): array {
 		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 		$filesystem = new WP_Filesystem_Direct( null );
@@ -240,7 +275,7 @@ class Welcome_Client {
 		}
 
 		if ( ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
-			return;
+			return [];
 		}
 
 		$changelog_contents = $filesystem->get_contents( $changelog_dir . $changelog_filename );
@@ -301,7 +336,7 @@ class Welcome_Client {
 			];
 		}
 
-		$this->welcome_data['changelog'] = $changelog;
+		return $changelog;
 	}
 
 	/**

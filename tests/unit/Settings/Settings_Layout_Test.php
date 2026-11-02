@@ -158,4 +158,42 @@ class Settings_Layout_Test extends UnitTestCase {
 		$this->assertNotContains( [ 'debug', 'enable_version_change' ], $fields );
 		$this->assertArrayNotHasKey( 'enable_version_change', Settings_Fields::get_field_definitions()['debug'] );
 	}
+
+	/**
+	 * A checkbox shows its replacement wording once, as its label.
+	 *
+	 * @return void
+	 */
+	public function test_checkbox_replacement_wording_is_shown_once(): void {
+		$field = Settings_Layout::apply_description(
+			[
+				'type'  => 'checkbox',
+				'label' => 'Old wording. <a href="https://example.com/doc">Learn more</a>',
+				'desc'  => '',
+			],
+			'enable_flat_files'
+		);
+
+		$replacement = Settings_Layout::get_descriptions()['enable_flat_files'];
+
+		$this->assertSame( $replacement . ' <a href="https://example.com/doc">Learn more</a>', $field['label'] );
+		$this->assertSame( '', $field['desc'] );
+	}
+
+	/**
+	 * Other field types take the replacement as their description.
+	 *
+	 * @return void
+	 */
+	public function test_other_fields_take_the_replacement_as_description(): void {
+		$field = Settings_Layout::apply_description(
+			[
+				'type' => 'number',
+				'desc' => 'Old wording.',
+			],
+			'max_revisions'
+		);
+
+		$this->assertSame( Settings_Layout::get_descriptions()['max_revisions'], $field['desc'] );
+	}
 }

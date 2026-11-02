@@ -185,6 +185,18 @@ class File_Import_REST_Controller extends REST_Controller {
 			'message'     => sprintf( $message, count( $all_snippets ) ),
 		];
 
+		// Conditions are referenced by their ID on the site the snippet came from,
+		// which means nothing here, so they are left behind.
+		foreach ( $all_snippets as $snippet_data ) {
+			if ( absint( $snippet_data['condition_id'] ?? $snippet_data['conditionId'] ?? 0 ) ) {
+				$errors[] = sprintf(
+					/* translators: %s: snippet name */
+					__( '"%s" was limited by a condition on the site it came from. Conditions are not imported, so once activated it will run wherever its location allows.', 'code-snippets' ),
+					$snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' )
+				);
+			}
+		}
+
 		if ( ! empty( $errors ) ) {
 			$response['warnings'] = $errors;
 		}

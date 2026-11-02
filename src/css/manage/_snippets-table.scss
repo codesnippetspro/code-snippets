@@ -362,9 +362,11 @@
 	gap: 1em;
 }
 
-// Keep every table row the same height by clamping the description cell
-// to two lines, matching the two-line name + row-actions column.
-.snippets-list-view .wp-list-table td.column-desc .snippet-description-content {
+// Rows are kept to a common height by clamping the description to two lines,
+// matching the two-line name + row-actions column. Descriptions are governed by
+// the "Truncate long snippet names and descriptions" Screen Option along with
+// names, so nothing is clamped once that option is switched off.
+.snippets-list-view .wp-list-table.truncate-row-values td.column-desc .snippet-description-content {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;

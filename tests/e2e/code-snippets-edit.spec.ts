@@ -15,6 +15,43 @@ test.describe('Code Snippets Admin', () => {
 		await helper.expectToBeOnSnippetsAdminPage()
 	})
 
+	test('A long unbroken line does not widen the editor page', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+
+		// Saved through the editor rather than WP-CLI. CI runs WP-CLI as root, and
+		// with file-based execution on, the first snippet saved that way leaves
+		// root-owned directories that the web server cannot write later snippets
+		// into, so every snippet saved after it silently never runs.
+		await helper.createSnippet({
+			name: snippetName,
+			code: `// ${'a'.repeat(4000)}`
+		})
+
+		try {
+			await helper.openSnippet(snippetName)
+
+			// Line wrapping is on by default, and the page widened regardless.
+			await expect(page.locator('.CodeMirror').first()).toHaveClass(/CodeMirror-wrap/)
+
+			// One pixel of tolerance covers sub-pixel rounding in layout.
+			const pageOverflow = await page.evaluate(() =>
+				document.documentElement.scrollWidth - document.documentElement.clientWidth)
+			expect(pageOverflow, 'the page should not scroll sideways').toBeLessThanOrEqual(1)
+
+			const sidebar = await page.locator('.snippet-editor-sidebar').boundingBox()
+
+			if (!sidebar) {
+				throw new Error('The editor sidebar is not laid out')
+			}
+
+			const viewportWidth = page.viewportSize()?.width ?? 0
+			expect(sidebar.x + sidebar.width, 'the sidebar should stay on screen')
+				.toBeLessThanOrEqual(viewportWidth + 1)
+		} finally {
+			await helper.cleanupSnippet(snippetName)
+		}
+	})
+
 	test('Can add a new snippet', async () => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.createSnippet({

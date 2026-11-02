@@ -1,8 +1,40 @@
 # Changelog
 
-## [4.0.0] (UPCOMING)
+## [4.1.0] (UPCOMING)
 
 ### Added
+* Universal search in the plugin header, for finding snippets and their code, settings, stats, the welcome screen,
+  documentation and Community Cloud snippets from one field, with keyboard navigation and a full results page.
+* Labels in the version switcher marking the current, latest, beta and release candidate builds, and the WordPress
+  version each was tested up to.
+
+### Changed
+* The version switch warning now notes that beta and release candidate builds are not recommended for production sites.
+* Resetting caches now fetches the list of available plugin versions again, and reports how many were found or why none
+  could be listed.
+
+### Fixed
+* Fixed the snippets list showing an out-of-date state on sites with a page cache, as the plugin's REST API responses
+  were being cached.
+* Fixed the Search with AI option missing from the Community Cloud search method menu. (PRO)
+* Fixed the share with subsites setting not being applied when a network snippet was saved on multisite.
+* Fixed a PHP deprecation notice and a missing browser tab title on the Edit Snippet screen.
+* Fixed a long unbroken line of code widening the snippet editor page and pushing the sidebar out of view.
+* Fixed admin screens waiting on remote requests for as long as the site's default timeout allows when the Code
+  Snippets service or WordPress.org is slow or unreachable: these requests now give up after 5 seconds, or 3 seconds
+  for the welcome content.
+* Fixed version switch messages being hidden by the admin notice filter, and showing markup from the response as HTML.
+* Fixed the version list refresh reporting success when the versions could not be fetched.
+* Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user,
+  and breaking REST API URLs. Safe mode is now carried on admin links only.
+* Fixed the snippets list showing only the first 100 snippets on sites with larger libraries, with the type counts
+  agreeing with that shortened list rather than the real total. The list no longer carries snippet code, making the
+  request far smaller, and the screen now reports a problem instead of presenting a partial list as complete.
+
+## [4.0.0] (2026-10-12)
+
+### Added
+* Stats page for viewing snippet totals and various snippet breakdowns.
 * AI Agent for building snippets from a description: it proposes a plan you can refine or approve before any code is
   written, and can revise the snippets it created. (PRO)
 * Snippet revisions, with a history of past versions, a side-by-side diff against the current code, and one-click
@@ -67,9 +99,15 @@
 * Fixed featured Community Cloud snippets failing to load with some cloud API responses. (PRO)
 * Fixed bulk actions in Community Cloud running against an empty selection, so selected snippets were never downloaded.
   (PRO)
-* Fixed the snippets list showing only the first 100 snippets on sites with larger libraries, with the type counts
-  agreeing with that shortened list rather than the real total. The list no longer carries snippet code, making the
-  request far smaller, and the screen now reports a problem instead of presenting a partial list as complete.
+* Fixed a fatal error in the Elementor editor on Elementor versions older than 3.19.
+* Fixed snippet descriptions staying truncated after the "Truncate long snippet names and descriptions" screen option
+  was switched off.
+* Fixed saving, activating or deactivating a snippet reporting its previous state, which could leave a deactivated
+  snippet running under file-based execution.
+* Fixed the snippet editor reporting a save as failed and undelivered when no response was received, which it cannot
+  determine.
+* Fixed translations being loaded too early, with a notice from WordPress, when posts were queried while plugins were
+  still loading.
 
 ## [3.10.2] (2026-09-01)
 

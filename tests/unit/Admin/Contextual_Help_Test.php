@@ -40,7 +40,7 @@ class Contextual_Help_Test extends AdminUnitTestCase {
 			'cloud-library' => [ 'cloud-library' ],
 			'blueprints'    => [ 'blueprints' ],
 			'ai-agent'      => [ 'ai-agent' ],
-			'insights'      => [ 'insights' ],
+			'stats'         => [ 'stats' ],
 			'import'        => [ 'import' ],
 			'settings'      => [ 'settings' ],
 			'welcome'       => [ 'welcome' ],

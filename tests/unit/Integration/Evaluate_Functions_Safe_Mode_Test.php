@@ -13,6 +13,36 @@ use function Code_Snippets\code_snippets;
 class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 
 	/**
+	 * Calls to the current-user filter after which it stops building URLs.
+	 *
+	 * Past anything a correct implementation produces, but low enough that a
+	 * regression fails on the count rather than exhausting the memory limit and
+	 * taking the whole test run down with it.
+	 */
+	private const RESOLUTION_LIMIT = 5;
+
+	/**
+	 * How many times the current-user filter was called during a test.
+	 *
+	 * @var int
+	 */
+	private int $resolution_count = 0;
+
+	/**
+	 * The last URL built while the current user was being resolved.
+	 *
+	 * @var string|null
+	 */
+	private ?string $resolved_url = null;
+
+	/**
+	 * User the current-user filter resolves to.
+	 *
+	 * @var int|false
+	 */
+	private $user_to_resolve = false;
+
+	/**
 	 * Set up before each test.
 	 *
 	 * @return void
@@ -20,6 +50,9 @@ class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 		unset( $_REQUEST['snippets-safe-mode'] );
+		$this->resolution_count = 0;
+		$this->resolved_url = null;
+		$this->user_to_resolve = false;
 	}
 
 	/**
@@ -29,7 +62,42 @@ class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 	 */
 	public function tear_down() {
 		unset( $_REQUEST['snippets-safe-mode'] );
+		remove_filter( 'determine_current_user', [ $this, 'resolve_user_through_a_url' ], 15 );
 		parent::tear_down();
+	}
+
+	/**
+	 * Stand in for a plugin that builds a URL while the current user is being resolved.
+	 *
+	 * WooCommerce does this: its REST authentication runs on determine_current_user
+	 * and calls home_url() to work out whether the request is for one of its routes.
+	 * An admin URL is built as well, as that is the one safe mode still filters.
+	 *
+	 * @param int|false $user_id Resolved user, from an unknown earlier callback.
+	 *
+	 * @return int|false
+	 */
+	public function resolve_user_through_a_url( $user_id ) {
+		++$this->resolution_count;
+
+		if ( $this->resolution_count < self::RESOLUTION_LIMIT ) {
+			$this->resolved_url = home_url( '/' );
+			admin_url( '/' );
+		}
+
+		return false === $this->user_to_resolve ? $user_id : $this->user_to_resolve;
+	}
+
+	/**
+	 * Force WordPress to resolve the current user again on the next capability check.
+	 *
+	 * @return void
+	 */
+	private function require_user_resolution(): void {
+		global $current_user;
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- emptying the cached user is the only way to make WordPress resolve one again, which is the whole point of these tests.
+		$current_user = null;
 	}
 
 	/**
@@ -87,5 +155,70 @@ class Evaluate_Functions_Safe_Mode_Test extends UnitTestCase {
 
 		$this->assertFalse( $evaluate->disable_snippet_execution( null ) );
 		$this->assertTrue( $evaluate->disable_snippet_execution( true ) );
+	}
+
+	/**
+	 * Resolving the current user must not re-enter the capability check.
+	 *
+	 * A plugin that builds a URL on determine_current_user reaches the URL
+	 * filter before WordPress knows who the user is. Checking the capability
+	 * again there restarts the resolution that is already running, which
+	 * recurses until the request exhausts its memory limit. Any visitor can
+	 * trigger it by putting the query var on a front-end URL.
+	 *
+	 * @return void
+	 */
+	public function test_url_filter_does_not_restart_user_resolution(): void {
+		$_REQUEST['snippets-safe-mode'] = '1';
+
+		$evaluate = new Evaluate_Functions( code_snippets()->db );
+
+		add_filter( 'determine_current_user', [ $this, 'resolve_user_through_a_url' ], 15 );
+		$this->require_user_resolution();
+
+		$evaluate->disable_snippet_execution( true );
+
+		$this->assertSame(
+			1,
+			$this->resolution_count,
+			'the current user should be resolved once per request, not once per URL built while resolving'
+		);
+	}
+
+	/**
+	 * Site URLs are left alone, as callers append paths to them and a query var
+	 * in the middle breaks the result.
+	 *
+	 * @return void
+	 */
+	public function test_site_urls_do_not_carry_the_query_var(): void {
+		$_REQUEST['snippets-safe-mode'] = '1';
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+
+		$evaluate = new Evaluate_Functions( code_snippets()->db );
+
+		$this->assertFalse( has_filter( 'home_url', [ $evaluate, 'add_safe_mode_query_var' ] ) );
+		$this->assertStringNotContainsString( 'snippets-safe-mode', home_url( '/' ) );
+		$this->assertStringNotContainsString( 'snippets-safe-mode', rest_url( 'code-snippets/v1/snippets' ) );
+	}
+
+	/**
+	 * Safe mode is carried on to the admin URLs of a request that asked for it.
+	 *
+	 * Whether snippets are then skipped depends on the capability, which is
+	 * checked where they are evaluated rather than for every URL built.
+	 *
+	 * @return void
+	 */
+	public function test_query_var_is_added_to_admin_urls(): void {
+		$_REQUEST['snippets-safe-mode'] = '1';
+		wp_set_current_user( 0 );
+
+		$evaluate = new Evaluate_Functions( code_snippets()->db );
+
+		$this->assertStringContainsString(
+			'snippets-safe-mode=1',
+			$evaluate->add_safe_mode_query_var( 'https://example.org/wp-admin/' )
+		);
 	}
 }

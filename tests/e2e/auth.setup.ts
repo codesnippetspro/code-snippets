@@ -1,13 +1,11 @@
 import { join } from 'path'
 import { expect, test as setup } from '@playwright/test'
 import { wpCli } from './helpers/wpCli'
-import { URLS } from './helpers/constants'
+import { TIMEOUTS, URLS } from './helpers/constants'
 
 const authFile = join(__dirname, '.auth/user.json')
-const AUTH_SETUP_TIMEOUT_MS = 120000
-
 setup('authenticate', async ({ page }) => {
-	setup.setTimeout(AUTH_SETUP_TIMEOUT_MS)
+	setup.setTimeout(TIMEOUTS.VERY_LONG)
 
 	// Ensure a clean environment across local runs / retries.
 	// If Safe Mode is enabled via `wp-config.php` it disables snippet execution and can
@@ -60,10 +58,10 @@ setup('authenticate', async ({ page }) => {
 			await updateBtn.first().click()
 		}
 		// Give the upgrade process more time to complete and the admin UI to load.
-		await page.waitForSelector('#wpbody-content, #adminmenu', { timeout: 120000 })
+		await page.waitForSelector('#wpbody-content, #adminmenu', { timeout: TIMEOUTS.VERY_LONG })
 	} else {
 		// Normal path: wait for admin UI.
-		await page.waitForSelector('#wpbody-content, #adminmenu', { timeout: 60000 })
+		await page.waitForSelector('#wpbody-content, #adminmenu', { timeout: TIMEOUTS.LONG })
 	}
 
 	await expect(page.locator('#adminmenu')).toBeVisible()

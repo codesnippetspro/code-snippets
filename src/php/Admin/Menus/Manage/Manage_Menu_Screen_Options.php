@@ -143,6 +143,18 @@ class Manage_Menu_Screen_Options {
 	}
 
 	/**
+	 * Whether the current request renders the snippet preview demo.
+	 *
+	 * Like the AI Agent, the subpage remains an upsell view for {@see load()};
+	 * this detection exists only so its runtime data can be localized.
+	 *
+	 * @return bool
+	 */
+	public function is_preview_demo_view(): bool {
+		return 'preview' === $this->get_current_subpage();
+	}
+
+	/**
 	 * Whether the current request renders Community Cloud.
 	 *
 	 * The "Bundles" tab within Community Cloud is a Pro-only upsell rather than
