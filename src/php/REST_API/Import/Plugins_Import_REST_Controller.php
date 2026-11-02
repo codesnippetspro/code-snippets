@@ -6,6 +6,7 @@ use Code_Snippets\REST_API\Import\Plugins\Header_Footer_Code_Manager_Plugin_Impo
 use Code_Snippets\REST_API\Import\Plugins\Insert_Headers_And_Footers_Plugin_Importer;
 use Code_Snippets\REST_API\Import\Plugins\Insert_PHP_Code_Snippet_Plugin_Importer;
 use Code_Snippets\REST_API\Import\Plugins\Plugin_Importer;
+use Code_Snippets\REST_API\Network_Scope;
 use Code_Snippets\REST_API\REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -18,6 +19,8 @@ use function Code_Snippets\code_snippets;
  * Handles registering REST API routes and providing information about available plugin importers.
  */
 class Plugins_Import_REST_Controller extends REST_Controller {
+	use Network_Scope;
+
 
 	/**
 	 * Current API version.
@@ -119,6 +122,8 @@ class Plugins_Import_REST_Controller extends REST_Controller {
 	 * @return bool
 	 */
 	public function permission_callback( WP_REST_Request $request ): bool {
-		return code_snippets()->current_user_can();
+		return $this->is_network_scoped_request( $request )
+			? code_snippets()->user_can_manage_network_snippets()
+			: code_snippets()->current_user_can();
 	}
 }

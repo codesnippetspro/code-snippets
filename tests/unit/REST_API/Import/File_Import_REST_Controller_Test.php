@@ -5,6 +5,8 @@ namespace Code_Snippets\REST_API\Import;
 use Code_Snippets\AdminUnitTestCase;
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_UnitTest_Factory;
+use function Code_Snippets\get_snippets;
 
 /**
  * Tests for parsing uploaded snippet export files.
@@ -20,6 +22,30 @@ class File_Import_REST_Controller_Test extends AdminUnitTestCase {
 	 * @var string[]
 	 */
 	private array $files = [];
+
+	/**
+	 * Super administrator user ID.
+	 *
+	 * @var int
+	 */
+	protected static int $super_admin_id;
+
+	/**
+	 * Create the fixture users.
+	 *
+	 * @param WP_UnitTest_Factory $factory Factory object.
+	 *
+	 * @return void
+	 */
+	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
+		parent::wpSetUpBeforeClass( $factory );
+
+		self::$super_admin_id = $factory->user->create( [ 'role' => 'administrator' ] );
+
+		if ( is_multisite() ) {
+			grant_super_admin( self::$super_admin_id );
+		}
+	}
 
 	/**
 	 * Remove the export files.
@@ -103,5 +129,126 @@ class File_Import_REST_Controller_Test extends AdminUnitTestCase {
 		);
 
 		$this->assertArrayNotHasKey( 'warnings', $response->get_data() );
+	}
+
+	/**
+	 * Import the given snippets.
+	 *
+	 * @param array<string, mixed> $params Request parameters.
+	 *
+	 * @return WP_REST_Response
+	 */
+	private function import( array $params ): WP_REST_Response {
+		$request = new WP_REST_Request( 'POST', '/code-snippets/v1/import/file-upload/import' );
+
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
+
+		return rest_do_request( $request );
+	}
+
+	/**
+	 * Skip the current test when not running on multisite.
+	 *
+	 * @return void
+	 */
+	private function require_multisite(): void {
+		if ( ! is_multisite() ) {
+			$this->markTestSkipped( 'Network scope only exists on multisite installs.' );
+		}
+	}
+
+	/**
+	 * A site administrator can import into the site table.
+	 *
+	 * @return void
+	 */
+	public function test_site_admin_can_import_site_snippets(): void {
+		$response = $this->import(
+            [
+				'snippets' => [
+					[
+						'name' => 'Site import',
+						'code' => '// site',
+					],
+				],
+			]
+        );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 1, $response->get_data()['imported'] );
+	}
+
+	/**
+	 * A site administrator without the network capability cannot import into the network table.
+	 *
+	 * @return void
+	 */
+	public function test_site_admin_cannot_import_network_snippets(): void {
+		$this->require_multisite();
+
+		$response = $this->import(
+			[
+				'network'  => true,
+				'snippets' => [
+					[
+						'name' => 'Network import',
+						'code' => '// network',
+					],
+				],
+			]
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertEmpty( get_snippets( [], true ) );
+	}
+
+	/**
+	 * A site administrator without the network capability cannot import shared network snippets.
+	 *
+	 * @return void
+	 */
+	public function test_site_admin_cannot_import_shared_network_snippets(): void {
+		$this->require_multisite();
+
+		$response = $this->import(
+			[
+				'snippets' => [
+					[
+						'name'           => 'Shared import',
+						'code'           => '// shared',
+						'shared_network' => true,
+					],
+				],
+			]
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * A network administrator can import into the network table.
+	 *
+	 * @return void
+	 */
+	public function test_super_admin_can_import_network_snippets(): void {
+		$this->require_multisite();
+		wp_set_current_user( self::$super_admin_id );
+
+		$response = $this->import(
+			[
+				'network'  => true,
+				'snippets' => [
+					[
+						'name' => 'Network import',
+						'code' => '// network',
+					],
+				],
+			]
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 1, get_snippets( [], true ) );
 	}
 }
