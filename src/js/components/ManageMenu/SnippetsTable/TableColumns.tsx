@@ -6,7 +6,7 @@ import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { SNIPPET_SCOPE_ICONS, getSnippetDisplayName, getSnippetEditUrl, getSnippetLocation, getSnippetType } from '../../../utils/snippets/snippets'
 import { getRunOnceNonce } from '../../../utils/restAPI'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
@@ -16,7 +16,7 @@ import { RowActions } from './RowActions'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
 import type { Key } from 'react'
-import type { Snippet } from '../../../types/Snippet'
+import type { Snippet, SnippetCodeScope } from '../../../types/Snippet'
 import type { ListTableColumn } from '../../common/ListTable'
 
 interface ColumnProps {
@@ -156,6 +156,20 @@ export const TypeColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	)
 }
 
+export const LocationColumn: React.FC<ColumnProps> = ({ snippet }) => {
+	const location = getSnippetLocation(snippet)
+	if (!location) {
+		return <>&#8212;</>
+	}
+
+	return (
+		<span className="snippet-location">
+			<span className={`dashicons dashicons-${SNIPPET_SCOPE_ICONS[snippet.scope as SnippetCodeScope]}`} aria-hidden="true"></span>
+			{location}
+		</span>
+	)
+}
+
 export const TagsColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	snippet.tags.map((tag, index) =>
 		<Fragment key={tag}>
@@ -228,6 +242,12 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 		title: __('Type', 'code-snippets'),
 		sortedValue: snippet => getSnippetType(snippet),
 		render: snippet => <TypeColumn snippet={snippet} />
+	},
+	{
+		id: 'location',
+		title: __('Location', 'code-snippets'),
+		sortedValue: snippet => getSnippetLocation(snippet) ?? '',
+		render: snippet => <LocationColumn snippet={snippet} />
 	},
 	{
 		id: 'desc',

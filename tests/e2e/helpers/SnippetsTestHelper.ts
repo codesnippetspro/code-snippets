@@ -32,6 +32,7 @@ export interface CreateSnippetCliOptions {
 	active: boolean;
 	conditionId?: number;
 	desc?: string;
+	scope?: string;
 	tags?: readonly string[];
 	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
 }
@@ -94,6 +95,10 @@ export class SnippetsTestHelper {
 			case 'cond':
 				scope = 'condition'
 				break
+		}
+
+		if (options.scope) {
+			scope = options.scope
 		}
 
 		const code = 'html' === type ? `<p>${options.name}</p>\n` : `// ${options.name}\n`

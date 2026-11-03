@@ -115,6 +115,10 @@ export const validateSnippet = (snippet: Snippet): undefined | string => {
 export const isCondition = (snippet: { scope?: SnippetScope }): boolean =>
 	'condition' === snippet.scope
 
+/** The visible location label of a snippet, or undefined for conditional snippets which have no single run location. */
+export const getSnippetLocation = (snippet: Pick<Snippet, 'scope'>): string | undefined =>
+	isCondition(snippet) ? undefined : SNIPPET_SCOPE_DESCRIPTIONS[<SnippetCodeScope> snippet.scope]
+
 export const isProSnippet = (snippet: Pick<Snippet, 'scope'>): boolean =>
 	PRO_TYPES.has(getSnippetType(snippet))
 
