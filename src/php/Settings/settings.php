@@ -217,7 +217,7 @@ function register_plugin_settings() {
 			// accessible name. Checkboxes render their own labels, and
 			// callback/action fields have no single control to point at.
 			$labelable_types = [ 'text', 'number', 'select' ];
-			$field_args      = [];
+			$field_args = [];
 
 			if ( isset( $field['type'] ) && in_array( $field['type'], $labelable_types, true ) ) {
 				$field_args['label_for'] = $field_object->element_id;
@@ -259,7 +259,7 @@ add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
  *
  * @param array<string, mixed>                    $field    Field definition.
  * @param array<string, array<string,mixed>>      $settings Current settings values.
- * @param array<string, array<string,mixed>>|null $input Optional raw input values.
+ * @param array<string, array<string,mixed>>|null $input    Optional raw input values.
  *
  * @return bool
  */
@@ -365,7 +365,7 @@ function process_settings_actions( array $input ): ?array {
 		add_settings_error(
 			OPTION_NAME,
 			'settings_reset',
-			__( 'All settings have been reset to their defaults.', 'code-snippets' ),
+			esc_html__( 'All settings have been reset to their defaults.', 'code-snippets' ),
 			'updated'
 		);
 
@@ -374,14 +374,25 @@ function process_settings_actions( array $input ): ?array {
 	}
 
 	if ( isset( $input['debug']['database_update'] ) ) {
-		code_snippets()->db->create_or_upgrade_tables();
+		if ( code_snippets()->db->create_or_upgrade_tables() ) {
+			add_settings_error(
+				OPTION_NAME,
+				'database_update_done',
+				esc_html__( 'Successfully performed database table upgrade.', 'code-snippets' ),
+				'updated'
+			);
+		} else {
+			global $wpdb;
 
-		add_settings_error(
-			OPTION_NAME,
-			'database_update_done',
-			__( 'Successfully performed database table upgrade.', 'code-snippets' ),
-			'updated'
-		);
+			/* translators: %s: database error message */
+			$error_text = __( 'The database table upgrade did not complete: %s', 'code-snippets' );
+
+			add_settings_error(
+				OPTION_NAME,
+				'database_update_failed',
+				esc_html( sprintf( $error_text, $wpdb->last_error ) ),
+			);
+		}
 	}
 
 	if ( isset( $input['debug']['reset_caches'] ) ) {
@@ -406,29 +417,27 @@ function process_settings_actions( array $input ): ?array {
 		$refresh_failure = Version_Switch::get_refresh_failure();
 
 		if ( $refresh_failure ) {
+			/* translators: %s: reason the plugin versions could not be listed. */
+			$message = __( 'Successfully reset snippets caches, but the available plugin versions could not be listed: %s', 'code-snippets' );
+
 			add_settings_error(
 				OPTION_NAME,
 				'snippet_caches_reset',
-				sprintf(
-					/* translators: %s: reason the plugin versions could not be listed. */
-					__( 'Successfully reset snippets caches, but the available plugin versions could not be listed: %s', 'code-snippets' ),
-					$refresh_failure
-				)
+				esc_html( sprintf( $message, $refresh_failure ) ),
 			);
 		} else {
+			/* translators: %d: number of plugin versions available to install. */
+			$message = _n(
+				'Successfully reset snippets caches. %d plugin version is available to install.',
+				'Successfully reset snippets caches. %d plugin versions are available to install.',
+				count( $available_versions ),
+				'code-snippets'
+			);
+
 			add_settings_error(
 				OPTION_NAME,
 				'snippet_caches_reset',
-				sprintf(
-					/* translators: %d: number of plugin versions available to install. */
-					_n(
-						'Successfully reset snippets caches. %d plugin version is available to install.',
-						'Successfully reset snippets caches. %d plugin versions are available to install.',
-						count( $available_versions ),
-						'code-snippets'
-					),
-					count( $available_versions )
-				),
+				esc_html( sprintf( $message, count( $available_versions ) ) ),
 				'updated'
 			);
 		}

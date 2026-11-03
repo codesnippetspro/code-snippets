@@ -98,13 +98,27 @@ class DB {
 
 	/**
 	 * Create the snippet tables, or upgrade them if they already exist
+	 *
+	 * @return bool Whether every table was created or upgraded.
 	 */
-	public function create_or_upgrade_tables() {
-		if ( is_multisite() ) {
-			$this->create_table( $this->ms_table );
-		}
+	public function create_or_upgrade_tables(): bool {
+		$network_okay = ! is_multisite() || $this->create_table( $this->ms_table );
+		return $this->create_table( $this->table ) && $network_okay;
+	}
 
-		$this->create_table( $this->table );
+	/**
+	 * Upgrade a table that a write has just failed on because it lacks a column.
+	 *
+	 * A table that missed an upgrade fails every save that writes a column it does not have.
+	 *
+	 * @param string $table_name Table the write failed on.
+	 *
+	 * @return bool Whether the table was upgraded, so the write can be retried.
+	 */
+	public static function upgrade_after_unknown_column( string $table_name ): bool {
+		global $wpdb;
+
+		return false !== stripos( (string) $wpdb->last_error, 'Unknown column' ) && self::create_table( $table_name );
 	}
 
 	/**
@@ -322,7 +336,7 @@ class DB {
 			: 'AND active <> -1';
 
 		$snippets = $wpdb->get_results(
-			// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$wpdb->prepare(
 				"
 				SELECT id, code, scope, active, priority
