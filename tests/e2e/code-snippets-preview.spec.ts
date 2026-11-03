@@ -6,6 +6,8 @@ import type { Locator, Page } from '@playwright/test'
 
 const MAXIMUM_FOCUS_ATTEMPTS = 10
 const MAXIMUM_BADGE_ALIGNMENT_OFFSET = 4
+// Allows for sub-pixel rounding between the line number and code boxes.
+const MAXIMUM_SUBPIXEL_OVERLAP = 1
 const PREVIEW_VIEWPORT_WIDTHS = [1280, 640]
 const CONTROL_HEIGHT = 38
 
@@ -129,6 +131,25 @@ test.describe('Code Snippets Preview Modal', () => {
 		const editor = await openPreviewEditor(page)
 
 		await expect(editor.locator('[aria-label="Snippet code preview"]')).toBeAttached()
+	})
+
+	// The modal scales in as it opens, and an editor measured during that animation
+	// would place its line numbers over the start of the code.
+	test('Preview code does not overlap the line numbers', async ({ page }) => {
+		const editor = await openPreviewEditor(page)
+		const lineNumber = editor.locator('.CodeMirror-linenumber').first()
+		const line = editor.locator('.CodeMirror-line').first()
+
+		await expect(async () => {
+			const [lineNumberBox, lineBox] = await Promise.all([lineNumber.boundingBox(), line.boundingBox()])
+
+			expect(lineNumberBox).not.toBeNull()
+			expect(lineBox).not.toBeNull()
+
+			if (lineNumberBox && lineBox) {
+				expect(lineNumberBox.x + lineNumberBox.width).toBeLessThanOrEqual(lineBox.x + MAXIMUM_SUBPIXEL_OVERLAP)
+			}
+		}).toPass({ timeout: TIMEOUTS.SHORT })
 	})
 
 	test('Preview type badge sits in the header before the close button', async ({ page }) => {
