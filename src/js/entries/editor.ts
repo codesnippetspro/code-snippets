@@ -1,4 +1,5 @@
 import { defineMode, getMode, registerHelper } from 'codemirror'
+import { registerPersistentSearch } from '../utils/editorSearch'
 import { Linter } from '../utils/Linter'
 import type { EditorConfiguration, ModeSpec } from 'codemirror'
 
@@ -12,6 +13,8 @@ const mode: ModeSpec<ModeSpecOptions> = {
 }
 
 defineMode('php-snippet', (config: EditorConfiguration) => getMode(config, mode))
+
+registerPersistentSearch()
 
 registerHelper('lint', 'php', (text: string) => {
 	const linter = new Linter(text)
