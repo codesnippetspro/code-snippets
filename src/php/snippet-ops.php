@@ -809,10 +809,12 @@ function save_snippet( $snippet ): ?Snippet {
 	// Create a new snippet if the ID is not set.
 	if ( 0 === $snippet->id ) {
 		$data['created_by'] = $author_id;
-		$result = $wpdb->insert( $table, $data, '%s' );
+		$format = '%s';
+
+		$result = $wpdb->insert( $table, $data, $format );
 
 		if ( false === $result && Core\DB::upgrade_after_unknown_column( $table ) ) {
-			$result = $wpdb->insert( $table, $data, '%s' );
+			$result = $wpdb->insert( $table, $data, $format );
 		}
 
 		if ( false === $result ) {
@@ -833,10 +835,13 @@ function save_snippet( $snippet ): ?Snippet {
 		// Otherwise, update the snippet data.
 		$existing = get_snippet( $snippet->id, $snippet->network );
 
-		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
+		$where = [ 'id' => $snippet->id ];
+		$where_format = [ '%d' ];
+
+		$result = $wpdb->update( $table, $data, $where, null, $where_format );
 
 		if ( false === $result && Core\DB::upgrade_after_unknown_column( $table ) ) {
-			$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
+			$result = $wpdb->update( $table, $data, $where, null, $where_format );
 		}
 
 		if ( false === $result ) {

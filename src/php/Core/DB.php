@@ -102,13 +102,8 @@ class DB {
 	 * @return bool Whether every table was created or upgraded.
 	 */
 	public function create_or_upgrade_tables(): bool {
-		$success = true;
-
-		if ( is_multisite() ) {
-			$success = $this->create_table( $this->ms_table );
-		}
-
-		return $this->create_table( $this->table ) && $success;
+		$network_okay = ! is_multisite() || $this->create_table( $this->ms_table );
+		return $this->create_table( $this->table ) && $network_okay;
 	}
 
 	/**
@@ -341,7 +336,7 @@ class DB {
 			: 'AND active <> -1';
 
 		$snippets = $wpdb->get_results(
-			// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$wpdb->prepare(
 				"
 				SELECT id, code, scope, active, priority
