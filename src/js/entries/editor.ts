@@ -1,6 +1,8 @@
-import { defineMode, getMode, registerHelper } from 'codemirror'
+import CodeMirror, { defineMode, getMode, registerHelper } from 'codemirror'
 import { Linter } from '../utils/Linter'
 import type { EditorConfiguration, ModeSpec } from 'codemirror'
+
+type LintHelper = (text: string, ...args: unknown[]) => unknown
 
 interface ModeSpecOptions {
 	startOpen: boolean
@@ -19,3 +21,11 @@ registerHelper('lint', 'php', (text: string) => {
 
 	return linter.annotations
 })
+
+const cssLint = (<{ lint?: Record<string, LintHelper> }> <unknown> CodeMirror).lint?.css
+
+// CSSLint rejects the fr unit, so lint with px in its place. Both are two characters, which keeps marker positions.
+if (cssLint) {
+	registerHelper('lint', 'css', (text: string, ...args: unknown[]) =>
+		cssLint(text.replace(/(?<digit>\d)fr\b/gi, '$1px'), ...args))
+}
