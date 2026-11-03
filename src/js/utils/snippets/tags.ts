@@ -19,22 +19,25 @@ export interface StripResult {
  * HTML is absent on purpose: a `<style>` block in a content snippet is the
  * author's own markup, not a wrapper.
  */
-const WRAPPERS: Partial<Record<SnippetType, { open: RegExp, close: RegExp, label: string }>> = {
+const WRAPPERS: Partial<Record<SnippetType, { open: RegExp, close: RegExp, label: string, language: string }>> = {
 	php: {
 		// `php` is matched as a whole word so `<?phpinfo()` is left alone.
 		open: /^\s*<\?(?:php\b)?/i,
 		close: /\?>\s*$/,
-		label: __('opening PHP tag', 'code-snippets')
+		label: __('opening PHP tag', 'code-snippets'),
+		language: __('PHP', 'code-snippets')
 	},
 	css: {
 		open: /^\s*<style\b[^>]*>/i,
 		close: /<\/style\s*>\s*$/i,
-		label: __('<style> tags', 'code-snippets')
+		label: __('<style> tags', 'code-snippets'),
+		language: __('CSS', 'code-snippets')
 	},
 	js: {
 		open: /^\s*<script\b[^>]*>/i,
 		close: /<\/script\s*>\s*$/i,
-		label: __('<script> tags', 'code-snippets')
+		label: __('<script> tags', 'code-snippets'),
+		language: __('JavaScript', 'code-snippets')
 	}
 }
 
@@ -86,4 +89,33 @@ export const stripWrapperTags = (code: string, type: SnippetType): StripResult =
 		: __('code fence', 'code-snippets')
 
 	return { code: result, removed }
+}
+
+/**
+ * Describe code that opens with the wrapper for a different snippet type.
+ *
+ * Code like this saves without complaint but never runs as intended, such as
+ * PHP pasted into a CSS snippet. Only the opening tag is checked, so code
+ * without tags is never flagged. Content and condition snippets are skipped, as
+ * `<style>`, `<script>` and `<?php` are all valid in a content snippet.
+ *
+ * Expects code that has already been through `stripWrapperTags()`.
+ */
+export const findTypeMismatch = (code: string, type: SnippetType): string | undefined => {
+	const expected = WRAPPERS[type]
+
+	if (!expected) {
+		return undefined
+	}
+
+	const found = Object.values(WRAPPERS).find(wrapper => wrapper !== expected && wrapper.open.test(code))
+
+	return found
+		? sprintf(
+			/* translators: 1: language the code looks like, such as "PHP". 2: language of this snippet, such as "CSS". */
+			__('This code looks like %1$s, but this is a %2$s snippet. Change the snippet type, or paste %2$s code instead.', 'code-snippets'),
+			found.language,
+			expected.language
+		)
+		: undefined
 }

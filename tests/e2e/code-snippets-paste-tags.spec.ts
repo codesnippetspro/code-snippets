@@ -121,6 +121,41 @@ test.describe('Wrapper tags in pasted code', () => {
 		await expect(page.locator('.code-snippets-notice')).toContainText('<script>')
 	})
 
+	test('warns when CSS is pasted into a Functions snippet', async ({ page }) => {
+		const code = '<style>\n.a { color: red; }\n</style>'
+		await enterCode(page, code, 'paste')
+
+		expect(await editorValue(page)).toBe(code)
+		await expect(page.locator('.code-snippets-notice.notice-warning')).toContainText('looks like CSS')
+	})
+
+	test('clears the warning once the snippet type is changed', async ({ page }) => {
+		await enterCode(page, '<style>\n.a { color: red; }\n</style>', 'paste')
+		await expect(page.locator('.code-snippets-notice.notice-warning')).toBeVisible()
+
+		await selectType(page, 'Content')
+
+		await expect(page.locator('.code-snippets-notice.notice-warning')).toHaveCount(0)
+	})
+
+	test('removes the code fence but still warns about CSS in a Functions snippet', async ({ page }) => {
+		await enterCode(page, '```css\n<style>\n.a { color: red; }\n</style>\n```', 'paste')
+
+		expect(await editorValue(page)).toBe('<style>\n.a { color: red; }\n</style>')
+		await expect(page.locator('.code-snippets-notice.notice-warning')).toContainText('looks like CSS')
+	})
+
+	test('warns when PHP is pasted into a Styles snippet', async ({ page }) => {
+		test.skip(!await isLicensed(page), 'Styles is a licensed snippet type.')
+
+		await selectType(page, 'Styles')
+		const code = '<?php\nadd_action( \'init\', \'__return_true\' );'
+		await enterCode(page, code, 'paste')
+
+		expect(await editorValue(page)).toBe(code)
+		await expect(page.locator('.code-snippets-notice.notice-warning')).toContainText('looks like PHP')
+	})
+
 	test('leaves a style tag inside Content markup alone', async ({ page }) => {
 		await selectType(page, 'Content')
 		const markup = '<style>\n.a { color: red; }\n</style>'

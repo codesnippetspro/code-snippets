@@ -60,7 +60,7 @@ const SnippetTypeOption: React.FC<SnippetTypeOptionProps> = ({
 	</div>
 
 export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgradeDialogOpen }) => {
-	const { snippet, setSnippet, codeEditorInstance, isReadOnly } = useSnippetForm()
+	const { snippet, setSnippet, codeEditorInstance, isReadOnly, setCurrentNotice } = useSnippetForm()
 	const snippetType = getSnippetType(snippet)
 	const snippetTypeId = useId()
 
@@ -104,6 +104,9 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgrade
 							...previous,
 							scope: SNIPPET_TYPE_SCOPES[option.value][0]
 						}))
+
+						// A paste warning names the old type, so it no longer applies.
+						setCurrentNotice(notice => 'warning' === notice?.[0] ? undefined : notice)
 					}
 				}}
 			/>

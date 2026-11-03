@@ -1,3 +1,3 @@
 import type { ReactNode } from 'react'
 
-export type ScreenNotice = ['error' | 'updated', ReactNode, ReactNode?, string?]
+export type ScreenNotice = ['error' | 'warning' | 'updated', ReactNode, ReactNode?, string?]
