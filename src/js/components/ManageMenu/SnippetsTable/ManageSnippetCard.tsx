@@ -49,15 +49,17 @@ const CloneExportMenuItems: React.FC<SnippetCardActionsProps> = ({ snippet }) =>
 
 	return (
 		<>
-			<KebabMenuItem
-				onSelect={() => {
-					api.create(cloneSnippetObject(snippet))
-						.then(refreshSnippetsList)
-						.catch(handleUnknownError)
-				}}
-			>
-				{__('Clone', 'code-snippets')}
-			</KebabMenuItem>
+			{!snippet.trashed
+				? <KebabMenuItem
+					onSelect={() => {
+						api.create(cloneSnippetObject(snippet))
+							.then(refreshSnippetsList)
+							.catch(handleUnknownError)
+					}}
+				>
+					{__('Clone', 'code-snippets')}
+				</KebabMenuItem>
+				: null}
 
 			<KebabMenuItem
 				onSelect={() => {
@@ -126,7 +128,7 @@ const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 					getSnippetDisplayName(snippet)
 				)}
 			>
-				{!snippet.trashed ? <CloneExportMenuItems snippet={snippet} /> : null}
+				<CloneExportMenuItems snippet={snippet} />
 
 				<KebabMenuRow className="kebab-menu-priority">
 					<label htmlFor={`snippet-${snippet.id}-priority`}>{__('Priority', 'code-snippets')}</label>
