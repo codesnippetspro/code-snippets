@@ -94,6 +94,26 @@ class Shortcodes {
 	}
 
 	/**
+	 * Determine whether the author of the current post may reveal the given snippet.
+	 *
+	 * The author is checked rather than the viewer, as published posts are viewed anonymously.
+	 *
+	 * @param Snippet $snippet Snippet object.
+	 * @param bool    $network Whether the snippet was requested from the network table.
+	 *
+	 * @return bool
+	 */
+	protected function can_render_snippet_source( Snippet $snippet, bool $network ): bool {
+		$post = get_post();
+		$allowed = $post && code_snippets()->user_can_manage_snippets(
+			(int) $post->post_author,
+			validate_network_param( $network )
+		);
+
+		return (bool) apply_filters( 'code_snippets/shortcode_can_render_source', $allowed, $snippet, $post );
+	}
+
+	/**
 	 * Allow boolean attributes to be provided without a value, similar to how React works.
 	 *
 	 * @param array<string|number, mixed> $atts          Unfiltered shortcode attributes.
@@ -277,12 +297,18 @@ class Shortcodes {
 
 		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
-			return $snippet->id ? $this->render_snippet_source( $snippet ) : $this->invalid_id_warning( $snippet->id );
+			if ( ! $snippet->id ) {
+				return $this->invalid_id_warning( $snippet->id );
+			}
+
+			return $this->can_render_snippet_source( $snippet, (bool) $atts['network'] )
+				? $this->render_snippet_source( $snippet )
+				: '';
 		}
 
 		// If the snippet is inactive, either display a message or render nothing.
 		if ( ! $snippet->active ) {
-			if ( $atts['debug'] ) {
+			if ( $atts['debug'] && $this->can_render_snippet_source( $snippet, (bool) $atts['network'] ) ) {
 				/* translators: 1: snippet name, 2: snippet edit link */
 				$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
 				$snippet_name = '<strong>' . $snippet->name . '</strong>';
@@ -418,6 +444,11 @@ class Shortcodes {
 		}
 
 		$snippet = $this->get_snippet( $id, (bool) $atts['network'] );
+
+		if ( ! $this->can_render_snippet_source( $snippet, (bool) $atts['network'] ) ) {
+			return '';
+		}
+
 		return $this->render_snippet_source( $snippet, $atts );
 	}
 }

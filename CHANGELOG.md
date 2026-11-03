@@ -27,6 +27,10 @@
 * Fixed the version list refresh reporting success when the versions could not be fetched.
 * Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user,
   and breaking REST API URLs. Safe mode is now carried on admin links only.
+* Fixed the snippet import routes allowing a subsite administrator on multisite to import network snippets without the
+  network capability. Thanks to Artus KG for responsibly disclosing this issue.
+* Fixed the snippet source shortcodes revealing snippet code in posts written by users who cannot manage snippets.
+  Thanks to Het Kalariya for responsibly disclosing this issue.
 
 ## [4.0.0] (2026-10-12)
 

@@ -346,6 +346,22 @@ class Plugin {
 	}
 
 	/**
+	 * Determine if a given user has the capability to manage snippets at the given scope.
+	 *
+	 * @param int  $user_id User ID.
+	 * @param bool $network Whether to check for network snippets.
+	 *
+	 * @return bool
+	 */
+	public function user_can_manage_snippets( int $user_id, bool $network = false ): bool {
+		if ( $network || ( is_multisite() && ! $this->is_subsite_menu_enabled() ) ) {
+			return is_super_admin( $user_id ) || user_can( $user_id, $this->get_network_cap_name() );
+		}
+
+		return user_can( $user_id, $this->get_cap_name() );
+	}
+
+	/**
 	 * Get the required capability to perform a certain action on snippets.
 	 * Does not check if the user has this capability or not.
 	 *
