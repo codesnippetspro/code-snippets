@@ -98,16 +98,19 @@ body.wp-admin {
 	.button:not(.button-primary, .button-link),
 	.button-secondary,
 	.page-title-action {
-		min-block-size: var(--cs-control-height);
-		padding-block: 0;
-		padding-inline: 12px;
 		border-radius: var(--cs-control-radius);
-		line-height: 2.5715;
-		font-size: 14px;
 		font-weight: 400;
 		background: var(--cs-color-surface-subtle);
 		border-color: var(--cs-color-accent);
 		color: var(--cs-color-accent);
+
+		&:not(.button-small) {
+			font-size: 14px;
+			min-block-size: var(--cs-control-height);
+			padding-block: 0;
+			padding-inline: 12px;
+			line-height: 2.5715;
+		}
 
 		&:hover:not(:disabled) {
 			background: var(--cs-color-surface-muted);
