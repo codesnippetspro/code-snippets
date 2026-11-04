@@ -130,16 +130,19 @@ body.wp-admin {
 	// matches the secondary rule's specificity so a `.button-small.button-primary`
 	// keeps the token height instead of collapsing to the 26px small size.
 	.button-primary:not(.button-link) {
-		min-block-size: var(--cs-control-height);
-		padding-block: 0;
-		padding-inline: 12px;
 		border-radius: var(--cs-control-radius);
-		line-height: 2.5715;
-		font-size: 14px;
 		font-weight: 700;
 		background: var(--cs-color-accent);
 		border-color: var(--cs-color-accent);
 		color: #fff;
+
+		&:not(.button-small) {
+			min-block-size: var(--cs-control-height);
+			padding-block: 0;
+			padding-inline: 12px;
+			line-height: 2.5715;
+			font-size: 14px;
+		}
 
 		&:hover:not(:disabled) {
 			background: var(--cs-color-accent-hover);
