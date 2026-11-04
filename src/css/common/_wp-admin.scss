@@ -159,7 +159,10 @@ body.wp-admin {
 	}
 
 	// Small buttons stay compact rather than inheriting the 40px control height.
-	.button-small {
+	.button-small,
+	.button.button-small,
+	.button-primary.button-small,
+	.button-secondary.button-small {
 		min-block-size: 26px;
 		line-height: 2.1818;
 		font-size: 11px;
