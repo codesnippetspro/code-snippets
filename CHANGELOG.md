@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.1.0] (UPCOMING)
+## [4.1.0] (2026-11-05)
 
 ### Added
 * Universal search in the plugin header, for finding snippets and their code, settings, stats, the welcome screen,
