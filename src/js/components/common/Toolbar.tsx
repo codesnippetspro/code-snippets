@@ -155,7 +155,7 @@ interface SubpageItemProps {
 
 const SubpageItem: React.FC<SubpageItemProps> = ({ subpage, label, Icon }) => {
 	const { demo, isPro } = SUBPAGE_ENTRIES[subpage]
-	const isNew = 'announce' === demo && !hasSeenDemo(subpage)
+	const isNew = 'announce' === demo && shouldShowUpsell() && !hasSeenDemo(subpage)
 
 	return (
 		<li>
