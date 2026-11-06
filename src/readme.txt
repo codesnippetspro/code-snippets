@@ -1,10 +1,10 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, carolinaop, tallblokeuk
+Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, ramiy, carolinaop, andreamorgadova, tallblokeuk
 Donate link: https://codesnippets.pro
 Tags: code, snippets, php, functions, multisite
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 4.1.0-rc.2
+Stable tag: 4.1.0
 Requires at least: 5.5
 Tested up to: 7.1
 Requires PHP: 7.4
