@@ -8,6 +8,8 @@ import type { Snippet } from '../types/Snippet'
 
 export interface SnippetsListContext {
 	snippetsList: readonly Snippet[] | undefined
+	/** Whether the last attempt to load the full list failed, leaving only the snippets sent with the page. */
+	hasLoadError: boolean
 	refreshSnippetsList: () => Promise<void>
 }
 
@@ -18,14 +20,17 @@ export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children 
 	const [snippetsList, setSnippetsList] = useState<Snippet[] | undefined>(
 		() => window.CODE_SNIPPETS_MANAGE?.snippetsList?.map(parseSnippetObject)
 	)
+	const [hasLoadError, setHasLoadError] = useState(false)
 
 	const refreshSnippetsList = useCallback(async (): Promise<void> => {
 		try {
 			console.info('Fetching snippets list')
 			const response = await fetchAll(isNetworkAdmin())
 			setSnippetsList(response)
+			setHasLoadError(false)
 		} catch (error: unknown) {
 			console.error('Error fetching snippets list', error)
+			setHasLoadError(true)
 		}
 	}, [fetchAll])
 
@@ -36,6 +41,7 @@ export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children 
 
 	const value: SnippetsListContext = {
 		snippetsList,
+		hasLoadError,
 		refreshSnippetsList
 	}
 

@@ -125,7 +125,7 @@ class Manage_Menu_Assets {
 				get_snippets()
 			);
 
-			$inline_limit = apply_filters( 'code_snippets/manage/inline_snippets_limit', min( $snippets_per_page, 100 ) );
+			$inline_limit = apply_filters( 'code_snippets/manage/inline_snippets_limit', $snippets_per_page );
 			$inline_limit = max( 0, intval( $inline_limit ) );
 
 			if ( $inline_limit > 0 ) {
