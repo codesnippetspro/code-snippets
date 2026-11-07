@@ -1,10 +1,10 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, carolinaop, tallblokeuk
+Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, ramiy, carolinaop, andreamorgadova, tallblokeuk
 Donate link: https://codesnippets.pro
 Tags: code, snippets, php, functions, multisite
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 4.0.0
+Stable tag: 4.1.0
 Requires at least: 5.5
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -182,10 +182,48 @@ Users with permission to update plugins can open **Snippets > Settings > Advance
 
 == Upgrade Notice ==
 
+= 4.1.0 =
+Adds universal search; fixes snippet list caching, search method menu,
+
 = 4.0.0 =
 Adds the Stats overview and fixes saving feedback, description display, Elementor compatibility and translation notices. Back up your site before updating.
 
 == Changelog ==
+
+= 4.1.0 (2026-11-05) =
+
+__Added__
+
+* Universal search in the plugin header, for finding snippets and their code, settings, stats, the welcome screen,
+  documentation and Community Cloud snippets from one field, with keyboard navigation and a full results page.
+* Labels in the version switcher marking the current, latest, beta and release candidate builds, and the WordPress
+  version each was tested up to.
+
+__Changed__
+
+* The version switch warning now notes that beta and release candidate builds are not recommended for production sites.
+* Resetting caches now fetches the list of available plugin versions again, and reports how many were found or why none
+  could be listed.
+
+__Fixed__
+
+* Fixed the snippets list showing an out-of-date state on sites with a page cache, as the plugin's REST API responses
+  were being cached.
+* Fixed the Search with AI option missing from the Community Cloud search method menu. (PRO)
+* Fixed the share with subsites setting not being applied when a network snippet was saved on multisite.
+* Fixed a PHP deprecation notice and a missing browser tab title on the Edit Snippet screen.
+* Fixed a long unbroken line of code widening the snippet editor page and pushing the sidebar out of view.
+* Fixed admin screens waiting on remote requests for as long as the site's default timeout allows when the Code
+  Snippets service or WordPress.org is slow or unreachable: these requests now give up after 5 seconds, or 3 seconds
+  for the welcome content.
+* Fixed version switch messages being hidden by the admin notice filter, and showing markup from the response as HTML.
+* Fixed the version list refresh reporting success when the versions could not be fetched.
+* Fixed safe mode failing on sites running a plugin that builds URLs while WordPress is identifying the current user,
+  and breaking REST API URLs. Safe mode is now carried on admin links only.
+* Fixed the snippet import routes allowing a subsite administrator on multisite to import network snippets without the
+  network capability. Thanks to Artus KG for responsibly disclosing this issue.
+* Fixed the snippet source shortcodes revealing snippet code in posts written by users who cannot manage snippets.
+  Thanks to Het Kalariya for responsibly disclosing this issue.
 
 = 4.0.0 (2026-10-12) =
 
