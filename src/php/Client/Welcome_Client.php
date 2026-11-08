@@ -3,7 +3,6 @@
 namespace Code_Snippets\Client;
 
 use DateTimeImmutable;
-use Exception;
 use WP_Filesystem_Direct;
 use const Code_Snippets\PLUGIN_FILE;
 
@@ -123,11 +122,9 @@ class Welcome_Client {
 	 * @return DateTimeImmutable|null
 	 */
 	private static function safe_parse_datetime( string $datetime ): ?DateTimeImmutable {
-		try {
-			return new DateTimeImmutable( $datetime );
-		} catch ( Exception $e ) {
-			return null;
-		}
+		$parsed = date_create_immutable( $datetime );
+
+		return $parsed ? $parsed : null;
 	}
 
 	/**
@@ -317,12 +314,8 @@ class Welcome_Client {
 			$version = trim( trim( $header_parts[0] ), '[]' );
 			$date = trim( trim( $header_parts[1] ?? '' ), '()' );
 
-			try {
-				$datetime = new DateTimeImmutable( $date );
-				$parsed_date = $datetime->format( get_option( 'date_format' ) );
-			} catch ( Exception $e ) {
-				$parsed_date = $date;
-			}
+			$datetime = self::safe_parse_datetime( $date );
+			$parsed_date = $datetime ? $datetime->format( get_option( 'date_format' ) ) : $date;
 
 			$changelog[] = [
 				'version' => $version,
