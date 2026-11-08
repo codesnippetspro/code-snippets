@@ -51,4 +51,13 @@ class Handler_Registry {
 	public function get_handler( string $type ): ?Snippet_Type_Handler {
 		return $this->handlers[ $type ] ?? null;
 	}
+
+	/**
+	 * Gets every registered handler.
+	 *
+	 * @return array<string, Snippet_Type_Handler> Handlers, keyed by type.
+	 */
+	public function get_handlers(): array {
+		return $this->handlers;
+	}
 }

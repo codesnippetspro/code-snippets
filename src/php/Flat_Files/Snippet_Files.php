@@ -7,6 +7,7 @@ use Code_Snippets\Flat_Files\Interfaces\Filesystem_Adapter;
 use Code_Snippets\Flat_Files\Interfaces\Snippet_Config_Repository;
 use Code_Snippets\Flat_Files\Interfaces\Snippet_Type_Handler;
 use Code_Snippets\Model\Snippet;
+use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 use function wp_hash;
@@ -155,17 +156,28 @@ class Snippet_Files {
 	 * @return void
 	 */
 	private function write_snippet( Snippet $snippet, string $table, Snippet_Type_Handler $handler ): void {
-		$hashed_table = self::get_hashed_table_name( $table );
-		$base_dir = self::get_base_dir( $hashed_table, $handler->get_dir_name() );
+		$base_dir = $this->write_code_file( $snippet, $table, $handler );
+		$this->config_repo->update( $base_dir, $snippet );
+	}
+
+	/**
+	 * Write the code file for a snippet.
+	 *
+	 * @param Snippet              $snippet Snippet to write.
+	 * @param string               $table   Snippet database table name.
+	 * @param Snippet_Type_Handler $handler Snippet type handler.
+	 *
+	 * @return string Directory the file was written to.
+	 */
+	private function write_code_file( Snippet $snippet, string $table, Snippet_Type_Handler $handler ): string {
+		$base_dir = self::get_base_dir( self::get_hashed_table_name( $table ), $handler->get_dir_name() );
 		$this->maybe_create_directory( $base_dir );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id, $handler->get_file_extension() );
 
-		$contents = $handler->wrap_code( $snippet->code );
+		$this->fs->put_contents( $file_path, $handler->wrap_code( $snippet->code ), FS_CHMOD_FILE );
 
-		$this->fs->put_contents( $file_path, $contents, FS_CHMOD_FILE );
-
-		$this->config_repo->update( $base_dir, $snippet );
+		return $base_dir;
 	}
 
 	/**
@@ -639,19 +651,16 @@ class Snippet_Files {
 	/**
 	 * Create snippet code files and config indexes for all active snippets.
 	 *
+	 * Each index is rebuilt from the database rather than merged into, as snippets
+	 * can be deactivated or deleted while file-based execution is switched off.
+	 *
 	 * @return void
 	 */
 	private function create_snippet_flat_files(): void {
 		$db = code_snippets()->db;
+		$indexes = [];
 
-		$scopes = Snippet::get_all_scopes();
-
-		$data = $db->fetch_active_snippets( $scopes );
-
-		foreach ( $data as $snippet ) {
-			$snippet_obj = get_snippet( $snippet['id'], $db->ms_table === $snippet['table'] );
-			$this->handle_snippet( $snippet_obj, $snippet['table'] );
-		}
+		$this->collect_active_snippets( $indexes );
 
 		if ( is_multisite() ) {
 			$sites = get_sites( [ 'fields' => 'ids' ] );
@@ -659,17 +668,55 @@ class Snippet_Files {
 				switch_to_blog( $site_id );
 				$db->set_table_vars();
 
-				$site_data = $db->fetch_active_snippets( $scopes );
-				foreach ( $site_data as $snippet ) {
-					$table_name = $snippet['table'];
-					$snippet_obj = get_snippet( $snippet['id'], false );
-					$this->handle_snippet( $snippet_obj, $table_name );
-				}
+				$this->collect_active_snippets( $indexes );
 
 				restore_current_blog();
 			}
 
 			$db->set_table_vars();
+		}
+
+		foreach ( $indexes as $table => $table_indexes ) {
+			foreach ( $table_indexes as $base_dir => $snippets ) {
+				if ( $snippets || $this->fs->is_dir( $base_dir ) ) {
+					$this->config_repo->save( $base_dir, $snippets );
+				}
+			}
+
+			clean_active_snippets_cache( $table );
+		}
+	}
+
+	/**
+	 * Write code files for the active snippets of the current site, and collect their index entries.
+	 *
+	 * @param array<string, array<string, array<int, array<string, mixed>>>> $indexes Index entries, keyed by table and directory.
+	 *
+	 * @return void
+	 */
+	private function collect_active_snippets( array &$indexes ): void {
+		$db = code_snippets()->db;
+		$tables = is_multisite() ? [ $db->table, $db->ms_table ] : [ $db->table ];
+
+		foreach ( $tables as $table ) {
+			clean_active_snippets_cache( $table, Snippet::get_all_scopes() );
+
+			foreach ( $this->handler_registry->get_handlers() as $handler ) {
+				$base_dir = self::get_base_dir( self::get_hashed_table_name( $table ), $handler->get_dir_name() );
+				$indexes[ $table ][ $base_dir ] = $indexes[ $table ][ $base_dir ] ?? [];
+			}
+		}
+
+		foreach ( $db->fetch_active_snippets( Snippet::get_all_scopes() ) as $row ) {
+			$snippet = get_snippet( $row['id'], $db->ms_table === $row['table'] );
+			$handler = $this->handler_registry->get_handler( $snippet->type );
+
+			if ( 0 === $snippet->id || ! $handler ) {
+				continue;
+			}
+
+			$base_dir = $this->write_code_file( $snippet, $row['table'], $handler );
+			$indexes[ $row['table'] ][ $base_dir ][ $snippet->id ] = $snippet->get_fields();
 		}
 	}
 
