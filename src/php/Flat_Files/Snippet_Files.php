@@ -452,7 +452,7 @@ class Snippet_Files {
 					'table'        => $db->table,
 					'network'      => false,
 					'priority'     => intval( $snippet['priority'] ),
-					'condition_id' => intval( $snippet['condition_id'] ),
+					'condition_id' => intval( $snippet['condition_id'] ?? 0 ),
 				];
 			}
 		}
@@ -493,7 +493,7 @@ class Snippet_Files {
 						'table'        => $db->ms_table,
 						'network'      => true,
 						'priority'     => intval( $snippet['priority'] ),
-						'condition_id' => intval( $snippet['condition_id'] ),
+						'condition_id' => intval( $snippet['condition_id'] ?? 0 ),
 					];
 				}
 

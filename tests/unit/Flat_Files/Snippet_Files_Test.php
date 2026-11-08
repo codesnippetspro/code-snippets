@@ -4,6 +4,7 @@ namespace Code_Snippets\Flat_Files;
 
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;
+use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
 use function Code_Snippets\delete_snippet;
@@ -148,5 +149,33 @@ class Snippet_Files_Test extends UnitTestCase {
 		$this->assertContains( $kept->id, $this->indexed_ids() );
 		$this->assertNotContains( $deactivated->id, $this->indexed_ids() );
 		$this->assertNotContains( $deleted->id, $this->indexed_ids() );
+	}
+
+	/**
+	 * An index entry written before snippets had conditions loads with no condition.
+	 *
+	 * @return void
+	 */
+	public function test_entry_without_condition_id_loads_without_a_condition(): void {
+		wp_mkdir_p( $this->php_dir() );
+
+		( new Flat_File_Config_Repository( new WP_Filesystem_Adapter() ) )->save(
+			$this->php_dir(),
+			[
+				999 => [
+					'id'       => 999,
+					'code'     => '/* old */',
+					'scope'    => 'global',
+					'active'   => true,
+					'priority' => 10,
+				],
+			]
+		);
+
+		clean_active_snippets_cache( code_snippets()->db->table, [ 'global' ] );
+
+		$snippets = array_column( Snippet_Files::get_active_snippets_from_flat_files( [ 'global' ] ), null, 'id' );
+
+		$this->assertSame( 0, $snippets[999]['condition_id'] );
 	}
 }
