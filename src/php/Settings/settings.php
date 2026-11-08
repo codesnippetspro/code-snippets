@@ -255,6 +255,23 @@ function register_plugin_settings() {
 add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
 
 /**
+ * Clear the cached settings once new values are written.
+ *
+ * Saving runs the values through sanitize_settings(), which caches the
+ * previous values before the option is updated.
+ *
+ * @return void
+ */
+function clear_settings_cache() {
+	wp_cache_delete( CACHE_KEY, CACHE_GROUP );
+}
+
+add_action( 'add_option_' . OPTION_NAME, __NAMESPACE__ . '\\clear_settings_cache' );
+add_action( 'update_option_' . OPTION_NAME, __NAMESPACE__ . '\\clear_settings_cache' );
+add_action( 'add_site_option_' . OPTION_NAME, __NAMESPACE__ . '\\clear_settings_cache' );
+add_action( 'update_site_option_' . OPTION_NAME, __NAMESPACE__ . '\\clear_settings_cache' );
+
+/**
  * Determine whether a setting field should be rendered.
  *
  * @param array<string, mixed>                    $field    Field definition.

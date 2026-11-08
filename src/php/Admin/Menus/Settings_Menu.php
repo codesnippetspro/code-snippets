@@ -13,7 +13,6 @@ use const Code_Snippets\PLUGIN_FILE;
 use const Code_Snippets\PLUGIN_VERSION;
 use const Code_Snippets\Settings\OPTION_GROUP;
 use const Code_Snippets\Settings\OPTION_NAME;
-use const Code_Snippets\Settings\CACHE_KEY;
 
 /**
  * This class handles the settings admin menu.
@@ -364,7 +363,6 @@ class Settings_Menu extends Admin_Menu {
 		// Retrieve the saved options and save them to the database.
 		$value = map_deep( wp_unslash( $_POST[ OPTION_NAME ] ), 'sanitize_key' );
 		update_site_option( OPTION_NAME, $value );
-		wp_cache_delete( CACHE_KEY );
 
 		// Add an updated notice.
 		if ( ! count( get_settings_errors() ) ) {
