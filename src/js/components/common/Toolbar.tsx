@@ -73,7 +73,7 @@ const UpperNavItems = () =>
 			<UpperNavItem
 				name="welcome"
 				url={window.CODE_SNIPPETS.urls.welcome}
-				label={__("What's New", 'code-snippets')}
+				label={__('New', 'code-snippets')}
 			/>)}
 
 		<UpperNavItem

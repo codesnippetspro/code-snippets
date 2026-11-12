@@ -211,9 +211,11 @@ final class Search_Index {
 	 * @return array<int, array<string, string>>
 	 */
 	public function get_welcome_entries(): array {
-		$welcome_url = code_snippets()->get_menu_url( 'welcome', $this->url_context );
-		$welcome_label = __( 'Welcome', 'code-snippets' );
-		$whats_new_path = self::build_path( $welcome_label, __( "What's new", 'code-snippets' ) );
+		$welcome_url         = code_snippets()->get_menu_url( 'welcome', $this->url_context );
+		$changelog_url       = add_query_arg( 'tab', 'changelog', $welcome_url );
+		$resources_url       = add_query_arg( 'tab', 'resources', $welcome_url );
+		$welcome_label       = __( 'Welcome', 'code-snippets' );
+		$whats_new_path      = self::build_path( $welcome_label, __( "What's new", 'code-snippets' ) );
 		$getting_started_path = self::build_path( $welcome_label, __( 'Getting started', 'code-snippets' ) );
 
 		$entries = [
@@ -222,7 +224,7 @@ final class Search_Index {
 				'type'        => 'guide',
 				'title'       => __( "What's new in Code Snippets", 'code-snippets' ),
 				'description' => __( 'Latest changes: the new features, improvements and bug fixes in recent releases.', 'code-snippets' ),
-				'url'         => $welcome_url . '#latest-changes',
+				'url'         => $changelog_url,
 				'path'        => $whats_new_path,
 			],
 			[
@@ -230,7 +232,7 @@ final class Search_Index {
 				'type'        => 'guide',
 				'title'       => __( 'Helpful articles', 'code-snippets' ),
 				'description' => __( 'Guides and tutorials for getting started with snippets.', 'code-snippets' ),
-				'url'         => $welcome_url . '#helpful-articles',
+				'url'         => $resources_url . '#helpful-articles',
 				'path'        => $getting_started_path,
 			],
 			[
@@ -238,7 +240,7 @@ final class Search_Index {
 				'type'        => 'guide',
 				'title'       => __( 'Exclusive deals from our partners', 'code-snippets' ),
 				'description' => __( 'Offers on other WordPress products from Code Snippets partners.', 'code-snippets' ),
-				'url'         => $welcome_url . '#partner-deals',
+				'url'         => $resources_url . '#partner-deals',
 				'path'        => self::build_path( $welcome_label, __( 'Partners', 'code-snippets' ) ),
 			],
 		];
@@ -257,7 +259,7 @@ final class Search_Index {
 				// translators: %s: version number.
 				'title'       => sprintf( __( "What's new in version %s", 'code-snippets' ), $release['version'] ),
 				'description' => self::flatten_changelog_entries( is_array( $release['entries'] ?? null ) ? $release['entries'] : [] ),
-				'url'         => $welcome_url . '#latest-changes',
+				'url'         => $changelog_url,
 				'path'        => $whats_new_path,
 			];
 		}
@@ -272,7 +274,7 @@ final class Search_Index {
 				'type'        => 'guide',
 				'title'       => Search_Query::plain_text( (string) $article['title'] ),
 				'description' => Search_Query::plain_text( is_scalar( $article['description'] ?? null ) ? (string) $article['description'] : '' ),
-				'url'         => $welcome_url . '#helpful-articles',
+				'url'         => $resources_url . '#helpful-articles',
 				'path'        => $getting_started_path,
 			];
 		}

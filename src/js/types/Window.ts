@@ -125,7 +125,7 @@ declare global {
 				name: string
 				follow_url: string
 				image_url: string
-			}
+			}[]
 			changelog: ChangelogSchema[]
 			features: ImageLinkSchema[]
 			partners: ImageLinkSchema[]
