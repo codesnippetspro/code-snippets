@@ -346,11 +346,24 @@ class Universal_Search_Test extends AdminUnitTestCase {
 	 * @return void
 	 */
 	public function test_finds_welcome_sections() {
-		$items = $this->search_source( 'Helpful articles', 'welcome' );
+		$changelog = $this->search_source( "What's new in Code Snippets", 'welcome' );
+		$articles  = $this->search_source( 'Helpful articles', 'welcome' );
+		$partners  = $this->search_source( 'Exclusive deals from our partners', 'welcome' );
 
-		$this->assertNotEmpty( $items );
-		$this->assertSame( 'guide', $items[0]['type'] );
-		$this->assertStringContainsString( 'page=code-snippets-welcome', $items[0]['url'] );
+		$this->assertNotEmpty( $changelog );
+		$this->assertSame( 'guide', $changelog[0]['type'] );
+		$this->assertStringContainsString( 'page=code-snippets-welcome', $changelog[0]['url'] );
+		$this->assertStringContainsString( 'tab=changelog', $changelog[0]['url'] );
+
+		$this->assertNotEmpty( $articles );
+		$this->assertSame( 'guide', $articles[0]['type'] );
+		$this->assertStringContainsString( 'tab=resources', $articles[0]['url'] );
+		$this->assertStringEndsWith( '#helpful-articles', $articles[0]['url'] );
+
+		$this->assertNotEmpty( $partners );
+		$this->assertSame( 'guide', $partners[0]['type'] );
+		$this->assertStringContainsString( 'tab=resources', $partners[0]['url'] );
+		$this->assertStringEndsWith( '#partner-deals', $partners[0]['url'] );
 	}
 
 	/**

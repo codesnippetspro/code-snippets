@@ -451,10 +451,28 @@ class Contextual_Help {
 
 		$this->add_help_tab(
 			'whats-new',
-			__( "What's New", 'code-snippets' ),
+			__( "What's new", 'code-snippets' ),
 			[
-				__( 'The Latest Changes section summarizes new features, improvements, bug fixes, security updates and other changes in recent releases.', 'code-snippets' ),
-				__( 'Select View Changelog to read the complete release notes.', 'code-snippets' ),
+				__( "The What's new tab highlights the latest Code Snippets news and featured updates.", 'code-snippets' ),
+				__( 'Select Read more to open the full article in a new tab.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'changelog',
+			__( 'Changelog', 'code-snippets' ),
+			[
+				__( 'The Changelog tab summarizes new features, improvements, bug fixes, security updates and other changes in recent releases.', 'code-snippets' ),
+				__( 'Select View changelog to read the complete release notes.', 'code-snippets' ),
+			]
+		);
+
+		$this->add_help_tab(
+			'resources',
+			__( 'Resources', 'code-snippets' ),
+			[
+				__( 'The Resources tab includes helpful articles and exclusive deals from Code Snippets partners.', 'code-snippets' ),
+				__( 'Select Read more for an article or Visit for a partner offer. Links open in a new tab.', 'code-snippets' ),
 			]
 		);
 	}

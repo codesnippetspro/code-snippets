@@ -89,7 +89,7 @@ class Welcome_Menu extends Admin_Menu {
 			'CODE_SNIPPETS_WELCOME',
 			[
 				'banner'    => $this->client->get_banner(),
-				'hero'      => $this->client->get_hero_item(),
+				'hero'      => $this->client->get_hero_items(),
 				'changelog' => $this->client->get_changelog(),
 				'features'  => $this->client->get_features(),
 				'partners'  => $this->client->get_partners(),

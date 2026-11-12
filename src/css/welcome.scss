@@ -1,6 +1,7 @@
 @use 'common/theme';
 @use 'common/badges';
 @use 'common/toolbar';
+@use 'common/subnav';
 @use 'common/wp-admin';
 @use 'common/page-header';
 
@@ -9,8 +10,8 @@
 }
 
 .code-snippets-updates {
-	display: flex;
-	flex-direction: row;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 20px;
 
 	> * {
@@ -22,7 +23,8 @@
 
 	.code-snippets-header-wrapper {
 		display: flex;
-		flex-flow: row;
+		flex-flow: row wrap;
+		gap: 16px;
 		justify-content: space-between;
 		align-items: center;
 		border-block-end: 1px solid var(--cs-color-border-subtle);
@@ -35,12 +37,9 @@
 		margin: 0;
 	}
 
-	@media (width <= 960px) {
-		flex-direction: column;
-	}
 }
 
-.code-snippets-hero {
+.code-snippets-news-item {
 	display: flex;
 	flex-flow: column;
 	border: 1px solid var(--cs-color-border-subtle);
@@ -148,21 +147,15 @@
 	}
 }
 
-.code-snippets-changelog-entries {
+.code-snippets-changelog-version {
 	font-size: 0.9rem;
 	line-height: 1.5;
-	overflow-y: scroll;
-	max-block-size: 500px;
 	color: var(--cs-color-text);
 	padding-inline-end: 1em;
 
-	h3 {
+	h2 {
 		font-size: 16px;
 		display: flex;
-
-		&:not(:first-of-type) {
-			margin-block-start: 100px;
-		}
 
 		span {
 			font-size: 14px;
@@ -171,7 +164,7 @@
 		}
 	}
 
-	h4 {
+	h3 {
 		font-size: 14px;
 		margin: 1em 0;
 	}
@@ -215,6 +208,11 @@
 	.dashicons-open-folder {
 		color: #5d2f27;
 	}
+}
+
+.code-snippets-changelog-card {
+	padding: 32px;
+	margin-block-end: 32px;
 }
 
 .code-snippets-loading-spinner {

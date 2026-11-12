@@ -2,40 +2,64 @@ import { __, sprintf } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
 import { revealLocationHash } from '../../utils/urls'
 import { ScreenMetaSlot } from '../common/ScreenMetaSlot'
+import { SubnavTabs, getTabFromQuery } from '../common/SubnavTabs'
 import { Toolbar } from '../common/Toolbar'
 import { Changelog } from './Changelog'
 import type { ImageLinkSchema } from '../../types/schema/WelcomeSchema'
+import type { SubnavTab } from '../common/SubnavTabs'
 
 const DATA = window.CODE_SNIPPETS_WELCOME
+const TAB_QUERY_PARAM = 'tab'
 
-const HeroImage = () => {
-	const [isImageLoaded, setImageLoaded] = useState(false)
+type WelcomeTabName = 'whats-new' | 'changelog' | 'resources'
+
+const TABS: SubnavTab<WelcomeTabName>[] = [
+	{
+		name: 'whats-new',
+		label: __("What's new", 'code-snippets')
+	},
+	{
+		name: 'changelog',
+		label: __('Changelog', 'code-snippets')
+	},
+	{
+		name: 'resources',
+		label: __('Resources', 'code-snippets')
+	}
+]
+
+const WhatsNew = () => {
+	const [loadedImages, setLoadedImages] = useState<string[]>([])
 
 	return (
-		<div className="code-snippets-hero">
-			<div className="code-snippets-header-wrapper">
-				<h2>{DATA?.hero.name}</h2>
-				<a
-					className="button button-primary button-large"
-					href={DATA?.hero.follow_url}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{__('Read more', 'code-snippets')}
-					<span className="screen-reader-text">
-						{__('(opens in a new tab)', 'code-snippets')}
-					</span>
-				</a>
-			</div>
-			<figure>
-				{!isImageLoaded && <div className="code-snippets-loading-spinner" aria-hidden="true"></div>}
-				<img
-					src={DATA?.hero.image_url}
-					alt={__('Latest news image', 'code-snippets')}
-					onLoad={() => setImageLoaded(true)}
-				/>
-			</figure>
-		</div>
+		<>
+			{DATA?.hero.map(({ name, follow_url, image_url }) => (
+				<div key={follow_url} className="code-snippets-card code-snippets-news-item">
+					<div className="code-snippets-header-wrapper">
+						<h2>{name}</h2>
+						<a
+							className="button button-primary button-large"
+							href={follow_url}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{__('Read more', 'code-snippets')}
+							<span className="screen-reader-text">
+								{__('(opens in a new tab)', 'code-snippets')}
+							</span>
+						</a>
+					</div>
+					<figure>
+						{!loadedImages.includes(image_url) && <div className="code-snippets-loading-spinner" aria-hidden="true"></div>}
+						<img
+							src={image_url}
+							alt={__('Latest news image', 'code-snippets')}
+							onLoad={() => setLoadedImages(images => [...images, image_url])}
+						/>
+					</figure>
+				</div>
+			))}
+		</>
 	)
 }
 
@@ -100,29 +124,49 @@ const Articles: React.FC<ArticlesProps> = ({ articles }) =>
 	</>
 
 export const WelcomeMenu = () => {
+	const [currentTab, setCurrentTab] = useState(() => getTabFromQuery(TABS, TAB_QUERY_PARAM))
+
 	useEffect(revealLocationHash, [])
 
 	return (
 		<>
 			<Toolbar />
 
+			<SubnavTabs
+				ariaLabel={__('Welcome sections', 'code-snippets')}
+				tabs={TABS}
+				currentTab={currentTab}
+				setCurrentTab={setCurrentTab}
+				queryParamName={TAB_QUERY_PARAM}
+			/>
+
 			<ScreenMetaSlot />
 
 			<div className="snippets-page-header">
-				<h1>{__('Resources and Updates', 'code-snippets')}</h1>
+				<h1>{currentTab.label}</h1>
 			</div>
 
 			<hr className="wp-header-end" />
 
 			<div className="code-snippets-welcome">
+				{'whats-new' === currentTab.name && (
+					<div className="code-snippets-welcome-panel code-snippets-updates whats-new-panel">
+						<WhatsNew />
+					</div>
+				)}
 
-				<div className="code-snippets-updates">
-					<HeroImage />
-					<Changelog />
-				</div>
+				{'changelog' === currentTab.name && (
+					<div className="code-snippets-welcome-panel changelog-panel">
+						<Changelog />
+					</div>
+				)}
 
-				{DATA?.features && <Articles articles={DATA.features} />}
-				{DATA?.partners && <Partners partners={DATA.partners} />}
+				{'resources' === currentTab.name && (
+					<div className="code-snippets-welcome-panel resources-panel">
+						{DATA?.features && <Articles articles={DATA.features} />}
+						{DATA?.partners && <Partners partners={DATA.partners} />}
+					</div>
+				)}
 			</div>
 		</>
 	)

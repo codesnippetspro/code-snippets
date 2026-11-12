@@ -138,11 +138,16 @@ class Welcome_Client {
 	 * @return array
 	 */
 	private function parse_hero_item( array $remote ): array {
-		return [
-			'name'       => $remote[0]['name'] ?? '',
-			'follow_url' => $remote[0]['follow_url'] ?? '',
-			'image_url'  => $remote[0]['image_url'] ?? '',
-		];
+		return array_map(
+			static function ( array $item ): array {
+				return [
+					'name'       => $item['name'] ?? '',
+					'follow_url' => $item['follow_url'] ?? '',
+					'image_url'  => $item['image_url'] ?? '',
+				];
+			},
+			$remote
+		);
 	}
 
 	/**
@@ -244,7 +249,7 @@ class Welcome_Client {
 	}
 
 	/**
-	 * Build the full list of latest changes for caching.
+	 * Build the full list of changelog for caching.
 	 *
 	 * @return void
 	 */
@@ -368,7 +373,17 @@ class Welcome_Client {
 	 * }
 	 */
 	public function get_hero_item(): array {
-		return $this->welcome_data['hero-item'] ?? [];
+		return $this->get_hero_items()[0] ?? [];
+	}
+
+	/**
+	 * Retrieve the list of news items, including previously cached single items.
+	 *
+	 * @return array<array{name: string, follow_url: string, image_url: string}>
+	 */
+	public function get_hero_items(): array {
+		$items = $this->welcome_data['hero-item'] ?? [];
+		return isset( $items['name'] ) ? [ $items ] : $items;
 	}
 
 	/**
