@@ -127,6 +127,28 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
+	 * As many snippets as the user shows on a page are sent with the page, even beyond 100.
+	 *
+	 * @return void
+	 */
+	public function test_enqueue_localizes_a_page_of_snippets_beyond_one_hundred(): void {
+		$existing = count( get_snippets() );
+
+		for ( $i = $existing; $i < 120; $i++ ) {
+			save_snippet( new Snippet( [ 'name' => "Per-page fixture $i" ] ) );
+		}
+
+		update_user_option( get_current_user_id(), 'snippets_per_page', 110 );
+
+		$this->enqueue_assets();
+		$localized = $this->get_localized_data();
+
+		delete_user_option( get_current_user_id(), 'snippets_per_page' );
+
+		$this->assertCount( 110, $localized['snippetsList'] );
+	}
+
+	/**
 	 * Snippet lists at or below the configured limit are localized inline.
 	 *
 	 * @dataProvider provide_inline_limit_offsets
@@ -162,12 +184,13 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 	}
 
 	/**
-	 * Snippet lists above the configured limit are omitted.
+	 * A library larger than the inline limit is cut to the limit; the rest load after the page.
 	 *
 	 * @return void
 	 */
-	public function test_enqueue_omits_snippets_above_inline_limit(): void {
+	public function test_enqueue_cuts_snippets_above_inline_limit(): void {
 		save_snippet( new Snippet( [ 'name' => 'Oversized Inline Snippet Fixture' ] ) );
+		save_snippet( new Snippet( [ 'name' => 'Second Oversized Inline Snippet Fixture' ] ) );
 		$inline_limit = count( get_snippets() ) - 1;
 		$filter = static fn() => $inline_limit;
 		add_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
@@ -177,7 +200,7 @@ class Manage_Menu_Assets_Test extends AdminUnitTestCase {
 
 		remove_filter( 'code_snippets/manage/inline_snippets_limit', $filter );
 
-		$this->assertArrayNotHasKey( 'snippetsList', $localized );
+		$this->assertCount( $inline_limit, $localized['snippetsList'] );
 	}
 
 	/**

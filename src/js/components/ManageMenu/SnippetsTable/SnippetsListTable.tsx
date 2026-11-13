@@ -122,8 +122,7 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 }) => {
 	const { activeByCondition } = useFilteredSnippets()
 	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
-	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
-	const pageCount = itemsPerPage && Math.ceil(snippets.length / itemsPerPage)
+	const itemsPerPage = Number(window.CODE_SNIPPETS_MANAGE?.snippetsPerPage) || undefined
 	const endTableNav = (which: 'top' | 'bottom') =>
 		'top' === which
 			? <SnippetViewToggle snippetView={snippetView} setSnippetView={setSnippetView} />
@@ -148,7 +147,7 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 			columns={columns}
 			actions={actions}
 			doAction={doAction}
-			totalPages={pageCount}
+			itemsPerPage={itemsPerPage}
 			extraTableNav={extraTableNav}
 			selectAllControl
 			endTableNav={endTableNav}
