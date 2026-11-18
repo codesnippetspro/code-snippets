@@ -111,3 +111,57 @@
 	margin-inline: 0.25em;
 	font-weight: bold;
 }
+
+// WordPress core styles the dialog it builds around this markup with
+// '.CodeMirror-dialog input' and button rules, so the dialog's own selectors
+// stay scoped here to outrank those.
+.CodeMirror-dialog {
+	.cs-editor-search-status.is-no-results {
+		color: var(--cs-color-error);
+		font-weight: 600;
+		white-space: normal;
+	}
+
+	.cs-editor-search-close {
+		padding: 2px 10px;
+		border: 1px solid var(--cs-color-border);
+		border-radius: var(--cs-control-radius);
+		background: var(--cs-color-surface);
+		color: var(--cs-color-text);
+		cursor: pointer;
+		font-size: inherit;
+	}
+
+	.cs-editor-search-form {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px 8px;
+		align-items: center;
+		padding: 6px 8px;
+		background: var(--cs-color-surface-subtle);
+		border-block-end: 1px solid var(--cs-color-border-subtle);
+		font-size: 13px;
+		cursor: text;
+	}
+
+	.cs-editor-search-field {
+		flex: 1 0 14em;
+		min-inline-size: 14em;
+		padding: 3px 8px;
+		background: var(--cs-color-surface);
+		border: 1px solid var(--cs-color-border);
+		border-radius: var(--cs-control-radius);
+	}
+
+	.cs-editor-search-field:focus-visible,
+	.cs-editor-search-close:focus-visible {
+		outline: 2px solid var(--cs-color-accent);
+		outline-offset: 1px;
+	}
+
+	.cs-editor-search-status {
+		color: var(--cs-color-text-muted);
+		white-space: nowrap;
+	}
+}
+
