@@ -132,8 +132,16 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ onRequestClose, titl
 		// 5.59, while WordPress 5.5 ships 5.29, so label the input directly.
 		instance.codemirror.getInputField().setAttribute('aria-label', __('Snippet code preview', 'code-snippets'))
 
+		// The modal scales in as it opens. CodeMirror measures the gutter and character
+		// widths against that scale, and a transform does not resize anything that would
+		// prompt it to measure again, so the code can end up overlapping the line numbers.
+		const modalFrame = textareaRef.current.closest('.components-modal__frame')
+		const refresh = () => instance.codemirror.refresh()
+		modalFrame?.addEventListener('animationend', refresh)
+
 		return () => {
 			(instance.codemirror as EditorFromTextArea).toTextArea()
+			modalFrame?.removeEventListener('animationend', refresh)
 		}
 	}, [type])
 
