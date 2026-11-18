@@ -139,15 +139,13 @@ const ActionLinks: React.FC<RowActionsProps> = ({ snippet }) => {
 		/>
 		: null
 
-	const exportButton = !snippet.trashed
-		? <SnippetActionButton
-			label={__('Export', 'code-snippets')}
-			workingLabel={__('Exporting…', 'code-snippets')}
-			action={() =>
-				api.export(snippet)
-					.then(response => downloadSnippetExportFile(response, snippet))}
-		/>
-		: null
+	const exportButton = <SnippetActionButton
+		label={__('Export', 'code-snippets')}
+		workingLabel={__('Exporting…', 'code-snippets')}
+		action={() =>
+			api.export(snippet)
+				.then(response => downloadSnippetExportFile(response, snippet))}
+	/>
 
 	const restoreButton = snippet.trashed
 		? <SnippetActionButton

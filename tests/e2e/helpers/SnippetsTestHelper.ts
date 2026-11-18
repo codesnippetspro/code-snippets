@@ -115,6 +115,10 @@ export class SnippetsTestHelper {
 		return Number(await wpCli(['eval', php]))
 	}
 
+	static async trashSnippet(snippetId: number): Promise<void> {
+		await wpCli(['eval', `\\Code_Snippets\\trash_snippet(${snippetId}, false);`])
+	}
+
 	static async cleanupSnippetsByPrefix(prefix: string): Promise<void> {
 		const php = `
 			global $wpdb;
