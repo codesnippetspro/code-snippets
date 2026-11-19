@@ -79,10 +79,47 @@ interface EditFormProps extends PropsWithChildren {
 	className?: string
 }
 
+const useSubmitAction = () => {
+	const formRef = useRef<HTMLFormElement>(null)
+	const isSubmittingFromTextField = useRef(false)
+
+	// Pressing Enter in a text field submits through the form's first button, which can be Save and Deactivate.
+	useEffect(() => {
+		const form = formRef.current
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			const { target } = event
+			if ('Enter' === event.key && target instanceof HTMLInputElement &&
+				'submit' !== target.type && 'button' !== target.type) {
+				isSubmittingFromTextField.current = true
+				setTimeout(() => {
+					isSubmittingFromTextField.current = false
+				})
+			}
+		}
+
+		form?.addEventListener('keydown', handleKeyDown)
+		return () => form?.removeEventListener('keydown', handleKeyDown)
+	}, [])
+
+	const getSubmitAction = (event: React.FormEvent<HTMLFormElement>): SubmitSnippetAction | undefined => {
+		const submitter = isSubmittingFromTextField.current
+			? null
+			: (event.nativeEvent as SubmitEvent).submitter
+
+		return Object.values(SubmitSnippetAction).find(actionName =>
+			actionName === submitter?.getAttribute('name'))
+	}
+
+	return { formRef, getSubmitAction }
+}
+
 const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 	const { submitSnippet } = useSubmitSnippet()
 	const { snippet } = useSnippetForm()
 	const { refreshSnippetsList } = useSnippetsList()
+
+	const { formRef, getSubmitAction } = useSubmitAction()
 
 	const [validationWarning, setValidationWarning] = useState<string | undefined>()
 	const [submitAction, setSubmitAction] = useState<SubmitSnippetAction | undefined>()
@@ -108,9 +145,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
-		const action = Object.values(SubmitSnippetAction).find(actionName =>
-			actionName === document.activeElement?.getAttribute('name'))
-
+		const action = getSubmitAction(event)
 		const validationWarning = validateSnippet(snippet)
 
 		if (validationWarning) {
@@ -123,7 +158,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 
 	return (
 		<>
-			<form aria-labelledby="snippet-form-heading" id="snippet-form" method="post" onSubmit={handleSubmit} className={className}>
+			<form aria-labelledby="snippet-form-heading" id="snippet-form" method="post" onSubmit={handleSubmit} className={className} ref={formRef}>
 				{children}
 			</form>
 
