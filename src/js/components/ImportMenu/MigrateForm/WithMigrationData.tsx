@@ -5,7 +5,7 @@ import { useSelection } from '../../../hooks/useSelection'
 import { createContextHook } from '../../../utils/bootstrap'
 import { REST_BASES } from '../../../utils/restAPI'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { useMigrationOptions } from './WithMigrationOptions'
+import { sanitizeImporterName, useMigrationOptions } from './WithMigrationOptions'
 import type { RestAPI } from '../../../hooks/useRestAPI'
 import type { UseSelection } from '../../../hooks/useSelection'
 import type { PropsWithChildren } from 'react'
@@ -52,11 +52,14 @@ const makeMigrationRequest = async (api: RestAPI, importer: string, request: Imp
 		throw new Error(__('Please select snippets to import.', 'code-snippets'))
 	}
 
-	if (!importer) {
+	const sanitizedImporter = sanitizeImporterName(importer)
+
+	if (!sanitizedImporter) {
 		throw new Error(__('Please select an importer.', 'code-snippets'))
 	}
 
-	const response = await api.post<ImportResponse, ImportRequest>(`${REST_BASES.import.plugins}/${importer}/import`, request)
+	const requestUrl = `${REST_BASES.import.plugins}/${encodeURIComponent(sanitizedImporter)}/import`
+	const response = await api.post<ImportResponse, ImportRequest>(requestUrl, request)
 
 	if (1 > response.imported.length) {
 		throw new Error(__('No snippets were imported.', 'code-snippets'))

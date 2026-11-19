@@ -5,6 +5,12 @@ import type { PropsWithChildren } from 'react'
 
 const IMPORTER_QUERY_PARAM = 'from'
 
+export const sanitizeImporterName = (name: string): string =>
+	name.toLowerCase().replace(/[^a-z0-9-]/g, '')
+
+const fetchImporterFromQueryParam = () =>
+	sanitizeImporterName(fetchQueryParam(IMPORTER_QUERY_PARAM) ?? '')
+
 export interface MigrationOptionsContext {
 	autoAddTags: boolean
 	selectedImporter: string
@@ -17,7 +23,7 @@ export interface MigrationOptionsContext {
 const [Context, useMigrationOptions] = createContextHook<MigrationOptionsContext>('useMigrationOptions')
 
 export const WithMigrationOptions: React.FC<PropsWithChildren> = ({ children }) => {
-	const [selectedImporter, setSelectedImporterValue] = useState<string>(() => fetchQueryParam(IMPORTER_QUERY_PARAM) ?? '')
+	const [selectedImporter, setSelectedImporterValue] = useState<string>(fetchImporterFromQueryParam)
 	const [autoAddTags, setAutoAddTags] = useState(false)
 	const [tagValue, setTagValue] = useState<string>(() => `imported-${selectedImporter}`)
 
