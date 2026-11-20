@@ -262,9 +262,6 @@ class Welcome_Client {
 		$filesystem = new WP_Filesystem_Direct( null );
 
 		$changelog_filename = 'CHANGELOG.md';
-		$changelog = [];
-
-		$section_titles = [ 'Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', 'Security', 'Other' ];
 		$changelog_dir = plugin_dir_path( PLUGIN_FILE );
 
 		while ( plugin_dir_path( $changelog_dir ) !== $changelog_dir && ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
@@ -276,6 +273,21 @@ class Welcome_Client {
 		}
 
 		$changelog_contents = $filesystem->get_contents( $changelog_dir . $changelog_filename );
+		return self::parse_changelog_contents( $changelog_contents );
+	}
+
+
+	/**
+	 * Parse the contents of a changelog file into an array of releases.
+	 *
+	 * @param string $changelog_contents
+	 *
+	 * @return array<int, array{version: string, date: string, entries: array<string, array<string, string[]>>}>
+	 */
+	public static function parse_changelog_contents( string $changelog_contents ): array {
+		$changelog = [];
+		$section_titles = [ 'Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', 'Security', 'Other' ];
+
 		$changelog_releases = explode( "\n## ", $changelog_contents );
 
 		foreach ( array_slice( $changelog_releases, 1, self::MAX_CHANGELOG_ENTRIES ) as $changelog_release ) {
