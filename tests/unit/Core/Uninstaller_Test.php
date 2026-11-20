@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Core;
 
+use Code_Snippets\Flat_Files\Snippet_Files;
 use Code_Snippets\REST_API\Preferences\Stats_View_Rest_Controller;
 use Code_Snippets\REST_API\Preferences\Snippet_View_REST_Controller;
 use Code_Snippets\Settings\Version_Switch;
@@ -53,6 +54,26 @@ class Uninstaller_Test extends UnitTestCase {
 		( new Uninstaller() )->uninstall_plugin();
 
 		$this->assertFalse( get_option( Stats_View_Rest_Controller::OPTION_NAME ) );
+	}
+
+	/**
+	 * Complete uninstall removes the stored names of the snippet file directories.
+	 *
+	 * @return void
+	 */
+	public function test_complete_uninstall_removes_flat_file_directory_names(): void {
+		update_option(
+			'code_snippets_settings',
+			[
+				'general' => [ 'complete_uninstall' => true ],
+			]
+		);
+
+		update_option( Snippet_Files::DIR_NAMES_OPTION, [ code_snippets()->db->table => 'directory' ] );
+
+		( new Uninstaller() )->uninstall_plugin();
+
+		$this->assertFalse( get_option( Snippet_Files::DIR_NAMES_OPTION ) );
 	}
 
 	/**

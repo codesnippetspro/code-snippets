@@ -7,6 +7,7 @@ use Code_Snippets\Flat_Files\Interfaces\Filesystem_Adapter;
 use Code_Snippets\Flat_Files\Interfaces\Snippet_Config_Repository;
 use Code_Snippets\Flat_Files\Interfaces\Snippet_Type_Handler;
 use Code_Snippets\Model\Snippet;
+use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 use function wp_hash;
@@ -25,6 +26,11 @@ class Snippet_Files {
 	 * Flag file name that indicates flat files are enabled.
 	 */
 	private const ENABLED_FLAG_FILE = 'flat-files-enabled.flag';
+
+	/**
+	 * Option storing the directory name used for each snippets table.
+	 */
+	public const DIR_NAMES_OPTION = 'code_snippets_flat_files_dirs';
 
 	/**
 	 * Instance of handler registry.
@@ -124,10 +130,62 @@ class Snippet_Files {
 
 			add_action( 'updated_option', [ $this, 'sync_active_shared_network_snippets' ], 10, 3 );
 			add_action( 'add_option', [ $this, 'sync_active_shared_network_snippets_add' ], 10, 2 );
+
+			add_action( 'plugins_loaded', [ $this, 'maybe_recreate_flat_files' ], 0 );
 		}
 
 		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ] );
 		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ] );
+	}
+
+	/**
+	 * Recreate the snippet files before snippets run, if the files for this site cannot be relied on.
+	 *
+	 * That is the case when this site's directory is missing, or when its name has not been stored yet,
+	 * as the files may then have been written under a name derived from earlier salts. The name is
+	 * stored once the files have been recreated.
+	 *
+	 * @return void
+	 */
+	public function maybe_recreate_flat_files(): void {
+		// WP-CLI can run as a different user from the web server, which could leave
+		// files the site is unable to update afterwards.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			return;
+		}
+
+		$db = code_snippets()->db;
+		$stored = self::get_stored_dir_names( $db->table );
+		$base_dir = self::get_base_dir( self::get_hashed_table_name( $db->table ) );
+
+		if ( isset( $stored[ $db->table ] ) && $this->fs->is_dir( $base_dir ) ) {
+			return;
+		}
+
+		$tables = is_multisite() ? [ $db->table, $db->ms_table ] : [ $db->table ];
+
+		foreach ( $tables as $table ) {
+			clean_active_snippets_cache( $table, Snippet::get_all_scopes() );
+		}
+
+		foreach ( $db->fetch_active_snippets( Snippet::get_all_scopes() ) as $row ) {
+			$this->handle_snippet( get_snippet( $row['id'], $db->ms_table === $row['table'] ), $row['table'] );
+		}
+
+		if ( is_multisite() ) {
+			$active_shared_network_snippets = get_option( 'active_shared_network_snippets' );
+
+			if ( false !== $active_shared_network_snippets ) {
+				$this->create_active_shared_network_snippets_file( $active_shared_network_snippets );
+			}
+		}
+
+		$this->maybe_create_directory( $base_dir );
+
+		foreach ( $tables as $table ) {
+			self::store_dir_name( $table );
+			clean_active_snippets_cache( $table );
+		}
 	}
 
 	/**
@@ -397,15 +455,74 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Hash a table name.
+	 * Get the name of the directory holding the snippet files of a table.
 	 *
-	 * @param string $table Table name to hash.
+	 * The name is derived from the site's salts until it is stored, which happens once
+	 * the snippet files have been recreated under it, so changing the salts later does
+	 * not move the directory.
 	 *
-	 * @return string Hashed table name.
+	 * @param string $table Table name.
+	 *
+	 * @return string Directory name.
 	 */
 	public static function get_hashed_table_name( string $table ): string {
+		$dir_names = self::get_stored_dir_names( $table );
+
+		if ( isset( $dir_names[ $table ] ) ) {
+			return (string) $dir_names[ $table ];
+		}
+
 		// wp_hash() is pluggable and may not be available during early bootstrap.
 		return function_exists( 'wp_hash' ) ? wp_hash( $table ) : md5( $table );
+	}
+
+	/**
+	 * Retrieve the stored directory names that would hold the name for a table.
+	 *
+	 * @param string $table Table name.
+	 *
+	 * @return array<string, string> Directory names, keyed by table name.
+	 */
+	private static function get_stored_dir_names( string $table ): array {
+		$dir_names = self::is_network_table( $table )
+			? get_site_option( self::DIR_NAMES_OPTION )
+			: get_option( self::DIR_NAMES_OPTION );
+
+		return is_array( $dir_names ) ? $dir_names : [];
+	}
+
+	/**
+	 * Store the directory name currently used for a table, if none is stored yet.
+	 *
+	 * @param string $table Table name.
+	 *
+	 * @return void
+	 */
+	private static function store_dir_name( string $table ): void {
+		$dir_names = self::get_stored_dir_names( $table );
+
+		if ( isset( $dir_names[ $table ] ) ) {
+			return;
+		}
+
+		$dir_names[ $table ] = self::get_hashed_table_name( $table );
+
+		if ( self::is_network_table( $table ) ) {
+			update_site_option( self::DIR_NAMES_OPTION, $dir_names );
+		} else {
+			update_option( self::DIR_NAMES_OPTION, $dir_names );
+		}
+	}
+
+	/**
+	 * Determine whether a table holds network snippets shared across a multisite network.
+	 *
+	 * @param string $table Table name.
+	 *
+	 * @return bool
+	 */
+	private static function is_network_table( string $table ): bool {
+		return is_multisite() && code_snippets()->db->ms_table === $table;
 	}
 
 	/**
