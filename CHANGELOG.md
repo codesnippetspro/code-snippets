@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.1.1] (2026-11-25)
+
+### Fixed
+* Fixed welcome and announcement banners no longer appearing on the plugin's admin screens, and dismissing a banner
+  only hiding it until the next page load.
+* Fixed admin pages failing to load when a release date in the changelog could not be read.
+* Fixed snippets that were deactivated or deleted while file-based execution was turned off running again once it was
+  turned back on, as the file index is now rebuilt from the active snippets.
+* Fixed an `Undefined array key "condition_id"` warning on sites with a file index written by an earlier version.
+* Fixed saved settings not being read back correctly on sites with a persistent object cache.
+* Improved validation of the importer selected on the Import screen. Thanks to crow (via Wordfence) for responsibly
+  disclosing this issue.
+
 ## [4.1.0] (2026-11-05)
 
 ### Added
