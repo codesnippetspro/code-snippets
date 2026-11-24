@@ -130,7 +130,8 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 
 	useEffect(() => {
 		if (selectedImporter) {
-			fetchSnippets(() => api.get<ImportableSnippet[]>(`${REST_BASES.import.plugins}/${selectedImporter}`))
+			fetchSnippets(() =>
+				api.get<ImportableSnippet[]>(`${REST_BASES.import.plugins}/${encodeURIComponent(selectedImporter)}`))
 		}
 	}, [api, selectedImporter, fetchSnippets])
 
