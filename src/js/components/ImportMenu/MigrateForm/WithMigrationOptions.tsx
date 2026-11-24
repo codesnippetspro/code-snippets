@@ -28,9 +28,10 @@ export const WithMigrationOptions: React.FC<PropsWithChildren> = ({ children }) 
 	const [tagValue, setTagValue] = useState<string>(() => `imported-${selectedImporter}`)
 
 	const setSelectedImporter = useCallback((newImporter: string) => {
-		updateQueryParams({ [IMPORTER_QUERY_PARAM]: newImporter })
-		setTagValue(`imported-${newImporter}`)
-		setSelectedImporterValue(newImporter)
+		const importer = sanitizeImporterName(newImporter)
+		updateQueryParams({ [IMPORTER_QUERY_PARAM]: importer })
+		setTagValue(`imported-${importer}`)
+		setSelectedImporterValue(importer)
 	}, [])
 
 	const value: MigrationOptionsContext = {
