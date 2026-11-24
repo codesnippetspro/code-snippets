@@ -326,7 +326,7 @@ class Bootstrap_Admin {
 		);
 
 		printf(
-			'<a href="%s" class="banner-dismiss"><span class="screen-reader-text">%s</span></a>',
+			'<a href="%s" class="notice-dismiss"><span class="screen-reader-text">%s</span></a>',
 			esc_url( wp_nonce_url( add_query_arg( $meta_key, $notice ), $meta_key ) ),
 			esc_html__( 'Dismiss', 'code-snippets' )
 		);
