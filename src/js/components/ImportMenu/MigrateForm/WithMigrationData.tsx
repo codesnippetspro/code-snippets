@@ -128,12 +128,20 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 			.then(response => Object.values(response)))
 	}, [api, fetchImporters])
 
+	const isAvailableImporter = importers.some(importer => importer.is_active && importer.name === selectedImporter)
+
 	useEffect(() => {
-		if (selectedImporter) {
+		if (selectedImporter && 0 < importers.length && !isAvailableImporter) {
+			setSelectedImporter('')
+		}
+	}, [importers.length, isAvailableImporter, selectedImporter, setSelectedImporter])
+
+	useEffect(() => {
+		if (isAvailableImporter) {
 			fetchSnippets(() =>
 				api.get<ImportableSnippet[]>(`${REST_BASES.import.plugins}/${encodeURIComponent(selectedImporter)}`))
 		}
-	}, [api, selectedImporter, fetchSnippets])
+	}, [api, isAvailableImporter, selectedImporter, fetchSnippets])
 
 	const importSnippets = () => {
 		const request: ImportRequest = {
@@ -148,7 +156,7 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 			snippetSelection.clearSelection()
 		}
 
-		doImport(() => makeMigrationRequest(api, selectedImporter, request), handleImportSuccess)
+		doImport(() => makeMigrationRequest(api, isAvailableImporter ? selectedImporter : '', request), handleImportSuccess)
 	}
 
 	const changeSelectedImporter = (newImporter: string) => {
