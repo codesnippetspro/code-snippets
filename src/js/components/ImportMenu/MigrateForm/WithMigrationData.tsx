@@ -5,7 +5,7 @@ import { useSelection } from '../../../hooks/useSelection'
 import { createContextHook } from '../../../utils/bootstrap'
 import { REST_BASES } from '../../../utils/restAPI'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { useMigrationOptions } from './WithMigrationOptions'
+import { sanitizeImporterName, useMigrationOptions } from './WithMigrationOptions'
 import type { RestAPI } from '../../../hooks/useRestAPI'
 import type { UseSelection } from '../../../hooks/useSelection'
 import type { PropsWithChildren } from 'react'
@@ -52,11 +52,14 @@ const makeMigrationRequest = async (api: RestAPI, importer: string, request: Imp
 		throw new Error(__('Please select snippets to import.', 'code-snippets'))
 	}
 
-	if (!importer) {
+	const sanitizedImporter = sanitizeImporterName(importer)
+
+	if (!sanitizedImporter) {
 		throw new Error(__('Please select an importer.', 'code-snippets'))
 	}
 
-	const response = await api.post<ImportResponse, ImportRequest>(`${REST_BASES.import.plugins}/${importer}/import`, request)
+	const requestUrl = `${REST_BASES.import.plugins}/${encodeURIComponent(sanitizedImporter)}/import`
+	const response = await api.post<ImportResponse, ImportRequest>(requestUrl, request)
 
 	if (1 > response.imported.length) {
 		throw new Error(__('No snippets were imported.', 'code-snippets'))
@@ -125,11 +128,20 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 			.then(response => Object.values(response)))
 	}, [api, fetchImporters])
 
+	const isAvailableImporter = importers.some(importer => importer.is_active && importer.name === selectedImporter)
+
 	useEffect(() => {
-		if (selectedImporter) {
-			fetchSnippets(() => api.get<ImportableSnippet[]>(`${REST_BASES.import.plugins}/${selectedImporter}`))
+		if (selectedImporter && 0 < importers.length && !isAvailableImporter) {
+			setSelectedImporter('')
 		}
-	}, [api, selectedImporter, fetchSnippets])
+	}, [importers.length, isAvailableImporter, selectedImporter, setSelectedImporter])
+
+	useEffect(() => {
+		if (isAvailableImporter) {
+			fetchSnippets(() =>
+				api.get<ImportableSnippet[]>(`${REST_BASES.import.plugins}/${encodeURIComponent(selectedImporter)}`))
+		}
+	}, [api, isAvailableImporter, selectedImporter, fetchSnippets])
 
 	const importSnippets = () => {
 		const request: ImportRequest = {
@@ -144,7 +156,7 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 			snippetSelection.clearSelection()
 		}
 
-		doImport(() => makeMigrationRequest(api, selectedImporter, request), handleImportSuccess)
+		doImport(() => makeMigrationRequest(api, isAvailableImporter ? selectedImporter : '', request), handleImportSuccess)
 	}
 
 	const changeSelectedImporter = (newImporter: string) => {
