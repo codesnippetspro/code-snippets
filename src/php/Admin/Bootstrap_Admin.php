@@ -313,7 +313,7 @@ class Bootstrap_Admin {
 		}
 
 		printf(
-			'<div class="banner notice-info code-snippets-notice code-snippets-%s-notice is-dismissible"><p>',
+			'<div class="banner notice notice-info code-snippets-notice code-snippets-%s-notice is-dismissible"><p>',
 			esc_attr( sanitize_key( $notice ) )
 		);
 

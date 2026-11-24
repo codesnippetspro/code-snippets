@@ -79,6 +79,7 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function render() {
 		echo '<div id="manage-snippets-container" class="wrap"></div>';
+		do_action( 'code_snippets/admin/manage' );
 	}
 
 	/**
