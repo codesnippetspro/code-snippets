@@ -280,7 +280,7 @@ class Welcome_Client {
 	/**
 	 * Parse the contents of a changelog file into an array of releases.
 	 *
-	 * @param string $changelog_contents
+	 * @param string $changelog_contents Raw contents of the changelog file.
 	 *
 	 * @return array<int, array{version: string, date: string, entries: array<string, array<string, string[]>>}>
 	 */
