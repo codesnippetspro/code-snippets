@@ -10,9 +10,9 @@ use Code_Snippets\Admin\Menus\Manage\Manage_Menu;
 use Code_Snippets\Admin\Menus\Settings_Menu;
 use Code_Snippets\Admin\Menus\Welcome_Menu;
 use Code_Snippets\Client\Welcome_Client;
+use Code_Snippets\Utils\System_Info;
 use DateTimeImmutable;
 use DateTimeZone;
-use Exception;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\Settings\are_settings_unified;
@@ -24,6 +24,20 @@ use const Code_Snippets\PLUGIN_FILE;
  * @package Code_Snippets
  */
 class Bootstrap_Admin {
+
+	/**
+	 * User meta key listing the notices each user has dismissed.
+	 *
+	 * @var string
+	 */
+	private const DISMISSED_NOTICES_META_KEY = 'ignore_code_snippets_survey_message';
+
+	/**
+	 * Notice style that is rendered as the promotional banner above the plugin toolbar.
+	 *
+	 * @var string
+	 */
+	private const PROMO_BANNER_STYLE = 'promo';
 
 	/**
 	 * Admin_Menu class instances
@@ -57,6 +71,7 @@ class Bootstrap_Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( $this, 'plugin_action_links' ), 10, 2 );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
+		add_action( 'admin_init', array( $this, 'handle_notice_dismissal' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'print_notices' ) );
 	}
 
@@ -266,68 +281,199 @@ class Bootstrap_Admin {
 	}
 
 	/**
-	 * Print any admin notices that have not been dismissed.
+	 * Record the dismissal of a notice for the current user, then return to the page without the dismissal parameters.
 	 *
 	 * @return void
-	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
-	public function print_notices() {
-		global $current_user;
+	public function handle_notice_dismissal() {
+		$meta_key = self::DISMISSED_NOTICES_META_KEY;
 
+		if ( ! isset( $_GET[ $meta_key ], $_REQUEST['_wpnonce'] ) ||
+		     ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $meta_key ) ||
+		     ! code_snippets()->current_user_can() ) {
+			return;
+		}
+
+		add_user_meta( get_current_user_id(), $meta_key, sanitize_key( wp_unslash( $_GET[ $meta_key ] ) ) );
+
+		wp_safe_redirect( remove_query_arg( [ $meta_key, '_wpnonce' ] ) );
+		exit;
+	}
+
+	/**
+	 * Build the query arguments that dismiss a notice for the current user.
+	 *
+	 * @param string $notice Notice key.
+	 *
+	 * @return array<string, string>
+	 */
+	private function get_notice_dismiss_args( string $notice ): array {
+		return [
+			self::DISMISSED_NOTICES_META_KEY => $notice,
+			'_wpnonce'                       => wp_create_nonce( self::DISMISSED_NOTICES_META_KEY ),
+		];
+	}
+
+	/**
+	 * Build the URL that dismisses a notice for the current user.
+	 *
+	 * @param string $notice Notice key.
+	 *
+	 * @return string Unescaped URL.
+	 */
+	private function get_notice_dismiss_url( string $notice ): string {
+		return add_query_arg( $this->get_notice_dismiss_args( $notice ) );
+	}
+
+	/**
+	 * Determine which notice, if any, should be shown to the current user.
+	 *
+	 * A banner from the remote welcome feed is shown as the promotional banner while it is scheduled and has not been
+	 * dismissed, using its short headline when the feed provides one and its full text otherwise. Otherwise, the
+	 * survey notice is shown until it is dismissed.
+	 *
+	 * @param DateTimeImmutable|null $now Current time. Defaults to now.
+	 *
+	 * @return array{
+	 *     key: string,
+	 *     style: string,
+	 *     label: string,
+	 *     text: string,
+	 *     secondary: string,
+	 *     action_url: string,
+	 *     action_label: string,
+	 *     end_datetime: ?DateTimeImmutable
+	 * }|null
+	 */
+	public function get_active_notice( ?DateTimeImmutable $now = null ): ?array {
 		if ( apply_filters( 'code_snippets/hide_welcome_banner', false ) ) {
-			return;
+			return null;
 		}
 
-		$meta_key = 'ignore_code_snippets_survey_message';
-		$dismissed = get_user_meta( $current_user->ID, $meta_key, false );
-
-		if ( isset( $_GET[ $meta_key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $meta_key ) ) {
-			add_user_meta( $current_user->ID, $meta_key, sanitize_key( wp_unslash( $_GET[ $meta_key ] ) ) );
-			return;
-		}
-
+		$now = $now ?? new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
+		$dismissed = get_user_meta( get_current_user_id(), self::DISMISSED_NOTICES_META_KEY, false );
 		$welcome = $this->welcome_client->get_banner();
-
-		try {
-			$now = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
-		} catch ( Exception $e ) {
-			$now = $welcome['start_datetime'];
-		}
 
 		if ( ! empty( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
 		     ( empty( $welcome['start_datetime'] ) || $now >= $welcome['start_datetime'] ) &&
 		     ( empty( $welcome['end_datetime'] ) || $now <= $welcome['end_datetime'] ) ) {
-			$notice = $welcome['key'];
+			return [
+				'key'          => $welcome['key'],
+				'style'        => self::PROMO_BANNER_STYLE,
+				'label'        => $welcome['label'] ?? '',
+				'text'         => '' === ( $welcome['headline_free'] ?? '' ) ? ( $welcome['text_free'] ?? '' ) : $welcome['headline_free'],
+				'secondary'    => $welcome['secondary_free'] ?? '',
+				'action_url'   => $welcome['action_url_free'] ?? '',
+				'action_label' => $welcome['action_label_free'] ?? '',
+				'end_datetime' => $welcome['end_datetime'] ?? null,
+			];
+		}
 
-			$text = $welcome['text_free'];
-			$action_url = $welcome['action_url_free'];
-			$action_label = $welcome['action_label_free'];
+		if ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
+			return [
+				'key'          => 'survey',
+				'style'        => '',
+				'label'        => '',
+				'text'         => __( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ),
+				'secondary'    => '',
+				'action_url'   => 'https://codesnippets.pro/survey/',
+				'action_label' => __( 'Take the survey now', 'code-snippets' ),
+				'end_datetime' => null,
+			];
+		}
 
-		} elseif ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
-			$notice = 'survey';
-			$action_url = 'https://codesnippets.pro/survey/';
-			$action_label = __( 'Take the survey now', 'code-snippets' );
-			$text = __( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' );
-		} else {
+		return null;
+	}
+
+	/**
+	 * Add the details the store uses to tailor an offer to an action URL from the welcome feed.
+	 *
+	 * @param string $url Action URL from the feed.
+	 *
+	 * @return string Unescaped URL, or an empty string when the feed provides none.
+	 */
+	private function add_offer_query_args( string $url ): string {
+		if ( '' === $url ) {
+			return '';
+		}
+
+		return add_query_arg(
+			[
+				'cs_user' => code_snippets()->licensing->is_licensed() ? 'existing' : 'new',
+				'plugin'  => 'pro' === System_Info::get_edition() ? 'cs_pro' : 'cs_core',
+			],
+			$url
+		);
+	}
+
+	/**
+	 * Retrieve the active promotional banner, prepared for the manage screen script.
+	 *
+	 * Only welcome feed banners are returned; the survey notice keeps the standard notice markup printed by
+	 * print_notices().
+	 *
+	 * @param DateTimeImmutable|null $now Current time. Defaults to now.
+	 *
+	 * @return array{
+	 *     key: string,
+	 *     label: string,
+	 *     text: string,
+	 *     secondary: string,
+	 *     actionUrl: string,
+	 *     actionLabel: string,
+	 *     endsAt: ?string,
+	 *     dismissUrl: string,
+	 *     dismissArgs: array<string, string>
+	 * }|null
+	 */
+	public function get_promo_banner( ?DateTimeImmutable $now = null ): ?array {
+		$notice = $this->get_active_notice( $now );
+
+		if ( ! $notice || self::PROMO_BANNER_STYLE !== $notice['style'] ) {
+			return null;
+		}
+
+		return [
+			'key'         => $notice['key'],
+			'label'       => sanitize_text_field( $notice['label'] ),
+			'text'        => wp_kses_post( $notice['text'] ),
+			'secondary'   => wp_kses_post( $notice['secondary'] ),
+			'actionUrl'   => esc_url_raw( $this->add_offer_query_args( $notice['action_url'] ) ),
+			'actionLabel' => sanitize_text_field( $notice['action_label'] ),
+			'endsAt'      => $notice['end_datetime'] ? $notice['end_datetime']->format( DATE_ATOM ) : null,
+			'dismissUrl'  => esc_url_raw( $this->get_notice_dismiss_url( $notice['key'] ) ),
+			'dismissArgs' => $this->get_notice_dismiss_args( $notice['key'] ),
+		];
+	}
+
+	/**
+	 * Print the active notice, unless it is a promotional banner, which the manage screen script renders instead.
+	 *
+	 * @return void
+	 */
+	public function print_notices() {
+		$notice = $this->get_active_notice();
+
+		if ( ! $notice || self::PROMO_BANNER_STYLE === $notice['style'] ) {
 			return;
 		}
 
 		printf(
 			'<div class="banner notice notice-info code-snippets-notice code-snippets-%s-notice is-dismissible"><p>',
-			esc_attr( sanitize_key( $notice ) )
+			esc_attr( sanitize_key( $notice['key'] ) )
 		);
 
-		echo wp_kses_post( $text );
+		echo wp_kses_post( $notice['text'] );
 
 		printf(
-			'<a href="%s" class="button button-secondary" target="_blank" style="margin-block: auto; margin-inline: .5em;">%s</a>',
-			esc_url( $action_url ),
-			esc_html( $action_label )
+			'<a href="%s" class="button button-secondary" target="_blank" rel="noopener noreferrer" style="margin-block: auto; margin-inline: .5em;">%s</a>',
+			esc_url( $notice['action_url'] ),
+			esc_html( $notice['action_label'] )
 		);
 
 		printf(
 			'<a href="%s" class="notice-dismiss"><span class="screen-reader-text">%s</span></a>',
-			esc_url( wp_nonce_url( add_query_arg( $meta_key, $notice ), $meta_key ) ),
+			esc_url( $this->get_notice_dismiss_url( $notice['key'] ) ),
 			esc_html__( 'Dismiss', 'code-snippets' )
 		);
 
