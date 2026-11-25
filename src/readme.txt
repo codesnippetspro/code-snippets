@@ -208,6 +208,7 @@ __Fixed__
 * Fixed snippets that were deactivated or deleted while file-based execution was turned off running again once it was
   turned back on, as the file index is now rebuilt from the active snippets.
 * Fixed an `Undefined array key "condition_id"` warning on sites with a file index written by an earlier version.
+* Fixed snippets no longer running with file-based execution after the site's security keys and salts change.
 * Fixed saved settings not being read back correctly on sites with a persistent object cache.
 * Fixed warnings on the Welcome screen when its content feed lists fewer than four articles or partners.
 * Fixed the plugin failing to uninstall when Complete uninstall is enabled.
