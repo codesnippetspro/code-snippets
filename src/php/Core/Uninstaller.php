@@ -12,6 +12,7 @@ namespace Code_Snippets\Core;
 use Code_Snippets\Admin\Feedback_Panel;
 use Code_Snippets\Client\Docs_Client;
 use Code_Snippets\Client\Feedback_Client;
+use Code_Snippets\Flat_Files\Snippet_Files;
 use Code_Snippets\Model\Feedback_Connection;
 use Code_Snippets\Search\Universal_Search;
 use Code_Snippets\Settings\Version_Switch;
@@ -85,6 +86,7 @@ class Uninstaller {
 		delete_option( 'code_snippets_settings' );
 		delete_option( 'code_snippets_stats' );
 		delete_option( 'code_snippets_demos_seen' );
+		delete_option( Snippet_Files::DIR_NAMES_OPTION );
 
 		delete_option( 'code_snippets_cloud_settings' );
 		delete_transient( 'code_snippets_cloud_links' );
@@ -128,6 +130,7 @@ class Uninstaller {
 		delete_site_option( 'code_snippets_version' );
 		delete_site_option( 'recently_active_snippets' );
 		delete_site_option( 'recently_activated_snippets' );
+		delete_site_option( Snippet_Files::DIR_NAMES_OPTION );
 	}
 
 	/**
