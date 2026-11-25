@@ -133,6 +133,20 @@ class Manage_Menu_Assets {
 			}
 		}
 
+		$promo_banner = isset( code_snippets()->admin ) ? code_snippets()->admin->get_promo_banner() : null;
+
+		if ( $promo_banner ) {
+			$localized['promoBanner'] = $promo_banner;
+
+			// The banner is drawn by the script, so the page reserves its space from the first paint.
+			add_filter(
+				'admin_body_class',
+				function ( $classes ) {
+					return "$classes code-snippets-has-promo-banner";
+				}
+			);
+		}
+
 		if ( $this->screen_options->is_ai_agent_view() ) {
 			// The AI Agent demo writes the site name into the snippet it builds,
 			// so the walkthrough reads as though it were written for this site.

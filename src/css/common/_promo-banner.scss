@@ -1,0 +1,138 @@
+.code-snippets-has-promo-banner {
+	--cs-promo-banner-block-size: 50px;
+}
+
+.code-snippets-promo-banner {
+	--cs-promo-banner-background: #1d4a47;
+	--cs-promo-banner-grid: rgb(255 255 255 / 6%);
+	--cs-promo-banner-text: #fff;
+	--cs-promo-banner-text-muted: rgb(255 255 255 / 72%);
+	--cs-promo-banner-chip: rgb(255 255 255 / 12%);
+	--cs-promo-banner-label: #f0c24b;
+	--cs-promo-banner-action: var(--cs-color-secondary);
+	--cs-promo-banner-action-hover: #bd5c3b;
+
+	position: relative;
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	gap: 22px;
+	box-sizing: border-box;
+	min-block-size: 50px;
+	padding-block: 8px;
+	padding-inline: 56px;
+	color: var(--cs-promo-banner-text);
+	background-color: var(--cs-promo-banner-background);
+	background-image:
+		linear-gradient(var(--cs-promo-banner-grid) 1px, transparent 1px),
+		linear-gradient(90deg, var(--cs-promo-banner-grid) 1px, transparent 1px);
+	background-size: 18px 18px;
+	font-size: 15px;
+	line-height: 1.4;
+	white-space: nowrap;
+}
+
+.code-snippets-promo-banner-label {
+	color: var(--cs-promo-banner-label);
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.code-snippets-promo-banner-text {
+	min-inline-size: 0;
+	font-weight: 600;
+	white-space: normal;
+
+	a {
+		color: inherit;
+	}
+}
+
+.code-snippets-promo-banner-countdown {
+	display: flex;
+	gap: 6px;
+
+	span {
+		padding-block: 3px;
+		padding-inline: 7px;
+		border-radius: 4px;
+		background: var(--cs-promo-banner-chip);
+		font-size: 13px;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+.code-snippets-promo-banner-action {
+	padding-block: 6px;
+	padding-inline: 14px;
+	border-radius: var(--cs-control-radius);
+	color: var(--cs-promo-banner-text);
+	background: var(--cs-promo-banner-action);
+	font-weight: 600;
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		color: var(--cs-promo-banner-text);
+		background: var(--cs-promo-banner-action-hover);
+	}
+}
+
+.code-snippets-promo-banner-secondary {
+	padding-inline-start: 22px;
+	border-inline-start: 1px solid var(--cs-promo-banner-chip);
+	color: var(--cs-promo-banner-text-muted);
+	font-size: 14px;
+
+	a {
+		color: var(--cs-promo-banner-text);
+		font-weight: 600;
+	}
+}
+
+.code-snippets-promo-banner-dismiss {
+	position: absolute;
+	inset-inline-end: 16px;
+	display: flex;
+	color: var(--cs-promo-banner-text-muted);
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		color: var(--cs-promo-banner-text);
+	}
+}
+
+.code-snippets-promo-banner a:focus-visible {
+	outline: 2px solid var(--cs-color-accent);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+
+@media (width <= 1280px) {
+	.code-snippets-promo-banner-secondary {
+		display: none;
+	}
+}
+
+@media (width <= 960px) {
+	.code-snippets-promo-banner-countdown {
+		display: none;
+	}
+}
+
+@media (width <= 600px) {
+	.code-snippets-promo-banner {
+		justify-content: flex-start;
+		gap: 12px;
+		padding-inline: 16px 48px;
+	}
+
+	.code-snippets-promo-banner-label {
+		display: none;
+	}
+}

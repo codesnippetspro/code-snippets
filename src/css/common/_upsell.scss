@@ -127,12 +127,12 @@
 // Bleed the upsell to the full width of the admin content area and fill the
 // remaining viewport height, so it reads as a full page rather than a small
 // boxed card floating in the subpage. 168px accounts for the WP admin bar
-// (32px) plus the plugin toolbar (136px).
+// (32px) plus the plugin toolbar (136px), which grows by any promotional banner.
 .code-snippets-upsell-page {
 	box-sizing: border-box;
 	margin-inline-start: -22px;
 	inline-size: calc(100% + 42px);
-	min-block-size: calc(100vh - 168px);
+	min-block-size: calc(100vh - 168px - var(--cs-promo-banner-block-size));
 	border-radius: 0;
 	justify-content: center;
 }

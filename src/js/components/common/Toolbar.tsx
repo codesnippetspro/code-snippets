@@ -13,6 +13,7 @@ import { SearchIcon } from './icons/SearchIcon'
 import { SettingsIcon } from './icons/SettingsIcon'
 import { SnippetsIcon } from './icons/SnippetsIcon'
 import { UnifiedSnippetsIcon } from './icons/UnifiedSnippetsIcon'
+import { PromoBanner } from './PromoBanner'
 import { UniversalSearch } from './UniversalSearch/UniversalSearch'
 import { UpsellDialog } from './UpsellDialog'
 import type { SVGProps } from 'react'
@@ -244,6 +245,7 @@ const LowerNav = () =>
 
 export const Toolbar = () =>
 	<div className="code-snippets-toolbar">
+		<PromoBanner />
 		<UpperNav />
 		<LowerNav />
 	</div>

@@ -1,8 +1,9 @@
+@use 'promo-banner';
 @use 'upsell';
 @use 'universal-search';
 
 #wpbody {
-	padding-block-start: var(--cs-toolbar-block-size);
+	padding-block-start: calc(var(--cs-toolbar-block-size) + var(--cs-promo-banner-block-size));
 }
 
 .code-snippets-toolbar {
@@ -12,7 +13,7 @@
 	margin-inline-start: calc(-1 * var(--cs-wpcontent-inline-start-indent) - 2px);
 	position: absolute;
 	inline-size: calc(100% + var(--cs-wpcontent-inline-start-indent));
-	block-size: var(--cs-toolbar-block-size);
+	block-size: calc(var(--cs-toolbar-block-size) + var(--cs-promo-banner-block-size));
 	inset-block-start: 0;
 	display: flex;
 	flex-direction: column;
@@ -470,7 +471,7 @@
 // padding the body rather than the page, so the toolbar has to clear it itself.
 @media (width <= 600px) {
 	#wpbody {
-		padding-block-start: calc(var(--cs-toolbar-block-size) + 46px);
+		padding-block-start: calc(var(--cs-toolbar-block-size) + var(--cs-promo-banner-block-size) + 46px);
 	}
 
 	.code-snippets-toolbar {
