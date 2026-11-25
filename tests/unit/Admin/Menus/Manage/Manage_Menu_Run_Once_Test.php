@@ -67,7 +67,7 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 *
 	 * @return string|null The result parameter of the redirect, or null when the handler returned without redirecting.
 	 *
-	 * @throws ReflectionException Uses reflection to access a private method.
+	 * @throws ReflectionException If plugin API and tests are desynced.
 	 */
 	private function run_once_request( int $snippet_id, string $nonce ): ?string {
 		$_REQUEST['action'] = 'run-once';
@@ -118,7 +118,7 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 *
 	 * @return void
 	 *
-	 * @throws ReflectionException Uses reflection to access a private method.
+	 * @throws ReflectionException If plugin API and tests are desynced.
 	 */
 	public function test_bad_nonce_is_ignored(): void {
 		$snippet = $this->single_use( 'update_option( "run_once_ran", "yes" );' );
@@ -132,7 +132,7 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 *
 	 * @return void
 	 *
-	 * @throws ReflectionException Uses reflection to access a private method.
+	 * @throws ReflectionException If plugin API and tests are desynced.
 	 */
 	public function test_valid_snippet_is_executed(): void {
 		$snippet = $this->single_use( 'update_option( "run_once_ran", "yes" );' );
@@ -150,7 +150,7 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 *
 	 * @return void
 	 *
-	 * @throws ReflectionException Uses reflection to access a private method.
+	 * @throws ReflectionException If plugin API and tests are desynced.
 	 */
 	public function test_invalid_snippet_reports_failure(): void {
 		$snippet = $this->single_use( 'function wp_head() { return "redeclared"; }' );
@@ -168,7 +168,7 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 *
 	 * @return void
 	 *
-	 * @throws ReflectionException Uses reflection to access a private method.
+	 * @throws ReflectionException If plugin API and tests are desynced.
 	 */
 	public function test_disabled_execution_is_reported(): void {
 		add_filter( 'code_snippets/execute_snippets', '__return_false' );
@@ -187,7 +187,7 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 *
 	 * @return void
 	 *
-	 * @throws ReflectionException Uses reflection to access a private method.
+	 * @throws ReflectionException If plugin API and tests are desynced.
 	 */
 	public function test_other_scopes_are_refused(): void {
 		$snippet = new Snippet();
@@ -229,7 +229,7 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 *
 	 * @return void
 	 *
-	 * @throws ReflectionException Uses reflection to access a private method.
+	 * @throws ReflectionException If plugin API and tests are desynced.
 	 */
 	public function test_capability_is_required_even_with_a_valid_nonce(): void {
 		$snippet = $this->single_use( 'update_option( "run_once_ran", "yes" );' );

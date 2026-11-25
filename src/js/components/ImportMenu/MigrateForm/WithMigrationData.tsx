@@ -8,7 +8,7 @@ import { isNetworkAdmin } from '../../../utils/screen'
 import { sanitizeImporterName, useMigrationOptions } from './WithMigrationOptions'
 import type { RestAPI } from '../../../hooks/useRestAPI'
 import type { UseSelection } from '../../../hooks/useSelection'
-import type { PropsWithChildren } from 'react'
+import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 
 export enum MigrationStep {
 	LoadImporters,
@@ -96,6 +96,37 @@ const useRemoteRequest = <T, >(
 	return [data, requestData, clearData]
 }
 
+interface ImporterOptions {
+	importers: Importer[]
+	isAvailableImporter: boolean
+}
+
+const useImporterOptions = (
+	setError: Dispatch<SetStateAction<MigrationError | undefined>>,
+	setStep: Dispatch<SetStateAction<MigrationStep | undefined>>
+): ImporterOptions => {
+	const { api } = useRestAPI()
+	const { selectedImporter, setSelectedImporter } = useMigrationOptions()
+
+	const [importers, fetchImporters] = useRemoteRequest<Importer>(MigrationStep.LoadImporters, setError, setStep)
+
+	useEffect(() => {
+		fetchImporters(() => api
+			.get<Record<string, Importer>>(REST_BASES.import.plugins)
+			.then(response => Object.values(response)))
+	}, [api, fetchImporters])
+
+	const isAvailableImporter = importers.some(importer => importer.is_active && importer.name === selectedImporter)
+
+	useEffect(() => {
+		if (selectedImporter && 0 < importers.length && !isAvailableImporter) {
+			setSelectedImporter('')
+		}
+	}, [importers.length, isAvailableImporter, selectedImporter, setSelectedImporter])
+
+	return { importers, isAvailableImporter }
+}
+
 export interface MigrationDataContext {
 	error: MigrationError | undefined
 	importSnippets: VoidFunction
@@ -115,26 +146,13 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 	const [error, setError] = useState<MigrationError>()
 	const [isWorking, setIsWorking] = useState<MigrationStep>()
 
+	const { importers, isAvailableImporter } = useImporterOptions(setError, setIsWorking)
+
 	const [importedIds, doImport] = useRemoteRequest<number>(MigrationStep.MigrateSnippets, setError, setIsWorking)
-	const [importers, fetchImporters] = useRemoteRequest<Importer>(MigrationStep.LoadImporters, setError, setIsWorking)
 	const [snippets, fetchSnippets, resetSnippets] =
 		useRemoteRequest<ImportableSnippet>(MigrationStep.FetchSnippets, setError, setIsWorking)
 
 	const snippetSelection = useSelection(snippets, snippet => snippet.table_data.id)
-
-	useEffect(() => {
-		fetchImporters(() => api
-			.get<Record<string, Importer>>(REST_BASES.import.plugins)
-			.then(response => Object.values(response)))
-	}, [api, fetchImporters])
-
-	const isAvailableImporter = importers.some(importer => importer.is_active && importer.name === selectedImporter)
-
-	useEffect(() => {
-		if (selectedImporter && 0 < importers.length && !isAvailableImporter) {
-			setSelectedImporter('')
-		}
-	}, [importers.length, isAvailableImporter, selectedImporter, setSelectedImporter])
 
 	useEffect(() => {
 		if (isAvailableImporter) {
