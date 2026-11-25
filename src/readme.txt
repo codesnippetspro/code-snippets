@@ -183,7 +183,7 @@ Users with permission to update plugins can open **Snippets > Settings > Advance
 == Upgrade Notice ==
 
 = 4.1.1 =
-Restores welcome banners, fixes file-based execution, settings caching and changelog date issues, and improves validation on the Import screen.
+Restores welcome banners with a new promotional banner design, fixes file-based execution, settings caching and changelog date issues, and improves validation on the Import screen.
 
 = 4.1.0 =
 Adds universal search; fixes snippet list caching, search method menu,
