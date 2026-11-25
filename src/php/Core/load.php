@@ -95,4 +95,10 @@ function code_snippets(): Plugin {
 	return $plugin;
 }
 
-code_snippets()->load_plugin();
+// WordPress deletes the plugin by running uninstall.php without loading the plugin. That file loads this one for the
+// plugin's functions and classes, and the plugin must not start while its data is being removed.
+if ( defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+	code_snippets()->load_for_uninstall();
+} else {
+	code_snippets()->load_plugin();
+}

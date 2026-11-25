@@ -120,6 +120,16 @@ class Plugin {
 	}
 
 	/**
+	 * Load only what removing the plugin's data needs, without running snippets or upgrades.
+	 *
+	 * @return void
+	 */
+	public function load_for_uninstall() {
+		$this->load_utilities();
+		$this->db = new DB();
+	}
+
+	/**
 	 * Initialize the plugin and load all necessary classes.
 	 */
 	public function load_plugin() {
