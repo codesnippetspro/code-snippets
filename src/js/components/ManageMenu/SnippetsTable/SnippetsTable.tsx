@@ -12,6 +12,7 @@ import { isLicensed } from '../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetAddNewUrl, getSnippetType, isProType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
+import { Button } from '../../common/Button'
 import { Notice } from '../../common/Notice'
 import { ScreenMetaSlot } from '../../common/ScreenMetaSlot'
 import { UpsellPage } from '../../common/UpsellDialog'
@@ -99,6 +100,26 @@ const SafeModeNotice = () =>
 		</Notice>
 		: null
 
+const SnippetsLoadErrorNotice = () => {
+	const { hasLoadError, refreshSnippetsList } = useSnippetsList()
+
+	return (
+		<>
+			{hasLoadError &&
+				<Notice type="error">
+					<p>
+						{__('Some of your snippets could not be loaded, so this list may be incomplete.', 'code-snippets')}{' '}
+						<Button link onClick={() => {
+							refreshSnippetsList().catch(() => undefined)
+						}}>
+							{__('Try again', 'code-snippets')}
+						</Button>
+					</p>
+				</Notice>}
+		</>
+	)
+}
+
 // Counts render immediately from localized values, then switch to live values.
 const useSnippetTypeCounts = () => {
 	const { snippetsList } = useSnippetsList()
@@ -174,6 +195,7 @@ const SnippetsTableInner = () => {
 				</>)}
 
 			<SafeModeNotice />
+			<SnippetsLoadErrorNotice />
 
 			{isUpsell
 				? <UpsellPage />
