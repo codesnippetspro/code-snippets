@@ -2,6 +2,9 @@
 
 ## [4.1.1] (2026-11-25)
 
+### Changed
+* Promotional banners now appear in a full-width bar above the plugin header, with a countdown to the end of the offer.
+
 ### Fixed
 * Fixed welcome and announcement banners no longer appearing on the plugin's admin screens, and dismissing a banner
   only hiding it until the next page load.
@@ -10,6 +13,7 @@
   turned back on, as the file index is now rebuilt from the active snippets.
 * Fixed an `Undefined array key "condition_id"` warning on sites with a file index written by an earlier version.
 * Fixed saved settings not being read back correctly on sites with a persistent object cache.
+* Fixed warnings on the Welcome screen when its content feed lists fewer than four articles or partners.
 * Improved validation of the importer selected on the Import screen. Thanks to crow (via Wordfence) for responsibly
   disclosing this issue.
 
