@@ -4,6 +4,7 @@ namespace Code_Snippets\Admin\Menus\Manage;
 
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\UnitTestCase;
+use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
 use function Code_Snippets\get_snippet;
@@ -65,16 +66,21 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 * @param string $nonce      Nonce to present.
 	 *
 	 * @return string|null The result parameter of the redirect, or null when the handler returned without redirecting.
+	 *
+	 * @throws ReflectionException
 	 */
 	private function run_once_request( int $snippet_id, string $nonce ): ?string {
-		$_REQUEST['action']   = 'run-once';
-		$_REQUEST['snippet']  = (string) $snippet_id;
+		$_REQUEST['action'] = 'run-once';
+		$_REQUEST['snippet'] = (string) $snippet_id;
 		$_REQUEST['_wpnonce'] = $nonce;
 
 		// The admin bootstrap does not run under PHPUnit, so the menu is built here.
-		$menu   = new Manage_Menu();
+		$menu = new Manage_Menu();
 		$method = new ReflectionMethod( $menu, 'handle_run_once' );
-		$method->setAccessible( true );
+
+		if ( version_compare( PHP_VERSION, '8.1.0', '<' ) ) {
+			$method->setAccessible( true );
+		}
 
 		try {
 			$method->invoke( $menu );
@@ -95,10 +101,10 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 * @return Snippet
 	 */
 	private function single_use( string $code ): Snippet {
-		$snippet         = new Snippet();
-		$snippet->name   = 'Run once';
-		$snippet->scope  = 'single-use';
-		$snippet->code   = $code;
+		$snippet = new Snippet();
+		$snippet->name = 'Run once';
+		$snippet->scope = 'single-use';
+		$snippet->code = $code;
 		$snippet->active = false;
 
 		$saved = save_snippet( $snippet );
@@ -111,66 +117,93 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 * A bad nonce does nothing at all.
 	 *
 	 * @return void
+	 *
+	 * @throws ReflectionException
 	 */
 	public function test_bad_nonce_is_ignored(): void {
 		$snippet = $this->single_use( 'update_option( "run_once_ran", "yes" );' );
 
 		$this->assertNull( $this->run_once_request( $snippet->id, 'not-a-nonce' ) );
-		$this->assertFalse( (bool) get_snippet( $snippet->id )->active );
+		$this->assertFalse( get_snippet( $snippet->id )->active );
 	}
 
 	/**
 	 * A valid snippet runs and reports it.
 	 *
 	 * @return void
+	 *
+	 * @throws ReflectionException
 	 */
 	public function test_valid_snippet_is_executed(): void {
 		$snippet = $this->single_use( 'update_option( "run_once_ran", "yes" );' );
 
-		$this->assertSame( 'executed', $this->run_once_request( $snippet->id, wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ) ) );
-		$this->assertTrue( (bool) get_snippet( $snippet->id )->active );
+		$this->assertSame(
+			'executed',
+			$this->run_once_request( $snippet->id, wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ) )
+		);
+
+		$this->assertTrue( get_snippet( $snippet->id )->active );
 	}
 
 	/**
 	 * Code that fails validation is reported as a failure and stays inactive.
 	 *
 	 * @return void
+	 *
+	 * @throws ReflectionException
 	 */
 	public function test_invalid_snippet_reports_failure(): void {
 		$snippet = $this->single_use( 'function wp_head() { return "redeclared"; }' );
 
-		$this->assertSame( 'run-once-failed', $this->run_once_request( $snippet->id, wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ) ) );
-		$this->assertFalse( (bool) get_snippet( $snippet->id )->active );
+		$this->assertSame(
+			'run-once-failed',
+			$this->run_once_request( $snippet->id, wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ) )
+		);
+
+		$this->assertFalse( get_snippet( $snippet->id )->active );
 	}
 
 	/**
 	 * With execution disabled nothing runs, and the result says so.
 	 *
 	 * @return void
+	 *
+	 * @throws ReflectionException
 	 */
 	public function test_disabled_execution_is_reported(): void {
 		add_filter( 'code_snippets/execute_snippets', '__return_false' );
 		$snippet = $this->single_use( 'update_option( "run_once_ran", "yes" );' );
 
-		$this->assertSame( 'run-once-safe-mode', $this->run_once_request( $snippet->id, wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ) ) );
-		$this->assertFalse( (bool) get_snippet( $snippet->id )->active );
+		$this->assertSame(
+			'run-once-safe-mode',
+			$this->run_once_request( $snippet->id, wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ) )
+		);
+
+		$this->assertFalse( get_snippet( $snippet->id )->active );
 	}
 
 	/**
 	 * Only single-use snippets can be run this way.
 	 *
 	 * @return void
+	 *
+	 * @throws ReflectionException
 	 */
 	public function test_other_scopes_are_refused(): void {
-		$snippet         = new Snippet();
-		$snippet->name   = 'Global';
-		$snippet->scope  = 'global';
-		$snippet->code   = 'update_option( "run_once_ran", "yes" );';
+		$snippet = new Snippet();
+		$snippet->name = 'Global';
+		$snippet->scope = 'global';
+		$snippet->code = 'update_option( "run_once_ran", "yes" );';
 		$snippet->active = false;
-		$saved           = save_snippet( $snippet );
+		$saved = save_snippet( $snippet );
 
-		$this->assertSame( '', $this->run_once_request( $saved->id, wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ) ), 'redirected back with no result' );
-		$this->assertFalse( (bool) get_snippet( $saved->id )->active );
+		$this->assertSame(
+			'',
+			$this->run_once_request( $saved->id, wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE ) ),
+			'redirected back with no result'
+		);
+
+		$this->assertFalse( get_snippet( $saved->id )->active );
 	}
 
 	/**
@@ -195,6 +228,8 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 	 * A user without the capability is refused even with a nonce of their own.
 	 *
 	 * @return void
+	 *
+	 * @throws ReflectionException
 	 */
 	public function test_capability_is_required_even_with_a_valid_nonce(): void {
 		$snippet = $this->single_use( 'update_option( "run_once_ran", "yes" );' );
@@ -203,7 +238,7 @@ class Manage_Menu_Run_Once_Test extends UnitTestCase {
 		$own_nonce = wp_create_nonce( Manage_Menu::RUN_ONCE_NONCE );
 
 		$this->assertNull( $this->run_once_request( $snippet->id, $own_nonce ) );
-		$this->assertFalse( (bool) get_snippet( $snippet->id )->active );
+		$this->assertFalse( get_snippet( $snippet->id )->active );
 		$this->assertFalse( get_option( 'run_once_ran' ) );
 	}
 }
