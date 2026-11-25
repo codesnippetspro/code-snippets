@@ -115,6 +115,18 @@ class Welcome_Client {
 	}
 
 	/**
+	 * Safely retrieve a string from an array, returning an empty string if it is missing or not a string.
+	 *
+	 * @param array<string, mixed> $items Associative array containing the string.
+	 * @param string               $key   Array key.
+	 *
+	 * @return string
+	 */
+	private static function safe_get_string( array $items, string $key ): string {
+		return isset( $items[ $key ] ) && is_string( $items[ $key ] ) ? $items[ $key ] : '';
+	}
+
+	/**
 	 * Parse DateTime value from a string without triggering an error.
 	 *
 	 * @param string $datetime String representation of DateTime value.
@@ -122,6 +134,10 @@ class Welcome_Client {
 	 * @return DateTimeImmutable|null
 	 */
 	private static function safe_parse_datetime( string $datetime ): ?DateTimeImmutable {
+		if ( '' === $datetime ) {
+			return null;
+		}
+
 		$parsed = date_create_immutable( $datetime );
 
 		return $parsed ? $parsed : null;
@@ -151,15 +167,18 @@ class Welcome_Client {
 	 */
 	private function parse_banner( array $remote ): array {
 		return [
-			'key'               => sanitize_key( $remote['key'] ) ?? '',
-			'start_datetime'    => self::safe_parse_datetime( $remote['start_datetime'] ),
-			'end_datetime'      => self::safe_parse_datetime( $remote['end_datetime'] ),
-			'text_free'         => $remote['text_free'] ?? '',
-			'action_url_free'   => $remote['action_url_free'] ?? '',
-			'action_label_free' => $remote['action_label_free'] ?? '',
-			'text_pro'          => $remote['text_pro'] ?? '',
-			'action_url_pro'    => $remote['action_url_pro'] ?? '',
-			'action_label_pro'  => $remote['action_label_pro'] ?? '',
+			'key'               => sanitize_key( self::safe_get_string( $remote, 'key' ) ),
+			'label'             => self::safe_get_string( $remote, 'label' ),
+			'start_datetime'    => self::safe_parse_datetime( self::safe_get_string( $remote, 'start_datetime' ) ),
+			'end_datetime'      => self::safe_parse_datetime( self::safe_get_string( $remote, 'end_datetime' ) ),
+			'text_free'         => self::safe_get_string( $remote, 'text_free' ),
+			'headline_free'     => self::safe_get_string( $remote, 'headline_free' ),
+			'secondary_free'    => self::safe_get_string( $remote, 'secondary_free' ),
+			'action_url_free'   => self::safe_get_string( $remote, 'action_url_free' ),
+			'action_label_free' => self::safe_get_string( $remote, 'action_label_free' ),
+			'text_pro'          => self::safe_get_string( $remote, 'text_pro' ),
+			'action_url_pro'    => self::safe_get_string( $remote, 'action_url_pro' ),
+			'action_label_pro'  => self::safe_get_string( $remote, 'action_label_pro' ),
 		];
 	}
 
@@ -171,11 +190,12 @@ class Welcome_Client {
 	 * @return array[] Parsed feature data.
 	 */
 	private function parse_features( array $remote ): array {
-		$limit = max( self::ITEM_LIMIT, count( $remote ) );
 		$features = [];
 
-		for ( $i = 0; $i < $limit; $i++ ) {
-			$feature = $remote[ $i ];
+		foreach ( $remote as $feature ) {
+			if ( ! is_array( $feature ) ) {
+				continue;
+			}
 
 			$features[] = [
 				'title'       => $feature['title'] ?? '',
@@ -197,11 +217,12 @@ class Welcome_Client {
 	 * @return array[] Parsed partner data.
 	 */
 	private function parse_partners( array $remote ): array {
-		$limit = max( self::ITEM_LIMIT, count( $remote ) );
 		$partners = [];
 
-		for ( $i = 0; $i < $limit; $i++ ) {
-			$partner = $remote[ $i ];
+		foreach ( $remote as $partner ) {
+			if ( ! is_array( $partner ) ) {
+				continue;
+			}
 
 			$partners[] = [
 				'title'      => $partner['title'] ?? '',
@@ -351,12 +372,15 @@ class Welcome_Client {
 	 *      key: string,
 	 *      start_datetime: ?DateTimeImmutable,
 	 *      end_datetime: ?DateTimeImmutable,
+	 *      label: string,
 	 *      text_free: string,
+	 *      headline_free: string,
+	 *      secondary_free: string,
 	 *      action_url_free: string,
 	 *      action_label_free: string,
 	 *      text_pro: string,
 	 *      action_url_pro: string,
-	 *      action_label_pro: string                                                                                                                           tet
+	 *      action_label_pro: string
 	 *  }
 	 */
 	public function get_banner(): array {
