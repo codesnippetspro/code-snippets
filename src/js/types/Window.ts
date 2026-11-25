@@ -101,6 +101,17 @@ declare global {
 				siteName: string
 				homeUrl: string
 			}
+			promoBanner?: {
+				key: string
+				label: string
+				text: string
+				secondary: string
+				actionUrl: string
+				actionLabel: string
+				endsAt: string | null
+				dismissUrl: string
+				dismissArgs: Record<string, string>
+			}
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: SnippetSchema

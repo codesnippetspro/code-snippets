@@ -15,6 +15,17 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) || ( defined( 'CODE_SNIPPETS_PRO' ) && C
 	return;
 }
 
+// WordPress runs this file without loading the plugin, so load what the uninstaller needs.
+if ( ! defined( 'CODE_SNIPPETS_FILE' ) ) {
+	$plugin_data = get_file_data( __DIR__ . '/code-snippets.php', [ 'Version' => 'Version' ] );
+
+	define( 'CODE_SNIPPETS_VERSION', $plugin_data['Version'] );
+	define( 'CODE_SNIPPETS_FILE', __DIR__ . '/code-snippets.php' );
+	define( 'CODE_SNIPPETS_PRO', false );
+
+	require_once __DIR__ . '/php/Core/load.php';
+}
+
 require_once __DIR__ . '/php/Core/Uninstaller.php';
 
 $uninstaller = new Uninstaller();
