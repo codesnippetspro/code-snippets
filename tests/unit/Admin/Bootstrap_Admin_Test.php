@@ -126,7 +126,10 @@ class Bootstrap_Admin_Test extends AdminUnitTestCase {
 		$this->assertIsArray( $promo );
 		$this->assertSame( 'bf2026', $promo['key'] );
 		$this->assertStringContainsString( 'Save up to 40% on Code Snippets Pro!', $promo['text'] );
-		$this->assertStringContainsString( '<a href="https://translatewp.ai/" target="_blank">TranslateWP</a>', $promo['text'] );
+		$this->assertStringContainsString(
+			'<a href="https://translatewp.ai/" target="_blank" rel="noopener noreferrer">TranslateWP</a>',
+			$promo['text']
+		);
 		$this->assertStringNotContainsString( '<script', $promo['text'] );
 		$this->assertSame( '', $promo['label'] );
 		$this->assertSame( '', $promo['secondary'] );
@@ -163,6 +166,36 @@ class Bootstrap_Admin_Test extends AdminUnitTestCase {
 			$promo['secondary']
 		);
 		$this->assertSame( 'Claim 40% off', $promo['actionLabel'] );
+	}
+
+	/**
+	 * Feed text in the promo banner keeps only https links and basic emphasis, and its links open safely in a new tab.
+	 *
+	 * @return void
+	 */
+	public function test_feed_text_keeps_only_links_and_basic_emphasis(): void {
+		$admin = $this->make_admin(
+			[
+				'headline_free'  => 'Deal <img src="https://example.com/pixel.gif"> <strong>40%</strong> <em>off</em><br>' .
+				                    '<a href="javascript:alert(1)" onmouseover="alert(2)" style="position:fixed">Script</a> ' .
+				                    '<span style="font-size:80px">Big</span>',
+				'secondary_free' => '<iframe src="https://example.com/frame"></iframe>' .
+				                    '<a href="https://translatewp.ai/" target="_self" rel="opener" class="x">TranslateWP</a>' .
+				                    '<a href="data:text/html,hi">Data</a><svg onload="alert(3)"></svg>',
+			]
+		);
+
+		$promo = $admin->get_promo_banner( self::moment( self::DURING_BANNER ) );
+
+		$this->assertSame(
+			'Deal  <strong>40%</strong> <em>off</em><br><a href="alert(1)" target="_blank" rel="noopener noreferrer">Script</a> Big',
+			$promo['text']
+		);
+		$this->assertSame(
+			'<a href="https://translatewp.ai/" target="_blank" rel="noopener noreferrer">TranslateWP</a>' .
+			'<a href="text/html,hi" target="_blank" rel="noopener noreferrer">Data</a>',
+			$promo['secondary']
+		);
 	}
 
 	/**

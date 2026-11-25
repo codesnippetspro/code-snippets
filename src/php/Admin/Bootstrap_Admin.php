@@ -407,6 +407,28 @@ class Bootstrap_Admin {
 	}
 
 	/**
+	 * Limit remote banner HTML to links and basic emphasis, with links opening safely in a new tab.
+	 *
+	 * @param string $html Banner HTML from the welcome feed.
+	 *
+	 * @return string Sanitized HTML.
+	 */
+	private static function kses_promo_html( string $html ): string {
+		$allowed_html = [
+			'a'      => [ 'href' => true ],
+			'strong' => [],
+			'em'     => [],
+			'br'     => [],
+		];
+
+		return preg_replace(
+			'/<a href="([^"]*)">/',
+			'<a href="$1" target="_blank" rel="noopener noreferrer">',
+			wp_kses( $html, $allowed_html, [ 'https' ] )
+		);
+	}
+
+	/**
 	 * Retrieve the active promotional banner, prepared for the manage screen script.
 	 *
 	 * Only welcome feed banners are returned; the survey notice keeps the standard notice markup printed by
@@ -436,8 +458,8 @@ class Bootstrap_Admin {
 		return [
 			'key'         => $notice['key'],
 			'label'       => sanitize_text_field( $notice['label'] ),
-			'text'        => wp_kses_post( $notice['text'] ),
-			'secondary'   => wp_kses_post( $notice['secondary'] ),
+			'text'        => self::kses_promo_html( $notice['text'] ),
+			'secondary'   => self::kses_promo_html( $notice['secondary'] ),
 			'actionUrl'   => esc_url_raw( $this->add_offer_query_args( $notice['action_url'] ) ),
 			'actionLabel' => sanitize_text_field( $notice['action_label'] ),
 			'endsAt'      => $notice['end_datetime'] ? $notice['end_datetime']->format( DATE_ATOM ) : null,
