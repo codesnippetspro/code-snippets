@@ -3,7 +3,6 @@
 namespace Code_Snippets\Client;
 
 use DateTimeImmutable;
-use Exception;
 use WP_Filesystem_Direct;
 use const Code_Snippets\PLUGIN_FILE;
 
@@ -123,11 +122,9 @@ class Welcome_Client {
 	 * @return DateTimeImmutable|null
 	 */
 	private static function safe_parse_datetime( string $datetime ): ?DateTimeImmutable {
-		try {
-			return new DateTimeImmutable( $datetime );
-		} catch ( Exception $e ) {
-			return null;
-		}
+		$parsed = date_create_immutable( $datetime );
+
+		return $parsed ? $parsed : null;
 	}
 
 	/**
@@ -270,9 +267,6 @@ class Welcome_Client {
 		$filesystem = new WP_Filesystem_Direct( null );
 
 		$changelog_filename = 'CHANGELOG.md';
-		$changelog = [];
-
-		$section_titles = [ 'Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', 'Security', 'Other' ];
 		$changelog_dir = plugin_dir_path( PLUGIN_FILE );
 
 		while ( plugin_dir_path( $changelog_dir ) !== $changelog_dir && ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
@@ -284,6 +278,21 @@ class Welcome_Client {
 		}
 
 		$changelog_contents = $filesystem->get_contents( $changelog_dir . $changelog_filename );
+		return self::parse_changelog_contents( $changelog_contents );
+	}
+
+
+	/**
+	 * Parse the contents of a changelog file into an array of releases.
+	 *
+	 * @param string $changelog_contents Raw contents of the changelog file.
+	 *
+	 * @return array<int, array{version: string, date: string, entries: array<string, array<string, string[]>>}>
+	 */
+	public static function parse_changelog_contents( string $changelog_contents ): array {
+		$changelog = [];
+		$section_titles = [ 'Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', 'Security', 'Other' ];
+
 		$changelog_releases = explode( "\n## ", $changelog_contents );
 
 		foreach ( array_slice( $changelog_releases, 1, self::MAX_CHANGELOG_ENTRIES ) as $changelog_release ) {
@@ -322,12 +331,8 @@ class Welcome_Client {
 			$version = trim( trim( $header_parts[0] ), '[]' );
 			$date = trim( trim( $header_parts[1] ?? '' ), '()' );
 
-			try {
-				$datetime = new DateTimeImmutable( $date );
-				$parsed_date = $datetime->format( get_option( 'date_format' ) );
-			} catch ( Exception $e ) {
-				$parsed_date = $date;
-			}
+			$datetime = self::safe_parse_datetime( $date );
+			$parsed_date = $datetime ? $datetime->format( get_option( 'date_format' ) ) : $date;
 
 			$changelog[] = [
 				'version' => $version,
