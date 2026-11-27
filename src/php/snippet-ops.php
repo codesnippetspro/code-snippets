@@ -946,7 +946,7 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 	ob_start();
 
 	try {
-		$result = eval( $code );
+		$result = eval( $code ); // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Running user-written snippets is the purpose of this plugin.
 	} catch ( Throwable $throwable ) {
 		$result = $throwable;
 	}
