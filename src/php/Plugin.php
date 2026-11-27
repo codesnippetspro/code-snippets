@@ -115,6 +115,7 @@ class Plugin {
 	private function load_utilities() {
 		require_once __DIR__ . '/Utils/editor.php';
 		require_once __DIR__ . '/Utils/options.php';
+		require_once __DIR__ . '/Utils/requests.php';
 		require_once __DIR__ . '/Settings/settings.php';
 		require_once __DIR__ . '/snippet-ops.php';
 	}

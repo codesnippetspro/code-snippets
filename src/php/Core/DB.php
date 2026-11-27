@@ -89,7 +89,9 @@ class DB {
 
 		if ( $refresh || ! isset( $checked[ $table_name ] ) ) {
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, caching is handled through $checked variable.
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- Checks whether the plugin's own table exists; no WordPress API does this.
 			$result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) );
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$checked[ $table_name ] = $result === $table_name;
 		}
 
@@ -335,6 +337,7 @@ class DB {
 			? 'AND active=1'
 			: 'AND active <> -1';
 
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; any values are prepared.
 		$snippets = $wpdb->get_results(
 		// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$wpdb->prepare(
@@ -347,6 +350,7 @@ class DB {
 			),
 			'ARRAY_A'
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Cache the full list of snippets.
 		if ( is_array( $snippets ) ) {

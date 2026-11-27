@@ -95,7 +95,7 @@ class Insert_Headers_And_Footers_Plugin_Importer extends Plugin_Importer {
 				'title' => $snippet_item->post_title,
 			];
 
-			$data[] = apply_filters( 'wpcode_export_snippet_data', $snippet_data, $snippet );
+			$data[] = apply_filters( 'wpcode_export_snippet_data', $snippet_data, $snippet ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPCode's own hook, applied as its exporter does.
 		}
 
 		return array_reverse( $data );

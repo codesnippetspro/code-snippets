@@ -5,6 +5,8 @@
  * @package Code_Snippets
  */
 
+defined( 'ABSPATH' ) || exit;
+
 __( 'You can now safely remove the free version of Code Snippets', 'code-snippets' );
 
 __( 'Success', 'code-snippets' );

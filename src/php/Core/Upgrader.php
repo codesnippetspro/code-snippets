@@ -217,6 +217,7 @@ class Upgrader {
 
 		foreach ( $scopes as $scope_number => $scope_name ) {
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, will flush at end of process.
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; any values are prepared.
 			$wpdb->query(
 				$wpdb->prepare(
 					"UPDATE $table_name SET scope = %s WHERE scope = %d",
@@ -224,6 +225,7 @@ class Upgrader {
 					$scope_number
 				)
 			);
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		}
 	}
 

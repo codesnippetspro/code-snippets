@@ -192,7 +192,7 @@ class Shortcodes {
 		extract( $atts, EXTR_SKIP );
 
 		ob_start();
-		eval( "?>\n\n" . $snippet->code );
+		eval( "?>\n\n" . $snippet->code ); // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Running user-written snippets is the purpose of this plugin.
 
 		return ob_get_clean();
 	}

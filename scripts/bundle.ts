@@ -21,6 +21,7 @@ const BUNDLE_FILES = [
 	'src/vendor/**/*',
 	'src/code-snippets.php',
 	'src/uninstall.php',
+	'src/composer.json',
 	'src/readme.txt',
 	'src/license.txt',
 	'CHANGELOG.md'

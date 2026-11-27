@@ -7,6 +7,8 @@
 
 namespace Code_Snippets\Utils;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Resolve whether an operation should apply to the network or the current site.
  *

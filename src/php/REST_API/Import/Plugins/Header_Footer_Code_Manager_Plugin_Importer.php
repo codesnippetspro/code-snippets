@@ -64,12 +64,16 @@ class Header_Footer_Code_Manager_Plugin_Importer extends Plugin_Importer {
 			$ids_format = implode( ',', array_fill( 0, count( $ids_to_import ), '%d' ) );
 
 			// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Reads the source plugin's own table; the name is built from $wpdb->prefix and IDs are prepared.
 			$snippets = $wpdb->get_results(
 				$wpdb->prepare( "SELECT * FROM `$table_name` WHERE script_id IN ($ids_format)", $ids_to_import ),
 				ARRAY_A
 			);
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		} else {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Reads the source plugin's own table; the name is built from $wpdb->prefix and IDs are prepared.
 			$snippets = $wpdb->get_results( "SELECT * FROM `$table_name`", ARRAY_A );
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		}
 
 		foreach ( $snippets as &$snippet ) {
