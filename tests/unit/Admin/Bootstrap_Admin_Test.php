@@ -376,4 +376,23 @@ class Bootstrap_Admin_Test extends AdminUnitTestCase {
 		$this->assertEmpty( get_user_meta( self::get_user_id(), self::DISMISSED_META_KEY, false ) );
 		$this->assertIsArray( $admin->get_promo_banner( self::moment( self::DURING_BANNER ) ) );
 	}
+
+	/**
+	 * A feed banner without any text is not shown, and the survey notice is offered instead.
+	 *
+	 * @return void
+	 */
+	public function test_feed_banner_without_text_is_not_shown(): void {
+		foreach ( [ '', '   ', '<strong> </strong>' ] as $text ) {
+			$admin = $this->make_admin(
+				[
+					'text_free'     => $text,
+					'headline_free' => '',
+				]
+			);
+
+			$this->assertNull( $admin->get_promo_banner( self::moment( self::DURING_BANNER ) ), "Text: '$text'" );
+			$this->assertSame( 'survey', $admin->get_active_notice( self::moment( self::DURING_BANNER ) )['key'], "Text: '$text'" );
+		}
+	}
 }
