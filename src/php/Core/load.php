@@ -9,6 +9,8 @@ namespace Code_Snippets;
 
 use Composer\Autoload\ClassLoader;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * The version number for this release of the plugin.
  * This will later be used for upgrades and enqueuing files.

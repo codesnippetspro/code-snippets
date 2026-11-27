@@ -21,6 +21,8 @@ use function Code_Snippets\Utils\get_self_option;
 use function Code_Snippets\Utils\update_self_option;
 use const Code_Snippets\CACHE_GROUP;
 
+defined( 'ABSPATH' ) || exit;
+
 const CACHE_KEY = 'code_snippets_settings';
 const OPTION_GROUP = 'code-snippets';
 const OPTION_NAME = 'code_snippets_settings';

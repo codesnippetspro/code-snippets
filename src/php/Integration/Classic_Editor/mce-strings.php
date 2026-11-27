@@ -13,6 +13,8 @@ use _WP_Editors;
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\get_snippets;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Variable types.
  *

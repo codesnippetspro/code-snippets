@@ -11,7 +11,11 @@
  * phpcs:disable Modernize.FunctionCalls.Dirname.FileConstant
  */
 
-if ( ! defined( 'ABSPATH' ) || function_exists( 'code_snippets_deactivation_notice' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+if ( function_exists( 'code_snippets_deactivation_notice' ) ) {
 	return;
 }
 

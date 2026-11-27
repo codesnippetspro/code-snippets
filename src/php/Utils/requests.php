@@ -9,6 +9,8 @@ namespace Code_Snippets\Utils;
 
 use WP_Error;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Unpack JSON data from a request response.
  *

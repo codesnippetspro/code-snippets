@@ -15,6 +15,8 @@ use function Code_Snippets\Utils\get_self_option;
 use function Code_Snippets\Utils\validate_network_param;
 use function Code_Snippets\Utils\update_self_option;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Get the locked status for a snippet from wp_options.
  *

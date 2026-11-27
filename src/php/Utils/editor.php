@@ -13,6 +13,8 @@ use function Code_Snippets\Settings\get_settings_values;
 use const Code_Snippets\PLUGIN_FILE;
 use const Code_Snippets\PLUGIN_VERSION;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Register and load the CodeMirror library.
  *
