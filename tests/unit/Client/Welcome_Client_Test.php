@@ -82,4 +82,18 @@ class Welcome_Client_Test extends UnitTestCase {
 		$this->assertSame( [ 'Only feature' ], array_column( $client->get_features(), 'title' ) );
 		$this->assertSame( [], $client->get_partners() );
 	}
+
+	/**
+	 * Stored welcome data with a banner that is not a list is read as having no banner.
+	 *
+	 * @return void
+	 */
+	public function test_damaged_stored_banner_is_read_as_no_banner(): void {
+		set_transient( 'code_snippets_welcome_data', [ 'banner' => 'damaged' ] );
+
+		$banner = ( new Welcome_Client() )->get_banner();
+		delete_transient( 'code_snippets_welcome_data' );
+
+		$this->assertSame( [], $banner );
+	}
 }

@@ -353,15 +353,17 @@ class Bootstrap_Admin {
 		$now = $now ?? new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$dismissed = get_user_meta( get_current_user_id(), self::DISMISSED_NOTICES_META_KEY, false );
 		$welcome = $this->welcome_client->get_banner();
+		$welcome_text = '' === ( $welcome['headline_free'] ?? '' ) ? ( $welcome['text_free'] ?? '' ) : $welcome['headline_free'];
 
 		if ( ! empty( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
+		     '' !== trim( wp_strip_all_tags( (string) $welcome_text ) ) &&
 		     ( empty( $welcome['start_datetime'] ) || $now >= $welcome['start_datetime'] ) &&
 		     ( empty( $welcome['end_datetime'] ) || $now <= $welcome['end_datetime'] ) ) {
 			return [
 				'key'          => $welcome['key'],
 				'style'        => self::PROMO_BANNER_STYLE,
 				'label'        => $welcome['label'] ?? '',
-				'text'         => '' === ( $welcome['headline_free'] ?? '' ) ? ( $welcome['text_free'] ?? '' ) : $welcome['headline_free'],
+				'text'         => $welcome_text,
 				'secondary'    => $welcome['secondary_free'] ?? '',
 				'action_url'   => $welcome['action_url_free'] ?? '',
 				'action_label' => $welcome['action_label_free'] ?? '',

@@ -384,7 +384,8 @@ class Welcome_Client {
 	 *  }
 	 */
 	public function get_banner(): array {
-		return $this->welcome_data['banner'] ?? [];
+		$banner = $this->welcome_data['banner'] ?? [];
+		return is_array( $banner ) ? $banner : [];
 	}
 
 	/**
