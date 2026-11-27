@@ -186,7 +186,7 @@ Users with permission to update plugins can open **Snippets > Settings > Advance
 Restores welcome banners with a new promotional banner design, fixes file-based execution, settings caching and changelog date issues, and improves validation on the Import screen.
 
 = 4.1.0 =
-Adds universal search; fixes snippet list caching, search method menu,
+Adds universal search; fixes snippet list caching, the search method menu, sharing network snippets with subsites, slow remote requests delaying admin screens, and safe mode.
 
 = 4.0.0 =
 Adds the Stats overview and fixes saving feedback, description display, Elementor compatibility and translation notices. Back up your site before updating.
