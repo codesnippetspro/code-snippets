@@ -62,20 +62,20 @@ const REST_API_NAMESPACE = 'code-snippets/v';
  * After loading, remove any PSR-4 namespace mappings that do not start with our vendor prefix but have a corresponding
  * prefixed version. These are not removed by Imposter and would cause collisions with other plugins that use the same libraries.
  *
- * @var ClassLoader $autoloader Composer autoloader instance.
+ * @var ClassLoader $code_snippets_autoloader Composer autoloader instance.
  */
-$autoloader = require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
+$code_snippets_autoloader = require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 
-if ( $autoloader instanceof ClassLoader ) {
-	$vendor_prefix = __NAMESPACE__ . '\\Vendor\\';
+if ( $code_snippets_autoloader instanceof ClassLoader ) {
+	$code_snippets_vendor_prefix = __NAMESPACE__ . '\\Vendor\\';
 
-	$prefixes = $autoloader->getPrefixesPsr4();
+	$code_snippets_prefixes = $code_snippets_autoloader->getPrefixesPsr4();
 
-	foreach ( $prefixes as $namespace => $paths ) {
+	foreach ( $code_snippets_prefixes as $code_snippets_namespace => $code_snippets_paths ) {
 		// Remove any non-Code_Snippets namespace that has a corresponding prefixed version.
-		if ( false === strpos( $namespace, $vendor_prefix ) ) {
-			if ( isset( $prefixes[ $vendor_prefix . $namespace ] ) ) {
-				$autoloader->setPsr4( $namespace, [] );
+		if ( false === strpos( $code_snippets_namespace, $code_snippets_vendor_prefix ) ) {
+			if ( isset( $code_snippets_prefixes[ $code_snippets_vendor_prefix . $code_snippets_namespace ] ) ) {
+				$code_snippets_autoloader->setPsr4( $code_snippets_namespace, [] );
 			}
 		}
 	}

@@ -91,10 +91,10 @@ class REST_Cache_Bypass {
 		// Honoured by WP Super Cache, W3 Total Cache, WP Rocket, WP Fastest Cache,
 		// WP-Optimize, Hummingbird, Cache Enabler, Breeze and LiteSpeed Cache.
 		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-			define( 'DONOTCACHEPAGE', true );
+			define( 'DONOTCACHEPAGE', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- constant read by caching plugins.
 		}
 
 		// LiteSpeed Cache decides from its own control API, and caches REST responses by default.
-		do_action( 'litespeed_control_set_nocache', 'Code Snippets REST API response' );
+		do_action( 'litespeed_control_set_nocache', 'Code Snippets REST API response' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- LiteSpeed Cache's own hook.
 	}
 }
