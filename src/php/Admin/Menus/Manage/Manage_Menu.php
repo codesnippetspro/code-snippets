@@ -401,9 +401,8 @@ class Manage_Menu extends Admin_Menu {
 		$per_page = intval( get_user_option( 'snippets_per_page' ) );
 
 		return intval(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public filter name kept for existing callbacks.
 			apply_filters(
-				'snippets_per_page',
+				'snippets_per_page', // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public filter name kept for existing callbacks.
 				$per_page > 0 ? $per_page : self::get_default_snippets_per_page()
 			)
 		);

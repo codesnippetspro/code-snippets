@@ -73,6 +73,7 @@ class Uninstaller {
 	private function uninstall_current_site() {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Removes the plugin's own table on uninstall.
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" );
 
 		delete_option( 'code_snippets_version' );
@@ -124,6 +125,7 @@ class Uninstaller {
 		restore_current_blog();
 
 		// Remove network snippets table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Removes the plugin's own table on uninstall.
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" );
 
 		// Remove saved options.

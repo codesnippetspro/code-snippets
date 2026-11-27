@@ -64,15 +64,19 @@ class Insert_PHP_Code_Snippet_Plugin_Importer extends Plugin_Importer {
 		$table_name = $wpdb->prefix . 'xyz_ips_short_code';
 
 		if ( empty( $ids_to_import ) ) {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Reads the source plugin's own table; the name is built from $wpdb->prefix and IDs are prepared.
 			$snippets = $wpdb->get_results( "SELECT * FROM `$table_name`", ARRAY_A );
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		} else {
 			$ids_format = implode( ',', array_fill( 0, count( $ids_to_import ), '%d' ) );
 
 			// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Reads the source plugin's own table; the name is built from $wpdb->prefix and IDs are prepared.
 			$snippets = $wpdb->get_results(
 				$wpdb->prepare( "SELECT * FROM `$table_name` WHERE id IN ($ids_format)", $ids_to_import ),
 				ARRAY_A
 			);
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		}
 
 		if ( ! is_array( $snippets ) ) {

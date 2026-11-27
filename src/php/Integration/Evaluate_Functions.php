@@ -163,6 +163,7 @@ class Evaluate_Functions {
 			update_option( 'active_shared_network_snippets', $active_shared_ids );
 			clean_active_snippets_cache( $table_name );
 		} else {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The plugin's own table, named from $wpdb->prefix; any values are prepared.
 			$wpdb->update(
 				$table_name,
 				[ 'active' => '0' ],
@@ -170,6 +171,7 @@ class Evaluate_Functions {
 				[ '%d' ],
 				[ '%d' ]
 			);
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			clean_snippets_cache( $table_name );
 
 			$network = $table_name === $this->db->ms_table;

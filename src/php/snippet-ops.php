@@ -201,7 +201,9 @@ function get_snippets( array $ids = [], ?bool $network = null ): array {
 
 	// Fetch all snippets from the database if none are cached.
 	if ( ! is_array( $snippets ) ) {
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; any values are prepared.
 		$results = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		$snippets = $results
 			? array_map(
@@ -259,7 +261,9 @@ function get_all_snippet_tags() {
 
 	// Grab all tags from the database.
 	$tags = array();
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; any values are prepared.
 	$all_tags = $wpdb->get_col( "SELECT tags FROM $table_name" );
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 	// Merge all tags into a single array.
 	foreach ( $all_tags as $snippet_tags ) {
@@ -337,7 +341,9 @@ function get_snippet( int $id = 0, ?bool $network = null ): ?Snippet {
 
 		// Otherwise, retrieve the snippet from the database.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; any values are prepared.
 		$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		$snippet = new Snippet( $snippet_data );
 	}
 
@@ -454,6 +460,7 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		}
 	}
 
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 	$result = $wpdb->update(
 		$table_name,
 		array( 'active' => '1' ),
@@ -461,6 +468,7 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		array( '%d' ),
 		array( '%d' )
 	);
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 
 	if ( ! $result ) {
 		return __( 'Could not activate snippet.', 'code-snippets' );
@@ -537,7 +545,9 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
 
 	// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; any values are prepared.
 	$rows_updated = $wpdb->query( $wpdb->prepare( "UPDATE $table_name SET active = 1 WHERE id IN ($ids_format)", $valid_ids ) );
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 	if ( ! $rows_updated ) {
 		return null;
@@ -568,6 +578,7 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 	$table = code_snippets()->db->get_table_name( $network );
 
 	// Set the snippet to inactive.
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 	$result = $wpdb->update(
 		$table,
 		array( 'active' => '0' ),
@@ -575,6 +586,7 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 		array( '%d' ),
 		array( '%d' )
 	);
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 
 	if ( ! $result ) {
 		return null;
@@ -620,11 +632,13 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 		return false;
 	}
 
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 	$result = $wpdb->delete(
 		$table,
 		array( 'id' => $id ),
 		array( '%d' )
 	);
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 
 	if ( $result ) {
 		clean_snippets_cache( $table );
@@ -664,7 +678,9 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 		return false;
 	}
 
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 	$wpdb->update( $table, [ 'active' => '-1' ], [ 'id' => $id ], [ '%d' ] );
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 
 	clean_snippets_cache( $table );
 	do_action( 'code_snippets/trash_snippet', $snippet, $network );
@@ -688,7 +704,9 @@ function restore_snippet( int $id, ?bool $network = null ): bool {
 	$network = validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 	$result = $wpdb->update( $table, [ 'active' => '0' ], [ 'id' => $id ], [ '%d' ] );
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 
 	if ( $result ) {
 		clean_snippets_cache( $table );
@@ -813,10 +831,14 @@ function save_snippet( $snippet ): ?Snippet {
 		$data['created_by'] = $author_id;
 		$format = '%s';
 
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 		$result = $wpdb->insert( $table, $data, $format );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 
 		if ( false === $result && Core\DB::upgrade_after_unknown_column( $table ) ) {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 			$result = $wpdb->insert( $table, $data, $format );
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 		}
 
 		if ( false === $result ) {
@@ -840,10 +862,14 @@ function save_snippet( $snippet ): ?Snippet {
 		$where = [ 'id' => $snippet->id ];
 		$where_format = [ '%d' ];
 
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 		$result = $wpdb->update( $table, $data, $where, null, $where_format );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 
 		if ( false === $result && Core\DB::upgrade_after_unknown_column( $table ) ) {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 			$result = $wpdb->update( $table, $data, $where, null, $where_format );
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 		}
 
 		if ( false === $result ) {
@@ -987,8 +1013,10 @@ function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?
 	}
 
 	// Otherwise, search for the snippet from the database.
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; any values are prepared.
 	$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE cloud_id = %s", $cloud_id ) ); // cache pass, db call ok.
 	$snippet = $snippet_data ? new Snippet( $snippet_data ) : null;
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 	// Load locked from wp_options if snippet exists.
 	if ( $snippet && $snippet->id > 0 ) {
@@ -1093,7 +1121,9 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
 
 	// Update the snippet in the database (excluding locked).
 	if ( ! empty( $clean_fields ) ) {
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- The plugin's own table has no WordPress API.
 		$wpdb->update( $table, $clean_fields, array( 'id' => $snippet->id ), null, array( '%d' ) );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 	}
 
 	// Save locked to wp_options if it was provided.
