@@ -51,17 +51,17 @@ test.describe('Code Snippets List Page Actions', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
-	test('Filters snippets as the search query changes without a submit control', async ({ page }) => {
-		const search = page.getByRole('search')
-		const searchInput = search.getByRole('searchbox', { name: 'Search Snippets:' })
+	test('Snippets list is searched from the header, and search links still filter it', async ({ page }) => {
 		const snippetRow = page.getByRole('row', { name: new RegExp(snippetName) })
 
-		await searchInput.fill(snippetName)
+		await expect(page.getByRole('combobox', { name: 'Search snippets, settings, docs and cloud' })).toBeVisible()
+		await expect(page.getByRole('searchbox', { name: 'Search Snippets:' })).toHaveCount(0)
 
+		await helper.filterSnippetsByName(snippetName)
 		await expect(snippetRow).toBeVisible()
-		await searchInput.fill(`${snippetName}-does-not-exist`)
+
+		await helper.filterSnippetsByName(`${snippetName}-does-not-exist`)
 		await expect(snippetRow).toBeHidden()
-		await expect(search.getByRole('button', { name: 'Search' })).toHaveCount(0)
 	})
 
 	test('Card action popovers let keyboard focus continue through the document', async ({ page }) => {
@@ -422,7 +422,7 @@ test.describe('Code Snippets List Page Actions', () => {
 			})
 			await helper.navigateToSnippetsAdmin()
 
-			await page.locator('#snippets_search').fill(bulkScopeBaseName)
+			await helper.filterSnippetsByName(bulkScopeBaseName)
 
 			const firstPageRow = page.locator(SELECTORS.SNIPPET_ROW).first()
 			await expect(firstPageRow).toBeVisible()
@@ -467,7 +467,7 @@ test.describe('Code Snippets List Page Actions', () => {
 			})
 			await helper.navigateToSnippetsAdmin()
 
-			await page.locator('#snippets_search').fill(bulkScopeBaseName)
+			await helper.filterSnippetsByName(bulkScopeBaseName)
 
 			// Select a row on page 1.
 			const firstPageRow = page.locator(SELECTORS.SNIPPET_ROW).first()
@@ -592,7 +592,7 @@ test.describe('Manage table Screen Options', () => {
 		await expect(snippetRowByName(page, snippetName).locator('.column-id')).toHaveText(snippetId)
 		await expect(snippetRowByName(page, unrelatedSnippetName)).toBeVisible()
 
-		await page.getByRole('searchbox', { name: 'Search Snippets:' }).fill(snippetId)
+		await helper.filterSnippetsByName(snippetId)
 		await expect(snippetRowByName(page, snippetName)).toBeVisible()
 		await expect(snippetRowByName(page, unrelatedSnippetName)).toBeHidden()
 
