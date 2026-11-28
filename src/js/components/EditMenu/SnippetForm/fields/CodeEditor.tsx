@@ -128,6 +128,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 
 			codeEditorInstance.codemirror.setOption('extraKeys', {
 				...'object' === typeof extraKeys ? extraKeys : undefined,
+				[`${controlKey}-F`]: 'findPersistent',
 				[`${controlKey}-S`]: onSave,
 				[`${controlKey}-Enter`]: onSave
 			})

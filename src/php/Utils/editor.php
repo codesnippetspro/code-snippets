@@ -89,10 +89,12 @@ function enqueue_code_editor( string $type, array $extra_atts = [] ) {
 	wp_enqueue_script(
 		'code-snippets-code-editor',
 		plugins_url( 'dist/editor.js', PLUGIN_FILE ),
-		[ 'code-editor' ],
+		[ 'code-editor', 'wp-i18n' ],
 		PLUGIN_VERSION,
 		[ 'in_footer' => true ]
 	);
+
+	wp_set_script_translations( 'code-snippets-code-editor', 'code-snippets' );
 
 	enqueue_code_editor_theme();
 }
