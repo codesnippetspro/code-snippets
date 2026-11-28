@@ -166,7 +166,7 @@ class DB_Test extends UnitTestCase {
 	}
 
 	/**
-	 * A table upgrade that fails is not recorded as done, so the next request tries it again.
+	 * A table upgrade that fails is not recorded as done, and is tried again once a short wait has passed.
 	 *
 	 * @return void
 	 */
@@ -194,6 +194,23 @@ class DB_Test extends UnitTestCase {
 		$this->assertSame( '4.0.0', get_option( 'code_snippets_version' ), 'Site version not recorded' );
 		$this->assertSame( '4.0.0', get_site_option( 'code_snippets_version' ), 'Network version not recorded' );
 
+		// The next requests leave the table alone for a few minutes.
+		$this->assertTrue( (bool) get_transient( Upgrader::TABLE_UPGRADE_WAIT ) );
+		$this->assertLessThanOrEqual( time() + 300, (int) get_option( '_transient_timeout_' . Upgrader::TABLE_UPGRADE_WAIT ) );
+
+		( new Upgrader( PLUGIN_VERSION, $db ) )->run();
+
+		$this->assertSame( '4.0.0', get_option( 'code_snippets_version' ), 'Not tried again while waiting' );
+		$this->assertNotContains( 'updated_by', $this->columns(), 'Table left alone while waiting' );
+
+		if ( is_multisite() ) {
+			$this->assertTrue( (bool) get_site_transient( Upgrader::TABLE_UPGRADE_WAIT ) );
+			$this->assertSame( '4.0.0', get_site_option( 'code_snippets_version' ), 'Network not tried again while waiting' );
+			$this->assertNotContains( 'updated_by', $this->columns( $db->ms_table ), 'Network table left alone while waiting' );
+		}
+
+		delete_transient( Upgrader::TABLE_UPGRADE_WAIT );
+		delete_site_transient( Upgrader::TABLE_UPGRADE_WAIT );
 		( new Upgrader( PLUGIN_VERSION, $db ) )->run();
 
 		$this->assertSame( PLUGIN_VERSION, get_option( 'code_snippets_version' ) );
