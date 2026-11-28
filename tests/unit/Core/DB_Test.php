@@ -24,6 +24,13 @@ class DB_Test extends UnitTestCase {
 	private array $shadowed = [];
 
 	/**
+	 * Plugin versions stored before a test changed them, by scope.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private array $stored_versions = [];
+
+	/**
 	 * Remove the replacement table.
 	 *
 	 * @return void
@@ -40,6 +47,37 @@ class DB_Test extends UnitTestCase {
 
 		remove_all_filters( 'query' );
 		parent::tear_down();
+		$this->restore_versions();
+	}
+
+	/**
+	 * Put back the plugin versions a test changed.
+	 *
+	 * Changing a table ends the transaction a test runs in, so values written before the change are not rolled back.
+	 *
+	 * @return void
+	 */
+	private function restore_versions(): void {
+		global $wpdb;
+
+		if ( ! $this->stored_versions ) {
+			return;
+		}
+
+		wp_cache_flush();
+
+		foreach ( $this->stored_versions as $scope => $version ) {
+			$network = 'network' === $scope;
+
+			if ( false === $version ) {
+				$network ? delete_site_option( 'code_snippets_version' ) : delete_option( 'code_snippets_version' );
+			} else {
+				$network ? update_site_option( 'code_snippets_version', $version ) : update_option( 'code_snippets_version', $version );
+			}
+		}
+
+		$wpdb->query( 'COMMIT' );
+		$this->stored_versions = [];
 	}
 
 	/**
@@ -177,6 +215,11 @@ class DB_Test extends UnitTestCase {
 		foreach ( $tables as $table ) {
 			$this->shadow_table_without_authorship( $table );
 		}
+
+		$this->stored_versions = [
+			'site'    => get_option( 'code_snippets_version' ),
+			'network' => get_site_option( 'code_snippets_version' ),
+		];
 
 		update_option( 'code_snippets_version', '4.0.0' );
 		update_site_option( 'code_snippets_version', '4.0.0' );
