@@ -137,7 +137,8 @@ test.describe('Code Snippets Preview Modal', () => {
 	// would place its line numbers over the start of the code.
 	test('Preview code does not overlap the line numbers', async ({ page }) => {
 		const editor = await openPreviewEditor(page)
-		const lineNumber = editor.locator('.CodeMirror-linenumber').first()
+		// CodeMirror also keeps a hidden line number for measuring, outside the gutter.
+		const lineNumber = editor.locator('.CodeMirror-gutter-wrapper .CodeMirror-linenumber').first()
 		const line = editor.locator('.CodeMirror-line').first()
 
 		await expect(async () => {
