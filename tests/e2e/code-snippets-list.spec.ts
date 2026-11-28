@@ -355,6 +355,115 @@ test.describe('Code Snippets List Page Actions', () => {
 		await helper.cleanupSnippet(secondSnippetName)
 	})
 
+	test('Can export all snippets, including trashed ones', async ({ page }) => {
+		test.setTimeout(TIMEOUTS.LONG)
+		const trashedSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Export All Trashed')
+		const trashedSnippetId = await SnippetsTestHelper.createSnippetViaCli({
+			name: trashedSnippetName,
+			active: false
+		})
+		await SnippetsTestHelper.trashSnippet(trashedSnippetId)
+
+		try {
+			await helper.navigateToSnippetsAdmin()
+
+			const exportAllButton = page.getByRole('button', { name: 'Export All' })
+			await expect(exportAllButton).toBeVisible()
+
+			const download = await Promise.all([
+				page.waitForEvent('download'),
+				exportAllButton.click()
+			]).then(([downloadEvent]) => downloadEvent)
+
+			expect(download.suggestedFilename()).toBe('snippets.code-snippets.json')
+
+			const downloadPath = await download.path()
+			if (!downloadPath) {
+				throw new Error('Download did not produce a local file path')
+			}
+			const parsed = <{ snippets: { name: string, trashed?: boolean }[] }><unknown>JSON.parse(readFileSync(downloadPath, 'utf-8'))
+			const names = parsed.snippets.map(snippet => snippet.name)
+
+			expect(names).toContain(snippetName)
+			expect(names).toContain(trashedSnippetName)
+
+			const trashedExport = parsed.snippets.find(snippet => snippet.name === trashedSnippetName)
+			expect(trashedExport?.trashed).toBe(true)
+		} finally {
+			await helper.cleanupSnippet(trashedSnippetName)
+		}
+	})
+
+	test('Can export a trashed snippet from its row actions', async ({ page }) => {
+		test.setTimeout(TIMEOUTS.LONG)
+
+		await clickRowAction(snippetRowByName(page, snippetName), SELECTORS.DELETE_ACTION)
+		await page.locator('a[href*="status=trashed"]').first().click()
+		await expect(page).toHaveURL(/status=trashed/)
+
+		const trashedRow = snippetRowByName(page, snippetName)
+		await expect(trashedRow).toBeVisible()
+
+		const download = await Promise.all([
+			page.waitForEvent('download'),
+			trashedRow.locator(SELECTORS.EXPORT_ACTION).first().click()
+		]).then(([downloadEvent]) => downloadEvent)
+
+		expect(download.suggestedFilename()).toMatch(/\.code-snippets\.json$/)
+
+		const downloadPath = await download.path()
+		if (!downloadPath) {
+			throw new Error('Download did not produce a local file path')
+		}
+		const parsed = <{ snippets: { name: string, trashed?: boolean }[] }><unknown>JSON.parse(readFileSync(downloadPath, 'utf-8'))
+		expect(parsed.snippets).toHaveLength(1)
+		expect(parsed.snippets[0].name).toBe(snippetName)
+		expect(parsed.snippets[0].trashed).toBe(true)
+	})
+
+	test('Can export multiple trashed snippets from bulk actions', async ({ page }) => {
+		test.setTimeout(TIMEOUTS.LONG)
+		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName()
+
+		await helper.createAndActivateSnippet({
+			name: secondSnippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+		await helper.navigateToSnippetsAdmin()
+
+		for (const name of [snippetName, secondSnippetName]) {
+			await clickRowAction(snippetRowByName(page, name), SELECTORS.DELETE_ACTION)
+		}
+
+		await page.locator('a[href*="status=trashed"]').first().click()
+		await expect(page).toHaveURL(/status=trashed/)
+
+		await page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()
+			.locator('input[name="checked[]"]').check({ force: true })
+		await page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${secondSnippetName}")`).first()
+			.locator('input[name="checked[]"]').check({ force: true })
+
+		await page.locator('select[name="action2"], select[name="action"]').last().selectOption({ label: 'Export' })
+
+		const download = await Promise.all([
+			page.waitForEvent('download'),
+			page.locator('#doaction2').click()
+		]).then(([downloadEvent]) => downloadEvent)
+
+		expect(download.suggestedFilename()).toBe('snippets.code-snippets.json')
+
+		const downloadPath = await download.path()
+		if (!downloadPath) {
+			throw new Error('Download did not produce a local file path')
+		}
+		const parsed = <{ snippets: { name: string }[] }><unknown>JSON.parse(readFileSync(downloadPath, 'utf-8'))
+		const names = parsed.snippets.map(snippet => snippet.name)
+		expect(names).toContain(snippetName)
+		expect(names).toContain(secondSnippetName)
+
+		await helper.cleanupSnippet(secondSnippetName)
+	})
+
 	test('Can download a single snippet from bulk actions', async ({ page }) => {
 		test.setTimeout(TIMEOUTS.LONG)
 		await helper.filterSnippetsByName(snippetName)
