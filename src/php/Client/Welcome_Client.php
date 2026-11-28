@@ -384,8 +384,35 @@ class Welcome_Client {
 	 *  }
 	 */
 	public function get_banner(): array {
-		$banner = $this->welcome_data['banner'] ?? [];
-		return is_array( $banner ) ? $banner : [];
+		$banner = $this->get_stored_list( 'banner' );
+
+		foreach ( [ 'key', 'label', 'text_free', 'headline_free', 'secondary_free', 'action_url_free', 'action_label_free', 'text_pro', 'action_url_pro', 'action_label_pro' ] as $field ) {
+			if ( isset( $banner[ $field ] ) ) {
+				$banner[ $field ] = is_scalar( $banner[ $field ] ) ? (string) $banner[ $field ] : '';
+			}
+		}
+
+		foreach ( [ 'start_datetime', 'end_datetime' ] as $field ) {
+			if ( isset( $banner[ $field ] ) && ! $banner[ $field ] instanceof DateTimeImmutable ) {
+				$banner[ $field ] = null;
+			}
+		}
+
+		return $banner;
+	}
+
+	/**
+	 * Retrieve a part of the stored welcome data that should be a list, or an empty list if it is not one.
+	 *
+	 * The data is stored in a transient, which another plugin or a damaged cache can change.
+	 *
+	 * @param string $key Part of the welcome data.
+	 *
+	 * @return array<string|int, mixed>
+	 */
+	private function get_stored_list( string $key ): array {
+		$value = $this->welcome_data[ $key ] ?? [];
+		return is_array( $value ) ? $value : [];
 	}
 
 	/**
@@ -398,7 +425,7 @@ class Welcome_Client {
 	 * }
 	 */
 	public function get_hero_item(): array {
-		return $this->welcome_data['hero-item'] ?? [];
+		return $this->get_stored_list( 'hero-item' );
 	}
 
 	/**
@@ -413,7 +440,7 @@ class Welcome_Client {
 	 * }[] Feature details.
 	 */
 	public function get_features(): array {
-		return $this->welcome_data['features'] ?? [];
+		return $this->get_stored_list( 'features' );
 	}
 
 	/**
@@ -426,7 +453,7 @@ class Welcome_Client {
 	 * }[] Partner details.
 	 */
 	public function get_partners(): array {
-		return $this->welcome_data['partners'] ?? [];
+		return $this->get_stored_list( 'partners' );
 	}
 
 	/**
@@ -440,6 +467,6 @@ class Welcome_Client {
 	 * }>
 	 */
 	public function get_changelog(): array {
-		return $this->welcome_data['changelog'] ?? [];
+		return $this->get_stored_list( 'changelog' );
 	}
 }

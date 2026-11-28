@@ -96,4 +96,40 @@ class Welcome_Client_Test extends UnitTestCase {
 
 		$this->assertSame( [], $banner );
 	}
+
+	/**
+	 * Damaged parts of the stored welcome data are read as empty, and damaged banner fields as empty values.
+	 *
+	 * @return void
+	 */
+	public function test_damaged_stored_welcome_data_is_read_as_empty(): void {
+		set_transient(
+			'code_snippets_welcome_data',
+			[
+				'hero-item' => 'damaged',
+				'features'  => 'damaged',
+				'partners'  => 3,
+				'changelog' => 'damaged',
+				'banner'    => [
+					'key'            => [ 'not', 'a', 'key' ],
+					'headline_free'  => [ 'not text' ],
+					'text_free'      => 'Shown text',
+					'start_datetime' => 'not a date',
+				],
+			]
+		);
+
+		$client = new Welcome_Client();
+		$banner = $client->get_banner();
+		delete_transient( 'code_snippets_welcome_data' );
+
+		$this->assertSame( [], $client->get_hero_item() );
+		$this->assertSame( [], $client->get_features() );
+		$this->assertSame( [], $client->get_partners() );
+		$this->assertSame( [], $client->get_changelog() );
+		$this->assertSame( '', $banner['key'] );
+		$this->assertSame( '', $banner['headline_free'] );
+		$this->assertSame( 'Shown text', $banner['text_free'] );
+		$this->assertNull( $banner['start_datetime'] );
+	}
 }
