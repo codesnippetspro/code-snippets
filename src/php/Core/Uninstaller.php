@@ -34,7 +34,7 @@ class Uninstaller {
 	 * @return void
 	 */
 	public function uninstall_plugin() {
-		if ( ! $this->is_complete_uninstall_enabled() || self::is_other_edition_installed() ) {
+		if ( ! $this->is_complete_uninstall_enabled() ) {
 			return;
 		}
 
@@ -45,32 +45,6 @@ class Uninstaller {
 		}
 
 		$this->delete_flat_files_directory();
-	}
-
-	/**
-	 * Determine whether another edition of the plugin is installed, such as Pro alongside the free plugin.
-	 *
-	 * The editions share their snippets and settings, so these are kept until the last edition is deleted.
-	 * WordPress runs uninstall.php before it removes the plugin's files, so the edition being deleted counts as one.
-	 *
-	 * @return bool
-	 */
-	private static function is_other_edition_installed(): bool {
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$editions = 0;
-
-		foreach ( get_plugins() as $plugin_file => $plugin_data ) {
-			// The plugin list is cached for the request, so files deleted earlier in a bulk delete can still be listed.
-			if ( 'code-snippets' === $plugin_data['TextDomain'] && 0 === strpos( $plugin_data['Name'], 'Code Snippets' ) &&
-			     file_exists( WP_PLUGIN_DIR . '/' . $plugin_file ) ) {
-				++$editions;
-			}
-		}
-
-		return $editions > 1;
 	}
 
 	/**

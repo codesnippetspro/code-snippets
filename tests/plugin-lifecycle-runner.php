@@ -58,6 +58,7 @@ if ( empty( $options['plugins'] ) ) {
 }
 
 define( 'RUNNER_PLUGIN', 'code-snippets/code-snippets.php' );
+const RUNNER_OTHER_EDITION = 'code-snippets-other/code-snippets.php';
 
 define( 'WP_CONTENT_DIR', $content_dir );
 define( 'DISABLE_WP_CRON', true );
@@ -222,6 +223,34 @@ switch ( $step ) {
 
 	case 'deactivate':
 		deactivate_plugins( RUNNER_PLUGIN );
+		break;
+
+	case 'add-edition':
+		// Another edition of the plugin, installed alongside: only its plugin header, or with copy=1 a full copy.
+		$other_dir = WP_PLUGIN_DIR . '/' . dirname( RUNNER_OTHER_EDITION );
+		wp_mkdir_p( $other_dir );
+
+		if ( empty( $options['copy'] ) ) {
+			file_put_contents( WP_PLUGIN_DIR . '/' . RUNNER_OTHER_EDITION, "<?php\n/**\n * Plugin Name: Code Snippets Pro\n * Text Domain: code-snippets\n */\n" );
+		} else {
+			WP_Filesystem();
+			copy_dir( WP_PLUGIN_DIR . '/' . dirname( RUNNER_PLUGIN ), $other_dir );
+			$main_file = WP_PLUGIN_DIR . '/' . RUNNER_OTHER_EDITION;
+			file_put_contents( $main_file, preg_replace( '/Plugin Name:\s*Code Snippets/', 'Plugin Name: Code Snippets Pro', file_get_contents( $main_file ), 1 ) );
+		}
+		break;
+
+	case 'uninstall-all':
+		// Plugins > Delete for several plugins at once: each is uninstalled, then its files removed, in one request.
+		$plugins_to_delete = 'other-first' === ( $options['order'] ?? '' )
+			? [ RUNNER_OTHER_EDITION, RUNNER_PLUGIN ]
+			: [ RUNNER_PLUGIN, RUNNER_OTHER_EDITION ];
+
+		$deleted = delete_plugins( $plugins_to_delete );
+
+		if ( true !== $deleted ) {
+			runner_fail( 'Deleting the plugins failed: ' . ( is_wp_error( $deleted ) ? $deleted->get_error_message() : 'unknown error' ) );
+		}
 		break;
 
 	case 'uninstall':

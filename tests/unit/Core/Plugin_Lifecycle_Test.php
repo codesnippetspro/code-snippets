@@ -186,6 +186,67 @@ class Plugin_Lifecycle_Test extends UnitTestCase {
 	}
 
 	/**
+	 * Deleting the plugin while another edition stays installed keeps the data that edition uses.
+	 *
+	 * @return void
+	 */
+	public function test_deleting_the_plugin_keeps_the_data_while_another_edition_is_installed(): void {
+		$this->run_step( 'install-wp' );
+		$this->run_step( 'activate' );
+		$this->run_step( 'request' );
+		$this->run_step( 'add-data' );
+		$this->run_step( 'deactivate' );
+		$this->run_step( 'add-edition' );
+
+		$state = $this->run_step( 'uninstall' );
+
+		$this->assertTrue( $state['table'], 'The snippets table was removed.' );
+		$this->assertContains( 'Snippet added by the test', $state['snippets'] );
+		$this->assertTrue( $state['settings']['general']['complete_uninstall'] );
+		$this->assertTrue( $state['flat_dir'] );
+	}
+
+	/**
+	 * Orders in which both editions can be deleted together.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function deletion_order_provider(): array {
+		return [
+			'this plugin first'  => [ '' ],
+			'other edition first' => [ 'other-first' ],
+		];
+	}
+
+	/**
+	 * Deleting both editions together finishes without an error and removes the data.
+	 *
+	 * @dataProvider deletion_order_provider
+	 *
+	 * @param string $order Which edition is deleted first.
+	 *
+	 * @return void
+	 */
+	public function test_deleting_both_editions_together_removes_the_data( string $order ): void {
+		$plugins = 'plugins=' . $this->site_dir . '/plugins';
+
+		$this->run_step( 'install-wp' );
+		$this->run_step( 'install-plugin', [ $plugins, 'package=' . self::get_package() ] );
+		$this->run_step( 'activate', [ $plugins ] );
+		$this->run_step( 'request', [ $plugins ] );
+		$this->run_step( 'add-data', [ $plugins ] );
+		$this->run_step( 'deactivate', [ $plugins ] );
+		$this->run_step( 'add-edition', [ $plugins, 'copy=1' ] );
+
+		$state = $this->run_step( 'uninstall-all', [ $plugins, "order=$order" ] );
+
+		$this->assertNull( $state['files'], 'The plugin files were not deleted.' );
+		$this->assertFalse( $state['table'], 'The snippets table was not removed.' );
+		$this->assertFalse( $state['settings'] );
+		$this->assertFalse( $state['flat_dir'] );
+	}
+
+	/**
 	 * Ways WordPress replaces the files of an installed plugin.
 	 *
 	 * @return array<string, array{0: string}>
