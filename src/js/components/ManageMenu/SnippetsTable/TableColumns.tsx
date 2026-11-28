@@ -6,7 +6,7 @@ import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { getSnippetDisplayName, getSnippetEditUrl, getSnippetKey, getSnippetType } from '../../../utils/snippets/snippets'
 import { getRunOnceNonce } from '../../../utils/restAPI'
 import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
@@ -62,7 +62,7 @@ const ActivationSwitch: React.FC<ColumnProps> = ({ snippet }) => {
 
 	return (
 		<input
-			id={`snippet-${snippet.id}-switch`}
+			id={`snippet-${getSnippetKey(snippet)}-switch`}
 			type="checkbox"
 			role="switch"
 			checked={snippet.active}

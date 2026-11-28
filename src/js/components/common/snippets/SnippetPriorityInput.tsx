@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
+import { getSnippetKey } from '../../../utils/snippets/snippets'
 import type { Snippet } from '../../../types/Snippet'
 
 export interface SnippetPriorityInputProps {
@@ -43,7 +44,7 @@ export const SnippetPriorityInput: React.FC<SnippetPriorityInputProps> = ({ snip
 			handleUpdate()
 		}}>
 			<input
-				id={`snippet-${snippet.id}-priority`}
+				id={`snippet-${getSnippetKey(snippet)}-priority`}
 				type="number"
 				className="snippet-priority"
 				value={value}

@@ -8,6 +8,21 @@ import type { Snippet, SnippetCodeScope, SnippetScope, SnippetType } from '../..
 
 const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
+/**
+ * Key identifying a snippet in a list.
+ */
+export type SnippetKey = string
+
+/**
+ * Build the key that identifies a snippet in a list. Site and network snippets are numbered separately, so a site
+ * snippet and a shared network snippet in the same list can have the same ID.
+ *
+ * @param snippet Snippet to identify.
+ * @return Key unique within a list of site and network snippets.
+ */
+export const getSnippetKey = ({ id, network }: Pick<Snippet, 'id' | 'network'>): SnippetKey =>
+	network ? `network-${id}` : String(id)
+
 export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
 	php: __('Functions', 'code-snippets'),
 	html: __('Content', 'code-snippets'),

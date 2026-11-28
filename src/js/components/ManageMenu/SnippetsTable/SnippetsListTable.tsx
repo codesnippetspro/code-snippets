@@ -1,7 +1,7 @@
 import { __, _n, sprintf } from '@wordpress/i18n'
 import React, { useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
-import { getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
+import { getSnippetKey, getSnippetType, isSnippetActive } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { ListTable } from '../../common/ListTable'
@@ -17,6 +17,7 @@ import { BULK_ACTIONS, TRASHED_BULK_ACTIONS, useApplyBulkAction } from './useApp
 import type { ListTableAction, ListTableSortDirection } from '../../common/ListTable'
 import type { SnippetsTableAction } from './useApplyBulkAction'
 import type { Snippet } from '../../../types/Snippet'
+import type { SnippetKey } from '../../../utils/snippets/snippets'
 import type { SnippetView } from '../../../types/SnippetView'
 import type { ReactNode } from 'react'
 
@@ -104,7 +105,7 @@ interface SnippetsViewProps {
 	setSnippetView: (view: SnippetView) => void
 	snippets: Snippet[]
 	actions: ListTableAction<SnippetsTableAction>[]
-	doAction: (action: SnippetsTableAction | undefined, selected: Set<Snippet['id']>) => Promise<void>
+	doAction: (action: SnippetsTableAction | undefined, selected: Set<SnippetKey>) => Promise<void>
 	extraTableNav: (which: 'top' | 'bottom') => ReactNode
 	hiddenColumns: Set<string>
 	truncateRowValues: boolean
@@ -142,7 +143,7 @@ const SnippetsView: React.FC<SnippetsViewProps> = ({
 		/>
 		: <ListTable
 			items={snippets}
-			getKey={snippet => snippet.id}
+			getKey={getSnippetKey}
 			initialSort={getInitialSort()}
 			className={classnames({ 'truncate-row-values': truncateRowValues })}
 			columns={columns}
@@ -186,10 +187,10 @@ type ApplyBulkAction = ReturnType<typeof useApplyBulkAction>
  * Hold a permanent bulk delete until it is confirmed, and count what it deleted.
  */
 const useConfirmedBulkDelete = (applyBulkAction: ApplyBulkAction) => {
-	const [pendingDelete, setPendingDelete] = useState<Set<Snippet['id']>>()
+	const [pendingDelete, setPendingDelete] = useState<Set<SnippetKey>>()
 	const [deletedCount, setDeletedCount] = useState<number>()
 
-	const doAction = async (action: SnippetsTableAction | undefined, selected: Set<Snippet['id']>): Promise<void> => {
+	const doAction = async (action: SnippetsTableAction | undefined, selected: Set<SnippetKey>): Promise<void> => {
 		if ('delete' === action) {
 			setPendingDelete(selected)
 		} else {
@@ -217,7 +218,7 @@ const useConfirmedBulkDelete = (applyBulkAction: ApplyBulkAction) => {
 }
 
 interface BulkDeleteFeedbackProps {
-	pendingDelete: Set<Snippet['id']> | undefined
+	pendingDelete: Set<SnippetKey> | undefined
 	cancelDelete: VoidFunction
 	confirmDelete: VoidFunction
 	deletedCount: number | undefined
