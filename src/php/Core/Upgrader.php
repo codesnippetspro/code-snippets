@@ -100,14 +100,17 @@ class Upgrader {
 			return;
 		}
 
+		// The version is recorded only once the table is up to date, so a failed upgrade is tried again on the next request.
+		if ( ! $this->db->create_table( $table_name ) ) {
+			return;
+		}
+
 		// Update the plugin version stored in the database.
 		$updated = update_option( 'code_snippets_version', $this->current_version );
 
 		if ( ! $updated ) {
 			return; // Bail if the data was not successfully saved to prevent this process from repeating.
 		}
-
-		$this->db->create_table( $table_name );
 
 		// Remove outdated user meta.
 		if ( version_compare( $prev_version, '2.14.1', '<' ) ) {
@@ -177,8 +180,10 @@ class Upgrader {
 			return;
 		}
 
-		// Always attempt to create or upgrade the database tables.
-		$this->db->create_table( $table_name );
+		// The version is recorded only once the table is up to date, so a failed upgrade is tried again on the next request.
+		if ( ! $this->db->create_table( $table_name ) ) {
+			return;
+		}
 
 		// Update the plugin version stored in the database.
 		update_site_option( 'code_snippets_version', $this->current_version );

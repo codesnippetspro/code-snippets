@@ -37,6 +37,13 @@ class DB {
 	public string $ms_table;
 
 	/**
+	 * Columns of a snippet table that the plugin writes to.
+	 *
+	 * @var string[]
+	 */
+	private const COLUMNS = [ 'id', 'name', 'description', 'code', 'tags', 'scope', 'condition_id', 'priority', 'active', 'modified', 'revision', 'cloud_id', 'created_by', 'updated_by' ];
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -135,6 +142,25 @@ class DB {
 	}
 
 	/**
+	 * Determine whether a snippet table has every column the plugin writes to.
+	 *
+	 * The error wpdb reports belongs to the last query dbDelta() ran, so a column it failed to add earlier is only
+	 * noticed by looking at the table.
+	 *
+	 * @param string $table_name Snippet table name.
+	 *
+	 * @return bool
+	 */
+	private static function has_current_columns( string $table_name ): bool {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; no WordPress API lists columns.
+		$columns = $wpdb->get_col( "SHOW COLUMNS FROM `$table_name`" );
+
+		return ! array_diff( self::COLUMNS, $columns );
+	}
+
+	/**
 	 * Create a single snippet table.
 	 *
 	 * @param string $table_name The name of the table to create.
@@ -173,7 +199,7 @@ class DB {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
-		$success = empty( $wpdb->last_error );
+		$success = empty( $wpdb->last_error ) && self::has_current_columns( $table_name );
 
 		if ( $success ) {
 			do_action( 'code_snippets/create_table', $table_name );
