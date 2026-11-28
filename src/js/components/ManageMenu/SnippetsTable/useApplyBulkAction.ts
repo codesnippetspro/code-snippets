@@ -3,9 +3,10 @@ import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadBulkSnippetExportFile } from '../../../utils/files'
-import { cloneSnippetObject } from '../../../utils/snippets/snippets'
+import { cloneSnippetObject, getSnippetKey } from '../../../utils/snippets/snippets'
 import type { ListTableAction } from '../../common/ListTable'
 import type { Snippet } from '../../../types/Snippet'
+import type { SnippetKey } from '../../../utils/snippets/snippets'
 
 export type SnippetsTableAction =
 	'activate' | 'deactivate' |
@@ -108,7 +109,7 @@ const applyAndRefresh = async (
 
 export const useApplyBulkAction = (
 	allSnippets: Snippet[]
-): (action: SnippetsTableAction | undefined, selected: Set<Snippet['id']>) => Promise<number | undefined> => {
+): (action: SnippetsTableAction | undefined, selected: Set<SnippetKey>) => Promise<number | undefined> => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
@@ -116,31 +117,31 @@ export const useApplyBulkAction = (
 		switch (action) {
 			case 'activate':
 				await applyAndRefresh(
-					allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.active),
+					allSnippets.filter(snippet => selected.has(getSnippetKey(snippet)) && !snippet.active),
 					snippet => api.activate({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 				break
 
 			case 'deactivate':
 				await applyAndRefresh(
-					allSnippets.filter(snippet => selected.has(snippet.id) && snippet.active),
+					allSnippets.filter(snippet => selected.has(getSnippetKey(snippet)) && snippet.active),
 					snippet => api.deactivate({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 				break
 
 			case 'clone':
 				await applyAndRefresh(
-					allSnippets.filter(snippet => selected.has(snippet.id) && !snippet.trashed),
+					allSnippets.filter(snippet => selected.has(getSnippetKey(snippet)) && !snippet.trashed),
 					snippet => api.create(cloneSnippetObject(snippet)),
 					refreshSnippetsList)
 				break
 
 			case 'export':
-				downloadBulkSnippetExportFile(allSnippets.filter(snippet => selected.has(snippet.id)))
+				downloadBulkSnippetExportFile(allSnippets.filter(snippet => selected.has(getSnippetKey(snippet))))
 				break
 
 			case 'download': {
-				const selectedSnippets = allSnippets.filter(snippet => selected.has(snippet.id))
+				const selectedSnippets = allSnippets.filter(snippet => selected.has(getSnippetKey(snippet)))
 
 				await (1 < selectedSnippets.length && !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads
 					? submitBulkSnippetDownloadsIndividually(selectedSnippets)
@@ -151,7 +152,7 @@ export const useApplyBulkAction = (
 			case 'trash':
 			case 'delete':
 				return applyAndRefresh(
-					allSnippets.filter(snippet => selected.has(snippet.id)),
+					allSnippets.filter(snippet => selected.has(getSnippetKey(snippet))),
 					snippet => api.delete({ id: snippet.id, network: snippet.network }),
 					refreshSnippetsList)
 

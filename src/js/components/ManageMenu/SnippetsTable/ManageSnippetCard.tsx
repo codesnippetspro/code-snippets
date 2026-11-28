@@ -8,7 +8,7 @@ import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
-import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isNetworkOnlySnippet, isSnippetActive } from '../../../utils/snippets/snippets'
+import { canModifySnippet, cloneSnippetObject, getSnippetDisplayName, getSnippetEditUrl, getSnippetKey, getSnippetType, isNetworkOnlySnippet, isSnippetActive } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
 import { KebabMenu, KebabMenuDivider, KebabMenuItem, KebabMenuRow } from '../../common/KebabMenu'
 import { SnippetCard } from '../../common/snippets/SnippetCard'
@@ -129,7 +129,7 @@ const CardActionsMenu: React.FC<SnippetCardActionsProps> = ({ snippet }) => {
 				{!snippet.trashed ? <CloneExportMenuItems snippet={snippet} /> : null}
 
 				<KebabMenuRow className="kebab-menu-priority">
-					<label htmlFor={`snippet-${snippet.id}-priority`}>{__('Priority', 'code-snippets')}</label>
+					<label htmlFor={`snippet-${getSnippetKey(snippet)}-priority`}>{__('Priority', 'code-snippets')}</label>
 					<PriorityColumn snippet={snippet} />
 				</KebabMenuRow>
 

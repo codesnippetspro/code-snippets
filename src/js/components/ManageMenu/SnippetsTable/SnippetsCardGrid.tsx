@@ -2,9 +2,11 @@ import classnames from 'classnames'
 import React, { useMemo, useState } from 'react'
 import { fetchQueryParam } from '../../../utils/urls'
 import { TableNavigation } from '../../common/ListTable/TableNavigation'
+import { getSnippetKey } from '../../../utils/snippets/snippets'
 import { ManageSnippetCard } from './ManageSnippetCard'
 import type { ListTableAction, ListTableNavProps } from '../../common/ListTable'
 import type { Snippet } from '../../../types/Snippet'
+import type { SnippetKey } from '../../../utils/snippets/snippets'
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 
 const PAGE_SEARCH_PARAM = 'paged'
@@ -12,30 +14,30 @@ const PAGE_SEARCH_PARAM = 'paged'
 interface CardGridProps {
 	snippets: Snippet[]
 	noItems: ReactNode
-	selected: Set<Snippet['id']>
-	setSelected: Dispatch<SetStateAction<Set<Snippet['id']>>>
+	selected: Set<SnippetKey>
+	setSelected: Dispatch<SetStateAction<Set<SnippetKey>>>
 }
 
 const CardGrid: React.FC<CardGridProps> = ({ snippets, noItems, selected, setSelected }) =>
 	0 < snippets.length
 		? <ul
 			className={classnames('code-snippets-cards', 'snippets-card-grid', {
-				'has-selection': snippets.some(snippet => selected.has(snippet.id))
+				'has-selection': snippets.some(snippet => selected.has(getSnippetKey(snippet)))
 			})}
 		>
 			{snippets.map(snippet =>
 				<ManageSnippetCard
-					key={snippet.id}
+					key={getSnippetKey(snippet)}
 					snippet={snippet}
-					isSelected={selected.has(snippet.id)}
+					isSelected={selected.has(getSnippetKey(snippet))}
 					onSelectedChange={isSelected => {
 						setSelected(previous => {
 							const updated = new Set(previous)
 
 							if (isSelected) {
-								updated.add(snippet.id)
+								updated.add(getSnippetKey(snippet))
 							} else {
-								updated.delete(snippet.id)
+								updated.delete(getSnippetKey(snippet))
 							}
 
 							return updated
@@ -45,8 +47,8 @@ const CardGrid: React.FC<CardGridProps> = ({ snippets, noItems, selected, setSel
 		</ul>
 		: <p className="no-items">{noItems}</p>
 
-const getVisibleSelection = (selected: Set<Snippet['id']>, visible: Snippet[]): Set<Snippet['id']> =>
-	new Set([...selected].filter(id => visible.some(snippet => snippet.id === id)))
+const getVisibleSelection = (selected: Set<SnippetKey>, visible: Snippet[]): Set<SnippetKey> =>
+	new Set([...selected].filter(key => visible.some(snippet => getSnippetKey(snippet) === key)))
 
 interface PagedSnippetsParams {
 	snippets: Snippet[]
@@ -79,10 +81,10 @@ const usePagedSnippets = ({
 }
 
 export interface SnippetsCardGridProps<A extends string>
-	extends Pick<ListTableNavProps<Snippet['id'], A>, 'extraTableNav' | 'endTableNav'> {
+	extends Pick<ListTableNavProps<SnippetKey, A>, 'extraTableNav' | 'endTableNav'> {
 	snippets: Snippet[]
 	actions: ListTableAction<A>[]
-	doAction: (action: A | undefined, selected: Set<Snippet['id']>) => Promise<void>
+	doAction: (action: A | undefined, selected: Set<SnippetKey>) => Promise<void>
 	itemsPerPage?: number
 	noItems: ReactNode
 	beforeGrid?: ReactNode
@@ -98,7 +100,7 @@ export const SnippetsCardGrid = <A extends string>({
 	noItems,
 	beforeGrid
 }: SnippetsCardGridProps<A>) => {
-	const [selected, setSelected] = useState(() => new Set<Snippet['id']>())
+	const [selected, setSelected] = useState(() => new Set<SnippetKey>())
 	const [currentPage, setCurrentPage] = useState(
 		() => Number(fetchQueryParam(PAGE_SEARCH_PARAM)) || 1
 	)
@@ -119,7 +121,7 @@ export const SnippetsCardGrid = <A extends string>({
 				pageSearchParam={PAGE_SEARCH_PARAM}
 				selected={getVisibleSelection(selected, visibleSnippets)}
 				setSelected={setSelected}
-				selectAllKeys={visibleSnippets.map(snippet => snippet.id)}
+				selectAllKeys={visibleSnippets.map(getSnippetKey)}
 				actions={actions}
 				doAction={doAction}
 				extraTableNav={extraTableNav}
