@@ -9,7 +9,7 @@
  * Usage: php plugin-lifecycle-runner.php <step> <tests directory> <content directory> [name=value ...]
  *
  * Options:
- * - plugins: directory holding the plugin as code-snippets/, instead of the repository's src/ directory.
+ * - plugins: directory holding the plugin as code-snippets/, instead of a link to the repository's src/ directory.
  * - package: plugin zip used by the install-plugin, overwrite and update steps.
  * - cache: no-group-flush to have the object cache report that it cannot flush whole groups.
  *
@@ -45,13 +45,20 @@ if ( 'install-wp' === $step ) {
 }
 
 if ( empty( $options['plugins'] ) ) {
-	// The plugin is found where it is in the repository, as src/code-snippets.php.
-	define( 'WP_PLUGIN_DIR', dirname( __DIR__ ) );
-	define( 'RUNNER_PLUGIN', 'src/code-snippets.php' );
+	// The plugin is the repository's src/ directory, linked into a plugins directory of its own so that other copies in
+	// the repository, such as a built bundle/, are not installed plugins.
+	define( 'WP_PLUGIN_DIR', dirname( $content_dir ) . '/repository-plugins' );
+
+	if ( ! is_link( WP_PLUGIN_DIR . '/code-snippets' ) ) {
+		mkdir( WP_PLUGIN_DIR, 0777, true );
+		symlink( dirname( __DIR__ ) . '/src', WP_PLUGIN_DIR . '/code-snippets' );
+	}
 } else {
 	define( 'WP_PLUGIN_DIR', $options['plugins'] );
-	define( 'RUNNER_PLUGIN', 'code-snippets/code-snippets.php' );
 }
+
+define( 'RUNNER_PLUGIN', 'code-snippets/code-snippets.php' );
+const RUNNER_OTHER_EDITION = 'code-snippets-other/code-snippets.php';
 
 define( 'WP_CONTENT_DIR', $content_dir );
 define( 'DISABLE_WP_CRON', true );
@@ -218,6 +225,34 @@ switch ( $step ) {
 		deactivate_plugins( RUNNER_PLUGIN );
 		break;
 
+	case 'add-edition':
+		// Another edition of the plugin, installed alongside: only its plugin header, or with copy=1 a full copy.
+		$other_dir = WP_PLUGIN_DIR . '/' . dirname( RUNNER_OTHER_EDITION );
+		wp_mkdir_p( $other_dir );
+
+		if ( empty( $options['copy'] ) ) {
+			file_put_contents( WP_PLUGIN_DIR . '/' . RUNNER_OTHER_EDITION, "<?php\n/**\n * Plugin Name: Code Snippets Pro\n * Text Domain: code-snippets\n */\n" );
+		} else {
+			WP_Filesystem();
+			copy_dir( WP_PLUGIN_DIR . '/' . dirname( RUNNER_PLUGIN ), $other_dir );
+			$main_file = WP_PLUGIN_DIR . '/' . RUNNER_OTHER_EDITION;
+			file_put_contents( $main_file, preg_replace( '/Plugin Name:\s*Code Snippets/', 'Plugin Name: Code Snippets Pro', file_get_contents( $main_file ), 1 ) );
+		}
+		break;
+
+	case 'uninstall-all':
+		// Plugins > Delete for several plugins at once: each is uninstalled, then its files removed, in one request.
+		$plugins_to_delete = 'other-first' === ( $options['order'] ?? '' )
+			? [ RUNNER_OTHER_EDITION, RUNNER_PLUGIN ]
+			: [ RUNNER_PLUGIN, RUNNER_OTHER_EDITION ];
+
+		$deleted = delete_plugins( $plugins_to_delete );
+
+		if ( true !== $deleted ) {
+			runner_fail( 'Deleting the plugins failed: ' . ( is_wp_error( $deleted ) ? $deleted->get_error_message() : 'unknown error' ) );
+		}
+		break;
+
 	case 'uninstall':
 		if ( function_exists( 'Code_Snippets\code_snippets' ) ) {
 			runner_fail( 'The plugin was loaded before it was uninstalled.' );
@@ -231,6 +266,10 @@ switch ( $step ) {
 		break;
 
 	case 'cleanup':
+		if ( is_link( WP_PLUGIN_DIR . '/code-snippets' ) ) {
+			unlink( WP_PLUGIN_DIR . '/code-snippets' );
+		}
+
 		runner_drop_tables();
 		exit( 0 );
 

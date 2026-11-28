@@ -8,10 +8,21 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Core\Editions;
 use Code_Snippets\Core\Uninstaller;
 
 // Ensure this plugin is actually being uninstalled.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) || ( defined( 'CODE_SNIPPETS_PRO' ) && CODE_SNIPPETS_PRO ) ) {
+	return;
+}
+
+// Another edition still uses the shared data. Nothing else is loaded before this point, so that edition can still be
+// uninstalled later in the same request, as when both are deleted together. Its copy of this class may already be loaded.
+if ( ! class_exists( Editions::class, false ) ) {
+	require_once __DIR__ . '/php/Core/Editions.php';
+}
+
+if ( Editions::is_other_edition_installed() ) {
 	return;
 }
 
