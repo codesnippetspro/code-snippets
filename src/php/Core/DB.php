@@ -154,8 +154,9 @@ class DB {
 	private static function has_current_columns( string $table_name ): bool {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; no WordPress API lists columns.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own table, named from $wpdb->prefix; no WordPress API lists columns.
 		$columns = $wpdb->get_col( "SHOW COLUMNS FROM `$table_name`" );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return ! array_diff( self::COLUMNS, $columns );
 	}
