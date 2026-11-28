@@ -383,7 +383,7 @@ class Bootstrap_Admin_Test extends AdminUnitTestCase {
 	 * @return void
 	 */
 	public function test_feed_banner_without_text_is_not_shown(): void {
-		foreach ( [ '', '   ', '<strong> </strong>' ] as $text ) {
+		foreach ( [ '', '   ', '<strong> </strong>', '&nbsp;', '<p>&nbsp; &#160;</p>' ] as $text ) {
 			$admin = $this->make_admin(
 				[
 					'text_free'     => $text,
@@ -394,5 +394,19 @@ class Bootstrap_Admin_Test extends AdminUnitTestCase {
 			$this->assertNull( $admin->get_promo_banner( self::moment( self::DURING_BANNER ) ), "Text: '$text'" );
 			$this->assertSame( 'survey', $admin->get_active_notice( self::moment( self::DURING_BANNER ) )['key'], "Text: '$text'" );
 		}
+	}
+
+	/**
+	 * Damaged banner fields in the stored welcome data do not break the screen.
+	 *
+	 * @return void
+	 */
+	public function test_damaged_banner_fields_do_not_break_the_screen(): void {
+		$admin = $this->make_admin( [ 'headline_free' => [ 'not text' ] ] );
+		$promo = $admin->get_promo_banner( self::moment( self::DURING_BANNER ) );
+		$this->assertStringContainsString( 'Save up to 40%', $promo['text'], 'Falls back to the full text' );
+
+		$admin = $this->make_admin( [ 'key' => [ 'not', 'a', 'key' ] ] );
+		$this->assertNull( $admin->get_promo_banner( self::moment( self::DURING_BANNER ) ), 'No banner without a key' );
 	}
 }

@@ -326,6 +326,20 @@ class Bootstrap_Admin {
 	}
 
 	/**
+	 * Determine whether banner text shows anything once its markup is removed.
+	 *
+	 * @param string $text Banner text.
+	 *
+	 * @return bool
+	 */
+	private static function has_visible_text( string $text ): bool {
+		$plain = html_entity_decode( wp_strip_all_tags( $text ), ENT_QUOTES, 'UTF-8' );
+
+		// A non-breaking space shows nothing, just like a regular one.
+		return '' !== trim( str_replace( "\u{00A0}", ' ', $plain ) );
+	}
+
+	/**
 	 * Determine which notice, if any, should be shown to the current user.
 	 *
 	 * A banner from the remote welcome feed is shown as the promotional banner while it is scheduled and has not been
@@ -356,7 +370,7 @@ class Bootstrap_Admin {
 		$welcome_text = '' === ( $welcome['headline_free'] ?? '' ) ? ( $welcome['text_free'] ?? '' ) : $welcome['headline_free'];
 
 		if ( ! empty( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
-		     '' !== trim( wp_strip_all_tags( (string) $welcome_text ) ) &&
+		     self::has_visible_text( $welcome_text ) &&
 		     ( empty( $welcome['start_datetime'] ) || $now >= $welcome['start_datetime'] ) &&
 		     ( empty( $welcome['end_datetime'] ) || $now <= $welcome['end_datetime'] ) ) {
 			return [
