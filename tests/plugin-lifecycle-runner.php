@@ -9,7 +9,7 @@
  * Usage: php plugin-lifecycle-runner.php <step> <tests directory> <content directory> [name=value ...]
  *
  * Options:
- * - plugins: directory holding the plugin as code-snippets/, instead of the repository's src/ directory.
+ * - plugins: directory holding the plugin as code-snippets/, instead of a link to the repository's src/ directory.
  * - package: plugin zip used by the install-plugin, overwrite and update steps.
  * - cache: no-group-flush to have the object cache report that it cannot flush whole groups.
  *
@@ -45,13 +45,19 @@ if ( 'install-wp' === $step ) {
 }
 
 if ( empty( $options['plugins'] ) ) {
-	// The plugin is found where it is in the repository, as src/code-snippets.php.
-	define( 'WP_PLUGIN_DIR', dirname( __DIR__ ) );
-	define( 'RUNNER_PLUGIN', 'src/code-snippets.php' );
+	// The plugin is the repository's src/ directory, linked into a plugins directory of its own so that other copies in
+	// the repository, such as a built bundle/, are not installed plugins.
+	define( 'WP_PLUGIN_DIR', dirname( $content_dir ) . '/repository-plugins' );
+
+	if ( ! is_link( WP_PLUGIN_DIR . '/code-snippets' ) ) {
+		mkdir( WP_PLUGIN_DIR, 0777, true );
+		symlink( dirname( __DIR__ ) . '/src', WP_PLUGIN_DIR . '/code-snippets' );
+	}
 } else {
 	define( 'WP_PLUGIN_DIR', $options['plugins'] );
-	define( 'RUNNER_PLUGIN', 'code-snippets/code-snippets.php' );
 }
+
+define( 'RUNNER_PLUGIN', 'code-snippets/code-snippets.php' );
 
 define( 'WP_CONTENT_DIR', $content_dir );
 define( 'DISABLE_WP_CRON', true );
@@ -231,6 +237,10 @@ switch ( $step ) {
 		break;
 
 	case 'cleanup':
+		if ( is_link( WP_PLUGIN_DIR . '/code-snippets' ) ) {
+			unlink( WP_PLUGIN_DIR . '/code-snippets' );
+		}
+
 		runner_drop_tables();
 		exit( 0 );
 

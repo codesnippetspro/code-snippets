@@ -141,7 +141,8 @@ class Plugin_Lifecycle_Test extends UnitTestCase {
 		);
 
 		foreach ( $items as $item ) {
-			$item->isDir() ? rmdir( $item->getPathname() ) : unlink( $item->getPathname() ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			// A linked directory is removed as a link, leaving what it points to alone.
+			$item->isDir() && ! $item->isLink() ? rmdir( $item->getPathname() ) : unlink( $item->getPathname() ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 		}
 
 		rmdir( $dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions
