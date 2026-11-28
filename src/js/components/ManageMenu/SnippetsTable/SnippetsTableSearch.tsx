@@ -3,32 +3,6 @@ import React from 'react'
 import { Button } from '../../common/Button'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
 
-export const SearchArea = () => {
-	const { searchQuery, setSearchQuery } = useSnippetsFilters()
-
-	return (
-		<search className="snippets-search-area">
-			<form
-				className="search-box"
-				aria-label={__('Search Snippets', 'code-snippets')}
-				onSubmit={event => {
-					event.preventDefault()
-				}}
-			>
-				<input
-					type="search"
-					id="snippets_search"
-					name="s"
-					value={searchQuery ?? ''}
-					aria-label={__('Search Snippets:', 'code-snippets')}
-					onChange={event => setSearchQuery(event.target.value)}
-					placeholder={__('Search snippets', 'code-snippets')}
-				/>
-			</form>
-		</search>
-	)
-}
-
 export const SearchResultsIndicator = () => {
 	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
 

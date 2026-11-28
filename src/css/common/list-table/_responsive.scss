@@ -33,33 +33,6 @@
 		flex-shrink: 0;
 	}
 
-	.snippets-search-area {
-		inline-size: auto;
-		flex: 1 1 237px;
-		min-inline-size: 150px;
-		max-inline-size: 237px;
-
-		// The inner search row never wraps — the field shrinks instead.
-		search,
-		form,
-		p.search-box {
-			display: flex;
-			align-items: center;
-			flex-wrap: nowrap;
-			gap: 8px;
-			min-inline-size: 0;
-			margin: 0;
-		}
-
-		input[type='search'] {
-			min-inline-size: 110px;
-		}
-
-		.button {
-			flex: 0 0 auto;
-		}
-	}
-
 	// Pagination labels stay on one line while the row squeezes.
 	.tablenav-pages,
 	.tablenav-pages .paging-input,
@@ -165,13 +138,6 @@
 
 		.alignleft.actions:not(.bulkactions) {
 			order: 2;
-		}
-
-		.snippets-search-area {
-			order: 3;
-			flex: 0 1 237px;
-			inline-size: 237px;
-			max-inline-size: 100%;
 		}
 
 		&::after {

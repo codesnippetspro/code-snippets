@@ -254,10 +254,11 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Filter the snippets table to a specific snippet name.
+   * Open the snippets table filtered to a snippet name, as a link with a search query does.
    */
 	async filterSnippetsByName(snippetName: string): Promise<void> {
-		await this.page.fill(SELECTORS.SNIPPET_SEARCH_INPUT, snippetName)
+		await this.page.goto(`${URLS.SNIPPETS_ADMIN}&s=${encodeURIComponent(snippetName)}`)
+		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**

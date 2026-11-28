@@ -6,7 +6,6 @@ import { handleUnknownError } from '../../../utils/errors'
 import { REST_BASES } from '../../../utils/restAPI'
 import { buildUrl } from '../../../utils/urls'
 import { SubmitButton } from '../../common/SubmitButton'
-import { SearchArea } from './SnippetsTableSearch'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
 import type { Snippet } from '../../../types/Snippet'
@@ -125,7 +124,6 @@ export const SnippetsTableNavigation: React.FC<SnippetsTableNavigationProps> = (
 	<>
 		{'top' === which && <FilterByTagControl visibleSnippets={visibleSnippets} />}
 		<ClearRecentlyActiveButton />
-		{'top' === which && <SearchArea />}
 	</>
 
 export const SnippetsTableToolbar = () =>
