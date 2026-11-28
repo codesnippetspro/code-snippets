@@ -16,6 +16,18 @@ use function Code_Snippets\save_snippet;
 class Upgrader {
 
 	/**
+	 * Transient set while a failed table upgrade waits to be tried again.
+	 */
+	public const TABLE_UPGRADE_WAIT = 'code_snippets_table_upgrade_wait';
+
+	/**
+	 * Seconds to wait before trying a failed table upgrade again, so a table that cannot be changed is not retried on
+	 * every request.
+	 */
+	private const TABLE_UPGRADE_RETRY_DELAY = 300;
+
+
+	/**
 	 * Option recording the plugin version that last wrote to the cache.
 	 */
 	private const CACHE_VERSION_OPTION = 'code_snippets_cache_version';
@@ -100,14 +112,22 @@ class Upgrader {
 			return;
 		}
 
+		// The version is recorded only once the table is up to date, so a failed upgrade is tried again a little later.
+		if ( get_transient( self::TABLE_UPGRADE_WAIT ) ) {
+			return;
+		}
+
+		if ( ! $this->db->create_table( $table_name ) ) {
+			set_transient( self::TABLE_UPGRADE_WAIT, true, self::TABLE_UPGRADE_RETRY_DELAY );
+			return;
+		}
+
 		// Update the plugin version stored in the database.
 		$updated = update_option( 'code_snippets_version', $this->current_version );
 
 		if ( ! $updated ) {
 			return; // Bail if the data was not successfully saved to prevent this process from repeating.
 		}
-
-		$this->db->create_table( $table_name );
 
 		// Remove outdated user meta.
 		if ( version_compare( $prev_version, '2.14.1', '<' ) ) {
@@ -177,8 +197,15 @@ class Upgrader {
 			return;
 		}
 
-		// Always attempt to create or upgrade the database tables.
-		$this->db->create_table( $table_name );
+		// The version is recorded only once the table is up to date, so a failed upgrade is tried again a little later.
+		if ( get_site_transient( self::TABLE_UPGRADE_WAIT ) ) {
+			return;
+		}
+
+		if ( ! $this->db->create_table( $table_name ) ) {
+			set_site_transient( self::TABLE_UPGRADE_WAIT, true, self::TABLE_UPGRADE_RETRY_DELAY );
+			return;
+		}
 
 		// Update the plugin version stored in the database.
 		update_site_option( 'code_snippets_version', $this->current_version );
